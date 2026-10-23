@@ -1,0 +1,684 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>Clik'Devis BRS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout : une colonne centrée (une étape = un écran), barre de progression en haut, boutons collés en bas sur téléphone. */
+:root{
+  --ink:#0B1226;      /* bleu nuit ProClik */
+  --mint:#2EE6C8;     /* turquoise ProClik */
+  --mint-ink:#0B5E52; /* turquoise lisible sur fond clair */
+  --bg:#F3F6F9;
+  --surface:#FFFFFF;
+  --fg:#0B1226;
+  --muted:#5B6579;
+  --line:#DCE3EB;
+  --soft:#E9F9F5;
+  --warn:#9A5B00;
+  --warn-bg:#FFF4E0;
+  --err:#B42318;
+  --shadow:0 1px 2px rgba(11,18,38,.06),0 8px 24px rgba(11,18,38,.06);
+  --f-display:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1226;--surface:#131C33;--fg:#EEF2F8;--muted:#9DA8BD;--line:#26324F;--soft:#12302E;--mint-ink:#2EE6C8;--warn:#FFC266;--warn-bg:#3A2A10;--err:#FF8A7A;--shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1226;--surface:#131C33;--fg:#EEF2F8;--muted:#9DA8BD;--line:#26324F;--soft:#12302E;--mint-ink:#2EE6C8;--warn:#FFC266;--warn-bg:#3A2A10;--err:#FF8A7A;--shadow:none;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 120px}
+.wrap{max-width:640px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--ink);display:grid;place-items:center}
+.logo i{width:10px;height:10px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(46,230,200,.25)}
+.brand small{display:block;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.02em}
+.demo-badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);padding:4px 8px;border-radius:999px}
+.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+.progress b{display:block;height:100%;background:var(--mint);border-radius:999px;transition:width .35s ease}
+.step-meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);padding-block:8px 4px;font-variant-numeric:tabular-nums}
+.cheer{color:var(--mint-ink);font-weight:700}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,34px);line-height:1.15;letter-spacing:-.02em;margin:14px 0 6px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 18px;max-width:60ch}
+.q{display:grid;gap:8px;margin-block:18px}
+.q>label,.q>.lab{font-weight:700}
+.hint{font-size:13px;color:var(--muted);margin:-2px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:600 15px/1.2 var(--f-body);padding:11px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.chip:hover{border-color:var(--mint)}
+.chip:active{transform:scale(.97)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{background:var(--mint);border-color:var(--mint);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:var(--mint);border-color:var(--mint);color:var(--ink)}}
+.chip.dk{border-style:dashed;color:var(--muted)}
+.chip.dk[aria-pressed="true"]{color:#fff}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:560px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:var(--r);padding:14px 12px;cursor:pointer;display:grid;gap:6px;align-content:start;font:inherit;transition:border-color .15s,transform .1s;position:relative}
+.card:hover{border-color:var(--mint)}
+.card:active{transform:scale(.98)}
+.card svg{width:40px;height:40px;color:var(--mint-ink)}
+.card b{font-size:15px;line-height:1.25}
+.card span{font-size:12.5px;color:var(--muted);line-height:1.35}
+.card[aria-pressed="true"]{border-color:var(--mint);background:var(--soft);box-shadow:0 0 0 3px rgba(46,230,200,.25)}
+.card[aria-pressed="true"]::after{content:"✓";position:absolute;top:8px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--mint);color:var(--ink);font-weight:800;font-size:13px;display:grid;place-items:center}
+input[type=text],input[type=tel],input[type=email],textarea{width:100%;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:12px 14px;font:500 16px/1.4 var(--f-body)}
+textarea{min-height:110px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.5;font-weight:500;font-style:italic}
+.numbox input::placeholder{font-style:normal;opacity:.4}
+input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-visible{outline:3px solid rgba(46,230,200,.55);outline-offset:2px;border-color:var(--mint)}
+.num{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.numbox{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.numbox button{appearance:none;border:0;background:transparent;color:var(--fg);width:44px;height:48px;font:700 20px var(--f-body);cursor:pointer}
+.numbox button:hover{background:var(--soft)}
+.numbox input{width:88px;border:0;border-inline:1.5px solid var(--line);border-radius:0;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;padding:12px 6px}
+.numbox .u{padding:0 12px 0 8px;color:var(--muted);font-weight:600;font-size:14px}
+.num.off .numbox{opacity:.4}
+.item{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:16px;margin-block:12px;box-shadow:var(--shadow)}
+.item-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.item-h h3{margin:0;font-size:17px;font-weight:800}
+.badge{font-size:13px;font-weight:700;color:var(--mint-ink);background:var(--soft);padding:4px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.del{appearance:none;border:0;background:transparent;color:var(--muted);font:600 13px var(--f-body);cursor:pointer;text-decoration:underline}
+.add{appearance:none;width:100%;border:1.5px dashed var(--mint-ink);background:transparent;color:var(--mint-ink);font:700 15px var(--f-body);border-radius:var(--r);padding:14px;cursor:pointer}
+.add:hover{background:var(--soft)}
+.schema{display:flex;gap:14px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--fg)}
+.schema svg{flex:none;width:110px;height:72px;color:var(--mint-ink)}
+.schema p{margin:0;min-width:0}
+.files{display:grid;gap:10px}
+.drop{display:grid;gap:4px;place-items:center;text-align:center;border:1.5px dashed var(--line);border-radius:var(--r);padding:18px;background:var(--surface);cursor:pointer}
+.drop:hover{border-color:var(--mint)}
+.drop b{font-size:15px}
+.drop span{font-size:13px;color:var(--muted)}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.thumbs figure{margin:0;width:76px;display:grid;gap:4px}
+.thumbs img,.thumbs .pdf{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--muted);background:var(--surface)}
+.thumbs figcaption{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tips{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:grid;gap:2px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--ink);flex:none}
+.note{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.err{color:var(--err);font-weight:700;font-size:14px;min-height:1.2em;margin:6px 0 0}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
+.nav .wrap{display:flex;gap:10px;justify-content:space-between;align-items:center}
+.btn{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px 22px;cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn.go{background:var(--ink);color:#fff;flex:1;max-width:340px;margin-left:auto}
+:root[data-theme="dark"] .btn.go{background:var(--mint);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.go{background:var(--mint);color:var(--ink)}}
+.btn.back{background:transparent;color:var(--muted);padding-inline:6px}
+.btn.ghost{background:transparent;color:var(--mint-ink);border:1.5px solid var(--mint-ink)}
+.hero{display:grid;gap:14px;padding-block:8px}
+.perks{display:grid;gap:10px;margin:6px 0 4px;padding:0;list-style:none}
+.perks li{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.perks i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--mint-ink);display:grid;place-items:center;font-style:normal;font-weight:800}
+.recap{display:grid;gap:12px}
+.rblock{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.rblock h3{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;gap:10px}
+.rblock h3 button{appearance:none;border:0;background:none;color:var(--mint-ink);font:700 13px var(--f-body);cursor:pointer}
+.rblock ul{margin:0;padding-left:18px;font-size:14.5px;display:grid;gap:2px}
+.rblock .tot{margin-top:6px;font-weight:800;color:var(--mint-ink);font-variant-numeric:tabular-nums}
+.done{text-align:center;display:grid;gap:12px;justify-items:center;padding-block:24px}
+.done .ok{width:72px;height:72px;border-radius:50%;background:var(--mint);color:var(--ink);display:grid;place-items:center;font-size:36px;font-weight:800;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.next{display:grid;gap:8px;text-align:left;width:100%}
+.next div{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.next b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:13px}
+details{width:100%;text-align:left}
+summary{cursor:pointer;color:var(--mint-ink);font-weight:700;font-size:14px}
+pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;max-height:340px}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:28px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.modes{display:grid;gap:14px;margin-top:6px}
+@media (min-width:560px){.modes{grid-template-columns:1.25fr 1fr}}
+.mcard{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:18px;padding:18px 16px 16px;cursor:pointer;display:grid;gap:8px;align-content:start;font:inherit;position:relative;transition:transform .1s,border-color .15s}
+.mcard:active{transform:scale(.98)}
+.mcard.reco{border:2px solid var(--mint);box-shadow:0 0 0 4px rgba(46,230,200,.18)}
+.mcard[aria-pressed="true"]{background:var(--soft);border-color:var(--mint-ink)}
+.mcard b{font-size:17px;line-height:1.25}
+.mcard>span{font-size:14px;color:var(--muted)}
+.mcard ul{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:2px}
+.mcard .rb{position:absolute;top:-12px;left:14px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px}
+.mcard svg{width:100%;height:auto;max-height:130px;color:var(--fg)}
+.ptiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:560px){.ptiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ptile{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;display:grid;gap:8px;justify-items:start;transition:border-color .15s,background .15s}
+.ptile.on{border-color:var(--mint);background:var(--soft)}
+.ptile b{font-size:15px}
+.pic{width:28px;height:20px;border-radius:5px;border:1.5px solid rgba(11,18,38,.35);display:inline-block;flex:none}
+.pcnt{display:flex;align-items:center;gap:6px}
+.pcnt button{appearance:none;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 20px var(--f-body);cursor:pointer}
+.pcnt button.plus{background:var(--ink);color:#fff;border-color:var(--ink)}
+:root[data-theme="dark"] .pcnt button.plus{background:var(--mint);color:var(--ink);border-color:var(--mint)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pcnt button.plus{background:var(--mint);color:var(--ink);border-color:var(--mint)}}
+.pcnt output{min-width:22px;text-align:center;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
+.rhead{display:flex;gap:12px;align-items:center;margin-top:14px}
+.rhead small{color:var(--muted);font-weight:700;font-size:13px}
+.rhead .pic{width:44px;height:32px;border-radius:8px}
+.mhelp{display:flex;gap:12px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:14px;margin-top:12px}
+.mhelp svg{flex:none;width:44px;height:44px;color:var(--mint-ink)}
+.mhelp p{margin:0}
+.prect{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;margin-top:12px;padding:6px}
+.prect svg{display:block;width:100%;height:auto;color:var(--fg)}
+.dims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dims .q{margin-block:12px 0}
+.dims .numbox input{width:72px}
+.dims .numbox button{width:40px}
+@media (max-width:430px){.dims{grid-template-columns:1fr}}
+.pdots{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.pdots button{width:12px;height:12px;border-radius:50%;border:0;background:var(--line);padding:0;cursor:pointer}
+.pdots .ok{background:var(--mint-ink)}.pdots .cur{background:var(--ink);transform:scale(1.35)}
+:root[data-theme="dark"] .pdots .cur{background:var(--mint)}
+.pview{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:10px;display:grid;gap:8px}
+.pview svg{display:block;width:100%;height:auto;color:var(--fg)}
+.pview g[data-pjmp]{cursor:pointer}
+.ptabs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;justify-self:start}
+.ptabs button{appearance:none;border:0;background:transparent;font:800 13px var(--f-body);padding:7px 14px;border-radius:999px;cursor:pointer;color:var(--fg)}
+.ptabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+:root[data-theme="dark"] .ptabs button[aria-pressed="true"]{background:var(--mint);color:var(--ink)}
+#planfull{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column}
+#planfull[hidden]{display:none}
+.pf-bar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.pf-t{flex:1;min-width:0}.pf-t b{display:block;font-size:17px}.pf-t small{color:var(--muted);font-size:13px}
+#pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
+:root[data-theme="dark"] #pf-done{background:var(--mint);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pf-done{background:var(--mint);color:var(--ink)}}
+#planfull iframe{flex:1 1 0;width:100%;border:0;display:block;min-height:0}
+.pcardp{display:grid;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px}
+.pcardp svg{width:100%;height:auto;max-height:220px;color:var(--fg)}
+.pempty{display:grid;place-items:center;text-align:center;gap:6px;padding:18px 8px;color:var(--muted);font-size:14px}
+.bigbtn{appearance:none;border:0;border-radius:16px;background:var(--hot,#E8590C);color:#fff;font:800 19px var(--f-body);padding:18px;cursor:pointer;width:100%}
+.howto{display:grid;gap:8px;margin:2px 0 0;padding:0;list-style:none}
+.howto li{display:flex;gap:12px;align-items:center;font-size:15px}
+.howto i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--mint-ink);display:grid;place-items:center;font-style:normal;font-weight:800}
+#offline{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:80;background:#3A2414;color:#FFD8B8;border:1.5px solid #E8590C;border-radius:14px;padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#offline[hidden]{display:none}
+.bigconf{position:fixed;inset:0;z-index:90;background:rgba(6,10,22,.72);display:grid;place-items:center;padding:20px}
+.bigconf[hidden]{display:none}
+.bc-in{background:var(--surface);color:var(--fg);border:2px solid #E5484D;border-radius:22px;padding:22px 20px;max-width:420px;width:100%;display:grid;gap:10px;text-align:center}
+.bc-ic{font-size:40px;line-height:1}.bc-in h2{margin:0;font-size:21px;font-weight:800}.bc-in p{margin:0;color:var(--muted);font-size:15px}
+.bc-b{display:grid;gap:8px;margin-top:6px}.bc-b button{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px;cursor:pointer}
+.bc-ok{background:#E5484D;color:#fff}.bc-no{background:var(--bg);color:var(--fg);border:1.5px solid var(--line)!important}
+#planhost{margin-top:4px}
+#planhost[hidden]{display:none}
+body.planmode{padding-bottom:16px}
+body.planmode .nav{position:static;border-top:0;background:transparent;padding-inline:0;margin-top:14px}
+#pframe{display:block;width:100%;height:620px;border:1.5px solid var(--line);border-radius:18px;background:var(--bg)}
+.pguide{display:grid;gap:6px;margin:0 0 10px}
+.pguide div{display:flex;gap:10px;align-items:center;font-size:14px}
+.pguide b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--mint);color:var(--ink);display:grid;place-items:center;font-size:12.5px}
+.plg{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.plg span{display:inline-flex;align-items:center;gap:6px}
+.plg i{display:inline-block;width:22px;border-radius:2px}
+.plg i.ext{height:6px;background:var(--fg)}
+.plg i.clo{height:3px;background:#C9955B}
+.psel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--soft);border-radius:12px;padding:8px 10px}
+.psel b{margin-right:auto}
+.psel .chip{padding:8px 12px;font-size:14px}
+.psum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.psum div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.psum b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.psum span{font-size:12.5px;color:var(--muted)}
+.fade{animation:fade .3s ease}
+@keyframes fade{from{opacity:.25;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo"><i></i></div><div>Clik'Devis<small>BRS · Bati Renov' Services</small></div></div>
+    <span class="demo-badge">Mode démo</span>
+  </header>
+  <div id="prog" hidden>
+    <div class="progress"><b id="bar" style="width:0"></b></div>
+    <div class="step-meta"><span id="stepn"></span><span id="cheer" class="cheer"></span></div>
+  </div>
+  <main id="app" aria-live="polite"></main>
+  <div id="offline" hidden role="status">📶 <b>Pas de connexion internet.</b> Pas d'inquiétude : tout est gardé sur cet appareil. Continuez, vous pourrez envoyer dès le retour du réseau.</div>
+  <div class="bigconf" id="bigconf" hidden role="alertdialog" aria-modal="true" aria-labelledby="bc-t"><div class="bc-in"><div class="bc-ic">⚠️</div><h2 id="bc-t"></h2><p id="bc-p"></p><div class="bc-b"><button type="button" class="bc-no" id="bc-no">Non, garder</button><button type="button" class="bc-ok" id="bc-ok">Oui</button></div></div></div>
+  <div id="planhost" hidden><div id="pextra"></div></div>
+  <div id="planfull" hidden role="dialog" aria-label="Votre plan"><div class="pf-bar"><div class="pf-t"><b>Votre plan</b><small id="pf-sub">Le contour du logement est prêt</small></div><button type="button" id="pf-done">✓ J'ai terminé</button></div><iframe id="pframe" title="Votre plan" allow="camera; microphone"></iframe></div>
+  <p class="foot">Vos réponses restent entre vous et l'artisan · Clik'Devis, propulsé par Cliky · ProClik</p>
+</div>
+<nav class="nav" id="nav" hidden>
+  <div class="wrap">
+    <button class="btn back" id="back" type="button">← Retour</button>
+    <button class="btn go" id="go" type="button">Continuer →</button>
+  </div>
+</nav>
+
+<script src="config.js"></script>
+<script>
+(function(){
+const CONFIG=Object.assign({artisan:"Aurélien",entreprise:"BRS",delai:"48 h"},window.CLIKDEVIS_CONFIG||{});CONFIG.demo=!/^https:\/\//.test(CONFIG.webhook||"");
+const IC={
+ cloison:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="7" width="28" height="26" rx="1.5"/><path d="M13 7v26M20 7v26M27 7v26"/></svg>',
+ doublage:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="6" width="8" height="28" fill="currentColor" fill-opacity=".18"/><path d="M18 6c2 3-2 5 0 8s-2 5 0 8-2 5 0 8 0 4 0 4"/><path d="M24 6v28M28 6v28"/></svg>',
+ plafond:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h32M11 8v7M29 8v7M20 8v7"/><rect x="7" y="15" width="26" height="3" fill="currentColor" fill-opacity=".18"/><path d="M4 33h32"/></svg>',
+ combles:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24 20 8l16 16"/><path d="M8 24h24"/><path d="M11 22q2-4 4 0t4 0 4 0 4 0"/><path d="M8 24v9h24v-9"/></svg>',
+ rampants:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 33 22 8l13 0"/><path d="M10 33 25 12"/><path d="M14 33 28 14" stroke-dasharray="2 3"/><path d="M5 33h30"/></svg>',
+ fenetres:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="6" width="22" height="28" rx="1.5"/><path d="M20 6v28M9 20h22"/></svg>',
+ portes:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="11" y="5" width="18" height="30" rx="1.5"/><circle cx="25" cy="21" r="1.6" fill="currentColor"/></svg>',
+ autre:'<svg viewBox="0 0 40 40" fill="currentColor"><circle cx="11" cy="20" r="3"/><circle cx="20" cy="20" r="3"/><circle cx="29" cy="20" r="3"/></svg>'
+};
+const SCH={
+ mur:'<svg viewBox="0 0 110 72" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="14" y="6" width="80" height="50" fill="currentColor" fill-opacity=".08"/><rect x="62" y="24" width="14" height="32"/><path d="M14 64h80M14 61v6M94 61v6" /><path d="M6 6v50M3 6h6M3 56h6"/><text x="54" y="71" font-size="8" fill="currentColor" stroke="none" text-anchor="middle">longueur</text><text x="5" y="33" font-size="8" fill="currentColor" stroke="none" transform="rotate(-90 5 33)" text-anchor="middle">hauteur</text></svg>',
+ piece:'<svg viewBox="0 0 110 72" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="20" y="8" width="72" height="46" fill="currentColor" fill-opacity=".08"/><path d="M20 63h72M20 60v6M92 60v6M10 8v46M7 8h6M7 54h6"/><text x="56" y="71" font-size="8" fill="currentColor" stroke="none" text-anchor="middle">longueur</text><text x="8" y="31" font-size="8" fill="currentColor" stroke="none" transform="rotate(-90 8 31)" text-anchor="middle">largeur</text></svg>',
+ fenetre:'<svg viewBox="0 0 110 72" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="30" y="4" width="54" height="54" fill="currentColor" fill-opacity=".08"/><rect x="36" y="10" width="42" height="42"/><path d="M57 10v42"/><path d="M30 66h54M30 63v6M84 63v6M20 4v54M17 4h6M17 58h6"/><text x="57" y="72" font-size="8" fill="currentColor" stroke="none" text-anchor="middle">largeur</text><text x="14" y="31" font-size="8" fill="currentColor" stroke="none" transform="rotate(-90 14 31)" text-anchor="middle">hauteur</text></svg>'
+};
+const DK="Je ne sais pas";
+const TRAVAUX=[
+ ["cloison","Cloison","Créer ou modifier un mur intérieur"],
+ ["doublage","Isolation des murs","Doublage isolant d'un mur"],
+ ["plafond","Faux plafond","Plafond neuf ou abaissé"],
+ ["combles","Combles perdus","Isolation du grenier non habitable"],
+ ["rampants","Sous la toiture","Combles aménagés, rampants"],
+ ["fenetres","Fenêtres","Remplacement ou création"],
+ ["portes","Portes intérieures","Blocs-portes standard"],
+ ["autre","Autre projet","Décrivez-le avec vos mots"]];
+const PLAQUE=["cloison","doublage","plafond","rampants"];
+
+// Définition des étapes
+const D={
+ travaux:{t:"Quels travaux souhaitez-vous ?",s:"Plusieurs choix possibles. On vous pose ensuite les bonnes questions, rien de plus.",cheer:"C'est parti !"},
+ logement:{t:"Parlez-nous du logement",s:"Ces réponses servent à calculer le déplacement et le bon taux de TVA.",cheer:"Bien démarré",f:[
+  {k:"cp",t:"text",l:"Code postal",ph:"Ex. 38190",im:"numeric",req:1},
+  {k:"commune",t:"text",l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
+  {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel"]},
+  {k:"age",t:"chips",l:"Le logement a-t-il plus de 2 ans ?",o:["Oui","Non",DK],h:"Au-delà de 2 ans, la TVA peut être réduite."},
+  {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non"]},
+  {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles"],sh:i=>i.type==="Maison"},
+  {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"},
+  {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non"],sh:i=>!!i.type&&i.type!=="Maison"&&(i.niveau||0)>=1}]},
+ cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
+  g:{n:"Cloison",add:"+ Ajouter une autre cloison",f:[
+   {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1},
+   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1},
+   {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre"]},
+   {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
+   {k:"largeur",t:"chips",l:"Largeur de la porte",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
+   {k:"galandage",t:"chips",l:"Porte coulissante qui rentre dans le mur (galandage) ?",o:["Oui","Non"],sh:i=>i.portes>0}]},
+  f:[{k:"phonique",t:"chips",l:"Isolation contre le bruit",o:["Standard","Renforcée",DK],h:"Renforcée = deux plaques par face, idéal pour une chambre ou une salle de bain."}]},
+ doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
+  g:{n:"Mur",add:"+ Ajouter un autre mur",f:[
+   {k:"L",t:"num",l:"Longueur du mur",u:"m",st:.1,dk:1},
+   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1},
+   {k:"ext",t:"chips",l:"Ce mur donne-t-il sur l'extérieur ?",o:["Oui","Non",DK]},
+   {k:"etat",t:"chips",l:"État du mur",o:["Bon, bien droit","Abîmé ou irrégulier","Humide",DK]},
+   {k:"fen",t:"step",l:"Fenêtres ou portes dans ce mur",min:0,max:6}]},
+  f:[{k:"objectif",t:"chips",l:"Votre objectif",o:["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK]},
+     {k:"epaisseur",t:"num",l:"Épaisseur d'isolant souhaitée (si vous la connaissez)",u:"mm",st:10,dk:1,dkdef:1}]},
+ plafond:{t:"Vos faux plafonds",s:"Pièce par pièce. Mesurez au sol, c'est plus simple.",cheer:"Plus que quelques questions",sch:"piece",
+  g:{n:"Pièce",add:"+ Ajouter une autre pièce",f:[
+   {k:"L",t:"num",l:"Longueur de la pièce",u:"m",st:.1,dk:1},
+   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1},
+   {k:"H",t:"num",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1},
+   {k:"baisser",t:"chips",l:"Voulez-vous baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DK]},
+   {k:"support",t:"chips",l:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DK]},
+   {k:"iso",t:"chips",l:"Isolant au-dessus du plafond ?",o:["Oui","Non",DK]},
+   {k:"humide",t:"chips",l:"Pièce humide (salle de bain, buanderie) ?",o:["Oui","Non"]}]}},
+ combles:{t:"Vos combles perdus",s:"Le grenier non habitable, au-dessus du dernier plafond.",cheer:"Le plus gros de la chaleur part par là",sch:"piece",f:[
+   {k:"surface",t:"num",l:"Surface au sol des combles",u:"m²",st:1,dk:1,h:"Souvent proche de la surface de l'étage en dessous."},
+   {k:"acces",t:"chips",l:"Comment y accède-t-on ?",o:["Trappe","Escalier","Pas d'accès",DK]},
+   {k:"existant",t:"chips",l:"Y a-t-il déjà de l'isolant ?",o:["Non","Oui, ancien ou tassé",DK]},
+   {k:"spots",t:"chips",l:"Des spots encastrés dans le plafond en dessous ?",o:["Oui","Non",DK]},
+   {k:"conduit",t:"chips",l:"Un conduit de cheminée traverse les combles ?",o:["Oui","Non",DK]},
+   {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK]}]},
+ rampants:{t:"L'isolation sous la toiture",s:"Pour des combles aménagés (chambre sous les toits).",cheer:"Vous y êtes presque",f:[
+   {k:"surface",t:"num",l:"Surface de toiture à isoler",u:"m²",st:1,dk:1,h:"Côté intérieur, pans de toit seulement."},
+   {k:"chevrons",t:"num",l:"Hauteur des chevrons (si vous la connaissez)",u:"cm",st:1,dk:1,dkdef:1},
+   {k:"ecran",t:"chips",l:"Voit-on une bâche ou un film sous les tuiles ?",o:["Oui","Non",DK]},
+   {k:"fin",t:"chips",l:"Finition souhaitée",o:["Isolation + plaques de plâtre","Isolation seule"]},
+   {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK]}]},
+ fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
+  g:{n:"Fenêtre",add:"+ Ajouter une autre fenêtre",copy:1,f:[
+   {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
+   {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1},
+   {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1},
+   {k:"ouv",t:"chips",l:"Ouverture",o:["1 vantail","2 vantaux","Oscillo-battant","Coulissante","Fixe",DK]},
+   {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
+   {k:"coul",t:"chips",l:"Couleur",o:["Blanc","Gris anthracite","Autre"]},
+   {k:"volet",t:"chips",l:"Volet roulant",o:["Aucun","Manuel","Motorisé"]},
+   {k:"pose",t:"chips",l:"Pose",o:["Sur l'ancien cadre","Dépose complète",DK],h:"Sur l'ancien cadre : plus rapide. Dépose complète : plus de lumière, plus de travaux."}]}},
+ portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Encore un petit effort",
+  g:{n:"Porte",add:"+ Ajouter une autre porte",copy:1,f:[
+   {k:"largeur",t:"chips",l:"Largeur",o:["63 cm","73 cm","83 cm","93 cm",DK]},
+   {k:"sens",t:"chips",l:"Sens d'ouverture",o:["Poussant à gauche","Poussant à droite",DK],h:"Debout face à la porte, vous la poussez : de quel côté sont les charnières ?"},
+   {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit"]},
+   {k:"bati",t:"chips",l:"Faut-il aussi changer le cadre (bâti) ?",o:["Oui","Non",DK]}]}},
+ autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
+   {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
+ finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Presque fini",f:[
+   {k:"fin",t:"chips",l:"Finition des plaques",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris."}]},
+ photos:{t:"Quelques photos",s:"Ce sont elles qui rendent le pré-devis vraiment juste.",cheer:"Les photos, ça change tout",f:[
+   {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
+   {k:"plan",t:"file",l:"Plan (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan",small:"Photo ou PDF, avec les cotes si possible"}]},
+ projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Dernière ligne droite",f:[
+   {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé"]},
+   {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
+   {k:"msg",t:"area",l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
+ contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
+   {k:"prenom",t:"text",l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
+   {k:"nom",t:"text",l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
+   {k:"tel",t:"tel",l:"Téléphone",ac:"tel",im:"tel",ph:"Ex. 06 12 34 56 78",req:1},
+   {k:"email",t:"email",l:"E-mail",ac:"email",ph:"Ex. vous@exemple.fr",req:1},
+   {k:"rgpd",t:"check",l:"J'accepte que mes réponses et mes photos servent uniquement à préparer mon devis.",req:1},
+   {k:"info",t:"note",l:"Votre demande est préparée avec l'aide de Cliky, un outil d'intelligence artificielle, puis vérifiée par "+CONFIG.artisan+". Le pré-devis est indicatif et sera confirmé après visite."}]},
+ mode:{t:"Comment voulez-vous nous montrer votre logement ?",s:"Deux façons, au choix. Le plan donne le pré-devis le plus juste.",cheer:"À vous de choisir"},
+ plan:{t:"Dessinez votre logement",s:"Comme sur une feuille, mais en plus simple. Une estimation suffit, tout sera vérifié sur place.",cheer:""},
+ recap:{t:"On vérifie ensemble ?",s:"Touchez « Modifier » pour corriger une réponse.",cheer:"Tout est prêt"}
+};
+
+
+// ---------- Plan dessiné par le client ----------
+const PLANABLE=["doublage","plafond","cloison"];
+const PT=[["sejour","Séjour",[[4,3.5],[5,4],[6.5,5]]],["cuisine","Cuisine",[[2.5,2.4],[3.2,3],[4,3.5]]],["chambre","Chambre",[[3,2.7],[3.5,3],[4.2,3.6]]],["sdb","Salle de bain",[[2,1.7],[2.5,2],[3.2,2.6]]],["wc","WC",[[1.2,.9],[1.5,1],[1.9,1.3]]],["entree","Entrée",[[1.8,1.4],[2.5,1.8],[3.5,2.2]]],["couloir","Couloir",[[2.5,1],[4,1.1],[6,1.2]]],["bureau","Bureau",[[2.6,2.4],[3,2.8],[3.8,3.2]]],["buanderie","Buanderie",[[1.8,1.5],[2.2,1.8],[3,2.2]]],["garage","Garage",[[5,3],[6,3.5],[7,6]]]];
+const SIZES=["Petite","Moyenne","Grande"];
+const PCOL={sejour:"#EAD6B5",cuisine:"#D3E5EF",chambre:"#E6DAF2",sdb:"#C9EDE4",wc:"#D9EFE8",entree:"#F2E4D0",couloir:"#ECE5DA",bureau:"#DDE5F4",buanderie:"#D4ECEF",garage:"#E0E0E0"};
+const PTRAV={doublage:"Isoler les murs",plafond:"Faux plafond",cloison:"Créer une cloison"};
+const fr1=n=>(Math.round(n*10)/10).toLocaleString("fr-FR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const ptName=t=>PT.find(x=>x[0]===t)[1];
+function trsOk(){return PLANABLE.filter(k=>S.travaux.includes(k))}
+function dimsOf(r){if(r.dk){return PT.find(x=>x[0]===r.type)[2][r.size]}return[pn(r.L)||0,pn(r.l)||0]}
+function dimsOk(r){return r.dk||(pn(r.L)>0&&pn(r.l)>0)}
+function renum(t){const L=S.plan.rooms.filter(r=>r.type===t);L.forEach((r,i)=>{r.nom=L.length>1?`${ptName(t)} ${i+1}`:ptName(t)})}
+function numBox(k,v,st,u,off,i){const ix=i==null?"":i;return`<div class="num${off?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-pop="${k}|${ix}|-" data-pst="${st}">−</button><input type="text" inputmode="decimal" autocomplete="off" value="${v==null||off?"":String(v).replace(".",",")}" placeholder="${off&&v!=null?String(v).replace(".",","):"0,00"}" data-pnum="1" data-pk="${k}" data-pi="${ix}" id="pn-${{L:"lo",l:"la",H:"h"}[k]}-${ix}" aria-label="${k==="L"?"Longueur":k==="l"?"Largeur":"Hauteur"}"><span class="u">${u}</span><button type="button" aria-label="Plus" data-pop="${k}|${ix}|+" data-pst="${st}">+</button></div></div>`}
+const MINI='<svg viewBox="0 0 220 110" fill="none"><g stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M20 70 80 40l60 30-60 30z" fill="#EAD6B5"/><path d="M80 40l60-30 60 30-60 30z" fill="#D3E5EF"/><path d="M140 70l60-30v14l-60 30z" fill="#C9C1B4"/><path d="M80 100l60-30v14l-60 30z" fill="#C9C1B4" opacity=".0"/><path d="M20 70v12l60 30v-12" fill="#C9C1B4"/><path d="M80 112l60-30v-12l-60 30z" fill="#D9D1C4"/></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="11" fill="#0B1226" text-anchor="middle"><text x="80" y="74">Séjour</text><text x="140" y="44">Cuisine</text></g><g fill="#2EE6C8"><circle cx="196" cy="18" r="9"/></g><path d="M192 18l3 3 6-6" stroke="#0B1226" stroke-width="2.2" fill="none"/></svg>';
+function modeH(){return`<div class="modes">
+ <button type="button" class="mcard reco" data-mode="plan" aria-pressed="${S.mode==="plan"}"><span class="rb">Recommandé · 2 minutes</span>${MINI}<b>✏️ Je dessine mon plan</b><span>Choisissez vos pièces, entrez 2 mesures par pièce. On assemble le plan pour vous, et vous le voyez en 3D.</span><ul><li>Le pré-devis le plus juste</li><li>Guidé pas à pas, rien de compliqué</li><li>Pas de mètre ? « Petite, moyenne, grande » suffit</li></ul></button>
+ <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>📝 Je préfère décrire mes travaux</b><span>Quelques questions simples, mur par mur, sans dessin.</span></button></div>`}
+function rectSVG(r){const W=320,Hh=190,[L,l]=dimsOf(r),ok=L>0&&l>0;
+ if(!ok)return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="70" y="35" width="180" height="110" rx="6" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-dasharray="8 6"/><text x="160" y="96" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="14" fill="currentColor" opacity=".6">Entrez les 2 mesures ↓</text></svg>`;
+ const sc=Math.min(34,250/L,125/l),w=L*sc,h=l*sc,x=(W-w)/2,y=(Hh-h)/2-6;
+ return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${PCOL[r.type]}" stroke="currentColor" stroke-width="5" ${r.dk?'stroke-dasharray="10 6"':""} style="transition:all .25s"/>
+ <g font-family="Manrope,sans-serif" font-weight="800" fill="currentColor" text-anchor="middle"><text x="${W/2}" y="${y+h+22}" font-size="14">${fr(L)} m${r.dk?" (estimé)":""}</text><text x="${x-12}" y="${y+h/2}" font-size="14" transform="rotate(-90 ${x-12} ${y+h/2})">${fr(l)} m</text>
+ <text x="${W/2}" y="${y+h/2+5}" font-size="13" fill="#0B1226">≈ ${fr1(L*l)} m²</text></g></svg>`}
+function fp(r){const[L,l]=dimsOf(r);return r.rot?[l,L]:[L,l]}
+function ensurePos(){const P=S.plan,R=P.rooms;if(!R.length)return;const need=R.filter(r=>r.x==null);if(!need.length)return;
+ if(need.length===R.length){R.forEach(r=>{const[L,l]=dimsOf(r);r.rot=L<l});const A=R.map(r=>{const[w,h]=fp(r);return{r,w:w||1,h:h||1}}),tot=A.reduce((s,o)=>s+o.w*o.h,0),W=Math.max(Math.max(...A.map(o=>o.w)),Math.sqrt(tot)*1.45);let x=0,y=0,rh=0;
+  A.slice().sort((a,b)=>b.h-a.h||b.w-a.w).forEach(o=>{if(x>0&&x+o.w>W+1e-6){x=0;y+=rh;rh=0}o.r.x=x;o.r.y=y;x+=o.w;rh=Math.max(rh,o.h)});return}
+ const P0=R.filter(r=>r.x!=null);let X=Math.max(...P0.map(r=>r.x+fp(r)[0]));need.forEach(r=>{const[L,l]=dimsOf(r);r.rot=L<l;r.x=X;r.y=0;X+=fp(r)[0]})}
+function layout(){ensurePos();return S.plan.rooms.map((r,i)=>{const[w,h]=fp(r);return{i,r,x:r.x,y:r.y,w:w||1,h:h||1}})}
+function walls(lay){const out=[],E=.06;
+ lay.forEach(o=>{const sides=[["haut",o.y,o.x,o.x+o.w,"h",-1],["bas",o.y+o.h,o.x,o.x+o.w,"h",1],["gauche",o.x,o.y,o.y+o.h,"v",-1],["droite",o.x+o.w,o.y,o.y+o.h,"v",1]];
+  sides.forEach(([side,c,a,b,ax,dir])=>{const sh=[];lay.forEach(q=>{if(q===o)return;const qc=ax==="h"?(dir<0?q.y+q.h:q.y):(dir<0?q.x+q.w:q.x),qa=ax==="h"?q.x:q.y,qb=ax==="h"?q.x+q.w:q.y+q.h;
+    if(Math.abs(qc-c)<E){const s0=Math.max(a,qa),s1=Math.min(b,qb);if(s1-s0>.05)sh.push([s0,s1,q.i])}});sh.sort((m,n)=>m[0]-n[0]);
+   let t=a;sh.forEach(([s0,s1,qi])=>{if(s0-t>.05)out.push({i:o.i,side,ax,c,a:t,b:s0,type:"ext"});out.push({i:o.i,side,ax,c,a:s0,b:s1,type:"clo",other:qi});t=Math.max(t,s1)});if(b-t>.05)out.push({i:o.i,side,ax,c,a:t,b,type:"ext"})})});return out}
+function overlaps(lay){let n=0;lay.forEach((a,k)=>lay.forEach((b,m)=>{if(m<=k)return;const ox=Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x),oy=Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y);if(ox>.05&&oy>.05)n++}));return n}
+let PVB=null;
+function vbOf(lay){const X0=Math.min(...lay.map(o=>o.x)),Y0=Math.min(...lay.map(o=>o.y)),X1=Math.max(...lay.map(o=>o.x+o.w)),Y1=Math.max(...lay.map(o=>o.y+o.h)),p=1.2;let w=X1-X0+2*p,h=Y1-Y0+2*p;if(w/h<1.2)w=h*1.2;const cx=(X0+X1)/2,cy=(Y0+Y1)/2;return{x:cx-w/2,y:cy-h/2,w,h}}
+function plan2dInner(lay){const vb=PVB||vbOf(lay),u=vb.w/34,sel=S.plan.sel,W=walls(lay);
+ let s=`<rect x="${vb.x}" y="${vb.y}" width="${vb.w}" height="${vb.h}" fill="transparent" data-pbg="1"/>`;
+ lay.forEach(o=>{s+=`<g data-pjmp="${o.i}"><rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="${PCOL[o.r.type]}" ${o.r.dk?'stroke="currentColor" stroke-opacity=".35" stroke-width=".04" stroke-dasharray=".25 .15"':""}/></g>`});
+ W.forEach(w=>{const[x1,y1,x2,y2]=w.ax==="h"?[w.a,w.c,w.b,w.c]:[w.c,w.a,w.c,w.b];s+=w.type==="ext"?`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="currentColor" stroke-width=".22" stroke-linecap="square" pointer-events="none"/>`:`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#C9955B" stroke-width=".1" pointer-events="none"/>`});
+ lay.forEach(o=>{const fs=Math.min(.42,o.w/6.5,o.h/2.6);s+=`<g pointer-events="none" font-family="Manrope,sans-serif" text-anchor="middle"><text x="${o.x+o.w/2}" y="${o.y+o.h/2-fs*.15}" font-weight="800" font-size="${fs}" fill="#0B1226">${esc(o.r.nom)}</text><text x="${o.x+o.w/2}" y="${o.y+o.h/2+fs*.95}" font-weight="600" font-size="${fs*.75}" fill="#3A4357">${fr(o.w)} × ${fr(o.h)} m</text></g>`;
+  if(o.i===sel)s+=`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="none" stroke="#0BB59B" stroke-width="${u*.35}" pointer-events="none"/>`});
+ return s}
+function plan2d(lay){if(!lay.length)return"";const vb=vbOf(lay);return`<svg id="pplan" viewBox="${vb.x} ${vb.y} ${vb.w} ${vb.h}" style="touch-action:none">${plan2dInner(lay)}</svg>`}
+function iso(lay){if(!lay.length)return"";const H=1.15,c=.866,P=(x,y,z)=>[(x-y)*c,(x+y)*.5-z],pts=a=>a.map(p=>P(...p).map(v=>v.toFixed(3)).join(",")).join(" ");
+ const all=[];lay.forEach(o=>{[[o.x,o.y],[o.x+o.w,o.y],[o.x+o.w,o.y+o.h],[o.x,o.y+o.h]].forEach(([x,y])=>{all.push(P(x,y,0),P(x,y,H))})});
+ const xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),x0=Math.min(...xs)-.6,y0=Math.min(...ys)-.6,w=Math.max(...xs)-x0+.6,h=Math.max(...ys)-y0+.6;
+ let s=`<svg viewBox="${x0} ${y0} ${w} ${h}">`;const sh=(hex,f)=>{const n=parseInt(hex.slice(1),16);return`rgb(${Math.round((n>>16&255)*f)},${Math.round((n>>8&255)*f)},${Math.round((n&255)*f)})`},lo=.4,sw=.035;
+ lay.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y)).forEach(o=>{const{x,y,w:W,h:Hh}=o,x1=x+W,y1=y+Hh,col=PCOL[o.r.type];
+  s+=`<g data-pjmp="${o.i}"><polygon points="${pts([[x,y,0],[x1,y,0],[x1,y1,0],[x,y1,0]])}" fill="${col}" stroke="#7d7466" stroke-width="${sw}"/>`;
+  s+=`<polygon points="${pts([[x,y,0],[x1,y,0],[x1,y,H],[x,y,H]])}" fill="#F4F1EA" stroke="#9a917f" stroke-width="${sw}"/><polygon points="${pts([[x,y,0],[x,y1,0],[x,y1,H],[x,y,H]])}" fill="#E6E0D4" stroke="#9a917f" stroke-width="${sw}"/>`;
+  s+=`<polygon points="${pts([[x,y1,0],[x1,y1,0],[x1,y1,lo],[x,y1,lo]])}" fill="#D8D0C2" stroke="#9a917f" stroke-width="${sw}"/><polygon points="${pts([[x1,y,0],[x1,y1,0],[x1,y1,lo],[x1,y,lo]])}" fill="#CFC6B6" stroke="#9a917f" stroke-width="${sw}"/>`;
+  const m=P(x+W/2,y+Hh/2,0);s+=`<text x="${m[0]}" y="${m[1]+.1}" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="${Math.min(.4,W/7)}" fill="#0B1226">${esc(o.r.nom)}</text></g>`});
+ return s+`</svg>`}
+function planH(){const P=S.plan,sub=P.sub,tr=trsOk();
+ if(sub==="pieces"){const cnt=t=>P.rooms.filter(r=>r.type===t).length;
+  return`<h1>Quelles pièces sont concernées ?</h1><p class="sub">Touchez + pour chaque pièce où il y a des travaux. Rien d'autre à faire ici.</p>
+  <div class="ptiles">${PT.map(([t,n])=>`<div class="ptile${cnt(t)?" on":""}"><span class="pic" style="background:${PCOL[t]}"></span><b>${n}</b><div class="pcnt"><button type="button" data-pcnt="${t}|-1" aria-label="Retirer : ${n}">−</button><output>${cnt(t)}</output><button type="button" class="plus" data-pcnt="${t}|1" aria-label="Ajouter : ${n}">+</button></div></div>`).join("")}</div>
+  <div class="q"><span class="lab">Hauteur sous plafond</span><p class="hint">La même partout, le plus souvent. 2,50 m est la plus courante.</p><div class="num">${numBox("H",P.H,.05,"m",P.H_dk)}<button type="button" class="chip dk" data-pdk="H" aria-pressed="${!!P.H_dk}">${DK}</button></div></div>`}
+ if(sub==="apercu"){const lay=layout(),surf=lay.reduce((s,o)=>s+o.w*o.h,0),est=P.rooms.filter(r=>r.dk).length,H=pn(P.H)||2.5,W=walls(lay),ext=W.filter(w=>w.type==="ext").reduce((s,w)=>s+w.b-w.a,0),ov=overlaps(lay),sel=P.sel!=null&&P.rooms[P.sel]?P.sel:null;
+  return`<h1>Placez vos pièces comme chez vous</h1><p class="sub">Faites glisser chaque pièce à sa place : elle se colle toute seule à sa voisine. Touchez une pièce pour la tourner ou corriger ses mesures.</p>
+  <div class="pview"><div class="ptabs"><button type="button" data-pv3="0" aria-pressed="${P.v3!==true}">Plan</button><button type="button" data-pv3="1" aria-pressed="${P.v3===true}">3D</button></div>${P.v3===true?iso(lay):plan2d(lay)}
+  ${P.v3===true?"":`<div class="plg"><span><i class="ext"></i>Mur extérieur</span><span><i class="clo"></i>Mur entre deux pièces</span></div>`}
+  ${sel!=null&&P.v3!==true?`<div class="psel"><b>${esc(P.rooms[sel].nom)}</b><button type="button" class="chip" data-prot="${sel}">↻ Tourner</button><button type="button" class="chip" data-pjump="${sel}">✏️ Mesures</button><button type="button" class="chip dk" data-pdesel="1">OK</button></div>`:""}</div>
+  ${ov?`<p class="err" style="min-height:0">Deux pièces se chevauchent : faites glisser l'une à côté de l'autre.</p>`:""}
+  <div class="psum"><div><b>${P.rooms.length}</b><span>pièce${P.rooms.length>1?"s":""}</span></div><div><b>${fr1(surf)}</b><span>m² au sol</span></div><div><b>≈ ${Math.round(ext*H)}</b><span>m² de murs extérieurs</span></div></div>
+  ${est?`<p class="note">${est} pièce${est>1?"s":""} en taille estimée : ${CONFIG.artisan} vérifiera sur place. Aucun souci.</p>`:""}
+  <button type="button" class="add" data-pback="1" style="margin-top:12px">+ Ajouter ou retirer une pièce</button>
+  ${S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:""}
+  ${S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:""}`}
+ const i=sub,r=P.rooms[i];if(!r){P.sub="pieces";return planH()}const off=r.dk,[eL,el]=dimsOf(r);
+ return`<div class="rhead"><span class="pic" style="background:${PCOL[r.type]}"></span><div><small>Pièce ${i+1} sur ${P.rooms.length}</small><h1 style="margin:0">${esc(r.nom)}</h1></div></div>
+ <div class="mhelp"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="16" width="36" height="12" rx="2"/><path d="M10 16v5M16 16v7M22 16v5M28 16v7M34 16v5"/></svg><p>Mesurez <b>au sol, d'un mur à l'autre</b>. Pas de mètre ? Un grand pas ≈ 70 cm, ça suffit.</p></div>
+ <div class="prect" id="prect">${rectSVG(r)}</div>
+ <div class="dims"><div class="q"><span class="lab">Longueur</span>${numBox("L",off?eL:r.L,.1,"m",off,i)}</div><div class="q"><span class="lab">Largeur</span>${numBox("l",off?el:r.l,.1,"m",off,i)}</div></div>
+ <div class="q"><span class="lab">Pas de mesures sous la main ?</span><div class="chips">${SIZES.map((z,k)=>`<button type="button" class="chip dk" data-psize="${i}|${k}" aria-pressed="${!!(r.dk&&r.size===k)}">${z} pièce</button>`).join("")}</div><p class="hint">On met une taille courante pour ce type de pièce, ${CONFIG.artisan} la vérifiera sur place.</p></div>
+ ${tr.length?`<div class="q"><span class="lab">Travaux dans cette pièce</span><div class="chips">${tr.map(k=>`<button type="button" class="chip" data-ptrav="${i}|${k}" aria-pressed="${r.trav.includes(k)}">${PTRAV[k]}</button>`).join("")}</div></div>`:""}
+ <div class="pdots" aria-label="Pièces">${P.rooms.map((x,j)=>`<button type="button" data-pjump="${j}" class="${j===i?"cur":dimsOk(x)?"ok":""}" aria-label="${esc(x.nom)}"></button>`).join("")}</div>`}
+function planSVG(){const t=S.plan.trace;if(!t||!t.floors||!t.floors.length)return"";const f=t.floors[0],P=f.pieces.flatMap(p=>p.points||[]);if(!P.length)return"";const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),x0=Math.min(...xs)-.4,y0=Math.min(...ys)-.4,w=Math.max(...xs)-x0+.4,h=Math.max(...ys)-y0+.4;
+ return`<svg viewBox="${x0} ${y0} ${w} ${h}">${f.pieces.map(p=>{const c=p.points.reduce((a,q)=>[a[0]+q[0]/p.points.length,a[1]+q[1]/p.points.length],[0,0]);return`<polygon points="${p.points.map(q=>q.join(",")).join(" ")}" fill="var(--soft)" stroke="currentColor" stroke-width=".12"/><text x="${c[0]}" y="${c[1]}" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="800" font-size="${Math.min(.45,w/14)}" fill="currentColor">${esc(p.nom)}</text>`}).join("")}</svg>`}
+function planCard(){const n=tPieces().length,sv=planSVG(),surf=tPieces().reduce((a,p)=>a+(p.surface_m2||0),0);
+ return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
+ <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
+ <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
+function updSub(){const n=tPieces().length,el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
+function tPieces(){const t=S.plan.trace;return t&&t.floors?t.floors.flatMap(f=>f.pieces.map(p=>({...p,etage:f.nom}))):[]}
+function planCheer(){const n=tPieces().length;return n?`${n} pièce${n>1?"s":""} 👍`:"Facile, promis"}
+function planCheerOld(){const P=S.plan;if(P.sub==="pieces")return P.rooms.length?`${P.rooms.length} pièce${P.rooms.length>1?"s":""} 👍`:"Facile, promis";if(P.sub==="apercu")return"Joli plan !";const left=P.rooms.length-P.sub-1;return left?`Plus que ${left} pièce${left>1?"s":""} 👍`:"Dernière pièce !"}
+function planPayload(){const t=S.plan.trace||{floors:[]},ps=tPieces(),M=ps.flatMap(p=>p.murs||[]);return{...JSON.parse(JSON.stringify(t)),surface_totale_m2:+ps.reduce((a,p)=>a+p.surface_m2,0).toFixed(2),murs_exterieurs_m:+M.reduce((a,m)=>a+(m.exterieur_m??(m.type==="mur extérieur"?m.longueur_m:0)),0).toFixed(2),murs_entre_pieces_m:+(M.reduce((a,m)=>a+(m.entre_pieces_m??0),0)/2).toFixed(2),menuiseries:ps.flatMap(p=>(p.murs||[]).flatMap(m=>(m.ouvertures||[]).map(o=>({repere:o.repere,piece:p.nom,designation:o.designation,ouverture:o.ouverture,largeur_cm:o.largeur_cm,hauteur_cm:o.hauteur_cm,menuiserie_exterieure:o.menuiserie_exterieure})))).sort((a,b)=>String(a.repere).localeCompare(String(b.repere),"fr",{numeric:true})),murs_a_faire:M.filter(m=>m.travaux).map(m=>({type:m.type,longueur_m:m.longueur_m,travaux:m.travaux})),objectif_isolation:S.plan.obj||null,plafond_actuel:S.plan.support||null,note:"Plan dessiné par le client avec le module Plan (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine, à confirmer à la visite (mitoyenneté, garage non chauffé) ; tailles estimées à vérifier."}}
+function planPayloadOld(){const P=S.plan,H=P.H_dk?null:pn(P.H);const pieces=P.rooms.map(r=>{const[L,l]=dimsOf(r);return{nom:r.nom,type:ptName(r.type),longueur_m:L,largeur_m:l,surface_m2:+(L*l).toFixed(2),perimetre_m:+(2*(L+l)).toFixed(2),estimee:!!r.dk,taille_estimee:r.dk?SIZES[r.size]:null,travaux:r.trav.map(k=>PTRAV[k])}});
+ const lay=layout(),W=walls(lay);lay.forEach(o=>{const p=pieces[o.i];p.position_m={x:+o.x.toFixed(2),y:+o.y.toFixed(2)};p.murs=W.filter(w=>w.i===o.i).map(w=>({cote:w.side,longueur_m:+(w.b-w.a).toFixed(2),type:w.type==="ext"?"mur extérieur":"mur entre pièces (avec "+P.rooms[w.other].nom+")"}))});
+ const extL=W.filter(w=>w.type==="ext").reduce((s,w)=>s+w.b-w.a,0),cloL=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((s,w)=>s+w.b-w.a,0);
+ return{hauteur_sous_plafond_m:H,pieces,murs_exterieurs_m:+extL.toFixed(2),murs_entre_pieces_m:+cloL.toFixed(2),surface_totale_m2:+pieces.reduce((s,p)=>s+p.surface_m2,0).toFixed(2),objectif_isolation:P.obj||null,plafond_actuel:P.support||null,note:"Plan placé par le client (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine ; à confirmer à la visite (mitoyenneté, garage non chauffé), comme les tailles estimées."}}
+function planInput(el){const P=S.plan,k=el.dataset.pk,i=el.dataset.pi===""?null:+el.dataset.pi,v=el.value.replace(",",".");
+ if(i==null){P[k]=v;P[k+"_dk"]=false}else{const r=P.rooms[i];if(r.dk){const[a,b]=dimsOf(r);r.L=a;r.l=b;r.dk=false;r[k]=v;save();render();const e=document.getElementById(`pn-${{L:"lo",l:"la",H:"h"}[k]}-${i}`);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}return}r[k]=v;const pr=document.getElementById("prect");if(pr)pr.innerHTML=rectSVG(r)}save()}
+let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;
+let cur="intro";
+const files={photos:[],plan:[]};
+const t0=Date.now();
+
+function fresh(){return {mode:null,plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
+ cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]}}}
+function load(){try{const x=JSON.parse(localStorage.getItem("clikdevis-brouillon")||"null");return x&&x.travaux?x:null}catch(e){return null}}
+function save(){try{localStorage.setItem("clikdevis-brouillon",JSON.stringify(S))}catch(e){}}
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&(k==="doublage"||k==="plafond")))a.push(k)});
+ if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");a.push("photos","projet","contact","recap");return a}
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
+const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
+function obj(sec,i){return i==null?S[sec]:S[sec].items[i]}
+
+function fieldH(f,sec,i){
+ const o=obj(sec,i);if(f.sh&&!f.sh(o))return"";
+ const id=`${sec}-${i??"x"}-${f.k}`,da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
+ const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
+ const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
+ if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
+ if(f.t==="chips")return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${f.o.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${o[f.k]===x}" ${da} data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
+ if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
+  return`<div class="q"><label for="${id}">${esc(f.l)}</label>${hint}<div class="num${dk?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${dk?"":esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1" ${dk?"disabled":""}><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div></div>`}
+ if(f.t==="step"){const v=o[f.k]??f.min;return`<div class="q"><span class="lab">${esc(f.l)}</span>${hint}<div class="numbox" style="width:max-content"><button type="button" aria-label="Moins" data-step="-1" ${da} data-min="${f.min}" data-max="${f.max}">−</button><input type="text" readonly value="${v}" aria-label="${esc(f.l)}" style="width:64px"><button type="button" aria-label="Plus" data-step="1" ${da} data-min="${f.min}" data-max="${f.max}">+</button></div></div>`}
+ if(f.t==="text"||f.t==="tel"||f.t==="email")return`<div class="q">${lab}${hint}<input id="${id}" type="${f.t}" ${f.im?`inputmode="${f.im}"`:""} ${f.ac?`autocomplete="${f.ac}"`:""} placeholder="${esc(f.ph||"")}" value="${esc(o[f.k]||"")}" ${da} data-txt="1"></div>`;
+ if(f.t==="area")return`<div class="q">${lab}${hint}<textarea id="${id}" placeholder="${esc(f.ph||"")}" ${da} data-txt="1">${esc(o[f.k]||"")}</textarea></div>`;
+ if(f.t==="check")return`<div class="q"><label class="check"><input id="${id}" type="checkbox" ${o[f.k]?"checked":""} ${da} data-chk="1"><span>${esc(f.l)}</span></label></div>`;
+ if(f.t==="note")return`<p class="note">${esc(f.l)}</p>`;
+ if(f.t==="file"){const L=files[f.k];return`<div class="q"><span class="lab">${esc(f.l)}</span><label class="drop" for="${id}"><b>${esc(f.big)}</b><span>${esc(f.small)}</span><input id="${id}" type="file" accept="${f.acc}" ${f.multi?"multiple":""} data-file="${f.k}"></label><div class="thumbs">${L.map(x=>`<figure>${x.img?`<img src="${x.img}" alt="">`:`<div class="pdf">PDF</div>`}<figcaption>${esc(x.name)}</figcaption></figure>`).join("")}</div></div>`}
+ return"";
+}
+function badge(sec,it){
+ if(sec==="cloison"||sec==="doublage"){const L=pn(it.L),H=pn(it.H);if(L&&H&&!it.L_dk&&!it.H_dk)return`≈ ${fr(L*H)} m²`;return""}
+ if(sec==="plafond"){const L=pn(it.L),l=pn(it.l);if(L&&l&&!it.L_dk&&!it.l_dk)return`≈ ${fr(L*l)} m²`;return""}
+ if(sec==="fenetres"){const a=pn(it.Lc),b=pn(it.Hc);if(a&&b&&!it.Lc_dk&&!it.Hc_dk)return`${fr(a)} × ${fr(b)} cm`;return""}
+ if(sec==="portes")return it.largeur&&it.largeur!==DK?`${it.largeur} × 204 cm`:"";
+ return"";
+}
+function render(){
+ const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
+ if(cur==="intro"){prog.hidden=true;nav.hidden=true;app.innerHTML=introH();return}
+ if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
+ const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
+ document.getElementById("bar").style.width=Math.round(((n+1)/st.length)*100)+"%";
+ document.getElementById("stepn").textContent=`Étape ${n+1} sur ${st.length}`;
+ document.getElementById("cheer").textContent=d.cheer||"";
+ document.getElementById("back").style.visibility="visible";
+ document.getElementById("go").textContent=cur==="recap"?"Envoyer ma demande":(cur==="contact"?"Vérifier ma demande →":cur==="plan"&&S.plan.sub==="pieces"?"Mesurer mes pièces →":cur==="plan"&&S.plan.sub==="apercu"?"C'est mon logement ✓":cur==="plan"?"Pièce suivante →":"Continuer →");
+ if(cur==="plan")document.getElementById("cheer").textContent=planCheer();
+ let h=false?``:`<section class="fade"><h1>${esc(d.t)}</h1><p class="sub">${esc(d.s)}</p>`;
+ if(cur==="plan"){h+=`<p class="err" id="err" role="alert"></p>`}else if(cur==="mode")h+=modeH();
+ else if(cur==="travaux")h+=`<div class="cards">${TRAVAUX.map(([k,t,s])=>`<button type="button" class="card" aria-pressed="${S.travaux.includes(k)}" data-trav="${k}">${IC[k]}<b>${t}</b><span>${s}</span></button>`).join("")}</div>`;
+ else if(cur==="recap")h+=recapH();
+ else{
+  if(d.sch)h+=`<div class="schema">${SCH[d.sch]}<p>${d.sch==="fenetre"?"Mesurez la largeur et la hauteur de l'ouverture, côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol : longueur et largeur.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p></div>`;
+  if(d.g){S[cur].items.forEach((it,i)=>{const b=badge(cur,it);
+   h+=`<div class="item"><div class="item-h"><h3>${d.g.n} ${i+1}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.f.map(f=>fieldH(f,cur,i)).join("")}</div>`});
+   h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
+   if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}
+  if(d.f)h+=d.f.map(f=>fieldH(f,cur,null)).join("");
+  if(cur==="photos")h+=`<ul class="tips"><li>Prenez la pièce entière depuis un angle.</li><li>Ajoutez les détails : fissures, humidité, fenêtres.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul>`;
+  if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
+ }
+ if(cur!=="plan")h+=`<p class="err" id="err" role="alert"></p>`;h+=`</section>`;app.innerHTML=h;
+ const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
+ if(cur==="plan"){const P=S.plan;
+  document.getElementById("pextra").innerHTML=planCard()+(S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+
+  (S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:"")}
+}
+function introH(){const has=S.travaux.length>0;
+ return`<section class="hero fade"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Répondez à quelques questions simples sur votre projet. ${CONFIG.artisan} reçoit tout, prépare votre devis et vous répond sous ${CONFIG.delai}.</p>
+ <ul class="perks"><li><i>3</i><div><b>Environ 3 minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
+ <li><i>?</i><div><b>« Je ne sais pas » est une bonne réponse</b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
+ <li><i>✓</i><div><b>Gratuit et sans engagement</b><br><span class="hint">Vous recevez un devis clair, ligne par ligne.</span></div></li></ul>
+ <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn go" type="button" data-start="1" style="max-width:none">${has?"Reprendre ma demande →":"C'est parti →"}</button>
+ <button class="btn ghost" type="button" data-example="1">Voir avec un exemple</button>${has?`<button class="btn back" type="button" data-reset="1">Recommencer</button>`:""}</div></section>`}
+function list(sec){const d=D[sec],o=S[sec],out=[];
+ const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
+  if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k];return v?`${f.l} : ${v}`:null};
+ if(d.g)o.items.forEach((it,i)=>{const parts=d.g.f.map(f=>fmt(f,it)).filter(Boolean);const b=badge(sec,it);out.push(`<b>${d.g.n} ${i+1}</b>${b?` (${b})`:""} : ${parts.map(esc).join(" · ")}`)});
+ if(d.f)d.f.forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
+function totals(){const r=[];const tp=tPieces();if(S.mode==="plan"&&tp.length){r.push(`plan : ${tp.length} pièce${tp.length>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+p.surface_m2,0))} m² au sol`)}const sum=(sec,a,b)=>S[sec].items.reduce((s,it)=>{const x=pn(it[a]),y=pn(it[b]);return s+(x&&y&&!it[a+"_dk"]&&!it[b+"_dk"]?x*y:0)},0);
+ if(S.travaux.includes("cloison")){const v=sum("cloison","L","H");if(v)r.push(`≈ ${fr(v)} m² de cloison`)}
+ if(S.travaux.includes("doublage")){const v=sum("doublage","L","H");if(v)r.push(`≈ ${fr(v)} m² de murs à isoler`)}
+ if(S.travaux.includes("plafond")){const v=sum("plafond","L","l");if(v)r.push(`≈ ${fr(v)} m² de plafond`)}
+ if(S.travaux.includes("fenetres"))r.push(`${S.fenetres.items.length} fenêtre${S.fenetres.items.length>1?"s":""}`);
+ if(S.travaux.includes("portes"))r.push(`${S.portes.items.length} porte${S.portes.items.length>1?"s":""}`);return r}
+function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
+ let h=`<div class="recap">`;if(tot.length)h+=`<div class="rblock" style="border-color:var(--mint)"><h3>Ce que nous avons compris</h3><div class="tot">${tot.join(" · ")}</div></div>`;
+ st.forEach(s=>{let items;if(s==="travaux")items=[S.travaux.map(k=>TRAVAUX.find(t=>t[0]===k)[1]).join(", ")];
+  else if(s==="mode")items=[S.mode==="plan"?"Plan dessiné":"Description mur par mur"];
+  else if(s==="plan")items=[(()=>{const M=tPieces().flatMap(p=>p.murs||[]),n=M.filter(m=>m.travaux).length,c=tPieces().reduce((a,p)=>a+(p.cloisons_a_creer||[]).length,0);return n||c?`Travaux indiqués : ${n} mur${n>1?"s":""}${c?` + ${c} cloison${c>1?"s":""} à créer`:""}`:"Travaux : pas de mur coché (l'artisan précisera)"})()].concat(tPieces().map(p=>`${p.nom}${p.etage&&S.plan.trace.floors.length>1?" ("+p.etage+")":""} : ≈ ${fr(p.surface_m2)} m²${p.estimee?" (estimé)":""} · ${(p.murs||[]).filter(m=>m.type==="mur extérieur").length} mur(s) extérieur(s)${(p.murs||[]).flatMap(m=>m.ouvertures||[]).length?" · "+(p.murs||[]).flatMap(m=>m.ouvertures||[]).map(o=>`${o.repere} ${String(o.designation||"").toLowerCase()} ${o.largeur_cm}×${o.hauteur_cm}`).join(", "):""}${p.sol&&p.sol.resume?" · sol : "+p.sol.resume:""}`));
+  else if(s==="planOld")items=(()=>{const lay=layout(),W=walls(lay),e=W.filter(w=>w.type==="ext").reduce((a,w)=>a+w.b-w.a,0),c=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((a,w)=>a+w.b-w.a,0);return[`Murs extérieurs ≈ ${fr(e)} m · murs entre pièces ≈ ${fr(c)} m`]})().concat(S.plan.rooms.map(r=>{const[L,l]=dimsOf(r);return`${r.nom} : ${fr(L)} × ${fr(l)} m${r.dk?" (estimé)":""}${r.trav.length?" · "+r.trav.map(k=>PTRAV[k]).join(", "):""}`}));
+  else if(s==="photos")items=[`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s":""}`];
+  else items=list(s);if(!items.length)items=["—"];
+  h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
+ return h+`</div>`}
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}});if(st.includes("plan"))det.plan=planPayload();
+ return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
+  contact:{prenom:S.contact.prenom,nom:S.contact.nom,telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
+  logement:S.logement,mode:S.mode||"texte",travaux:S.travaux,details:det,projet:S.projet,
+  fichiers:{photos:files.photos.map(f=>f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
+let lastPayload=null;
+function finish(){cur="done";try{localStorage.removeItem("clikdevis-brouillon")}catch(e){};render();scrollTo(0,0)}
+let SENDING=false;
+function shrink(dataUrl,max,q){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>res(b),"image/jpeg",q)};im.onerror=()=>res(null);im.src=dataUrl})}
+async function sendReq(p){const go=document.getElementById("go"),err=document.getElementById("err"),old=go?go.textContent:"";SENDING=true;if(go){go.disabled=true;go.textContent="Envoi en cours…"}if(err)err.textContent="";
+ try{const fd=new FormData();fd.append("donnees",JSON.stringify(p));let tot=0;const MAXT=4.5*1024*1024;
+  for(const k of ["photos","plan"]){let i=0;for(const f of files[k].slice(0,10)){let b=null;if(f.img)b=await shrink(f.img,1600,.8);else if(f.file&&f.file.size<3*1024*1024)b=f.file;if(!b||tot+b.size>MAXT)continue;tot+=b.size;i++;fd.append((k==="photos"?"photo_":"plan_")+i,b,(k==="photos"?"photo_":"plan_")+i+(f.img?".jpg":".pdf"))}}
+  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),60000);await fetch(CONFIG.webhook,{method:"POST",body:fd,mode:"no-cors",signal:ac.signal});clearTimeout(tm);SENDING=false;finish()}
+ catch(e){SENDING=false;if(go){go.disabled=false;go.textContent=old}const er=document.getElementById("err");if(er)er.textContent="L'envoi n'est pas passé (réseau trop faible ?). Votre demande est bien gardée sur cet appareil : réessayez dans un instant."}}
+function doneH(){const p=lastPayload;return`<section class="done fade"><div class="ok">✓</div><h1>Merci ${esc(S.contact.prenom||"")} !</h1>
+ <p class="sub" style="margin:0 auto">Votre demande est bien arrivée. ${CONFIG.artisan} la relit et vous répond sous ${CONFIG.delai}.</p>
+ <div class="next"><div><b>1</b><span>Cliky prépare un pré-devis à partir de vos réponses et de vos photos.</span></div>
+ <div><b>2</b><span>${CONFIG.artisan} le vérifie, ligne par ligne, avec son œil de pro.</span></div>
+ <div><b>3</b><span>Vous recevez votre devis par e-mail, à signer en ligne si tout vous convient.</span></div></div>
+ ${CONFIG.demo?`<p class="note">Mode démonstration : rien n'a été envoyé.</p><details><summary>Voir les données qui seront transmises à Cliky</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`:""}
+ <button class="btn ghost" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
+function validate(){const e=m=>{document.getElementById("err").textContent=m;return false};
+ if(cur==="travaux"&&!S.travaux.length)return e("Choisissez au moins un type de travaux.");
+ if(cur==="mode"&&!S.mode)return e("Choisissez une des deux façons.");
+ if(cur==="plan"&&!tPieces().length)return e("Ajoutez au moins une pièce avec « + Pièce ».");
+ if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
+ if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.");
+ if(cur==="contact"){const c=S.contact;if(!(c.prenom||"").trim()||!(c.nom||"").trim())return e("Indiquez votre prénom et votre nom.");
+  if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.");
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||""))return e("Indiquez une adresse e-mail valide.");
+  if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.")}
+ return true}
+function go(dir){const st=steps();let n=st.indexOf(cur);
+ if(false){const P=S.plan,e=m=>{document.getElementById("err").textContent=m};
+  if(dir>0){if(P.sub==="pieces"){if(!P.rooms.length)return e("Ajoutez au moins une pièce avec le bouton +.");P.sub=0}
+   else{const r=P.rooms[P.sub];if(!dimsOk(r))return e("Entrez la longueur et la largeur, ou choisissez une taille de pièce.");P.sub=P.sub+1<P.rooms.length?P.sub+1:"apercu"}}
+  else{if(P.sub==="pieces"){cur=st[n-1]}else if(P.sub===0)P.sub="pieces";else if(P.sub==="apercu")P.sub=P.rooms.length-1;else P.sub--}
+  save();render();scrollTo({top:0,behavior:"auto"});return}
+ if(dir>0){if(!validate())return;if(cur==="recap"&&!navigator.onLine){document.getElementById("err").textContent="Pas de connexion internet : votre demande est bien gardée sur cet appareil. Réessayez dès que le réseau revient.";return}if(cur==="recap"){if(SENDING)return;lastPayload=payload();if(CONFIG.demo){finish();return}sendReq(lastPayload);return}
+  cur=st[n+1];if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1]}
+ save();render();scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
+function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode="plan";S.plan={H:2.5,sub:"apercu",obj:"Avoir droit aux aides",trace:{floors:[{nom:"Rez-de-chaussée",hauteur_m:2.5,pieces:[{nom:"Séjour",estimee:false,points:[[0,0],[5,0],[5,4],[0,4]],murs:[{ouvertures:[{k:"fenetre",w:1.4,h:1.35,p:1.8,al:.9}]},{ouvertures:[]},{ouvertures:[{k:"porte",w:.9,h:2.15,p:3.2,al:0}]},{ouvertures:[]}]},{nom:"Cuisine",estimee:false,points:[[5,0],[8.2,0],[8.2,3],[5,3]],murs:[{ouvertures:[{k:"fenetre",w:1,h:1.15,p:1,al:1.05}]},{},{},{}]},{nom:"Chambre",estimee:true,points:[[5,3],[8.5,3],[8.5,6],[5,6]],murs:[{},{},{},{}]}]}]},rooms:[{type:"sejour",nom:"Séjour",L:5,l:4,dk:false,size:1,trav:["doublage"]},{type:"cuisine",nom:"Cuisine",L:3.2,l:3,dk:false,size:1,trav:["doublage"]},{type:"chambre",nom:"Chambre 1",L:3.8,l:2.9,dk:false,size:1,trav:["doublage","cloison"]},{type:"chambre",nom:"Chambre 2",L:null,l:null,dk:true,size:1,trav:["doublage"]},{type:"sdb",nom:"Salle de bain",L:2.4,l:2,dk:false,size:1,trav:["doublage"]}]};
+ S.logement={cp:"38920",commune:"Crolles",type:"Maison",age:"Oui",occupe:"Oui",ou:["Rez-de-chaussée","Étage(s)"]};
+ S.cloison={items:[{L:3.8,H:2.5,piece:"Chambre",portes:1,largeur:"83 cm",galandage:"Non"}],phonique:"Standard"};
+ S.doublage={items:[{L:4.2,H:2.5,ext:"Oui",etat:"Abîmé ou irrégulier",fen:1},{L:3.1,H:2.5,ext:"Oui",etat:"Bon, bien droit",fen:0}],objectif:"Avoir droit aux aides",epaisseur_dk:true};
+ S.fenetres={items:[{piece:"Chambre",Lc:120,Hc:135,ouv:"2 vantaux",mat:"PVC",coul:"Blanc",volet:"Motorisé",pose:"Dépose complète"}]};
+ S.finition={fin:"Prêt à peindre"};S.projet={delai:"Dans les 3 mois",budget:"5 000 à 10 000 €",msg:"Exemple de démonstration."};
+ S.contact={prenom:"Exemple",nom:"Démo",tel:"06 00 00 00 00",email:"exemple@exemple.fr",rgpd:true};cur="travaux";render()}
+
+addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
+ if(d.type==="proclik-plan-ready"){f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null},"*");return}
+ if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
+ if(d.type==="proclik-plan-sheet")return;
+ if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=planCheer();const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
+let BC=null;function confirmBig(t,p,ok,cb){document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;BC=cb;document.getElementById("bigconf").hidden=false}
+document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;const f=BC;BC=null;if(f)f()});
+function netUI(){document.getElementById("offline").hidden=navigator.onLine!==false}addEventListener("online",netUI);addEventListener("offline",netUI);netUI();
+let PDR=null;
+function pPt(svg,e){const m=svg.getScreenCTM().inverse(),q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const r=q.matrixTransform(m);return[r.x,r.y]}
+document.addEventListener("pointerdown",e=>{const svg=e.target.closest("#pplan");if(!svg||cur!=="plan")return;const g=e.target.closest("[data-pjmp]");const lay=layout();PVB=vbOf(lay);
+ if(!g){PDR={bg:true};return}const i=+g.dataset.pjmp,r=S.plan.rooms[i],p=pPt(svg,e);PDR={i,p0:p,x0:r.x,y0:r.y,moved:false,svg};try{svg.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()});
+document.addEventListener("pointermove",e=>{if(!PDR||PDR.bg)return;const r=S.plan.rooms[PDR.i],p=pPt(PDR.svg,e),dx=p[0]-PDR.p0[0],dy=p[1]-PDR.p0[1];if(!PDR.moved&&Math.hypot(dx,dy)<.12)return;PDR.moved=true;
+ const[w,h]=fp(r);let nx=PDR.x0+dx,ny=PDR.y0+dy,bx=null,by=null;S.plan.rooms.forEach((q,k)=>{if(k===PDR.i||q.x==null)return;const[qw,qh]=fp(q);
+  [q.x-w,q.x+qw,q.x,q.x+qw-w].forEach(c=>{const d=c-nx;if(Math.abs(d)<.4&&(bx==null||Math.abs(d)<Math.abs(bx)))bx=d});[q.y-h,q.y+qh,q.y,q.y+qh-h].forEach(c=>{const d=c-ny;if(Math.abs(d)<.4&&(by==null||Math.abs(d)<Math.abs(by)))by=d})});
+ r.x=Math.round((bx!=null?nx+bx:Math.round(nx/.05)*.05)*100)/100;r.y=Math.round((by!=null?ny+by:Math.round(ny/.05)*.05)*100)/100;S.plan.sel=PDR.i;PDR.svg.innerHTML=plan2dInner(layout())});
+document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PVB=null;if(D.bg){if(S.plan.sel!=null&&e.target.closest("#pplan")){S.plan.sel=null;save();render()}return}
+ if(!D.moved){S.plan.sel=S.plan.sel===D.i?null:D.i}save();render()});
+document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
+ if(ds.start){cur="travaux";render();return}
+ if(ds.example){example();return}
+ if(ds.mode){S.mode=ds.mode;save();render();return}
+ if(ds.openplan){openPlan();return}
+ if(b.id==="pf-done"){closePlan();return}
+ if(ds.pcnt){const[t,d]=ds.pcnt.split("|"),R=S.plan.rooms;if(+d>0){R.push({type:t,nom:ptName(t),L:null,l:null,dk:false,size:1,trav:trsOk().filter(k=>k!=="cloison")})}else{for(let j=R.length-1;j>=0;j--)if(R[j].type===t){R.splice(j,1);break}}renum(t);save();render();return}
+ if(ds.pop){const[k,ix,sg]=ds.pop.split("|"),P=S.plan,o=ix===""?P:P.rooms[+ix],st=+ds.pst;if(ix!==""&&o.dk){const[a,b]=dimsOf(o);o.L=a;o.l=b;o.dk=false}const v=pn(o[k])??(k==="H"?2.5:0);let nv=sg==="+"?v+st:v-st;o[k]=Math.max(0,Math.round(nv*100)/100);if(ix==="")P.H_dk=false;save();render();return}
+ if(ds.pdk){S.plan.H_dk=!S.plan.H_dk;save();render();return}
+ if(ds.psize){const[i,k]=ds.psize.split("|").map(Number),r=S.plan.rooms[i];if(r.dk&&r.size===k){r.dk=false}else{r.dk=true;r.size=k}save();render();return}
+ if(ds.ptrav){const[i,k]=ds.ptrav.split("|"),r=S.plan.rooms[+i];r.trav.includes(k)?r.trav.splice(r.trav.indexOf(k),1):r.trav.push(k);save();render();return}
+ if(ds.pjump!=null){S.plan.sub=+ds.pjump;save();render();return}
+ if(ds.pback){S.plan.sub="pieces";save();render();scrollTo(0,0);return}
+ if(ds.prot!=null){const r=S.plan.rooms[+ds.prot];r.rot=!r.rot;save();render();return}
+ if(ds.pdesel){S.plan.sel=null;save();render();return}
+ if(ds.pv3!=null){S.plan.v3=ds.pv3==="1";save();render();return}
+ if(ds.pq){const[k,v]=ds.pq.split("|");S.plan[k]=S.plan[k]===v?undefined:v;save();render();return}
+ if(ds.reset&&!ds.ok){confirmBig("Tout recommencer ?","Toutes vos réponses, vos photos et votre plan seront effacés. Cette action est définitive.","Oui, tout effacer",()=>{b.dataset.ok="1";b.click();delete b.dataset.ok});return}
+ if(ds.reset){S=fresh();files.photos=[];files.plan=[];try{localStorage.removeItem("clikdevis-brouillon")}catch(e){};cur="intro";render();return}
+ if(b.id==="go"){go(1);return}if(b.id==="back"){go(-1);return}
+ if(ds.goto){cur=ds.goto;render();scrollTo(0,0);return}
+ if(ds.trav){const k=ds.trav,a=S.travaux;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);save();render();return}
+ if(ds.add){const it=S[cur].items,last=it[it.length-1]||{};const d=D[cur];const n=d.g.copy?Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k))):(cur==="doublage"||cur==="cloison"?{H:last.H??2.5,portes:0,fen:0}:{H:last.H??2.5});
+  it.push(n);save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);save();render();return}
+ const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
+ if(ds.multi){const a=Array.isArray(o[k])?o[k]:[];o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
+ if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];save();render();return}
+ if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();return}
+ if(ds.op){const st=+ds.st;const v=pn(o[k])??0;let nv=ds.op==="+"?v+st:v-st;if(nv<0)nv=0;o[k]=Math.round(nv*100)/100;o[k+"_dk"]=false;save();render();document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus();return}
+ if(ds.step){const v=(o[k]??+ds.min)+(+ds.step);o[k]=Math.max(+ds.min,Math.min(+ds.max,v));save();render();return}
+});
+function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
+document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pnum){planInput(el);return}if(!ds.s)return;const o=obj(ds.s,ds.i===""?null:+ds.i);
+ if(ds.num){o[ds.k]=el.value.replace(",",".");o[ds.k+"_dk"]=false;save();const it=el.closest(".item");if(it){const b=badge(ds.s,o);let bd=it.querySelector(".badge");if(b&&!bd){bd=document.createElement("span");bd.className="badge";it.querySelector(".item-h div").prepend(bd)}if(bd)bd.textContent=b}return}
+ if(ds.txt){o[ds.k]=el.value;save();return}
+ if(ds.chk){o[ds.k]=el.checked;save();return}});
+document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)return;const k=el.dataset.file;
+ [...el.files].forEach(f=>{if(!/^image\/|application\/pdf/.test(f.type))return;if(f.size>15*1024*1024)return;
+  if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>{files[k].push({name:f.name,img:r.result,file:f});render()};r.readAsDataURL(f)}else{files[k].push({name:f.name,img:null,file:f});render()}});});
+render();
+})();
+</script>
