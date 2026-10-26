@@ -30,7 +30,7 @@
   --bg:#0B1226;--surface:#131C33;--fg:#EEF2F8;--muted:#9DA8BD;--line:#26324F;--soft:#12302E;--mint-ink:#2EE6C8;--warn:#FFC266;--warn-bg:#3A2A10;--err:#FF8A7A;--shadow:none;color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 120px}
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(120px + var(--vb,0px))}
 .wrap{max-width:640px;margin:0 auto}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
@@ -106,7 +106,7 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .check input{width:22px;height:22px;margin-top:1px;accent-color:var(--ink);flex:none}
 .note{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .err{color:var(--err);font-weight:700;font-size:14px;min-height:1.2em;margin:6px 0 0}
-.nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);
+.nav{position:fixed;left:0;right:0;bottom:var(--vb,0px);transition:bottom .15s;background:var(--surface);border-top:1px solid var(--line);
   padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
 .nav .wrap{display:flex;gap:10px;justify-content:space-between;align-items:center}
 .btn{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px 22px;cursor:pointer;transition:transform .1s}
@@ -701,4 +701,7 @@ document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)r
   if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>{files[k].push({name:f.name,img:r.result,file:f});render()};r.readAsDataURL(f)}else{files[k].push({name:f.name,img:null,file:f});render()}});});
 render();
 })();
+// Intégré dans une page (GHL) plus haute que l'écran : la barre Retour / Continuer remonte au bas de la partie visible.
+if(window.top!==window&&"IntersectionObserver" in window){const vp=document.createElement("div");vp.style.cssText="position:fixed;left:0;top:0;width:1px;height:100%;pointer-events:none;visibility:hidden";document.body.appendChild(vp);
+ new IntersectionObserver(es=>{const e=es[es.length-1],vb=e.isIntersecting?Math.max(0,Math.round(innerHeight-e.intersectionRect.bottom)):0;document.documentElement.style.setProperty("--vb",vb+"px")},{threshold:Array.from({length:201},(_,i)=>i/200)}).observe(vp)}
 </script>
