@@ -475,7 +475,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
-function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
+let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
 function tPieces(){const t=S.plan.trace;return t&&t.floors?t.floors.flatMap(f=>f.pieces.map(p=>({...p,etage:f.nom}))):[]}
@@ -654,6 +654,8 @@ addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pfr
  if(d.type==="proclik-plan-ready"){f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[]},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
  if(d.type==="proclik-plan-sheet")return;
+ if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}
+ if(d.type==="proclik-plan-finish"){clearTimeout(PFT);closePlan();return}
  if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=planCheer();const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
 let BC=null;function confirmBig(t,p,ok,cb,no){document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;document.getElementById("bc-no").textContent=no||"Non, garder";BC=cb;document.getElementById("bigconf").hidden=false}
 document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;const f=BC;BC=null;if(f)f()});
@@ -673,7 +675,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.example){example();return}
  if(ds.mode){S.mode=ds.mode;save();render();return}
  if(ds.openplan){openPlan();return}
- if(b.id==="pf-done"){closePlan();return}
+ if(b.id==="pf-done"){const f=document.getElementById("pframe");clearTimeout(PFT);PFT=setTimeout(()=>closePlan(),1500);try{f.contentWindow.postMessage({type:"proclik-plan-check"},"*")}catch(x){closePlan()}return}
  if(ds.pcnt){const[t,d]=ds.pcnt.split("|"),R=S.plan.rooms;if(+d>0){R.push({type:t,nom:ptName(t),L:null,l:null,dk:false,size:1,trav:trsOk().filter(k=>k!=="cloison")})}else{for(let j=R.length-1;j>=0;j--)if(R[j].type===t){R.splice(j,1);break}}renum(t);save();render();return}
  if(ds.pop){const[k,ix,sg]=ds.pop.split("|"),P=S.plan,o=ix===""?P:P.rooms[+ix],st=+ds.pst;if(ix!==""&&o.dk){const[a,b]=dimsOf(o);o.L=a;o.l=b;o.dk=false}const v=pn(o[k])??(k==="H"?2.5:0);let nv=sg==="+"?v+st:v-st;o[k]=Math.max(0,Math.round(nv*100)/100);if(ix==="")P.H_dk=false;save();render();return}
  if(ds.pdk){S.plan.H_dk=!S.plan.H_dk;save();render();return}
