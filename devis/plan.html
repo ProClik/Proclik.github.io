@@ -870,6 +870,8 @@ function roofFaces(out,g,zt,cut,vd){const{u0,u1,v0,v1,vm,hw,tn,ov,M}=g,c=ST.comb
 function draw3(){if(ST.view!=="3d")return;const out=[],zs=[];let z=0;ST.floors.forEach((f,i)=>{if(i>0)z+=slabH(f);zs[i]=z;z+=f.H});const last=ST.floors.length-1,show=ST.v3==="etage"?[ST.fi]:ST.floors.map((_,i)=>i);
  const th=ST.th*Math.PI/180,ph=ST.ph*Math.PI/180,ct=Math.cos(th),st=Math.sin(th),cp=Math.cos(ph),sp=Math.sin(ph),vd=[st,ct];VD=vd;
  show.forEach(fi=>{const f=ST.floors[fi],z0=zs[fi];if(ST.v3==="etage"&&f.rooms.length){const fb=bbox(f.rooms.flatMap(r=>r.pts));slabPoly(out,[[fb.x0-WE,fb.y0-WE],[fb.x1+WE,fb.y0-WE],[fb.x1+WE,fb.y1+WE],[fb.x0-WE,fb.y1+WE]],z0-slabH(f),z0,slabC(f),"slab",true)}
+  // Vue Maison : la dalle (ou le plancher) du rez-de-chaussée se voit en pied de façade, à l'aplomb des murs extérieurs.
+  if(ST.v3==="maison"&&fi===0)f.rooms.forEach(rm=>{const b=bbox(rm.pts),rect=Math.abs(Math.abs(sarea(rm.pts))-(b.x1-b.x0)*(b.y1-b.y0))<.05;slabPoly(out,rect?[[b.x0-WE,b.y0-WE],[b.x1+WE,b.y0-WE],[b.x1+WE,b.y1+WE],[b.x0-WE,b.y1+WE]]:rm.pts,z0-slabH(f),z0,slabC(f),"slab",true)});
   const xo=ST.v3==="maison"&&!(ST.cut&&fi===last);if(!xo)f.rooms.forEach((rm,ri)=>out.push({p:rm.pts.map(p=>[p[0],p[1],z0+.005]),n:[0,0,1],c:solCol(rm),kind:"floor",rm,fi,ri}));wallPieces(f,fi,z0,out,ST.v3==="maison"&&fi<last?{h:slabH(ST.floors[fi+1]),c:slabC(ST.floors[fi+1])}:null,xo,vd)});
  const g=roofGeo(),roofOn=ST.v3==="maison"&&ST.roof&&!!g;if(roofOn)roofFaces(out,g,zs[last]+ST.floors[last].H,ST.cut,vd);
  const allP=[];ST.floors.forEach(f=>f.rooms.forEach(r=>allP.push(...r.pts)));if(!allP.length){s3.innerHTML="";return}
