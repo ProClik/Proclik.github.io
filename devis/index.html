@@ -496,6 +496,8 @@ const t0=Date.now();
 function fresh(){return {mode:null,plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
  cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]}}}
 function load(){try{const x=JSON.parse(localStorage.getItem("clikdevis-brouillon")||"null");return x&&x.travaux?x:null}catch(e){return null}}
+const PRE=()=>(S.contact.prenom||"").trim().split(/\s+/)[0]||"";
+const cheerN=c=>{const p=PRE();if(!p||!c)return c;return/\s*!$/.test(c)?c.replace(/\s*!$/,`, ${p} !`):`${c}, ${p}`};
 function save(){try{localStorage.setItem("clikdevis-brouillon",JSON.stringify(S))}catch(e){}}
 // Pièces (ou sous-pièces séparées par une cloison) du plan, avec des dimensions équivalentes pour le plafond.
 function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;const dim=(pts,s)=>{if(!pts||pts.length<3)return null;const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),a=Math.max(...xs)-Math.min(...xs),b=Math.max(...ys)-Math.min(...ys),L=Math.max(a,b);if(!L)return null;const S2=s||a*b;return[Math.round(L*100)/100,Math.round(S2/L*100)/100,S2]};
@@ -533,16 +535,16 @@ function badge(sec,it){
 }
 function render(){
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
- if(cur==="intro"){prog.hidden=true;nav.hidden=true;app.innerHTML=introH();return}
+ if(cur==="intro"){prog.hidden=true;nav.hidden=true;app.innerHTML=introH();{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
  if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
  const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
  document.getElementById("bar").style.width=Math.round(((n+1)/st.length)*100)+"%";
  document.getElementById("stepn").textContent=`Étape ${n+1} sur ${st.length}`;
- document.getElementById("cheer").textContent=d.cheer||"";
+ document.getElementById("cheer").textContent=cheerN(d.cheer||"");
  document.getElementById("back").style.visibility="visible";
  document.getElementById("go").textContent=cur==="recap"?"Envoyer ma demande":(cur==="contact"?"Vérifier ma demande →":cur==="plan"&&S.plan.sub==="pieces"?"Mesurer mes pièces →":cur==="plan"&&S.plan.sub==="apercu"?"C'est mon logement ✓":cur==="plan"?"Pièce suivante →":"Continuer →");
- if(cur==="plan")document.getElementById("cheer").textContent=planCheer();
- let h=false?``:`<section class="fade"><h1>${esc(d.t)}</h1><p class="sub">${esc(d.s)}</p>`;
+ if(cur==="plan")document.getElementById("cheer").textContent=cheerN(planCheer());
+ let h=false?``:`<section class="fade"><h1>${esc(d.t)}</h1><p class="sub">${cur==="travaux"&&PRE()?`Enchanté, ${esc(PRE())} ! `:""}${esc(d.s)}</p>`;
  if(cur==="plan"){h+=`<p class="err" id="err" role="alert"></p>`}else if(cur==="mode")h+=modeH();
  else if(cur==="travaux")h+=`<div class="cards">${TRAVAUX.map(([k,t,s])=>`<button type="button" class="card" aria-pressed="${S.travaux.includes(k)}" data-trav="${k}">${IC[k]}<b>${t}</b><span>${s}</span></button>`).join("")}</div>`;
  else if(cur==="recap")h+=recapH();
@@ -569,6 +571,7 @@ function introH(){const has=S.travaux.length>0;
  <ul class="perks"><li><i>3</i><div><b>Environ 3 minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
  <li><i>?</i><div><b>« Je ne sais pas » est une bonne réponse</b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
  <li><i>✓</i><div><b>Gratuit et sans engagement</b><br><span class="hint">Vous recevez un devis clair, ligne par ligne.</span></div></li></ul>
+ <div class="q" style="margin:4px 0 14px"><label class="lab" for="in-pre">Pour commencer, votre prénom</label><p class="hint">Les conseils vous seront adressés, et il sera déjà rempli dans vos coordonnées à la fin.</p><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}" style="width:100%;max-width:340px"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
  <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn go" type="button" data-start="1" style="max-width:none">${has?"Reprendre ma demande →":"C'est parti →"}</button>
  <button class="btn ghost" type="button" data-example="1">Voir avec un exemple</button>${has?`<button class="btn back" type="button" data-reset="1">Recommencer</button>`:""}</div></section>`}
 function list(sec){const d=D[sec],o=S[sec],out=[];
@@ -610,7 +613,7 @@ async function unpackS(t){const bin=atob(t.slice(1).replace(/-/g,"+").replace(/_
 async function later(){save();let url=null;try{url=location.href.split("#")[0]+"#reprise="+await packS()}catch(e){}
  const subj="Ma demande de devis à terminer",em=(S.contact&&S.contact.email)||"";
  if(url&&navigator.share){try{await navigator.share({title:subj,text:"Reprendre ma demande de devis là où je l'ai laissée",url});return}catch(e){if(e&&e.name==="AbortError")return}}
- confirmBig("Finir plus tard","Votre demande est gardée sur cet appareil : revenez quand vous voulez. Pour la reprendre sur un autre téléphone ou ordinateur, envoyez-vous le lien par e-mail.",url?"📩 M'envoyer le lien":"OK",()=>{if(!url)return;const a=document.createElement("a");a.href=`mailto:${encodeURIComponent(em)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent("Bonjour,\n\nVoici le lien pour reprendre ma demande là où je l'ai laissée :\n"+url+"\n")}`;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()},"Fermer","📩")}
+ confirmBig(PRE()?`À tout à l'heure, ${PRE()}`:"Finir plus tard","Votre demande est gardée sur cet appareil : revenez quand vous voulez. Pour la reprendre sur un autre téléphone ou ordinateur, envoyez-vous le lien par e-mail.",url?"📩 M'envoyer le lien":"OK",()=>{if(!url)return;const a=document.createElement("a");a.href=`mailto:${encodeURIComponent(em)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent("Bonjour,\n\nVoici le lien pour reprendre ma demande là où je l'ai laissée :\n"+url+"\n")}`;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()},"Fermer","📩")}
 function finish(){cur="done";try{localStorage.removeItem("clikdevis-brouillon")}catch(e){};render();scrollTo(0,0)}
 let SENDING=false;
 function shrink(dataUrl,max,q){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>res(b),"image/jpeg",q)};im.onerror=()=>res(null);im.src=dataUrl})}
@@ -658,13 +661,13 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
  S.contact={prenom:"Exemple",nom:"Démo",tel:"06 00 00 00 00",email:"exemple@exemple.fr",rgpd:true};cur="travaux";render()}
 
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
- if(d.type==="proclik-plan-ready"){f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[]},"*");return}
+ if(d.type==="proclik-plan-ready"){f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE()},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
  if(d.type==="proclik-plan-sheet")return;
  if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}
  if(d.type==="proclik-plan-finish"){clearTimeout(PFT);closePlan();return}
- if(d.type==="proclik-plan-help"){closePlan();confirmBig("Pas de souci, on vous aide","Votre plan est gardé tel quel. L'artisan vous appellera pour le terminer avec vous. Il reste juste quelques questions et vos coordonnées.","Continuer",()=>{S.plan.aide=true;S.plan.noWallOk=true;save();if(cur==="plan")go(1)},"Revenir au plan","🤝");return}
- if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=planCheer();const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
+ if(d.type==="proclik-plan-help"){closePlan();confirmBig(PRE()?`Pas de souci, ${PRE()}, on vous aide`:"Pas de souci, on vous aide","Votre plan est gardé tel quel. L'artisan vous appellera pour le terminer avec vous. Il reste juste quelques questions et vos coordonnées.","Continuer",()=>{S.plan.aide=true;S.plan.noWallOk=true;save();if(cur==="plan")go(1)},"Revenir au plan","🤝");return}
+ if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=cheerN(planCheer());const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
 let BC=null;function confirmBig(t,p,ok,cb,no,soft){const bg=document.getElementById("bigconf");bg.classList.toggle("soft",!!soft);bg.querySelector(".bc-ic").textContent=soft||"⚠️";document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;document.getElementById("bc-no").textContent=no||"Non, garder";BC=cb;document.getElementById("bigconf").hidden=false}
 document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;const f=BC;BC=null;if(f)f()});
 function netUI(){document.getElementById("offline").hidden=navigator.onLine!==false}addEventListener("online",netUI);addEventListener("offline",netUI);netUI();
@@ -679,7 +682,7 @@ document.addEventListener("pointermove",e=>{if(!PDR||PDR.bg)return;const r=S.pla
 document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PVB=null;if(D.bg){if(S.plan.sel!=null&&e.target.closest("#pplan")){S.plan.sel=null;save();render()}return}
  if(!D.moved){S.plan.sel=S.plan.sel===D.i?null:D.i}save();render()});
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
- if(ds.start){cur="travaux";render();return}
+ if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur="travaux";render();return}
  if(ds.example){example();return}
  if(ds.mode){S.mode=ds.mode;save();render();return}
  if(ds.openplan){openPlan();return}
