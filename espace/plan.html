@@ -185,9 +185,25 @@ html.client body{padding-block:0!important}
 .client #floors .chip{padding:6px 11px;font-size:12.5px}
 .client .board>svg{aspect-ratio:auto!important;height:var(--clh,calc(100dvh - 160px))}
 .client .board{border-radius:16px}
-/* Plan d'un client ouvert depuis une demande : plan moins haut pour pouvoir faire défiler la page autour, molette = défilement (zoom : pincer ou Ctrl + molette) */
+/* Plan d'un client ouvert depuis une demande : il s'ouvre bloqué (html.bloque) : plan fixe et entier, rien ne se modifie,
+   le doigt et la molette font défiler la page vers le récapitulatif. Le gros bouton « Débloquer » rend toutes les retouches. */
 .attendre .board>svg{aspect-ratio:auto;height:min(56vh,75vw)}
-.attendre .board,.attendre .board>svg{touch-action:pan-x pan-y}
+.bloque .board{touch-action:pan-y}
+.bloque #svg,.bloque #s3,.bloque #list{pointer-events:none}
+.bloque .board .fl.mr,.bloque .board .fl.tr,.bloque #bar2d,.bloque .rotb,.bloque #opp,.bloque #ed,.bloque .chip.add,.bloque #open-comb{display:none!important}
+.attendre #z-lock{display:none}
+.verrou{display:none}
+.attendre .verrou{display:flex;align-items:center;gap:12px;appearance:none;width:100%;text-align:left;border:2px solid #FF8A3D;background:#FFF1E6;color:#0B1226;font:800 17px var(--f);padding:12px 14px;border-radius:16px;cursor:pointer}
+.verrou b{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#FF8A3D;font-size:22px}
+.verrou span{flex:1;min-width:0;line-height:1.25}.verrou small{display:block;font:600 13.5px var(--f);opacity:.75}
+.verrou em{flex:none;font-style:normal;background:#0B1226;color:#fff;padding:9px 14px;border-radius:999px;font-size:15px}
+.attendre:not(.bloque) .verrou{border-color:var(--mint);background:#E6FCF8}
+.attendre:not(.bloque) .verrou b{background:var(--mint)}
+.gorecap{display:none}
+.attendre .gorecap{display:flex;align-items:center;justify-content:center;gap:10px;appearance:none;border:1.5px solid rgba(46,230,200,.55);background:var(--ink);color:#fff;font:800 16px var(--f);padding:13px 18px;border-radius:999px;cursor:pointer;width:100%}
+.gorecap i{font-style:normal;font-size:20px;line-height:1;color:var(--mint);animation:gorecap 1.4s ease-in-out infinite}
+@keyframes gorecap{50%{transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.gorecap i{animation:none}}
 #clbanner{position:relative;z-index:4;display:flex;gap:8px;align-items:center;border:1.5px solid rgba(46,230,200,.45);background:var(--ink);color:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 8px 24px rgba(11,18,38,.25)}
 #clbanner p{margin:0;font-size:15px;font-weight:700;line-height:1.35;flex:1;min-width:0}
 #clbanner button{appearance:none;border:0;background:var(--mint);color:var(--ink);font:800 15px var(--f);padding:10px 14px;border-radius:999px;cursor:pointer;flex:none}
@@ -238,7 +254,7 @@ html.client body{padding-block:0!important}
 html.client body{padding-bottom:12px}
 .embed .wrap{padding-top:12px}
 </style>
-<script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(!/[?&]client/.test(location.search)&&/[?&]attendre/.test(location.search))document.documentElement.classList.add("attendre");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
+<script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(!/[?&]client/.test(location.search)&&/[?&]attendre/.test(location.search))document.documentElement.classList.add("attendre","bloque");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
 
 <div class="wrap">
   <header>
@@ -248,6 +264,7 @@ html.client body{padding-bottom:12px}
   <div><h1>Plan du logement</h1><p class="lead">Pièces en 2 cotes, collées les unes aux autres. Touchez un mur ou un sol pour dire ce qu'on y fait. Vue 3D avec étages et toit.</p></div>
   <div class="tabs" id="floors"></div>
   <div class="tabs" id="rooms"></div>
+  <button class="verrou" id="verrou" type="button" aria-pressed="true"><b aria-hidden="true">🔒</b><span id="verrou-t">Plan bloqué<small>Rien ne peut être modifié par erreur.</small></span><em id="verrou-b">Débloquer</em></button>
   <div class="board" id="board">
     <div class="fl tl"><div class="pill" role="group" aria-label="Affichage"><button id="v-2d" aria-pressed="true">Plan</button><button id="v-3d" aria-pressed="false">3D</button></div></div>
     <div class="fl tr"><div class="pill"><button id="t-undo" class="ud" aria-label="Annuler">↶ Annuler</button><button id="t-redo" class="ud" aria-label="Rétablir" disabled>↷ Rétablir</button></div></div>
@@ -263,6 +280,7 @@ html.client body{padding-bottom:12px}
     <svg id="s3" viewBox="0 0 10 7.5" hidden aria-label="Vue 3D du logement"></svg>
     <div class="legend" id="legend"><span><i style="background:var(--ba13)"></i>BA13</span><span><i style="background:var(--laine)"></i>Laine</span><span><i style="background:var(--hydro)"></i>Hydro</span><span><i style="background:var(--phon)"></i>Phonique</span><span><i style="background:var(--tile)"></i>Carrelage</span><span><i style="background:var(--parq)"></i>Parquet</span><span><i style="background:var(--win);border-color:var(--win)"></i>Fenêtre</span><span><i style="background:var(--oss);border-color:var(--oss)"></i>Appui · fourrures F47 · pointes Pulsa</span><span><i style="background:#F7FAFC"></i>Polystyrène</span></div>
   </div>
+  <button class="gorecap" id="go-recap" type="button"><i aria-hidden="true">↓</i>Voir le récapitulatif<i aria-hidden="true">↓</i></button>
   <div class="cap idle" id="cap"><b id="capn">i</b><p id="capt"></p></div>
   <section class="panel"><h2>Les cotes<small id="list-sub"></small></h2><div id="list"></div></section>
   <section class="panel"><h2>Pour le pré-devis<small>tous étages</small></h2><div class="tot" id="tot"></div><div class="combsum"><span id="comb-sum"></span><button class="btn" id="open-comb" type="button">Toit et combles</button></div><button class="send" id="send" type="button">Voir le récapitulatif</button><div id="recap" hidden></div></section>
@@ -274,7 +292,7 @@ html.client body{padding-bottom:12px}
 
 <script>
 (function(){
-const CL=/[?&]client/.test(location.search);const ATTP=!CL&&/[?&]attendre/.test(location.search);let READY=!CL,NTF=null;
+const CL=/[?&]client/.test(location.search);let READY=!CL,NTF=null;
 // ---------- Outils ----------
 const $=id=>document.getElementById(id),svg=$("svg"),s3=$("s3");
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -500,7 +518,7 @@ function ptrEnd(e,cancel){PTR.delete(e.pointerId);const D=PD;if(!D)return;
  if(D.type==="room"){ST.ri=D.ri;tabs();openRoom(D.ri);draw();return}}
 svg.addEventListener("pointerup",e=>{if(demo)return;ptrEnd(e,false)});svg.addEventListener("pointercancel",e=>ptrEnd(e,true));
 svg.addEventListener("pointerleave",()=>{if(!PD&&!demo&&preview){preview=null;draw()}});
-svg.addEventListener("wheel",e=>{if(demo||(ATTP&&!e.ctrlKey))return;e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY>0?1.12:1/1.12)},{passive:false});
+svg.addEventListener("wheel",e=>{if(demo)return;e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY>0?1.12:1/1.12)},{passive:false});
 svg.addEventListener("contextmenu",e=>e.preventDefault());
 function setMode(m){if(CL)document.querySelectorAll(".cltool").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cl===m));if(m!=="plan"&&m!=="todo"&&ST.lock){say(null,"Plan verrouillé 🔒 : touchez le cadenas pour tracer de nouveau.");return}ST.mode=m;document.querySelectorAll("#bar2d [data-mode]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));{const ta=$("todo-bar");if(ta)ta.hidden=m!=="todo";if(m==="todo")setTimeout(todoMsg,0)}if(m!=="clo")ST.cur=null;if(m!=="trace")ST.trace=null;preview=null;
  if(CL&&m==="trace")say(null,"Touchez chaque coin de la nouvelle partie, l'un après l'autre. Touchez le premier coin pour la fermer.");
@@ -762,6 +780,7 @@ function tot(){let sol=0,dbl=0,clo=0,nf=0,np=0;const rev={};ST.floors.forEach(f=
   f.rooms.forEach(rm=>{const a=Math.abs(sarea(rm.pts));sol+=a;if(rm.sol.revet!=="Aucun")rev[rm.sol.revet]=(rev[rm.sol.revet]||0)+a})});
  $("tot").innerHTML=`<div><b>${fr1(sol)}</b><span>m² habitables</span></div><div><b>${fr1(dbl)}</b><span>m² de doublage</span></div><div><b>${fr1(clo)}</b><span>m² de cloisons</span></div><div><b>${nf} · ${np}</b><span>fenêtres · portes</span></div>`+Object.entries(rev).map(([n,a])=>`<div><b>${fr1(a)}</b><span>m² de ${n.toLowerCase()}</span></div>`).join("");const cc=combCalc();$("comb-sum").textContent=cc?(cc.parts.length>1?"Combles : "+cc.parts.slice(1).join(" · "):"Combles : rien de prévu pour l'instant"):"Toit et combles : ajoutez des pièces";if(cc&&ST.comb.isol!=="Aucune")$("tot").insertAdjacentHTML("beforeend",`<div><b>${fr1(ST.comb.isol==="En rampant"?cc.ramp:cc.sol)}</b><span>m² de combles isolés</span></div>`)}
 function rth(key){const P=PH.get(key)||[];return P.length?`<div class="rth">${P.map(p=>`<img src="${p.u}" alt="">`).join("")}</div>`:""}
+$("go-recap").addEventListener("click",()=>{$("send").click();$("send").scrollIntoView({behavior:"smooth",block:"start"})});
 $("send").addEventListener("click",()=>{const box=$("recap");box.hidden=false;let h=`<p class="muted">Récapitulatif du plan. Rien n'est envoyé : le recalcul du pré-devis à partir du plan arrivera plus tard.</p>`;
  ST.floors.forEach(f=>{h+=`<div class="rc"><b>${esc(f.nom)}</b> · hauteur ${fr(f.H)} m · ${dal(f).type==="Bois"?"plancher bois":"dalle béton"} ${dal(f).ep}</div>`;f.rooms.forEach(rm=>{h+=`<div class="rc">— <b>${esc(rm.nom)}</b> · ${fr1(Math.abs(sarea(rm.pts)))} m²${solTxt(rm)?" · sol : "+esc(solTxt(rm)):""}${(NT.get(rm)||"").trim()?" · « "+esc(NT.get(rm))+" »":""}${rth(rm)}</div>`;
   segs(f).filter(sg=>sg.rm===rm).forEach(sg=>{const t=[compTxt(sg),opTxt(sg),(NT.get(sg.a)||"").trim()?"« "+esc(NT.get(sg.a))+" »":""].filter(Boolean).join(" · "),ph=rth(sg.a);if(t||ph)h+=`<div class="rc" style="padding-left:18px">${segName(sg)} · ${fr(dist(sg.a,sg.b))} m${t?" · "+t:""}${ph}</div>`})})});
@@ -881,7 +900,7 @@ function end3(e){P3.delete(e.pointerId);const D=D3;if(!D||P3.size)return;D3=null
  if(!D.moved){const h=D.tgt&&D.tgt.closest&&D.tgt.closest("[data-hs]");if(h){const a=h.dataset.hs;if(a==="c"){ST.cut=true;ST.roof=true;sync3();draw3();openComb();return}if(a==="m"){ST.v3="maison";sync3();draw3();say3();return}if(a[0]==="f"){ST.fi=+a.slice(1);ST.ri=0;ST.v3="etage";ST.cut=false;sync3();tabs();rows();draw3();say(null,`${ST.floors[ST.fi].nom} : touchez une pièce pour régler son sol, ses murs et ses photos. « Maison entière » pour revenir.`);return}if(a[0]==="r"){ST.ri=+a.slice(1);tabs();openRoom(ST.ri);return}}const t=D.tgt&&D.tgt.closest&&D.tgt.closest("[data-k]");if(t){if(t.dataset.k==="roof"){openComb();return}if(t.dataset.k==="floor"){ST.fi=+t.dataset.fi;ST.ri=+t.dataset.ri;tabs();rows();openRoom(ST.ri);return}}return}
  anim3(snap45(ST.th),ST.ph)}
 s3.addEventListener("pointerup",end3);s3.addEventListener("pointercancel",end3);
-s3.addEventListener("wheel",e=>{if(ATTP&&!e.ctrlKey)return;e.preventDefault();ST.z3=Math.max(.6,Math.min(3,ST.z3*(e.deltaY>0?.9:1.1)));draw3()},{passive:false});
+s3.addEventListener("wheel",e=>{e.preventDefault();ST.z3=Math.max(.6,Math.min(3,ST.z3*(e.deltaY>0?.9:1.1)));draw3()},{passive:false});
 function sync3(){$("v3-etage").setAttribute("aria-pressed",ST.v3==="etage");$("v3-maison").setAttribute("aria-pressed",ST.v3==="maison");$("v3-roof").setAttribute("aria-pressed",ST.roof);$("v3-cut").setAttribute("aria-pressed",ST.cut)}
 function setView(v){ST.view=v;$("v-2d").setAttribute("aria-pressed",v==="2d");$("v-3d").setAttribute("aria-pressed",v==="3d");svg.toggleAttribute("hidden",v!=="2d");s3.toggleAttribute("hidden",v!=="3d");$("board").classList.toggle("v3",v==="3d");
  $("bar2d").hidden=v!=="2d";$("bar3d").hidden=v!=="3d";$("legend").hidden=v!=="2d";$("r-l").hidden=v!=="3d";$("r-r").hidden=v!=="3d";$("z-lock").hidden=v==="3d";closeEd();
@@ -940,7 +959,13 @@ if(CL)addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-pla
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{draw()});new MutationObserver(()=>{draw()}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]})}catch(e){}
 const ATT=!CL&&/[?&]attendre/.test(location.search);const RST=restore();if(CL){ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[]}];ST.fi=0;ST.ri=0}else if(RST){}else if(ATT){ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[]}];ST.fi=0;ST.ri=0}else if(/[?&]new/.test(location.search)){ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[mkRoom("Pièce 1",0,0,4,3.5)]}];ST.fi=0;ST.ri=0}else example();all();if(CL){clLayout();try{new ResizeObserver(()=>{const o=$("board").getBoundingClientRect().top;clLayout();if(Math.abs($("board").getBoundingClientRect().top-o)>1&&!ST.cam)draw()}).observe($("clbanner"))}catch(e){}addEventListener("resize",clLayout)}
 // Plan d'un client ouvert depuis l'Espace : la page attend le plan de la demande (envoyé par l'Espace).
-if(ATT){addEventListener("message",e=>{const d=e.data||{};if(e.source!==parent||d.type!=="proclik-plan-load")return;if(RST){say(null,"Vous aviez retouché ce plan sur cet appareil : c'est votre version qui est affichée.");return}if(d.plan)importPlan(d.plan);HIST.length=0;REDO.length=0;all();say(null,(d.prenom?`Plan dessiné par ${d.prenom}`:"Plan dessiné par le client")+" : un doigt fait défiler la page, deux doigts déplacent et zooment le plan. Touchez une pièce ou un mur pour ses détails ; vos retouches restent sur cet appareil.")});try{parent.postMessage({type:"proclik-plan-ready"},"*")}catch(e){}}
+// Bloqué à l'ouverture ; le gros bouton au-dessus du plan débloque les retouches (visite chez le client) puis rebloque.
+function bloquer(on){document.documentElement.classList.toggle("bloque",on);const v=$("verrou");v.setAttribute("aria-pressed",on);v.querySelector("b").textContent=on?"🔒":"🔓";
+ $("verrou-t").innerHTML=on?"Plan bloqué<small>Rien ne peut être modifié par erreur.</small>":"Modifications ouvertes<small>Un doigt déplace le plan, deux doigts zooment. Pensez à rebloquer.</small>";$("verrou-b").textContent=on?"Débloquer":"Rebloquer";
+ if(on){closeSheet(true);closeEd();if(ST.mode==="clo")endClo();setMode("plan");ST.cam=null;ST.frozen=false;ST.view==="3d"?draw3():draw()}
+ say(null,on?"Plan bloqué 🔒 : faites défiler la page vers le bas pour le récapitulatif ↓.":"Plan débloqué 🔓 : touchez une pièce ou un mur pour le modifier. Vos retouches restent sur cet appareil.")}
+if(ATT){bloquer(true);$("verrou").addEventListener("click",()=>bloquer(!document.documentElement.classList.contains("bloque")))}
+if(ATT){addEventListener("message",e=>{const d=e.data||{};if(e.source!==parent||d.type!=="proclik-plan-load")return;if(RST){say(null,"Vous aviez retouché ce plan sur cet appareil : c'est votre version qui est affichée.");return}if(d.plan)importPlan(d.plan);HIST.length=0;REDO.length=0;all();say(null,(d.prenom?`Plan dessiné par ${d.prenom}`:"Plan dessiné par le client")+" : il est bloqué 🔒, faites défiler la page vers le bas pour le récapitulatif ↓. Pour le retoucher pendant la visite, touchez « Débloquer ».")});try{parent.postMessage({type:"proclik-plan-ready"},"*")}catch(e){}}
 function placeBar(){try{const l=$("legend");$("bar2d").style.bottom=(l.hidden?12:l.offsetHeight+10)+"px"}catch(e){}}placeBar();addEventListener("resize",()=>{placeBar();ST.view==="3d"?draw3():draw()});if(CL){say(null,"");try{parent.postMessage({type:"proclik-plan-ready"},"*")}catch(e){}}else if(ATT&&!RST)say(null,"Chargement du plan du client…");else if(RST)say(null,`Plan récupéré : vous reprenez où vous en étiez (sauvegardé sur cet appareil le ${new Date(RST.t).toLocaleString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})}${RST.sansPhotos?", sans les photos : mémoire pleine":""}).`);else say(null,"Exemple : une maison sur 2 étages. Un doigt déplace le plan, deux doigts zooment. Touchez un sol ou un mur pour le régler, appui long sur une pièce pour la déplacer, appui long sur une cote pour la dicter.");
 })();
 </script>
