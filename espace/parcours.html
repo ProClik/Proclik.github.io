@@ -1,0 +1,347 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>Espace guidé (maquette)</title>
+<!-- Maquette du nouveau parcours de l'Espace artisan (demande de Cyril, 28/10) : une demande = une action principale à la fois.
+     Données d'exemple : le pré-devis vient du vrai calcul ProClik (base de prix BRS) sur une demande fictive à Crolles.
+     Rien n'est envoyé : ni au client, ni au fournisseur, ni à GHL. L'avancement est gardé sur cet appareil. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#F4F6FA;--card:#FFFFFF;--fg:#0B1226;--muted:#4A5470;--line:#E3E7F0;--soft:#EEF1F6;--nuit:#0B1226;--turq:#2EE6C8;--turq-ink:#0B6B5B;--turq-bg:#E3FBF6;--warn:#B45309;--warn-bg:#FFF4E5;--cor:#FF7A59;--cor-bg:#FFF1EC;--cor-ink:#8A3A22;--ok:#15803D;--ok-bg:#E7F7EC;--shadow:0 1px 0 var(--line),0 10px 26px rgba(11,18,38,.06);--btn:#0B1226;--btn-fg:#fff;
+--f:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070B18;--card:#111933;--fg:#F1F4FB;--muted:#9FB0D9;--line:#232C4F;--soft:#1A2344;--turq-bg:rgba(46,230,200,.14);--turq-ink:#7FF3E0;--warn:#FBBF77;--warn-bg:rgba(251,191,119,.12);--cor-bg:rgba(255,122,89,.14);--cor-ink:#FFB9A6;--ok:#6EE7A0;--ok-bg:rgba(110,231,160,.12);--shadow:0 0 0 1px var(--line);--btn:#2EE6C8;--btn-fg:#0B1226;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#070B18;--card:#111933;--fg:#F1F4FB;--muted:#9FB0D9;--line:#232C4F;--soft:#1A2344;--turq-bg:rgba(46,230,200,.14);--turq-ink:#7FF3E0;--warn:#FBBF77;--warn-bg:rgba(251,191,119,.12);--cor-bg:rgba(255,122,89,.14);--cor-ink:#FFB9A6;--ok:#6EE7A0;--ok-bg:rgba(110,231,160,.12);--shadow:0 0 0 1px var(--line);--btn:#2EE6C8;--btn-fg:#0B1226;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--turq);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:12px 16px calc(120px + env(safe-area-inset-bottom))}
+.maq{display:flex;gap:10px;align-items:center;background:var(--warn-bg);color:var(--warn);border-radius:12px;padding:8px 12px;font-size:13.5px;font-weight:700;margin-bottom:12px}
+.maq span{flex:1}.maq button{font-weight:800;text-decoration:underline;color:inherit;font-size:13.5px}
+h1{font-size:26px;line-height:1.15;margin:6px 0 4px;letter-spacing:-.01em}
+h2{font-size:19px;margin:0 0 6px}
+h3{font-size:15px;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+p{margin:0 0 8px}.mu{color:var(--muted)}.sm{font-size:14px}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin:0 0 12px}
+.grp{margin:20px 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+.grp h2{font-size:17px}.grp span{color:var(--muted);font-size:14px}
+/* cartes de la liste */
+.dm{display:block;width:100%;text-align:left;background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px;margin:0 0 10px;border:2px solid transparent}
+.dm.now{border-color:var(--turq)}
+.dm .r{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.dm b{font-size:17px}.dm small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.dm .amt{font-size:20px;font-weight:800;margin-top:8px;font-variant-numeric:tabular-nums}
+.act{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:var(--btn);color:var(--btn-fg);font-weight:800;font-size:15px}
+.wait{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 12px;border-radius:999px;background:var(--soft);color:var(--muted);font-weight:700;font-size:14px}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}
+.pill.w{background:var(--warn-bg);color:var(--warn)}.pill.t{background:var(--turq-bg);color:var(--turq-ink)}.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.g{background:var(--soft);color:var(--muted)}
+.tip{background:var(--turq-bg);border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.tip ol{margin:6px 0 8px;padding-left:20px}.tip li{margin:3px 0}
+.tip button{font-weight:800;color:var(--turq-ink)}
+/* une demande */
+.back{display:inline-flex;align-items:center;gap:6px;font-weight:800;padding:8px 0;color:var(--muted)}
+.contact{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;background:var(--soft);font-weight:700;font-size:15px;text-decoration:none;color:inherit}
+.prog{display:flex;gap:4px;margin:14px 0 6px}
+.prog i{flex:1;height:6px;border-radius:9px;background:var(--line)}
+.prog i.d{background:var(--turq)}.prog i.c{background:var(--btn)}
+.progl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:14px}
+.progl span.c{color:var(--fg)}
+.now{border:2px solid var(--turq)}
+.stepn{display:inline-block;font-size:13px;font-weight:800;color:var(--turq-ink);background:var(--turq-bg);padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.total{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.total b{font-size:30px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.det{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14.5px;margin-top:10px;color:var(--muted)}
+.det b{color:var(--fg);text-align:right;font-variant-numeric:tabular-nums}
+details>summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::after{content:"›";font-size:22px;color:var(--muted);transform:rotate(90deg);transition:transform .2s}
+details[open]>summary::after{transform:rotate(-90deg)}
+/* lignes du devis */
+.ln{display:flex;width:100%;text-align:left;gap:10px;align-items:center;padding:11px 4px;border-bottom:1px solid var(--line)}
+.ln:last-child{border-bottom:0}
+.ln .t{flex:1;min-width:0}.ln .t small{display:block;color:var(--muted);font-size:13.5px;font-variant-numeric:tabular-nums}
+.ln .x{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ln .e{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-size:15px}
+.ln.mod .t::after{content:"modifiée";display:inline-block;margin-top:3px;font-size:12px;font-weight:800;color:var(--turq-ink);background:var(--turq-bg);padding:1px 8px;border-radius:999px}
+.ln.pr .t small::after{content:" · tarif provisoire";color:var(--warn);font-weight:700}
+.ln.off{opacity:.45;text-decoration:line-through}
+.add{width:100%;padding:12px;border:1.5px dashed var(--line);border-radius:14px;font-weight:800;color:var(--muted);margin-top:8px}
+/* à vérifier */
+.chk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.chk:last-child{border-bottom:0}
+.chk p{flex:1;margin:0}
+.chk button{flex:none;padding:7px 12px;border-radius:999px;background:var(--soft);font-weight:800;font-size:14px}
+.chk.done p{color:var(--muted);text-decoration:line-through}.chk.done button{background:var(--ok-bg);color:var(--ok)}
+/* menuiseries */
+.mn{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:0 0 10px}
+.mn .hd{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px}
+.mn .hd b{font-size:16px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14.5px}
+.kv span{color:var(--muted)}.kv b{font-weight:700}.kv b.manq{color:var(--warn)}
+.mail{background:var(--soft);border-radius:14px;padding:12px;font-size:14.5px;white-space:pre-wrap;line-height:1.5}
+label.f{display:block;font-weight:700;font-size:14px;margin:10px 0 4px}
+input.i,select.i,textarea.i{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-size:16px}
+.eur{display:flex;align-items:center;gap:8px}.eur input{text-align:right;font-variant-numeric:tabular-nums}
+.drop{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;padding:22px 14px;border:2px dashed var(--turq);border-radius:16px;background:var(--turq-bg);color:var(--turq-ink);font-weight:800;text-align:center}
+.drop small{font-weight:600;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{padding:18px 12px;border-radius:16px;font-weight:800;font-size:17px}
+.big.yes{background:var(--ok);color:#fff}.big.no{background:var(--soft);color:var(--fg)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chips button{padding:9px 14px;border-radius:999px;background:var(--soft);font-weight:700}
+.chips button[aria-pressed="true"]{background:var(--btn);color:var(--btn-fg)}
+.hist{font-size:14px;color:var(--muted)}.hist li{margin:3px 0}
+.done-ic{font-size:40px;line-height:1}
+/* barre d'action en bas : un seul gros bouton */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:linear-gradient(transparent,var(--bg) 28%);padding:22px 16px calc(14px + env(safe-area-inset-bottom))}
+.bar .in{max-width:760px;margin:0 auto}
+.go{display:block;width:100%;padding:17px 18px;border-radius:999px;background:var(--btn);color:var(--btn-fg);font-weight:800;font-size:17.5px;box-shadow:0 10px 24px rgba(11,18,38,.18)}
+.go[disabled]{opacity:.45;cursor:default}
+.sub{display:block;width:100%;text-align:center;padding:10px;font-weight:700;color:var(--muted);font-size:15px}
+/* feuille du bas */
+.sh{position:fixed;inset:0;z-index:30;background:rgba(7,11,24,.5);display:flex;align-items:flex-end;justify-content:center}
+.sh[hidden]{display:none}
+.sh .p{background:var(--card);width:100%;max-width:760px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.sh .p h2{margin-bottom:10px}
+.row{display:flex;gap:10px;margin-top:14px}.row>*{flex:1}
+.sec{display:block;width:100%;padding:15px;border-radius:999px;background:var(--soft);font-weight:800;font-size:16px}
+.dang{color:#C2410C}
+.toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);z-index:40;background:var(--nuit);color:#fff;padding:11px 16px;border-radius:999px;font-weight:700;font-size:15px;box-shadow:0 10px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px);text-align:center}
+.toast[hidden]{display:none}
+@media (min-width:700px){h1{font-size:30px}}
+@media (max-width:560px){.progl{display:none}.prog{margin-bottom:14px}}
+</style></head><body>
+<div class="wrap" id="app"></div>
+<div class="bar" id="bar" hidden><div class="in" id="barin"></div></div>
+<div class="sh" id="sh" hidden><div class="p" id="shp" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+(function(){
+"use strict";
+/* ---------- données d'exemple ---------- */
+// Pré-devis : sortie réelle du calcul ProClik (version 2026-10-27, base de prix BRS) pour une demande fictive.
+var MAT=[["Montant M48 2,59 m",8,"barre",2.46],["Rail R48 3 m",3,"barre",2.37],["Plaque BA13 250 × 120",27,"plaque",9.48],["Laine 45 mm (rouleau 9,6 m²)",1,"rouleau",18.19],["Bloc-porte alvéolaire 204 × 83",1,"pièce",107.86],["Poignée standard Joffrin",1,"pièce",16.25],["Rail contre-cloison 3 m",18,"barre",1.89],["Fourrure F47 3 m",52,"barre",2.28],["Appui Proside 30/120",42,"pièce",1.33],["Laine Acoustiplus 032 kraft 120 mm",18,"rouleau",36.67],["Pointes Pulsa + gaz",144,"pointe",.13],["Vis TTPC 25",797,"pièce",.0076],["Bande à joint (au mètre)",67,"m",.034],["Enduit Proplak 8H 25 kg",2,"sac",18.97],["Film de protection 165 m²",1,"pièce",27.25]];
+var MO=[["Pose bloc-porte (chambre)",1,"pièce",150,1],["Pose cloison (chambre)",7.5,"m²",22.5],["Pose doublage (mur 1)",14.3,"m²",22.5],["Pose doublage (mur 2)",14.3,"m²",22.5],["Pose doublage (mur 3)",10.8,"m²",22.5],["Pose doublage (mur 4)",12,"m²",22.5],["Dépose fenêtre F1",1,"pièce",250,1],["Dépose fenêtre F2",1,"pièce",250,1],["Dépose fenêtre F3",1,"pièce",250,1],["Nettoyage de fin de chantier",66.4,"m²",5.5,1]];
+var VERIF=["Porte de la chambre : sens d'ouverture (poussant gauche ou droite) ?","Déplacement : la commune est-elle dans votre zone sans frais ?","Fenêtres : pose et accessoires de pose à chiffrer avec le prix du fournisseur."];
+// Menuiseries décrites par le client dans le formulaire : base de la demande de prix au fournisseur.
+var MENU=[
+ {rep:"F1",piece:"Séjour",type:"Fenêtre",L:140,H:135,mat:"PVC",ouv:"2 vantaux, ouvrant à la française",coul:"Blanc",vitrage:"",pose:"Rénovation (dépose complète de l'ancienne)",volet:"Volet roulant motorisé",volet_det:""},
+ {rep:"F2",piece:"Cuisine",type:"Fenêtre",L:100,H:115,mat:"PVC",ouv:"1 vantail oscillo-battant",coul:"Blanc",vitrage:"",pose:"Rénovation (dépose complète de l'ancienne)",volet:"Aucun",volet_det:""},
+ {rep:"F3",piece:"Chambre",type:"Fenêtre",L:120,H:135,mat:"PVC",ouv:"2 vantaux, ouvrant à la française",coul:"Blanc",vitrage:"",pose:"Rénovation (dépose complète de l'ancienne)",volet:"Aucun",volet_det:""}];
+var MARGE=.10,FG=.15; // réglages de la base BRS (frais généraux « sur tout » encore provisoires)
+var ETAPES=[["verifier","Vérifier"],["fournisseur","Fournisseur"],["valider","Valider"],["client","Client"],["acompte","Acompte"],["chantier","Chantier"],["facture","Facture"]];
+var POS={verifier:0,prix_envoi:1,prix_attente:1,prix_lu:1,valider:2,envoi_client:2,reponse:3,acompte_facture:4,acompte_attente:4,chantier:5,facture:6,facture_attente:6,fini:7,refuse:7};
+var GHL={verifier:"Pré-devis à valider",prix_envoi:"En attente du fournisseur",prix_attente:"En attente du fournisseur",prix_lu:"En attente du fournisseur",valider:"Pré-devis à valider",envoi_client:"Pré-devis à valider",reponse:"Devis envoyé",acompte_facture:"Signé, acompte reçu",acompte_attente:"Signé, acompte reçu",chantier:"Chantier en cours",facture:"Chantier terminé",facture_attente:"Chantier terminé",fini:"Chantier terminé",refuse:"Perdu"};
+
+function neuf(nom,ville,etape,extra){var d={id:Math.random().toString(36).slice(2,9),client:nom,ville:ville,resume:"Maison : cloison de 3 m avec bloc-porte 83 dans la chambre, doublage isolant des murs extérieurs, 3 fenêtres PVC (dont 1 avec volet roulant).",
+ etape:etape,mat:MAT.map(function(x){return {lib:x[0],q:x[1],u:x[2],pu:x[3]}}),mo:MO.map(function(x){return {lib:x[0],q:x[1],u:x[2],pu:x[3],prov:!!x[4]}}),
+ verif:VERIF.map(function(t){return {t:t,ok:false}}),menu:MENU.map(function(m){return Object.assign({prix:null,prixPose:null},m)}),fourn:{nom:"Tout Faire Matériaux",mail:""},depot:null,acompte:30,hist:[["Demande reçue par le formulaire",'hier 21 h 12']],recu:"hier, 21 h 12"};
+ return Object.assign(d,extra||{})}
+function depart(){return {tip:true,cur:null,demandes:[neuf("Jean Martin","Crolles","verifier"),neuf("Sophie Durand","Meylan","reponse",{recu:"il y a 5 jours"}),neuf("Paul Petit","Grenoble","chantier",{recu:"il y a 3 semaines"})]}}
+var K="pc-parcours-v1",S;
+try{S=JSON.parse(localStorage.getItem(K)||"null")}catch(e){S=null}
+if(!S||!S.demandes)S=depart();
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+
+/* ---------- outils ---------- */
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function eur(n,d){return (Math.round((+n||0)*100)/100).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:d||2})+" €"}
+function qte(n){return (+n).toLocaleString("fr-FR",{maximumFractionDigits:2})}
+function maintenant(){var d=new Date();return "aujourd'hui "+d.getHours()+" h "+String(d.getMinutes()).padStart(2,"0")}
+function D(){return S.demandes.filter(function(x){return x.id===S.cur})[0]}
+function totaux(d){var m=0,o=0;d.mat.forEach(function(l){if(!l.off)m+=l.q*l.pu});d.mo.forEach(function(l){if(!l.off)o+=l.q*l.pu});
+ d.menu.forEach(function(x){if(x.prix!=null)m+=+x.prix;if(x.prixPose!=null)o+=+x.prixPose});
+ m=Math.round(m*100)/100;o=Math.round(o*100)/100;var mg=Math.round(m*MARGE*100)/100,fg=Math.round((m+mg+o)*FG*100)/100;
+ return {mat:m,marge:mg,mo:o,fg:fg,ht:Math.round((m+mg+o+fg)*100)/100}}
+function aChiffrer(d){return d.menu.filter(function(x){return x.prix==null}).length}
+function toast(t){var e=$("#toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){e.hidden=true},2600)}
+function hist(d,t){d.hist.push([t,maintenant()])}
+function aller(d,etape,t){d.etape=etape;if(t)hist(d,t);save();rendre();scrollTo(0,0)}
+
+/* ce qu'il faut faire, en mots simples (liste et cartes) */
+function quoi(d){var n=aChiffrer(d);return {
+ verifier:["now","Vérifier le pré-devis"],prix_envoi:["now","Envoyer la demande de prix"],prix_attente:["wait","Attend le devis du fournisseur"],prix_lu:["now","Contrôler les prix lus par Cliky"],
+ valider:["now","Valider le devis"],envoi_client:["now","Envoyer le devis au client"],reponse:["wait","Attend la réponse du client"],acompte_facture:["now","Envoyer la facture d'acompte"],
+ acompte_attente:["wait","Attend l'acompte"],chantier:["chantier","Chantier en cours"],facture:["now","Envoyer la facture finale"],facture_attente:["wait","Attend le paiement"],fini:["fin","Terminé et payé"],refuse:["fin","Refusé par le client"]}[d.etape]}
+
+/* ---------- liste ---------- */
+function carte(d){var q=quoi(d),t=totaux(d);
+ return '<button class="dm'+(q[0]==="now"?" now":"")+'" type="button" data-open="'+d.id+'"><div class="r"><span><b>'+esc(d.client)+'</b><small>'+esc(d.ville)+' · reçue '+esc(d.recu)+'</small></span></div>'+
+  '<div class="amt">'+eur(t.ht)+' <span class="mu sm">HT</span></div>'+
+  (q[0]==="now"?'<span class="act">'+esc(q[1])+' ›</span>':'<span class="wait">'+(q[0]==="wait"?"⏳ ":q[0]==="chantier"?"🛠 ":"")+esc(q[1])+'</span>')+'</button>'}
+function liste(){var L=S.demandes,g=function(k){return L.filter(function(d){return quoi(d)[0]===k})};
+ var a=g("now"),w=g("wait"),c=g("chantier"),f=g("fin");
+ var h='<div class="maq"><span>Maquette : rien n\'est envoyé, les clients sont fictifs.</span><button type="button" data-reset>Recommencer</button></div>'+
+  '<h1>Bonsoir Aurélien</h1><p class="mu">'+(a.length?(a.length===1?"Une demande attend votre œil. Le reste avance tout seul.":a.length+" demandes attendent votre œil. Le reste avance tout seul."):"Rien à faire ce soir. Le reste avance tout seul.")+'</p>';
+ if(S.tip)h+='<div class="tip"><b>Comment ça marche</b><ol><li>Touchez une demande.</li><li>Faites ce que dit le gros bouton en bas.</li><li>C\'est tout : l\'étape suivante vient toute seule.</li></ol><button type="button" data-tip>J\'ai compris</button></div>';
+ h+='<div class="grp"><h2>À faire</h2><span>'+a.length+'</span></div>'+(a.length?a.map(carte).join(""):'<p class="mu">Rien pour l\'instant. Le café peut rester chaud.</p>');
+ if(w.length)h+='<div class="grp"><h2>En attente des autres</h2><span>'+w.length+'</span></div>'+w.map(carte).join("");
+ if(c.length)h+='<div class="grp"><h2>Chantiers</h2><span>'+c.length+'</span></div>'+c.map(carte).join("");
+ if(f.length)h+='<details class="card" style="margin-top:20px"><summary>Terminées ('+f.length+')</summary><div style="margin-top:10px">'+f.map(carte).join("")+'</div></details>';
+ $("#app").innerHTML=h;$("#bar").hidden=true}
+
+/* ---------- une demande ---------- */
+function tete(d){var p=POS[d.etape];
+ return '<button class="back" type="button" data-home>‹ Mes demandes</button>'+
+  '<h1>'+esc(d.client)+'</h1><p class="mu" style="margin:0">'+esc(d.ville)+' · reçue '+esc(d.recu)+'</p>'+
+  '<div class="contact"><a class="chip" href="tel:">📞 Appeler</a><a class="chip" href="sms:">💬 SMS</a><a class="chip" href="#" data-noop>🧭 Itinéraire</a></div>'+
+  '<div class="prog" aria-hidden="true">'+ETAPES.map(function(e,i){return '<i class="'+(i<p?"d":i===p?"c":"")+'"></i>'}).join("")+'</div>'+
+  '<div class="progl">'+ETAPES.map(function(e,i){return '<span class="'+(i===p?"c":"")+'">'+e[1]+'</span>'}).join("")+'</div>'}
+function totalCarte(d,titre){var t=totaux(d);
+ return '<div class="card"><div class="total"><span class="mu">'+(titre||"Total du devis")+'</span><b>'+eur(t.ht)+' <span class="mu sm">HT</span></b></div>'+
+  (aChiffrer(d)?'<p class="sm" style="margin:6px 0 0;color:var(--warn)">+ '+aChiffrer(d)+' menuiserie'+(aChiffrer(d)>1?"s":"")+' à chiffrer chez le fournisseur</p>':'')+
+  '<details style="margin-top:10px"><summary class="sm">Voir le détail du calcul</summary><div class="det"><span>Matériaux (achat)</span><b>'+eur(t.mat)+'</b><span>Marge matériaux '+MARGE*100+' %</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.mo)+'</b><span>Frais généraux '+FG*100+' %</span><b>'+eur(t.fg)+'</b></div><p class="sm mu" style="margin:8px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'}
+function ligne(l,k,i,edit){return '<button class="ln'+(l.mod?" mod":"")+(l.prov?" pr":"")+(l.off?" off":"")+'" type="button"'+(edit?' data-edit="'+k+'.'+i+'"':' disabled')+'><span class="t">'+esc(l.lib)+'<small>'+qte(l.q)+' '+esc(l.u)+' × '+eur(l.pu,4)+'</small></span><span class="x">'+eur(l.q*l.pu)+'</span>'+(edit?'<span class="e" aria-hidden="true">✎</span>':'')+'</button>'}
+function lignes(d,edit){var nv=d.verif.filter(function(v){return !v.ok}).length;
+ var h='';
+ h+='<div class="card"><h3>À vérifier ('+nv+')</h3>'+d.verif.map(function(v,i){return '<div class="chk'+(v.ok?" done":"")+'"><p>'+esc(v.t)+'</p><button type="button" data-ok="'+i+'">'+(v.ok?"✓ Vu":"C\'est vu")+'</button></div>'}).join("")+'</div>';
+ h+='<div class="card"><h3>Main-d\'œuvre</h3>'+d.mo.map(function(l,i){return ligne(l,"mo",i,edit)}).join("")+(edit?'<button class="add" type="button" data-addl="mo">＋ Ajouter une ligne</button>':'')+'</div>';
+ h+='<div class="card"><h3>Matériaux · prix d\'achat</h3>'+d.mat.map(function(l,i){return ligne(l,"mat",i,edit)}).join("")+(edit?'<button class="add" type="button" data-addl="mat">＋ Ajouter une ligne</button>':'')+'</div>';
+ h+='<div class="card"><h3>Menuiseries · chez le fournisseur</h3>'+d.menu.map(function(m){return '<div class="ln" style="cursor:default"><span class="t">'+esc(m.rep+" "+m.type+" "+m.piece)+'<small>'+m.L+' × '+m.H+' cm · '+esc(m.mat)+(m.volet!=="Aucun"?" · + "+esc(m.volet.toLowerCase()):"")+'</small></span><span class="x">'+(m.prix!=null?eur(m.prix):'<span class="pill w">à chiffrer</span>')+'</span></div>'}).join("")+'</div>';
+ return h}
+function demandeClient(d){return '<details class="card"><summary>La demande du client</summary><p class="mu sm" style="margin:10px 0">'+esc(d.resume)+'</p><p class="sm mu">Dans le vrai Espace : les réponses du formulaire, les photos et le plan dessiné par le client sont ici.</p></details>'}
+function manuel(d){return '<details class="card"><summary class="mu">Changer l\'étape à la main</summary><p class="sm mu" style="margin:10px 0">À utiliser seulement en cas de besoin. Étape actuelle dans GHL : <b>'+esc(GHL[d.etape])+'</b>.</p><div class="chips">'+
+ [["verifier","Vérifier"],["prix_attente","Fournisseur"],["valider","Valider"],["reponse","Réponse client"],["acompte_attente","Acompte"],["chantier","Chantier"],["facture","Facture"],["fini","Terminé"],["refuse","Refusé"]].map(function(x){return '<button type="button" data-man="'+x[0]+'" aria-pressed="'+(d.etape===x[0])+'">'+x[1]+'</button>'}).join("")+'</div></details>'+
+ '<details class="card"><summary class="mu">Historique</summary><ul class="hist">'+d.hist.slice().reverse().map(function(x){return '<li>'+esc(x[0])+' · '+esc(x[1])+'</li>'}).join("")+'</ul></details>'}
+function barre(go,sub){var b=$("#bar");if(!go&&!sub){b.hidden=true;return}b.hidden=false;
+ $("#barin").innerHTML=(go?'<button class="go" type="button" data-go="'+go[1]+'"'+(go[2]?" disabled":"")+'>'+go[0]+'</button>':'')+(sub?'<button class="sub" type="button" data-go="'+sub[1]+'">'+sub[0]+'</button>':'')}
+function etapeCarte(n,titre,txt){return '<div class="card now"><span class="stepn">'+n+'</span><h2>'+titre+'</h2><p class="mu" style="margin:0">'+txt+'</p></div>'}
+function menuFiche(m,i,edit){var manq=function(v){return v?'<b>'+esc(v)+'</b>':'<b class="manq">à préciser</b>'};
+ return '<div class="mn"><div class="hd"><b>'+esc(m.rep+" · "+m.type+" "+m.piece)+'</b>'+(edit?'<button class="chip" type="button" data-menu="'+i+'">✎ Modifier</button>':'')+'</div><div class="kv">'+
+  '<span>Dimensions</span><b>'+m.L+' × '+m.H+' cm (largeur × hauteur, en tableau)</b><span>Matériau</span>'+manq(m.mat)+'<span>Ouverture</span>'+manq(m.ouv)+'<span>Couleur</span>'+manq(m.coul)+'<span>Vitrage</span>'+manq(m.vitrage)+'<span>Pose</span>'+manq(m.pose)+
+  '<span>Volet</span><b>'+esc(m.volet)+'</b>'+(m.volet!=="Aucun"?'<span>Détail volet</span>'+manq(m.volet_det):'')+'</div></div>'}
+function mail(d){return "Bonjour,\n\nPouvez-vous me faire un prix pour les menuiseries ci-dessous (chantier à "+d.ville+") ?\n\n"+
+ d.menu.map(function(m){return "• "+m.rep+" – "+m.type+" "+m.piece+" : "+m.L+" × "+m.H+" cm, "+[m.mat,m.ouv,m.coul,m.vitrage||"vitrage à préciser"].join(", ")+". Pose : "+m.pose+"."+(m.volet!=="Aucun"?" Avec "+m.volet.toLowerCase()+(m.volet_det?" ("+m.volet_det+")":"")+".":"")}).join("\n")+
+ "\n\nMerci de m'indiquer aussi le délai.\n\nBien cordialement,\nAurélien – BRS"}
+function demande(){var d=D();if(!d){S.cur=null;rendre();return}var h=tete(d),t=totaux(d),nv=d.verif.filter(function(v){return !v.ok}).length,n=aChiffrer(d);
+ switch(d.etape){
+ case "verifier":
+  h+=etapeCarte("Étape 1 sur 7","Vérifiez le pré-devis","Cliky a tout calculé. Touchez une ligne pour la corriger"+(nv?", et cochez les "+nv+" points à vérifier":"")+".");
+  h+=totalCarte(d,"Pré-devis")+lignes(d,true);
+  barre(n?["Demander le prix des fenêtres au fournisseur ›","prix_envoi"]:["Le pré-devis est bon ›","valider"],["Je finirai plus tard","home"]);break;
+ case "prix_envoi":
+  h+=etapeCarte("Étape 2 sur 7","Demandez le prix des menuiseries","Tout est déjà rempli à partir de la demande du client. Vérifiez, complétez ce qui manque, puis envoyez.");
+  h+='<div class="card"><h3>Fournisseur</h3><label class="f" for="fn">Nom</label><input class="i" id="fn" value="'+esc(d.fourn.nom)+'"><label class="f" for="fm">E-mail du fournisseur</label><input class="i" id="fm" type="email" inputmode="email" placeholder="adresse e-mail du fournisseur" value="'+esc(d.fourn.mail)+'"><p class="sm mu" style="margin:6px 0 0">Gardé pour les prochaines fois.</p></div>';
+  h+='<div class="card"><h3>Ce qui est demandé ('+d.menu.length+')</h3>'+d.menu.map(function(m,i){return menuFiche(m,i,true)}).join("")+'</div>';
+  h+='<details class="card"><summary>Voir l\'e-mail qui partira</summary><p class="sm mu" style="margin:10px 0 6px">Objet : Demande de prix menuiseries – chantier '+esc(d.client)+', '+esc(d.ville)+'</p><div class="mail">'+esc(mail(d))+'</div></details>';
+  barre(["Envoyer la demande au fournisseur ›","envoyer_fourn"],["‹ Revenir au pré-devis","verifier"]);break;
+ case "prix_attente":
+  h+=etapeCarte("Étape 2 sur 7","Le fournisseur a votre demande","Envoyée à "+esc(d.fourn.nom)+". Dès que son devis arrive, déposez-le ici : Cliky lit les prix et met le devis à jour tout seul.");
+  h+='<div class="card"><button class="drop" type="button" data-depot>📎 Déposer le devis du fournisseur<small>photo, capture ou PDF</small></button><p class="sm mu" style="margin:10px 0 0">Plus tard : s\'il répond par e-mail, Cliky le récupérera directement.</p></div>';
+  h+=totalCarte(d,"Devis en attente des prix");
+  barre(null,["Relancer le fournisseur","relance"]);break;
+ case "prix_lu":
+  h+=etapeCarte("Étape 2 sur 7","Cliky a lu le devis du fournisseur","Contrôlez les prix d'achat reportés pour chaque menuiserie, et la pose. Votre marge s'ajoute toute seule.");
+  h+='<p class="maq"><span>Maquette : Cliky ne lit pas encore les devis. Tapez des prix pour voir le calcul.</span></p>';
+  h+='<div class="card"><h3>Prix reportés · '+esc(d.depot||"devis fournisseur")+'</h3>'+d.menu.map(function(m,i){return '<div class="mn"><b>'+esc(m.rep+" · "+m.type+" "+m.piece+" "+m.L+" × "+m.H)+(m.volet!=="Aucun"?" + volet":"")+'</b><label class="f" for="px'+i+'">Prix d\'achat fournisseur HT</label><div class="eur"><input class="i" id="px'+i+'" data-px="'+i+'" inputmode="decimal" placeholder="0,00" value="'+(m.prix!=null?String(m.prix).replace(".",","):"")+'"><span>€</span></div><label class="f" for="po'+i+'">Votre prix de pose HT</label><div class="eur"><input class="i" id="po'+i+'" data-po="'+i+'" inputmode="decimal" placeholder="0,00" value="'+(m.prixPose!=null?String(m.prixPose).replace(".",","):"")+'"><span>€</span></div></div>'}).join("")+'</div>';
+  h+=totalCarte(d,"Nouveau total");
+  barre(["Les prix sont bons ›","valider",!!n],["‹ Déposer un autre devis","prix_attente"]);break;
+ case "valider":
+  h+=etapeCarte("Étape 3 sur 7","Contrôlez et validez le devis","Dernier coup d'œil avant de l'envoyer au client. Vous pouvez encore corriger une ligne.");
+  if(nv)h+='<p class="maq"><span>'+nv+' point'+(nv>1?"s":"")+' à vérifier reste'+(nv>1?"nt":"")+' non coché'+(nv>1?"s":"")+'.</span></p>';
+  h+=totalCarte(d,"Devis final")+lignes(d,true);
+  barre(["Valider le devis ✓","envoi_client",!!n],["‹ Revenir en arrière","verifier"]);break;
+ case "envoi_client":
+  h+=etapeCarte("Étape 3 sur 7","Devis validé. On l'envoie au client ?","Le client reçoit le devis par e-mail avec un bouton pour l'accepter. Rien ne part sans votre accord.");
+  h+=totalCarte(d,"Devis validé");
+  barre(["Envoyer le devis au client ›","envoyer_client"],["Je l'ai remis moi-même au client","remis"]);break;
+ case "reponse":
+  h+=etapeCarte("Étape 4 sur 7","En attente de la réponse du client","Le client est relancé tout seul après 3 jours. Dès qu'il vous répond, touchez sa réponse.");
+  h+='<div class="two"><button class="big yes" type="button" data-go="accepte">✓ Le client accepte</button><button class="big no" type="button" data-go="refuse_q">✗ Le client refuse</button></div><div style="height:12px"></div>';
+  h+=totalCarte(d,"Devis envoyé");barre(null,["‹ Revenir au devis","valider"]);break;
+ case "acompte_facture":
+  h+=etapeCarte("Étape 5 sur 7","Bravo, devis accepté ! Facture d'acompte","Cliky a préparé la facture d'acompte à partir du devis. Choisissez le pourcentage, vérifiez, puis envoyez.");
+  h+='<div class="card"><h3>Acompte</h3><div class="chips">'+[20,30,40,50].map(function(p){return '<button type="button" data-acpt="'+p+'" aria-pressed="'+(d.acompte===p)+'">'+p+' %</button>'}).join("")+'</div><div class="total" style="margin-top:14px"><span class="mu">Facture d\'acompte ('+d.acompte+' %)</span><b>'+eur(t.ht*d.acompte/100)+' <span class="mu sm">HT</span></b></div><p class="sm mu" style="margin:6px 0 0">Pourcentage à confirmer avec BRS. TVA ajoutée selon votre réglage.</p></div>';
+  barre(["Envoyer la facture d'acompte ›","envoyer_acompte"],["Le client a déjà payé l'acompte","acompte_recu"]);break;
+ case "acompte_attente":
+  h+=etapeCarte("Étape 5 sur 7","En attente de l'acompte","Facture d'acompte envoyée ("+eur(t.ht*d.acompte/100)+" HT). Dès que le paiement arrive, le chantier démarre tout seul.");
+  barre(["L'acompte est arrivé : démarrer le chantier ›","acompte_recu"],null);break;
+ case "chantier":
+  h+=etapeCarte("Étape 6 sur 7","Chantier en cours","Quand c'est fini, touchez le bouton : Cliky prépare la facture finale.");
+  h+=totalCarte(d,"Devis accepté")+'<details class="card"><summary>Lignes du devis</summary><div style="margin-top:8px">'+d.mat.concat(d.mo).map(function(l){return ligne(l,"",0,false)}).join("")+'</div></details>';
+  barre(["Le chantier est terminé ›","facture"],null);break;
+ case "facture":
+  var ac=Math.round(t.ht*d.acompte)/100;
+  h+=etapeCarte("Étape 7 sur 7","Facture finale prête","Cliky l'a préparée à partir du devis accepté, acompte déduit. Vérifiez, puis envoyez.");
+  h+='<div class="card"><div class="det" style="margin-top:0"><span>Total des travaux</span><b>'+eur(t.ht)+'</b><span>Acompte déjà payé ('+d.acompte+' %)</span><b>− '+eur(ac)+'</b></div><div class="total" style="margin-top:12px"><span class="mu">Reste à payer</span><b>'+eur(t.ht-ac)+' <span class="mu sm">HT</span></b></div><p class="sm mu" style="margin:6px 0 0">Un supplément pendant le chantier ? Ajoutez une ligne avant d\'envoyer.</p><button class="add" type="button" data-addl="mo">＋ Ajouter un supplément</button></div>';
+  barre(["Envoyer la facture au client ›","envoyer_facture"],null);break;
+ case "facture_attente":
+  h+=etapeCarte("Étape 7 sur 7","En attente du paiement","Facture finale envoyée. Le client est relancé tout seul s'il tarde.");
+  barre(["Le client a payé ✓","paye"],null);break;
+ case "fini":
+  h+='<div class="card now" style="text-align:center"><div class="done-ic">🎉</div><h2>Chantier terminé et payé</h2><p class="mu">Tout est rangé. Bien joué !</p></div>';barre(null,["‹ Mes demandes","home"]);break;
+ case "refuse":
+  h+='<div class="card" style="text-align:center"><h2>Devis refusé</h2><p class="mu">'+esc(d.raison||"")+'</p><button class="chip" type="button" data-go="reponse">Remettre en attente de réponse</button></div>';barre(null,["‹ Mes demandes","home"]);break;
+ }
+ h+=demandeClient(d)+manuel(d);
+ $("#app").innerHTML=h;
+ var fn=$("#fn"),fm=$("#fm");if(fn)fn.oninput=function(){d.fourn.nom=fn.value;save()};if(fm)fm.oninput=function(){d.fourn.mail=fm.value.trim();save()};
+ document.querySelectorAll("[data-px],[data-po]").forEach(function(inp){inp.oninput=function(){var i=+(inp.dataset.px||inp.dataset.po),v=inp.value.replace(/\s/g,"").replace(",","."),n=v===""?null:+v;if(n!=null&&!(n>=0))return;d.menu[i][inp.dataset.px!=null?"prix":"prixPose"]=n;save();
+  var go=$(".go");if(go)go.disabled=!!aChiffrer(d);var tc=document.querySelectorAll(".card .total b");var tt=totaux(d);tc.forEach(function(b){b.innerHTML=eur(tt.ht)+' <span class="mu sm">HT</span>'})}});
+}
+function rendre(){if(S.cur)demande();else liste()}
+
+/* ---------- feuilles ---------- */
+function feuille(h){$("#shp").innerHTML=h;$("#sh").hidden=false;var f=$("#shp input");if(f)setTimeout(function(){f.focus()},50)}
+function fermer(){$("#sh").hidden=true}
+$("#sh").addEventListener("click",function(e){if(e.target.id==="sh")fermer()});
+function editLigne(k,i){var d=D(),l=d[k][i];
+ feuille('<h2>'+esc(l.lib)+'</h2><label class="f" for="eq">Quantité ('+esc(l.u)+')</label><input class="i" id="eq" inputmode="decimal" value="'+String(l.q).replace(".",",")+'"><label class="f" for="ep">Prix unitaire HT</label><div class="eur"><input class="i" id="ep" inputmode="decimal" value="'+String(l.pu).replace(".",",")+'"><span>€</span></div>'+
+  '<div class="row"><button class="sec" type="button" data-shx>Annuler</button><button class="go" type="button" data-shok="'+k+'.'+i+'">Enregistrer</button></div>'+
+  '<button class="sub dang" type="button" data-shdel="'+k+'.'+i+'">'+(l.off?"Remettre cette ligne":"Retirer cette ligne du devis")+'</button>')}
+function addLigne(k){feuille('<h2>Nouvelle ligne</h2><label class="f" for="al">Désignation</label><input class="i" id="al" placeholder="ex. Reprise d\'enduit"><label class="f" for="aq">Quantité</label><input class="i" id="aq" inputmode="decimal" value="1"><label class="f" for="au">Unité</label><input class="i" id="au" value="'+(k==="mo"?"forfait":"pièce")+'"><label class="f" for="ap">Prix unitaire HT</label><div class="eur"><input class="i" id="ap" inputmode="decimal" placeholder="0,00"><span>€</span></div><div class="row"><button class="sec" type="button" data-shx>Annuler</button><button class="go" type="button" data-shadd="'+k+'">Ajouter</button></div>')}
+function editMenu(i){var m=D().menu[i],f=function(id,lab,v,ph){return '<label class="f" for="'+id+'">'+lab+'</label><input class="i" id="'+id+'" value="'+esc(v)+'" placeholder="'+esc(ph||"")+'">'};
+ feuille('<h2>'+esc(m.rep+" · "+m.type+" "+m.piece)+'</h2><div class="two">'+f("mL","Largeur (cm)",m.L)+f("mH","Hauteur (cm)",m.H)+'</div>'+f("mm","Matériau",m.mat)+f("mo","Ouverture",m.ouv)+f("mc","Couleur",m.coul)+f("mv","Vitrage",m.vitrage,"ex. double vitrage, à préciser")+f("mp","Pose",m.pose)+f("mvo","Volet",m.volet)+(m.volet!=="Aucun"?f("mvd","Détail du volet",m.volet_det,"commande, coffre, couleur…"):"")+
+  '<div class="row"><button class="sec" type="button" data-shx>Annuler</button><button class="go" type="button" data-shmenu="'+i+'">Enregistrer</button></div>')}
+function num(v){v=String(v).replace(/\s/g,"").replace(",",".");return v===""||!(+v>=0)?null:+v}
+
+/* ---------- actions ---------- */
+function action(a){var d=D();
+ switch(a){
+ case "home":S.cur=null;save();rendre();scrollTo(0,0);break;
+ case "verifier":case "valider":case "prix_attente":case "reponse":aller(d,a);break;
+ case "prix_envoi":aller(d,"prix_envoi","Pré-devis vérifié, mis en attente du fournisseur");break;
+ case "envoyer_fourn":if(!d.fourn.mail){toast("Indiquez l'e-mail du fournisseur.");var fm=$("#fm");if(fm)fm.focus();return}
+  feuille('<h2>Envoyer à '+esc(d.fourn.nom)+' ?</h2><p class="mu">La demande de prix part à <b>'+esc(d.fourn.mail)+'</b>, depuis votre adresse.</p><div class="row"><button class="sec" type="button" data-shx>Pas encore</button><button class="go" type="button" data-shgo="fourn_ok">Oui, envoyer</button></div>');break;
+ case "fourn_ok":fermer();toast("Demande envoyée (maquette : rien n'est parti).");aller(d,"prix_attente","Demande de prix envoyée à "+d.fourn.nom);break;
+ case "relance":toast("Relance envoyée au fournisseur (maquette).");hist(d,"Fournisseur relancé");save();break;
+ case "envoi_client":aller(d,"envoi_client","Devis validé");break;
+ case "envoyer_client":feuille('<h2>Envoyer le devis au client ?</h2><p class="mu">'+esc(d.client)+' le reçoit par e-mail, avec un bouton pour l\'accepter.</p><div class="row"><button class="sec" type="button" data-shx>Pas encore</button><button class="go" type="button" data-shgo="client_ok">Oui, envoyer</button></div>');break;
+ case "client_ok":fermer();toast("Devis envoyé (maquette : rien n'est parti).");aller(d,"reponse","Devis envoyé au client");break;
+ case "remis":aller(d,"reponse","Devis remis en main propre");break;
+ case "accepte":aller(d,"acompte_facture","Le client a accepté le devis");break;
+ case "refuse_q":feuille('<h2>Le client refuse</h2><p class="mu">Pourquoi ? (facultatif, ça aide à progresser)</p><div class="chips">'+["Trop cher","Autre artisan","Projet reporté","Sans réponse","Autre"].map(function(r){return '<button type="button" data-raison="'+r+'">'+r+'</button>'}).join("")+'</div><div class="row"><button class="sec" type="button" data-shx>Annuler</button></div>');break;
+ case "envoyer_acompte":toast("Facture d'acompte envoyée (maquette).");aller(d,"acompte_attente","Facture d'acompte envoyée ("+d.acompte+" %)");break;
+ case "acompte_recu":aller(d,"chantier","Acompte reçu, chantier démarré");break;
+ case "facture":aller(d,"facture","Chantier terminé");break;
+ case "envoyer_facture":toast("Facture envoyée (maquette).");aller(d,"facture_attente","Facture finale envoyée");break;
+ case "paye":aller(d,"fini","Facture payée");break;
+ }}
+document.addEventListener("click",function(e){var b=e.target.closest("button,a[data-noop]");if(!b)return;var s=b.dataset,d=D();
+ if(b.hasAttribute("data-noop")){e.preventDefault();return}
+ if(s.open){S.cur=s.open;save();rendre();scrollTo(0,0);return}
+ if(b.hasAttribute("data-home")){action("home");return}
+ if(b.hasAttribute("data-tip")){S.tip=false;save();rendre();return}
+ if(b.hasAttribute("data-reset")){S=depart();save();rendre();toast("Démo remise à zéro.");return}
+ if(s.go){action(s.go);return}
+ if(s.shgo){action(s.shgo);return}
+ if(b.hasAttribute("data-shx")){fermer();return}
+ if(s.ok!=null){d.verif[+s.ok].ok=!d.verif[+s.ok].ok;save();rendre();return}
+ if(s.edit){var p=s.edit.split(".");editLigne(p[0],+p[1]);return}
+ if(s.addl){addLigne(s.addl);return}
+ if(s.menu!=null){editMenu(+s.menu);return}
+ if(s.shok){var q=s.shok.split("."),l=d[q[0]][+q[1]],nq=num($("#eq").value),np=num($("#ep").value);if(nq==null||np==null){toast("Chiffre illisible.");return}if(nq!==l.q||np!==l.pu){l.q=nq;l.pu=np;l.mod=true;hist(d,"Ligne modifiée : "+l.lib)}fermer();save();rendre();toast("Ligne enregistrée, total recalculé.");return}
+ if(s.shdel){var r=s.shdel.split("."),ll=d[r[0]][+r[1]];ll.off=!ll.off;hist(d,(ll.off?"Ligne retirée : ":"Ligne remise : ")+ll.lib);fermer();save();rendre();return}
+ if(s.shadd){var lb=$("#al").value.trim(),aq=num($("#aq").value),ap=num($("#ap").value);if(!lb||aq==null||ap==null){toast("Remplissez la désignation, la quantité et le prix.");return}d[s.shadd].push({lib:lb,q:aq,u:$("#au").value.trim()||"pièce",pu:ap,mod:true});hist(d,"Ligne ajoutée : "+lb);fermer();save();rendre();toast("Ligne ajoutée.");return}
+ if(s.shmenu!=null){var m=d.menu[+s.shmenu],v=function(id){var x=$("#"+id);return x?x.value.trim():""};m.L=num(v("mL"))||m.L;m.H=num(v("mH"))||m.H;m.mat=v("mm");m.ouv=v("mo");m.coul=v("mc");m.vitrage=v("mv");m.pose=v("mp");m.volet=v("mvo")||"Aucun";if($("#mvd"))m.volet_det=v("mvd");fermer();save();rendre();return}
+ if(s.raison){d.raison=s.raison;fermer();aller(d,"refuse","Le client a refusé : "+s.raison);return}
+ if(s.acpt){d.acompte=+s.acpt;save();rendre();return}
+ if(b.hasAttribute("data-depot")){d.depot="Devis "+d.fourn.nom+" du "+new Date().toLocaleDateString("fr-FR");aller(d,"prix_lu","Devis du fournisseur déposé, lu par Cliky");return}
+ if(s.man){if(s.man!==d.etape)aller(d,s.man,"Étape changée à la main");return}
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")fermer()});
+rendre();
+})();
+</script>
+</body></html>
