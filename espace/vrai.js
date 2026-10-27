@@ -187,7 +187,8 @@ function demarrer(){var art=lsG(KA)||{};document.documentElement.classList.add('
  var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();charger();}
 function proposer(){if(!SERVICE)return;var ph=$('#phrase');if(!ph||$('#vco'))return;var d=document.createElement('div');d.className='vco';d.id='vco';
  d.innerHTML='<span><b>Mode démo.</b> Vous êtes l\'artisan ? Connectez-vous pour voir vos vraies demandes.</span><button class="vbtn go sm" type="button" data-vlogin>Se connecter</button>';ph.parentNode.insertBefore(d,ph.nextSibling)}
-function lienDirect(){var m=/[#&]c=([A-Za-z0-9_-]{6,64})/.exec(location.hash);return m?m[1]:null}
+// Lien collé à la main : espaces, guillemets ou %20 autour de l'identifiant sont ignorés.
+function lienDirect(){var h=location.hash;try{h=decodeURIComponent(h)}catch(e){}var m=/[#&]c=[\s"'<>]*([A-Za-z0-9_-]{6,64})/.exec(h);return m?m[1]:null}
 
 if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore branché','<div class="card"><p style="margin:0">Ce lien ouvre une vraie demande, mais l\'adresse du service ProClik n\'est pas encore réglée dans l\'Espace. Prévenez Cyril : c\'est une ligne à ajouter.</p></div>','<button class="vbtn" type="button" data-vfermer>Fermer</button>')},1500);return}
 if(lsG(KJ))demarrer();else proposer();
