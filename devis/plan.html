@@ -213,6 +213,7 @@ html.client body{padding-block:0!important}
 .cltool{transition:background .15s,opacity .2s;position:relative}
 .cltool .lk{display:none;position:absolute;top:2px;right:2px;font:800 9.5px var(--f);font-style:normal;background:var(--bg);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 5px;white-space:nowrap}
 .cltool.locked{opacity:.42}
+#tut{position:absolute;inset:0;pointer-events:none;z-index:5}#tut[hidden]{display:none}#tut i{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(232,89,12,.28);border:3px solid #E8590C;box-shadow:0 4px 14px rgba(0,0,0,.25)}#tut i::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#E8590C}#tut b{position:absolute;left:50%;top:64px;max-width:calc(100% - 24px);white-space:normal;text-align:center;transform:translateX(-50%);background:#0B1226;color:#fff;font:800 14px var(--f);padding:8px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 .sh-foot{position:sticky;bottom:0;padding:12px 0 calc(6px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--surface) 30%);display:grid}.sh-foot .btn{width:100%;font-size:17px;padding:15px;border-radius:999px;justify-content:center}
 .etat.ask{outline:2.5px solid var(--mint);outline-offset:2px;animation:gpulse 1.5s ease-in-out infinite}.etat>.qk button{font-weight:800}
 /* Accompagnement : progression, bienvenue, cibles qui clignotent, relance si le client hésite */
@@ -255,7 +256,7 @@ html.client body{padding-bottom:12px}
   <div><h1>Plan du logement</h1><p class="lead">Pièces en 2 cotes, collées les unes aux autres. Touchez un mur ou un sol pour dire ce qu'on y fait. Vue 3D avec étages et toit.</p></div>
   <div class="tabs" id="floors"></div>
   <div class="tabs" id="rooms"></div>
-  <div class="board" id="board">
+  <div class="board" id="board"><div id="tut" hidden aria-hidden="true"><i></i><b></b></div>
     <div class="fl tl"><div class="pill" role="group" aria-label="Affichage"><button id="v-2d" aria-pressed="true">Plan</button><button id="v-3d" aria-pressed="false">3D</button></div></div>
     <div class="fl tr"><div class="pill"><button id="t-undo" class="ud" aria-label="Annuler">↶ Annuler</button><button id="t-redo" class="ud" aria-label="Rétablir" disabled>↷ Rétablir</button></div></div>
     <div class="fl mr"><div class="pill v"><button id="z-in" aria-label="Zoomer">＋</button><button id="z-out" aria-label="Dézoomer">−</button><button id="z-fit" aria-label="Recentrer">⤢</button><button id="z-lock" class="lk" aria-pressed="false" aria-label="Verrouiller le plan">🔓</button></div></div>
@@ -535,7 +536,7 @@ svg.addEventListener("pointerleave",()=>{if(!PD&&!demo&&preview){preview=null;dr
 svg.addEventListener("wheel",e=>{if(demo)return;e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY>0?1.12:1/1.12)},{passive:false});
 svg.addEventListener("contextmenu",e=>e.preventDefault());
 let CLIP=null;
-function setMode(m){if(m!=="win"&&m!=="door")CLIP=null;if(CL)document.querySelectorAll(".cltool").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cl===m));if(m!=="plan"&&m!=="todo"&&ST.lock){say(null,"Plan verrouillé 🔒 : touchez le cadenas pour tracer de nouveau.");return}ST.mode=m;document.querySelectorAll("#bar2d [data-mode]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));{const ta=$("todo-bar");if(ta)ta.hidden=m!=="todo";if(m==="todo")setTimeout(todoMsg,0)}if(m!=="clo")ST.cur=null;if(m!=="trace")ST.trace=null;preview=null;
+function setMode(m){if(CL&&["win","door","clo","todo"].includes(m)&&ST.mode!==m)setTimeout(()=>tutor(m),350);if(m!=="win"&&m!=="door")CLIP=null;if(CL)document.querySelectorAll(".cltool").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cl===m));if(m!=="plan"&&m!=="todo"&&ST.lock){say(null,"Plan verrouillé 🔒 : touchez le cadenas pour tracer de nouveau.");return}ST.mode=m;document.querySelectorAll("#bar2d [data-mode]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));{const ta=$("todo-bar");if(ta)ta.hidden=m!=="todo";if(m==="todo")setTimeout(todoMsg,0)}if(m!=="clo")ST.cur=null;if(m!=="trace")ST.trace=null;preview=null;
  if(CL&&m==="trace")say(null,"Touchez chaque coin de la nouvelle partie, l'un après l'autre. Touchez le premier coin pour la fermer.");
  else if(CL&&(m==="win"||m==="door"||m==="clo"))say(null,m==="win"?"Touchez le mur extérieur où se trouve la fenêtre.":m==="door"?"Touchez le mur où se trouve la porte.":"Touchez le mur où commence la cloison, puis l'endroit où elle s'arrête.");
  else if(CL&&m==="plan")say(null,"");
@@ -853,6 +854,17 @@ var VFL=[];function verif(){VFL=verifList();if(!VFL.length){try{parent.postMessa
  $("vf-p").textContent=VFL.length>1?`${VFL.length} points à compléter pour un devis juste. Touchez-en un pour y aller.`:"Un point à compléter pour un devis juste. Touchez-le pour y aller.";
  $("vf-l").innerHTML=VFL.map((v,i)=>`<button type="button" data-vf="${i}"><span>${esc(v.t)}</span><b>Aller ›</b></button>`).join("");$("verif").hidden=false}
 if(CL){$("vf-l").addEventListener("click",e=>{const b=e.target.closest("[data-vf]");if(!b)return;$("verif").hidden=true;const v=VFL[+b.dataset.vf];if(v)v.go()});$("vf-fix").addEventListener("click",()=>{$("verif").hidden=true;const v=VFL[0];if(v)v.go()});$("vf-end").addEventListener("click",()=>{$("verif").hidden=true;try{parent.postMessage({type:"proclik-plan-finish"},"*")}catch(e){}})}
+// Mini-démo au premier usage d'un outil : un doigt montre le geste sur le vrai plan (une seule fois par outil).
+var TUTA=null;function tutSeen(m){try{if(localStorage.getItem("pk-tut-"+m))return true;localStorage.setItem("pk-tut-"+m,"1")}catch(e){if((tutSeen.m=tutSeen.m||{})[m])return true;tutSeen.m[m]=1}return false}
+function tutStop(){if(TUTA){TUTA.cancel();TUTA=null}const t=$("tut");if(t)t.hidden=true}
+function tutor(m){if(!CL||ST.view!=="2d"||!F()||!F().rooms.length||tutSeen(m))return;const S=segs(),ext=S.find(x=>x.kind==="mur"&&!x.sh&&dist(x.a,x.b)>1)||S.find(x=>x.kind==="mur");if(!ext)return;
+ const ctm=svg.getScreenCTM(),br=$("board").getBoundingClientRect();if(!ctm)return;const P=q=>{const pt=svg.createSVGPoint();pt.x=q[0];pt.y=q[1];const r=pt.matrixTransform(ctm);return[r.x-br.left,r.y-br.top]},mid=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+ const rm=ext.rm,b=bbox(rm.pts),A=P(mid(ext.a,ext.b,.5));let K,txt;
+ if(m==="clo"){const p1=P([(b.x0+b.x1)/2,b.y0]),p2=P([(b.x0+b.x1)/2,b.y1]);K=[[p1,1,0],[p1,1,.12],[p1,.7,.2],[p1,1,.28],[p2,1,.62],[p2,.7,.72],[p2,1,.8],[p2,0,1]];txt="Touchez le mur de départ, puis l'endroit où la cloison s'arrête"}
+ else{K=[[[A[0]+60,A[1]+70],0,0],[A,1,.35],[A,.7,.48],[A,1,.6],[A,.7,.72],[A,1,.84],[A,0,1]];txt=m==="win"?"Touchez l'endroit exact de la fenêtre sur le mur":m==="door"?"Touchez l'endroit exact de la porte sur le mur":"Touchez les murs ou cloisons à refaire"}
+ const t=$("tut"),f=t.querySelector("i");t.querySelector("b").textContent="👆 "+txt;t.hidden=false;tutStop();t.hidden=false;
+ TUTA=f.animate(K.map(([q,sc,o])=>({offset:o,transform:`translate(${q[0]}px,${q[1]}px) scale(${sc||.01})`,opacity:sc?1:0})),{duration:2600,iterations:2,easing:"ease-in-out"});TUTA.onfinish=()=>{TUTA=null;t.hidden=true}}
+if(CL)addEventListener("pointerdown",()=>{if(TUTA)tutStop()},true);
 function gIntro(){const T=ST.trav||[],D={2:["cloison"],3:["fenetres","portes"],5:["doublage","cloison"],6:["plafond"]};$("intro").querySelectorAll("li").forEach((li,i)=>{const on=(D[i+1]||[]).some(k=>T.includes(k));let t=li.querySelector(".dem");if(on&&!t)li.insertAdjacentHTML("beforeend",'<span class="dem">Demandé</span>');if(!on&&t)t.remove()});$("intro").hidden=false;setTimeout(()=>$("in-ok").focus(),30)}
 if(CL){$("in-ok").addEventListener("click",()=>{$("intro").hidden=true;try{localStorage.setItem("pk-intro","1")}catch(e){}});$("clb-h").addEventListener("click",e=>{e.stopPropagation();gIntro()})}
 function clBanner(t){if(CL&&t&&!["win","door","clo","todo","trace"].includes(ST.mode)){GMSG=t;clearTimeout(GTM);GTM=setTimeout(()=>{GMSG=null;clGuide()},4200)}if(!t&&!["win","door","clo","todo","trace"].includes(ST.mode)){GMSG=null;return clGuide()}const b=$("clbanner");if(!b)return;const tool=["win","door","clo","todo","trace"].includes(ST.mode);b.classList.toggle("tool",tool);b.classList.remove("done");$("clb-t").textContent=t||CLIDLE;const x=$("clb-b");delete x.dataset.skip;delete x.dataset.next;{const pv=$("clb-p");if(pv)pv.hidden=true}x.hidden=!tool;x.textContent=ST.mode==="clo"?(ST.cur&&ST.cur.length>1?"✓ Terminer la cloison":"Annuler"):ST.mode==="todo"?"✓ C'est fait":"Annuler"}
