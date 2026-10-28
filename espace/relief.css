@@ -117,3 +117,95 @@ html body .voice-b,html body .mic-h{background:var(--rs);color:var(--accx);box-s
 html body .toast{background:var(--rs);box-shadow:var(--up)}
 html body .install{background:var(--cx);box-shadow:var(--in)}
 html body .net.back{background:var(--turq-bg);color:var(--turq-ink)}
+
+/* ---------- Plus de machine à écrire : tout en Manrope, chiffres alignés ---------- */
+:root,html body{--mono:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif}
+html body .mono,html body .chip-demo,html body .today small,html body .soon,html body .pdf-k,html body .vex button small{letter-spacing:.02em;font-variant-numeric:tabular-nums}
+html body .chip-demo{font-weight:700;font-size:11px;background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+
+/* ---------- Icônes en trait fin à la place des emoji ---------- */
+html body .ri{display:inline-grid;place-items:center;width:1.15em;height:1.15em;vertical-align:-.2em}
+html body .ri svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .icon-b .ri{width:19px;height:19px;color:var(--muted)}
+html body .icon-b[aria-pressed="true"] .ri{color:var(--accx)}
+html body .pcq .e .ri,html body .adds span .ri{width:24px;height:24px;color:var(--muted)}
+
+/* ---------- En-tête : seulement l'essentiel sur téléphone ---------- */
+@media (max-width:899px){html body #net{display:none}}
+html body .head{background:var(--bg);border-bottom:0}
+
+/* ---------- Bandeaux d'installation : même matière, plus de cadre laiton ---------- */
+html body .instb{background:var(--rs);border:0;box-shadow:var(--up);border-radius:20px;padding:12px 14px}
+html body .instb .ic{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--cx);box-shadow:var(--in);color:var(--muted);font-size:0}
+html body .instb .ic .ri{width:20px;height:20px}
+html body .instb .x{color:var(--muted)}
+html body .vco{background:var(--rs);box-shadow:var(--up);border-radius:20px}
+
+/* ---------- Nouvel accueil (accueil.js) ---------- */
+html.pcacc #v-accueil>.grid2{display:none}
+.acc{display:grid;gap:16px;margin-top:16px}
+.acc-g,.acc-d{display:grid;gap:16px;align-content:start;min-width:0}
+@media (min-width:900px){.acc{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}}
+html body .acc .card{margin:0;padding:18px}
+.acc .stats-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.acc .stats-h small{display:block;color:var(--muted);font-size:13px;font-weight:600}
+.acc .stats-h b{display:block;font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+.acc .stats-h em{font-style:normal;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0}
+.acc .barres{width:120px;height:52px;flex:none}
+.acc .barres .b0{fill:color-mix(in srgb,var(--muted) 45%,transparent)}.acc .barres .b1{fill:var(--fg)}
+.acc .barres text{fill:var(--muted);font:600 8px var(--f);text-anchor:middle}
+.acc .flux{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;margin-top:16px;padding:16px;border-radius:16px;background:var(--cx);box-shadow:var(--in)}
+.acc .flux span{display:block;font-size:12.5px;font-weight:700;color:var(--fg)}
+.acc .flux b{display:block;font-size:17px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+.acc .flux small{display:block;font-size:12px;color:var(--muted)}
+.acc .flux .cor b{color:var(--cor-ink,#E0603C)}
+.acc .exemple{display:block;margin-top:12px;font-size:12px;font-style:italic;color:var(--muted)}
+.acc .tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:12px}
+.acc .tuile{padding:14px 12px;border-radius:18px;background:var(--rs);box-shadow:var(--up);min-width:0}
+.acc .tuile b{display:block;font-size:24px;font-weight:800;line-height:1.1}
+.acc .tuile span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted);line-height:1.35}
+.acc .tuile.chaud b{color:var(--accx)}
+.acc .dem{display:grid;gap:14px}
+.acc .dem-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.acc .dem-h b{display:block;font-size:16px;font-weight:800}
+.acc .dem-h small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.acc .prix{font-size:17px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}.acc .prix small{font-size:12px;color:var(--muted)}
+.acc .chaine{position:relative;display:flex;justify-content:space-between;align-items:center}
+.acc .chaine::before{content:"";position:absolute;left:14px;right:14px;top:50%;height:2px;margin-top:-1px;background:color-mix(in srgb,var(--muted) 30%,transparent)}
+.acc .chaine::after{content:"";position:absolute;left:14px;top:50%;height:2px;margin-top:-1px;width:calc((100% - 28px)*var(--fait));background:var(--acc)}
+.acc .pas{position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);font-size:12px;font-weight:700;color:var(--muted)}
+.acc .pas.ici{background:var(--cx);box-shadow:var(--in);color:var(--accx);font-weight:800}
+.acc .pas.fait{color:var(--accx)}
+.acc .pas svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.acc .etape-nom{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:10px}
+.acc .etape-nom b{font-size:14.5px;font-weight:800}.acc .etape-nom span{font-size:12.5px;color:var(--muted)}
+.acc .ligne{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--cx);box-shadow:var(--in),inset 0 0 0 1px color-mix(in srgb,var(--cor-ink,#E0603C) 45%,transparent);font-size:14px;font-weight:600}
+.acc .ligne .q{color:var(--cor-ink,#E0603C);font-size:13px;font-weight:700;white-space:nowrap}
+.acc .vide{margin:0;color:var(--muted);font-size:14px}
+/* Le gros bouton : icône d'étape grise + texte centré entre le bord gauche et le galet */
+html body .acc .acc-go{width:100%;min-height:clamp(54px,15vw,62px);border-radius:999px;font-size:clamp(15px,4.2vw,17px);padding:0 clamp(58px,16vw,66px) 0 18px;display:flex;align-items:center}
+html body .acc .acc-go::after{width:clamp(38px,11vw,44px);height:clamp(38px,11vw,44px);margin-top:calc(clamp(38px,11vw,44px)/-2);right:8px}
+html body .acc .acc-go::before{right:calc(8px + (clamp(38px,11vw,44px) - 18px)/2)}
+.acc .acc-go .lab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+.acc .acc-go .lab>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc .acc-go .ic{display:grid;place-items:center;width:20px;height:20px;flex:none;color:var(--muted)}
+.acc .acc-go .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.acc .acc-tout{justify-self:center;padding:8px 14px;font-size:14px;font-weight:700;color:var(--muted);background:none;border:0}
+.acc .acc-tout span{color:var(--accx)}
+
+/* ---------- Retouches après essai sur iPhone ---------- */
+/* Jour/nuit : la lune la nuit, le soleil le jour (on montre où l'on va) */
+html body #theme{color:var(--muted)}
+html body #theme .sol{display:none}
+:root[data-theme="dark"] body #theme .lune{display:none}:root[data-theme="dark"] body #theme .sol{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #theme .lune{display:none}:root:not([data-theme="light"]) body #theme .sol{display:block}}
+/* Téléphone : en-tête réduit à l'essentiel, comme la planche */
+@media (max-width:899px){html body #search,html body .head .mic-h{display:none}}
+html body #hello{font-size:clamp(26px,7.4vw,32px);letter-spacing:-.6px;margin-bottom:4px}
+html body #phrase{font-size:15px;color:var(--muted)}
+.acc .dem-h>div:first-child{min-width:0}
+/* Bandeau d'installation : une ligne discrète, tout en bas */
+html body .acc .instb{margin:0;padding:10px 12px;gap:10px;box-shadow:var(--up-s)}
+html body .acc .instb .tx b{font-size:14px}html body .acc .instb .tx small{display:none}
+html body .acc .instb .ic{width:34px;height:34px}html body .acc .instb .ic .ri{width:17px;height:17px}
+.acc .dem-h .prix small{display:inline;margin:0}
