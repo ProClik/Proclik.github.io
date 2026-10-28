@@ -200,7 +200,7 @@ html body #theme .sol{display:none}
 :root[data-theme="dark"] body #theme .lune{display:none}:root[data-theme="dark"] body #theme .sol{display:block}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #theme .lune{display:none}:root:not([data-theme="light"]) body #theme .sol{display:block}}
 /* Téléphone : en-tête réduit à l'essentiel, comme la planche */
-@media (max-width:899px){html body #search,html body .head .mic-h{display:none}}
+@media (max-width:899px){html body #search{display:none}}
 html body #hello{font-size:clamp(26px,7.4vw,32px);letter-spacing:-.6px;margin-bottom:4px}
 html body #phrase{font-size:15px;color:var(--muted)}
 .acc .dem-h>div:first-child{min-width:0}
@@ -306,3 +306,6 @@ html body .brand>img.pc-logo{box-sizing:border-box;width:42px!important;height:4
   html body .nav .badge{top:-3px;right:calc(50% - 27px)}
   html body .app{padding-bottom:40px}
 }
+/* La dictée reste toujours à portée (Cyril : « très important dans notre processus ») : rond micro dans l'en-tête, téléphone comme tablette */
+html body .head #speak{display:grid!important;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--accx)}
+html body .head #speak .ri{width:19px;height:19px;color:var(--accx)}
