@@ -209,3 +209,60 @@ html body .acc .instb{margin:0;padding:10px 12px;gap:10px;box-shadow:var(--up-s)
 html body .acc .instb .tx b{font-size:14px}html body .acc .instb .tx small{display:none}
 html body .acc .instb .ic{width:34px;height:34px}html body .acc .instb .ic .ri{width:17px;height:17px}
 .acc .dem-h .prix small{display:inline;margin:0}
+
+/* ---------- Graphique « Voir l'évolution sur 6 mois » (comme la planche) ---------- */
+.acc .stats{--enc:var(--fg);--sig:color-mix(in srgb,var(--muted) 80%,transparent);--s:var(--bg);--tx:var(--fg);--tm:var(--muted)}
+.acc .graph{margin-top:14px}
+.acc .graph summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-radius:16px;font-size:14px;font-weight:700;color:var(--fg);cursor:pointer;background:var(--rs);box-shadow:var(--up-s);transition:box-shadow .8s var(--doux)}
+.acc .graph summary::-webkit-details-marker{display:none}
+.acc .graph summary .fl{color:var(--accx);font-size:18px;transition:transform .8s var(--doux)}
+.acc .graph[open] summary{background:var(--cx);box-shadow:var(--in)}
+.acc .graph[open] summary .fl{transform:rotate(90deg)}
+.acc .graph[open]{display:grid;gap:12px}
+.acc .leg{display:flex;gap:16px;font-size:12.5px;color:var(--muted);font-weight:600}
+.acc .leg span{display:flex;align-items:center;gap:6px}
+.acc .leg i{width:16px;height:0}
+.acc .leg i.l1{border-top:3px solid var(--enc)}.acc .leg i.l2{border-top:2px solid var(--sig)}
+.acc .courbe{width:100%;height:auto;display:block;overflow:visible}
+.acc .courbe .ax{font:600 11px var(--f);fill:var(--muted)}
+.acc .courbe .ax.on{fill:var(--fg);font-weight:800}
+.acc .courbe .val{font:800 13px var(--f);fill:var(--fg)}
+.acc .courbe .val.v2{fill:var(--muted);font-weight:700}
+.acc .courbe .grille{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+.acc .courbe .grille.base{stroke-dasharray:0}
+.acc .courbe .pt{cursor:pointer}
+.acc .courbe .pt .guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.acc .courbe .pt>:not(rect){opacity:0;transition:opacity .3s}
+.acc .courbe .pt:hover>*,.acc .courbe .pt:focus>*,.acc .courbe .pt.on>*{opacity:1}
+.acc .courbe .pt:focus{outline:none}
+.acc .courbe .bulle rect{fill:var(--fg)}
+.acc .courbe .bulle text{font:700 11px var(--f);fill:var(--bg)}
+.acc .courbe .bulle .bt{font-weight:800;font-size:12px}
+.acc .courbe:has(.pt:hover) .fin,.acc .courbe:has(.pt.on) .fin{opacity:.25;transition:opacity .3s}
+/* Le point du mois en cours : seule touche laiton */
+.acc .courbe .fin circle:last-of-type,.acc .courbe .pouls{fill:var(--acc)!important}
+@keyframes acc-trace{to{stroke-dashoffset:0}}
+@keyframes acc-monte{from{transform:scaleY(0);opacity:0}}
+@keyframes acc-pouls{0%{r:6;opacity:.6}100%{r:18;opacity:0}}
+.acc .courbe .aire{transform-box:view-box;transform-origin:50% 100%}
+.acc .anime .aire{animation:acc-monte 1.2s var(--doux) both}
+.acc .anime .a2{animation-delay:.25s}
+.acc .anime .trace.go{animation:acc-trace 1.6s cubic-bezier(.4,0,.2,1) forwards}
+.acc .anime .t2.go{animation-delay:.35s}
+.acc .anime .fin{animation:acc-monte .01s 1.7s both}
+.acc .courbe .pouls{animation:acc-pouls 2.4s ease-out 1.9s infinite;opacity:0}
+@media (prefers-reduced-motion:reduce){.acc .anime .aire,.acc .anime .trace.go,.acc .anime .fin,.acc .courbe .pouls{animation:none}.acc .courbe .pouls{display:none}}
+
+/* ---------- Menu du bas comme la planche : pas de barre, des galets posés sur le fond ---------- */
+html body .nav{background:linear-gradient(to top,var(--bg) 0,var(--bg) calc(100% - 14px),color-mix(in srgb,var(--bg) 0%,transparent) 100%);box-shadow:none;border:0;padding:12px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+html body .nav button,:root.simple body .nav button{min-height:0;gap:6px;padding:0;font-size:11px;font-weight:600;color:var(--muted)}
+html body .nav button[aria-selected="true"]{color:var(--fg);font-weight:700}
+html body .nav .ico,:root.simple body .nav .ico{width:42px;height:42px;font-size:0}
+html body .nav .badge{top:-3px;right:calc(50% - 25px)}
+@media (max-width:899px){html body .app{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}}
+/* Textes du graphique lisibles sur téléphone ; le détail d'un mois s'écrit sous la courbe */
+.acc .courbe .ax{font-size:19px}
+.acc .courbe .val{font-size:21px}
+.acc .courbe .bulle{display:none}
+.acc .graph .mois{margin:0;font-size:13px;color:var(--muted);text-align:center}
+.acc .graph .mois b{color:var(--fg)}
