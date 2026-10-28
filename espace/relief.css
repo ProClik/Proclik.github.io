@@ -11,18 +11,18 @@
   --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
   --doux:cubic-bezier(.22,1,.36,1)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#161B28;--card:#1D2333;--soft:#1D2333;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
+  --bg:#1E2433;--card:#1E2433;--soft:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
   --turq:#D4B483;--turq-ink:#E3C99C;--turq-bg:rgba(212,180,131,.12);--nuit:#0E1322;
   --acc:#D4B483;--accx:#D4B483;--acc-g:rgba(212,180,131,.4);
-  --rs:linear-gradient(145deg,#232A3D,#1C2232);--cx:#191E2C;--hi:rgba(255,255,255,.07);--lo:rgba(0,0,0,.42);--ihi:rgba(255,255,255,.05);--ilo:rgba(0,0,0,.3);
-  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.06);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.06);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.06);
+  --rs:#1E2433;--cx:#1E2433;--hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
   --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}}
 :root[data-theme="dark"]{
-  --bg:#161B28;--card:#1D2333;--soft:#1D2333;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
+  --bg:#1E2433;--card:#1E2433;--soft:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
   --turq:#D4B483;--turq-ink:#E3C99C;--turq-bg:rgba(212,180,131,.12);--nuit:#0E1322;
   --acc:#D4B483;--accx:#D4B483;--acc-g:rgba(212,180,131,.4);
-  --rs:linear-gradient(145deg,#232A3D,#1C2232);--cx:#191E2C;--hi:rgba(255,255,255,.07);--lo:rgba(0,0,0,.42);--ihi:rgba(255,255,255,.05);--ilo:rgba(0,0,0,.3);
-  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.06);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.06);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.06);
+  --rs:#1E2433;--cx:#1E2433;--hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
   --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}
 
 html body{background:var(--bg)}
