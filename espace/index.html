@@ -686,11 +686,11 @@ button.pill{cursor:pointer}
 <aside class="sheet" id="vsheet" aria-label="Parler à ProClik" style="z-index:41"><div class="grab"></div><div class="listen"><b>Parlez à ProClik</b><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="said" id="said"></div><span class="hint" id="vhint" style="text-align:center">Exemple de consigne, comme à un collègue.</span></div><div class="vex" id="vex"></div><div class="sheet-foot"><button class="btn" id="vclose">Fermer</button><button class="btn go" id="vapply" disabled>Appliquer</button></div></aside>
 
 <nav class="nav" role="tablist" aria-label="Sections">
-<button role="tab" data-v="accueil" id="nb-accueil" aria-selected="true"><span class="ico">⌂</span>Accueil</button>
-<button role="tab" data-v="devis" id="nb-devis" aria-selected="false"><span class="ico">✓</span>Devis<span class="badge" id="badge">2</span></button>
-<button role="tab" data-v="planning" id="nb-planning" aria-selected="false"><span class="ico">🗓</span>Planning</button>
-<button role="tab" data-v="chantiers" id="nb-chantiers" aria-selected="false"><span class="ico">⛏</span>Chantiers</button>
-<button role="tab" data-v="prix" id="nb-prix" aria-selected="false"><span class="ico">📦</span>Achats</button>
+<button role="tab" data-v="accueil" id="nb-accueil" aria-selected="true"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8H4z"/></svg></span>Accueil</button>
+<button role="tab" data-v="devis" id="nb-devis" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/></svg></span>Devis<span class="badge" id="badge">2</span></button>
+<button role="tab" data-v="planning" id="nb-planning" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>Planning</button>
+<button role="tab" data-v="chantiers" id="nb-chantiers" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h7M6 20V10l6-4 5 3.4"/><g transform="translate(10.6 10.4) scale(.56)"><path vector-effect="non-scaling-stroke" d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path vector-effect="non-scaling-stroke" d="M14 6a6 6 0 0 1 6 6v3"/><path vector-effect="non-scaling-stroke" d="M4 15v-3a6 6 0 0 1 6-6"/><rect vector-effect="non-scaling-stroke" x="2" y="15" width="20" height="4" rx="1"/></g></svg></span>Chantiers</button>
+<button role="tab" data-v="prix" id="nb-prix" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h2l2 10h10l2-7H7"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg></span>Achats</button>
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"><span class="ti"><svg width="22" height="22" viewBox="0 0 100 100"><rect x="24" y="14" width="18" height="72" rx="9" fill="#FFFFFF"/><circle cx="54" cy="40" r="26" fill="#FFFFFF"/><circle cx="56" cy="40" r="9" fill="#0B1226" stroke="#2EE6C8" stroke-width="3"/></svg></span><span><b id="tt"></b><small id="ts"></small></span></div>
 
@@ -1684,3 +1684,5 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 
 <script src="config.js?v=2"></script>
 <script src="vrai.js?v=7"></script>
+<link rel="stylesheet" href="relief.css?v=1">
+<script src="relief.js?v=1"></script>
