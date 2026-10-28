@@ -71,15 +71,3 @@
   new MutationObserver(function(M){M.forEach(function(m){if(m.type==="characterData")texte(m.target);else m.addedNodes.forEach(passe)})})
     .observe(document.body,{childList:true,subtree:true,characterData:true});
 })();
-/* Micro de dictée au centre du menu du bas (téléphone) : il appelle le même « Parler » que l'en-tête. */
-(function(){
-  function poser(){
-    var nav=document.querySelector(".nav"),d=document.getElementById("nb-devis");
-    if(!nav||!d||nav.querySelector(".nav-mic"))return;
-    var b=document.createElement("button");b.type="button";b.className="nav-mic";b.setAttribute("aria-label","Parler à ProClik");
-    b.innerHTML='<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>Parler';
-    b.addEventListener("click",function(){var s=document.getElementById("speak");if(s)s.click()});
-    d.parentNode.insertBefore(b,d.nextSibling);
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",poser);else poser();
-})();
