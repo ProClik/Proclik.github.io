@@ -50,8 +50,8 @@
     var h=tuiles([[a.length,a.length>1?"demandes à valider":"demande à valider",1],[o.length,o.length>1?"autres demandes en cours":"autre demande en cours"]]);
     if(!L)h+='<div class="card dem"><p class="vide">Chargement de vos demandes…</p></div>';
     else if(!d)h+='<div class="card dem"><p class="vide">Rien à valider pour l\'instant. Le café peut rester chaud.</p></div>';
-    else{var i=E.indexOf(d.etape),n=E.length;
-      h+='<div class="card dem"><div class="dem-h"><div><b>'+esc(d.client)+"</b><small>"+esc(d.resume||d.titre||"")+"</small></div>"+
+    else{var i=-1,n=E.length;E.forEach(function(e,k){if(i<0&&(e===d.etape||(e&&(e.id===d.etape_id||e.nom===d.etape))))i=k});
+      h+='<div class="card dem"><div class="dem-h"><div><b>'+esc(d.client)+"</b><small class=\"resume\">"+esc(d.resume||d.titre||"")+"</small></div>"+
         (d.total_ht!=null?'<div class="prix">'+eur(d.total_ht)+" <small>HT</small></div>":"")+"</div>"+
         (n>1&&i>=0?chaine(n,i)+'<div class="etape-nom"><b>'+esc(d.etape)+"</b><span>étape "+(i+1)+" sur "+n+"</span></div>":"")+
         (d.a_verifier?'<div class="ligne corr"><span>'+(d.a_verifier>1?d.a_verifier+" lignes":"1 ligne")+' à vérifier</span><span class="q">à vérifier</span></div>':"")+"</div>"+

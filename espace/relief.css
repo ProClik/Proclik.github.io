@@ -292,3 +292,5 @@ html body .acc .card{border-radius:22px;padding:18px}
 html body .acc .vco{margin:0;padding:12px 14px;box-shadow:var(--up-s)}
 html body .acc .vco span{font-size:13px}
 html body .brand>img.pc-logo{box-sizing:border-box;width:42px!important;height:42px!important;padding:6px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);object-fit:contain;flex:none}
+/* Résumé d'une vraie demande : deux lignes au plus, comme la planche */
+.acc .dem-h small.resume{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
