@@ -266,3 +266,29 @@ html body .nav .badge{top:-3px;right:calc(50% - 25px)}
 .acc .courbe .bulle{display:none}
 .acc .graph .mois{margin:0;font-size:13px;color:var(--muted);text-align:center}
 .acc .graph .mois b{color:var(--fg)}
+
+/* ---------- Alignement fin sur la planche (essai iPhone du 28/10 au soir) ---------- */
+/* En-tête : logo de l'artisan posé dans un galet, boutons ronds de 40 px */
+html body .brand>svg,html body .brand>span:first-child{box-sizing:border-box;width:42px!important;height:42px!important;padding:6px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);flex:none}
+html body .brand>span:first-child>svg,html body .brand>span:first-child>img{width:30px!important;height:30px!important;border-radius:9px;display:block}
+html body .brand>svg rect:first-child{rx:22}
+html body .head .icon-b{width:42px;height:42px}
+html body .chip-demo{padding:6px 10px}
+/* Accueil : mêmes poids et tailles que la planche */
+html body #hello{font-size:clamp(26px,7vw,30px)}
+.acc{gap:18px}
+html body .acc .card{border-radius:22px;padding:18px}
+.acc .flux span{color:var(--muted);font-weight:600}
+.acc .tuile{border-radius:20px;padding:14px;display:grid;align-content:start;gap:2px}
+.acc .tuile b{font-size:24px}
+.acc .graph summary{font-weight:500}
+.acc .pas{width:26px;height:26px;font-size:11px}
+.acc .pas.ici{width:36px;height:36px;font-size:14px}
+.acc .chaine{padding:4px 0}
+.acc .chaine::before,.acc .chaine::after{left:13px;right:13px}
+.acc .chaine::after{width:calc((100% - 26px)*var(--fait));right:auto}
+.acc .ligne .cote{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
+/* La carte « Mode démo » passe tout en bas, en petit : l'accueil commence par les chiffres comme la planche */
+html body .acc .vco{margin:0;padding:12px 14px;box-shadow:var(--up-s)}
+html body .acc .vco span{font-size:13px}
+html body .brand>img.pc-logo{box-sizing:border-box;width:42px!important;height:42px!important;padding:6px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);object-fit:contain;flex:none}

@@ -36,7 +36,8 @@
     var n=+(($("#badge")||{}).textContent||0)||1;
     poser('<div class="acc-g">'+stats+'</div><div class="acc-d">'+tuiles([[n,"à faire ce soir",1],[2,"devis en attente de réponse"],[1,"chantier en cours"]])+
       '<div class="card dem"><div class="dem-h"><div><b>Mme Durand · Grenoble</b><small>Cloisons du séjour</small></div><div class="prix">765,08 € <small>HT</small></div></div>'+
-      chaine(7,0)+'<div class="etape-nom"><b>Vérifier le pré-devis</b><span>étape 1 sur 7</span></div></div>'+
+      chaine(7,0)+'<div class="etape-nom"><b>Vérifier le pré-devis</b><span>étape 1 sur 7</span></div>'+
+      '<div class="ligne corr"><span>Bâti de porte<span class="cote">730 × 2 040 mm</span></span><span class="q">à vérifier</span></div></div>'+
       bouton(IC_VERIF,"Vérifier le pré-devis","data-accdemo")+
       '<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>›</span></button></div>');
   }
@@ -59,7 +60,12 @@
     poser('<div class="acc-d">'+h+"</div>");
   }
 
-  function rendre(){var ib=$("#instb");if(ib)ib.remove();document.documentElement.classList.contains("pcvrai")?vrai():demo();if(ib)acc.lastElementChild.appendChild(ib)}
+  function rendre(){var ib=$("#instb"),co=$("#vco");if(ib)ib.remove();if(co)co.remove();document.documentElement.classList.contains("pcvrai")?vrai():demo();
+    if(co)acc.lastElementChild.appendChild(co);if(ib)acc.lastElementChild.appendChild(ib)}
+  // Salutation comme la planche : « Bonsoir » après 18 h, sans point final
+  var hello=$("#hello");
+  function salut(){if(!hello)return;var t=hello.textContent,n=t.replace(/^Bonjour\b/,new Date().getHours()>=18||new Date().getHours()<5?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
+  if(hello){salut();new MutationObserver(salut).observe(hello,{childList:true,characterData:true,subtree:true})}
   rendre();
   // vrai.js réécrit sa liste (#va) à chaque chargement : on suit le mouvement.
   new MutationObserver(function(){clearTimeout(rendre._t);rendre._t=setTimeout(rendre,60)}).observe(ancien,{childList:true,subtree:true});
