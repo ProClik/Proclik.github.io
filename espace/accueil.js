@@ -1,6 +1,6 @@
 /* Accueil de l'Espace façon planche « Relief doux » : les chiffres, trois tuiles, la demande en cours avec ses étapes, un seul gros bouton.
    Démo : exemples fictifs, signalés comme tels. Vraies demandes (vrai.js) : on relit la liste gardée sur l'appareil à chaque mise à jour,
-   aucun chiffre d'argent n'est inventé (le bloc des chiffres n'apparaît pas tant qu'ils ne viennent pas de GHL). */
+   le bloc des chiffres reste un exemple fictif, signalé « Chiffres d'exemple », tant que l'argent ne vient pas de GHL. */
 (function(){
   "use strict";
   var $=function(s,r){return (r||document).querySelector(s)};
@@ -26,13 +26,15 @@
   function poser(h){if(acc._h===h)return;acc._h=h;acc.innerHTML=h}
 
   /* ---------- démo ---------- */
-  function demo(){
-    var stats='<div class="card stats"><div class="stats-h"><div><small>Encaissé en octobre</small><b>8 640 € <em>HT</em></b></div>'+
+  // Chiffres d'exemple (demandés par Cyril aussi sur ses vraies demandes, tant que l'argent ne vient pas de GHL) : toujours signalés comme tels
+  function chiffres(){return '<div class="card stats"><div class="stats-h"><div><small>Encaissé en octobre</small><b>8 640 € <em>HT</em></b></div>'+
       '<svg class="barres" viewBox="0 0 120 52" aria-hidden="true"><g class="b0"><rect x="2" y="22" width="12" height="18" rx="4"/><rect x="22" y="14" width="12" height="26" rx="4"/><rect x="42" y="18" width="12" height="22" rx="4"/><rect x="62" y="10" width="12" height="30" rx="4"/><rect x="82" y="16" width="12" height="24" rx="4"/></g><rect class="b1" x="102" y="4" width="12" height="36" rx="4"/>'+
       '<g class="bm"><text x="8" y="50">M</text><text x="28" y="50">J</text><text x="48" y="50">J</text><text x="68" y="50">A</text><text x="88" y="50">S</text><text x="108" y="50">O</text></g></svg></div>'+
       '<div class="flux"><div><span>Devis envoyés</span><b>9 850 €</b><small>2 sans réponse</small></div><div><span>Signés</span><b>14 210 €</b><small>3 sur 5 · 60 %</small></div>'+
       '<div><span>Facturé</span><b>11 400 €</b><small>ce mois-ci</small></div><div class="cor"><span>À encaisser</span><b>2 760 €</b><small>1 facture</small></div></div>'+
-      GRAPH+'<span class="exemple">Chiffres d\'exemple</span></div>';
+      GRAPH+'<span class="exemple">Chiffres d\'exemple</span></div>';}
+  function demo(){
+    var stats=chiffres();
     var n=+(($("#badge")||{}).textContent||0)||1;
     poser('<div class="acc-g">'+stats+'</div><div class="acc-d">'+tuiles([[n,"à faire ce soir",1],[2,"devis en attente de réponse"],[1,"chantier en cours"]])+
       '<div class="card dem"><div class="dem-h"><div><b>Mme Durand · Grenoble</b><small>Cloisons du séjour</small></div><div class="prix">765,08 € <small>HT</small></div></div>'+
@@ -57,7 +59,7 @@
         (d.a_verifier?'<div class="ligne corr"><span>'+(d.a_verifier>1?d.a_verifier+" lignes":"1 ligne")+' à vérifier</span><span class="q">à vérifier</span></div>':"")+"</div>"+
         bouton(IC_VERIF,"Vérifier le pré-devis",'data-vc="'+esc(d.contact||"")+'"')}
     if(D.length)h+='<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+D.length+" ›</span></button>";
-    poser('<div class="acc-d">'+h+"</div>");
+    poser('<div class="acc-g">'+chiffres()+'</div><div class="acc-d">'+h+"</div>");
   }
 
   function rendre(){var ib=$("#instb"),co=$("#vco");if(ib)ib.remove();if(co)co.remove();document.documentElement.classList.contains("pcvrai")?vrai():demo();
