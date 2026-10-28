@@ -309,3 +309,9 @@ html body .brand>img.pc-logo{box-sizing:border-box;width:42px!important;height:4
 /* La dictée reste toujours à portée (Cyril : « très important dans notre processus ») : rond micro dans l'en-tête, téléphone comme tablette */
 html body .head #speak{display:grid!important;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--accx)}
 html body .head #speak .ri{width:19px;height:19px;color:var(--accx)}
+/* Téléphone : la dictée flotte en bas à droite, au-dessus du menu, accessible à tout moment même en faisant défiler */
+@media (max-width:899px){
+  html body .head #speak{position:fixed;z-index:22;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(98px + env(safe-area-inset-bottom,0px));width:58px;height:58px;box-shadow:var(--up)}
+  html body .head #speak .ri{width:24px;height:24px}
+}
+@media (max-width:899px){html body .app{padding-bottom:calc(172px + env(safe-area-inset-bottom,0px))}}
