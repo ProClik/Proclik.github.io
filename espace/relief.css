@@ -4,26 +4,26 @@
   --bg:#ECEEF2;--card:#ECEEF2;--soft:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.08);
   --turq:#A8823F;--turq-ink:#7A5C26;--turq-bg:rgba(168,130,63,.12);--nuit:#0E1322;
   --acc:#A8823F;--accx:#8A6A2F;--acc-g:rgba(168,130,63,.32);
-  --rs:#ECEEF2;--cx:#ECEEF2;--hi:#FFFFFF;--lo:rgba(26,34,64,.16);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
+  --rs:#ECEEF2;--cx:#ECEEF2;--hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
   --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
   --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
-  --up-s:-3px -3px 7px var(--hi),3px 3px 8px var(--lo);
-  --in:inset 3px 3px 7px var(--ilo),inset -3px -3px 7px var(--ihi);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
   --doux:cubic-bezier(.22,1,.36,1)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#131826;--card:#181D2B;--soft:#181D2B;--fg:#EEF1F8;--muted:#A3ACC6;--line:rgba(255,255,255,.06);
   --turq:#D4B483;--turq-ink:#E3C99C;--turq-bg:rgba(212,180,131,.12);--nuit:#0E1322;
   --acc:#D4B483;--accx:#D4B483;--acc-g:rgba(212,180,131,.4);
-  --rs:linear-gradient(145deg,#1B2132,#161B29);--cx:#0F131F;--hi:rgba(255,255,255,.07);--lo:rgba(0,0,0,.6);--ihi:rgba(255,255,255,.06);--ilo:rgba(0,0,0,.6);
-  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up-s:-3px -3px 7px var(--hi),3px 3px 8px var(--lo);
-  --in:inset 3px 3px 7px var(--ilo),inset -3px -3px 7px var(--ihi)}}
+  --rs:linear-gradient(145deg,#1B2132,#161B29);--cx:#0F131F;--hi:rgba(255,255,255,.09);--lo:rgba(0,0,0,.6);--ihi:rgba(255,255,255,.06);--ilo:rgba(0,0,0,.6);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}}
 :root[data-theme="dark"]{
   --bg:#131826;--card:#181D2B;--soft:#181D2B;--fg:#EEF1F8;--muted:#A3ACC6;--line:rgba(255,255,255,.06);
   --turq:#D4B483;--turq-ink:#E3C99C;--turq-bg:rgba(212,180,131,.12);--nuit:#0E1322;
   --acc:#D4B483;--accx:#D4B483;--acc-g:rgba(212,180,131,.4);
-  --rs:linear-gradient(145deg,#1B2132,#161B29);--cx:#0F131F;--hi:rgba(255,255,255,.07);--lo:rgba(0,0,0,.6);--ihi:rgba(255,255,255,.06);--ilo:rgba(0,0,0,.6);
-  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up-s:-3px -3px 7px var(--hi),3px 3px 8px var(--lo);
-  --in:inset 3px 3px 7px var(--ilo),inset -3px -3px 7px var(--ihi)}
+  --rs:linear-gradient(145deg,#1B2132,#161B29);--cx:#0F131F;--hi:rgba(255,255,255,.09);--lo:rgba(0,0,0,.6);--ihi:rgba(255,255,255,.06);--ilo:rgba(0,0,0,.6);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}
 
 html body{background:var(--bg)}
 html body button:focus-visible,html body [tabindex]:focus-visible{outline-color:var(--acc)}
@@ -311,7 +311,9 @@ html body .head #speak{display:grid!important;place-items:center;width:42px;heig
 html body .head #speak .ri{width:19px;height:19px;color:var(--accx)}
 /* Téléphone : la dictée flotte en bas à droite, au-dessus du menu, accessible à tout moment même en faisant défiler */
 @media (max-width:899px){
-  html body .head #speak{position:fixed;z-index:22;left:0;right:0;margin:0 auto;bottom:calc(96px + env(safe-area-inset-bottom,0px));width:60px;height:60px;box-shadow:var(--up)}
-  html body .head #speak .ri{width:24px;height:24px}
+  html body .head #speak{position:fixed;z-index:22;left:0;right:0;margin:0 auto;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:42px;height:42px;box-shadow:var(--up-s)}
+  html body .head #speak .ri{width:20px;height:20px}
 }
 @media (max-width:899px){html body .app{padding-bottom:calc(172px + env(safe-area-inset-bottom,0px))}}
+/* Relief plus marqué sur les gros boutons d'action */
+html body .btn.go,html body .vbtn.go{box-shadow:-6px -6px 14px var(--hi),8px 8px 18px var(--lo)}
