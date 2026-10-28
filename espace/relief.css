@@ -317,3 +317,45 @@ html body .head #speak .ri{width:19px;height:19px;color:var(--accx)}
 @media (max-width:899px){html body .app{padding-bottom:calc(172px + env(safe-area-inset-bottom,0px))}}
 /* Relief plus marqué sur les gros boutons d'action */
 html body .btn.go,html body .vbtn.go{box-shadow:-6px -6px 14px var(--hi),8px 8px 18px var(--lo)}
+/* ===== Harmonisation de tout l'Espace (28/10) ===== */
+/* Encadrés d'aide : bloc en relief, plus de pointillés */
+html body .tip{background:var(--rs);border:0;box-shadow:var(--up-s);border-radius:18px;padding:12px 12px 12px 14px}
+html body .tip .q{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+/* Puces « Bientôt » : creusées */
+html body .soon{background:var(--cx);border:0;box-shadow:var(--in);font-family:inherit;letter-spacing:.04em}
+/* Cartes Devis : le relief est porté par l'enveloppe (sinon coupé) */
+html body .dwrap{box-shadow:var(--up);overflow:hidden;-webkit-mask-image:none;mask-image:none;isolation:isolate;background:var(--rs)}
+html body .dwrap .under{inset:2px;border-radius:18px;background:var(--acc)}
+html body .dwrap .dcard{box-shadow:none;background:var(--rs)}
+html body .dcard.sel{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--acc) 55%,transparent)!important}
+/* Interrupteurs : rail creusé, bouton en relief, laiton quand actif */
+html body .sw{background:var(--cx);box-shadow:var(--in)}
+html body .sw::after{background:var(--rs);box-shadow:var(--up-s)}
+html body .sw.on{background:color-mix(in srgb,var(--acc) 30%,var(--cx))}
+html body .sw.on::after{background:var(--accx)}
+/* Relances : petites puces creusées, icône sans pastille */
+html body .rel span{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+html body .rel span.done{background:var(--cx);color:var(--accx)}
+html body .rel span .ri,html body .rel span.ri{background:none;box-shadow:none;padding:0}
+/* Avatars / initiales (fournisseurs, menu) : galets */
+html body .av{background:var(--rs);box-shadow:var(--up-s);border-radius:50%;color:var(--fg)}
+/* Bouton Retour des fiches : galet sans contour */
+html body .xback{background:var(--rs)!important;color:var(--fg)!important;border:0!important;box-shadow:var(--up-s)}
+/* Notification : icône dans un galet laiton */
+html body .toast .ti{background:var(--rs);box-shadow:var(--up-s);border-radius:50%}
+html body .toast .ti rect,html body .toast .ti circle:first-of-type{fill:var(--accx)}
+html body .toast .ti circle:last-of-type{fill:var(--rs);stroke:var(--accx)}
+/* Bienvenue : icône dans un galet, plus de halo */
+html body .wicon{background:var(--rs);box-shadow:var(--up);color:var(--accx);border-radius:50%}
+html body .wdots i{background:var(--cx);box-shadow:var(--in)}
+html body .wdots i.on{background:var(--accx);box-shadow:none}
+/* Calendrier : aujourd'hui en laiton */
+html body .cal-top h3 span{color:var(--accx)}
+html body .wkc-h .tdy b,html body .mo-g .tdy .n,html body .mo-g .tdy.sel .n{background:var(--accx);color:var(--bg);box-shadow:none}
+html body .nowl{border-top-color:var(--accx)}html body .nowl::before{background:var(--accx)}
+html body .ev.free{border-color:color-mix(in srgb,var(--muted) 35%,transparent)}
+/* Anneaux d'avancement des chantiers */
+html body .ring{background:conic-gradient(var(--accx) calc(var(--p)*1%),var(--cx) 0)}
+html body .ring::before{background:var(--rs)}
+html body .prog{background:var(--cx);box-shadow:var(--in)}
+html body .prog i{background:var(--accx)}
