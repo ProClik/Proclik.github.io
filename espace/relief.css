@@ -294,3 +294,15 @@ html body .acc .vco span{font-size:13px}
 html body .brand>img.pc-logo{box-sizing:border-box;width:42px!important;height:42px!important;padding:6px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);object-fit:contain;flex:none}
 /* Résumé d'une vraie demande : deux lignes au plus, comme la planche */
 .acc .dem-h small.resume{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- Tablette et ordinateur : menu de ronds sur le côté gauche, comme la planche ---------- */
+@media (min-width:900px){
+  html body{padding-left:108px}
+  html body .tabs-top,html body #net{display:none!important}
+  html body .nav{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:18px;position:fixed;top:0;bottom:0;left:0;right:auto;width:108px;
+    padding:24px 0 calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg);box-shadow:none}
+  html body .nav button{width:100%;flex:none}
+  html body .nav .ico,:root.simple body .nav .ico{width:46px;height:46px}
+  html body .nav .badge{top:-3px;right:calc(50% - 27px)}
+  html body .app{padding-bottom:40px}
+}
