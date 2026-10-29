@@ -801,8 +801,21 @@ svg[stroke="currentColor"],svg[stroke="currentColor"] [stroke-width]{stroke-widt
 .resa .points li{position:relative;padding-left:24px;color:var(--muted);font-size:15.5px}
 .resa .points li::before{content:"";position:absolute;left:0;top:8px;width:10px;height:10px;border-radius:50%;background:var(--acc)}
 .resa .points b{color:var(--fg)}
+/* la carte Studio Nova prend la couleur du salon (prune), comme son site */
+.resa-d{--acc:#A8667A;--accx:#7B4B5E;--lis:0 0 0 1px rgba(123,75,94,.38),0 0 30px -8px rgba(123,75,94,.4)}
+:root[data-theme="dark"] .resa-d{--acc:#D49BAA;--accx:#E0AEBB;--lis:0 0 0 1px rgba(212,155,170,.32),0 0 30px -8px rgba(212,155,170,.3)}
+.resa-d .rd-m .choisi,.resa-d .rd-h .choisi{box-shadow:var(--in),0 0 0 1px rgba(123,75,94,.35)}
 .resa-d{position:relative;display:grid;gap:14px;max-width:420px;justify-self:center;width:100%}
 .rd-t b{display:block;font-size:18px}.rd-t small{color:var(--muted);font-weight:600}
+.rd-m{padding:12px 10px 10px;border-radius:20px;box-shadow:var(--in)}
+.rd-m .cal-h{margin-bottom:8px}.rd-m .cal-h b{font-size:15px;font-weight:800}
+.rd-m .cal-b{width:32px;height:32px;cursor:default}.rd-m .cal-b svg{width:15px;height:15px}
+.rd-m .cal-g{gap:4px}.rd-m .cal-s{gap:4px}
+.rd-m .cal-g span{aspect-ratio:1;display:grid;place-items:center;position:relative;border-radius:50%;font-size:13px;font-weight:700}
+.rd-m .cal-g .cj{color:var(--muted);opacity:.4;font-weight:600}
+.rd-m .cal-g .jl{box-shadow:var(--up-s);color:var(--fg)}
+.rd-m .cal-g .jl i{position:absolute;bottom:14%;width:4px;height:4px;border-radius:50%;background:var(--acc)}
+.rd-m .cal-g .choisi{box-shadow:var(--in),0 0 0 1px rgba(168,130,63,.3);color:var(--accx)}
 .rd-j,.rd-h{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .rd-h{grid-template-columns:repeat(3,1fr)}
 .rd-j span,.rd-h span{padding:10px 4px;border-radius:14px;text-align:center;font-size:12.5px;font-weight:700;color:var(--muted);box-shadow:var(--up-s)}
@@ -1313,8 +1326,8 @@ footer a{text-decoration:none}
     <ul class="points"><li><b>Moins d'oublis.</b> Un rappel part tout seul avant chaque rendez-vous.</li><li><b>L'acompte.</b> Le client peut régler un acompte en réservant : il vient.</li><li><b>Votre agenda à jour.</b> Rendez-vous, annulations et clients, au même endroit.</li></ul>
   </div>
   <div class="card resa-d lis rv" aria-hidden="true">
-    <div class="rd-t"><b>Studio Nova</b><small>Coupe + brushing · 45 min</small></div>
-    <div class="rd-j"><span>Mar.<b>3</b></span><span class="choisi">Mer.<b>4</b></span><span>Jeu.<b>5</b></span><span>Ven.<b>6</b></span></div>
+    <div class="rd-t"><b>Studio Nova</b><small>Coupe + brushing · 1 h</small></div>
+    <div class="rd-m"><div class="cal-h"><span class="cal-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6-6 6 6 6"/></svg></span><b>Novembre 2026</b><span class="cal-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></span></div><div class="cal-s"><span>lun.</span><span>mar.</span><span>mer.</span><span>jeu.</span><span>ven.</span><span>sam.</span><span>dim.</span></div><div class="cal-g"><span></span><span></span><span></span><span></span><span></span><span></span><span class="cj">1</span><span class="cj">2</span><span class="jl">3<i></i></span><span class="jl choisi">4<i></i></span><span class="jl">5<i></i></span><span class="jl">6<i></i></span><span class="jl">7<i></i></span><span class="cj">8</span><span class="cj">9</span><span class="jl">10<i></i></span><span class="jl">11<i></i></span><span class="cj">12</span><span class="jl">13<i></i></span><span class="jl">14<i></i></span><span class="cj">15</span><span class="cj">16</span><span class="jl">17<i></i></span><span class="jl">18<i></i></span><span class="jl">19<i></i></span><span class="cj">20</span><span class="jl">21<i></i></span><span class="cj">22</span><span class="cj">23</span><span class="jl">24<i></i></span><span class="jl">25<i></i></span><span class="jl">26<i></i></span><span class="jl">27<i></i></span><span class="jl">28<i></i></span><span class="cj">29</span><span class="cj">30</span></div></div>
     <div class="rd-h"><span>9 h 30</span><span class="choisi">14 h 00</span><span>16 h 30</span></div>
     <div class="rd-a"><span>Acompte</span><b>15,00 €</b><i class="paye">Payé</i></div>
     <div class="rd-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>Réservé : mercredi 4 à 14 h 00</div>
