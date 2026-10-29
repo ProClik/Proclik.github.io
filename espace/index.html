@@ -569,6 +569,7 @@ button.pill{cursor:pointer}
 <button role="tab" data-v="clients" id="tt-clients" aria-selected="false">Clients</button>
 <button role="tab" data-v="devis" id="tt-devis" aria-selected="false">Devis</button>
 <button role="tab" data-v="factures" id="tt-factures" aria-selected="false">Factures</button>
+<button role="tab" data-v="depenses" id="tt-depenses" aria-selected="false">Dépenses</button>
 <button role="tab" data-v="planning" id="tt-planning" aria-selected="false">Planning</button>
 <button role="tab" data-v="chantiers" id="tt-chantiers" aria-selected="false">Chantiers</button>
 <button role="tab" data-v="prix" id="tt-prix" aria-selected="false">Achats</button>
@@ -678,6 +679,7 @@ button.pill{cursor:pointer}
 </section>
 <section class="view" id="v-clients" aria-label="Clients" hidden></section>
 <section class="view" id="v-factures" aria-label="Devis et factures" hidden></section>
+<section class="view" id="v-depenses" aria-label="Dépenses" hidden></section>
 <div class="scrim" id="scrim"></div>
 </main>
 </div>
@@ -691,6 +693,7 @@ button.pill{cursor:pointer}
 <button role="tab" data-v="clients" id="nb-clients" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.6a6 6 0 0 1 3 5.4"/></svg></span>Clients</button>
 <button role="tab" data-v="devis" id="nb-devis" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/></svg></span>Devis<span class="badge" id="badge">2</span></button>
 <button role="tab" data-v="factures" id="nb-factures" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>Factures<span class="badge" id="badge-f" hidden></span></button>
+<button role="tab" data-v="depenses" id="nb-depenses" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7.5h15a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 19 20H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M4 7.5V6a2 2 0 0 1 2-2h10.5v3.5"/><path d="M16 13.8h1.5"/></svg></span>Dépenses<span class="badge" id="badge-d" hidden></span></button>
 <button role="tab" data-v="planning" id="nb-planning" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>Planning</button>
 <button role="tab" data-v="chantiers" id="nb-chantiers" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h7M6 20V10l6-4 5 3.4"/><g transform="translate(10.6 10.4) scale(.56)"><path vector-effect="non-scaling-stroke" d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path vector-effect="non-scaling-stroke" d="M14 6a6 6 0 0 1 6 6v3"/><path vector-effect="non-scaling-stroke" d="M4 15v-3a6 6 0 0 1 6-6"/><rect vector-effect="non-scaling-stroke" x="2" y="15" width="20" height="4" rx="1"/></g></svg></span>Chantiers</button>
 <button role="tab" data-v="prix" id="nb-prix" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h2l2 10h10l2-7H7"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg></span>Achats</button>
@@ -1593,7 +1596,7 @@ $$('.tip[data-tip]').forEach(function(t){if(tipsOff[t.dataset.tip])t.hidden=true
 /* ---------- démarrage du module ---------- */
 renderFour();renderChList();relUI();renderList();
 /* Clients et Factures (clients.js) se servent des mêmes données et du même panneau */
-window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet};
+window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet,saveCH:saveCH,showCh:showCh,VX:VX};
 if(!lsGet('pc-welcome',0))setTimeout(showWelcome,200);
 
 /* ---------- fiche identité : état de lecture ---------- */
@@ -1702,4 +1705,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="accueil.js?v=6"></script>
 <link rel="stylesheet" href="clients.css?v=1">
 <script src="clients.js?v=1"></script>
+<link rel="stylesheet" href="depenses.css?v=1">
+<script src="depenses.js?v=1"></script>
 <script src="relief.js?v=4"></script>

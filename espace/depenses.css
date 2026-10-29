@@ -1,0 +1,42 @@
+/* Dépenses de l'Espace : même matière « Relief doux » que Clients et Factures (clients.css), même dessin jour et nuit. */
+.dp-aide{margin:-4px 4px 0;font-size:13px;color:var(--muted);line-height:1.45;text-align:center}
+/* Par chantier : une barre creusée, remplie de laiton (gris foncé si on dépasse le prévu, sans alarme criarde) */
+.dp-bar{display:block;height:7px;margin-top:7px;border-radius:99px;background:var(--cx);box-shadow:var(--in);overflow:hidden}
+.dp-bar i{display:block;height:100%;border-radius:99px;background:var(--acc)}
+.dp-bar.trop i{background:var(--fg);opacity:.55}
+
+/* Formulaire : la photo d'abord, en grand */
+.dp-photo{display:flex!important;align-items:center;gap:14px;padding:14px 16px;border-radius:20px;background:var(--rs);box-shadow:var(--up-s);cursor:pointer;font-weight:600!important}
+.dp-photo .dp-pi{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+.dp-photo svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dp-photo img{flex:none;width:52px;height:52px;border-radius:14px;object-fit:cover;box-shadow:var(--in)}
+.dp-photo .dp-pt{display:grid;gap:2px;min-width:0}
+.dp-photo .dp-pt b{font-size:15.5px;font-weight:700}
+.dp-photo .dp-pt small{font-size:12.5px;color:var(--muted);font-weight:600}
+.dp-lu{margin:-4px 0 0}
+/* Cinq choix en galets : un appui, c'est choisi (le choix est creusé, icône laiton) */
+.dp-q{display:grid;gap:8px}.dp-q>span{font-size:13.5px;font-weight:700}
+.dp-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.dp-cats button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 2px 9px;border:0;border-radius:16px;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);font:700 11px var(--f,inherit);cursor:pointer;min-width:0}
+.dp-cats button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dp-cats svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dp-cats button[aria-pressed="true"]{background:var(--cx);box-shadow:var(--in);color:var(--fg)}
+.dp-cats button[aria-pressed="true"] svg{color:var(--accx)}
+.dp-tva summary{cursor:pointer;font-size:13.5px;color:var(--muted);list-style:none}.dp-tva summary::-webkit-details-marker{display:none}
+.dp-tva summary b{color:var(--fg)}
+.dp-tva .seg{display:flex;margin-top:10px}.dp-tva .seg button{flex:1}
+.dp-opt{margin:0;padding:10px 14px;border-radius:14px;background:var(--cx);box-shadow:var(--in);font-size:12.5px;color:var(--muted);line-height:1.45}.dp-opt b{color:var(--accx)}
+/* Fiche : la photo du ticket */
+.dp-ph{display:grid;place-items:center;margin-bottom:12px;border-radius:18px;overflow:hidden;background:var(--cx);box-shadow:var(--in)}
+.dp-ph img{display:block;width:100%;max-height:340px;object-fit:contain}
+.dp-ph.vide{grid-auto-flow:column;gap:8px;padding:26px;color:var(--muted);font-size:13px;font-weight:600}
+.dp-ph svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* Menu : sur téléphone, sept onglets (Dépenses s'ajoute, Achats reste dans le menu ☰) */
+@media (max-width:899px){
+  html body .nav{grid-template-columns:repeat(7,1fr)!important}
+  html body .nav button{font-size:10px;letter-spacing:-.1px}
+  html body .nav .ico,:root.simple body .nav .ico{width:38px;height:38px}
+  html body .nav .ico svg{width:19px;height:19px}
+}
+@media (max-width:899px) and (min-width:400px){html body .nav .ico,:root.simple body .nav .ico{width:40px;height:40px}}
