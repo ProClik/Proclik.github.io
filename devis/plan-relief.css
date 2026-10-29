@@ -133,3 +133,19 @@ html body .cltool svg{width:28px;height:28px}
 @media (min-width:700px){html body .cltool{font-size:14px}html body .cltool svg{width:34px;height:34px}}
 html body .cltool .lk{top:-6px;right:50%;transform:translateX(50%);font-size:9px;padding:1px 6px}
 @media (max-width:340px){html body .cltool{font-size:9.5px;letter-spacing:-.02em}html body .cltool svg{width:23px;height:23px}}
+
+/* barre d'outils du bas = menu de l'Espace (Cyril, 29/10) : ronds séparés sans barre, nom en dessous, l'outil choisi enfoncé avec son icône laiton */
+html body #cltools{left:0;right:0;bottom:0;gap:0;padding:14px 4px 8px;border:0;border-radius:0 0 16px 16px;box-shadow:none;background:linear-gradient(to top,var(--paper) 0,var(--paper) calc(100% - 14px),transparent 100%)}
+html body .cltool,html body .cltool[aria-pressed="true"],:root[data-theme="dark"] body .cltool[aria-pressed="true"],html.client body .cltool[aria-pressed="true"]{background:transparent;box-shadow:none;padding:0;gap:6px;color:var(--muted);font:600 11px/1.1 var(--f);letter-spacing:0}
+html body .cltool svg{box-sizing:border-box;width:42px;height:42px;padding:9px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);transition:box-shadow .6s cubic-bezier(.22,1,.36,1),color .6s}
+html body .cltool[aria-pressed="true"]{color:var(--fg);font-weight:700}
+html body .cltool[aria-pressed="true"] svg{box-shadow:var(--in);color:var(--mint-ink)}
+html body .cltool:active svg{box-shadow:var(--in)}
+html body .cltool:active{transform:none}
+html body .cltool.next,html body .cltool.next[aria-pressed="true"]{box-shadow:none;animation:none}
+html body .cltool.next svg{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
+@keyframes pr-pulse3{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px rgba(168,130,63,.16)}}
+html body .cltool .lk{top:-12px}
+@media (max-width:370px){html body .cltool{font-size:10px}html body .cltool svg{width:38px;height:38px;padding:8px}}
+@media (min-width:700px){html body .cltool{font-size:13px}html body .cltool svg{width:50px;height:50px;padding:11px}}
+html.client body .fl.mr,html.client body #todo-bar,html.client body .rotb,html.client body #bar3d{bottom:104px!important}
