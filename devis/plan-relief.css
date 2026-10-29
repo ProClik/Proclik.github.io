@@ -4,7 +4,7 @@
 :root{
   --bg:#ECEEF2;--surface:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.13);--ink:#0E1322;
   --mint:#A8823F;--mint-ink:#8A6A2F;--acc:#A8823F;--soft:rgba(168,130,63,.12);--clo:#8A6A2F;
-  --paper:#F4F5F8;--dot:#CDD2DC;
+  --paper:#F4F5F8;--dot:#D6DAE2;--wall:#353C4E;--floor:#F8F7F4;--parq:#EFE6D8;--parq-ln:#E2D3BC;--tile:#EAEDF2;--joint:#CFD4DD;--win:#6F8FB8;
   --hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
   --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
   --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
@@ -15,7 +15,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#1E2433;--surface:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.12);--ink:#0E1322;
   --mint:#D4B483;--mint-ink:#D4B483;--acc:#D4B483;--soft:rgba(212,180,131,.12);--clo:#D4B483;
-  --paper:#1A1F2D;--dot:#2E3648;--floor:#232A3B;--tile:#283045;--joint:#3A4359;--souple:#263049;--rag:#262D40;
+  --paper:#1A1F2D;--dot:#283043;--wall:#B7BECD;--floor:#262D3E;--parq:#3A342C;--parq-ln:#4A4136;--tile:#2A3246;--joint:#3A4359;--souple:#263049;--rag:#262D40;--win:#8FAAD0;
   --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
   --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
   --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
@@ -25,7 +25,7 @@
 :root[data-theme="dark"]{
   --bg:#1E2433;--surface:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.12);--ink:#0E1322;
   --mint:#D4B483;--mint-ink:#D4B483;--acc:#D4B483;--soft:rgba(212,180,131,.12);--clo:#D4B483;
-  --paper:#1A1F2D;--dot:#2E3648;--floor:#232A3B;--tile:#283045;--joint:#3A4359;--souple:#263049;--rag:#262D40;
+  --paper:#1A1F2D;--dot:#283043;--wall:#B7BECD;--floor:#262D3E;--parq:#3A342C;--parq-ln:#4A4136;--tile:#2A3246;--joint:#3A4359;--souple:#263049;--rag:#262D40;--win:#8FAAD0;
   --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
   --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
   --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
