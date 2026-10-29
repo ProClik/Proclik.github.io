@@ -786,6 +786,13 @@ svg[stroke="currentColor"],svg[stroke="currentColor"] [stroke-width]{stroke-widt
 .factures .embleme{margin:0;grid-row:span 2}
 .factures h3{font-size:22px}
 .or-t{color:var(--accx)}
+.fr-b{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.fr-p{display:flex;align-items:center;gap:10px;padding:9px 16px 9px 10px;border-radius:999px;box-shadow:var(--up-s);color:var(--fg);text-decoration:none;transition:box-shadow .5s}
+a.fr-p:active{box-shadow:var(--in)}
+.fr-p .fr{width:26px;height:26px;flex:none;filter:drop-shadow(0 1px 1.5px rgba(14,19,34,.18))}
+.fr-p b{display:block;font-size:13.5px;line-height:1.2}
+.fr-p small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.embleme .fr{width:15px;height:15px;vertical-align:-3px;margin-left:5px}
 .fac-txt p{color:var(--muted);margin-top:8px;font-size:15.5px}
 .fac-txt b{color:var(--fg)}
 .fac-pts{grid-column:2;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -1266,10 +1273,11 @@ footer a{text-decoration:none}
     <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><h3>Votre planning.</h3><p>Rendez-vous, visites, chantiers : votre semaine d'un coup d'œil.</p></div>
   </div>
   <div class="factures card lis rv" id="factures">
-    <div class="embleme"><span class="em-g"><svg class="em-fac" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h15l7 7v29H14z"/><path d="M29 6v7h7"/><path class="l1" pathLength="1" d="M19 21h12"/><path class="l2" pathLength="1" d="M19 27h8"/><path class="sceau" pathLength="1" d="M27 35l3 3 6-7"/></svg></span><span class="em-f"></span><span class="em-n">Vos factures<small>conformes 2026</small></span></div>
+    <div class="embleme"><span class="em-g"><svg class="em-fac" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h15l7 7v29H14z"/><path d="M29 6v7h7"/><path class="l1" pathLength="1" d="M19 21h12"/><path class="l2" pathLength="1" d="M19 27h8"/><path class="sceau" pathLength="1" d="M27 35l3 3 6-7"/></svg></span><span class="em-f"></span><span class="em-n">Vos factures<small>conformes 2026<svg class="fr" viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="fr3"><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/></clipPath></defs><g clip-path="url(#fr3)"><rect x="0" y="0" width="9.4" height="24" fill="#0055A4"/><rect x="9.4" y="0" width="5.2" height="24" fill="#FFFFFF"/><rect x="14.6" y="0" width="9.4" height="24" fill="#EF4135"/></g><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z" fill="none" stroke="rgba(14,19,34,.18)" stroke-width="1"/></svg></small></span></div>
     <div class="fac-txt"><h3>La facture électronique, <span class="or-t">sans y penser.</span></h3>
       <p>Depuis le 1<sup>er</sup> septembre 2026, toute entreprise doit pouvoir recevoir des factures électroniques. Le 1<sup>er</sup> septembre 2027, les PME, TPE et micro-entreprises devront aussi les envoyer ainsi.</p>
-      <p>Dans votre Espace, vos devis et factures passent par <b>VosFactures</b>, plateforme agréée par l'État : ils partent au bon format, et vous n'avez rien à changer.</p></div>
+      <p>Dans votre Espace, vos devis et factures passent par <b>VosFactures</b>, plateforme agréée par l'État : ils partent au bon format, et vous n'avez rien à changer.</p>
+      <div class="fr-b"><span class="fr-p"><svg class="fr" viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="fr1"><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/></clipPath></defs><g clip-path="url(#fr1)"><rect x="0" y="0" width="9.4" height="24" fill="#0055A4"/><rect x="9.4" y="0" width="5.2" height="24" fill="#FFFFFF"/><rect x="14.6" y="0" width="9.4" height="24" fill="#EF4135"/></g><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z" fill="none" stroke="rgba(14,19,34,.18)" stroke-width="1"/></svg><span><b>Conforme à la loi française</b><small>Réforme de la facture électronique</small></span></span><a class="fr-p" href="https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees" target="_blank" rel="noopener"><svg class="fr" viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="fr2"><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/></clipPath></defs><g clip-path="url(#fr2)"><rect x="0" y="0" width="9.4" height="24" fill="#0055A4"/><rect x="9.4" y="0" width="5.2" height="24" fill="#FFFFFF"/><rect x="14.6" y="0" width="9.4" height="24" fill="#EF4135"/></g><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z" fill="none" stroke="rgba(14,19,34,.18)" stroke-width="1"/></svg><span><b>VosFactures, plateforme agréée</b><small>Sur la liste officielle impots.gouv.fr ↗</small></span></a></div></div>
     <ul class="fac-pts"><li><b>Reçues</b>Les factures de vos fournisseurs arrivent rangées.</li><li><b>Envoyées</b>Au format officiel, en un clic depuis l'Espace.</li><li><b>Archivées</b>Gardées pour vous, prêtes pour votre comptable.</li></ul>
   </div>
 </div></section>
