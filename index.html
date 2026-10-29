@@ -487,6 +487,11 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .mat li.ok{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--acc)}
 .mat li.ok::after{content:"";position:absolute;left:6px;top:14px;width:5px;height:9px;border:solid var(--accx);border-width:0 2px 2px 0;transform:rotate(45deg)}
 .mat li.voix{font-style:italic;color:var(--accx)}
+.mat.dp li{padding-left:0}
+.mat.dp li::before{display:none}
+.mat.dp b{display:block;font-size:14.5px;font-weight:700}
+.mat.dp span{display:block;font-size:13px;color:var(--muted)}
+.liste .btn{width:100%;margin-top:14px}
 .liste .note{margin-top:12px;text-align:center}
 .predevis .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
 .predevis .ph b{display:block;font-size:17px}
@@ -1438,7 +1443,7 @@ footer a{text-decoration:none}
       <li><div><b>Vos prix, jamais inventés.</b><span>Cliky chiffre avec votre catalogue et votre main-d'œuvre. Cliky est fort en calcul, mais c'est vous le patron.</span></div></li>
       <li><div><b>Rien ne part sans vous.</b><span>Chaque pré-devis attend votre validation, ligne par ligne.</span></div></li>
       <li><div><b>Une photo suffit.</b><span>Un plan griffonné, une note sur un coin de carton : vous la prenez en photo, Cliky la lit et prépare le devis.</span></div></li>
-      <li><div><b>Les fournisseurs aussi.</b><span>La liste du matériel, tirée du pré-devis, devient une demande de prix. Vous la vérifiez, elle part chez votre fournisseur. Fenêtres ou sols : avec les bonnes dimensions.</span></div></li>
+      <li><div><b>Les fournisseurs aussi.</b><span>La liste du matériel, tirée du pré-devis, devient une demande de prix. Vous la vérifiez, elle part chez votre fournisseur. Par exemple pour des fenêtres : dimensions, ouverture, vitrage et volet, tout y est.</span></div></li>
       <li><div><b>La liste du chantier, toujours à jour.</b><span>Vos notes de chantier suivent le devis. Chez le fournisseur, vous avez la liste du matériel sous les yeux : rien n'est oublié, pas de deuxième voyage.</span></div></li>
       <li><div><b>Tout à la voix.</b><span>Le micro marche partout : vous dictez une note, une correction ou un ajout, l'Espace l'écrit.</span></div></li>
     </ul>
@@ -1466,6 +1471,16 @@ footer a{text-decoration:none}
       <li class="voix">« Penser aux chevilles pour la cuisine »</li>
     </ul>
     <p class="note">Exemple fictif · la dernière ligne a été dictée au micro.</p>
+  </div>
+  <div class="card liste lis rv">
+    <div class="ph"><div class="pt"><b>Demande de prix · menuiseries</b><span>Pour votre fournisseur · tirée du pré-devis</span></div><span class="etat">Vérifiée</span></div>
+    <ul class="creux mat dp">
+      <li><b>Fenêtre PVC 2 vantaux · 120 × 135 cm</b><span>Oscillo-battant · double vitrage · volet roulant électrique · ×2</span></li>
+      <li><b>Porte-fenêtre PVC 2 vantaux · 140 × 215 cm</b><span>Battant · double vitrage · volet roulant électrique · ×1</span></li>
+      <li><b>Fenêtre de toit · 78 × 98 cm</b><span>Rotation · store occultant · ×1</span></li>
+    </ul>
+    <a class="btn go" href="#contact">Envoyer au fournisseur</a>
+    <p class="note">Exemple fictif · rien ne part sans votre accord.</p>
   </div>
   </div>
 </div></section>
