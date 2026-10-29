@@ -123,3 +123,13 @@ html body .intro .bc-ok::after,html body .sh-foot .btn::after{content:"";positio
 html body .intro .bc-ok::before,html body .sh-foot .btn::before{content:"";position:absolute;z-index:1;right:15px;top:50%;width:18px;height:18px;margin-top:-9px;background:var(--mint-ink);
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
           mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
+
+/* barre d'outils du bas : les noms s'affichent en entier (retour de Cyril, 29/10), même sur petit téléphone */
+html body #cltools{left:6px;right:6px;bottom:6px;gap:2px;padding:5px 4px}
+html body .cltool{padding:7px 0 6px;gap:4px;font:700 11.5px/1.1 var(--f);letter-spacing:-.01em}
+html body .cltool span{overflow:visible;text-overflow:clip;max-width:none}
+html body .cltool svg{width:28px;height:28px}
+@media (max-width:370px){html body .cltool{font-size:10.5px}html body .cltool svg{width:25px;height:25px}}
+@media (min-width:700px){html body .cltool{font-size:14px}html body .cltool svg{width:34px;height:34px}}
+html body .cltool .lk{top:-6px;right:50%;transform:translateX(50%);font-size:9px;padding:1px 6px}
+@media (max-width:340px){html body .cltool{font-size:9.5px;letter-spacing:-.02em}html body .cltool svg{width:23px;height:23px}}
