@@ -34,7 +34,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16
 .wrap{max-width:640px;margin:0 auto}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
-.logo{--pl:#A8823F;--lh:rgba(255,255,255,.95);--lo:rgba(26,34,64,.17);width:40px;height:40px;border-radius:50%;background:var(--bg);box-shadow:-3px -3px 7px var(--lh),3px 3px 8px var(--lo);display:grid;place-items:center;flex:none}.logo svg{width:27px;height:27px;display:block}:root[data-theme="dark"] .logo{--pl:#D4B483;--lh:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5)}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo{--pl:#D4B483;--lh:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5)}}
+.logo{--pl:#A8823F;--lh:rgba(255,255,255,.95);--lo:rgba(26,34,64,.17);width:40px;height:40px;border-radius:50%;background:var(--bg);box-shadow:-3px -3px 7px var(--lh),3px 3px 8px var(--lo);display:grid;place-items:center;flex:none}.logo svg{width:24px;height:24px;display:block}:root[data-theme="dark"] .logo{--pl:#D4B483;--lh:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5)}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo{--pl:#D4B483;--lh:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5)}}
 
 .brand small{display:block;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.02em}
 .demo-badge[hidden]{display:none}
@@ -136,7 +136,7 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 details{width:100%;text-align:left}
 summary{cursor:pointer;color:var(--mint-ink);font-weight:700;font-size:14px}
 pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;max-height:340px}
-.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:28px}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:28px}.foot{--pl:#A8823F}:root[data-theme="dark"] .foot{--pl:#D4B483}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .foot{--pl:#D4B483}}.foot svg{width:14px;height:14px;vertical-align:-2px;margin-right:3px}.foot .sig{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:14px;color:var(--fg)}.foot .sig svg{width:18px;height:18px;margin:0;vertical-align:0}.foot .sig i{width:1px;height:16px;background:var(--pl);opacity:.7}.foot .sig span{font-weight:300;font-size:11px;letter-spacing:.32em;margin-right:-.32em}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .modes{display:grid;gap:14px;margin-top:6px}
 @media (min-width:560px){.modes{grid-template-columns:1.25fr 1fr}}
@@ -235,7 +235,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="logo"><svg viewBox="18 6.5 76 76" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--pl)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="56" cy="42" r="6" fill="var(--pl)"/></svg></div><div>Clik'Devis<small>BRS · Bati Renov' Services</small></div></div>
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--pl)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="var(--pl)" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="var(--pl)" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="var(--pl)" stroke="none"/></svg></div><div>Clik'Devis<small>BRS · Bati Renov' Services</small></div></div>
     <span class="demo-badge">Mode démo</span>
   </header>
   <div id="prog" hidden>
@@ -247,7 +247,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
   <div class="bigconf" id="bigconf" hidden role="alertdialog" aria-modal="true" aria-labelledby="bc-t"><div class="bc-in"><div class="bc-ic">⚠️</div><h2 id="bc-t"></h2><p id="bc-p"></p><div class="bc-b"><button type="button" class="bc-no" id="bc-no">Non, garder</button><button type="button" class="bc-ok" id="bc-ok">Oui</button></div></div></div>
   <div id="planhost" hidden><div id="pextra"></div></div>
   <div id="planfull" hidden role="dialog" aria-label="Votre plan"><div class="pf-bar"><div class="pf-t"><b>Votre plan</b><small id="pf-sub">Le contour du logement est prêt</small></div><button type="button" id="pf-later" data-later="1" aria-label="Finir plus tard">📩<span> Plus tard</span></button><button type="button" id="pf-done">✓ J'ai terminé</button></div><iframe id="pframe" title="Votre plan" allow="camera; microphone"></iframe></div>
-  <p class="foot">Vos réponses restent entre vous et l'artisan · Clik'Devis, propulsé par Cliky · ProClik</p>
+  <div class="foot"><p style="margin:0">Vos réponses restent entre vous et l'artisan · Clik'Devis, propulsé par Cliky</p><div class="sig"><svg viewBox="18 6.5 76 76" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--pl)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--pl)"/></svg><i></i><span>PROCLIK</span></div></div>
 </div>
 <nav class="nav" id="nav" hidden>
   <div class="wrap">
