@@ -910,49 +910,9 @@ a.fr-p:active{box-shadow:var(--in)}
 .aide li b{color:var(--fg)}
 /* Espace : petit téléphone qui montre l'Espace en action + dictée */
 .esp-v{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;margin:40px 0 30px}
-.mt{width:232px;padding:10px;border-radius:38px;box-shadow:var(--up),var(--lis);justify-self:center}
-.mt-n{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.mt-n span{padding:8px 2px;border-radius:12px;box-shadow:var(--in);text-align:center;font-size:10.5px;color:var(--muted)}
-.mt-n b{display:block;font-size:17px;color:var(--fg)}
-.mt-e{position:relative;height:360px;border-radius:30px;overflow:hidden}
-.mt-s{position:absolute;inset:0;padding:30px 16px 16px;display:flex;flex-direction:column;gap:12px;opacity:0;transform:translateY(8px);transition:opacity .7s var(--doux),transform .9s var(--doux)}
-.mt-s.on{opacity:1;transform:none}
-.mt-h{margin:0;font-weight:800;font-size:15px}
-.mt-c{position:relative;padding:12px 12px 12px 26px;border-radius:16px;box-shadow:var(--up-s);font-size:13px}
-.mt-c b{display:block}.mt-c small{color:var(--muted);font-size:11.5px}
-.mt-pt{position:absolute;left:11px;top:17px;width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pouls 1.8s infinite}
-.mt-pt.ok{animation:none;background:#4E9A6B}
-.mt-l{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:8px 10px;border-radius:12px;box-shadow:var(--in)}
-.mt-l b{white-space:nowrap}.mt-l .att{color:var(--accx);font-size:11px}
-.mt-b{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 6px 16px;border-radius:999px;box-shadow:var(--up-s);font-size:13px;font-weight:700}
-.mt-b i{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up-s);color:var(--accx)}
-.mt-b svg{width:16px;height:16px}
-.mt-s.on .mt-b.presse{animation:enfonce 2.6s ease 1.2s both}
-.mt-s[data-s="4"]{align-items:center;justify-content:center;text-align:center}
-.mt-ok{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up),var(--lis);color:var(--accx)}
-.mt-ok svg{width:28px;height:28px}
-.mt-t{font-size:16px}.mt-x{color:var(--muted);font-size:12px;max-width:170px}
-.mt-ex{position:absolute;top:9px;left:50%;transform:translateX(-50%);font-size:9.5px;padding:2px 8px}
 .mt-ck{display:inline-flex;align-items:center;gap:5px;align-self:flex-start;padding:3px 9px 3px 6px;border-radius:999px;font-size:10.5px;font-weight:800;color:var(--accx);box-shadow:var(--in);white-space:nowrap}
 .mt-ck svg{width:14px;height:14px}
 .esp-p .mt-ck{font-size:11.5px;margin-right:6px;vertical-align:1px}
-.mt-s .mt-ck{margin-bottom:-4px}
-.mt-plan{width:100%;height:auto;border-radius:14px;box-shadow:var(--in);padding:8px}
-.mt-plan path{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.mp-m{stroke:var(--fg);stroke-width:4;stroke-dasharray:1;stroke-dashoffset:1}
-.mp-c{stroke:var(--muted);stroke-width:2.5;stroke-dasharray:1;stroke-dashoffset:1}
-.mp-f{stroke:var(--acc);stroke-width:5;opacity:0}
-.mt-plan text{font:700 9px Manrope,sans-serif;fill:var(--muted)}
-.mt-s.on .mp-m{animation:trace-o 1.4s ease .3s forwards}.mt-s.on .mp-c{animation:trace-o .7s ease 1.5s forwards}.mt-s.on .mp-f{animation:fen-p .5s ease 2s forwards}
-.mt-x.g{color:var(--muted);font-size:11px;max-width:none}
-.mt-c.pt0{padding-left:12px}
-.mt-dic{display:inline-block;overflow:hidden;white-space:nowrap;max-width:0;border-right:2px solid var(--acc);vertical-align:bottom}
-.mt-s.on .mt-dic{animation:dicte-m 2.4s steps(26) .6s forwards,curseur .9s step-end infinite}
-@keyframes dicte-m{to{max-width:26ch}}
-.mt-mic{margin:auto auto 0;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--accx);box-shadow:var(--up-s),var(--lis)}
-.mt-mic svg{width:20px;height:20px}
-.mt-s.on .mt-mic{animation:sonne 1.6s ease infinite}
-.mt-b{white-space:nowrap}
 @media (max-width:820px){.esp-p li:not(.ck){display:none}.esp-p{display:grid!important}}
 .esp-t{display:grid;gap:22px}
 .dicte{display:flex;gap:20px;align-items:flex-start}
@@ -970,8 +930,30 @@ a.fr-p:active{box-shadow:var(--in)}
 .esp-p{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .esp-p li{padding:12px 16px;border-radius:16px;box-shadow:var(--in);color:var(--muted);font-size:15px}
 .esp-p b{color:var(--fg)}
-@media (max-width:820px){.esp-v{grid-template-columns:1fr;gap:26px;margin:28px 0 24px}.mt{width:200px;padding:8px;border-radius:34px}.mt-e{height:330px;border-radius:27px}.dicte{flex-direction:column;gap:12px}.dc-m{width:50px;height:50px}.dicte h3{font-size:19px}.esp-p{display:none}}
-@media (prefers-reduced-motion:reduce){.mt-s{transition:none}.vu .dc-f{animation:none;max-width:28ch}.vu .dc-m i{animation:none}}
+@media (max-width:820px){.esp-v{grid-template-columns:1fr;gap:26px;margin:28px 0 24px}.dicte{flex-direction:column;gap:12px}.dc-m{width:50px;height:50px}.dicte h3{font-size:19px}.esp-p{display:none}}
+@media (prefers-reduced-motion:reduce){.vu .dc-f{animation:none;max-width:28ch}.vu .dc-m i{animation:none}}
+/* l'Espace en vrai dans un cadre téléphone ou iPad */
+.mt-z{display:grid;justify-items:center;gap:14px}
+.mt-o{display:flex;gap:4px;padding:4px;border-radius:999px;box-shadow:var(--in)}
+.mt-o button{appearance:none;border:0;background:var(--bg);display:flex;align-items:center;gap:5px;padding:8px 13px;border-radius:999px;font:700 13px Manrope,system-ui,sans-serif;color:var(--muted);cursor:pointer;box-shadow:none;transition:box-shadow .6s var(--doux),color .5s}
+.mt-o button svg{width:15px;height:15px}
+.mt-o button.on{box-shadow:var(--up-s);color:var(--accx)}
+.mt-leg{margin:0;max-width:300px;text-align:center;font-size:13px;color:var(--muted);min-height:3.4em}
+.mt-leg small{display:block;font-size:11.5px;margin-top:3px;opacity:.8}
+.mt-leg .mt-ck{vertical-align:1px}
+.mt-f{width:236px;padding:9px;border-radius:40px;background:var(--bg);box-shadow:var(--up),var(--lis);transition:width .8s var(--doux),border-radius .8s var(--doux)}
+.mt-f .mt-e{position:relative;aspect-ratio:390/844;height:auto;border-radius:31px;overflow:hidden;box-shadow:var(--in)}
+.mt-f.ipad{width:min(100%,600px);border-radius:28px;padding:11px}
+.mt-f.ipad .mt-e{aspect-ratio:1180/820;border-radius:18px}
+.mt-im{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .8s var(--doux)}
+.mt-im.on{opacity:1}
+.mt-d{display:flex;gap:6px}
+.mt-d button{appearance:none;border:0;background:var(--bg);display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;font:700 12.5px Manrope,system-ui,sans-serif;color:var(--muted);cursor:pointer;box-shadow:var(--up-s);transition:box-shadow .6s var(--doux),color .5s}
+.mt-d button svg{width:15px;height:15px}
+.mt-d button.on{box-shadow:var(--in);color:var(--accx)}
+.esp-v.ipad{grid-template-columns:1fr}
+.esp-v.ipad .esp-t{grid-template-columns:1fr 1fr;align-items:start}
+@media (max-width:820px){.mt-f{width:220px}.esp-v.ipad .esp-t{grid-template-columns:1fr}}
 /* garantie et questions */
 .sous-t{text-align:center;margin:clamp(44px,6vw,64px) 0 18px;font-size:22px}
 .faq{max-width:780px;margin:0 auto;display:grid;gap:16px}
@@ -1346,16 +1328,12 @@ footer a{text-decoration:none}
     <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><h3>Votre planning.</h3><p>Rendez-vous, visites, chantiers : votre semaine d'un coup d'œil.</p></div>
   </div>
   <div class="esp-v">
-    <div class="mt rv" aria-hidden="true"><div class="mt-e creux">
-      <div class="mt-s on" data-s="0"><p class="mt-h">Bonsoir Paul</p><div class="mt-n"><span><b>3</b>demandes</span><span><b>2</b>devis</span><span><b>1</b>visite</span></div><div class="mt-c nouv"><span class="mt-pt"></span><b>Nouvelle demande</b><small>Mme Martin · fenêtres et cloison</small></div><div class="mt-b">Voir la demande<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg></i></div></div>
-      <div class="mt-s" data-s="1"><span class="mt-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>Option Cliky</span><p class="mt-h">Le plan du client</p><svg class="mt-plan" viewBox="0 0 160 120" aria-hidden="true"><path class="mp-m" pathLength="1" d="M14 14h132v92H14z"/><path class="mp-c" pathLength="1" d="M90 14v52"/><path class="mp-f" d="M38 14h34M118 106h18"/><text x="80" y="9" text-anchor="middle">4,20 m</text><text x="152" y="62" text-anchor="middle" transform="rotate(90 152 62)">3,10 m</text></svg><small class="mt-x g">Dessiné par Mme Martin dans le formulaire.</small><div class="mt-b">Voir le pré-devis<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg></i></div></div>
-      <div class="mt-s" data-s="2"><span class="mt-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>Option Cliky</span><p class="mt-h">Pré-devis</p><div class="mt-l"><span>Cloison · 12 m²</span><b>363 €</b></div><div class="mt-l"><span>Doublage · 18 m²</span><b>611 €</b></div><div class="mt-l"><span>Fenêtres</span><b class="att">prix fournisseur</b></div><div class="mt-b presse">Valider<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg></i></div></div>
-      <div class="mt-s" data-s="3"><span class="mt-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>Option Cliky</span><p class="mt-h">Demande de prix fournisseur</p><div class="mt-l"><span>Fenêtre PVC 120 × 135</span><b>× 2</b></div><div class="mt-l"><span>Fenêtre PVC 60 × 75</span><b>× 1</b></div><small class="mt-x g">Dimensions reprises du plan, vérifiées par vous.</small><div class="mt-b presse">Envoyer<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg></i></div></div>
-      <div class="mt-s" data-s="4"><div class="mt-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b class="mt-t">Devis envoyé</b><small class="mt-x">Mme Martin le reçoit et peut le signer en ligne.</small></div>
-      <div class="mt-s" data-s="5"><p class="mt-h">Chantier Martin · notes</p><div class="mt-c pt0"><b>Lundi</b><small>Protéger le parquet du salon.</small></div><div class="mt-c pt0"><b>À l'instant</b><small class="mt-dic">Deux fenêtres côté jardin</small></div><span class="mt-mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span></div>
-      <div class="mt-s" data-s="6"><p class="mt-h">Bonsoir Paul</p><div class="mt-c"><span class="mt-pt ok"></span><b>Devis accepté</b><small>Facture d'acompte prête</small></div><div class="mt-b">Envoyer la facture<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg></i></div></div>
-      <span class="ex mt-ex">Exemple</span>
-    </div></div>
+    <div class="mt-z rv">
+      <div class="mt-o" role="tablist" aria-label="Voir l'Espace"><button type="button" class="on" data-g="b">L'Espace</button><button type="button" data-g="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>+ Cliky</button><button type="button" data-g="p">Planning</button></div>
+      <div class="mt-f"><div class="mt-e"><img class="mt-im on" data-g="b" data-n="accueil" alt="Accueil : vos chiffres et ce qui vous attend"><img class="mt-im" data-g="b" data-n="chantiers" alt="Vos chantiers et leur suivi"><img class="mt-im" data-g="c" data-n="devis" alt="Le plan dessiné par le client"><img class="mt-im" data-g="c" data-n="predevis" alt="Le pré-devis calculé, à vérifier"><img class="mt-im" data-g="c" data-n="achats" alt="Les demandes de prix fournisseur"><img class="mt-im" data-g="p" data-n="semaine" alt="Le planning de la semaine"><img class="mt-im" data-g="p" data-n="mois" alt="Le planning du mois"><img class="mt-im" data-g="p" data-n="carte" alt="La carte de vos chantiers"></div></div>
+      <div class="mt-d" aria-label="Type d'écran"><button type="button" class="on" data-d="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>Téléphone</button><button type="button" data-d="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M11 17h2"/></svg>iPad</button></div>
+      <p class="mt-leg" aria-live="polite"></p>
+    </div>
     <div class="esp-t">
       <div class="card dicte lis rv"><span class="dc-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><i></i><i></i></span><div><h3>Vous parlez, <span class="or-t">l'Espace écrit.</span></h3><p>Les mains prises sur le chantier ? Touchez le micro et dictez vos notes de chantier, votre message au client ou une ligne de devis. Le micro est toujours là, sur chaque écran.</p><p class="dc-x creux" aria-hidden="true"><span class="dc-f">« Deux fenêtres côté jardin »</span></p></div></div>
       <ul class="esp-p"><li><b>Un gros bouton par étape.</b> L'Espace vous dit quoi faire, une chose à la fois.</li><li><b>Tout au même endroit.</b> Demandes, devis, factures, planning et clients.</li><li><b>Rien ne part sans vous.</b> Vous relisez, vous validez, c'est envoyé.</li><li class="ck"><span class="mt-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>Option Cliky</span> Le plan du client, le pré-devis calculé et la demande de prix fournisseur avec les bonnes dimensions.</li></ul>
@@ -1598,10 +1576,20 @@ footer a{text-decoration:none}
       [["dep",dep],["mois",mois]].forEach(function(a){anime(f.querySelector('[data-k="'+a[0]+'"]'),a[1])})}
     f.addEventListener("change",calc);calc()})();
   /* petit téléphone de l'Espace : les écrans se suivent quand il est visible */
-  (function(){var m=document.querySelector(".mt");if(!m)return;var s=[].slice.call(m.querySelectorAll(".mt-s")),k=0,tm=null,D=[3000,3600,3600,3800,2800,3800,3200];
-    if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    function suit(){s[k].classList.remove("on");k=(k+1)%s.length;s[k].classList.add("on");tm=setTimeout(suit,D[k])}
-    if("IntersectionObserver" in window)new IntersectionObserver(function(e){clearTimeout(tm);if(e[0].isIntersecting)tm=setTimeout(suit,D[k])}).observe(m)})();
+  /* l'Espace en vrai : captures du vrai Espace en démo (clients fictifs), téléphone ou iPad, jour ou nuit */
+  (function(){var z=document.querySelector(".mt-z");if(!z)return;var f=z.querySelector(".mt-f"),s=[].slice.call(z.querySelectorAll(".mt-im")),bt=[].slice.call(z.querySelectorAll(".mt-o button")),bd=[].slice.call(z.querySelectorAll(".mt-d button")),leg=z.querySelector(".mt-leg"),k=0,dev="t",tm=null,vis=false,vu=false,calme=matchMedia("(prefers-reduced-motion: reduce)").matches,R=document.documentElement;
+    var CK='<span class="mt-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>Option Cliky</span>';
+    function th(){return R.getAttribute("data-theme")==="dark"?"dark":"light"}
+    function src(){if(!vu)return;s.forEach(function(im){var u="img/espace/"+dev+"-"+th()+"-"+im.getAttribute("data-n")+".webp";if(im.getAttribute("src")!==u)im.setAttribute("src",u)})}
+    function montre(i){s[k].classList.remove("on");k=i;s[k].classList.add("on");var gr=s[k].getAttribute("data-g");bt.forEach(function(b){b.classList.toggle("on",b.getAttribute("data-g")===gr)});
+      leg.innerHTML=(gr==="c"?CK+" ":"")+s[k].alt+'<small>Exemple · clients fictifs</small>'}
+    function suit(){montre((k+1)%s.length);if(!calme&&vis)tm=setTimeout(suit,4200)}
+    function relance(){clearTimeout(tm);if(!calme&&vis)tm=setTimeout(suit,5200)}
+    bt.forEach(function(b){b.addEventListener("click",function(){var gr=b.getAttribute("data-g");for(var i=0;i<s.length;i++)if(s[i].getAttribute("data-g")===gr){montre(i);break}relance()})});
+    bd.forEach(function(b){b.addEventListener("click",function(){dev=b.getAttribute("data-d");bd.forEach(function(x){x.classList.toggle("on",x===b)});f.classList.toggle("ipad",dev==="i");z.parentNode.classList.toggle("ipad",dev==="i");src();relance()})});
+    new MutationObserver(src).observe(R,{attributes:true,attributeFilter:["data-theme"]});
+    montre(0);
+    if("IntersectionObserver" in window)new IntersectionObserver(function(e){vis=e[0].isIntersecting;if(vis&&!vu){vu=true;src()}clearTimeout(tm);if(vis&&!calme)tm=setTimeout(suit,4200)},{rootMargin:"200px 0px"}).observe(f);else{vu=true;src()}})();
   /* rendez-vous guidé, une question à la fois ; créneaux réels de l'agenda GHL ProClik via le service ProClik */
   (function(){var f=document.getElementById("rdv");if(!f)return;
     var SERVICE="https://proclik-calcul.proclik-test.workers.dev"; /* adresse du service ProClik (ce n'est pas une clé) */
