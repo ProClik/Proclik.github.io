@@ -307,6 +307,44 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .sc.on .ouvre b{animation:nom-o .8s ease 1.1s forwards}
 @keyframes nom-o{to{opacity:1}}
 .sc.on .ouvre .og{transition-delay:.1s}
+/* le plan tracé par le client (mêmes murs que le vrai plan : bleu nuit arrondis, fenêtres laiton) */
+.plan-s{position:relative;padding:8px 10px 4px;border-radius:16px}
+.pl-t{display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:var(--muted)}
+.pl-t .m2{color:var(--accx)}
+.plan-s svg{display:block;width:100%;height:auto;max-height:96px;overflow:visible}
+.pl-a .mur,.pl-m .mur{fill:none;stroke:var(--mur,#2A3350);stroke-width:7;stroke-linejoin:round;stroke-linecap:round}
+:root[data-theme="dark"] .ecran{--mur:#C9D0E2}
+.pl-a .fen,.pl-m .fen{stroke:var(--acc);stroke-width:7;stroke-linecap:round}
+.pl-a .clo,.pl-m .clo{stroke:var(--mur,#2A3350);stroke-width:4;stroke-linecap:round;stroke-dasharray:.06 .05;opacity:.75}
+.pl-m .clo{stroke-dasharray:6 5}
+.cote{font:700 9px Manrope,system-ui,sans-serif;fill:var(--muted);text-anchor:middle}
+.pl-a .mur{stroke-dasharray:1;stroke-dashoffset:1}
+.sc.on .pl-a .mur{animation:trace-p 1.6s cubic-bezier(.45,0,.25,1) calc(var(--d) + .3s) forwards}
+.pl-a .clo{stroke-dashoffset:1;stroke-dasharray:1}
+.sc.on .pl-a .clo{animation:trace-c .7s cubic-bezier(.45,0,.25,1) calc(var(--d) + 2.5s) forwards}
+@keyframes trace-p{to{stroke-dashoffset:0}}@keyframes trace-c{to{stroke-dashoffset:0;stroke-dasharray:.06 .05}}
+.pl-a .fen,.pl-a .cote{opacity:0}
+.sc.on .pl-a .fen{animation:fen-p .6s ease forwards}
+.sc.on .pl-a .f1{animation-delay:calc(var(--d) + 1.9s)}.sc.on .pl-a .f2{animation-delay:calc(var(--d) + 2.1s)}.sc.on .pl-a .f3{animation-delay:calc(var(--d) + 2.3s)}
+.sc.on .pl-a .cote{animation:fen-p .8s ease calc(var(--d) + 2.8s) forwards}
+@keyframes fen-p{to{opacity:1}}
+.crayon{position:absolute;left:13%;top:28%;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,rgba(168,130,63,.5) 0 30%,transparent 32%);box-shadow:0 0 0 2px rgba(168,130,63,.35);opacity:0;pointer-events:none}
+.sc.on .crayon{animation:crayon 1.6s cubic-bezier(.45,0,.25,1) calc(var(--d) + .3s) forwards}
+@keyframes crayon{0%{opacity:0;left:9%;top:24%}8%{opacity:1}30%{left:86%;top:24%}52%{left:86%;top:80%}76%{left:9%;top:80%}96%{opacity:1;left:9%;top:24%}100%{opacity:0;left:9%;top:24%}}
+.photos{align-items:center}
+.ph-t{font-size:11px;font-weight:700;color:var(--muted);margin-left:4px}
+/* dans l'Espace : la pièce jointe du client */
+.pj{display:flex;align-items:center;gap:10px;padding:7px 10px 7px 7px;border-radius:16px}
+.pj-p{flex:none;width:58px;height:38px;border-radius:10px;display:grid;place-items:center;padding:3px}
+.pj-p svg{width:100%;height:100%}
+.pj-p .cote{display:none}
+.pj div{flex:1;min-width:0;line-height:1.25}
+.pj b{display:block;font-size:12px}
+.pj div span{font-size:11px;color:var(--muted)}
+.pj-f{display:flex;gap:4px}
+.pj-f i{width:18px;height:18px;border-radius:6px;background:linear-gradient(135deg,#D9C3A5,#9C7B57)}
+.pj-f i:nth-child(2){background:linear-gradient(135deg,#CFC6BC,#8E7F72)}.pj-f i:nth-child(3){background:linear-gradient(135deg,#E3D6C8,#B7957A)}
+@media (max-width:880px){.sc .eh{display:none}.pj{padding:5px 8px 5px 5px}.pj-p{height:32px;width:50px}.plan-s svg{max-height:80px}.photos span{width:38px;height:38px}}
 /* recherche */
 .cherche{display:flex;align-items:center;gap:9px;padding:12px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-top:6px}
 .cherche svg{width:17px;height:17px;color:var(--acc);flex:none}
@@ -807,26 +845,27 @@ footer a{text-decoration:none}
         <div class="e " style="--d:0.3s"><div class="barre-s c"><i></i></div></div>
         <div class="e " style="--d:0.6s"><p class="q">Quels travaux ?</p></div>
         <div class="e " style="--d:0.8s"><div class="chips"><span class="rs sel-t" style="--s:2.2s">Cloison</span><span class="rs">Doublage</span><span class="rs sel-t" style="--s:1.7s">Fenêtres</span><span class="rs">Plafond</span></div></div>
-        <div class="e " style="--d:2.7s"><div class="champ c"><small>Fenêtres</small><b>3 · 120 × 135 cm</b></div></div>
-        <div class="e " style="--d:3.1s"><div class="photos"><span class="rs"></span><span class="rs"></span><span class="rs"></span></div></div>
-        <div class="e pill go-s rs presse" style="--d:3.5s;--p:4.4s"><i class="doigt-t"></i>Envoyer ma demande<span class="rs"></span></div>
-        <div class="envoye" style="--d:5.5s"><div class="rond r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b>C'est envoyé !</b><span>Dupont Rénovation revient vers vous</span></div>
+        <div class="e plan-s c" style="--d:2.6s"><small class="pl-t">Votre plan · Séjour <span class="m2">13 m²</span></small><svg class="pl-a" viewBox="0 0 200 104" aria-hidden="true"><path class="mur" pathLength="1" d="M22 14H178V88H22Z"/><path class="fen f1" d="M46 14h32"/><path class="fen f2" d="M108 14h32"/><path class="fen f3" d="M178 34v28"/><path class="clo" pathLength="1" d="M96 88V48"/><text class="cote" x="100" y="101">4,20 m</text><text class="cote" x="12" y="54" transform="rotate(-90 12 51)">3,10 m</text></svg><i class="crayon"></i></div>
+        <div class="e " style="--d:5.6s"><div class="photos"><span class="rs"></span><span class="rs"></span><span class="rs"></span><small class="ph-t">3 photos</small></div></div>
+        <div class="e pill go-s rs presse" style="--d:6s;--p:6.9s"><i class="doigt-t"></i>Envoyer ma demande<span class="rs"></span></div>
+        <div class="envoye" style="--d:8s"><div class="rond r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b>C'est envoyé !</b><span>Dupont Rénovation revient vers vous</span></div>
       </div>
       <!-- 5. l'Espace de l'artisan s'ouvre : la demande, le pré-devis prêt -->
       <div class="sc pardessus" data-l="Votre Espace s'ouvre">
         <div class="ouvre"><span class="og r"><svg viewBox="10 4 80 92" aria-hidden="true"><path pathLength="1" d="M52 64.7 A23 23 0 1 0 33 42 V70"/><circle cx="56" cy="42" r="6"/></svg></span><b>PROCLIK</b></div>
         <div class="e banniere r presse" style="--d:1.9s;--p:2.9s"><i class="doigt-t"></i><span class="lg rs"><svg class="pp" viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><div><b>Nouvelle demande</b><span>Mme Rossi · visite samedi 10 h 30</span></div></div>
         <div class="e " style="--d:3.8s"><div class="eh"><span class="bj">Bonsoir,<b>Julien</b></span></div></div>
-        <div class="e pdv r" style="--d:4.1s">
+        <div class="e pj rs" style="--d:4.1s"><span class="pj-p c"><svg class="pl-m" viewBox="0 0 200 104" aria-hidden="true"><path class="mur" d="M22 14H178V88H22Z"/><path class="fen f1" d="M46 14h32"/><path class="fen f2" d="M108 14h32"/><path class="fen f3" d="M178 34v28"/><path class="clo" d="M96 88V48"/><text class="cote" x="100" y="101">4,20 m</text><text class="cote" x="12" y="54" transform="rotate(-90 12 51)">3,10 m</text></svg></span><div><b>Plan du client</b><span>Séjour · 4,20 × 3,10 m</span></div><span class="pj-f"><i></i><i></i><i></i></span></div>
+        <div class="e pdv r" style="--d:4.5s">
           <div class="pt"><b>Pré-devis · Fenêtres et cloison</b><span class="etat c">À valider</span></div>
-          <div class="lig" style="--d:4.6s"><span>Dépose fenêtres · 3 u</span><b>270,00 €</b></div>
-          <div class="lig" style="--d:5s"><span>Pose fenêtres · 3 u</span><b>607,50 €</b></div>
-          <div class="lig" style="--d:5.4s"><span>Cloison · 12 m²</span><b>363,12 €</b></div>
-          <div class="tot"><span>Total HT</span><b class="cpt" data-v="1240.62" data-dec="2" data-t="4700" data-ms="1400">1 240,62 €</b></div>
+          <div class="lig" style="--d:5s"><span>Dépose fenêtres · 3 u</span><b>270,00 €</b></div>
+          <div class="lig" style="--d:5.4s"><span>Pose fenêtres · 3 u</span><b>607,50 €</b></div>
+          <div class="lig" style="--d:5.8s"><span>Cloison · 12 m²</span><b>363,12 €</b></div>
+          <div class="tot"><span>Total HT</span><b class="cpt" data-v="1240.62" data-dec="2" data-t="5100" data-ms="1400">1 240,62 €</b></div>
         </div>
-        <div class="e " style="--d:5.9s"><p class="cliky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg> Calculé par Cliky avec vos prix</p></div>
-        <div class="e pill go-s rs presse" style="--d:6.3s;--p:7.1s"><i class="doigt-t"></i>Valider et envoyer<span class="rs"></span></div>
-        <div class="toast-s" style="--d:8.1s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>Devis envoyé à Mme Rossi</div>
+        <div class="e " style="--d:6.3s"><p class="cliky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg> Calculé par Cliky avec vos prix</p></div>
+        <div class="e pill go-s rs presse" style="--d:6.7s;--p:7.5s"><i class="doigt-t"></i>Valider et envoyer<span class="rs"></span></div>
+        <div class="toast-s" style="--d:8.5s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>Devis envoyé à Mme Rossi</div>
       </div>
       <!-- 6. le tableau de bord -->
       <div class="sc" data-l="Vous suivez tout">
@@ -1101,7 +1140,7 @@ footer a{text-decoration:none}
   /* le téléphone raconte l'histoire : une étape après l'autre, en boucle, seulement quand il est à l'écran.
      L'étape qui part s'aplatit d'abord, puis la suivante émerge. */
   var tel=d.querySelector(".tel"),scs=tel?tel.querySelectorAll(".sc"):[],fil=d.querySelector(".fil"),flots=d.querySelectorAll(".flot"),n=-1,minu=null,visible=false,cpts=[];
-  var duree=[5400,6500,10200,7600,10400,6800];
+  var duree=[5400,6500,10200,10200,10800,6800];
   var leg=d.createElement("p");leg.className="legende";leg.setAttribute("aria-live","polite");if(fil)fil.after(leg);
   function montre(k){var dessous=n;n=k;[].forEach.call(scs,function(s,i){if(i===n)s.classList.add("on");else if(!(/\b(sur|pardessus)\b/.test(scs[n].className)&&i===dessous))s.classList.remove("on")});
     leg.innerHTML="<span>"+(n+1)+"</span> · "+scs[n].getAttribute("data-l");leg.classList.remove("change");
