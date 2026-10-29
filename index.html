@@ -87,32 +87,106 @@ section{padding:clamp(64px,9vw,112px) 0}
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
 .hero h1 em{font-style:normal;color:var(--accx)}
 .hero .pour{margin-top:26px;font-size:14.5px;color:var(--muted)}
-@media (max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:48px}.tel{width:min(300px,100%);aspect-ratio:9/14}}
+@media (max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:48px}.tel{width:min(300px,100%);aspect-ratio:9/16}}
 
 /* téléphone d'exemple : l'Espace ProClik */
-.tel{justify-self:center;width:min(330px,100%);aspect-ratio:9/18.5;border-radius:46px;padding:14px;background:var(--bg);box-shadow:var(--up)}
-.ecran{height:100%;border-radius:34px;box-shadow:var(--in);padding:22px 18px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.tel{justify-self:center;width:min(330px,100%);aspect-ratio:9/16.5;border-radius:46px;padding:14px;background:var(--bg);box-shadow:var(--up)}
+/* le téléphone raconte l'histoire en boucle : le site, l'assistant, le rendez-vous, la demande, l'Espace, le tableau de bord */
+.ecran{position:relative;height:100%;border-radius:34px;box-shadow:var(--in);overflow:hidden;font-size:13.5px;line-height:1.35}
+.ecran::before{content:"";position:absolute;top:10px;left:50%;width:54px;height:5px;margin-left:-27px;border-radius:9px;box-shadow:var(--in)}
+.ecran .ex{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:10.5px}
+.sc{position:absolute;inset:28px 16px 44px;display:flex;flex-direction:column;gap:11px;opacity:0;visibility:hidden;transition:opacity .8s var(--doux),visibility 0s .8s}
+.sc.on{opacity:1;visibility:visible;transition:opacity .8s var(--doux)}
+.sc .e{opacity:0;transform:translateY(12px);transition:opacity .8s var(--doux),transform 1s var(--doux)}
+.sc.on .e{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.js .sc:not(.on) .e{transition-delay:0s}
+html:not(.js) .sc:nth-child(5){opacity:1;visibility:visible}html:not(.js) .sc .e{opacity:1;transform:none}
+.sh{display:flex;align-items:center;gap:10px;padding:4px 2px}
+.sh b{font-size:15px;font-weight:800}
+.sh .lg{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up-s);font-size:11px;font-weight:800;color:var(--accx);flex:none}
+.sh .lg svg{width:18px;height:18px}
+.sh .enl{margin-left:auto;font-size:11px;color:var(--accx);font-weight:700}
+.sh .burger{margin-left:auto;width:16px;height:10px;border-top:2px solid var(--muted);border-bottom:2px solid var(--muted);position:relative}
+.sh .burger::after{content:"";position:absolute;left:0;right:0;top:2px;border-top:2px solid var(--muted)}
+.hero-s{border-radius:18px;padding:18px 16px;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;color:#fff;background:linear-gradient(150deg,#353C4E,#8A6A2F 130%)}
+.hero-s small{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.hero-s b{font-size:17px;line-height:1.2}
+.pill{position:relative;display:flex;align-items:center;gap:9px;padding:12px 14px;border-radius:999px;box-shadow:var(--up-s);font-weight:700;font-size:13.5px}
+.pill svg{width:17px;height:17px;color:var(--acc);flex:none}
+.go-s{justify-content:center;padding-right:48px}
+.go-s span{position:absolute;right:5px;top:50%;width:32px;height:32px;margin-top:-16px;border-radius:50%;box-shadow:var(--up-s)}
+.go-s span::after{content:"";position:absolute;inset:8px;background:var(--acc);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
+.avis{font-size:12px;color:var(--muted);text-align:center}
+.avis span{color:var(--acc);letter-spacing:.08em}
+.bulle-s{position:absolute;right:0;bottom:10px;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up);color:var(--acc)}
+.bulle-s svg{width:22px;height:22px}
+/* appui : un doigt se pose, le bouton s'enfonce */
+.doigt-t{position:absolute;z-index:3;width:36px;height:36px;border-radius:50%;background:var(--acc-bg);border:1.5px solid var(--acc);opacity:0;pointer-events:none}
+.sc.on .doigt-t{animation:pose 1.3s var(--doux) var(--p) both}
+@keyframes pose{0%{opacity:0;transform:translate(18px,22px) scale(1.15)}40%{opacity:1;transform:none}55%{transform:scale(.82)}75%{opacity:1;transform:none}100%{opacity:0;transform:scale(1.4)}}
+.sc.on .presse{animation:enfonce .9s var(--doux) calc(var(--p) + .45s)}
+@keyframes enfonce{0%,100%{box-shadow:var(--up-s)}30%,55%{box-shadow:var(--in);transform:scale(.97)}}
+.msg{margin:0;max-width:82%;padding:10px 13px;border-radius:16px;font-size:13.5px}
+.msg.lui{box-shadow:var(--up-s);border-bottom-left-radius:5px}
+.msg.moi{align-self:flex-end;box-shadow:var(--in);color:var(--accx);font-weight:600;border-bottom-right-radius:5px}
+.e:has(>.msg.moi){align-self:flex-end;display:flex;justify-content:flex-end;width:100%}
+.tape-s{display:flex;gap:5px;padding:12px 14px;border-radius:16px;box-shadow:var(--up-s);align-self:flex-start}
+.tape-s i{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pt 1.1s ease-in-out infinite}
+.tape-s i:nth-child(2){animation-delay:.15s}.tape-s i:nth-child(3){animation-delay:.3s}
+.sc.on .tape-s{animation:part .5s ease var(--f) forwards}
+@keyframes part{to{opacity:0;height:0;padding:0;margin:-11px 0 0}}
+.jours{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.jours span,.creneaux span{display:flex;flex-direction:column;align-items:center;padding:10px 0;border-radius:14px;box-shadow:var(--up-s);font-size:11.5px;color:var(--muted);font-weight:600}
+.jours b{font-size:18px;color:var(--fg);margin-top:2px}
+.jours .off{opacity:.45;box-shadow:none}
+.creneaux{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.creneaux span{font-size:13px;color:var(--fg);padding:11px 0}
+.sel-t{transition:box-shadow .6s var(--doux),color .6s var(--doux)}
+.sc.on .sel-t{box-shadow:var(--in)!important;color:var(--accx)!important;transition-delay:var(--s)}
+.sc.on .sel-t b{color:var(--accx);transition:color .6s var(--doux) var(--s)}
+.conf{display:flex;gap:11px;align-items:center;padding:12px 14px;border-radius:16px;box-shadow:var(--in)}
+.conf>svg{width:30px;height:30px;padding:6px;border-radius:50%;box-shadow:var(--up-s);color:var(--acc);flex:none}
+.conf b{display:block;font-size:14px}
+.conf span{color:var(--muted);font-size:12.5px}
+.barre-s{height:7px;border-radius:9px;box-shadow:var(--in);overflow:hidden}
+.barre-s i{display:block;height:100%;width:30%;border-radius:9px;background:var(--acc);transition:width 1.6s var(--doux) .5s}
+.sc.on .barre-s i{width:100%}
+.champ{padding:10px 14px;border-radius:14px;box-shadow:var(--in)}
+.champ small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.champ b{font-size:14px}
+.photos{display:flex;gap:8px}
+.photos span{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;box-shadow:var(--up-s);color:var(--acc)}
+.photos svg{width:20px;height:20px}
 .ecran .eh{display:flex;align-items:center;justify-content:space-between}
 .ecran .eh .g{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up-s)}
-.ecran .eh svg{width:22px;height:25px;overflow:visible}
+.ecran .eh svg,.sh .lg.ic>svg[viewBox="10 4 80 92"]{width:22px;height:25px;overflow:visible}
 .ecran .bj{font-size:13px;color:var(--muted)}
 .ecran .bj b{display:block;font-size:21px;color:var(--fg);font-weight:800;margin-top:2px}
-.notif{display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:18px;background:var(--bg);box-shadow:var(--up-s);font-size:13.5px;line-height:1.35}
+.notif{display:flex;gap:12px;align-items:center;padding:12px 13px;border-radius:18px;background:var(--bg);box-shadow:var(--up-s);font-size:13px;line-height:1.35}
 .notif .i{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;box-shadow:var(--in);color:var(--acc)}
 .notif .i svg{width:17px;height:17px}
 .notif b{display:block;font-size:14px}
 .notif span{color:var(--muted)}
-.ecran .pied{margin-top:auto;display:flex;justify-content:space-around}
-.ecran .pied i{width:40px;height:40px;border-radius:50%;box-shadow:var(--up-s)}
-.ecran .pied i:first-child{box-shadow:var(--in)}
-.ecran .ex{align-self:center}
-/* gros bouton de l'Espace : pilule + galet flèche laiton, qui s'enfonce de temps en temps */
-.gb{position:relative;margin-top:6px;padding:14px 52px 14px 16px;border-radius:999px;box-shadow:var(--up-s);font-weight:700;font-size:14px;text-align:center}
-.gb span{position:absolute;right:5px;top:50%;width:34px;height:34px;margin-top:-17px;border-radius:50%;box-shadow:var(--up-s);background:var(--bg)}
-.gb span::after{content:"";position:absolute;inset:9px;background:var(--acc);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
-.js .tel .gb{opacity:0}
-.js .tel.vu .gb{animation:arrive .9s var(--doux) 2.7s forwards,clic 9s var(--doux) 4.2s}
-@keyframes clic{0%{box-shadow:var(--up-s)}5%,9%{box-shadow:var(--in);transform:scale(.98)}16%,100%{box-shadow:var(--up-s);transform:none}}
+.tuiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tuiles div{padding:12px;border-radius:16px;box-shadow:var(--up-s)}
+.tuiles small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.tuiles b{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums}
+.courbe{position:relative;padding:14px 12px 24px;border-radius:16px;box-shadow:var(--in)}
+.courbe svg{width:100%;height:120px;overflow:visible}
+.courbe .aire{fill:var(--acc-bg);stroke:none;opacity:0;transition:opacity 1.2s ease 2.2s}
+.courbe .ligne-c{fill:none;stroke:var(--acc);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.8s cubic-bezier(.5,0,.3,1) 1.2s;vector-effect:non-scaling-stroke}
+.courbe circle{fill:var(--acc);opacity:0;transition:opacity .5s ease 2.9s}
+.sc.on .courbe .aire,.sc.on .courbe circle{opacity:1}
+.sc.on .courbe .ligne-c{stroke-dashoffset:0}
+.js .sc:not(.on) .courbe *{transition-delay:0s}
+.courbe small{position:absolute;bottom:7px;font-size:10.5px;color:var(--muted)}
+.courbe small:first-of-type{left:12px}.courbe small:last-of-type{right:12px}
+/* le fil des étapes, sous le téléphone : on peut toucher une étape pour y aller */
+.fil{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:22px}
+.fil button{appearance:none;border:0;cursor:pointer;background:var(--bg);width:12px;height:12px;padding:0;border-radius:999px;box-shadow:var(--in);transition:width .8s var(--doux),background .8s var(--doux)}
+.fil button[aria-selected="true"]{width:34px;background:var(--acc)}
+.legende{text-align:center;margin-top:12px;font-weight:700;font-size:15px;min-height:1.4em;transition:opacity .5s ease}
+.legende span{color:var(--accx)}
 
 /* le constat */
 .trois{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
@@ -360,18 +434,13 @@ footer a{text-decoration:none}
 .js .trois .rv:nth-child(2),.js .etapes .rv:nth-child(2),.js .prix .rv:nth-child(2),.js .options .rv:nth-child(2),.js .sites .rv:nth-child(2),.js .garantie .rv:nth-child(2){transition-delay:.12s}
 .js .trois .rv:nth-child(3),.js .etapes .rv:nth-child(3),.js .prix .rv:nth-child(3),.js .options .rv:nth-child(3),.js .sites .rv:nth-child(3),.js .garantie .rv:nth-child(3){transition-delay:.24s}
 .js .prix .rv:nth-child(4),.js .garantie .rv:nth-child(4){transition-delay:.36s}
-/* téléphone : les notifications arrivent une à une */
-.js .tel .notif{opacity:0;transform:translateY(10px)}
-.js .tel.vu .notif{animation:arrive .9s var(--doux) forwards}
-.js .tel.vu .notif:nth-child(3){animation-delay:.9s}
-.js .tel.vu .notif:nth-child(4){animation-delay:1.8s}
 @keyframes arrive{to{opacity:1;transform:none}}
 /* le P du logo se trace en arrivant */
 .js .logo .pcl{stroke-dasharray:100 110;stroke-dashoffset:101;animation:trace .9s cubic-bezier(.5,0,.3,1) .2s forwards}
 .js .logo .pcd{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:point .4s var(--doux) 1s forwards}
 @keyframes trace{to{stroke-dashoffset:0}}
 @keyframes point{to{transform:none}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .rv,.js .tel .notif{opacity:1;transform:none;transition:none;animation:none}.js .logo .pcl,.js .logo .pcd{animation:none;stroke-dasharray:none;stroke-dashoffset:0;transform:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .rv{opacity:1;transform:none;transition:none;animation:none}.js .logo .pcl,.js .logo .pcd{animation:none;stroke-dasharray:none;stroke-dashoffset:0;transform:none}}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -406,17 +475,64 @@ footer a{text-decoration:none}
     <p class="pour">Pour les artisans, commerçants, indépendants et petites entreprises.</p>
   </div>
   <div class="scene"><span class="flot f1"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><span class="flot f2"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg></span><span class="flot f3"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg></span><span class="flot f4"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span>
-  <div class="tel rv" aria-label="Exemple : l'appli ProClik sur un téléphone">
+  <div class="tel rv" aria-label="Exemple animé : du site de votre client jusqu'à votre tableau de bord">
     <div class="ecran">
-      <div class="eh"><span class="bj">Bonjour,<b>Julie</b></span><span class="g"><svg viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span></div>
-      <div class="notif"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></span><div><b>Nouvelle demande</b><span>Mme Rossi · reçue à 21 h 47</span></div></div>
-      <div class="notif"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>Rendez-vous demain</b><span>9 h 00 · M. Martin</span></div></div>
-      <div class="notif"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg></span><div><b>Devis accepté</b><span>Signé en ligne ce matin</span></div></div>
-      <div class="gb">Voir la demande<span></span></div>
+      <!-- 1. le site du commerce -->
+      <div class="sc" data-l="Votre site">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg">AM</span><b>Atelier Martin</b><i class="burger"></i></div></div>
+        <div class="e " style="--d:0.3s"><div class="hero-s"><small>Rénovation · Grenoble</small><b>Votre projet, entre de bonnes mains.</b></div></div>
+        <div class="e " style="--d:0.7s"><div class="pill"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Prendre rendez-vous</div></div>
+        <div class="e " style="--d:0.9s"><div class="pill"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>Demander un devis</div></div>
+        <div class="e " style="--d:1.1s"><div class="avis"><span>★★★★★</span> 4,9 · avis clients</div></div>
+        <div class="e bulle-s presse" style="--d:1.4s;--p:2.6s"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg></div>
+        <i class="doigt-t" style="--p:2.6s;right:10px;bottom:62px"></i>
+      </div>
+      <!-- 2. l'assistant du site répond -->
+      <div class="sc" data-l="L'assistant répond">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg ic"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg></span><b>Assistant</b><small class="enl">● en ligne</small></div></div>
+        <div class="e " style="--d:0.4s"><p class="msg moi">Vous êtes ouverts samedi&nbsp;?</p></div>
+        <div class="e tape-s" style="--d:1s;--f:1.9s"><i></i><i></i><i></i></div>
+        <div class="e " style="--d:1.9s"><p class="msg lui">Oui, de 9 h à 12 h. Je vous réserve un créneau&nbsp;?</p></div>
+        <div class="e " style="--d:2.8s"><p class="msg moi">Oui, avec plaisir&nbsp;!</p></div>
+      </div>
+      <!-- 3. le client réserve -->
+      <div class="sc" data-l="Le client réserve">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg ic"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><b>Choisissez un jour</b></div></div>
+        <div class="e " style="--d:0.3s"><div class="jours"><span>Jeu<b>6</b></span><span>Ven<b>7</b></span><span class="sel-t" style="--s:1.1s">Sam<b>8</b></span><span class="off">Dim<b>9</b></span></div></div>
+        <div class="e " style="--d:1.4s"><div class="creneaux"><span>9 h 00</span><span class="sel-t" style="--s:2.1s">10 h 30</span><span>11 h 30</span></div></div>
+        <div class="e " style="--d:2.8s"><div class="conf"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg><div><b>Rendez-vous confirmé</b><span>Samedi 8 · 10 h 30</span></div></div></div>
+      </div>
+      <!-- 4. ou il demande un devis -->
+      <div class="sc" data-l="Ou demande un devis">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg ic"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span><b>Votre demande</b><small class="enl">3 / 3</small></div></div>
+        <div class="e " style="--d:0.2s"><div class="barre-s"><i></i></div></div>
+        <div class="e " style="--d:0.5s"><div class="champ"><small>Vos travaux</small><b>Cloison et doublage</b></div></div>
+        <div class="e " style="--d:0.9s"><div class="champ"><small>Surface</small><b>12 m²</b></div></div>
+        <div class="e " style="--d:1.3s"><div class="photos"><span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/></svg></span><span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/></svg></span><span><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/></svg></span></div></div>
+        <div class="e pill go-s presse" style="--d:1.7s;--p:2.5s">Envoyer ma demande<span></span></div>
+        <i class="doigt-t" style="--p:2.5s;right:34px;bottom:118px"></i>
+        <div class="e " style="--d:3s"><div class="conf"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg><div><b>Demande envoyée</b><span>Réponse sous 48 h</span></div></div></div>
+      </div>
+      <!-- 5. vous êtes prévenu dans votre Espace -->
+      <div class="sc" data-l="Vous êtes prévenu">
+        <div class="e " style="--d:0s"><div class="eh"><span class="bj">Bonjour,<b>Julie</b></span><span class="g"><svg viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span></div></div>
+        <div class="e " style="--d:0.4s"><div class="notif"><span class="i"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></span><div><b>Nouvelle demande</b><span>Mme Rossi · 21 h 47</span></div></div></div>
+        <div class="e " style="--d:1s"><div class="notif"><span class="i"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>Rendez-vous samedi</b><span>10 h 30 · M. Martin</span></div></div></div>
+        <div class="e " style="--d:1.6s"><div class="notif"><span class="i"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></span><div><b>Devis accepté</b><span>Signé en ligne</span></div></div></div>
+        <div class="e pill go-s presse" style="--d:2.1s;--p:3s">Voir la demande<span></span></div>
+        <i class="doigt-t" style="--p:3s;right:34px;bottom:92px"></i>
+      </div>
+      <!-- 6. le tableau de bord -->
+      <div class="sc" data-l="Vous suivez tout">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg ic"><svg viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><b>Ce mois-ci</b><small class="enl">Octobre</small></div></div>
+        <div class="e " style="--d:0.3s"><div class="tuiles"><div><small>Demandes</small><b class="cpt" data-v="12">12</b></div><div><small>Rendez-vous</small><b class="cpt" data-v="18">18</b></div><div><small>Devis signés</small><b class="cpt" data-v="5">5</b></div><div><small>Encaissé</small><b><span class="cpt" data-v="4860">4 860</span> €</b></div></div></div>
+        <div class="e " style="--d:0.9s"><div class="courbe"><svg viewBox="0 0 240 80" preserveAspectRatio="none" aria-hidden="true"><path class="aire" d="M0 70 C30 64 40 52 70 54 S110 34 140 38 S190 16 240 12 V80 H0z"/><path class="ligne-c" pathLength="1" d="M0 70 C30 64 40 52 70 54 S110 34 140 38 S190 16 240 12"/><circle cx="240" cy="12" r="5"/></svg><small>Mai</small><small>Oct.</small></div></div>
+      </div>
       <span class="ex">Exemple</span>
-      <div class="pied"><i></i><i></i><i></i><i></i></div>
     </div>
-  </div></div>
+  </div>
+  <div class="fil" role="tablist" aria-label="Les étapes"></div>
+  </div>
 </div></section>
 
 <!-- 2. Le constat -->
@@ -568,19 +684,29 @@ footer a{text-decoration:none}
   var d=document,top=d.getElementById("top"),calme=matchMedia("(prefers-reduced-motion: reduce)").matches;
   addEventListener("scroll",function(){top.classList.toggle("ombre",scrollY>8)},{passive:true});
   function fr(v,dec){return v.toLocaleString("fr-FR",{minimumFractionDigits:dec,maximumFractionDigits:dec}).replace(/ | /g," ")}
-  function compte(e){
-    var v=parseFloat(e.getAttribute("data-v")),dec=/\./.test(e.getAttribute("data-v"))?2:0,suf=dec?" €":"",t0=null,dur=dec?1800:1100,att=dec?2200:0;
+  function compte(e,att0){
+    var v=parseFloat(e.getAttribute("data-v")),dec=/\./.test(e.getAttribute("data-v"))?2:0,suf=dec?" €":"",t0=null,dur=dec?1800:1100,att=att0!=null?att0:(dec?2200:0);
     if(calme)return;
     e.textContent=fr(0,dec)+suf;
     setTimeout(function(){requestAnimationFrame(function pas(ts){if(!t0)t0=ts;var k=Math.min(1,(ts-t0)/dur);k=1-Math.pow(1-k,3);e.textContent=fr(v*k,dec)+suf;if(k<1)requestAnimationFrame(pas)})},att)}
-  function vu(e){e.classList.add("vu");[].forEach.call(e.querySelectorAll(".compte"),compte)}
+  function vu(e){e.classList.add("vu");[].forEach.call(e.querySelectorAll(".compte"),function(c){compte(c)})}
   var els=d.querySelectorAll(".rv");
   if(!("IntersectionObserver" in window)){[].forEach.call(els,function(e){e.classList.add("vu")})}
   else{var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){vu(e.target);io.unobserve(e.target)}})},{rootMargin:"0px 0px -8% 0px"});
     [].forEach.call(els,function(e){io.observe(e)})}
-  /* les trois notifications du téléphone reviennent toutes les 9 secondes */
-  var tel=d.querySelector(".tel");
-  if(tel&&!calme)setInterval(function(){if(!tel.classList.contains("vu")||d.hidden)return;tel.classList.remove("vu");void tel.offsetWidth;tel.classList.add("vu")},9000);
+  /* le téléphone raconte l'histoire : une scène après l'autre, en boucle, seulement quand il est à l'écran */
+  var tel=d.querySelector(".tel"),scs=tel?tel.querySelectorAll(".sc"):[],fil=d.querySelector(".fil"),n=-1,minu=null,visible=false;
+  var duree=[4600,4600,4800,5000,5200,5600];
+  var leg=d.createElement("p");leg.className="legende";leg.setAttribute("aria-live","polite");if(fil)fil.after(leg);
+  function va(k){if(!scs.length)return;n=(k+scs.length)%scs.length;
+    [].forEach.call(scs,function(s,i){s.classList.toggle("on",i===n)});
+    [].forEach.call(fil.children,function(b,i){b.setAttribute("aria-selected",i===n?"true":"false")});
+    leg.innerHTML="<span>"+(n+1)+"</span> · "+scs[n].getAttribute("data-l");
+    [].forEach.call(scs[n].querySelectorAll(".cpt"),function(c){compte(c,700)});
+    clearTimeout(minu);if(!calme&&visible)minu=setTimeout(function(){va(n+1)},duree[n]||5000)}
+  if(fil)[].forEach.call(scs,function(s,i){var b=d.createElement("button");b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-label",(i+1)+". "+s.getAttribute("data-l"));b.onclick=function(){va(i)};fil.appendChild(b)});
+  if(tel){if(calme)va(4);else if("IntersectionObserver" in window){new IntersectionObserver(function(en){visible=en[0].isIntersecting;if(visible&&!d.hidden){if(n<0)va(0);else va(n)}else clearTimeout(minu)}).observe(tel)}else{visible=true;va(0)}
+    d.addEventListener("visibilitychange",function(){if(d.hidden)clearTimeout(minu);else if(visible)va(n)})}
   /* onde laiton au toucher des boutons */
   if(!calme)d.addEventListener("pointerdown",function(ev){var b=ev.target.closest(".btn:not(.go)");if(!b)return;var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height)*2,o=d.createElement("span");
     o.className="onde";o.style.cssText="width:"+s+"px;height:"+s+"px;left:"+(ev.clientX-r.left-s/2)+"px;top:"+(ev.clientY-r.top-s/2)+"px";b.appendChild(o);setTimeout(function(){o.remove()},1200)});
