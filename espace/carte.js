@@ -21,8 +21,8 @@
   function teintes(){
     var nuit=document.documentElement.getAttribute("data-theme")==="dark"||
       (document.documentElement.getAttribute("data-theme")!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);
-    return nuit?{sol:"#1E2433",sol2:"#222839",bati:"#283043",route:"#343C50",bord:"#2A3142",eau:"#151A26",eauT:"#2B3B55",limite:"#4A5268",texte:"#AEB6CB",halo:"#1E2433",fort:"#E3E7F0"}
-      :{sol:"#ECEEF2",sol2:"#E4E8EE",bati:"#DCE0E7",route:"#FFFFFF",bord:"#D3D8E1",eau:"#CDD6E2",eauT:"#B3C0D2",limite:"#A9B0BF",texte:"#5D6578",halo:"#ECEEF2",fort:"#2A3142"};
+    return nuit?{sol:"#1E2433",quart:"#232A3A",sol2:"#262E3F",bati:"#2E364A",route:"#3B4359",bord:"#343C51",eau:"#131824",eauT:"#2F405C",limite:"#5A647E",texte:"#AEB6CB",halo:"#1E2433",fort:"#E3E7F0"}
+      :{sol:"#F2F3F6",quart:"#E4E7EC",sol2:"#DCE1E7",bati:"#D1D6DE",route:"#FFFFFF",bord:"#C4CAD4",eau:"#C2CCDA",eauT:"#A9B6CA",limite:"#8C94A6",texte:"#5D6578",halo:"#F2F3F6",fort:"#2A3142"};
   }
   function peindre(map){
     var t=teintes(),st=map.getStyle();if(!st)return;
@@ -31,8 +31,8 @@
       var id=L.id,sl=(L["source-layer"]||"")+" "+id.toLowerCase();
       if(L.type==="background")set(id,"background-color",t.sol);
       else if(L.type==="fill"){
-        set(id,"fill-color",/water|ocean|lake/.test(sl)?t.eau:/building/.test(sl)?t.bati:/park|wood|grass|forest|landcover|landuse|ice|sand/.test(sl)?t.sol2:t.sol);
-        set(id,"fill-outline-color",/building/.test(sl)?t.bord:"rgba(0,0,0,0)");}
+        set(id,"fill-color",/water|ocean|lake/.test(sl)?t.eau:/building/.test(sl)?t.bati:/park|wood|grass|forest|landcover|ice|sand|cemetery|pitch/.test(sl)?t.sol2:/landuse|residential|industrial/.test(sl)?t.quart:t.sol);
+        set(id,"fill-opacity",1);set(id,"fill-outline-color",/building/.test(sl)?t.bord:"rgba(0,0,0,0)");}
       else if(L.type==="fill-extrusion")set(id,"fill-extrusion-color",t.bati);
       else if(L.type==="line"){
         if(/water|river|stream|canal/.test(sl))set(id,"line-color",t.eauT);
