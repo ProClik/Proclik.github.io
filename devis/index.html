@@ -232,7 +232,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 @keyframes fade{from{opacity:.25;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-<link rel="stylesheet" href="relief.css?v=1">
+<link rel="stylesheet" href="relief.css?v=2">
 
 <div class="wrap">
   <header class="top">
@@ -253,7 +253,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 <nav class="nav" id="nav" hidden>
   <div class="wrap">
     <button class="btn back" id="back" type="button">← Retour</button>
-    <button class="btn go" id="go" type="button">Continuer →</button>
+    <button class="btn go" id="go" type="button">Continuer</button>
   </div>
 </nav>
 
@@ -543,7 +543,7 @@ function render(){
  document.getElementById("stepn").textContent=`Étape ${n+1} sur ${st.length}`;
  document.getElementById("cheer").textContent=cheerN(d.cheer||"");
  document.getElementById("back").style.visibility="visible";
- document.getElementById("go").textContent=cur==="recap"?"Envoyer ma demande":(cur==="contact"?"Vérifier ma demande →":cur==="plan"&&S.plan.sub==="pieces"?"Mesurer mes pièces →":cur==="plan"&&S.plan.sub==="apercu"?"C'est mon logement ✓":cur==="plan"?"Pièce suivante →":"Continuer →");
+ document.getElementById("go").textContent=cur==="recap"?"Envoyer ma demande":(cur==="contact"?"Vérifier ma demande":cur==="plan"&&S.plan.sub==="pieces"?"Mesurer mes pièces":cur==="plan"&&S.plan.sub==="apercu"?"C'est mon logement ✓":cur==="plan"?"Pièce suivante":"Continuer");
  if(cur==="plan")document.getElementById("cheer").textContent=cheerN(planCheer());
  let h=false?``:`<section class="fade"><h1>${esc(d.t)}</h1><p class="sub">${cur==="travaux"&&PRE()?`Enchanté, ${esc(PRE())} ! `:""}${esc(d.s)}</p>`;
  if(cur==="plan"){h+=`<p class="err" id="err" role="alert"></p>`}else if(cur==="mode")h+=modeH();
@@ -573,7 +573,7 @@ function introH(){const has=S.travaux.length>0;
  <li><i>?</i><div><b>« Je ne sais pas » est une bonne réponse</b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
  <li><i>✓</i><div><b>Gratuit et sans engagement</b><br><span class="hint">Vous recevez un devis clair, ligne par ligne.</span></div></li></ul>
  <div class="q" style="margin:4px 0 14px"><label class="lab" for="in-pre">Pour commencer, votre prénom</label><p class="hint">Les conseils vous seront adressés, et il sera déjà rempli dans vos coordonnées à la fin.</p><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}" style="width:100%;max-width:340px"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
- <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn go" type="button" data-start="1" style="max-width:none">${has?"Reprendre ma demande →":"C'est parti →"}</button>
+ <div style="display:grid;gap:14px"><button class="btn go" type="button" data-start="1" style="max-width:none;flex:none;width:100%">${has?"Reprendre ma demande":"C'est parti"}</button>
  <button class="btn ghost" type="button" data-example="1">Voir avec un exemple</button>${has?`<button class="btn back" type="button" data-reset="1">Recommencer</button>`:""}</div></section>`}
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}

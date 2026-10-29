@@ -64,11 +64,22 @@ html body .progress b{background:var(--acc)}
 
 /* boutons */
 html body .nav{background:var(--bg);border-top:0;box-shadow:0 -8px 18px -10px var(--lo)}
-html body .btn.go{background:var(--fg);color:var(--bg);box-shadow:var(--up-s)}
-:root[data-theme="dark"] body .btn.go{background:var(--acc);color:var(--ink)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .btn.go{background:var(--acc);color:var(--ink)}}
-html body .btn.ghost{border:0;background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-s)}
-html body .btn.ghost:active,html body .chip:active,html body .add:active{box-shadow:var(--in)}
+/* boutons : même dessin que l'Espace. Bouton d'action = pilule en relief + galet à droite avec flèche laiton fine */
+html body .btn,html body .bc-b button,html body .bigbtn,html body #pf-done,html body #pf-later{border:0!important;background:var(--bg)!important;color:var(--fg)!important;box-shadow:var(--up-s);font-weight:600;
+  transition:box-shadow .8s var(--doux,cubic-bezier(.22,1,.36,1)),transform 1.2s var(--doux,cubic-bezier(.22,1,.36,1))}
+html body .btn.go,html body .bigbtn,html body #pf-done{position:relative;box-shadow:var(--up);padding-right:58px;padding-left:22px;text-align:center}
+html body .btn.go::after,html body .bigbtn::after,html body #pf-done::after{content:"";position:absolute;right:6px;top:50%;width:36px;height:36px;margin-top:-18px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s)}
+html body .btn.go::before,html body .bigbtn::before,html body #pf-done::before{content:"";position:absolute;z-index:1;right:15px;top:50%;width:18px;height:18px;margin-top:-9px;background:var(--mint-ink);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:transform .6s cubic-bezier(.22,1,.36,1)}
+html body .btn.back{padding-inline:18px;color:var(--muted)!important}
+html body .btn[disabled]::before{opacity:.5}
+html body .bc-ok{color:#C2362F!important}
+html body .bigconf.soft .bc-ok{color:var(--mint-ink)!important}
+@media (hover:hover){html body .btn:not([disabled]):hover,html body .bigbtn:hover{transform:translateY(-1px)}
+  html body .btn.go:not([disabled]):hover::before,html body .bigbtn:hover::before{transform:translateX(3px)}}
+html body .btn:not([disabled]):active,html body .bc-b button:active,html body .bigbtn:active,html body #pf-done:active,html body #pf-later:active,html body .chip:active,html body .add:active{transform:scale(.99);box-shadow:var(--in);transition-duration:.45s,.55s}
 html body .add{border:0;background:var(--bg);box-shadow:var(--up-s);color:var(--mint-ink)}
 html body .add:hover{background:var(--bg)}
 html body .pcnt button{border:0;background:var(--bg);box-shadow:-2px -2px 5px var(--hi),2px 2px 6px var(--lo)}
@@ -76,9 +87,7 @@ html body .pcnt button.plus,:root[data-theme="dark"] body .pcnt button.plus{back
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .pcnt button.plus{background:var(--bg);color:var(--mint-ink);border:0}}
 html body .ptabs{border:0;box-shadow:var(--in)}
 html body .ptabs button[aria-pressed="true"],:root[data-theme="dark"] body .ptabs button[aria-pressed="true"]{background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-s)}
-html body #pf-later{border:0;background:var(--bg);box-shadow:var(--up-s)}
 html body .pf-bar{background:var(--bg);border-bottom:0;box-shadow:0 8px 18px -10px var(--lo)}
-html body .bc-no{background:var(--bg);border:0!important;box-shadow:var(--up-s)}
 html body .done .ok{background:var(--bg);color:var(--mint-ink);box-shadow:var(--up)}
 html body .pdots .cur,:root[data-theme="dark"] body .pdots .cur{background:var(--acc)}
 html body #pframe{border:0;box-shadow:var(--in)}
