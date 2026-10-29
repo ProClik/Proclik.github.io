@@ -121,9 +121,22 @@
     el.classList.add("pcm","pcx-carte");
     el.innerHTML='<div class="pcx-fond"></div>'+
       '<div class="pcm-ui"><button class="pcm-b" data-z="zone" aria-pressed="true">Ma zone · '+R+' km</button><button class="pcm-b" data-z="full" aria-pressed="false">Isère</button><button class="pcm-b" data-z="reg" aria-pressed="false">Rhône-Alpes</button></div>'+
-      '<div class="pcm-zoom"><button class="pcm-r" data-k="1" aria-label="Zoomer">+</button><button class="pcm-r" data-k="-1" aria-label="Dézoomer">−</button></div>';
+      '<div class="pcm-zoom"><button class="pcm-r" data-k="1" aria-label="Zoomer">+</button><button class="pcm-r" data-k="-1" aria-label="Dézoomer">−</button>'+
+      '<button class="pcm-r pcx-plein-b" aria-label="Plein écran"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="o" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="f" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button></div>';
     el.querySelectorAll(".pcm-b").forEach(function(b){b.addEventListener("click",function(){aller(b.dataset.z)})});
-    el.querySelectorAll(".pcm-r").forEach(function(b){b.addEventListener("click",function(){if(secours)return;map&&(+b.dataset.k>0?map.zoomIn():map.zoomOut())})});
+    el.querySelectorAll(".pcm-r[data-k]").forEach(function(b){b.addEventListener("click",function(){if(secours)return;map&&(+b.dataset.k>0?map.zoomIn():map.zoomOut())})});
+    // Plein écran (demande de Cyril, 29/10) : la carte passe par-dessus tout l'Espace, même bouton pour revenir.
+    // L'iPhone refuse le vrai plein écran du navigateur hors vidéo : on pose la carte sur toute la page, à la main.
+    var place=null,pb=el.querySelector(".pcx-plein-b");
+    function plein(oui){
+      if(oui===!!place)return;
+      if(oui){place=document.createComment("carte");el.parentNode.insertBefore(place,el);document.body.appendChild(el)}
+      else{place.parentNode.insertBefore(el,place);place.remove();place=null}
+      el.classList.toggle("pcx-plein",oui);document.documentElement.classList.toggle("pcx-fige",oui);
+      pb.setAttribute("aria-label",oui?"Quitter le plein écran":"Plein écran");pb.setAttribute("aria-pressed",String(oui));
+      setTimeout(function(){if(map){map.resize();poser()}},30)}
+    pb.addEventListener("click",function(){if(!secours)plein(!place)});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")plein(false)});
 
     if(navigator.onLine===false){repli();return api}
     var delai=setTimeout(repli,9000);
