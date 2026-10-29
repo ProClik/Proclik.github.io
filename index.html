@@ -425,8 +425,14 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .essai .card p{color:var(--muted)}
 .essai .ex{align-self:flex-start}
 .essai .btn{align-self:flex-start;margin-top:auto}
-.sites{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:26px}
-@media (max-width:880px){.sites{grid-template-columns:1fr}}
+.sites-t{margin:40px 0 0;font-weight:700;text-align:center}
+.sites{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:16px}
+.sites .mini{padding:10px}.sites .mini .barre{padding:2px 4px 8px}
+.sites .mini .page{min-height:120px;padding:14px 12px;gap:4px}
+.sites .mini .page b{font-size:16px}.sites .mini .page .m{font-size:10px}
+.sites .mini .page .c{font-size:11px;padding:6px 10px}
+.sites .mini .leg{padding:10px 4px 2px;font-size:13px}
+@media (max-width:700px){.sites{gap:10px}.sites .mini{padding:6px}.sites .mini .page{min-height:100px;padding:10px 8px}.sites .mini .page b{font-size:13px}.sites .mini .page .m{font-size:8.5px;letter-spacing:.06em}.sites .mini .page .c{display:none}.sites .mini .page .p{width:16px;height:16px;right:8px;bottom:8px}.sites .mini .leg{flex-direction:column;align-items:flex-start;gap:0;font-size:12px}.sites .mini .leg span{font-size:10.5px}}
 .mini{padding:14px}
 .mini .barre{display:flex;gap:6px;padding:4px 6px 12px}
 .mini .barre i{width:9px;height:9px;border-radius:50%;box-shadow:var(--in)}
@@ -473,7 +479,15 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .prix{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
 .prix.x3{grid-template-columns:repeat(3,1fr)}
 @media (max-width:1000px){.prix{grid-template-columns:repeat(2,1fr)}.prix.x3{grid-template-columns:1fr}}
-@media (max-width:600px){.prix{grid-template-columns:1fr}}
+@media (max-width:600px){
+  #tarifs .prix,#tarifs .options{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin:0 -16px;padding:18px 16px 24px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .prix::-webkit-scrollbar,.options::-webkit-scrollbar{display:none}
+  #tarifs .prix>.card,#tarifs .options>.card{flex:0 0 80%;scroll-snap-align:center}
+  .offre .m{font-size:32px}
+  #tarifs .glisse{display:flex}}
+.glisse{display:none;justify-content:center;gap:7px;margin:-10px 0 6px}
+.glisse i{width:7px;height:7px;border-radius:50%;box-shadow:var(--in);transition:width .6s var(--doux),background .5s}
+.glisse i.ici{width:22px;border-radius:4px;background:var(--acc)}
 .offre{display:flex;flex-direction:column;gap:6px;position:relative}
 .offre .reco{position:absolute;top:-12px;right:20px;font-size:11.5px;font-weight:800;letter-spacing:.08em;background:var(--bg);color:var(--accx);padding:5px 11px;border-radius:999px;box-shadow:var(--up-s)}
 .offre .q{color:var(--muted);font-size:15px}
@@ -488,7 +502,7 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 :root[data-theme="dark"] .sol.creux{box-shadow:var(--in),0 0 0 1px rgba(212,180,131,.12)}
 .offre .reco{box-shadow:var(--lis),var(--up-s)}
 .options{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-@media (max-width:880px){.options{grid-template-columns:1fr}}
+@media (min-width:601px) and (max-width:880px){.options{grid-template-columns:1fr}}
 .option{display:flex;flex-direction:column;gap:8px}
 .option .tag{align-self:flex-start;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accx)}
 .option p{color:var(--muted);font-size:15.5px}
@@ -528,7 +542,7 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .calc-t .offert{display:block;font-style:normal;font-size:12.5px;font-weight:700;color:var(--accx);margin-top:2px}
 .calc-t .note-c{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
 @media (max-width:820px){.calc-t{grid-template-columns:1fr}.calc-t .total{position:static}.rang{grid-template-columns:1fr 1fr}.rang.r3{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:420px){.rang.r3{grid-template-columns:1fr}.rang.r3 .gal>span{min-height:50px;flex-direction:row;gap:8px}.calc-t .rang.r3 .gal>span{flex-direction:column;gap:2px}}
+@media (max-width:420px){.calc-t .rang.r3{grid-template-columns:repeat(3,1fr)}.calc-t .gal b{font-size:12.5px}.calc-t .gal small{font-size:10.5px}.calc-t .gal>span{padding:8px 4px;min-height:54px}.rdv .rang.r3,.rang.r3:not(.calc-t *){grid-template-columns:1fr}.rang.r3 .gal>span{min-height:50px;flex-direction:row;gap:8px}.calc-t .rang.r3 .gal>span{flex-direction:column;gap:2px}}
 /* rendez-vous guidé */
 .rdv{position:relative;max-width:620px;margin:26px auto 0;text-align:left}
 .barre-r{height:10px;border-radius:999px;padding:2px;margin-bottom:22px}
@@ -967,7 +981,6 @@ footer a{text-decoration:none}
     <p class="pour">Pour les artisans, commerçants, indépendants et petites entreprises.</p>
   </div>
   <div class="scene">
-    <span class="flot f0" data-s="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><span class="flot f1" data-s="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><span class="flot f2" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg></span><span class="flot f3" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span><span class="flot f4" data-s="4"><svg class="pp" viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><span class="flot f5" data-s="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>
   <div class="tel rv" aria-label="Exemple animé : du site de l'artisan jusqu'à son tableau de bord">
     <div class="ecran">
       <div class="statut"><span>21:47</span><i></i></div>
@@ -1050,9 +1063,9 @@ footer a{text-decoration:none}
 <section id="constat"><div class="wrap">
   <div class="head"><span class="eyebrow">Le constat</span><h2>Un beau site <span class="or">ne suffit plus.</span></h2><p class="lead">Vos clients vous trouvent, puis tout recommence à la main. Vous faites trois métiers à la fois : le vôtre, celui de secrétaire et celui de comptable.</p></div>
   <div class="trois">
-    <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="ondes"><path d="M78 44a30 30 0 0 0 0 32"/><path d="M66 36a44 44 0 0 0 0 48"/><path d="M162 44a30 30 0 0 1 0 32"/><path d="M174 36a44 44 0 0 1 0 48"/></g><g class="vib"><rect x="98" y="20" width="44" height="80" rx="9"/><path d="M114 30h12"/><circle class="pl" cx="120" cy="62" r="9"/><path class="pl" d="M116.5 58.5l7 7M123.5 58.5l-7 7"/></g><g class="bulle"><rect x="150" y="12" width="78" height="24" rx="12"/><text x="189" y="28">Appel manqué</text></g></svg></div><span class="num">01</span><h3>Le téléphone qui sonne au mauvais moment.</h3><p>Vous êtes occupé, vous ne décrochez pas, le client appelle le suivant.</p><p class="sol creux"><b>Avec ProClik :</b> le client laisse sa demande sur votre site, même à 22 h. Elle vous attend dans l'appli.</p></article>
-    <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><path class="lune pl" d="M196 18a14 14 0 1 0 14 20 11 11 0 0 1-14-20z"/><g class="etoile"><path d="M170 22v6M167 25h6"/><path d="M214 58v4M212 60h4"/></g><rect x="62" y="30" width="96" height="60" rx="6"/><path d="M50 98h120"/><g class="tape"><path d="M76 46h44"/><path d="M76 58h64"/><path d="M76 70h30"/></g><text class="heure" x="110" y="24">22:47</text><path class="tasse" d="M180 78h20v12a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8z M200 82h4a4 4 0 0 1 0 8h-4"/><path class="vapeur" d="M186 72c-3-4 3-6 0-10M194 72c-3-4 3-6 0-10"/></svg></div><span class="num">02</span><h3>Les papiers du soir.</h3><p>Vous rentrez, vous dînez, et vous rouvrez l'ordinateur pour les devis et les factures.</p><p class="sol creux"><b>Avec ProClik :</b> le devis et la facture se préparent tout seuls. Vous relisez et vous validez.</p></article>
-    <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="app a1"><rect x="34" y="20" width="34" height="34" rx="9"/><path d="M42 31h18M42 38h18M42 45h10"/></g><g class="app a2"><rect x="100" y="12" width="34" height="34" rx="9"/><path d="M109 23h16v16h-16zM109 29h16"/></g><g class="app a3"><rect x="168" y="26" width="34" height="34" rx="9"/><path d="M185 34v18M178 40h14"/></g><g class="app a4"><rect x="62" y="70" width="34" height="34" rx="9"/><circle cx="79" cy="87" r="7"/></g><g class="app a5"><rect x="140" y="74" width="34" height="34" rx="9"/><path d="m148 91 6 6 12-12"/></g><g class="pl qm"><text x="120" y="70">?</text></g></svg></div><span class="num">03</span><h3>Cinq applis qui ne se parlent pas.</h3><p>Un agenda ici, des factures là, des clients dans un carnet. Rien n'est relié.</p><p class="sol creux"><b>Avec ProClik :</b> site, demandes, devis, factures et agenda dans une seule appli.</p></article>
+    <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="ondes"><path d="M78 44a30 30 0 0 0 0 32"/><path d="M66 36a44 44 0 0 0 0 48"/><path d="M162 44a30 30 0 0 1 0 32"/><path d="M174 36a44 44 0 0 1 0 48"/></g><g class="vib"><rect x="98" y="20" width="44" height="80" rx="9"/><path d="M114 30h12"/><circle class="pl" cx="120" cy="62" r="9"/><path class="pl" d="M116.5 58.5l7 7M123.5 58.5l-7 7"/></g><g class="bulle"><rect x="150" y="12" width="78" height="24" rx="12"/><text x="189" y="28">Appel manqué</text></g></svg></div><span class="num">01</span><h3>Le téléphone qui sonne au mauvais moment.</h3><p>Vous êtes occupé, vous ne décrochez pas, le client appelle le suivant.</p></article>
+    <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><path class="lune pl" d="M196 18a14 14 0 1 0 14 20 11 11 0 0 1-14-20z"/><g class="etoile"><path d="M170 22v6M167 25h6"/><path d="M214 58v4M212 60h4"/></g><rect x="62" y="30" width="96" height="60" rx="6"/><path d="M50 98h120"/><g class="tape"><path d="M76 46h44"/><path d="M76 58h64"/><path d="M76 70h30"/></g><text class="heure" x="110" y="24">22:47</text><path class="tasse" d="M180 78h20v12a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8z M200 82h4a4 4 0 0 1 0 8h-4"/><path class="vapeur" d="M186 72c-3-4 3-6 0-10M194 72c-3-4 3-6 0-10"/></svg></div><span class="num">02</span><h3>Les papiers du soir.</h3><p>Vous rentrez, vous dînez, et vous rouvrez l'ordinateur pour les devis et les factures.</p></article>
+    <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="app a1"><rect x="34" y="20" width="34" height="34" rx="9"/><path d="M42 31h18M42 38h18M42 45h10"/></g><g class="app a2"><rect x="100" y="12" width="34" height="34" rx="9"/><path d="M109 23h16v16h-16zM109 29h16"/></g><g class="app a3"><rect x="168" y="26" width="34" height="34" rx="9"/><path d="M185 34v18M178 40h14"/></g><g class="app a4"><rect x="62" y="70" width="34" height="34" rx="9"/><circle cx="79" cy="87" r="7"/></g><g class="app a5"><rect x="140" y="74" width="34" height="34" rx="9"/><path d="m148 91 6 6 12-12"/></g><g class="pl qm"><text x="120" y="70">?</text></g></svg></div><span class="num">03</span><h3>Cinq applis qui ne se parlent pas.</h3><p>Un agenda ici, des factures là, des clients dans un carnet. Rien n'est relié.</p></article>
   </div>
 </div></section>
 
@@ -1097,10 +1110,11 @@ footer a{text-decoration:none}
     <div class="card lis rv"><div class="embleme petit"><span class="em-g"><svg class="em-form" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="11" y="7" width="26" height="34" rx="5"/><path class="l1" pathLength="1" d="M17 16h14"/><path class="l2" pathLength="1" d="M17 22h14"/><path class="l3" pathLength="1" d="M17 28h8"/><path class="ok" pathLength="1" d="m27 33 3 3 6-7"/></svg></span><span class="em-f"></span><span class="em-n">Le formulaire<small>côté client</small></span></div><span class="ex">Démo · rien n'est envoyé</span><h3>Le formulaire de demande</h3><p>Ce que voit votre client sur votre site. Ici, celui d'une entreprise de plâtrerie et d'isolation, avec le plan de la pièce.</p><a class="btn go" href="devis/" target="_blank" rel="noopener">Essayer le formulaire</a></div>
     <div class="card lis rv"><div class="embleme petit"><span class="em-g"><svg class="em-p" viewBox="10 4 80 92" aria-hidden="true"><path pathLength="1" d="M52 64.7 A23 23 0 1 0 33 42 V70"/><circle cx="56" cy="42" r="6"/></svg></span><span class="em-f"></span><span class="em-n">L'Espace<small>côté artisan</small></span></div><span class="ex">Démo · clients fictifs</span><h3>Votre Espace ProClik</h3><p>Ce que vous voyez, vous, sur votre téléphone : vos demandes, vos devis, votre planning.</p><a class="btn go" href="espace/parcours.html" target="_blank" rel="noopener">Voir l'Espace</a></div>
   </div>
+  <p class="sites-t">Pour tous les commerces, chacun à son image :</p>
   <div class="sites">
-    <div class="card mini rv"><div class="barre"><i></i><i></i><i></i></div><div class="page s1"><span class="m">Salon de coiffure</span><b>Studio Nova</b><span>Réservez en ligne, on s'occupe du reste.</span><span class="c">Prendre rendez-vous</span><svg class="metier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.1 8.1 20 20M8.1 15.9 20 4"/></svg></div><div class="leg"><b>Coiffure</b><span>Réservation en ligne</span></div></div>
-    <div class="card mini rv"><div class="barre"><i></i><i></i><i></i></div><div class="page s2"><span class="m">Boulangerie</span><b>Maison Vidal</b><span>Commandez avant 18 h, c'est prêt demain matin.</span><span class="c">Commander</span><svg class="metier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c0-5 4-8 9-8s9 3 9 8c0 2-1.5 3-3.5 3h-11C4.5 18 3 17 3 15z"/><path d="M8 10.5l1.5 3M12 9.5v3.5M16 10.5l-1.5 3"/></svg></div><div class="leg"><b>Commerce</b><span>Commande à l'avance</span></div></div>
-    <div class="card mini rv"><div class="barre"><i></i><i></i><i></i></div><div class="page s3"><span class="m">Rénovation</span><b>Dupont Rénovation</b><span>Décrivez votre projet, recevez votre devis.</span><span class="c">Demander un devis</span><svg class="metier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg></div><div class="leg"><b>Artisan</b><span>Devis en ligne</span></div></div>
+    <div class="card mini rv"><div class="barre"><i></i><i></i><i></i></div><div class="page s1"><span class="m">Salon de coiffure</span><b>Studio Nova</b><span class="c">Prendre rendez-vous</span><svg class="metier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.1 8.1 20 20M8.1 15.9 20 4"/></svg></div><div class="leg"><b>Coiffure</b><span>Réservation en ligne</span></div></div>
+    <div class="card mini rv"><div class="barre"><i></i><i></i><i></i></div><div class="page s2"><span class="m">Boulangerie</span><b>Maison Vidal</b><span class="c">Commander</span><svg class="metier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c0-5 4-8 9-8s9 3 9 8c0 2-1.5 3-3.5 3h-11C4.5 18 3 17 3 15z"/><path d="M8 10.5l1.5 3M12 9.5v3.5M16 10.5l-1.5 3"/></svg></div><div class="leg"><b>Commerce</b><span>Commande à l'avance</span></div></div>
+    <div class="card mini rv"><div class="barre"><i></i><i></i><i></i></div><div class="page s3"><span class="m">Rénovation</span><b>Dupont Rénovation</b><span class="c">Demander un devis</span><svg class="metier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg></div><div class="leg"><b>Artisan</b><span>Devis en ligne</span></div></div>
   </div>
   <p class="note">Studio Nova, Maison Vidal et Dupont Rénovation sont des exemples fictifs. Chaque site est à l'image de son commerce, avec la même touche ProClik.</p>
 </div></section>
@@ -1166,8 +1180,9 @@ footer a{text-decoration:none}
     </div>
   </div>
 
-  <h3 id="calcul"><span class="n">4</span>Faites le calcul</h3>
-    <p class="sub">Choisissez, le total se fait tout seul. Calculé avec les prix ci-dessus.</p>
+  <div class="bloc-t">
+    <h3 id="calcul"><span class="n">4</span>Faites le calcul</h3>
+    <p>Choisissez, le total se fait tout seul. Calculé avec les prix ci-dessus.</p>
     <form class="card calc-t lis rv" onsubmit="return false" aria-label="Calculer votre total">
       <div class="choix">
         <fieldset><legend>Votre site</legend><div class="rang"><label class="gal"><input type="radio" name="site" value="390"><span><b>Starter</b><small>390 €</small></span></label><label class="gal"><input type="radio" name="site" value="990" checked><span><b>Pro-Vitrine</b><small>990 €</small></span></label><label class="gal"><input type="radio" name="site" value="1990"><span><b>Expert-Business</b><small>1 990 €</small></span></label><label class="gal"><input type="radio" name="site" value="149"><span><b>J'ai déjà un site</b><small>149 €</small></span></label></div></fieldset>
@@ -1182,6 +1197,7 @@ footer a{text-decoration:none}
       </div>
       <p class="note-c">Un exemple pour vous faire une idée : on fait votre vrai devis ensemble, au rendez-vous. TVA non applicable, art. 293 B du CGI.</p>
     </form>
+  </div>
   <p class="tva creux"><b>Aucune TVA à ajouter :</b> chaque prix affiché est le prix que vous payez. TVA non applicable, article 293 B du CGI.</p>
 </div></section>
 
@@ -1322,6 +1338,13 @@ footer a{text-decoration:none}
           demo.textContent="Petit souci de notre côté : appelez-nous ou écrivez-nous, on cale le rendez-vous ensemble.";fini(don,don.lieu+", "+quand+".",true)})
         .catch(function(){bouton.disabled=false;bouton.textContent="Réserver mon café";demo.textContent="Pas de réseau : appelez-nous ou écrivez-nous, on cale le rendez-vous ensemble.";fini(don,don.lieu+", "+quand+".",true)})});
     va(0)})();
+  /* tarifs sur téléphone : petits points sous chaque rangée d'offres, l'offre conseillée en premier plan */
+  (function(){if(!matchMedia("(max-width:600px)").matches)return;
+    [].forEach.call(document.querySelectorAll("#tarifs .prix,#tarifs .options"),function(r){var cs=[].slice.call(r.children);
+      var g=document.createElement("div");g.className="glisse";g.setAttribute("aria-hidden","true");g.innerHTML=cs.map(function(){return"<i></i>"}).join("");r.after(g);
+      function maj(){var m=r.scrollLeft+r.clientWidth/2,k=0,d=1e9;cs.forEach(function(c,i){var x=Math.abs(c.offsetLeft+c.offsetWidth/2-m);if(x<d){d=x;k=i}});[].forEach.call(g.children,function(p,i){p.classList.toggle("ici",i===k)})}
+      var mis=r.querySelector(".mis");if(mis)r.scrollLeft=mis.offsetLeft-(r.clientWidth-mis.offsetWidth)/2;
+      r.addEventListener("scroll",maj,{passive:true});maj()})})();
   /* titres : les mots arrivent un à un quand le titre entre à l'écran */
   (function(){var hs=[].slice.call(document.querySelectorAll("main h2"));
     hs.forEach(function(h){var i=0;(function coupe(n){[].slice.call(n.childNodes).forEach(function(c){
