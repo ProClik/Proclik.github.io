@@ -182,3 +182,13 @@ html body .pcx-carte .maplibregl-ctrl-attrib-button{filter:grayscale(1) opacity(
 html body .pcx-carte{overflow:hidden;border-radius:24px;isolation:isolate}
 html body .pcx-carte::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:var(--in);pointer-events:none;z-index:3}
 html body .pcx-dep{z-index:0!important}
+/* Carte en plein écran : posée sur toute la page, coins droits, boutons sous l'encoche du téléphone */
+html.pcx-fige,html.pcx-fige body{overflow:hidden}
+html body .pcx-carte.pcx-plein{position:fixed!important;inset:0;width:100vw!important;height:100vh!important;height:100dvh!important;max-height:none!important;min-height:0!important;aspect-ratio:auto!important;margin:0!important;border-radius:0;z-index:2147483000}
+html body .pcx-carte.pcx-plein::after{display:none}
+html body .pcx-plein .pcm-ui{top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left))}
+html body .pcx-plein .pcm-zoom{top:calc(10px + env(safe-area-inset-top));right:calc(10px + env(safe-area-inset-right))}
+html body .pcx-plein-b svg{display:block;margin:auto}
+html body .pcx-plein-b .f,html body .pcx-plein .pcx-plein-b .o{display:none}
+html body .pcx-plein .pcx-plein-b .f{display:inline}
+html body .pcx-plein .pcx-plein-b{color:var(--accx)}
