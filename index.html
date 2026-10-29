@@ -549,7 +549,13 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .rdv .envoi{width:100%;margin-top:8px}
 .retour{appearance:none;border:0;background:none;color:var(--muted);font:600 14.5px Manrope,system-ui,sans-serif;cursor:pointer;margin:16px auto 0;display:block;padding:8px 14px;border-radius:999px}
 .retour:hover{color:var(--fg)}
-.retour[hidden],.calc-t .offert[hidden],.demo-r[hidden]{display:none}
+.piege{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.heures-r{grid-template-columns:repeat(4,1fr)!important}
+.heures-r .gal>span{min-height:50px}
+@media (max-width:520px){.heures-r{grid-template-columns:repeat(3,1fr)!important}}
+.pris-r{text-align:center;color:#B5603A;font-weight:700;font-size:14px;margin:12px 0 0}
+.envoi[disabled]{opacity:.6}
+.heures-t[hidden],.heures-r[hidden],.moments[hidden],.pris-r[hidden],.retour[hidden],.calc-t .offert[hidden],.demo-r[hidden]{display:none}
 .fin{text-align:center}
 .fin b{display:block;font-size:22px;margin-top:14px}
 .rond-r{width:72px;height:72px;margin:0 auto;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up),var(--lis);color:var(--accx)}
@@ -557,6 +563,45 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .recap{color:var(--muted);margin:8px 0 0}
 .demo-r{font-size:13.5px;color:var(--accx);margin:14px auto 0;max-width:440px}
 @media (max-width:520px){.rdv .rang{grid-template-columns:1fr 1fr}.rdv .rang.r3{grid-template-columns:1fr}}
+/* ===== titres vivants : sur-titre en galet, mots qui arrivent un à un, partie laiton soulignée d'un trait de lumière ===== */
+.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 11px;border-radius:999px;box-shadow:var(--up-s)}
+.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px var(--acc-bg);animation:pouls 3.2s ease-in-out infinite}
+@keyframes pouls{50%{box-shadow:0 0 0 7px rgba(168,130,63,0)}}
+h2 .or{background:linear-gradient(transparent 62%,rgba(168,130,63,.2) 62%,rgba(168,130,63,.2) 90%,transparent 90%) no-repeat 0 0/0% 100%;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-size 1.6s cubic-bezier(.65,0,.35,1) .5s}
+:root[data-theme="dark"] h2 .or{background-image:linear-gradient(transparent 62%,rgba(212,180,131,.18) 62%,rgba(212,180,131,.18) 90%,transparent 90%)}
+html:not(.js) h2 .or,.t-vu .or{background-size:100% 100%}
+.js h2 .mot{display:inline-block;opacity:0;transform:translateY(.38em);filter:blur(6px);transition:opacity .9s ease,transform 1.2s var(--doux),filter 1s ease;transition-delay:calc(var(--i) * 55ms)}
+.js .t-vu .mot{opacity:1;transform:none;filter:none}
+.js .rv{transform:translateY(22px) scale(.985)}
+.js .rv.vu{transform:none}
+/* ===== mode présentation (rendez-vous client, sur iPad ou grand écran) ===== */
+.pres .top,.pres footer{display:none}
+.pres{scroll-snap-type:y proximity}
+.pres main>section{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;padding-top:clamp(40px,6vh,80px);padding-bottom:clamp(40px,6vh,80px)}
+.pres main>section>.wrap{width:100%}
+.bonjour[hidden]{display:none!important}
+.bonjour{text-align:center}
+.bonjour .wrap{display:flex;flex-direction:column;align-items:center}
+.g-b{width:clamp(110px,16vw,150px);height:clamp(110px,16vw,150px);border-radius:50%;display:grid;place-items:center;box-shadow:var(--up),var(--lis)}
+.g-b svg{width:46%;height:52%;overflow:visible}
+.g-b path{fill:none;stroke:var(--acc);stroke-width:7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:trace-o 1.4s cubic-bezier(.5,0,.3,1) .4s forwards}
+.g-b circle{fill:var(--acc);transform-box:fill-box;transform-origin:center;transform:scale(0);animation:point-o .6s ease 1.7s forwards}
+.nom-b{font-weight:300;font-size:clamp(20px,2.6vw,28px);letter-spacing:.32em;margin:26px -.32em 0 0;opacity:0;animation:nom-o 1s ease 1.6s forwards}
+.nom-b small{display:block;font-size:.36em;font-weight:600;letter-spacing:.14em;color:var(--muted);margin-top:8px}
+.t-b{font-size:clamp(40px,7vw,76px);margin-top:clamp(30px,5vh,56px)}
+.bonjour .lead{margin:20px auto 0}
+.bonjour .commence{margin-top:34px}
+.pres-nav[hidden]{display:none}
+.pn-q{position:fixed;top:max(16px,env(safe-area-inset-top));right:16px;z-index:30}
+.pn-fl{position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:30;display:flex;gap:12px}
+.pres-nav button{appearance:none;border:0;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--fg);box-shadow:var(--up-s);cursor:pointer;transition:box-shadow .5s var(--doux)}
+.pres-nav button:active{box-shadow:var(--in)}
+.pres-nav .pn-s{color:var(--accx);box-shadow:var(--lis),var(--up-s)}
+.pres-nav svg{width:22px;height:22px}
+.pn-pts{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:10px}
+.pn-pts i{width:8px;height:8px;border-radius:50%;box-shadow:var(--in);transition:height .8s var(--doux),background .6s}
+.pn-pts i.ici{height:26px;border-radius:5px;background:var(--acc)}
+@media (max-width:700px){.pn-pts{display:none}}
 /* garantie et questions */
 .sous-t{text-align:center;margin:clamp(44px,6vw,64px) 0 18px;font-size:22px}
 .faq{max-width:780px;margin:0 auto;display:grid;gap:16px}
@@ -764,7 +809,7 @@ footer a{text-decoration:none}
 .js .logo .pcd{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:point .4s var(--doux) 1s forwards}
 @keyframes trace{to{stroke-dashoffset:0}}
 @keyframes point{to{transform:none}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .rv{opacity:1;transform:none;transition:none;animation:none}.js .logo .pcl,.js .logo .pcd{animation:none;stroke-dasharray:none;stroke-dashoffset:0;transform:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js h2 .mot{opacity:1;transform:none;filter:none;transition:none}h2 .or{transition:none;background-size:100% 100%}.eyebrow::before{animation:none}.js .rv{opacity:1;transform:none;transition:none;animation:none}.js .logo .pcl,.js .logo .pcd{animation:none;stroke-dasharray:none;stroke-dashoffset:0;transform:none}}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -789,6 +834,13 @@ footer a{text-decoration:none}
 </header>
 
 <main>
+<section class="bonjour" id="bonjour" hidden><div class="wrap">
+  <span class="g-b"><svg viewBox="10 4 80 92" aria-hidden="true"><path pathLength="1" d="M52 64.7 A23 23 0 1 0 33 42 V70"/><circle cx="56" cy="42" r="6"/></svg></span>
+  <p class="nom-b">PROCLIK<small>VOTRE COMMERCE EN UN CLIC</small></p>
+  <h2 class="t-b">Bonjour<span class="qui"></span>,<br><span class="or">voici ProClik.</span></h2>
+  <p class="lead">Votre site, vos demandes, vos devis et votre agenda : tout au même endroit, sur votre téléphone.</p>
+  <button class="btn go commence" type="button">On commence</button>
+</div></section>
 <!-- 1. Accueil -->
 <section class="hero" id="accueil"><div class="wrap">
   <div>
@@ -883,7 +935,7 @@ footer a{text-decoration:none}
 
 <!-- 2. Le constat -->
 <section id="constat"><div class="wrap">
-  <div class="head"><span class="eyebrow">Le constat</span><h2>Un beau site ne suffit plus.</h2><p class="lead">Vos clients vous trouvent, puis tout recommence à la main. Vous faites trois métiers à la fois : le vôtre, celui de secrétaire et celui de comptable.</p></div>
+  <div class="head"><span class="eyebrow">Le constat</span><h2>Un beau site <span class="or">ne suffit plus.</span></h2><p class="lead">Vos clients vous trouvent, puis tout recommence à la main. Vous faites trois métiers à la fois : le vôtre, celui de secrétaire et celui de comptable.</p></div>
   <div class="trois">
     <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="ondes"><path d="M78 44a30 30 0 0 0 0 32"/><path d="M66 36a44 44 0 0 0 0 48"/><path d="M162 44a30 30 0 0 1 0 32"/><path d="M174 36a44 44 0 0 1 0 48"/></g><g class="vib"><rect x="98" y="20" width="44" height="80" rx="9"/><path d="M114 30h12"/><circle class="pl" cx="120" cy="62" r="9"/><path class="pl" d="M116.5 58.5l7 7M123.5 58.5l-7 7"/></g><g class="bulle"><rect x="150" y="12" width="78" height="24" rx="12"/><text x="189" y="28">Appel manqué</text></g></svg></div><span class="num">01</span><h3>Le téléphone qui sonne au mauvais moment.</h3><p>Vous êtes occupé, vous ne décrochez pas, le client appelle le suivant.</p><p class="sol creux"><b>Avec ProClik :</b> le client laisse sa demande sur votre site, même à 22 h. Elle vous attend dans l'appli.</p></article>
     <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><path class="lune pl" d="M196 18a14 14 0 1 0 14 20 11 11 0 0 1-14-20z"/><g class="etoile"><path d="M170 22v6M167 25h6"/><path d="M214 58v4M212 60h4"/></g><rect x="62" y="30" width="96" height="60" rx="6"/><path d="M50 98h120"/><g class="tape"><path d="M76 46h44"/><path d="M76 58h64"/><path d="M76 70h30"/></g><text class="heure" x="110" y="24">22:47</text><path class="tasse" d="M180 78h20v12a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8z M200 82h4a4 4 0 0 1 0 8h-4"/><path class="vapeur" d="M186 72c-3-4 3-6 0-10M194 72c-3-4 3-6 0-10"/></svg></div><span class="num">02</span><h3>Les papiers du soir.</h3><p>Vous rentrez, vous dînez, et vous rouvrez l'ordinateur pour les devis et les factures.</p><p class="sol creux"><b>Avec ProClik :</b> le devis et la facture se préparent tout seuls. Vous relisez et vous validez.</p></article>
@@ -912,7 +964,7 @@ footer a{text-decoration:none}
 
 <!-- 2 ter. L'Espace : la cerise sur le gâteau -->
 <section class="cerise" id="espace"><div class="wrap">
-  <div class="head center"><span class="eyebrow">Votre Espace ProClik</span><h2>Et la cerise sur le gâteau.</h2><p class="lead">Derrière votre site, une appli sur votre téléphone qui range tout ce qu'il reçoit. Un gros bouton par étape, rien à apprendre. L'installation et la prise en main se font avec vous.</p></div>
+  <div class="head center"><span class="eyebrow">Votre Espace ProClik</span><h2>Et <span class="or">la cerise</span> sur le gâteau.</h2><p class="lead">Derrière votre site, une appli sur votre téléphone qui range tout ce qu'il reçoit. Un gros bouton par étape, rien à apprendre. L'installation et la prise en main se font avec vous.</p></div>
   <div class="trois">
     <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><h3>Vous êtes prévenu.</h3><p>Chaque demande, chaque réservation arrive rangée, avec les photos et les infos utiles.</p></div>
     <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span><h3>Devis et factures.</h3><p>Préparés pour vous. Vous relisez, vous validez, c'est envoyé.</p></div>
@@ -921,7 +973,7 @@ footer a{text-decoration:none}
 </div></section>
 
 <section id="exemples"><div class="wrap">
-  <div class="head"><span class="eyebrow">Exemples</span><h2>Essayez, vous verrez.</h2><p class="lead">Le formulaire et l'Espace ci-dessous sont les vrais, en mode démonstration : rien n'est envoyé à personne.</p></div>
+  <div class="head"><span class="eyebrow">Exemples</span><h2>Essayez, <span class="or">vous verrez.</span></h2><p class="lead">Le formulaire et l'Espace ci-dessous sont les vrais, en mode démonstration : rien n'est envoyé à personne.</p></div>
   <div class="essai">
     <div class="card lis rv"><span class="ex">Démo · rien n'est envoyé</span><h3>Le formulaire de demande</h3><p>Ce que voit votre client sur votre site. Ici, celui d'une entreprise de plâtrerie et d'isolation, avec le plan de la pièce.</p><a class="btn go" href="devis/" target="_blank" rel="noopener">Essayer le formulaire</a></div>
     <div class="card lis rv"><span class="ex">Démo · clients fictifs</span><h3>Votre Espace ProClik</h3><p>Ce que vous voyez, vous, sur votre téléphone : vos demandes, vos devis, votre planning.</p><a class="btn go" href="espace/parcours.html" target="_blank" rel="noopener">Voir l'Espace</a></div>
@@ -938,7 +990,7 @@ footer a{text-decoration:none}
 <section class="cliky" id="artisans"><div class="wrap">
   <div>
     <span class="eyebrow">Pour les artisans · bâtiment</span>
-    <h2>Le devis se prépare pendant que vous êtes sur le chantier.</h2>
+    <h2>Le devis se prépare <span class="or">pendant que vous êtes sur le chantier.</span></h2>
     <p class="lead">Avec Cliky, votre assistant de chiffrage, la demande du client devient un pré-devis calculé avec vos propres prix. Le soir, vous relisez et vous validez.</p>
     <ul class="points">
       <li><div><b>Vos prix, jamais inventés.</b><span>Cliky chiffre avec votre catalogue et votre main-d'œuvre.</span></div></li>
@@ -962,7 +1014,7 @@ footer a{text-decoration:none}
 
 <!-- 6. Tarifs -->
 <section id="tarifs"><div class="wrap">
-  <div class="head center"><span class="eyebrow">Tarifs</span><h2>Composez votre ProClik.</h2><p class="lead">Un site, un abonnement, et seulement les options qui vous aident.</p></div>
+  <div class="head center"><span class="eyebrow">Tarifs</span><h2>Composez <span class="or">votre ProClik.</span></h2><p class="lead">Un site, un abonnement, et seulement les options qui vous aident.</p></div>
 
   <div class="bloc-t">
     <h3><span class="n">1</span>Votre site</h3>
@@ -1016,7 +1068,7 @@ footer a{text-decoration:none}
 
 <!-- 7. Garantie et questions -->
 <section id="questions"><div class="wrap">
-  <div class="head center"><span class="eyebrow">La garantie ProClik</span><h2>Vous ne serez jamais seul.</h2><p class="lead">Votre site en ligne, ce n'est pas la fin de notre travail, c'est le début. Une personne, à Grenoble, connaît votre activité et répond quand vous avez une question.</p></div>
+  <div class="head center"><span class="eyebrow">La garantie ProClik</span><h2>Vous ne serez <span class="or">jamais seul.</span></h2><p class="lead">Votre site en ligne, ce n'est pas la fin de notre travail, c'est le début. Une personne, à Grenoble, connaît votre activité et répond quand vous avez une question.</p></div>
   <div class="garantie" id="garantie">
     <div class="card rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><h3>Maquette d'abord</h3><p>Vous voyez votre site et vous le validez avant de payer le solde.</p></div>
     <div class="card rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></span><h3>Retouches incluses</h3><p><span class="todo">[2]</span> séries de retouches avant la mise en ligne.</p></div>
@@ -1039,7 +1091,7 @@ footer a{text-decoration:none}
   <div class="card lis rv">
     <svg class="cafe" viewBox="0 0 80 70" aria-hidden="true"><path class="vapeur" d="M30 22c-4-5 4-8 0-14M40 22c-4-5 4-8 0-14M50 22c-4-5 4-8 0-14"/><path d="M18 30h44v14a16 16 0 0 1-16 16H34a16 16 0 0 1-16-16z"/><path d="M62 34h4a7 7 0 0 1 0 14h-5"/><path d="M14 64h52"/></svg>
     <span class="eyebrow">Rendez-vous gratuit</span>
-    <h2>On en parle autour d'un café ?</h2>
+    <h2>On en parle <span class="or">autour d'un café ?</span></h2>
     <p class="lead center">30 minutes, chez vous ou en visio. On parle de votre activité, on vous montre l'appli, et vous décidez ensuite. Promis, sans harcèlement.</p>
     <form class="rdv" id="rdv" novalidate>
       <div class="barre-r creux"><i></i></div>
@@ -1050,11 +1102,14 @@ footer a{text-decoration:none}
         <label class="gal"><input type="radio" name="lieu" value="Chez moi"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Chez vous</b></span></label><label class="gal"><input type="radio" name="lieu" value="En visio"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10 5-3v10l-5-3"/></svg><b>En visio</b></span></label><label class="gal"><input type="radio" name="lieu" value="Au téléphone"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg><b>Au téléphone</b></span></label>
       </div></div>
       <div class="pas" data-q="jour"><p class="q-r">Quel jour vous arrange ?</p><div class="rang jours-r"></div>
-        <p class="q-r petit-q">Plutôt…</p><div class="rang r3"><label class="gal"><input type="radio" name="moment" value="Matin"><span><b>Le matin</b></span></label><label class="gal"><input type="radio" name="moment" value="Après-midi"><span><b>L'après-midi</b></span></label><label class="gal"><input type="radio" name="moment" value="Fin de journée"><span><b>En fin de journée</b></span></label></div></div>
+        <p class="q-r petit-q">Plutôt…</p><div class="rang r3 moments"><label class="gal"><input type="radio" name="moment" value="Matin"><span><b>Le matin</b></span></label><label class="gal"><input type="radio" name="moment" value="Après-midi"><span><b>L'après-midi</b></span></label><label class="gal"><input type="radio" name="moment" value="Fin de journée"><span><b>En fin de journée</b></span></label></div>
+        <p class="q-r petit-q heures-t" hidden>À quelle heure ?</p><div class="rang heures-r" hidden></div><p class="pris-r" hidden>Ce créneau vient d'être pris. Choisissez-en un autre.</p></div>
       <div class="pas" data-q="coord"><p class="q-r">Comment vous joindre ?</p>
         <label class="champ-r"><span>Votre prénom</span><input name="prenom" autocomplete="given-name" required></label>
         <label class="champ-r"><span>Votre téléphone</span><input name="tel" type="tel" inputmode="tel" autocomplete="tel" required></label>
         <label class="champ-r"><span>Votre entreprise <small>(si vous voulez)</small></span><input name="entreprise" autocomplete="organization"></label>
+        <label class="champ-r"><span>Votre ville <small>(si on vient chez vous)</small></span><input name="ville" autocomplete="address-level2"></label>
+        <input class="piege" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn go envoi" type="submit">Réserver mon café</button></div>
       <div class="pas fin"><div class="rond-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b>C'est noté, <span data-k="prenom"></span> !</b><p class="recap"></p><p class="demo-r" hidden>Mode démonstration : la réservation n'est pas encore envoyée. Pour l'instant, appelez-nous ou écrivez-nous.</p></div>
       <button class="retour" type="button" hidden>← Retour</button>
@@ -1063,10 +1118,15 @@ footer a{text-decoration:none}
   </div>
 </div></section>
 </main>
+<div class="pres-nav" hidden>
+  <button class="pn-q" type="button" aria-label="Quitter la présentation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <div class="pn-pts" aria-hidden="true"></div>
+  <div class="pn-fl"><button class="pn-p" type="button" aria-label="Page précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button><button class="pn-s" type="button" aria-label="Page suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+</div>
 
 <footer><div class="wrap">
   <span>ProClik · Grenoble</span>
-  <span class="liens"><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">CGV</a></span>
+  <span class="liens"><a href="?presentation#bonjour" class="lien-pres">Mode présentation</a><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">CGV</a></span>
 </div></footer>
 
 <script>
@@ -1098,34 +1158,85 @@ footer a{text-decoration:none}
       f.querySelector(".offert").hidden=!offert;
       [["dep",dep],["mois",mois],["an",dep+12*mois]].forEach(function(a){anime(f.querySelector('[data-k="'+a[0]+'"]'),a[1])})}
     f.addEventListener("change",calc);vu={dep:990,mois:99,an:2178};calc()})();
-  /* rendez-vous guidé, une question à la fois */
+  /* rendez-vous guidé, une question à la fois ; créneaux réels de l'agenda GHL ProClik via le service ProClik */
   (function(){var f=document.getElementById("rdv");if(!f)return;
-    var RDV_URL=""; /* adresse d'envoi des réservations ProClik : à brancher (rien n'est envoyé tant qu'elle est vide) */
+    var SERVICE="https://proclik-calcul.proclik-test.workers.dev"; /* adresse du service ProClik (ce n'est pas une clé) */
     var pas=[].slice.call(f.querySelectorAll(".pas")),k=0,barre=f.querySelector(".barre-r i"),ret=f.querySelector(".retour");
     var J=["dim.","lun.","mar.","mer.","jeu.","ven.","sam."],M=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
-    var box=f.querySelector(".jours-r"),d=new Date(),n=0,h="";
-    while(n<6){d.setDate(d.getDate()+1);if(d.getDay()===0)continue;
-      var v=J[d.getDay()]+" "+d.getDate()+" "+M[d.getMonth()];
-      h+='<label class="gal"><input type="radio" name="jour" value="'+v+'"><span><small>'+J[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+M[d.getMonth()]+'</small></span></label>';n++}
-    box.innerHTML=h;
+    var box=f.querySelector(".jours-r"),moments=f.querySelector(".moments"),momT=moments.previousElementSibling,heures=f.querySelector(".heures-r"),heuresT=f.querySelector(".heures-t"),pris=f.querySelector(".pris-r");
+    var reel=null; /* {"2026-10-30": ["2026-10-30T09:00:00+01:00", …]} quand l'agenda répond */
+    function galet(nom,val,haut,gros,bas){return '<label class="gal"><input type="radio" name="'+nom+'" value="'+val+'"><span>'+(haut?'<small>'+haut+'</small>':'')+'<b>'+gros+'</b>'+(bas?'<small>'+bas+'</small>':'')+'</span></label>'}
+    function libJour(d){return J[d.getDay()]+" "+d.getDate()+" "+M[d.getMonth()]}
+    function joursDemo(){var d=new Date(),n=0,h="";while(n<6){d.setDate(d.getDate()+1);if(d.getDay()===0)continue;h+=galet("jour",libJour(d),J[d.getDay()],d.getDate(),M[d.getMonth()]);n++}box.innerHTML=h}
+    function joursReels(){var h="";Object.keys(reel).slice(0,8).forEach(function(cle){var d=new Date(cle+"T12:00:00");h+=galet("jour",cle,J[d.getDay()],d.getDate(),M[d.getMonth()])});box.innerHTML=h;
+      moments.hidden=momT.hidden=true;heures.hidden=heuresT.hidden=true}
+    function heure(s){var m=/T(\d{2}):(\d{2})/.exec(s);return m?(+m[1])+" h "+m[2]:s}
+    function charge(){var c=new AbortController(),tm=setTimeout(function(){c.abort()},6000);
+      return fetch(SERVICE+"/rdv/creneaux",{signal:c.signal}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(tm);
+        if(j&&j.ok&&j.jours&&j.jours.length){reel={};j.jours.forEach(function(x){reel[x.date]=x.creneaux});joursReels()}}).catch(function(){})}
+    joursDemo();charge();
     function va(i){k=i;pas.forEach(function(p,j){p.classList.toggle("on",j===k)});barre.style.width=(Math.min(k+1,pas.length-1)/(pas.length-1)*100)+"%";
       ret.hidden=k===0||k===pas.length-1}
-    function plein(){return f.jour&&[].some.call(f.querySelectorAll('[name="jour"]'),function(r){return r.checked})&&[].some.call(f.querySelectorAll('[name="moment"]'),function(r){return r.checked})}
-    f.addEventListener("change",function(e){var q=pas[k].getAttribute("data-q");if(e.target.type!=="radio")return;
-      if(q==="activite"||q==="lieu")setTimeout(function(){va(k+1)},450);
-      else if(q==="jour"&&plein())setTimeout(function(){va(k+1)},450)});
+    var coche=function(n){return [].some.call(f.querySelectorAll('[name="'+n+'"]'),function(r){return r.checked})};
+    var val=function(n){var c=f.querySelector('[name="'+n+'"]:checked');return c?c.value:""};
+    f.addEventListener("change",function(e){if(e.target.type!=="radio")return;var q=pas[k].getAttribute("data-q");
+      if(q==="activite"||q==="lieu")return setTimeout(function(){va(k+1)},450);
+      if(q!=="jour")return;
+      if(reel&&e.target.name==="jour"){pris.hidden=true;heures.innerHTML=(reel[e.target.value]||[]).map(function(s){return galet("heure",s,"",heure(s),"")}).join("");heures.hidden=heuresT.hidden=false;return}
+      if(reel?coche("heure"):(coche("jour")&&coche("moment")))setTimeout(function(){va(k+1)},450)});
     ret.addEventListener("click",function(){if(k>0)va(k-1)});
+    var bouton=f.querySelector(".envoi"),demo=f.querySelector(".demo-r");
+    function fini(don,texte,montreDemo){f.querySelector('[data-k="prenom"]').textContent=don.prenom;f.querySelector(".recap").textContent=texte;
+      demo.hidden=!montreDemo;va(pas.length-1)}
     f.addEventListener("submit",function(e){e.preventDefault();var ok=true;
       ["prenom","tel"].forEach(function(n){var c=f[n],bon=n==="tel"?c.value.replace(/\D/g,"").length>=10:c.value.trim().length>0;c.parentNode.classList.toggle("err",!bon);if(!bon)ok=false});
       if(!ok)return;
-      var val=function(n){var c=f.querySelector('[name="'+n+'"]:checked');return c?c.value:""};
-      var don={prenom:f.prenom.value.trim(),telephone:f.tel.value.trim(),entreprise:f.entreprise.value.trim(),activite:val("activite"),lieu:val("lieu"),jour:val("jour"),moment:val("moment"),source:"site ProClik"};
-      f.querySelector('[data-k="prenom"]').textContent=don.prenom;
-      f.querySelector(".recap").textContent=don.lieu+", "+don.jour+", "+don.moment.toLowerCase()+". On vous rappelle pour confirmer.";
-      if(RDV_URL){fetch(RDV_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(don)}).catch(function(){f.querySelector(".demo-r").hidden=false})}
-      else f.querySelector(".demo-r").hidden=false;
-      va(pas.length-1)});
+      var don={prenom:f.prenom.value.trim(),telephone:f.tel.value.trim(),entreprise:f.entreprise.value.trim(),ville:f.ville.value.trim(),activite:val("activite"),lieu:val("lieu"),site:f.site.value};
+      if(!reel){fini(don,don.lieu+", "+val("jour")+", "+val("moment").toLowerCase()+". On vous rappelle pour confirmer.",true);return}
+      don.debut=val("heure");var d=new Date(don.debut.slice(0,10)+"T12:00:00"),quand=libJour(d)+" à "+heure(don.debut);
+      bouton.disabled=true;bouton.textContent="Je réserve…";
+      fetch(SERVICE+"/rdv/reserver",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(don)})
+        .then(function(r){return r.json().then(function(j){return [r.status,j]})})
+        .then(function(a){bouton.disabled=false;bouton.textContent="Réserver mon café";
+          if(a[1]&&a[1].ok)return fini(don,"C'est réservé : "+don.lieu.toLowerCase()+", "+quand+". Vous recevez la confirmation.",false);
+          if(a[0]===409){charge().then(function(){pris.hidden=false;va(2)});return}
+          demo.textContent="Petit souci de notre côté : appelez-nous ou écrivez-nous, on cale le rendez-vous ensemble.";fini(don,don.lieu+", "+quand+".",true)})
+        .catch(function(){bouton.disabled=false;bouton.textContent="Réserver mon café";demo.textContent="Pas de réseau : appelez-nous ou écrivez-nous, on cale le rendez-vous ensemble.";fini(don,don.lieu+", "+quand+".",true)})});
     va(0)})();
+  /* titres : les mots arrivent un à un quand le titre entre à l'écran */
+  (function(){var hs=[].slice.call(document.querySelectorAll("main h2"));
+    hs.forEach(function(h){var i=0;(function coupe(n){[].slice.call(n.childNodes).forEach(function(c){
+      if(c.nodeType===3){var frag=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(function(m){if(!m)return;if(/^\s+$/.test(m)){frag.appendChild(document.createTextNode(m));return}
+        var s=document.createElement("span");s.className="mot";s.style.setProperty("--i",i++);s.textContent=m;frag.appendChild(s)});c.parentNode.replaceChild(frag,c)}
+      else if(c.nodeType===1&&c.tagName!=="BR")coupe(c)})})(h)});
+    if(!("IntersectionObserver" in window)){hs.forEach(function(h){h.classList.add("t-vu")});return}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("t-vu");io.unobserve(e.target)}})},{rootMargin:"0px 0px -12% 0px"});
+    hs.forEach(function(h){io.observe(h)})})();
+  /* accueil : le téléphone recule tout doucement quand on descend (façon Apple, sans excès) */
+  (function(){var sc=document.querySelector(".hero .scene");if(!sc||matchMedia("(prefers-reduced-motion: reduce)").matches)return;var att=false;
+    var hero=document.querySelector(".hero");
+    function maj(){att=false;var y=Math.max(0,Math.min(scrollY-hero.offsetTop,innerHeight)),r=y/innerHeight;sc.style.transform="translateY("+(y*.1).toFixed(1)+"px) scale("+(1-r*.05).toFixed(4)+")";sc.style.opacity=(1-r*.35).toFixed(3)}
+    addEventListener("scroll",function(){if(!att){att=true;requestAnimationFrame(maj)}},{passive:true})})();
+  /* mode présentation : ?presentation (et &client=Prénom pour l'accueil) — une page par section, flèches en galets */
+  (function(){var q=new URLSearchParams(location.search),lien=document.querySelector(".lien-pres");
+    lien.addEventListener("click",function(e){e.preventDefault();lancer()});
+    if(q.has("presentation")||location.hash==="#presentation")lancer();
+    function lancer(){if(document.documentElement.classList.contains("pres"))return;
+    var de=document.documentElement,b=document.getElementById("bonjour"),nav=document.querySelector(".pres-nav");
+    de.classList.add("pres");b.hidden=false;nav.hidden=false;
+    var cl=(q.get("client")||"").trim().slice(0,30);b.querySelector(".qui").textContent=cl?" "+cl:"";
+    var secs=[].slice.call(document.querySelectorAll("main>section")).filter(function(s){return !s.hidden}),pts=nav.querySelector(".pn-pts");
+    pts.innerHTML=secs.map(function(){return"<i></i>"}).join("");
+    function cur(){var y=scrollY+innerHeight*.4,c=0;secs.forEach(function(s,i){if(s.offsetTop<=y)c=i});return c}
+    function maj(){var c=cur();[].forEach.call(pts.children,function(p,i){p.classList.toggle("ici",i===c)})}
+    function aller(d){var c=cur(),n=Math.max(0,Math.min(secs.length-1,c+d));scrollTo({top:secs[n].offsetTop,behavior:"smooth"})}
+    nav.querySelector(".pn-s").addEventListener("click",function(){aller(1)});nav.querySelector(".pn-p").addEventListener("click",function(){aller(-1)});
+    b.querySelector(".commence").addEventListener("click",function(){aller(1)});
+    nav.querySelector(".pn-q").addEventListener("click",function(){location.href=location.pathname});
+    addEventListener("keydown",function(e){if(/INPUT|TEXTAREA/.test(e.target.tagName))return;
+      if(["ArrowDown","ArrowRight","PageDown"," "].indexOf(e.key)>=0){e.preventDefault();aller(1)}else if(["ArrowUp","ArrowLeft","PageUp"].indexOf(e.key)>=0){e.preventDefault();aller(-1)}else if(e.key==="Escape")location.href=location.pathname});
+    addEventListener("scroll",maj,{passive:true});maj();
+    scrollTo(0,0)}})();
   function fr(v,dec){return v.toLocaleString("fr-FR",{minimumFractionDigits:dec,maximumFractionDigits:dec}).replace(/ | /g," ")}
   function compte(e,att0){
     var v=parseFloat(e.getAttribute("data-v")),dec=/\./.test(e.getAttribute("data-v"))?2:0,suf=dec?" €":"",t0=null,dur=dec?1800:1100,att=att0!=null?att0:(dec?2200:0);
