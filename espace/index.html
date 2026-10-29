@@ -1190,6 +1190,8 @@ function xrender(){var t=xstack[xstack.length-1];if(!t)return;
 function xclose(){$('#xsheet').classList.remove('on');$('#xscrim').classList.remove('on');xstack=[];}
 $('#x-close').addEventListener('click',xclose);$('#xscrim').addEventListener('click',xclose);
 $('#x-back').addEventListener('click',function(){xstack.pop();xrender();});
+// Pour les modules à part (options.js) : ouvrir le même panneau, revenir en arrière, petit message
+window.pcX={open:xopen,close:xclose,back:function(){xstack.pop();xrender();},toast:toast};
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#xsheet').classList.contains('on'))xclose();});
 
 /* ---------- données de démonstration ---------- */
@@ -1550,7 +1552,7 @@ $('#search').addEventListener('click',function(){xopen('Rechercher','Clients, de
 /* ---------- menu, affichage simple, accueil guidé, astuces ---------- */
 var simple=lsGet('pc-simple',false);function simpleUI(){root.classList.toggle('simple',simple);}simpleUI();
 $('#menu').addEventListener('click',function(){xopen('Votre espace',PCID.entreprise+' · '+PCID.prenom,
- '<div class="card menu"><button id="m-simple"><span class="av t">Aa</span><span class="tx"><b>Affichage simple</b><small>Plus gros, plus aéré, l\'essentiel seulement</small></span><span class="sw'+(simple?' on':'')+'" role="switch" aria-checked="'+simple+'"></span></button>'+
+ (window.pcOptionsHTML?pcOptionsHTML():'')+'<div class="card menu"><button id="m-simple"><span class="av t">Aa</span><span class="tx"><b>Affichage simple</b><small>Plus gros, plus aéré, l\'essentiel seulement</small></span><span class="sw'+(simple?' on':'')+'" role="switch" aria-checked="'+simple+'"></span></button>'+
  '<button id="m-net"><span class="av">📶</span><span class="tx"><b>Simuler une coupure de réseau</b><small>Démo : voir comment l\'espace fonctionne sans connexion</small></span><span class="sw'+(simOff?' on':'')+'" role="switch" aria-checked="'+simOff+'"></span></button>'+'<button id="m-welcome"><span class="av">👋</span><span class="tx"><b>Revoir la présentation</b><small>Les 3 écrans du premier lancement</small></span><span class="go">›</span></button>'+
  '<button id="m-inst"><span class="av t">📲</span><span class="tx"><b>Installer l\'appli</b><small>ProClik sur l\'écran d\'accueil, en plein écran</small></span><span class="go">›</span></button>'+'<button id="m-id"><span class="av">🪪</span><span class="tx"><b>Identité de l\'entreprise</b><small>Logo, nom, couleur, mentions des documents</small></span><span class="go">›</span></button>'+'<button id="m-help"><span class="av">💬</span><span class="tx"><b>Une question ?</b><small>Cyril vous répond sous 24 h · par message ou téléphone</small></span><span class="go">›</span></button></div>'+
  '<div class="xsec"><h3>Mes réglages</h3><div class="card"><div class="kv"><span>Seuil de visite</span><b>au-delà de [montant à confirmer] € HT</b><span>Coefficient fourniture</span><b>× 1,30</b><span>Coût horaire</span><b>[à fixer avec vous]</b><span>Ratios matériel</span><b>par ouvrage, selon la difficulté : +5 / +10 / +15 % (exemple)</b><span>Zone de travail</span><b>25 km autour de Domène</b><span>Relances</span><b>J+3 et J+7, '+(relOn?'activées':'en pause')+'</b><span>Logiciel de facturation</span><b>VosFactures</b></div><p class="hint" style="margin-top:8px">Réglés avec vous à la mise en service, modifiables ensuite.</p></div></div>'+
@@ -1679,7 +1681,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 </script>
 
 <script src="config.js?v=2"></script>
-<script src="vrai.js?v=7"></script>
-<link rel="stylesheet" href="relief.css?v=17">
-<script src="accueil.js?v=6"></script>
+<script src="vrai.js?v=8"></script>
+<link rel="stylesheet" href="relief.css?v=18">
+<script src="options.js?v=1"></script>
+<script src="accueil.js?v=7"></script>
 <script src="relief.js?v=4"></script>

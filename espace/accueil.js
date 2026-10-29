@@ -17,6 +17,7 @@
     return '<div class="chaine" style="--fait:'+(n>1?Math.max(0,i)/(n-1):0)+'">'+h+"</div>"}
   function tuiles(T){T=T.filter(function(t){return t[0]>0});if(!T.length)return "";
     return '<div class="tuiles">'+T.map(function(t){return '<div class="tuile'+(t[2]?" chaud":"")+'"><b>'+t[0]+"</b><span>"+t[1]+"</span></div>"}).join("")+"</div>"}
+  function cliky(){return !window.pcOption||window.pcOption("cliky")}
   function bouton(ic,txt,attr){return '<button class="btn go acc-go" type="button" '+attr+'><span class="lab"><span class="ic">'+ic+"</span><span>"+esc(txt)+"</span></span></button>"}
 
   /* Courbe sur 6 mois (exemple de la planche) : encaissé en trait plein, signé en trait fin, détail d'un mois au toucher */
@@ -36,11 +37,13 @@
   function demo(){
     var stats=chiffres();
     var n=+(($("#badge")||{}).textContent||0)||1;
+    // Sans Cliky : la demande arrive quand même, sans pré-devis ; l'artisan l'ouvre et chiffre lui-même.
+    var ck=cliky();
     poser('<div class="acc-g">'+stats+'</div><div class="acc-d">'+tuiles([[n,"à faire ce soir",1],[2,"devis en attente de réponse"],[1,"chantier en cours"]])+
-      '<div class="card dem"><div class="dem-h"><div><b>Mme Durand · Grenoble</b><small>Cloisons du séjour</small></div><div class="prix">765,08 € <small>HT</small></div></div>'+
-      chaine(7,0)+'<div class="etape-nom"><b>Vérifier le pré-devis</b><span>étape 1 sur 7</span></div>'+
-      '<div class="ligne corr"><span>Bâti de porte<span class="cote">730 × 2 040 mm</span></span><span class="q">à vérifier</span></div></div>'+
-      bouton(IC_VERIF,"Vérifier le pré-devis","data-accdemo")+
+      '<div class="card dem"><div class="dem-h"><div><b>Mme Durand · Grenoble</b><small>Cloisons du séjour</small></div>'+(ck?'<div class="prix">765,08 € <small>HT</small></div>':'')+'</div>'+
+      chaine(7,0)+'<div class="etape-nom"><b>'+(ck?"Vérifier le pré-devis":"Chiffrer la demande")+'</b><span>étape 1 sur 7</span></div>'+
+      (ck?'<div class="ligne corr"><span>Bâti de porte<span class="cote">730 × 2 040 mm</span></span><span class="q">à vérifier</span></div>':'<div class="ligne"><span>Réponses, photos et plan du client reçus</span></div>')+'</div>'+
+      bouton(ck?IC_VERIF:IC_LISTE,ck?"Vérifier le pré-devis":"Voir la demande","data-accdemo")+
       '<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>›</span></button></div>');
   }
 
@@ -57,7 +60,7 @@
         (d.total_ht!=null?'<div class="prix">'+eur(d.total_ht)+" <small>HT</small></div>":"")+"</div>"+
         (n>1&&i>=0?chaine(n,i)+'<div class="etape-nom"><b>'+esc(d.etape)+"</b><span>étape "+(i+1)+" sur "+n+"</span></div>":"")+
         (d.a_verifier?'<div class="ligne corr"><span>'+(d.a_verifier>1?d.a_verifier+" lignes":"1 ligne")+' à vérifier</span><span class="q">à vérifier</span></div>':"")+"</div>"+
-        bouton(IC_VERIF,"Vérifier le pré-devis",'data-vc="'+esc(d.contact||"")+'"')}
+        (d.total_ht!=null||cliky()?bouton(IC_VERIF,"Vérifier le pré-devis",'data-vc="'+esc(d.contact||"")+'"'):bouton(IC_LISTE,"Voir la demande",'data-vc="'+esc(d.contact||"")+'"'))}
     if(D.length)h+='<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+D.length+" ›</span></button>";
     poser('<div class="acc-g">'+chiffres()+'</div><div class="acc-d">'+h+"</div>");
   }
@@ -69,6 +72,7 @@
   function salut(){if(!hello)return;var t=hello.textContent,n=t.replace(/^Bonjour\b/,new Date().getHours()>=18||new Date().getHours()<5?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
   if(hello){salut();new MutationObserver(salut).observe(hello,{childList:true,characterData:true,subtree:true})}
   rendre();
+  document.addEventListener("pc-options",function(){clearTimeout(rendre._t);rendre._t=setTimeout(rendre,60)});
   // vrai.js réécrit sa liste (#va) à chaque chargement : on suit le mouvement.
   new MutationObserver(function(){clearTimeout(rendre._t);rendre._t=setTimeout(rendre,60)}).observe(ancien,{childList:true,subtree:true});
   var etat=document.documentElement.classList.contains("pcvrai");
