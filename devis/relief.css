@@ -93,3 +93,11 @@ html body .pdots .cur,:root[data-theme="dark"] body .pdots .cur{background:var(-
 html body #pframe{border:0;box-shadow:var(--in)}
 html body .thumbs img,html body .thumbs .pdf{border:0;box-shadow:var(--up-s)}
 html body pre{background:var(--bg);border:0;box-shadow:var(--in)}
+
+/* bouton jour / nuit en haut à droite : petit galet, lune le jour, soleil la nuit */
+html body .top-r{display:flex;align-items:center;gap:10px;flex:none}
+html body .theme-b{appearance:none;border:0;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--bg);color:var(--muted);box-shadow:var(--up-s);transition:box-shadow .45s ease,transform .45s ease}
+html body .theme-b:active{box-shadow:var(--in);transform:scale(.97)}
+html body .theme-b .sol{display:none}
+:root[data-theme="dark"] body .theme-b .lune{display:none}
+:root[data-theme="dark"] body .theme-b .sol{display:block}
