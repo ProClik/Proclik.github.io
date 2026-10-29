@@ -458,6 +458,14 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .points span{color:var(--muted)}
 .predevis{padding:24px}
 .plus-cl{font-size:13.5px;font-weight:600;color:var(--accx);margin-top:-4px}
+.equipe{margin-top:24px;padding:20px 22px;border-radius:22px;box-shadow:var(--in)}
+.eq-t{margin:0 0 14px;font-weight:800;font-size:18px}
+.eq{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.eq li{padding:12px 14px;border-radius:16px;box-shadow:var(--up-s);background:var(--bg)}
+.eq b{display:block;font-size:15px;color:var(--accx)}
+.eq span{font-size:13.5px;color:var(--muted)}
+.eq-f{margin:14px 0 0;font-size:14.5px;color:var(--muted);font-style:italic}
+@media (max-width:420px){.eq{grid-template-columns:1fr}}
 .cl-col{display:grid;gap:22px}
 .liste{padding:22px 24px}
 .liste .ph{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
@@ -1396,6 +1404,16 @@ footer a{text-decoration:none}
     <div class="embleme rv"><span class="em-g"><svg class="em-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="tete"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle class="ant" cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><g class="yeux"><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></g></g></svg></span><span class="em-f"></span><span class="em-n">Cliky<small>assistant de chiffrage · artisans</small></span></div>
     <h2>Le devis se prépare pendant que vous êtes <span class="or">sur le chantier.</span></h2>
     <p class="lead">Avec Cliky, votre assistant de chiffrage, la demande du client devient un pré-devis calculé avec vos propres prix. Le soir, vous relisez et vous validez.</p>
+    <div class="equipe rv">
+      <p class="eq-t">Toute une équipe de bureau, <span class="or-t">sans les embauches.</span></p>
+      <ul class="eq">
+        <li><b>Le métreur</b><span>lit le plan ou la photo et prend les mesures</span></li>
+        <li><b>Le chiffreur</b><span>calcule chaque ligne avec vos prix</span></li>
+        <li><b>La secrétaire</b><span>met le devis au propre</span></li>
+        <li><b>L'acheteur</b><span>prépare la demande de prix et la liste du matériel</span></li>
+      </ul>
+      <p class="eq-f">Le travail de quatre postes, prêt avant que vous ayez enlevé vos chaussures de chantier.</p>
+    </div>
     <ul class="points">
       <li><div><b>Vos prix, jamais inventés.</b><span>Cliky chiffre avec votre catalogue et votre main-d'œuvre. Cliky est fort en calcul, mais c'est vous le patron.</span></div></li>
       <li><div><b>Rien ne part sans vous.</b><span>Chaque pré-devis attend votre validation, ligne par ligne.</span></div></li>
@@ -1479,7 +1497,7 @@ footer a{text-decoration:none}
     <h3><span class="n">3</span>Vos options</h3>
     <p>Facultatives. Vous pourrez en ajouter plus tard.</p>
     <div class="options">
-      <div class="card option rv"><span class="tag">Artisans</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><h3>Cliky, le pré-devis</h3><p>La demande du client, ou la photo de sa note, devient un pré-devis calculé avec vos prix. La liste du chantier suit. Vous validez d'un clic.</p><span class="px">99 € <small>/ mois · mise en service 490 €</small></span><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>On entre votre catalogue et vos prix de main-d'œuvre</li><li>On règle Cliky sur votre façon de chiffrer</li><li>On teste ensemble sur de vraies demandes avant de lancer</li></ul></div></div>
+      <div class="card option rv"><span class="tag">Artisans</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><h3>Cliky, le pré-devis</h3><p class="plus-cl">Toute une équipe de bureau dans un seul abonnement.</p><p>La demande du client, ou la photo de sa note, devient un pré-devis calculé avec vos prix. La liste du chantier suit. Vous validez d'un clic.</p><span class="px">99 € <small>/ mois · mise en service 490 €</small></span><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>On entre votre catalogue et vos prix de main-d'œuvre</li><li>On règle Cliky sur votre façon de chiffrer</li><li>On teste ensemble sur de vraies demandes avant de lancer</li></ul></div></div>
       <div class="card option rv"><span class="tag">Salons, commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="m9.5 15 1.8 1.8 3.4-3.6"/></svg></span><h3>Réservation</h3><p>Vos clients réservent en ligne et règlent l'acompte anti-lapin. Les lapins se font rares.</p><span class="px">19 € <small>/ mois · mise en service comprise</small></span><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Dans l'option</b><ul><li>Vos créneaux libres sur votre site</li><li>L'acompte anti-lapin, payé en réservant</li><li>Le rendez-vous dans votre planning</li><li>Rappels par SMS avec l'option SMS</li></ul></div></div>
       <div class="card option rv"><span class="tag">Tous les commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="m8 17-2 4 5-4"/><path d="M8 10.5h.01M12 10.5h.01M16 10.5h.01" stroke-width="2.6"/></svg></span><h3>SMS</h3><p>Un numéro à votre nom : confirmation au client, alerte pour vous, rappel quand vous n'avez pas pu décrocher.</p><span class="px">9 € <small>/ mois</small></span></div>
       <div class="card option rv"><span class="tag">Tous les commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 9a5 5 0 0 1-7.3 4.4L3 14.5l1-3.2A5 5 0 1 1 14 9z"/><path d="M10 16.5a5 5 0 0 0 7.3 1.9l3.7 1.1-1-3.2a5 5 0 0 0-3.5-7.2"/></svg></span><h3>Assistant du site</h3><p>Répond aux questions de vos visiteurs, jour et nuit, et les guide vers une demande.</p><p class="plus-cl">Encore mieux avec Cliky : la conversation devient une demande chiffrée.</p><span class="px">39 € <small>/ mois</small></span></div>
