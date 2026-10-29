@@ -1,0 +1,133 @@
+/* Planning et carte au style « Relief doux » (demande de Cyril, 29/10) : même matière que le reste de l'Espace.
+   Une seule couleur d'action (laiton), le reste en encre et en gris ; ce qui est posé est en relief, ce qui est libre est creusé.
+   Chargé après relief.css : ne change que l'apparence. Même dessin le jour et la nuit, seules les couleurs changent. */
+:root{
+  --k-run:var(--acc);
+  --k-plan:color-mix(in srgb,var(--acc) 42%,var(--bg));
+  --k-done:color-mix(in srgb,var(--muted) 55%,var(--bg));
+  --k-visit:var(--fg);
+  --k-devis:color-mix(in srgb,var(--fg) 62%,var(--bg));
+  --k-pc:color-mix(in srgb,var(--muted) 80%,var(--bg));
+  --k-free:transparent;
+  /* carte */
+  --m-encre:color-mix(in srgb,var(--fg) 34%,transparent);
+  --m-trait:color-mix(in srgb,var(--fg) 14%,transparent);
+  --m-fin:color-mix(in srgb,var(--fg) 8%,transparent);
+  --m-eau:color-mix(in srgb,#5E7FA8 45%,transparent);
+  --m-eau-f:color-mix(in srgb,#5E7FA8 16%,transparent);
+  --m-texte:color-mix(in srgb,var(--fg) 46%,transparent);
+  --m-texte-f:color-mix(in srgb,var(--fg) 28%,transparent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--m-eau:color-mix(in srgb,#8FB0D8 40%,transparent);--m-eau-f:color-mix(in srgb,#8FB0D8 12%,transparent)}}
+:root[data-theme="dark"]{--m-eau:color-mix(in srgb,#8FB0D8 40%,transparent);--m-eau-f:color-mix(in srgb,#8FB0D8 12%,transparent)}
+
+/* ---------- En-tête du calendrier ---------- */
+html body .cal-top h3 span{color:var(--accx)}
+html body .cal-nav button{background:var(--rs);box-shadow:var(--up-s);color:var(--fg)}
+
+/* ---------- Semaine : la grille est un creux, les rendez-vous sont posés dessus en relief ---------- */
+html body .wkc{background:var(--rs);border:0;box-shadow:var(--up);border-radius:22px;overflow:hidden}
+html body .wkc-h{border-bottom:1px solid var(--line)}
+html body .wkc-h .tdy b{background:var(--cx);color:var(--accx);box-shadow:var(--in)}
+html body .wkc-col{border-left:1px solid var(--line)}
+html body .wkc-line{border-top-color:var(--line);opacity:1}
+html body .ev{left:3px;right:3px;border:0;border-radius:10px;padding:5px 6px 4px 11px;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);
+  transition:box-shadow .5s var(--doux),transform .5s var(--doux)}
+html body .ev::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:3px;border-radius:2px;background:var(--c)}
+html body .ev.tent{background:var(--rs)}
+html body .ev.tent::before{background:repeating-linear-gradient(180deg,var(--c) 0 4px,transparent 4px 7px)}
+html body .ev.tent b{color:var(--muted)}
+html body .ev.free{background:var(--cx);box-shadow:var(--in);border:0;color:var(--muted)}
+html body .ev.free::before{display:none}
+html body .ev.free b{font-weight:600;color:var(--muted)}
+html body .ev.sel{background:var(--cx);box-shadow:var(--in)}
+html body .ev.sel b{color:var(--accx)}
+html body .ev:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+html body .nowl{border-top-color:var(--acc)}
+html body .nowl::before{background:var(--acc);box-shadow:0 0 0 3px var(--rs)}
+
+/* Légende : petits traits comme sur les rendez-vous */
+html body .cal-key{gap:6px 16px}
+html body .cal-key i{width:3px;height:12px;border-radius:2px;vertical-align:-2px;background:var(--c)}
+html body .cal-key i.tent{background:repeating-linear-gradient(180deg,var(--c) 0 3px,transparent 3px 5px)}
+html body .cal-key span:nth-child(6) i{width:12px;border-radius:4px;background:var(--cx);box-shadow:inset 1px 1px 2px var(--ilo),inset -1px -1px 2px var(--ihi)}
+
+/* ---------- Mois ---------- */
+html body .mo{background:var(--rs);box-shadow:var(--up);border-radius:22px}
+html body .mo-g>button{border-color:var(--line)}
+html body .mo-g .tdy .n{background:var(--cx);color:var(--accx);box-shadow:var(--in)}
+html body .mo-g .sel .n{background:var(--rs);color:var(--fg);box-shadow:var(--up-s)}
+html body .mo-g .tdy.sel .n{background:var(--cx);color:var(--accx);box-shadow:var(--in),0 0 0 2px color-mix(in srgb,var(--acc) 45%,transparent)}
+html body .mo-d i{width:5px;height:5px}
+html body .mo-c span.allday{background:var(--rs);box-shadow:var(--up-s);font-weight:700;position:relative;padding-left:9px}
+html body .mo-c span.allday i{display:none}
+html body .mo-c span.allday::before{content:"";position:absolute;left:3px;top:3px;bottom:3px;width:2px;border-radius:2px;background:var(--c)}
+html body .calday .bar{width:3px}
+
+/* ---------- Jour ---------- */
+html body .week button[aria-pressed="true"]{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+html body .week button[aria-pressed="true"] b{color:var(--accx)}
+html body .slot .b{background:var(--rs);box-shadow:var(--up-s);border-radius:14px;position:relative;padding-left:16px}
+html body .slot .b::before{content:"";position:absolute;left:6px;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--k-pc)}
+html body .slot .b.on{background:var(--rs);color:var(--fg);box-shadow:var(--up-s)}
+html body .slot .b.on::before{background:var(--k-run)}
+html body .slot .b.on small{color:var(--muted)}
+html body .slot .b.free{background:var(--cx);box-shadow:var(--in);border:0}
+html body .slot .b.free::before{display:none}
+html body #aplan .dot{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+
+/* ---------- Carte : un plan d'architecte, même matière que la page ---------- */
+html body .pcm{background:var(--cx);box-shadow:var(--in);border:0}
+html body .pcm-fond{fill:var(--cx)}
+html body .pcm-trame,html body .pcm-lueur{display:none}
+html body .pcm-region{stroke:var(--m-encre)}
+html body .pcm-dborders path{stroke:var(--m-trait)}
+html body .pcm-depn{fill:var(--m-texte-f)}
+html body .pcm-border{stroke:color-mix(in srgb,var(--acc) 55%,transparent)}
+html body .pcm-relief{stroke:var(--m-fin)}
+html body .pcm-urban{fill:color-mix(in srgb,var(--fg) 4%,transparent);stroke:var(--m-trait)}
+html body .pcm-zone{stroke:color-mix(in srgb,var(--acc) 60%,transparent)}
+html body .pcm-river{stroke:var(--m-eau)}
+html body .pcm-lake{fill:var(--m-eau-f);stroke:var(--m-eau)}
+html body .pcm-roads path{stroke:var(--m-trait);stroke-width:1.6px}
+html body .pcm-sroads path{stroke:var(--m-fin)}
+html body .pcm-neigh,html body .pcm-massif{fill:var(--m-texte-f)}
+html body .pcm-rname,html body .pcm-lname{fill:var(--m-eau)}
+html body .pcm-rtagbg{fill:var(--rs);stroke:var(--m-trait)}
+html body .pcm-rtag{fill:var(--m-texte)}
+html body .pcm-tdot{fill:var(--m-texte-f)}html body .pcm-tdot.big{fill:var(--m-texte)}
+html body .pcm-town{fill:var(--m-texte)}html body .pcm-town.big{fill:color-mix(in srgb,var(--fg) 70%,transparent)}
+html body .pcm-peak{fill:var(--m-texte-f)}
+html body .pcm-ptxt{fill:var(--m-texte)}html body .pcm-alt{fill:color-mix(in srgb,var(--acc) 70%,transparent)}
+html body .pcm-dep{fill:var(--rs);stroke:var(--m-encre);stroke-width:1}
+html body .pcm-depi{fill:var(--accx)}
+/* Repères : galets en relief, anneau d'avancement laiton */
+html body .pcm-pb{fill:var(--rs);filter:drop-shadow(1.5px 1.5px 2px var(--lo)) drop-shadow(-1px -1px 1.5px var(--hi))}
+html body .pcm-pt{stroke:var(--m-fin)}
+html body .pcm-pin.dim>circle{opacity:1}
+/* Étiquettes : pilules en relief, nom en encre */
+html body .pcm-lab rect{fill:var(--rs);stroke:none;filter:drop-shadow(2px 2px 3px var(--lo)) drop-shadow(-1.5px -1.5px 2px var(--hi))}
+html body .pcm-lab rect+rect{filter:none}
+html body .pcm-lb{fill:var(--fg)}
+html body .pcm-ls{fill:var(--muted)}
+html body .pcm-pin:hover .pcm-lab rect:first-child,html body .pcm-pin:focus-visible .pcm-lab rect:first-child,html body .pcm-pin.on .pcm-lab rect:first-child{
+  fill:var(--rs);stroke:color-mix(in srgb,var(--acc) 70%,transparent);stroke-width:1.2}
+html body .pcm-pin:hover .pcm-lb,html body .pcm-pin:focus-visible .pcm-lb,html body .pcm-pin.on .pcm-lb{fill:var(--accx)}
+html body .pcm-pin:hover .pcm-ls,html body .pcm-pin:focus-visible .pcm-ls,html body .pcm-pin.on .pcm-ls{fill:var(--muted)}
+/* Commandes posées sur la carte : comme le reste de l'Espace */
+html body .pcm-ui{background:var(--cx);border:0;box-shadow:var(--in);backdrop-filter:none;-webkit-backdrop-filter:none}
+html body .pcm-b{color:var(--muted);font-weight:600}
+html body .pcm-b[aria-pressed="true"]{background:var(--rs);color:var(--fg);box-shadow:var(--up-s)}
+html body .pcm-r{background:var(--rs);border:0;border-radius:50%;color:var(--fg);box-shadow:var(--up-s);backdrop-filter:none;-webkit-backdrop-filter:none;font-weight:600}
+html body .pcm-scale{background:color-mix(in srgb,var(--rs) 85%,transparent);color:var(--muted);box-shadow:var(--up-s)}
+html body .pcm-scale i{border-color:var(--muted)}
+html body .pcm button:focus-visible{outline-color:var(--acc)}
+/* Légende de la carte */
+html body .legend i.depot{width:12px;height:12px;border-radius:4px;background:var(--rs);box-shadow:var(--up-s);vertical-align:-2px}
+/* Hors région un peu plus sombre, la région à la couleur de la page, le département à peine teinté laiton */
+html body .pcm-fond{fill:color-mix(in srgb,var(--fg) 5%,var(--bg))}
+html body .pcm-terre{fill:var(--bg)}
+html body .pcm-dep-f{fill:color-mix(in srgb,var(--acc) 4%,transparent)}
+/* Rendez-vous très courts (20 min) : une seule ligne, sans marge */
+html body .ev.court{padding-top:1px;padding-bottom:1px;justify-content:center}
+html body .ev.court::before{top:3px;bottom:3px}
+html body .ev.court b{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
