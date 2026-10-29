@@ -1,0 +1,168 @@
+/* Style « Relief doux » de l'Espace appliqué au plan (demande de Cyril le 29/10 : le plan ne rendait pas bien avec le style ProClik).
+   Même matière que le fond, reliefs et creux, laiton en seule couleur d'accent. Le orange reste le signal « à faire / attention ».
+   Chargé après les styles du plan : il ne change que l'apparence. Les couleurs du dessin viennent des variables ci-dessous. */
+:root{
+  --bg:#ECEEF2;--surface:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.13);--ink:#0E1322;
+  --mint:#A8823F;--mint-ink:#8A6A2F;--acc:#A8823F;--soft:rgba(168,130,63,.12);--clo:#8A6A2F;
+  --paper:#F4F5F8;--dot:#D6DAE2;--wall:#353C4E;--floor:#F8F7F4;--parq:#EFE6D8;--parq-ln:#E2D3BC;--tile:#EAEDF2;--joint:#CFD4DD;--win:#6F8FB8;
+  --hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --up-xs:-2px -2px 5px var(--hi),2px 2px 6px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
+  --in-s:inset 2px 2px 5px var(--ilo),inset -2px -2px 5px var(--ihi);
+  --shadow:var(--up-s)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E2433;--surface:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.12);--ink:#0E1322;
+  --mint:#D4B483;--mint-ink:#D4B483;--acc:#D4B483;--soft:rgba(212,180,131,.12);--clo:#D4B483;
+  --paper:#1A1F2D;--dot:#283043;--wall:#B7BECD;--floor:#262D3E;--parq:#3A342C;--parq-ln:#4A4136;--tile:#2A3246;--joint:#3A4359;--souple:#263049;--rag:#262D40;--win:#8FAAD0;
+  --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --up-xs:-2px -2px 5px var(--hi),2px 2px 6px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
+  --in-s:inset 2px 2px 5px var(--ilo),inset -2px -2px 5px var(--ihi);--shadow:var(--up-s)}}
+:root[data-theme="dark"]{
+  --bg:#1E2433;--surface:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.12);--ink:#0E1322;
+  --mint:#D4B483;--mint-ink:#D4B483;--acc:#D4B483;--soft:rgba(212,180,131,.12);--clo:#D4B483;
+  --paper:#1A1F2D;--dot:#283043;--wall:#B7BECD;--floor:#262D3E;--parq:#3A342C;--parq-ln:#4A4136;--tile:#2A3246;--joint:#3A4359;--souple:#263049;--rag:#262D40;--win:#8FAAD0;
+  --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --up-xs:-2px -2px 5px var(--hi),2px 2px 6px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
+  --in-s:inset 2px 2px 5px var(--ilo),inset -2px -2px 5px var(--ihi);--shadow:var(--up-s)}
+
+/* planche à dessin : en creux, comme une feuille posée dans la matière */
+html body .board{border:0;background:var(--paper);box-shadow:var(--in)}
+html body .legend{background:var(--bg);border-top:0}
+
+/* étages, pastilles, boutons de choix : en relief, enfoncés et laiton quand ils sont choisis */
+html body .chip,html body .qk button,html body .det,html body .cam,html body .btn,html body .hotbtn,html body .vf-l button,html body .qc{border:0!important;background:var(--bg)!important;color:var(--fg);box-shadow:var(--up-xs)}
+html body .chip[aria-pressed="true"],html body .qk button[aria-pressed="true"],html body .fav button[aria-pressed="true"],html body .qc.on{background:var(--bg)!important;color:var(--mint-ink)!important;box-shadow:var(--in-s)!important}
+html body .chip.add,html.client body .chip.add{color:var(--mint-ink);background:var(--bg)!important}
+html body .fav button{color:var(--mint-ink)}
+html body .btn{color:var(--mint-ink)}
+html body .btn.solid,html body .sh-foot .btn{color:var(--fg);box-shadow:var(--up)}
+html body .btn.danger{color:#C2362F}
+html body .hotbtn,html body .cam.big{color:var(--hot)!important}
+html body .qc button{border:0;background:var(--bg);box-shadow:var(--up-xs);color:var(--mint-ink)}
+html body .vf-l button b{color:var(--mint-ink)}
+html body .sh-foot{background:linear-gradient(transparent,var(--bg) 30%)}
+
+/* barres flottantes (Plan/3D, Annuler, zoom) et outils du bas : en relief */
+html body .pill,html body .rotb{border:0;background:var(--bg);box-shadow:var(--up-s)}
+html body .pill button[aria-pressed="true"],:root[data-theme="dark"] body .pill button[aria-pressed="true"]{background:var(--bg);color:var(--mint-ink);box-shadow:var(--in-s)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .pill button[aria-pressed="true"]{background:var(--bg);color:var(--mint-ink);box-shadow:var(--in-s)}}
+html body .pill button.lk[aria-pressed="true"],html body .pill button.hotb{background:var(--bg);color:var(--hot);box-shadow:var(--in-s)}
+html.client body [data-mode="todo"][aria-pressed="true"]{background:var(--bg)!important;color:var(--hot)!important;box-shadow:var(--in-s)}
+html body #cltools{border:0;background:var(--bg);box-shadow:var(--up)}
+html body .cltool[aria-pressed="true"],:root[data-theme="dark"] body .cltool[aria-pressed="true"],html.client body .cltool[aria-pressed="true"]{background:var(--bg);color:var(--mint-ink);box-shadow:var(--in)}
+html body .cltool.next{box-shadow:0 0 0 2.5px var(--acc);animation:pr-pulse 1.5s ease-in-out infinite}
+html body .etat.ask{outline-color:var(--acc);animation:pr-pulse 1.5s ease-in-out infinite}
+@keyframes pr-pulse{50%{box-shadow:0 0 0 7px rgba(168,130,63,.22)}}
+html body .cltool .lk{border:0;background:var(--bg);box-shadow:var(--up-xs)}
+
+/* bandeau qui guide le client : une carte en relief claire, plus de bloc noir */
+html body #clbanner,html body #clbanner.tool,html body #clbanner.done{border:0;background:var(--bg);color:var(--fg);box-shadow:var(--up)}
+html body #clbanner.tool{box-shadow:var(--up),0 0 0 2px var(--acc)}
+html body #clb-t b,html body #clbanner.tool #clb-t b,html body #clbanner.done #clb-t b{color:var(--mint-ink)}
+html body .gdots i{background:var(--bg);box-shadow:var(--in-s)}
+html body .gdots i.ok{background:var(--acc);box-shadow:none}
+html body .gdots i.cur{background:var(--fg);box-shadow:none}
+html body #clbanner button,html body #clbanner.tool button{background:var(--bg);color:var(--fg);box-shadow:var(--up-s);font-weight:700}
+html body #clbanner button:active{box-shadow:var(--in-s)}
+html body #clbanner #clb-p,html body #clbanner #clb-h{border:0;background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-xs)}
+html body .pcl,html body .pcl.ic{border:0;background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-xs)}
+html body .pcl i{background:var(--acc);box-shadow:0 0 0 4px var(--soft)}
+html body #clbanner.nudge{background:var(--bg);box-shadow:var(--up),0 0 0 2px #E0A020}
+html body #clbanner.nudge #clb-h{color:#B07A10}
+
+/* bulles sur le plan (mesure, question, astuce) : en relief, plus de noir */
+html body .opp,html body #toast,html body #tut b{border:0;background:var(--bg);color:var(--fg);box-shadow:var(--up)}
+html body .opp button,html body #toast button{background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-xs)}
+html body .opp button.x{background:var(--bg);color:var(--muted)}
+html body #toast.warn{box-shadow:var(--up),0 0 0 2px #E0A020}
+html body .ed{border:0;background:var(--bg);box-shadow:var(--up),0 0 0 2px var(--hot)}
+html body .ed.listen{box-shadow:var(--up),0 0 0 2px var(--acc),0 0 0 6px var(--soft)}
+html body .ed button{background:var(--bg);box-shadow:var(--up-xs)}
+html body .ed .ok{color:var(--mint-ink);background:var(--bg)}
+html body .ed .x{color:var(--muted)}
+html body .ed .mic{color:var(--mint-ink);background:var(--bg)}
+html body .ed.listen .mic{background:var(--acc);color:var(--ink)}
+
+/* fiche du bas et fenêtres de confirmation */
+html body .sheet{border-top:0;background:var(--bg);box-shadow:0 -14px 34px -10px var(--lo)}
+html body .sheet::before{background:var(--bg);box-shadow:var(--in-s)}
+html body .sec{background:var(--bg);box-shadow:var(--in)}
+html body .op,html body .combsum,html body .room-h,html body .tot div{border:0;background:var(--bg);box-shadow:var(--up-s)}
+html body .bc-in,html body .intro .bc-in{border:0;background:var(--bg);box-shadow:var(--up),0 20px 60px rgba(0,0,0,.25)}
+html body .bc-b button{background:var(--bg)!important;box-shadow:var(--up-s);font-weight:700}
+html body .bc-ok{color:#C2362F!important}
+html body .intro .bc-ok{color:var(--fg)!important;box-shadow:var(--up)}
+html body .bc-no{border:0!important;color:var(--fg)}
+html body .intro li b{background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-xs)}
+html body .cap{border:0;background:var(--bg);box-shadow:var(--up-s)}
+html body .panel{border:0;background:var(--bg);box-shadow:var(--up)}
+
+/* champs à remplir : en creux, avec un fin contour pour bien les repérer */
+html body .r input,html body .ed input,html body .inl input[type=text],html body textarea{background:var(--bg);border:1.5px solid var(--line);box-shadow:var(--in-s)}
+html body button:focus-visible,html body input:focus,html body textarea:focus{outline:2px solid var(--acc);outline-offset:2px}
+
+/* appuyer = s'enfoncer, comme dans l'Espace */
+html body .chip:active,html body .qk button:active,html body .pill button:active,html body .btn:active,html body .bc-b button:active,html body .opp button:active,html body #toast button:active{box-shadow:var(--in-s)!important;transform:scale(.98)}
+/* le creux de la planche passe au-dessus du dessin, sans gêner les doigts */
+html body .board{box-shadow:none}
+html body .board::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;box-shadow:var(--in);pointer-events:none}
+html body #toast{white-space:nowrap}
+html body .cltool.next{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse2 1.6s ease-in-out infinite}
+@keyframes pr-pulse2{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px rgba(168,130,63,.16)}}
+/* bouton d'action : galet à droite avec flèche laiton fine, comme dans l'Espace et le formulaire */
+html body .intro .bc-ok,html body .sh-foot .btn{position:relative;padding-right:58px!important;padding-left:22px!important}
+html body .intro .bc-ok::after,html body .sh-foot .btn::after{content:"";position:absolute;right:6px;top:50%;width:36px;height:36px;margin-top:-18px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s)}
+html body .intro .bc-ok::before,html body .sh-foot .btn::before{content:"";position:absolute;z-index:1;right:15px;top:50%;width:18px;height:18px;margin-top:-9px;background:var(--mint-ink);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
+
+/* barre d'outils du bas : les noms s'affichent en entier (retour de Cyril, 29/10), même sur petit téléphone */
+html body #cltools{left:6px;right:6px;bottom:6px;gap:2px;padding:5px 4px}
+html body .cltool{padding:7px 0 6px;gap:4px;font:700 11.5px/1.1 var(--f);letter-spacing:-.01em}
+html body .cltool span{overflow:visible;text-overflow:clip;max-width:none}
+html body .cltool svg{width:28px;height:28px}
+@media (max-width:370px){html body .cltool{font-size:10.5px}html body .cltool svg{width:25px;height:25px}}
+@media (min-width:700px){html body .cltool{font-size:14px}html body .cltool svg{width:34px;height:34px}}
+html body .cltool .lk{top:-6px;right:50%;transform:translateX(50%);font-size:9px;padding:1px 6px}
+@media (max-width:340px){html body .cltool{font-size:9.5px;letter-spacing:-.02em}html body .cltool svg{width:23px;height:23px}}
+
+/* barre d'outils du bas = menu de l'Espace (Cyril, 29/10) : ronds séparés sans barre, nom en dessous, l'outil choisi enfoncé avec son icône laiton */
+html body #cltools{left:0;right:0;bottom:0;gap:0;padding:14px 4px 8px;border:0;border-radius:0 0 16px 16px;box-shadow:none;background:linear-gradient(to top,var(--paper) 0,var(--paper) calc(100% - 14px),transparent 100%)}
+html body .cltool,html body .cltool[aria-pressed="true"],:root[data-theme="dark"] body .cltool[aria-pressed="true"],html.client body .cltool[aria-pressed="true"]{background:transparent;box-shadow:none;padding:0;gap:6px;color:var(--muted);font:600 11px/1.1 var(--f);letter-spacing:0}
+html body .cltool svg{box-sizing:border-box;width:42px;height:42px;padding:9px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);transition:box-shadow .6s cubic-bezier(.22,1,.36,1),color .6s}
+html body .cltool[aria-pressed="true"]{color:var(--fg);font-weight:700}
+html body .cltool[aria-pressed="true"] svg{box-shadow:var(--in);color:var(--mint-ink)}
+html body .cltool:active svg{box-shadow:var(--in)}
+html body .cltool:active{transform:none}
+html body .cltool.next,html body .cltool.next[aria-pressed="true"]{box-shadow:none;animation:none}
+html body .cltool.next svg{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
+@keyframes pr-pulse3{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px rgba(168,130,63,.16)}}
+html body .cltool .lk{top:-12px}
+@media (max-width:370px){html body .cltool{font-size:10px}html body .cltool svg{width:38px;height:38px;padding:8px}}
+@media (min-width:700px){html body .cltool{font-size:13px}html body .cltool svg{width:50px;height:50px;padding:11px}}
+html.client body .fl.mr,html.client body #todo-bar,html.client body .rotb,html.client body #bar3d{bottom:104px!important}
+
+/* bouton « Tracer » en haut à gauche + petite barre Mur / Cloison (Cyril, 29/10) ; le menu du bas passe à 5 outils */
+html body #cltools{grid-template-columns:repeat(5,minmax(0,1fr))}
+html body #cltrace{position:absolute;z-index:4;top:60px;left:10px;display:flex;align-items:flex-start;gap:8px}
+html:not(.client) body #cltrace,html body .board.v3 #cltrace{display:none}
+html body #ctr-b{appearance:none;border:0;background:transparent;padding:0;display:grid;justify-items:center;gap:5px;font:600 11px/1.1 var(--f);color:var(--muted);cursor:pointer}
+html body #ctr-b svg{box-sizing:border-box;width:42px;height:42px;padding:9px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);transition:box-shadow .6s cubic-bezier(.22,1,.36,1),color .6s}
+html body #ctr-b[aria-pressed="true"]{color:var(--fg);font-weight:700}
+html body #ctr-b[aria-pressed="true"] svg,html body #ctr-b:active svg{box-shadow:var(--in);color:var(--mint-ink)}
+html body #ctr-b.next svg{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
+html body #ctr-bar{display:flex;gap:4px;padding:4px;margin-top:3px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s)}
+html body #ctr-bar[hidden]{display:none}
+html body #ctr-bar button{appearance:none;border:0;background:transparent;display:inline-flex;align-items:center;gap:6px;padding:7px 13px 7px 9px;border-radius:999px;font:700 14px var(--f);color:var(--fg);cursor:pointer}
+html body #ctr-bar svg{width:22px;height:22px;color:var(--muted)}
+html body #ctr-bar button[aria-pressed="true"]{box-shadow:var(--in-s);color:var(--mint-ink)}
+html body #ctr-bar button[aria-pressed="true"] svg{color:var(--mint-ink)}
+html.client body #toast{top:120px}

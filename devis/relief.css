@@ -1,0 +1,103 @@
+/* Style « Relief doux » de l'Espace appliqué au formulaire Clik'Devis (demande de Cyril le 29/10 : la touche ProClik des sites artisans).
+   Même matière que le fond, reliefs et creux, laiton en seule couleur d'accent. Chargé après les styles du formulaire : il ne change que l'apparence.
+   Garde-fou pour les clients peu à l'aise : champs à remplir avec un fin contour, bouton principal bien contrasté. */
+:root{
+  --bg:#ECEEF2;--surface:#ECEEF2;--soft:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.13);--ink:#0E1322;
+  --mint:#A8823F;--mint-ink:#8A6A2F;--acc:#A8823F;
+  --hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
+  --shadow:var(--up)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E2433;--surface:#1E2433;--soft:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.12);--ink:#0E1322;
+  --mint:#D4B483;--mint-ink:#D4B483;--acc:#D4B483;
+  --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);--shadow:var(--up)}}
+:root[data-theme="dark"]{
+  --bg:#1E2433;--surface:#1E2433;--soft:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.12);--ink:#0E1322;
+  --mint:#D4B483;--mint-ink:#D4B483;--acc:#D4B483;
+  --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);--shadow:var(--up)}
+
+/* blocs en relief, sans bordure */
+html body .perks li,html body .item,html body .rblock,html body .next div,html body .note,html body .ill,html body .pcardp,html body .pview,html body .prect,
+html body .psum div,html body .ptile,html body .mcard,html body .card,html body .drop,html body .bc-in{border:0;background:var(--bg);box-shadow:var(--up)}
+html body .perks li,html body .next div,html body .note{border-radius:18px}
+html body .item,html body .rblock,html body .card,html body .ptile,html body .drop{border-radius:20px}
+html body .mcard,html body .pview,html body .pcardp,html body .prect{border-radius:22px}
+/* encadrés d'aide : en creux */
+html body .schema,html body .mhelp,html body .psel{background:var(--bg);box-shadow:var(--in)}
+/* pastilles rondes (3, ?, ✓, numéros) : petits galets, chiffre en laiton */
+html body .perks i,html body .howto i{background:var(--bg);box-shadow:-2px -2px 5px var(--hi),2px 2px 6px var(--lo);color:var(--mint-ink)}
+html body .next b,html body .pguide b{background:var(--bg);box-shadow:-2px -2px 5px var(--hi),2px 2px 6px var(--lo);color:var(--mint-ink)}
+html body .badge{background:var(--bg);box-shadow:var(--in);color:var(--mint-ink)}
+
+/* choix : en relief, enfoncé et laiton quand il est choisi (comme dans l'Espace) */
+html body .chip{border:0;background:var(--bg);box-shadow:var(--up-s);color:var(--fg);transition:box-shadow .3s ease,color .3s ease,transform .1s}
+html body .chip:hover{border-color:transparent}
+html body .chip[aria-pressed="true"],:root[data-theme="dark"] body .chip[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in);color:var(--mint-ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .chip[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in);color:var(--mint-ink)}}
+html body .chip.dk{border:0;color:var(--muted)}
+html body .chip.dk[aria-pressed="true"]{color:var(--mint-ink)}
+html body .card:hover,html body .drop:hover{border-color:transparent}
+html body .card[aria-pressed="true"],html body .ptile.on,html body .mcard[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in)}
+html body .card[aria-pressed="true"]::after{background:var(--acc);color:var(--ink)}
+html body .card svg{color:var(--mint-ink)}
+html body .mcard.reco{border:0;box-shadow:var(--up),0 0 0 2px var(--acc)}
+html body .mcard .rb{background:var(--acc);color:var(--ink)}
+
+/* champs à remplir : en creux, avec un fin contour pour bien les repérer */
+html body input[type=text],html body input[type=tel],html body input[type=email],html body textarea,html body .numbox{background:var(--bg);border:1.5px solid var(--line);box-shadow:var(--in);border-radius:14px}
+html body .numbox input{background:transparent;box-shadow:none;border:0;border-inline:1.5px solid var(--line);border-radius:0}
+html body .numbox button:hover{background:transparent;color:var(--mint-ink)}
+html body input:focus,html body textarea:focus,html body .chip:focus-visible,html body .card:focus-visible,html body button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-color:var(--acc)}
+html body .check input{accent-color:var(--acc)}
+
+/* progression : rail en creux, avancement laiton */
+html body .progress{background:var(--bg);box-shadow:inset 2px 2px 4px var(--ilo),inset -2px -2px 4px var(--ihi);height:8px}
+html body .progress b{background:var(--acc)}
+
+/* boutons */
+html body .nav{background:var(--bg);border-top:0;box-shadow:0 -8px 18px -10px var(--lo)}
+/* boutons : même dessin que l'Espace. Bouton d'action = pilule en relief + galet à droite avec flèche laiton fine */
+html body .btn,html body .bc-b button,html body .bigbtn,html body #pf-done,html body #pf-later{border:0!important;background:var(--bg)!important;color:var(--fg)!important;box-shadow:var(--up-s);font-weight:600;
+  transition:box-shadow .8s var(--doux,cubic-bezier(.22,1,.36,1)),transform 1.2s var(--doux,cubic-bezier(.22,1,.36,1))}
+html body .btn.go,html body .bigbtn,html body #pf-done{position:relative;box-shadow:var(--up);padding-right:58px;padding-left:22px;text-align:center}
+html body .btn.go::after,html body .bigbtn::after,html body #pf-done::after{content:"";position:absolute;right:6px;top:50%;width:36px;height:36px;margin-top:-18px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s)}
+html body .btn.go::before,html body .bigbtn::before,html body #pf-done::before{content:"";position:absolute;z-index:1;right:15px;top:50%;width:18px;height:18px;margin-top:-9px;background:var(--mint-ink);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:transform .6s cubic-bezier(.22,1,.36,1)}
+html body .btn.back{padding-inline:18px;color:var(--muted)!important}
+html body .btn[disabled]::before{opacity:.5}
+html body .bc-ok{color:#C2362F!important}
+html body .bigconf.soft .bc-ok{color:var(--mint-ink)!important}
+@media (hover:hover){html body .btn:not([disabled]):hover,html body .bigbtn:hover{transform:translateY(-1px)}
+  html body .btn.go:not([disabled]):hover::before,html body .bigbtn:hover::before{transform:translateX(3px)}}
+html body .btn:not([disabled]):active,html body .bc-b button:active,html body .bigbtn:active,html body #pf-done:active,html body #pf-later:active,html body .chip:active,html body .add:active{transform:scale(.99);box-shadow:var(--in);transition-duration:.45s,.55s}
+html body .add{border:0;background:var(--bg);box-shadow:var(--up-s);color:var(--mint-ink)}
+html body .add:hover{background:var(--bg)}
+html body .pcnt button{border:0;background:var(--bg);box-shadow:-2px -2px 5px var(--hi),2px 2px 6px var(--lo)}
+html body .pcnt button.plus,:root[data-theme="dark"] body .pcnt button.plus{background:var(--bg);color:var(--mint-ink);border:0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .pcnt button.plus{background:var(--bg);color:var(--mint-ink);border:0}}
+html body .ptabs{border:0;box-shadow:var(--in)}
+html body .ptabs button[aria-pressed="true"],:root[data-theme="dark"] body .ptabs button[aria-pressed="true"]{background:var(--bg);color:var(--mint-ink);box-shadow:var(--up-s)}
+html body .pf-bar{background:var(--bg);border-bottom:0;box-shadow:0 8px 18px -10px var(--lo)}
+html body .done .ok{background:var(--bg);color:var(--mint-ink);box-shadow:var(--up)}
+html body .pdots .cur,:root[data-theme="dark"] body .pdots .cur{background:var(--acc)}
+html body #pframe{border:0;box-shadow:var(--in)}
+html body .thumbs img,html body .thumbs .pdf{border:0;box-shadow:var(--up-s)}
+html body pre{background:var(--bg);border:0;box-shadow:var(--in)}
+
+/* bouton jour / nuit en haut à droite : petit galet, lune le jour, soleil la nuit */
+html body .top-r{display:flex;align-items:center;gap:10px;flex:none}
+html body .theme-b{appearance:none;border:0;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--bg);color:var(--muted);box-shadow:var(--up-s);transition:box-shadow .45s ease,transform .45s ease}
+html body .theme-b:active{box-shadow:var(--in);transform:scale(.97)}
+html body .theme-b .sol{display:none}
+:root[data-theme="dark"] body .theme-b .lune{display:none}
+:root[data-theme="dark"] body .theme-b .sol{display:block}

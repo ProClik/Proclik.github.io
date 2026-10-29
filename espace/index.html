@@ -26,6 +26,7 @@
 <!-- ===================== fin de la fiche identité ====================== -->
 <meta charset="utf-8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<script src="theme.js?v=1"></script>
 <style>
 /* Mise en page : téléphone = une colonne + onglets en bas ; tablette/ordinateur (≥ 900 px) = onglets en haut, deux colonnes, détail du devis en panneau à droite */
 :root{--bg:#F4F6FA;--card:#FFFFFF;--fg:#0B1226;--muted:#4A5470;--line:#E3E7F0;--soft:#EEF1F6;--nuit:#0B1226;--turq:#2EE6C8;--turq-ink:#0B6B5B;--turq-bg:#E3FBF6;--warn:#B45309;--warn-bg:#FFF4E5;--cor:#FF7A59;--cor-bg:#FFF1EC;--cor-ink:#8A3A22;--shadow:0 1px 0 var(--line),0 10px 26px rgba(11,18,38,.06);
@@ -939,7 +940,7 @@ var r2=function(n){return Math.round(n*100)/100};
 var P=["Votre agenda est plein, votre café est froid. On s'occupe du reste.","Deux devis vous attendent. Ils sont déjà calculés, promis.","Le fournisseur a répondu avant vous. Pour une fois.","Bonne nouvelle : aucun devis à taper ce soir."];
 $('#phrase').textContent=P[new Date().getDate()%P.length];
 var root=document.documentElement;
-$('#theme').addEventListener('click',function(){var dark=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);root.setAttribute('data-theme',dark?'light':'dark');});
+$('#theme').addEventListener('click',function(){pcTheme()});
 var tmr;function toast(t,s){$('#tt').textContent=t;$('#ts').textContent=s||'';$('#toast').classList.add('on');clearTimeout(tmr);tmr=setTimeout(function(){$('#toast').classList.remove('on')},3400);}
 /* ---------- données de démonstration (prix de la bibliothèque ProClik) ---------- */
 var D=[
