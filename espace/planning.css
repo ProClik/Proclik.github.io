@@ -131,3 +131,31 @@ html body .pcm-dep-f{fill:color-mix(in srgb,var(--acc) 4%,transparent)}
 html body .ev.court{padding-top:1px;padding-bottom:1px;justify-content:center}
 html body .ev.court::before{top:3px;bottom:3px}
 html body .ev.court b{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
+
+/* ---------- Carte épurée (Cyril, 29/10 : « ça fait un peu brouillon ») ----------
+   On ne garde que ce qui aide à se repérer : la région, votre département, votre zone, les grands axes, l'eau,
+   les villes principales et vos repères. Plus de reliefs, massifs, sommets, numéros de routes ni petites routes. */
+html body .pcm-relief,html body .pcm-urban,html body .pcm-sroads,html body .pcm-dborders,html body .pcm-depn,
+html body .pcm-neigh,html body .pcm-massif,html body .pcm-peak,html body .pcm-ptxt,html body .pcm-alt,
+html body .pcm-rtagbg,html body .pcm-rtag,html body .pcm-rname,html body .pcm-lname{display:none}
+html body .pcm-peak,html body .pcm-ptxt{display:none}
+html body svg g:has(>.pcm-peak){display:none}
+html body .pcm-border{stroke:color-mix(in srgb,var(--acc) 40%,transparent);stroke-dasharray:none;stroke-width:1.2px}
+html body .pcm-zone{stroke:color-mix(in srgb,var(--acc) 55%,transparent);stroke-dasharray:2 4}
+html body .pcm-roads path{stroke:color-mix(in srgb,var(--fg) 11%,transparent);stroke-width:2.2px}
+html body .pcm-river{stroke:color-mix(in srgb,#6F8DB3 30%,transparent)}
+html body .pcm-lake{fill:color-mix(in srgb,#6F8DB3 12%,transparent);stroke:none}
+html body .pcm-region{stroke:color-mix(in srgb,var(--fg) 22%,transparent)}
+/* Villes : écriture de l'Espace (Manrope), sans capitales espacées */
+html body .pcm-town{font-family:Manrope,system-ui,sans-serif;font-weight:600;fill:var(--muted);opacity:.75}
+html body .pcm-town.big{fill:var(--muted);opacity:1;font-weight:700}
+html body .pcm-tdot{fill:var(--muted);opacity:.5}html body .pcm-tdot.big{opacity:.8}
+/* Repères plus légers : visites et devis en trait, seul le chantier en cours est plein laiton */
+html body .pcm-pt{stroke:color-mix(in srgb,var(--fg) 6%,transparent)}
+:root{--k-visit:color-mix(in srgb,var(--fg) 70%,var(--bg))}
+/* Échelle : simple trait, sans plaque */
+html body .pcm-scale{background:none;box-shadow:none}
+/* Halo couleur du fond autour des noms de villes : ils restent lisibles par-dessus routes et repères */
+html body .pcm-town{paint-order:stroke;stroke:var(--bg);stroke-linejoin:round}
+html body .pcm-pins{isolation:isolate}
+html body .legend i.depot{background:var(--rs);box-shadow:0 0 0 1px var(--m-encre)}
