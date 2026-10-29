@@ -359,3 +359,36 @@ html body .ring{background:conic-gradient(var(--accx) calc(var(--p)*1%),var(--cx
 html body .ring::before{background:var(--rs)}
 html body .prog{background:var(--cx);box-shadow:var(--in)}
 html body .prog i{background:var(--accx)}
+
+/* ---------- Options de l'abonnement (options.js) : Cliky sur l'accueil, « Mes options » dans le menu ---------- */
+.opt-puce{display:inline-flex;align-items:center;gap:10px;margin:12px 0 2px;padding:6px 14px 6px 6px;border:0;border-radius:999px;background:var(--rs);box-shadow:var(--up-s);
+  color:var(--muted);font:600 14px var(--f);cursor:pointer;max-width:100%;text-align:left}
+.opt-puce>span:nth-child(2){min-width:0}
+.opt-puce b{color:var(--fg);font-weight:800}
+.opt-puce .fl{color:var(--accx);font-size:18px;line-height:1}
+.opt-puce.on>span:nth-child(2)::after{content:"";display:inline-block;width:7px;height:7px;margin-left:8px;border-radius:50%;background:var(--acc);vertical-align:1px;box-shadow:0 0 0 3px var(--acc-g);animation:optpouls 2.6s var(--doux) infinite}
+.opt-puce.coupe>span:nth-child(2)::after{background:var(--muted);box-shadow:none;animation:none}
+@keyframes optpouls{50%{box-shadow:0 0 0 6px transparent}}
+@media (prefers-reduced-motion:reduce){.opt-puce.on>span:nth-child(2)::after{animation:none}}
+.opt-ic{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+.opt-ic svg,.opt-gal svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.opt-ic svg .pl,.opt-gal svg .pl{fill:currentColor;stroke:none}
+.opt-puce.on .opt-ic,.opt-l button:not(.off) .opt-ic{color:var(--accx)}
+html body .opt-l .av.opt-ic{width:40px;height:40px;background:var(--cx);box-shadow:var(--in);border-radius:50%}
+.opt-l button.off .tx b{color:var(--muted)}
+.opt-st{flex:none;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--cx);box-shadow:var(--in);color:var(--muted);white-space:nowrap}
+.opt-st.on{color:var(--accx)}
+.opt-tete{display:flex;align-items:center;gap:16px}
+.opt-tete b{display:block;font-size:16px;font-weight:800;line-height:1.3}
+.opt-tete small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.opt-gal{display:grid;place-items:center;width:64px;height:64px;flex:none;border-radius:50%;background:var(--rs);box-shadow:var(--up);color:var(--muted)}
+.opt-gal svg{width:34px;height:34px;stroke-width:1.5}
+.opt-tete.on .opt-gal{color:var(--accx)}
+.opt-li{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:14px;font-weight:600;color:var(--fg)}
+.opt-li i{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 3px var(--acc-g)}
+.opt-li.coupe i{background:var(--muted);box-shadow:none}
+.opt-ul{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14.5px;line-height:1.45}
+.opt-ul li::marker{color:var(--accx)}
+.opt-p{margin:0;font-size:14.5px;line-height:1.5}
+/* Le bouton « Retour » du panneau ne s'affiche que s'il y a un écran avant */
+html body #x-back[hidden]{display:none!important}
