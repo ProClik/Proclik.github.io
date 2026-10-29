@@ -93,8 +93,6 @@ section{padding:clamp(64px,9vw,112px) 0}
 .theme-b .sol{display:none}
 :root[data-theme="dark"] .theme-b .lune{display:none}
 :root[data-theme="dark"] .theme-b .sol{display:block}
-@media (max-width:1180px){.menu .m3{display:none}}
-@media (max-width:1040px){.menu .m2{display:none}}
 .menu-b{display:none;appearance:none;border:0;width:44px;height:44px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s);cursor:pointer;flex:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:box-shadow .45s ease}
 .menu-b i{display:block;width:17px;height:2px;border-radius:2px;background:var(--fg);transition:transform .5s var(--doux),opacity .4s}
 .menu-b[aria-expanded="true"]{box-shadow:var(--in)}
@@ -102,7 +100,7 @@ section{padding:clamp(64px,9vw,112px) 0}
 .menu-b[aria-expanded="true"] i:nth-child(2){opacity:0}
 .menu-b[aria-expanded="true"] i:nth-child(3){transform:translateY(-6px) rotate(-45deg);background:var(--acc)}
 .menu-m{display:none}
-@media (max-width:900px){.menu{display:none}.menu+.top-r{margin-left:auto}.menu-b{display:flex}
+@media (max-width:1180px){.menu{display:none}.menu+.top-r{margin-left:auto}.menu-b{display:flex}
   .menu-m{display:block;max-width:1100px;margin:12px auto 0;padding:14px 14px 16px;border-radius:28px;background:var(--bg);box-shadow:var(--lis),var(--up);max-height:calc(100dvh - 110px);overflow:auto;
     opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .5s var(--doux),transform .6s var(--doux),visibility 0s .6s}
   .menu-m.ouvert{opacity:1;visibility:visible;transform:none;transition:opacity .5s var(--doux),transform .6s var(--doux)}
@@ -119,7 +117,8 @@ section{padding:clamp(64px,9vw,112px) 0}
   .menu-m a.ici .gi{box-shadow:var(--up-s)}
   .menu-m .rdv{margin-top:16px;justify-content:center;font-weight:700;font-size:16px;color:var(--accx);box-shadow:var(--lis),var(--up-s)}
   @media (max-width:360px){.menu-m .lst{grid-template-columns:1fr}}
-  .top{position:sticky}.top .menu-m{position:absolute;left:12px;right:12px}}
+  .top{position:sticky}.top .menu-m{position:absolute;left:12px;right:12px}
+  @media (min-width:701px){.top .menu-m{left:auto;width:580px}}}
 @media (max-width:520px){.top-r{gap:10px}.top .btn{min-height:44px;font-size:14.5px}}
 @media (max-width:520px){.top{padding:8px 12px 4px}.top .wrap{height:58px;padding:0 8px}}
 @media (max-width:520px){.logo .filet,.logo .nom{display:none}.top .btn{padding:0 16px}}
