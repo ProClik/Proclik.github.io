@@ -616,8 +616,9 @@ h2 .or>svg path{fill:none;stroke:var(--acc);stroke-width:4;stroke-linecap:round;
 .embleme.petit .em-g{width:56px;height:56px}.embleme.petit .em-g svg{width:32px;height:32px}
 .embleme.petit .em-f{height:30px}.embleme.petit .em-n{font-size:16px}
 /* globe : un méridien tourne doucement */
-.em-site .meri{animation:meri 6s ease-in-out infinite;transform-origin:center}
-@keyframes meri{0%,100%{rx:7}25%{rx:15}50%{rx:7}75%{rx:1}}
+.em-site .meri{transform-box:fill-box;transform-origin:center;animation:meri 6s linear infinite}
+.em-site .m2{animation-delay:-3s}
+@keyframes meri{0%{transform:scaleX(1);opacity:.25}25%{opacity:1}50%{transform:scaleX(0);opacity:1}75%{opacity:1}100%{transform:scaleX(-1);opacity:.25}}
 /* P : se trace quand il arrive, le point respire */
 .em-p{width:34px!important;height:38px!important}
 .em-p path{fill:none;stroke:var(--acc);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
@@ -644,6 +645,76 @@ h2 .or>svg path{fill:none;stroke:var(--acc);stroke-width:4;stroke-linecap:round;
 svg[stroke="currentColor"] :is(path,circle,rect,ellipse,line,polyline,polygon){vector-effect:non-scaling-stroke}
 svg[stroke="currentColor"],svg[stroke="currentColor"] [stroke-width]{stroke-width:2px}
 .ecran svg[stroke="currentColor"],.ecran svg[stroke="currentColor"] [stroke-width]{stroke-width:1.8px}
+/* atouts du site : une petite scène vivante dans chaque fiche */
+.vig{position:relative;height:66px;border-radius:16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding:0 14px;overflow:hidden;font-size:12.5px}
+.atout .ico{margin-top:-4px}
+.v-img i{width:22px;height:22px;border-radius:50%;box-shadow:var(--up-s)}
+.v-img .c1{background:#B5603A}.v-img .c2{background:var(--acc)}.v-img .c3{background:#2A3350}
+.v-img b{margin-left:auto;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.v-img .bague{position:absolute;left:10px;top:17px;width:30px;height:30px;border-radius:50%;box-shadow:0 0 0 2px var(--acc)}
+.vu .v-img .bague{animation:bague 6s var(--doux) infinite}
+@keyframes bague{0%,25%{transform:none}33%,58%{transform:translateX(32px)}66%,91%{transform:translateX(64px)}100%{transform:none}}
+.v-goo{flex-direction:column;align-items:stretch;justify-content:center;gap:4px;padding:6px 10px}
+.v-goo .q{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--muted);font-size:11px}
+.v-goo .q svg{width:13px;height:13px}
+.v-goo .r{display:flex;align-items:center;gap:6px;height:18px;padding:0 8px;border-radius:8px;font-size:11px;font-weight:700;box-shadow:var(--up-s);transition:transform 1.2s var(--doux)}
+.v-goo .autre{color:var(--muted);font-weight:600}
+.v-goo .vous{color:var(--accx)}
+.v-goo em{font-style:normal;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:#fff;font-size:9px}
+.vu .v-goo .autre{animation:descend 5s var(--doux) infinite}
+.vu .v-goo .vous{animation:monte 5s var(--doux) infinite}
+@keyframes descend{0%,20%{transform:none}40%,90%{transform:translateY(22px)}100%{transform:none}}
+@keyframes monte{0%,20%{transform:none}40%,90%{transform:translateY(-22px)}100%{transform:none}}
+.v-tel{justify-content:center;gap:14px}
+.v-tel .mini{position:relative;width:30px;height:50px;border-radius:8px;box-shadow:var(--up-s);display:grid;place-items:center}
+.v-tel .mini>i{position:absolute;top:4px;width:10px;height:2px;border-radius:2px;background:var(--line)}
+.v-tel .ap{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:#fff}
+.v-tel .ap svg{width:11px;height:11px}
+.vu .v-tel .ap{animation:sonne 2.4s ease-in-out infinite}
+@keyframes sonne{0%,100%{box-shadow:0 0 0 0 rgba(168,130,63,.45)}50%{box-shadow:0 0 0 8px rgba(168,130,63,0)}}
+.v-tel small{font-weight:700;color:var(--accx)}
+.v-nuit .lune{width:20px;height:20px;color:var(--accx)}
+.v-nuit b{font-size:13px}
+.v-nuit .notif{margin-left:auto;padding:6px 10px;border-radius:10px;font-weight:700;font-size:11px;box-shadow:var(--up-s),var(--lis);opacity:0;transform:translateX(16px)}
+.vu .v-nuit .notif{animation:notif 4.5s var(--doux) infinite}
+@keyframes notif{0%,15%{opacity:0;transform:translateX(16px)}30%,85%{opacity:1;transform:none}100%{opacity:0;transform:none}}
+.v-avis b{font-size:26px;font-weight:800}
+.et{display:inline-flex;gap:2px}
+.et i{width:14px;height:14px;background:var(--line);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);transition:background .4s}
+.vu .et i{animation:etoile 4.8s ease infinite}
+.et i:nth-child(2){animation-delay:.15s!important}.et i:nth-child(3){animation-delay:.3s!important}.et i:nth-child(4){animation-delay:.45s!important}.et i:nth-child(5){animation-delay:.6s!important}
+@keyframes etoile{0%{background:var(--line)}12%,88%{background:#E2A93B}100%{background:var(--line)}}
+.v-avis small{color:var(--muted);font-weight:600}
+.v-maj small{color:var(--muted);font-weight:600}
+.v-maj .h{position:relative;display:inline-grid;font-weight:800;font-size:15px}
+.v-maj .h>*{grid-area:1/1;text-decoration:none}
+.v-maj s{color:var(--muted)}
+.v-maj .h b{opacity:0;color:var(--accx)}
+.vu .v-maj s{animation:avant 5s ease infinite}.vu .v-maj .h b{animation:apres 5s ease infinite}
+@keyframes avant{0%,30%{opacity:1}40%,90%{opacity:0}100%{opacity:1}}@keyframes apres{0%,30%{opacity:0}40%,90%{opacity:1}100%{opacity:0}}
+.v-maj .ok{width:20px;height:20px;margin-left:auto;color:var(--accx)}
+.v-maj .ok path{stroke-dasharray:1;stroke-dashoffset:1}
+.vu .v-maj .ok path{animation:coche 5s ease infinite}
+@keyframes coche{0%,40%{stroke-dashoffset:1}55%,90%{stroke-dashoffset:0}100%{stroke-dashoffset:1}}
+/* bandeau des avis Google */
+.avis-g{position:relative;margin-top:28px;display:grid;grid-template-columns:auto 1fr;gap:14px 32px;align-items:center;overflow:hidden}
+.ag-note{display:flex;align-items:center;gap:16px}
+.g-logo{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:800 30px Manrope,system-ui,sans-serif;color:var(--accx);box-shadow:var(--up-s)}
+.ag-note b{display:block;font-size:44px;font-weight:800;line-height:1}
+.ag-note .et i{width:18px;height:18px}
+.ag-note small{display:block;color:var(--muted);font-weight:600;margin-top:4px}
+.ag-txt p{color:var(--muted);margin-top:8px;font-size:15.5px}
+.ag-fil{grid-column:1/-1;overflow:hidden;margin:4px -26px -6px;padding:10px 0 14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ag-rail{display:flex;gap:16px;width:max-content;padding-left:26px}
+.vu .ag-rail{animation:defile-a 40s linear infinite}
+@keyframes defile-a{to{transform:translateX(-50%)}}
+.ag-c{width:250px;padding:14px 16px;border-radius:18px;flex:none}
+.ag-c .et5{color:#E2A93B;letter-spacing:2px;font-size:13px}
+.ag-c p{margin:6px 0 4px;font-size:14px;line-height:1.4}
+.ag-c small{color:var(--muted);font-weight:600;font-size:12px}
+.ex-ag{position:absolute;top:14px;right:16px;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:4px 9px;border-radius:999px;box-shadow:var(--in)}
+@media (max-width:700px){.avis-g{grid-template-columns:1fr}.ag-note b{font-size:38px}}
+@media (prefers-reduced-motion:reduce){.vig *,.et i,.ag-rail{animation:none!important}.v-nuit .notif{opacity:1;transform:none}.et i{background:#E2A93B}}
 /* garantie et questions */
 .sous-t{text-align:center;margin:clamp(44px,6vw,64px) 0 18px;font-size:22px}
 .faq{max-width:780px;margin:0 auto;display:grid;gap:16px}
@@ -987,7 +1058,7 @@ footer a{text-decoration:none}
 
 <!-- 2 bis. Le site : la base de tout -->
 <section class="votre-site" id="site"><div class="wrap">
-  <div class="head center"><div class="embleme rv"><span class="em-g"><svg class="em-site" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="16"/><path d="M8 24h32"/><path d="M11 15h26M11 33h26" opacity=".55"/><ellipse class="meri" cx="24" cy="24" rx="7" ry="16"/></svg></span><span class="em-f"></span><span class="em-n">Votre site<small>vitrine et demandes</small></span></div><h2>La base de tout : <span class="or">un site qui donne envie.</span></h2><p class="lead">C'est lui que vos clients voient en premier. On le crée avec vous, à votre image, pour qu'il donne confiance au premier coup d'œil et qu'il transforme une visite en demande.</p></div>
+  <div class="head center"><div class="embleme rv"><span class="em-g"><svg class="em-site" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="16"/><path d="M8 24h32"/><path d="M11 15h26M11 33h26" opacity=".55"/><ellipse class="meri" cx="24" cy="24" rx="15" ry="16"/><ellipse class="meri m2" cx="24" cy="24" rx="15" ry="16"/></svg></span><span class="em-f"></span><span class="em-n">Votre site<small>vitrine et demandes</small></span></div><h2>La base de tout : <span class="or">un site qui donne envie.</span></h2><p class="lead">C'est lui que vos clients voient en premier. On le crée avec vous, à votre image, pour qu'il donne confiance au premier coup d'œil et qu'il transforme une visite en demande.</p></div>
   <div class="maquette rv">
     <div class="navig r-card"><div class="barre-n"><i></i><i></i><i></i><span class="url creux">dupont-renovation.fr</span></div>
       <div class="page-n"><div class="defile-n">
@@ -1001,7 +1072,13 @@ footer a{text-decoration:none}
     <div class="mini-tel"><div class="mt-ecran"><div class="mt-tete"><i></i><b>Dupont Rénovation</b></div><div class="mt-img"></div><span class="mt-btn">Demander un devis</span><span class="mt-btn b2">Appeler</span><div class="mt-bulle"></div></div></div>
     <span class="ex ex-m">Exemple fictif</span>
   </div>
-  <div class="atouts"><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3l3 3-9 9-4 1 1-4z"/><path d="M7 17c-1 2-2.5 3-4 3 0-2 .5-4 2.5-5"/></svg></span><h3>À votre image</h3><p>Votre logo, vos couleurs, vos photos, vos textes écrits avec vous. Pas un modèle de plus.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><h3>Trouvé sur Google</h3><p>Pensé pour votre ville et votre métier, pour que les clients d'à côté tombent sur vous.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></span><h3>Parfait sur téléphone</h3><p>Rapide, lisible, un gros bouton pour appeler. Là où vos clients vous cherchent vraiment.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg></span><h3>Il travaille pour vous</h3><p>Demande de devis, réservation, assistant virtuel : votre site reçoit, même la nuit.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg></span><h3>Vos avis en vitrine</h3><p>Vos meilleures notes et les mots de vos clients, là où ça rassure.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></span><h3>Toujours à jour</h3><p>Un horaire, un prix, une photo à changer ? On s'en occupe, c'est inclus.</p></div></div>
+  <div class="atouts"><div class="card atout rv"><div class="vig v-img creux" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="c3"></i><b>Aa</b><span class="bague"></span></div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3l3 3-9 9-4 1 1-4z"/><path d="M7 17c-1 2-2.5 3-4 3 0-2 .5-4 2.5-5"/></svg></span><h3>À votre image</h3><p>Votre logo, vos couleurs, vos photos, vos textes écrits avec vous. Pas un modèle de plus.</p></div><div class="card atout rv"><div class="vig v-goo creux" aria-hidden="true"><span class="q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg>plâtrier Meylan</span><span class="r autre">Autre entreprise</span><span class="r vous"><em>1</em>Votre entreprise</span></div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><h3>Trouvé sur Google</h3><p>Pensé pour votre ville et votre métier, pour que les clients d'à côté tombent sur vous.</p></div><div class="card atout rv"><div class="vig v-tel creux" aria-hidden="true"><span class="mini"><i></i><span class="ap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></span></span><small>Appeler</small></div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></span><h3>Parfait sur téléphone</h3><p>Rapide, lisible, un gros bouton pour appeler. Là où vos clients vous cherchent vraiment.</p></div><div class="card atout rv"><div class="vig v-nuit creux" aria-hidden="true"><svg class="lune" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14A8 8 0 1 1 10 4a6.5 6.5 0 0 0 10 10z"/></svg><b>22 h 14</b><span class="notif">Nouvelle demande</span></div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg></span><h3>Il travaille pour vous</h3><p>Demande de devis, réservation, assistant virtuel : votre site reçoit, même la nuit.</p></div><div class="card atout rv"><div class="vig v-avis creux" aria-hidden="true"><b>4,9</b><span class="et"><i></i><i></i><i></i><i></i><i></i></span><small>86 avis Google</small></div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg></span><h3>Vos avis en vitrine</h3><p>Vos meilleures notes et les mots de vos clients, là où ça rassure.</p></div><div class="card atout rv"><div class="vig v-maj creux" aria-hidden="true"><small>Horaires</small><span class="h"><s>18 h 00</s><b>19 h 00</b></span><svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="m5 12 4.5 4.5L19 7"/></svg></div><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></span><h3>Toujours à jour</h3><p>Un horaire, un prix, une photo à changer ? On s'en occupe, c'est inclus.</p></div></div>
+  <div class="avis-g card lis rv">
+    <div class="ag-note"><span class="g-logo" aria-hidden="true">G</span><div><b class="cpt" data-v="4.9" data-dec="1" data-t="300" data-ms="1200">4,9</b><span class="et"><i></i><i></i><i></i><i></i><i></i></span><small><span class="cpt" data-v="86" data-t="300" data-ms="1200">86</span> avis Google</small></div></div>
+    <div class="ag-txt"><h3>Vos avis Google, en vitrine.</h3><p>Avant d'appeler, on regarde les avis. Votre note et les mots de vos clients s'affichent sur votre site, toujours à jour. Avec l'abonnement Accélération, l'avis est demandé à chaque client satisfait, automatiquement.</p></div>
+    <div class="ag-fil" aria-hidden="true"><div class="ag-rail"><div class="ag-c rs"><span class="et5">★★★★★</span><p>Chantier propre, délais tenus. Je recommande !</p><small>Claire · Meylan</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Très bon conseil pour nos fenêtres, devis rapide.</p><small>Marc · Voiron</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Cloisons parfaites, équipe sérieuse et souriante.</p><small>Sophie · Grenoble</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Réponse le soir même, travail impeccable.</p><small>Karim · Échirolles</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Chantier propre, délais tenus. Je recommande !</p><small>Claire · Meylan</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Très bon conseil pour nos fenêtres, devis rapide.</p><small>Marc · Voiron</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Cloisons parfaites, équipe sérieuse et souriante.</p><small>Sophie · Grenoble</small></div><div class="ag-c rs"><span class="et5">★★★★★</span><p>Réponse le soir même, travail impeccable.</p><small>Karim · Échirolles</small></div></div></div>
+    <span class="ex-ag">Exemple</span>
+  </div>
 </div></section>
 
 <!-- 2 ter. L'Espace : la cerise sur le gâteau -->
