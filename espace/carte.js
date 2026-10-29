@@ -21,14 +21,15 @@
   function teintes(){
     var nuit=document.documentElement.getAttribute("data-theme")==="dark"||
       (document.documentElement.getAttribute("data-theme")!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);
-    return nuit?{sol:"#1E2433",quart:"#232A3A",sol2:"#262E3F",bati:"#2E364A",route:"#3B4359",bord:"#343C51",eau:"#131824",eauT:"#2F405C",limite:"#5A647E",texte:"#AEB6CB",halo:"#1E2433",fort:"#E3E7F0"}
-      :{sol:"#F2F3F6",quart:"#E4E7EC",sol2:"#DCE1E7",bati:"#D1D6DE",route:"#FFFFFF",bord:"#C4CAD4",eau:"#C2CCDA",eauT:"#A9B6CA",limite:"#8C94A6",texte:"#5D6578",halo:"#F2F3F6",fort:"#2A3142"};
+    return nuit?{sol:"#1E2433",quart:"#232A3A",sol2:"#262E3F",bati:"#2E364A",route:"#3B4359",bord:"#343C51",eau:"#131824",eauT:"#2F405C",lis:"#3F5678",fortE:"#5A77A3",nomE:"#93A9CB",limite:"#5A647E",texte:"#AEB6CB",halo:"#1E2433",fort:"#E3E7F0"}
+      :{sol:"#F2F3F6",quart:"#E4E7EC",sol2:"#DCE1E7",bati:"#D1D6DE",route:"#FFFFFF",bord:"#C4CAD4",eau:"#C2CCDA",eauT:"#A9B6CA",lis:"#97A9C3",fortE:"#7F95B7",nomE:"#566C8F",limite:"#8C94A6",texte:"#5D6578",halo:"#F2F3F6",fort:"#2A3142"};
   }
   function peindre(map){
     var t=teintes(),st=map.getStyle();if(!st)return;
     var set=function(id,k,v){try{map.setPaintProperty(id,k,v)}catch(e){}};
     st.layers.forEach(function(L){
       var id=L.id,sl=(L["source-layer"]||"")+" "+id.toLowerCase();
+      if(/^pc-/.test(id))return; // nos propres calques (zone, rivières) gardent leurs teintes
       if(L.type==="background")set(id,"background-color",t.sol);
       else if(L.type==="fill"){
         set(id,"fill-color",/water|ocean|lake/.test(sl)?t.eau:/building/.test(sl)?t.bati:/park|wood|grass|forest|landcover|ice|sand|cemetery|pitch/.test(sl)?t.sol2:/landuse|residential|industrial/.test(sl)?t.quart:t.sol);
@@ -47,6 +48,29 @@
         set(id,"text-color",/water/.test(sl)?t.eauT:ville?t.fort:t.texte);
         set(id,"text-halo-color",t.halo);set(id,"text-halo-width",1.4);set(id,"icon-opacity",0);}
     });
+    set("pc-eau-lis","line-color",t.lis);set("pc-riv-fort","line-color",t.fortE);
+    set("pc-riv-nom","text-color",t.nomE);set("pc-riv-nom","text-halo-color",t.halo);
+  }
+  // Cours d'eau (demande de Cyril, 29/10) : liseré bleuté autour de l'eau, l'Isère et le Drac plus marqués car ce sont des repères
+  var GRANDES=["any",["in","Isère",["concat",["to-string",["get","name"]],["to-string",["get","name:fr"]]]],
+    ["in","Drac",["concat",["to-string",["get","name"]],["to-string",["get","name:fr"]]]]];
+  function rivieres(map){
+    var st=map.getStyle(),src=null,avant=null,police=null;
+    Object.keys(st.sources).forEach(function(k){if(!src&&st.sources[k].type==="vector")src=k});
+    st.layers.forEach(function(L){
+      if(!avant&&L.type==="symbol")avant=L.id;
+      if(!police&&L.type==="symbol"&&/water/.test((L["source-layer"]||"")+L.id)&&L.layout&&L.layout["text-font"])police=L.layout["text-font"];});
+    if(!src||map.getLayer("pc-eau-lis"))return;
+    var z=function(a){return["interpolate",["linear"],["zoom"]].concat(a)};
+    try{
+      map.addLayer({id:"pc-eau-lis",type:"line",source:src,"source-layer":"water",paint:{"line-width":z([8,.5,13,1.2,16,2])}},avant);
+      map.addLayer({id:"pc-riv-fort",type:"line",source:src,"source-layer":"waterway",filter:GRANDES,
+        layout:{"line-cap":"round","line-join":"round"},paint:{"line-width":z([6,1.4,9,2.2,12,3.2,15,5]),"line-opacity":z([12,1,15,.55])}},avant);
+      map.addLayer({id:"pc-riv-nom",type:"symbol",source:src,"source-layer":"waterway",filter:GRANDES,minzoom:8,
+        layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:fr"],["get","name"]],"text-font":police||["Noto Sans Italic"],
+          "text-size":z([8,11,13,14]),"symbol-spacing":350,"text-letter-spacing":.08},
+        paint:{"text-halo-width":1.6}},avant);
+    }catch(e){}
   }
   // Cercle de la zone d'intervention (en km), pour la source GeoJSON
   function cercle(lat,lon,km){var c=[],n=96;for(var i=0;i<=n;i++){var a=i/n*2*Math.PI;
@@ -110,7 +134,7 @@
       map.touchZoomRotate.disableRotation();
       var styleOk=false;map.on("styledata",function(){styleOk=true});
       map.on("error",function(){if(!styleOk)repli()});
-      map.on("load",function(){clearTimeout(delai);if(secours)return;peindre(map);zoneTrait();depot();poser();aller(btn)});
+      map.on("load",function(){clearTimeout(delai);if(secours)return;rivieres(map);peindre(map);zoneTrait();depot();poser();aller(btn)});
       map.on("click",function(){if(sel<0)return;sel=-1;poser()});
       // Le jour et la nuit suivent le bouton lune/soleil
       new MutationObserver(function(){if(map&&map.isStyleLoaded())peindre(map)}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
