@@ -1,0 +1,96 @@
+/* Clients et Factures de l'Espace : même matière « Relief doux » (reliefs, creux, laiton en seule couleur d'action), même dessin jour et nuit. */
+.cf .cf-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cf .cf-top h2{margin:0}
+.cf .cf-n{font-size:13px;color:var(--muted)}
+.cf .grid2>.col{gap:14px}
+.cf .exemple{display:block;font-size:12px;font-style:italic;color:var(--muted)}
+
+/* Recherche : un creux, comme les champs */
+.cf-cherche{display:flex;align-items:center;gap:10px;padding:0 16px;border-radius:999px;background:var(--cx);box-shadow:var(--in);min-height:50px;color:var(--muted)}
+.cf-cherche svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.app .cf-cherche input,html body .cf-cherche input{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;font:600 15px var(--f,inherit);color:var(--fg);padding:12px 0;outline:none}
+
+/* Le gros bouton de l'écran : même dessin que celui de l'accueil */
+html body .cf .cf-go{width:100%;min-height:clamp(54px,15vw,62px);border-radius:999px;font-size:clamp(15px,4.2vw,17px);padding:0 clamp(58px,16vw,66px) 0 18px;display:flex;align-items:center}
+html body .cf .cf-go::after{width:clamp(38px,11vw,44px);height:clamp(38px,11vw,44px);margin-top:calc(clamp(38px,11vw,44px)/-2);right:8px}
+html body .cf .cf-go::before{right:calc(8px + (clamp(38px,11vw,44px) - 18px)/2)}
+.cf .cf-go .lab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+.cf .cf-go .lab>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf .cf-go .ic{display:grid;place-items:center;width:20px;height:20px;flex:none;color:var(--muted)}
+.cf .cf-go .ic svg,.cf-main svg,.cf-act svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* Listes : une ligne par client ou par document */
+.cf-l{padding:4px 16px!important}
+.cf-li{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:inherit;cursor:pointer}
+.cf-l>.cf-li:last-child{border-bottom:0}
+.cf-li .tx{flex:1;min-width:0}
+.cf-li .tx b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf-li .tx small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf-li .tx small.cf-et{margin-top:2px;font-weight:600}
+.cf-li .tx small.cf-et.on{color:var(--accx)}
+.cf-li .go{color:var(--muted);font-size:18px}
+.cf-av{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up-s);font-weight:800;font-size:14px;color:var(--fg);letter-spacing:.02em}
+.cf-av.cf-doc{color:var(--muted)}
+.cf-av svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cf-m{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.cf-m b{font-size:14.5px;font-weight:800;white-space:nowrap}
+.cf-m .pill{font-size:10.5px;padding:4px 9px}
+html body .cf .pill.ok{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+html body .cf .pill.warn,html body .cf .pill.todo{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+html body .cf .pill.grey{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+
+/* Badge de conformité : écusson au trait laiton, petit ruban tricolore */
+.cf-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 9px;border-radius:999px;border:0;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font:700 12.5px var(--f,inherit);cursor:pointer}
+.ecu{width:24px;height:24px;flex:none;fill:none;stroke:var(--accx);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cf-conf{display:flex;align-items:center;gap:14px}
+.cf-conf .ecu{width:44px;height:44px;stroke-width:1.3}
+.cf-conf b{display:block;font-size:15.5px}.cf-conf span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+/* À encaisser : le chiffre en avant */
+.cf-hero{display:grid;gap:4px}
+.cf-hero small{font-size:13px;color:var(--muted);font-weight:600}
+.cf-hero b{font-size:clamp(30px,8.5vw,38px);font-weight:800;letter-spacing:-.8px;line-height:1.1}
+.cf-hero b em{font-style:normal;font-size:14px;font-weight:700;color:var(--muted);letter-spacing:0}
+.cf-hero>span{font-size:13px;color:var(--muted)}
+.cf-pret .dem-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cf-pret .dem-h>div:first-child{min-width:0}
+.cf-pret .dem-h b{display:block;font-size:16px;font-weight:800}
+.cf-pret .dem-h small{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
+.cf-pret .prix{font-size:18px;font-weight:800;white-space:nowrap}.cf-pret .prix small{font-size:12px;color:var(--muted)}
+.cf-rien{display:grid;gap:6px}.cf-rien span{font-size:13.5px;color:var(--muted);line-height:1.45}
+.cf-main{display:flex;gap:10px;flex-wrap:wrap}
+.cf-main .btn,.cf-act .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1 1 0;text-decoration:none;color:var(--fg)}
+.cf-main svg,.cf-act svg{width:17px;height:17px;color:var(--accx)}
+.cf .cf-seg{display:flex;width:100%}.cf .cf-seg button{flex:1}
+
+/* Fiche client et formulaires (dans le panneau) */
+.cf-act{display:flex;gap:10px}
+.cf-ou{display:grid;gap:3px}.cf-ou small{font-size:12.5px;color:var(--muted);font-weight:600}.cf-ou b{font-size:15.5px}
+.xsec>h3 small{font-size:12px;color:var(--muted);font-weight:600}
+.cf-arg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cf-arg div{padding:10px 12px;border-radius:14px;background:var(--cx);box-shadow:var(--in)}
+.cf-arg span{display:block;font-size:12px;color:var(--muted)}.cf-arg b{display:block;font-size:16px;font-weight:800;margin-top:2px}
+.cf-arg .cor b{color:var(--accx)}
+.cf-tout{align-self:flex-start}
+.cf-aide{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}.cf-aide b{color:var(--fg)}
+.cf-form{display:grid;gap:14px}
+.cf-form label{display:grid;gap:6px;font-size:13.5px;font-weight:700}
+.cf-form label small{font-weight:600;color:var(--muted)}
+.cf-form input,.cf-form select,.cf-form textarea{width:100%;min-height:48px;padding:12px 14px;border-radius:14px;font:600 15.5px var(--f,inherit);color:var(--fg);border:0}
+.cf-form textarea{resize:vertical;min-height:84px}
+.cf-tva{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13.5px;font-weight:700}
+.cf-ttc{display:flex;justify-content:space-between;align-items:baseline}.cf-ttc span{color:var(--muted);font-size:13.5px}.cf-ttc b{font-size:20px}
+
+/* Menu : sur téléphone, six onglets (Achats passe dans le menu ☰) ; tablette, tout reste sur le côté */
+@media (max-width:899px){
+  html body .nav{grid-template-columns:repeat(6,1fr)!important}
+  html body .nav #nb-prix{display:none!important}
+  html body .nav button{font-size:10.5px}
+  html body .nav .ico,:root.simple body .nav .ico{width:40px;height:40px}
+}
+@media (min-width:900px){
+  .m-achats{display:none!important}
+  html body .nav{gap:12px!important}
+  html body .nav .ico,:root.simple body .nav .ico{width:42px;height:42px}
+}
+.xback[hidden]{display:none!important}
