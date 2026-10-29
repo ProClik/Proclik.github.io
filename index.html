@@ -84,21 +84,215 @@ section{padding:clamp(64px,9vw,112px) 0}
 
 /* accueil */
 .hero{padding-top:clamp(40px,6vw,80px)}
-.hero .wrap{display:grid;grid-template-columns:1fr;gap:48px;text-align:center}
-.hero .lead{margin-left:auto;margin-right:auto}
-.hero .btns{justify-content:center}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
 .hero h1 em{font-style:normal;color:var(--accx)}
 .hero .pour{margin-top:26px;font-size:14.5px;color:var(--muted)}
-/* la télé : le film ProClik, comme sur l'écran d'un magasin */
-.tv{width:min(1080px,100%);margin:0 auto;padding:14px;border-radius:30px;background:var(--bg);box-shadow:var(--up)}
-.ecran-tv{position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#131826;box-shadow:var(--in)}
-.ecran-tv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.pied-tv{width:120px;height:10px;margin:14px auto 0;border-radius:9px;box-shadow:var(--in)}
-.voir-film{justify-self:center;margin-top:-26px;font-weight:600;font-size:15px;color:var(--accx);text-decoration:none;padding:10px 16px;border-radius:999px}
-.voir-film:hover{box-shadow:var(--in)}
-@media (max-width:600px){.tv{padding:8px;border-radius:20px}.ecran-tv{border-radius:13px}}
+@media (max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:48px}}
 
 /* téléphone d'exemple : l'Espace ProClik */
+.tel{justify-self:center;width:min(330px,100%);aspect-ratio:9/17;border-radius:46px;padding:14px;background:var(--bg);box-shadow:var(--up)}
+/* Le téléphone raconte l'histoire, au style de l'Espace : rien ne glisse, tout ÉMERGE de la matière.
+   Chaque bloc arrive à plat (même teinte que le fond, invisible), puis son relief se lève doucement.
+   Appuis comme dans l'Espace : creux visible ≥ 0,3 s, retour lent (~1,4 s), flèche laiton qui file de 10 px. */
+.ecran{position:relative;height:100%;border-radius:34px;box-shadow:var(--in);overflow:hidden;font-size:13px;line-height:1.35;--cl:#B5603A}
+:root[data-theme="dark"] .ecran{--cl:#D98A63}
+.statut{position:absolute;top:12px;left:24px;right:22px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:800;color:var(--muted);z-index:2}
+.statut i{width:20px;height:9px;border:1.5px solid currentColor;border-radius:3px;position:relative}
+.statut i::after{content:"";position:absolute;inset:1.5px 4px 1.5px 1.5px;background:currentColor;border-radius:1px}
+.ecran .ex{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:10px}
+.sc{position:absolute;inset:36px 14px 40px;display:flex;flex-direction:column;gap:10px;visibility:hidden;transition:visibility 0s 1s}
+.sc.on{visibility:visible;transition:none}
+/* matière : relief (r), petit relief (rs), creux (c) */
+.sc .r{box-shadow:var(--up)}.sc .rs{box-shadow:var(--up-s)}.sc .c{box-shadow:var(--in)}
+.sc .r,.sc .rs,.sc .c{transition:box-shadow 1.5s var(--doux),color .8s var(--doux)}
+.sc:not(.on) .r,.sc:not(.on) .rs,.sc:not(.on) .c{box-shadow:0 0 0 transparent;transition-duration:.8s}
+.sc .e{opacity:0;transform:translateY(5px) scale(.985);transition:opacity 1s var(--doux),transform 1.3s var(--doux)}
+.sc.on .e{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.sc.on .r,.sc.on .rs,.sc.on .c{transition-delay:calc(var(--d,0s) + .25s)}
+.js .sc:not(.on) .e{transition-duration:.7s;transition-delay:0s}
+html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity:1;transform:none}
+.sh{display:flex;align-items:center;gap:10px;padding:2px}
+.sh b{display:block;font-size:14.5px;font-weight:800}
+.sh .enl{display:block;font-size:11px;color:var(--accx);font-weight:700}
+.lg{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--acc);flex:none}
+.lg svg{width:18px;height:18px}.lg .pp{width:20px;height:23px}
+.lg.cl{color:var(--cl)}
+.burger{margin-left:auto;width:16px;height:10px;border-top:2px solid var(--muted);border-bottom:2px solid var(--muted);position:relative}
+.burger::after{content:"";position:absolute;left:0;right:0;top:2px;border-top:2px solid var(--muted)}
+/* le site du client : sa photo et sa couleur, posées dans la matière ProClik */
+.hero-s{position:relative;height:150px;border-radius:20px;padding:6px;overflow:hidden}
+.hero-s .maison{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);border-radius:15px;background:linear-gradient(170deg,#F6D9C2,#E9A57E 60%,#B5603A)}
+.hero-s::after{content:"";position:absolute;inset:45% 6px 6px;border-radius:0 0 15px 15px;background:linear-gradient(transparent,rgba(60,24,10,.7))}
+.hero-s .t{position:absolute;z-index:1;left:18px;right:18px;bottom:16px;color:#fff}
+.hero-s small{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.hero-s b{display:block;font-size:16px;line-height:1.2;margin-top:3px}
+.duo{display:flex;gap:9px}
+.pill{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 12px;border-radius:999px;font-weight:700;font-size:13px;flex:1;text-align:center}
+.cl-t{color:var(--cl)}
+.avis{font-size:11.5px;color:var(--muted);text-align:center;font-weight:600}
+.avis span{color:#D9A23A;letter-spacing:.08em}
+.reals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.reals i{height:54px;border-radius:14px;padding:4px;background-clip:content-box}
+.reals i:nth-child(1){background-image:linear-gradient(135deg,#D9C3A5,#9C7B57)}
+.reals i:nth-child(2){background-image:linear-gradient(135deg,#C9D2DA,#7F8EA0)}
+.reals i:nth-child(3){background-image:linear-gradient(135deg,#E8D8C4,#C08A5B)}
+.bulle-s{position:absolute;right:0;bottom:0;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:var(--cl)}
+.bulle-s svg{width:23px;height:23px}
+.bulle-s b{position:absolute;top:-3px;right:-3px;width:19px;height:19px;border-radius:50%;background:var(--cl);color:#fff;font-size:10.5px;display:grid;place-items:center}
+/* appui : le doigt se pose (anneau laiton fin), le bloc s'enfonce lentement puis remonte */
+.doigt-t{position:absolute;z-index:3;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--acc);background:var(--acc-bg);opacity:0;pointer-events:none}
+.sc.on .doigt-t{animation:pose 2.2s var(--doux) var(--p) both}
+@keyframes pose{0%{opacity:0;transform:translate(14px,18px) scale(1.1)}22%{opacity:1;transform:none}32%{transform:scale(.84)}48%{transform:scale(.84);opacity:1}100%{opacity:0;transform:scale(1.25)}}
+.sc.on .presse{animation:enfonce 2s cubic-bezier(.3,0,.2,1) calc(var(--p) + .5s)}
+@keyframes enfonce{0%{box-shadow:var(--up-s);transform:none}15%,30%{box-shadow:var(--in);transform:scale(.985)}100%{box-shadow:var(--up-s);transform:none}}
+.go-s{padding-right:50px;flex:none}
+.go-s>span{position:absolute;right:5px;top:50%;width:34px;height:34px;margin-top:-17px;border-radius:50%}
+.go-s>span::after{content:"";position:absolute;inset:9px;background:var(--acc);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
+.sc.on .presse>span::after{animation:file 2s var(--doux) calc(var(--p) + .5s)}
+@keyframes file{0%{transform:none;filter:none}25%{transform:translateX(10px);filter:drop-shadow(0 0 4px var(--acc-g,rgba(168,130,63,.45)))}100%{transform:none;filter:none}}
+/* discussion */
+.msg{margin:0;max-width:84%;padding:10px 13px;border-radius:16px;font-size:12.5px}
+.msg.lui{border-bottom-left-radius:5px}
+.msg.moi{border-bottom-right-radius:5px;color:var(--cl);font-weight:700}
+.e:has(>.msg.moi){display:flex;justify-content:flex-end}
+.tape-s{display:flex;gap:5px;padding:12px 14px;border-radius:16px;align-self:flex-start}
+.tape-s i{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pt 1.1s ease-in-out infinite}
+.tape-s i:nth-child(2){animation-delay:.15s}.tape-s i:nth-child(3){animation-delay:.3s}
+.sc.on .tape-s{animation:part .6s ease var(--f) forwards}
+@keyframes part{to{opacity:0;height:0;padding:0;margin:-10px 0 0}}
+.sc .tape-s{animation:none}
+/* formulaire */
+.barre-s{height:7px;border-radius:9px;overflow:hidden}
+.barre-s i{display:block;height:100%;width:25%;border-radius:9px;background:var(--acc);transition:width 3.5s var(--doux) .6s}
+.sc.on .barre-s i{width:100%}
+.js .sc:not(.on) .barre-s i{transition:none}
+.q{margin:2px 0 0;font-size:16px;font-weight:800}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips span{padding:11px 4px;border-radius:14px;font-weight:700;font-size:12.5px;text-align:center}
+.sel-t{transition:box-shadow 1.2s var(--doux),color .9s var(--doux)}
+.sc.on .sel-t{box-shadow:var(--in)!important;color:var(--accx)!important;transition-delay:var(--s)!important}
+.sc.on .sel-t b{color:var(--accx);transition:color .9s var(--doux) var(--s)}
+.champ{padding:9px 14px;border-radius:14px}
+.champ small{display:block;font-size:10.5px;color:var(--muted);font-weight:700}
+.champ b{font-size:14px}
+.photos{display:flex;gap:8px}
+.photos span{width:44px;height:44px;border-radius:12px;padding:4px;background-clip:content-box}
+.photos span:nth-child(1){background-image:linear-gradient(135deg,#D9C3A5,#9C7B57)}
+.photos span:nth-child(2){background-image:linear-gradient(135deg,#CFC6BC,#8E7F72)}
+.photos span:nth-child(3){background-image:linear-gradient(135deg,#E3D6C8,#B7957A)}
+.envoye{position:absolute;inset:-6px;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:var(--bg);opacity:0;transition:opacity 1s var(--doux)}
+.sc.on .envoye{opacity:1;transition-delay:var(--d)}
+.envoye .rond{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;color:var(--acc);margin-bottom:12px}
+.envoye .rond svg{width:38px;height:38px;stroke-dasharray:30;stroke-dashoffset:30;transition:stroke-dashoffset 1s ease}
+.sc.on .envoye .rond{transition-delay:calc(var(--d) + .3s)}
+.sc.on .envoye .rond svg{stroke-dashoffset:0;transition-delay:calc(var(--d) + .9s)}
+.sc:not(.on) .envoye .rond{box-shadow:none}
+.envoye b{font-size:18px}.envoye span{color:var(--muted);font-size:12.5px}
+/* rendez-vous */
+.jours{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.jours span,.creneaux span{display:flex;flex-direction:column;align-items:center;padding:10px 0;border-radius:14px;font-size:11px;color:var(--muted);font-weight:700}
+.jours b{font-size:17px;color:var(--fg);margin-top:2px}
+.jours .off{opacity:.45}
+.creneaux{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.creneaux span{font-size:12.5px;color:var(--fg);padding:11px 0}
+.conf{display:flex;gap:11px;align-items:center;padding:12px 14px;border-radius:16px}
+.conf>svg{width:30px;height:30px;padding:6px;border-radius:50%;box-shadow:var(--up-s);color:var(--acc);flex:none}
+.conf b{display:block;font-size:13.5px}.conf span{color:var(--muted);font-size:12px}
+/* l'Espace : la notification, puis le pré-devis */
+.banniere{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:20px;font-size:12px}
+.banniere b{display:block;font-size:13px}.banniere span{color:var(--muted)}
+.banniere .lg{width:34px;height:34px}
+.sc .e.banniere{transform:translateY(-14px)}
+.sc.on .e.banniere{transform:none}
+.ecran .eh{display:flex;align-items:center;justify-content:space-between}
+.ecran .bj{font-size:12px;color:var(--muted)}
+.ecran .bj b{display:block;font-size:19px;color:var(--fg);font-weight:800}
+.pdv{padding:12px 14px;border-radius:18px}
+.pdv .pt{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.pdv .pt b{font-size:13.5px}
+.pdv .etat{font-size:10.5px;font-weight:800;color:var(--accx);padding:4px 9px;border-radius:999px}
+.lig{display:flex;justify-content:space-between;gap:8px;padding:6px 0;font-size:12px;border-bottom:1px solid var(--line);opacity:0;transform:translateX(-8px);transition:opacity .8s var(--doux),transform 1s var(--doux)}
+.sc.on .lig{opacity:1;transform:none;transition-delay:var(--d)}
+.lig b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tot{display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;font-weight:800;font-size:14px}
+.tot b{font-size:17px;font-variant-numeric:tabular-nums}
+.cliky{display:flex;align-items:center;gap:7px;margin:0;font-size:11.5px;font-weight:700;color:var(--accx)}
+.cliky svg{width:16px;height:16px}
+.toast-s{position:absolute;left:0;right:0;bottom:58px;display:flex;gap:9px;align-items:center;justify-content:center;padding:11px;border-radius:16px;font-weight:700;font-size:12.5px;background:var(--bg);box-shadow:var(--in);opacity:0;transform:translateY(6px);transition:opacity .9s var(--doux),transform 1.1s var(--doux)}
+.toast-s svg{width:17px;height:17px;color:var(--acc)}
+.sc.on .toast-s{opacity:1;transform:none;transition-delay:var(--d)}
+/* tableau de bord */
+.tuiles{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tuiles div{padding:11px 12px;border-radius:16px}
+.tuiles small{display:block;font-size:10.5px;color:var(--muted);font-weight:700}
+.tuiles b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.courbe{position:relative;padding:12px 12px 22px;border-radius:16px}
+.courbe svg{width:100%;height:90px;overflow:visible}
+.courbe .aire{fill:var(--acc-bg);stroke:none;opacity:0;transition:opacity 1.4s ease 2.6s}
+.courbe .ligne-c{fill:none;stroke:var(--acc);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.2s cubic-bezier(.5,0,.3,1) 1.4s;vector-effect:non-scaling-stroke}
+.courbe circle{fill:var(--acc);opacity:0;transition:opacity .6s ease 3.4s}
+.sc.on .courbe .aire,.sc.on .courbe circle{opacity:1}
+.sc.on .courbe .ligne-c{stroke-dashoffset:0}
+.js .sc:not(.on) .courbe *{transition-delay:0s;transition-duration:.5s}
+.courbe small{position:absolute;bottom:6px;font-size:10px;color:var(--muted)}
+.courbe small:first-of-type{left:12px}.courbe small:last-of-type{right:12px}
+.ping{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:16px;font-size:12px}
+.ping i{width:9px;height:9px;border-radius:50%;background:var(--acc);flex:none;box-shadow:0 0 0 4px var(--acc-bg)}
+.ping b{display:block;font-size:12.5px}.ping span{color:var(--muted)}
+/* recherche */
+.cherche{display:flex;align-items:center;gap:9px;padding:12px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-top:6px}
+.cherche svg{width:17px;height:17px;color:var(--acc);flex:none}
+.frappe{display:inline-block;overflow:hidden;white-space:nowrap;width:0;border-right:1.5px solid var(--acc)}
+.sc.on .frappe{animation:frappe 1.5s steps(27) .5s forwards,curseur .8s step-end 2.2s 3}
+@keyframes frappe{to{width:27ch}}
+@keyframes curseur{50%{border-color:transparent}}
+.res{position:relative;display:flex;gap:11px;align-items:center;padding:13px 14px;border-radius:18px;margin-top:4px}
+.res b{display:block;font-size:14.5px;color:var(--cl)}
+.res small{display:block;font-size:11.5px;color:var(--muted)}
+.res .et{color:#D9A23A}.res .ouv{color:#3E9A5B;font-weight:700}
+.res2{padding:13px 14px;border-radius:18px;display:grid;gap:7px;opacity:.6}
+.res2 i{height:7px;border-radius:9px;box-shadow:var(--in);width:70%}.res2 i+i{width:45%}
+/* le site défile */
+.vit{position:relative;flex:1;min-height:0;overflow:hidden;margin:0 -6px;padding:0 6px}
+.defile{display:flex;flex-direction:column;gap:10px;padding:6px 0 70px;transition:transform 3.2s var(--glisse,cubic-bezier(.65,0,.35,1))}
+.sc.on .defile{transform:translateY(-40%);transition-delay:2.4s}
+.js .sc:not(.on) .defile{transition:none}
+.h-s{margin:4px 2px 6px;font-weight:800;font-size:13px}
+.serv{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.serv span{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0;border-radius:14px;font-size:11px;font-weight:700}
+.serv svg{width:19px;height:19px;color:var(--cl)}
+.temoin{padding:12px 14px;border-radius:16px;font-size:12px;line-height:1.4}
+.temoin span{display:block;color:#D9A23A;letter-spacing:.08em;margin-bottom:3px}
+.temoin small{display:block;margin-top:4px;color:var(--muted);font-weight:700}
+.bulle-s{z-index:3}
+/* doigt posé au centre de ce qu'il appuie ; sur les pilules, sur le galet flèche */
+.presse{position:relative}
+.presse>.doigt-t{left:50%;top:50%;margin:-19px 0 0 -19px}
+.go-s>.doigt-t{left:auto;right:3px;margin-left:0}
+/* assistant virtuel : bien un robot */
+.ia{margin-left:auto;font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--accx);padding:4px 9px;border-radius:999px}
+.bot{display:flex;gap:7px;align-items:flex-end}
+.bot .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--acc);flex:none}
+.bot .av svg{width:15px;height:15px}
+.bot .msg{max-width:none;flex:1}
+.msg small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.04em;color:var(--accx);margin-bottom:3px;text-transform:uppercase}
+/* réservation avec acompte (un salon) */
+.coif{--cl:#8E4C6A}
+:root[data-theme="dark"] .coif{--cl:#D69BB6}
+.presta{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:16px;font-weight:700;font-size:13px}
+.presta b{font-size:11.5px;color:var(--muted)}
+.acompte{padding:12px;border-radius:18px;display:flex;flex-direction:column;gap:10px}
+.ac-t{display:flex;gap:10px;align-items:center}
+.ac-t svg{width:28px;height:28px;padding:6px;border-radius:50%;box-shadow:var(--up-s);color:var(--acc);flex:none}
+.ac-t b{display:block;font-size:12.5px}.ac-t span{font-size:11px;color:var(--muted)}
+.acompte .pill{flex:none}
+/* le fil des étapes, sous le téléphone : on peut toucher une étape pour y aller */
+.fil{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:24px}
+.fil button{appearance:none;border:0;cursor:pointer;background:var(--bg);width:12px;height:12px;padding:0;border-radius:999px;box-shadow:var(--in);transition:width 1.2s var(--doux),background 1.2s var(--doux)}
+.fil button[aria-selected="true"]{width:34px;background:var(--acc)}
+.legende{text-align:center;margin-top:12px;font-weight:700;font-size:15px;min-height:1.4em;transition:opacity .6s ease}
+.legende.change{opacity:0}
+.legende span{color:var(--accx)}
 
 /* le constat */
 .trois{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
@@ -239,8 +433,20 @@ footer a{text-decoration:none}
 .js .souligne path{stroke-dasharray:1;stroke-dashoffset:1;animation:dessine 1.4s cubic-bezier(.5,0,.3,1) .7s forwards}
 @keyframes dessine{to{stroke-dashoffset:0}}
 
+/* galets autour du téléphone : un par étape ; celui de l'étape en cours s'enfonce, icône laiton */
+.scene{position:relative;justify-self:center;width:min(330px,100%)}
+.scene .tel{width:100%}
+.flot{position:absolute;z-index:2;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);animation:flotte 8s ease-in-out infinite;transition:box-shadow 1.4s var(--doux),color 1.2s var(--doux)}
+.flot svg{width:22px;height:22px}.flot .pp{width:22px;height:25px}
+.flot .pp path,.flot .pp circle{transition:stroke 1.2s,fill 1.2s}
+.flot:not(.actif) .pp path{stroke:var(--muted)}.flot:not(.actif) .pp circle{fill:var(--muted)}
+.flot.actif{box-shadow:var(--in);color:var(--acc)}
+.f0{left:-34px;top:6%}.f1{right:-32px;top:17%;animation-delay:-1.1s}.f2{left:-40px;top:30%;animation-delay:-2.3s}.f3{right:-36px;top:43%;animation-delay:-3.4s}
+.f4{left:-36px;top:56%;animation-delay:-4.6s}.f5{right:-32px;top:69%;animation-delay:-5.7s}.f6{left:-30px;top:82%;animation-delay:-6.9s}
+@keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media (max-width:880px){.tel{aspect-ratio:9/18.5}.sc{inset:34px 11px 34px;gap:8px}.ecran .pill{padding:10px 10px;font-size:12px}.lig{padding:4px 0;font-size:11px}.pdv{padding:10px 12px}.tot b{font-size:15px}.msg{font-size:11.5px}.banniere{padding:8px 10px}.ecran .bj b{font-size:17px}.toast-s{bottom:52px}.frappe{max-width:calc(100% - 26px)}.tuiles b{font-size:16px;white-space:nowrap}}
+@media (max-width:880px){.scene{width:min(300px,76%)}.flot{width:44px;height:44px}.flot svg{width:19px;height:19px}.f0,.f2,.f4,.f6{left:-28px}.f1,.f3,.f5{right:-28px}}
 
-@keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 /* petites scènes au trait */
 .illu{height:128px;margin:-4px 0 20px;display:grid;place-items:center;overflow:hidden}
 .illu svg{height:112px;width:auto;max-width:100%;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
@@ -328,7 +534,59 @@ footer a{text-decoration:none}
 @keyframes ondeBtn{to{transform:scale(1);opacity:0}}
 .btn.go{overflow:visible}
 
-@media (prefers-reduced-motion:reduce){.illu *,.robot,.calc i,.cafe .vapeur{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}.js .souligne path{animation:none;stroke-dashoffset:0}.js .predevis .ligne,.js .predevis .etat,.js .predevis .total{opacity:1;transform:none;transition:none}}
+@media (prefers-reduced-motion:reduce){.flot,.illu *,.mini-tel,.defile-n,.robot,.calc i,.cafe .vapeur{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}.js .souligne path{animation:none;stroke-dashoffset:0}.js .predevis .ligne,.js .predevis .etat,.js .predevis .total{opacity:1;transform:none;transition:none}}
+
+
+/* ===== Votre site : la base ===== */
+.or{color:var(--accx)}
+.maquette{position:relative;max-width:980px;margin:0 auto 56px;padding:0 40px 40px 0;--cl:#B5603A}
+.r-card{background:var(--bg);border-radius:24px;box-shadow:var(--up)}
+.navig{padding:12px}
+.barre-n{display:flex;align-items:center;gap:7px;padding:4px 6px 12px}
+.barre-n>i{width:11px;height:11px;border-radius:50%;box-shadow:var(--in)}
+.url{margin-left:14px;flex:1;max-width:340px;padding:7px 16px;border-radius:999px;font-size:12.5px;color:var(--muted);font-weight:600}
+.page-n{height:400px;border-radius:16px;overflow:hidden;background:#FFFDFB;color:#2A211C;position:relative}
+.defile-n{animation:visite 16s cubic-bezier(.65,0,.35,1) infinite;animation-play-state:paused}
+.maquette.vu .defile-n{animation-play-state:running}
+@keyframes visite{0%,18%{transform:none}38%,58%{transform:translateY(-300px)}78%,92%{transform:translateY(-470px)}100%{transform:none}}
+.nav-s{display:flex;align-items:center;gap:18px;padding:16px 26px;font-size:13px;font-weight:600;color:#6E625A}
+.nav-s i{width:30px;height:30px;border-radius:9px;background:var(--cl)}
+.nav-s b{color:#2A211C;font-size:15px;margin-right:auto}
+.nav-s .cta{padding:9px 16px;border-radius:999px;background:var(--cl);color:#fff}
+.une{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;padding:20px 26px 30px}
+.une-t small{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--cl)}
+.une-t b{display:block;font-size:30px;line-height:1.12;margin:10px 0 18px}
+.btn-c{display:inline-block;padding:13px 22px;border-radius:999px;background:var(--cl);color:#fff;font-weight:800;font-size:14px}
+.note-c{display:block;margin-top:14px;font-size:13px;color:#8A7B70;font-weight:600}
+.une-img{height:230px;border-radius:20px;background:linear-gradient(170deg,#F6D9C2,#E9A57E 60%,#B5603A);position:relative;overflow:hidden}
+.une-img::before{content:"";position:absolute;left:30%;right:30%;bottom:0;height:46%;background:#fff;opacity:.92;border-radius:6px 6px 0 0}
+.une-img::after{content:"";position:absolute;left:24%;right:24%;bottom:46%;height:22%;background:#fff;opacity:.92;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.bloc-n{padding:10px 26px 20px}
+.bloc-n>b{display:block;font-size:17px;margin-bottom:12px}
+.trois-n{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.trois-n span{padding:20px 14px;border-radius:14px;background:#F6EFE9;font-weight:700;font-size:14px}
+.galerie-n{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.galerie-n i{height:110px;border-radius:14px}
+.galerie-n i:nth-child(1){background:linear-gradient(135deg,#D9C3A5,#9C7B57)}.galerie-n i:nth-child(2){background:linear-gradient(135deg,#C9D2DA,#7F8EA0)}
+.galerie-n i:nth-child(3){background:linear-gradient(135deg,#E8D8C4,#C08A5B)}.galerie-n i:nth-child(4){background:linear-gradient(135deg,#BFC8B8,#7E8D74)}
+.avis-n{font-size:15px;font-style:italic}
+.avis-n span{display:block;font-style:normal;color:#D9A23A;letter-spacing:.1em;margin-bottom:6px}
+.avis-n small{font-style:normal;color:#8A7B70;font-weight:700}
+.mini-tel{position:absolute;right:0;bottom:0;width:190px;height:380px;border-radius:32px;padding:9px;background:var(--bg);box-shadow:var(--up);animation:flotte 9s ease-in-out infinite}
+.mt-ecran{position:relative;height:100%;border-radius:24px;overflow:hidden;background:#FFFDFB;color:#2A211C;padding:14px 12px;display:flex;flex-direction:column;gap:9px}
+.mt-tete{display:flex;align-items:center;gap:8px;font-size:12px;padding-top:6px}
+.mt-tete i{width:20px;height:20px;border-radius:6px;background:var(--cl)}
+.mt-img{height:130px;border-radius:14px;background:linear-gradient(170deg,#F6D9C2,#E9A57E 60%,#B5603A)}
+.mt-btn{padding:10px;border-radius:999px;background:var(--cl);color:#fff;font-weight:800;font-size:11.5px;text-align:center}
+.mt-btn.b2{background:#F3EDE8;color:var(--cl)}
+.mt-bulle{position:absolute;right:12px;bottom:14px;width:38px;height:38px;border-radius:50%;background:var(--cl);box-shadow:0 6px 14px -4px rgba(181,96,58,.6)}
+.ex-m{position:absolute;left:14px;bottom:4px}
+.atouts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.atout p{color:var(--muted);margin-top:8px;font-size:15.5px}
+@media (max-width:880px){.atouts{grid-template-columns:1fr 1fr}.maquette{padding:0 24px 60px 0}.une{grid-template-columns:1fr}.une-img{height:150px}.page-n{height:330px}.mini-tel{width:130px;height:260px;border-radius:24px;padding:7px}.mt-ecran{border-radius:18px;padding:10px 8px;gap:6px}.mt-img{height:80px}.mt-btn{font-size:9.5px;padding:7px}.nav-s span:not(.cta){display:none}}
+@media (max-width:560px){.atouts{grid-template-columns:1fr}.navig{padding:8px}.url{max-width:none}.page-n{height:240px}.defile-n{zoom:.5}.nav-s span:not(.cta){display:inline}.une{grid-template-columns:1fr 1fr}.une-img{height:230px}.maquette{padding:0 18px 70px 0}.mini-tel{width:190px;height:380px;padding:9px;border-radius:32px;zoom:.6}.mt-ecran{border-radius:24px;padding:14px 12px;gap:9px}.mt-img{height:130px}.mt-btn{font-size:11.5px;padding:10px}}
+.js .atouts .rv:nth-child(3n+2){transition-delay:.12s}.js .atouts .rv:nth-child(3n){transition-delay:.24s}
+.cerise .etape p{color:var(--muted)}
 
 /* apparitions douces au défilement (contenu toujours visible sans script) */
 .js .rv{opacity:0;transform:translateY(18px);transition:opacity 1.1s var(--doux),transform 1.2s var(--doux)}
@@ -355,7 +613,7 @@ footer a{text-decoration:none}
     <span class="nom">PROCLIK<small>VOTRE COMMERCE EN UN CLIC</small></span>
   </a>
   <nav class="menu" aria-label="Sommaire">
-    <a href="#comment">Comment ça marche</a><a href="#exemples">Exemples</a><a href="#artisans">Artisans</a><a href="#tarifs">Tarifs</a><a href="#questions">Questions</a>
+    <a href="#site">Votre site</a><a href="#espace">L'Espace</a><a href="#comment">Comment ça marche</a><a href="#exemples">Exemples</a><a href="#artisans">Artisans</a><a href="#tarifs">Tarifs</a><a href="#questions">Questions</a>
   </nav>
   <div class="top-r">
     <a class="btn" href="#contact">Rendez-vous</a>
@@ -376,8 +634,86 @@ footer a{text-decoration:none}
     </div>
     <p class="pour">Pour les artisans, commerçants, indépendants et petites entreprises.</p>
   </div>
-  <div class="tv rv"><div class="ecran-tv"><iframe id="film" src="film/?embed" title="Le film ProClik : du site de votre client jusqu'à votre tableau de bord" loading="lazy" allow="fullscreen" allowfullscreen></iframe></div><div class="pied-tv"></div></div>
-  <a class="voir-film" href="film/?tv" target="_blank" rel="noopener">Voir le film en plein écran</a>
+  <div class="scene">
+    <span class="flot f0" data-s="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><span class="flot f1" data-s="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><span class="flot f2" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg></span><span class="flot f3" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span><span class="flot f4" data-s="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.1 8.1 20 20M8.1 15.9 20 4"/></svg></span><span class="flot f5" data-s="5"><svg class="pp" viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><span class="flot f6" data-s="6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>
+  <div class="tel rv" aria-label="Exemple animé : du site de votre client jusqu'à votre tableau de bord">
+    <div class="ecran">
+      <div class="statut"><span>21:47</span><i></i></div>
+      <!-- 0. il cherche, et trouve le site de son artisan en tête -->
+      <div class="sc" data-l="Votre client vous cherche">
+        <div class="e " style="--d:0s"><div class="cherche c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="frappe">rénovation cuisine Grenoble</span></div></div>
+        <div class="e res r presse" style="--d:1.9s;--p:3.6s"><i class="doigt-t"></i><span class="lg cl rs">AM</span><div><b>Atelier Martin</b><small><span class="et">★★★★★</span> 4,9 (86 avis) · Rénovation</small><small class="ouv">Ouvert · Grenoble</small></div></div>
+        <div class="e " style="--d:2.3s"><div class="res2 rs"><i></i><i></i></div></div>
+        <div class="e " style="--d:2.6s"><div class="res2 rs"><i></i><i></i></div></div>
+      </div>
+      <!-- 1. le site du commerce : à SA couleur (ici terre cuite) ; il défile comme un vrai site -->
+      <div class="sc site" data-l="Il découvre votre site">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg cl rs">AM</span><b>Atelier Martin</b><i class="burger"></i></div></div>
+        <div class="vit"><div class="defile">
+        <div class="e " style="--d:0.35s"><div class="hero-s r"><svg class="maison" viewBox="0 0 320 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle cx="262" cy="44" r="22" fill="#FBE7D3" opacity=".85"/><path d="M0 128 L70 92 L120 112 L190 72 L260 106 L320 86 V170 H0z" fill="#9C4A2A" opacity=".32"/><g fill="#fff" opacity=".93"><rect x="96" y="82" width="128" height="78" rx="6"/><path d="M84 88 L160 40 L236 88z"/></g><g fill="#B5603A"><rect x="146" y="116" width="28" height="44" rx="4"/><rect x="110" y="98" width="24" height="18" rx="3" opacity=".7"/><rect x="186" y="98" width="24" height="18" rx="3" opacity=".7"/></g></svg><div class="t"><small>Rénovation · Grenoble</small><b>Votre intérieur, entre de bonnes mains.</b></div></div></div>
+        <div class="e " style="--d:0.8s"><div class="duo"><span class="pill rs cl-t">Demander un devis</span><span class="pill rs">Appeler</span></div></div>
+        <div class="e " style="--d:1.1s"><div class="avis"><span>★★★★★</span> 4,9 · 86 avis Google</div></div>
+        <div class="e " style="--d:1.3s"><p class="h-s">Nos métiers</p><div class="serv"><span class="rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6l4 4M3 21l9-9M13 5l2-2 6 6-2 2z"/></svg>Plâtrerie</span><span class="rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="14" height="6" rx="1.5"/><path d="M18 6h2v5h-8v3M11 14h2v7h-2z"/></svg>Peinture</span><span class="rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>Isolation</span></div></div>
+        <div class="e " style="--d:1.5s"><p class="h-s">Nos réalisations</p><div class="reals"><i class="rs"></i><i class="rs"></i><i class="rs"></i></div></div>
+        <div class="e " style="--d:1.7s"><div class="temoin rs"><span>★★★★★</span>« Travail soigné, chantier propre, je recommande ! »<small>Claire, Meylan</small></div></div>
+        </div></div>
+        <div class="e bulle-s r presse" style="--d:1.8s;--p:5.6s"><i class="doigt-t"></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg><b>1</b></div>
+      </div>
+      <!-- 2. l'assistant virtuel du site répond (un robot, pas une personne) -->
+      <div class="sc" data-l="L'assistant virtuel lui répond">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><div><b>Assistant virtuel</b><small class="enl">Réponse automatique · 24 h/24</small></div><span class="ia c">IA</span></div></div>
+        <div class="e " style="--d:0.5s"><p class="msg moi c">Bonsoir ! Vous refaites les cuisines&nbsp;?</p></div>
+        <div class="e bot" style="--d:1.2s"><span class="av rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><div class="tape-s rs" style="--f:2.4s"><i></i><i></i><i></i></div></div>
+        <div class="e bot" style="--d:2.4s"><span class="av rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><p class="msg lui rs"><small>Assistant · automatique</small>Bonsoir ! Oui, Atelier Martin rénove les cuisines. Décrivez votre projet en 2 minutes, je prépare votre demande.</p></div>
+        <div class="e pill go-s rs presse" style="--d:3.4s;--p:4.6s"><i class="doigt-t"></i>Décrire mon projet<span class="rs"></span></div>
+      </div>
+      <!-- 3. la demande guidée (formulaire Clik'Devis) -->
+      <div class="sc" data-l="Votre client décrit son projet">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><div><b>Votre projet</b><small class="enl">Atelier Martin</small></div></div></div>
+        <div class="e " style="--d:0.3s"><div class="barre-s c"><i></i></div></div>
+        <div class="e " style="--d:0.6s"><p class="q">Quelle pièce ?</p></div>
+        <div class="e " style="--d:0.8s"><div class="chips"><span class="rs sel-t" style="--s:1.9s">Cuisine</span><span class="rs">Salle de bain</span><span class="rs">Chambre</span><span class="rs">Autre</span></div></div>
+        <div class="e " style="--d:2.4s"><div class="champ c"><small>Surface</small><b>12 m²</b></div></div>
+        <div class="e " style="--d:2.9s"><div class="photos"><span class="rs"></span><span class="rs"></span><span class="rs"></span></div></div>
+        <div class="e pill go-s rs presse" style="--d:3.3s;--p:4.4s"><i class="doigt-t"></i>Envoyer ma demande<span class="rs"></span></div>
+        <div class="envoye" style="--d:5.4s"><div class="rond r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b>C'est envoyé !</b><span>Réponse sous 48 h</span></div>
+      </div>
+      <!-- 4. un autre commerce : réservation en ligne avec acompte (salon de coiffure) -->
+      <div class="sc coif" data-l="Ou réserve en ligne, avec acompte">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg cl rs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.1 8.1 20 20M8.1 15.9 20 4"/></svg></span><div><b>Studio Nova</b><small class="enl">Salon de coiffure · réservation</small></div></div></div>
+        <div class="e " style="--d:0.3s"><div class="presta rs sel-t" style="--s:1s"><span>Coupe + brushing</span><b>45 min · 48 €</b></div></div>
+        <div class="e " style="--d:0.8s"><div class="jours"><span class="rs">Jeu<b>5</b></span><span class="rs">Ven<b>6</b></span><span class="rs sel-t" style="--s:1.9s">Sam<b>7</b></span><span class="off">Dim<b>8</b></span></div></div>
+        <div class="e " style="--d:2.1s"><div class="creneaux"><span class="rs">9 h 00</span><span class="rs sel-t" style="--s:2.8s">10 h 30</span><span class="rs">14 h 00</span></div></div>
+        <div class="e acompte r" style="--d:3.4s"><div class="ac-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg><div><b>Acompte pour bloquer le créneau</b><span>Déduit le jour du rendez-vous</span></div></div><div class="pill go-s rs presse" style="--p:4.4s"><i class="doigt-t"></i>Payer 15 €<span class="rs"></span></div></div>
+        <div class="envoye" style="--d:5.5s"><div class="rond r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b>Réservé !</b><span>Samedi 7 · 10 h 30 · acompte reçu</span></div>
+      </div>
+      <!-- 5. vous êtes prévenu, le pré-devis est prêt -->
+      <div class="sc" data-l="Vous êtes prévenu">
+        <div class="e banniere r presse" style="--d:0s;--p:1.4s"><i class="doigt-t"></i><span class="lg rs"><svg class="pp" viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><div><b>Nouvelle demande</b><span>Mme Rossi · le pré-devis est prêt</span></div></div>
+        <div class="e " style="--d:2.3s"><div class="eh"><span class="bj">Bonsoir,<b>Julien</b></span></div></div>
+        <div class="e pdv r" style="--d:2.6s">
+          <div class="pt"><b>Pré-devis · Cuisine</b><span class="etat c">À valider</span></div>
+          <div class="lig" style="--d:3.1s"><span>Dépose de l'existant</span><b>420,00 €</b></div>
+          <div class="lig" style="--d:3.5s"><span>Plâtrerie et peinture</span><b>1 180,00 €</b></div>
+          <div class="lig" style="--d:3.9s"><span>Pose cuisine · 12 m²</span><b>2 340,00 €</b></div>
+          <div class="tot"><span>Total HT</span><b class="cpt" data-v="3940" data-dec="2" data-t="3200" data-ms="1500">3 940,00 €</b></div>
+        </div>
+        <div class="e " style="--d:4.4s"><p class="cliky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg> Calculé par Cliky avec vos prix</p></div>
+        <div class="e pill go-s rs presse" style="--d:4.8s;--p:5.8s"><i class="doigt-t"></i>Valider et envoyer<span class="rs"></span></div>
+        <div class="toast-s" style="--d:6.6s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>Devis envoyé à Mme Rossi</div>
+      </div>
+      <!-- 6. le tableau de bord -->
+      <div class="sc" data-l="Vous suivez tout">
+        <div class="e " style="--d:0s"><div class="sh"><span class="lg rs"><svg class="pp" viewBox="10 4 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><div><b>Novembre</b><small class="enl">Chiffres d'exemple</small></div></div></div>
+        <div class="e " style="--d:0.3s"><div class="tuiles"><div class="rs"><small>Demandes</small><b class="cpt" data-v="14" data-t="400">14</b></div><div class="rs"><small>Visites</small><b class="cpt" data-v="21" data-t="500">21</b></div><div class="rs"><small>Devis signés</small><b class="cpt" data-v="6" data-t="600">6</b></div><div class="rs"><small>Encaissé</small><b><span class="cpt" data-v="12480" data-t="700">12 480</span> €</b></div></div></div>
+        <div class="e " style="--d:0.9s"><div class="courbe c"><svg viewBox="0 0 240 80" preserveAspectRatio="none" aria-hidden="true"><path class="aire" d="M0 70 C30 64 40 52 70 54 S110 34 140 38 S190 16 240 12 V80 H0z"/><path class="ligne-c" pathLength="1" d="M0 70 C30 64 40 52 70 54 S110 34 140 38 S190 16 240 12"/><circle cx="240" cy="12" r="5"/></svg><small>Juin</small><small>Nov.</small></div></div>
+        <div class="e " style="--d:3.6s"><div class="ping rs"><i></i><div><b>Devis signé · Mme Rossi</b><span>Cuisine · à l'instant</span></div></div></div>
+      </div>
+      <span class="ex">Exemple</span>
+    </div>
+  </div>
+  <div class="fil" role="tablist" aria-label="Les étapes"></div>
+  </div>
 </div></section>
 
 <!-- 2. Le constat -->
@@ -387,6 +723,35 @@ footer a{text-decoration:none}
     <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="ondes"><path d="M78 44a30 30 0 0 0 0 32"/><path d="M66 36a44 44 0 0 0 0 48"/><path d="M162 44a30 30 0 0 1 0 32"/><path d="M174 36a44 44 0 0 1 0 48"/></g><g class="vib"><rect x="98" y="20" width="44" height="80" rx="9"/><path d="M114 30h12"/><circle class="pl" cx="120" cy="62" r="9"/><path class="pl" d="M116.5 58.5l7 7M123.5 58.5l-7 7"/></g><g class="bulle"><rect x="150" y="12" width="78" height="24" rx="12"/><text x="189" y="28">Appel manqué</text></g></svg></div><span class="num">01</span><h3>Le téléphone qui sonne au mauvais moment.</h3><p>Vous êtes occupé, vous ne décrochez pas, le client appelle le suivant.</p><p class="sol creux"><b>Avec ProClik :</b> le client laisse sa demande sur votre site, même à 22 h. Elle vous attend dans l'appli.</p></article>
     <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><path class="lune pl" d="M196 18a14 14 0 1 0 14 20 11 11 0 0 1-14-20z"/><g class="etoile"><path d="M170 22v6M167 25h6"/><path d="M214 58v4M212 60h4"/></g><rect x="62" y="30" width="96" height="60" rx="6"/><path d="M50 98h120"/><g class="tape"><path d="M76 46h44"/><path d="M76 58h64"/><path d="M76 70h30"/></g><text class="heure" x="110" y="24">22:47</text><path class="tasse" d="M180 78h20v12a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8z M200 82h4a4 4 0 0 1 0 8h-4"/><path class="vapeur" d="M186 72c-3-4 3-6 0-10M194 72c-3-4 3-6 0-10"/></svg></div><span class="num">02</span><h3>Les papiers du soir.</h3><p>Vous rentrez, vous dînez, et vous rouvrez l'ordinateur pour les devis et les factures.</p><p class="sol creux"><b>Avec ProClik :</b> le devis et la facture se préparent tout seuls. Vous relisez et vous validez.</p></article>
     <article class="card pb rv"><div class="illu creux"><svg viewBox="0 0 240 120" aria-hidden="true"><g class="app a1"><rect x="34" y="20" width="34" height="34" rx="9"/><path d="M42 31h18M42 38h18M42 45h10"/></g><g class="app a2"><rect x="100" y="12" width="34" height="34" rx="9"/><path d="M109 23h16v16h-16zM109 29h16"/></g><g class="app a3"><rect x="168" y="26" width="34" height="34" rx="9"/><path d="M185 34v18M178 40h14"/></g><g class="app a4"><rect x="62" y="70" width="34" height="34" rx="9"/><circle cx="79" cy="87" r="7"/></g><g class="app a5"><rect x="140" y="74" width="34" height="34" rx="9"/><path d="m148 91 6 6 12-12"/></g><g class="pl qm"><text x="120" y="70">?</text></g></svg></div><span class="num">03</span><h3>Cinq applis qui ne se parlent pas.</h3><p>Un agenda ici, des factures là, des clients dans un carnet. Rien n'est relié.</p><p class="sol creux"><b>Avec ProClik :</b> site, demandes, devis, factures et agenda dans une seule appli.</p></article>
+  </div>
+</div></section>
+
+<!-- 2 bis. Le site : la base de tout -->
+<section class="votre-site" id="site"><div class="wrap">
+  <div class="head center"><span class="eyebrow">Votre site</span><h2>La base de tout : <span class="or">un site qui donne envie.</span></h2><p class="lead">C'est lui que vos clients voient en premier. On le crée avec vous, à votre image, pour qu'il donne confiance au premier coup d'œil et qu'il transforme une visite en demande.</p></div>
+  <div class="maquette rv">
+    <div class="navig r-card"><div class="barre-n"><i></i><i></i><i></i><span class="url creux">atelier-martin.fr</span></div>
+      <div class="page-n"><div class="defile-n">
+        <div class="nav-s"><i></i><b>Atelier Martin</b><span>Accueil</span><span>Métiers</span><span>Réalisations</span><span>Avis</span><span class="cta">Demander un devis</span></div>
+        <div class="une"><div class="une-t"><small>RÉNOVATION · GRENOBLE</small><b>Votre intérieur, entre de bonnes mains.</b><span class="btn-c">Demander un devis gratuit</span><span class="note-c">★★★★★ 4,9 · 86 avis Google</span></div><div class="une-img"></div></div>
+        <div class="bloc-n"><b>Nos métiers</b><div class="trois-n"><span>Plâtrerie</span><span>Peinture</span><span>Isolation</span></div></div>
+        <div class="bloc-n"><b>Nos réalisations</b><div class="galerie-n"><i></i><i></i><i></i><i></i></div></div>
+        <div class="bloc-n avis-n"><span>★★★★★</span>« Travail soigné, chantier propre, je recommande ! » <small>Claire, Meylan</small></div>
+      </div></div>
+    </div>
+    <div class="mini-tel"><div class="mt-ecran"><div class="mt-tete"><i></i><b>Atelier Martin</b></div><div class="mt-img"></div><span class="mt-btn">Demander un devis</span><span class="mt-btn b2">Appeler</span><div class="mt-bulle"></div></div></div>
+    <span class="ex ex-m">Exemple fictif</span>
+  </div>
+  <div class="atouts"><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3l3 3-9 9-4 1 1-4z"/><path d="M7 17c-1 2-2.5 3-4 3 0-2 .5-4 2.5-5"/></svg></span><h3>À votre image</h3><p>Votre logo, vos couleurs, vos photos, vos textes écrits avec vous. Pas un modèle de plus.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><h3>Trouvé sur Google</h3><p>Pensé pour votre ville et votre métier, pour que les clients d'à côté tombent sur vous.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></span><h3>Parfait sur téléphone</h3><p>Rapide, lisible, un gros bouton pour appeler. Là où vos clients vous cherchent vraiment.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg></span><h3>Il travaille pour vous</h3><p>Demande de devis, réservation, assistant virtuel : votre site reçoit, même la nuit.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg></span><h3>Vos avis en vitrine</h3><p>Vos meilleures notes et les mots de vos clients, là où ça rassure.</p></div><div class="card atout rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></span><h3>Toujours à jour</h3><p>Un horaire, un prix, une photo à changer ? On s'en occupe, c'est inclus.</p></div></div>
+</div></section>
+
+<!-- 2 ter. L'Espace : la cerise sur le gâteau -->
+<section class="cerise" id="espace"><div class="wrap">
+  <div class="head center"><span class="eyebrow">Votre Espace ProClik</span><h2>Et la cerise sur le gâteau.</h2><p class="lead">Derrière votre site, une appli sur votre téléphone qui range tout ce qu'il reçoit. Un gros bouton par étape, rien à apprendre.</p></div>
+  <div class="trois">
+    <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><h3>Vous êtes prévenu.</h3><p>Chaque demande, chaque réservation arrive rangée, avec les photos et les infos utiles.</p></div>
+    <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span><h3>Devis et factures.</h3><p>Préparés pour vous. Vous relisez, vous validez, c'est envoyé.</p></div>
+    <div class="card etape rv"><span class="pastille"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><h3>Votre planning.</h3><p>Rendez-vous, visites, chantiers : votre semaine d'un coup d'œil.</p></div>
   </div>
 </div></section>
 
@@ -539,9 +904,29 @@ footer a{text-decoration:none}
   if(!("IntersectionObserver" in window)){[].forEach.call(els,function(e){e.classList.add("vu")})}
   else{var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){vu(e.target);io.unobserve(e.target)}})},{rootMargin:"0px 0px -8% 0px"});
     [].forEach.call(els,function(e){io.observe(e)})}
-  /* le film ne tourne que quand la télé est à l'écran */
-  var film=d.getElementById("film");
-  if(film&&"IntersectionObserver" in window)new IntersectionObserver(function(en){try{film.contentWindow.postMessage(en[0].isIntersecting?"pc-film-joue":"pc-film-pause","*")}catch(e){}}).observe(film);
+  /* le téléphone raconte l'histoire : une étape après l'autre, en boucle, seulement quand il est à l'écran.
+     L'étape qui part s'aplatit d'abord, puis la suivante émerge. */
+  var tel=d.querySelector(".tel"),scs=tel?tel.querySelectorAll(".sc"):[],fil=d.querySelector(".fil"),flots=d.querySelectorAll(".flot"),n=-1,minu=null,visible=false,cpts=[];
+  var duree=[5400,8000,6800,7400,7800,8600,6800];
+  var leg=d.createElement("p");leg.className="legende";leg.setAttribute("aria-live","polite");if(fil)fil.after(leg);
+  function montre(k){n=k;[].forEach.call(scs,function(s,i){s.classList.toggle("on",i===n)});
+    leg.innerHTML="<span>"+(n+1)+"</span> · "+scs[n].getAttribute("data-l");leg.classList.remove("change");
+    cpts.forEach(clearTimeout);cpts=[];
+    [].forEach.call(scs[n].querySelectorAll(".cpt"),function(c){var dec=+(c.getAttribute("data-dec")||0),v=+c.getAttribute("data-v"),ms=+(c.getAttribute("data-ms")||1300),suf=dec?" €":"";
+      c.textContent=fr(0,dec)+suf;if(calme){c.textContent=fr(v,dec)+suf;return}
+      cpts.push(setTimeout(function(){var t0=null;requestAnimationFrame(function pas(ts){if(!t0)t0=ts;var q=Math.min(1,(ts-t0)/ms);q=1-Math.pow(1-q,3);c.textContent=fr(v*q,dec)+suf;if(q<1)requestAnimationFrame(pas)})},+(c.getAttribute("data-t")||0)))});
+    clearTimeout(minu);if(!calme&&visible)minu=setTimeout(function(){va(n+1)},duree[n]||6000)}
+  function va(k){if(!scs.length)return;k=(k+scs.length)%scs.length;
+    [].forEach.call(fil.children,function(b,i){b.setAttribute("aria-selected",i===k?"true":"false")});
+    [].forEach.call(flots,function(f){f.classList.toggle("actif",+f.getAttribute("data-s")===k)});
+    clearTimeout(minu);
+    if(n<0||k===n){montre(k);return}
+    /* l'étape en cours s'aplatit, la légende s'efface, puis la suivante émerge */
+    scs[n].classList.remove("on");leg.classList.add("change");minu=setTimeout(function(){montre(k)},750)}
+  if(fil)[].forEach.call(scs,function(s,i){var b=d.createElement("button");b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-label",(i+1)+". "+s.getAttribute("data-l"));b.onclick=function(){va(i)};fil.appendChild(b)});
+  [].forEach.call(flots,function(f){f.addEventListener("click",function(){va(+f.getAttribute("data-s"))})});
+  if(tel){if(calme)va(1);else if("IntersectionObserver" in window){new IntersectionObserver(function(en){visible=en[0].isIntersecting;if(visible&&!d.hidden)va(n<0?0:n);else clearTimeout(minu)}).observe(tel)}else{visible=true;va(0)}
+    d.addEventListener("visibilitychange",function(){if(d.hidden)clearTimeout(minu);else if(visible)va(n)})}
   /* onde laiton au toucher des boutons */
   if(!calme)d.addEventListener("pointerdown",function(ev){var b=ev.target.closest(".btn:not(.go)");if(!b)return;var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height)*2,o=d.createElement("span");
     o.className="onde";o.style.cssText="width:"+s+"px;height:"+s+"px;left:"+(ev.clientX-r.left-s/2)+"px;top:"+(ev.clientY-r.top-s/2)+"px";b.appendChild(o);setTimeout(function(){o.remove()},1200)});
