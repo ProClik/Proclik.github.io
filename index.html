@@ -600,10 +600,25 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .rond-r{width:72px;height:72px;margin:0 auto;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up),var(--lis);color:var(--accx)}
 .rond-r svg{width:32px;height:32px}
 .recap{color:var(--muted);margin:8px 0 0}
-.mois-r{margin:-4px 0 10px;font-size:13px;font-weight:700;color:var(--muted);text-transform:capitalize}
-.mois-r:empty{display:none}
-.jours-r .gal input:disabled+span{opacity:.42;box-shadow:var(--in);cursor:default}
-.jours-r .gal small.n-r{color:var(--accx)}
+/* calendrier en vue mois */
+#rdv .heures-r{max-width:460px;margin-left:auto;margin-right:auto}
+.cal-r{max-width:460px;margin:0 auto;padding:16px 14px 12px;border-radius:24px;box-shadow:var(--in)}
+.cal-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.mois-r{font-size:16.5px;font-weight:800;text-transform:capitalize}
+.cal-b{appearance:none;border:0;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--bg);color:var(--accx);box-shadow:var(--up-s);transition:box-shadow .5s,opacity .4s}
+.cal-b:active{box-shadow:var(--in)}
+.cal-b:disabled{opacity:.3;cursor:default;box-shadow:none}
+.cal-b svg{width:18px;height:18px}
+.cal-s,.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-s span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding-bottom:4px}
+.cal-g .gal>span,.cal-g .cj{aspect-ratio:1;min-height:0;padding:0;border-radius:50%;gap:0;position:relative}
+.cal-g .gal b{font-size:15.5px}
+.cal-g .gal i{position:absolute;bottom:17%;width:5px;height:5px;border-radius:50%;background:var(--acc)}
+.cal-g .cj{display:grid;place-items:center;font-size:15px;font-weight:600;color:var(--muted);opacity:.4}
+.cal-g .cj.auj{opacity:.75;box-shadow:inset 0 0 0 1px rgba(168,130,63,.45)}
+.cal-l{display:flex;align-items:center;justify-content:center;gap:7px;margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+.cal-l i{width:6px;height:6px;border-radius:50%;background:var(--acc)}
+@media (max-width:420px){.cal-r{padding:14px 8px 10px}.cal-s,.cal-g{gap:4px}.cal-g .gal b{font-size:14.5px}}
 .ex-r{font-size:13px;color:var(--muted);margin:14px 0 0;line-height:1.45}
 .ex-r .ex{margin-right:6px}
 .ex-r[hidden],.vis-r[hidden],.ics-r[hidden]{display:none}
@@ -834,6 +849,13 @@ svg[stroke="currentColor"],svg[stroke="currentColor"] [stroke-width]{stroke-widt
   .garantie .card p{font-size:13.5px}
   .garantie .ico{width:40px;height:40px}
 }
+.mes{margin-top:16px;padding:12px 14px;border-radius:16px;box-shadow:var(--in)}
+.mes>b{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accx);margin-bottom:6px}
+.mes .ci{width:16px;height:16px}
+.mes ul{margin:0!important;padding:0!important;list-style:none;display:grid;gap:5px}
+.mes li{font-size:13.5px!important;color:var(--muted);line-height:1.4;padding-left:0!important}
+.mes li::before{content:none!important}
+.unef-x{margin:10px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted)}
 /* icônes du calculateur */
 .calc-t .gal .ci{width:18px;height:18px;color:var(--muted);margin-bottom:3px;transition:color .5s}
 .calc-t .gal input:checked+span .ci{color:var(--accx)}
@@ -1307,10 +1329,10 @@ footer a{text-decoration:none}
     <h3><span class="n">1</span>Votre site</h3>
     <p>Création payée une seule fois, ou raccordement de votre site actuel.</p>
     <div class="prix">
-      <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span><h3>Starter</h3><span class="q">Une page claire pour être trouvé et contacté.</span><span class="m"><b class="compte" data-v="390">390</b> €</span><span class="q">une fois</span><ul><li>Une page, toutes les infos utiles</li><li>Bouton d'appel, itinéraire, demande</li><li>Référencement local de base</li></ul></div>
-      <div class="card offre mis rv"><span class="reco">CONSEILLÉ</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="11" height="15" rx="2"/><path d="M5 7v12a2 2 0 0 0 2 2h9"/><path d="M11 8h5M11 12h5"/></svg></span><h3>Pro-Vitrine</h3><span class="q">Le site complet d'un commerce qui veut grandir.</span><span class="m"><b class="compte" data-v="990">990</b> €</span><span class="q">une fois</span><ul><li>4 à 7 pages pensées pour Google</li><li>Prestations, photos, avis, contact</li><li>Textes rédigés avec vous</li></ul></div>
-      <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 4.5 9-4.5" opacity=".6"/></svg></span><h3>Expert-Business</h3><span class="q">Pour les entreprises qui ont beaucoup à montrer.</span><span class="m"><b class="compte" data-v="1990">1 990</b> €</span><span class="q">une fois</span><ul><li>10 pages et plus</li><li>Une page par prestation ou par ville</li><li>Réalisations, actualités, recrutement</li></ul></div>
-      <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><h3>J'ai déjà un site</h3><span class="q">On le garde et on le relie à votre appli ProClik.</span><span class="m"><b class="compte" data-v="149">149</b> €</span><span class="q">une fois</span><ul><li>Formulaire de demande sur votre site</li><li>Offert avec un engagement de 24 mois</li></ul></div>
+      <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span><h3>Starter</h3><span class="q">Une page claire pour être trouvé et contacté.</span><span class="m"><b class="compte" data-v="390">390</b> €</span><span class="q">une fois, mise en service comprise</span><ul><li>Une page, toutes les infos utiles</li><li>Bouton d'appel, itinéraire, demande</li><li>Référencement local de base</li></ul><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>Mise en ligne de votre site et tous les réglages</li><li>Raccordé à votre Espace ProClik et à vos alertes</li><li>Prise en main de l'appli avec vous, chez vous ou en visio</li></ul></div></div>
+      <div class="card offre mis rv"><span class="reco">CONSEILLÉ</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="11" height="15" rx="2"/><path d="M5 7v12a2 2 0 0 0 2 2h9"/><path d="M11 8h5M11 12h5"/></svg></span><h3>Pro-Vitrine</h3><span class="q">Le site complet d'un commerce qui veut grandir.</span><span class="m"><b class="compte" data-v="990">990</b> €</span><span class="q">une fois, mise en service comprise</span><ul><li>4 à 7 pages pensées pour Google</li><li>Prestations, photos, avis, contact</li><li>Textes rédigés avec vous</li></ul><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>Mise en ligne de votre site et tous les réglages</li><li>Raccordé à votre Espace ProClik et à vos alertes</li><li>Prise en main de l'appli avec vous, chez vous ou en visio</li></ul></div></div>
+      <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 4.5 9-4.5" opacity=".6"/></svg></span><h3>Expert-Business</h3><span class="q">Pour les entreprises qui ont beaucoup à montrer.</span><span class="m"><b class="compte" data-v="1990">1 990</b> €</span><span class="q">une fois, mise en service comprise</span><ul><li>10 pages et plus</li><li>Une page par prestation ou par ville</li><li>Réalisations, actualités, recrutement</li></ul><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>Mise en ligne de votre site et tous les réglages</li><li>Raccordé à votre Espace ProClik et à vos alertes</li><li>Prise en main de l'appli avec vous, chez vous ou en visio</li></ul></div></div>
+      <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><h3>J'ai déjà un site</h3><span class="q">On le garde et on le relie à votre appli ProClik.</span><span class="m"><b class="compte" data-v="149">149</b> €</span><span class="q">une fois, mise en service comprise</span><ul><li>Formulaire de demande sur votre site</li><li>Offert avec un engagement de 24 mois</li></ul><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>Le formulaire installé sur votre site</li><li>Raccordé à votre Espace ProClik et à vos alertes</li><li>Prise en main de l'appli avec vous</li></ul></div></div>
     </div>
   </div>
 
@@ -1328,7 +1350,7 @@ footer a{text-decoration:none}
     <h3><span class="n">3</span>Vos options</h3>
     <p>Facultatives. Vous pourrez en ajouter plus tard.</p>
     <div class="options">
-      <div class="card option rv"><span class="tag">Artisans</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><h3>Cliky, le pré-devis</h3><p>La demande du client devient un pré-devis calculé avec vos prix. Vous validez d'un clic.</p><span class="px">99 € <small>/ mois · mise en service 490 €</small></span></div>
+      <div class="card option rv"><span class="tag">Artisans</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><h3>Cliky, le pré-devis</h3><p>La demande du client devient un pré-devis calculé avec vos prix. Vous validez d'un clic.</p><span class="px">99 € <small>/ mois · mise en service 490 €</small></span><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>On entre votre catalogue et vos prix de main-d'œuvre</li><li>On règle Cliky sur votre façon de chiffrer</li><li>On teste ensemble sur de vraies demandes avant de lancer</li></ul></div></div>
       <div class="card option rv"><span class="tag">Tous les commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="m8 17-2 4 5-4"/><path d="M8 10.5h.01M12 10.5h.01M16 10.5h.01" stroke-width="2.6"/></svg></span><h3>SMS</h3><p>Un numéro à votre nom : confirmation au client, alerte pour vous, rappel quand vous n'avez pas pu décrocher.</p><span class="px">9 € <small>/ mois</small></span></div>
       <div class="card option rv"><span class="tag">Tous les commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 9a5 5 0 0 1-7.3 4.4L3 14.5l1-3.2A5 5 0 1 1 14 9z"/><path d="M10 16.5a5 5 0 0 0 7.3 1.9l3.7 1.1-1-3.2a5 5 0 0 0-3.5-7.2"/></svg></span><h3>Assistant du site</h3><p>Répond aux questions de vos visiteurs, jour et nuit, et les guide vers une demande.</p><span class="px">39 € <small>/ mois</small></span></div>
     </div>
@@ -1347,7 +1369,7 @@ footer a{text-decoration:none}
       <div class="total" aria-live="polite">
         <small>Votre ProClik</small>
         <p class="gros"><b data-k="mois">99</b><span>€<em>par mois</em></span></p>
-        <div class="unef"><p class="unef-t">Une seule fois</p><ul class="unef-l"></ul><p class="unef-tot">Total <b><span data-k="dep">990</span> €</b></p></div>
+        <div class="unef"><p class="unef-t">Une seule fois</p><ul class="unef-l"></ul><p class="unef-tot">Total <b><span data-k="dep">990</span> €</b></p><p class="unef-x">La mise en service, c'est : la mise en ligne et les réglages, le raccordement à votre Espace, et la prise en main avec vous. Pour Cliky : vos prix entrés et testés ensemble.</p></div>
         <p class="inc-t">Tout est compris chaque mois</p>
         <ul class="inclus"></ul>
         <div class="aide"><p class="aide-t"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V6a2 2 0 0 1 4 0v4"/><path d="M11 10V5a2 2 0 0 1 4 0v5"/><path d="M15 10V7a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-1a6 6 0 0 1-5.6-3.8L3 13.5a2 2 0 0 1 3.5-1.8L7 13"/></svg>Notre aide, comprise</p><ul>
@@ -1397,7 +1419,7 @@ footer a{text-decoration:none}
       <div class="pas" data-q="lieu"><p class="q-r">Où préférez-vous qu'on se voie ?</p><div class="rang r3">
         <label class="gal"><input type="radio" name="lieu" value="Chez moi"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Chez vous</b></span></label><label class="gal"><input type="radio" name="lieu" value="En visio"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10 5-3v10l-5-3"/></svg><b>En visio</b></span></label><label class="gal"><input type="radio" name="lieu" value="Au téléphone"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg><b>Au téléphone</b></span></label>
       </div></div>
-      <div class="pas" data-q="jour"><p class="q-r">Quel jour vous arrange ?</p><p class="mois-r"></p><div class="rang jours-r"></div>
+      <div class="pas" data-q="jour"><p class="q-r">Quel jour vous arrange ?</p><div class="cal-r"><div class="cal-h"><button class="cal-b cal-p" type="button" aria-label="Mois précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button><b class="mois-r"></b><button class="cal-b cal-n" type="button" aria-label="Mois suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></button></div><div class="cal-s" aria-hidden="true"><span>lun.</span><span>mar.</span><span>mer.</span><span>jeu.</span><span>ven.</span><span>sam.</span><span>dim.</span></div><div class="cal-g jours-r"></div><p class="cal-l"><i></i>créneaux libres</p></div>
         <p class="q-r petit-q">Plutôt…</p><div class="rang r3 moments"><label class="gal"><input type="radio" name="moment" value="Matin"><span><b>Le matin</b></span></label><label class="gal"><input type="radio" name="moment" value="Après-midi"><span><b>L'après-midi</b></span></label><label class="gal"><input type="radio" name="moment" value="Fin de journée"><span><b>En fin de journée</b></span></label></div>
         <p class="q-r petit-q heures-t" hidden>À quelle heure ?</p><div class="rang heures-r" hidden></div><p class="pris-r" hidden>Ce créneau vient d'être pris. Choisissez-en un autre.</p><p class="ex-r" hidden><span class="ex">Exemple</span> Créneaux d'exemple : quand l'agenda sera branché, vous verrez ici les vraies disponibilités de ProClik.</p></div>
       <div class="pas" data-q="coord"><p class="q-r">Comment vous joindre ?</p>
@@ -1446,7 +1468,7 @@ footer a{text-decoration:none}
     var IC={"globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "tel": "<rect x=\"7\" y=\"2.5\" width=\"10\" height=\"19\" rx=\"2.5\"/><path d=\"M11 18.5h2\"/>", "doc": "<path d=\"M7 3h7l4 4v14H7z\"/><path d=\"M14 3v4h4M10 12h5M10 16h3\"/>", "cloche": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8\"/><path d=\"M10 20a2 2 0 0 0 4 0\"/>", "gens": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6\"/>", "chat": "<path d=\"M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z\"/>", "etoile": "<path d=\"m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z\"/>", "mail": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2.5\"/><path d=\"m4 7 8 6 8-6\"/>", "robot": "<rect x=\"5\" y=\"8\" width=\"14\" height=\"11\" rx=\"4\"/><path d=\"M12 4.8V8\"/><circle cx=\"12\" cy=\"3.6\" r=\"1.3\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"9.5\" cy=\"13.4\" r=\"1.25\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"14.5\" cy=\"13.4\" r=\"1.25\" fill=\"currentColor\" stroke=\"none\"/>", "sms": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"13\" rx=\"3\"/><path d=\"m7 18-1 3 4-3\"/><path d=\"M8 11h.01M12 11h.01M16 11h.01\"/>", "page": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"2\"/><path d=\"M9 8h6M9 12h6M9 16h4\"/>", "pages": "<rect x=\"8\" y=\"3\" width=\"12\" height=\"15\" rx=\"2\"/><path d=\"M5 7v12a2 2 0 0 0 2 2h9\"/><path d=\"M11 8h6M11 12h6\"/>", "couches": "<path d=\"m12 3 9 5-9 5-9-5z\"/><path d=\"m3 13 9 5 9-5\"/>", "lien": "<path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/>", "outil": "<path d=\"M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z\"/>"};
     function ic(k){return '<svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg>'}
     var INC={p:[["globe","Votre site, hébergé et mis à jour"],["tel","Votre Espace ProClik sur téléphone"],["doc","Devis et factures conformes 2026"],["cloche","Agenda et alertes"]],c:[["gens","Fichier clients"],["chat","Discussion sur votre site"]],a:[["etoile","Avis Google demandés automatiquement"],["mail","Campagnes e-mail"]]};
-    var NOM={390:["page","Site Starter : création et mise en ligne"],990:["pages","Site Pro-Vitrine : création et mise en ligne"],1990:["couches","Site Expert-Business : création et mise en ligne"],149:["lien","Raccordement de votre site actuel"]};
+    var NOM={390:["page","Site Starter : création et mise en service"],990:["pages","Site Pro-Vitrine : création et mise en service"],1990:["couches","Site Expert-Business : création et mise en service"],149:["lien","Raccordement et mise en service de votre site actuel"]};
     function eur(v){return Math.round(v).toLocaleString("fr-FR").replace(/\u202f|\u00a0/g," ")}
     function anime(el,v){var de=vu[el.dataset.k]||0,t0=performance.now(),d=650;vu[el.dataset.k]=v;
       if(matchMedia("(prefers-reduced-motion: reduce)").matches){el.textContent=eur(v);return}
@@ -1475,14 +1497,22 @@ footer a{text-decoration:none}
     function libJour(d){return J[d.getDay()]+" "+d.getDate()+" "+M[d.getMonth()]}
     var MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
     function cleJ(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
-    /* exemple de ce que donnera l'agenda GHL : 9 jours ouvrés, des créneaux libres, un jour complet */
-    function joursDemo(){var d=new Date(),n=0,H=["09:00","10:30","14:00","15:30","17:00"],R=[[0,2,3],[1,2,4],[],[0,1,3,4],[2,3],[0,4],[1,3],[0,2,4],[1,2]];reel={};exemple=true;
-      while(n<9){d.setDate(d.getDate()+1);var j=d.getDay();if(j===0||j===6)continue;var cle=cleJ(d);reel[cle]=R[n].map(function(i){return cle+"T"+H[i]+":00"});n++}
+    /* exemple de ce que donnera l'agenda GHL : un mois de jours ouvrés, des créneaux libres, quelques jours complets */
+    function joursDemo(){var d=new Date(),n=0,H=["09:00","10:30","14:00","15:30","17:00"],R=[[0,2,3],[1,2,4],[],[0,1,3,4],[2,3],[0,4],[1,3],[0,2,4],[1,2],[],[3,4],[0,1,2]];reel={};exemple=true;
+      while(n<31){d.setDate(d.getDate()+1);n++;var j=d.getDay();if(j===0||j===6)continue;var cle=cleJ(d);reel[cle]=R[n%R.length].map(function(i){return cle+"T"+H[i]+":00"})}
       joursReels()}
-    function joursReels(){var h="",cles=Object.keys(reel).slice(0,9),ms=[];cles.forEach(function(cle){var d=new Date(cle+"T12:00:00"),nb=reel[cle].length,m=MOIS[d.getMonth()]+" "+d.getFullYear();if(ms.indexOf(m)<0)ms.push(m);
-        h+='<label class="gal"><input type="radio" name="jour" value="'+cle+'"'+(nb?'':' disabled')+'><span><small>'+J[d.getDay()]+'</small><b>'+d.getDate()+'</b><small class="'+(nb?'n-r':'')+'">'+(nb?nb+" libre"+(nb>1?"s":""):"complet")+'</small></span></label>'});
-      box.innerHTML=h;moisR.textContent=ms.join(" · ");exR.hidden=!exemple;
+    var vue=null,choix="",cp=f.querySelector(".cal-p"),cn=f.querySelector(".cal-n");
+    function bornes(){var c=Object.keys(reel).sort(),a=new Date(),b=c.length?new Date(c[c.length-1]+"T12:00:00"):a;return [a.getFullYear()*12+a.getMonth(),b.getFullYear()*12+b.getMonth()]}
+    function grille(){var y=Math.floor(vue/12),m=vue%12,prem=new Date(y,m,1),dec=(prem.getDay()+6)%7,nb=new Date(y,m+1,0).getDate(),auj=cleJ(new Date()),h="";
+      for(var i=0;i<dec;i++)h+="<span></span>";
+      for(var j=1;j<=nb;j++){var cle=cleJ(new Date(y,m,j)),l=reel[cle]||[];
+        h+=l.length?'<label class="gal"><input type="radio" name="jour" value="'+cle+'"'+(cle===choix?" checked":"")+' aria-label="'+libJour(new Date(y,m,j))+', '+l.length+' créneau'+(l.length>1?"x":"")+' libre'+(l.length>1?"s":"")+'"><span><b>'+j+'</b><i></i></span></label>':'<span class="cj'+(cle===auj?" auj":"")+'">'+j+'</span>'}
+      box.innerHTML=h;moisR.textContent=MOIS[m]+" "+y;var bo=bornes();cp.disabled=vue<=bo[0];cn.disabled=vue>=bo[1]}
+    function joursReels(){var c=Object.keys(reel).filter(function(k){return reel[k].length}).sort(),p=c.filter(function(k){return c.length&&k.slice(0,7)===c[0].slice(0,7)}).length,
+      d=c.length?new Date((p<3&&c[p]?c[p]:c[0])+"T12:00:00"):new Date(); /* fin de mois presque vide : on ouvre directement le mois suivant (la flèche ‹ y ramène) */
+      vue=d.getFullYear()*12+d.getMonth();choix="";grille();exR.hidden=!exemple;
       moments.hidden=momT.hidden=true;heures.hidden=heuresT.hidden=true}
+    cp.addEventListener("click",function(){vue--;grille()});cn.addEventListener("click",function(){vue++;grille()});
     function heure(s){var m=/T(\d{2}):(\d{2})/.exec(s);return m?(+m[1])+" h "+m[2]:s}
     function charge(){var c=new AbortController(),tm=setTimeout(function(){c.abort()},6000);
       return fetch(SERVICE+"/rdv/creneaux",{signal:c.signal}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(tm);
@@ -1495,7 +1525,7 @@ footer a{text-decoration:none}
     f.addEventListener("change",function(e){if(e.target.type!=="radio")return;var q=pas[k].getAttribute("data-q");
       if(q==="activite"||q==="lieu")return setTimeout(function(){va(k+1)},450);
       if(q!=="jour")return;
-      if(reel&&e.target.name==="jour"){pris.hidden=true;heures.innerHTML=(reel[e.target.value]||[]).map(function(s){return galet("heure",s,"",heure(s),"")}).join("");heures.hidden=heuresT.hidden=false;return}
+      if(reel&&e.target.name==="jour"){choix=e.target.value;pris.hidden=true;heures.innerHTML=(reel[e.target.value]||[]).map(function(s){return galet("heure",s,"",heure(s),"")}).join("");heures.hidden=heuresT.hidden=false;return}
       if(coche("heure"))setTimeout(function(){va(k+1)},450)});
     ret.addEventListener("click",function(){if(k>0)va(k-1)});
     var bouton=f.querySelector(".envoi"),demo=f.querySelector(".demo-r");

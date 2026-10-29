@@ -55,12 +55,20 @@ header{display:flex;align-items:center;gap:12px;margin-bottom:22px}
 .presta .ico svg{width:20px;height:20px}
 .presta .t{flex:1;min-width:0}.presta .t small{display:block}
 .presta .p{font-weight:800;font-size:15px}
-.mois{font-size:13px;font-weight:700;color:var(--muted);text-transform:capitalize;margin:0 0 10px}
-.jours{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 14px;margin:0 -4px;scrollbar-width:none}
-.jours::-webkit-scrollbar{display:none}
-.jours .gal{flex:0 0 74px;scroll-snap-align:start}
-.jours .gal b{font-size:21px}
-.jours small.n{color:var(--accx)}
+.cal{padding:14px 10px 10px;border-radius:22px;box-shadow:var(--in)}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mois{font-size:16px;font-weight:800;text-transform:capitalize}
+.cal-b{appearance:none;border:0;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--bg);color:var(--accx);box-shadow:var(--up-s);transition:opacity .4s}
+.cal-b:active{box-shadow:var(--in)}.cal-b:disabled{opacity:.3;box-shadow:none;cursor:default}.cal-b svg{width:18px;height:18px}
+.cal-s,.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-s span{text-align:center;font-size:10.5px;font-weight:700;color:var(--muted);padding-bottom:4px}
+.cal-g .gal>span,.cal-g .cj{aspect-ratio:1;min-height:0;padding:0;border-radius:50%;gap:0;position:relative}
+.cal-g .gal b{font-size:15px}
+.cal-g .gal i{position:absolute;bottom:16%;width:5px;height:5px;border-radius:50%;background:var(--acc)}
+.cal-g .cj{display:grid;place-items:center;font-size:14.5px;font-weight:600;color:var(--muted);opacity:.4}
+.cal-g .cj.auj{opacity:.75;box-shadow:inset 0 0 0 1px rgba(168,130,63,.45)}
+.cal-l{display:flex;align-items:center;justify-content:center;gap:7px;margin:10px 0 0;font-size:12.5px;color:var(--muted)}
+.cal-l i{width:6px;height:6px;border-radius:50%;background:var(--acc)}
 .heures{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:6px}
 .heures-t{font-size:15px;font-weight:700;margin:14px 0 8px}
 .heures-t[hidden],.heures[hidden]{display:none}
@@ -117,7 +125,7 @@ footer{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap
     </div></div>
 
     <div class="pas" data-q="quand"><p class="q">Quel jour ?</p><p class="s">Seuls les créneaux libres sont proposés.</p>
-      <p class="mois"></p><div class="jours"></div>
+      <div class="cal"><div class="cal-h"><button class="cal-b cal-p" type="button" aria-label="Mois précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button><b class="mois"></b><button class="cal-b cal-n" type="button" aria-label="Mois suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></button></div><div class="cal-s" aria-hidden="true"><span>lun.</span><span>mar.</span><span>mer.</span><span>jeu.</span><span>ven.</span><span>sam.</span><span>dim.</span></div><div class="cal-g jours"></div><p class="cal-l"><i></i>créneaux libres</p></div>
       <p class="heures-t" hidden>À quelle heure ?</p><div class="heures" hidden></div></div>
 
     <div class="pas" data-q="coord"><p class="q">Vos coordonnées</p><p class="s">Pour vous envoyer la confirmation et le rappel.</p>
@@ -150,12 +158,17 @@ footer{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap
 (function(){var f=document.getElementById("resa"),pas=[].slice.call(f.querySelectorAll(".pas")),k=0,barre=f.querySelector(".barre i"),ret=f.querySelector(".retour");
   var J=["dim.","lun.","mar.","mer.","jeu.","ven.","sam."],M=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."],MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
   var jours=f.querySelector(".jours"),heures=f.querySelector(".heures"),heuresT=f.querySelector(".heures-t"),moisP=f.querySelector(".mois");
-  /* créneaux d'exemple : salon ouvert du mardi au samedi, un jour complet */
-  var H=["09:00","09:45","10:30","11:15","14:00","14:45","15:30","16:15","17:00"],R=[[0,2,4,7],[1,3,5,6,8],[],[0,1,4,5],[2,6,7],[0,3,4,8],[1,2,5],[4,6,8],[0,1,2,7],[3,5]],cr={};
-  (function(){var d=new Date(),n=0,h="",ms=[];while(n<10){d.setDate(d.getDate()+1);var j=d.getDay();if(j===0||j===1)continue;
-    var cle=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2),l=R[n].map(function(i){return H[i]}),m=MOIS[d.getMonth()]+" "+d.getFullYear();cr[cle]=l;if(ms.indexOf(m)<0)ms.push(m);
-    h+='<label class="gal"><input type="radio" name="jour" value="'+cle+'"'+(l.length?'':' disabled')+'><span><small>'+J[j]+'</small><b>'+d.getDate()+'</b><small class="'+(l.length?'n':'')+'">'+(l.length?l.length+" libre"+(l.length>1?"s":""):"complet")+'</small></span></label>';n++}
-    jours.innerHTML=h;moisP.textContent=ms.join(" · ")})();
+  /* créneaux d'exemple : salon ouvert du mardi au samedi, sur 6 semaines, quelques jours complets */
+  var H=["09:00","09:45","10:30","11:15","14:00","14:45","15:30","16:15","17:00"],R=[[0,2,4,7],[1,3,5,6,8],[],[0,1,4,5],[2,6,7],[0,3,4,8],[1,2,5],[4,6,8],[0,1,2,7],[3,5],[]],cr={},choix="";
+  function cleJ(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+  (function(){var d=new Date(),n=0;for(var x=0;x<42;x++){d.setDate(d.getDate()+1);var j=d.getDay();if(j===0||j===1)continue;cr[cleJ(d)]=R[n%R.length].map(function(i){return H[i]});n++}})();
+  var cles=Object.keys(cr).sort(),a0=new Date(),deb=a0.getFullYear()*12+a0.getMonth(),dn=new Date(cles[cles.length-1]+"T12:00:00"),fin=dn.getFullYear()*12+dn.getMonth(),p0=cles.filter(function(k){return cr[k].length&&k.slice(0,7)===cles[0].slice(0,7)}).length,dep=p0<3?deb+1:deb,vue=dep,cp=f.querySelector(".cal-p"),cn=f.querySelector(".cal-n");
+  function grille(){var y=Math.floor(vue/12),m=vue%12,dec=(new Date(y,m,1).getDay()+6)%7,nb=new Date(y,m+1,0).getDate(),auj=cleJ(new Date()),h="";
+    for(var i=0;i<dec;i++)h+="<span></span>";
+    for(var j=1;j<=nb;j++){var cle=cleJ(new Date(y,m,j)),l=cr[cle]||[];
+      h+=l.length?'<label class="gal"><input type="radio" name="jour" value="'+cle+'"'+(cle===choix?" checked":"")+' aria-label="'+j+' '+MOIS[m]+', '+l.length+' libres"><span><b>'+j+'</b><i></i></span></label>':'<span class="cj'+(cle===auj?" auj":"")+'">'+j+'</span>'}
+    jours.innerHTML=h;moisP.textContent=MOIS[m]+" "+y;cp.disabled=vue<=deb;cn.disabled=vue>=fin}
+  grille();cp.addEventListener("click",function(){vue--;grille()});cn.addEventListener("click",function(){vue++;grille()});
   function va(i){k=i;pas.forEach(function(p,j){p.classList.toggle("on",j===k)});barre.style.width=((k+1)/pas.length*100)+"%";ret.hidden=k===0||k===pas.length-1;
     if(k)f.scrollIntoView({behavior:"smooth",block:"start"})}
   var val=function(n){var c=f.querySelector('[name="'+n+'"]:checked');return c?c:null};
@@ -165,7 +178,7 @@ footer{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap
   function recap(el,paye){var p=val("presta");el.innerHTML='<div><span>Prestation</span><b>'+p.value+' · '+duree(+p.dataset.d)+'</b></div><div><span>Quand</span><b>'+quand()+'</b></div><div><span>Prix</span><b>'+p.dataset.p+',00 €</b></div><div><span>Acompte</span><b>15,00 €'+(paye?' <i class="paye">Payé</i>':'')+'</b></div>'+(paye?'<div><span>Reste au salon</span><b>'+(p.dataset.p-15)+',00 €</b></div>':'')}
   f.addEventListener("change",function(e){var n=e.target.name;
     if(n==="presta")setTimeout(function(){va(1)},420);
-    if(n==="jour"){heures.innerHTML=cr[e.target.value].map(function(s){return '<label class="gal"><input type="radio" name="heure" value="'+s+'"><span><b>'+hh(s)+'</b></span></label>'}).join("");heures.hidden=heuresT.hidden=false}
+    if(n==="jour"){choix=e.target.value;heures.innerHTML=cr[e.target.value].map(function(s){return '<label class="gal"><input type="radio" name="heure" value="'+s+'"><span><b>'+hh(s)+'</b></span></label>'}).join("");heures.hidden=heuresT.hidden=false}
     if(n==="heure")setTimeout(function(){va(2)},420)});
   f.querySelector(".suite").addEventListener("click",function(){var ok=true;
     ["prenom","tel"].forEach(function(n){var c=f[n],bon=n==="tel"?c.value.replace(/\D/g,"").length>=10:c.value.trim().length>0;c.parentNode.classList.toggle("err",!bon);if(!bon)ok=false});
@@ -177,7 +190,7 @@ footer{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap
       var deb=new Date(val("jour").value+"T"+val("heure").value+":00"),fin=new Date(deb.getTime()+val("presta").dataset.d*60000);
       f.querySelector(".ics").href="data:text/calendar;charset=utf-8,"+encodeURIComponent(["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ProClik//Demo//FR","BEGIN:VEVENT","UID:"+z(deb)+"@studio-nova-demo","DTSTAMP:"+z(new Date()),"DTSTART:"+z(deb),"DTEND:"+z(fin),"SUMMARY:Studio Nova · "+val("presta").value,"END:VEVENT","END:VCALENDAR"].join("\r\n"));
       va(4)},900)});
-  f.querySelector(".encore").addEventListener("click",function(){f.reset();heures.hidden=heuresT.hidden=true;va(0)});
+  f.querySelector(".encore").addEventListener("click",function(){f.reset();choix="";vue=dep;grille();heures.hidden=heuresT.hidden=true;va(0)});
   ret.addEventListener("click",function(){if(k>0)va(k-1)});
   va(0)})();
 </script>
