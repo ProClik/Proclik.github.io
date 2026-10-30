@@ -32,15 +32,15 @@ var css=
 '#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
 '#pc-ouv.espace .pbox{animation:pcRange 1.1s cubic-bezier(.65,0,.35,1) 7.2s forwards}'+
 '#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
-'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.42s + var(--i) * 1.1s)}'+
+'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
 /* une vague : un bourrelet sans bord net, éclairé en haut à gauche, ombré en bas à droite */
 '#pc-ouv .ond i::before,#pc-ouv .ond i::after{content:"";position:absolute;inset:0;border-radius:50%}'+
 '#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 76%,var(--mo) 87%,transparent 98%);transform:translate(1%,1.2%);opacity:.7}'+
 '#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%)}'+
-'#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s cubic-bezier(.3,0,.2,1) 1.15s,pcFond .5s var(--d) 2.5s forwards}'+
+'#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s linear 1.15s forwards,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
-'#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s cubic-bezier(.3,0,.2,1) 1.15s}'+
-'#pc-ouv .g::after{box-shadow:inset 4px 4px 9px var(--mo),inset -4px -4px 9px var(--mh);opacity:0;animation:pcCreux 1.3s cubic-bezier(.3,0,.2,1) 1.15s}'+
+'#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s linear 1.15s forwards}'+
+'#pc-ouv .g::after{box-shadow:inset 4px 4px 9px var(--mo),inset -4px -4px 9px var(--mh);opacity:0;animation:pcCreux 1.3s linear 1.15s forwards}'+
 '@keyframes pcTrace{from{stroke-dashoffset:101}to{stroke-dashoffset:0}}'+
 '@keyframes pcReflet{from{stroke-dashoffset:8}to{stroke-dashoffset:-92}}'+
 '@keyframes pcEteint{to{opacity:0}}'+
@@ -54,9 +54,9 @@ var css=
 '@keyframes pcEfface{to{opacity:0;transform:translateX(6px)}}'+
 '@keyframes pcRange{to{transform:translate(var(--px),var(--py)) scale(var(--ps,.66))}}'+
 '@keyframes pcLeve{from{opacity:0}to{opacity:1}}'+
-'@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,0,.2,1)}23%,35%{transform:scale(.925);animation-timing-function:cubic-bezier(.3,0,.25,1)}100%{transform:scale(1)}}'+
-'@keyframes pcOmbre{0%{opacity:1}23%,35%{opacity:0}100%{opacity:1}}'+
-'@keyframes pcCreux{0%{opacity:0}23%,35%{opacity:1}100%{opacity:0}}'+
+'@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{transform:scale(.93);animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{transform:scale(.97)}}'+
+'@keyframes pcOmbre{0%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%,100%{opacity:0}}'+
+'@keyframes pcCreux{0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{opacity:1;animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{opacity:0}}'+
 '@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}12%{opacity:.4}55%{opacity:.22}100%{width:150vmax;height:150vmax;opacity:0}}'+
 '@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
@@ -92,8 +92,8 @@ function plume(svg,centre){
  var e1=bez(.45,0,.3,1),e2=bez(.5,0,.3,1),e3=bez(.45,0,.25,1),t0=performance.now(),px=cx,py=cy,pt0=0,ang=0,s=1;
  function pos(t){
   if(t<2.45){var c=centre();cx=c[0];cy=c[1];
-   /* l'appui : la pointe s'enfonce avec le bouton, puis ressort un peu plus grosse quand il remonte */
-   var a=t-1.15,dz=a<0?0:a<.3?bez(.3,0,.2,1)(a/.3):a<.45?1:a<1.2?1-bez(.3,0,.2,1)((a-.45)/.75):0,pop=a>.45&&a<1?Math.sin(Math.PI*(a-.45)/.55)*.12:0;
+   /* l'appui : la pointe s'enfonce avec le bouton, puis revient doucement pendant que la vague part */
+   var a=t-1.15,dz=a<0?0:a<.39?bez(.4,0,.2,1)(a/.39):a<1.3?1-bez(.3,0,.3,1)((a-.39)/.91):0,pop=0;
    return [cx,cy,1-.2*dz+pop]}
   if(t<2.85){var k=e1((t-2.45)/.4);return [cx+(52-cx)*k,cy+(69.7-cy)*k,1]}
   if(t<4.75){var k=e2((t-2.85)/1.9),q=P.getPointAtLength(k*L);l.style.strokeDashoffset=101-101*k;sh.style.strokeDashoffset=8-100*k;return [q.x,q.y,1]}
