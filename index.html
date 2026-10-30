@@ -881,10 +881,31 @@ a.fr-p:active{box-shadow:var(--in)}
 .resa .points li::before{content:"";position:absolute;left:0;top:8px;width:10px;height:10px;border-radius:50%;background:var(--acc)}
 .resa .points li{display:block}
 .resa .points b{display:block;color:var(--fg)}
-/* agendas compatibles : trois galets plats, sans logo de marque */
-.sync{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
-.sync span{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px;border-radius:999px;background:var(--bg);box-shadow:var(--up);font-size:14px;font-weight:600;color:var(--fg)}
-.sync i{width:8px;height:8px;border-radius:50%;background:var(--acc)}
+/* agendas compatibles : galets en relief, petite icône d'agenda aux couleurs de chacun (pas de logo), coche laiton qui se trace une fois synchronisé */
+.sync{margin-top:24px}
+.sync-t{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--accx)}
+.sync-t svg{width:18px;height:18px;flex:none;animation:syncTour 6s cubic-bezier(.6,0,.3,1) infinite}
+.sync-l{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:440px}
+.ag-s{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:104px;padding:16px 6px 12px;border-radius:24px;background:var(--bg);box-shadow:var(--up),var(--lis);font-size:13.5px;font-weight:700;line-height:1.2;text-align:center;color:var(--fg);overflow:hidden}
+.ag-s b small{display:block;font-size:11.5px;font-weight:600;color:var(--muted)}
+.ag-s>svg{width:38px;height:38px;flex:none;filter:drop-shadow(1px 2px 2px rgba(26,34,64,.18))}
+.ag-s .cb{fill:#FFFFFF;stroke:rgba(26,34,64,.12);stroke-width:.8}
+.ag-s .ca{stroke:#5B6275;stroke-width:1.8;stroke-linecap:round}
+.ag-s text{font:800 10px Manrope,system-ui,sans-serif;fill:#1A2033}
+.ag-s em{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;box-shadow:var(--gal);color:var(--acc)}
+.ag-s em svg{width:13px;height:13px}
+.ag-s em path{stroke-dasharray:1;stroke-dashoffset:1}
+.ag-s::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-110%);pointer-events:none}
+:root[data-theme="dark"] .ag-s::after{background:linear-gradient(100deg,transparent 30%,rgba(212,180,131,.14) 50%,transparent 70%)}
+.js .sync .ag-s{opacity:0;transform:translateY(10px) scale(.94)}
+.sync.vu .ag-s{animation:agEntre .7s cubic-bezier(.3,.7,.3,1) calc(.25s + var(--k)*.18s) forwards}
+.sync.vu .ag-s em path{animation:agCoche .5s ease calc(.9s + var(--k)*.25s) forwards}
+.sync.vu .ag-s::after{animation:agReflet 7s ease-in-out calc(2s + var(--k)*.3s) infinite}
+@keyframes agEntre{to{opacity:1;transform:none}}
+@keyframes agCoche{to{stroke-dashoffset:0}}
+@keyframes agReflet{0%{transform:translateX(-110%)}18%,100%{transform:translateX(110%)}}
+@keyframes syncTour{0%,55%{transform:rotate(0)}85%,100%{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sync *,.sync *::after{animation:none!important}.js .sync .ag-s{opacity:1;transform:none}.ag-s em path{stroke-dashoffset:0}}
 /* la carte Studio Nova prend la couleur du salon (prune), comme son site */
 .resa-d{--acc:#A8667A;--accx:#7B4B5E;--lis:0 0 0 1px rgba(123,75,94,.38),0 0 30px -8px rgba(123,75,94,.4)}
 :root[data-theme="dark"] .resa-d{--acc:#D49BAA;--accx:#E0AEBB;--lis:0 0 0 1px rgba(212,155,170,.32),0 0 30px -8px rgba(212,155,170,.3)}
@@ -1570,7 +1591,10 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
     <h2>Vos clients réservent, <span class="or">même quand vous travaillez.</span></h2>
     <p class="lead">Coiffeur, esthéticienne, garage, coach : votre client choisit son créneau sur votre site, reçoit sa confirmation et un rappel la veille. Le rendez-vous arrive dans votre planning.</p>
     <ul class="points"><li><b>Moins d'oublis.</b> Un rappel part tout seul avant chaque rendez-vous.</li><li><b>L'acompte anti-lapin.</b> Le client peut régler un acompte en réservant. Les lapins se font beaucoup plus rares.</li><li><b>Votre agenda à jour.</b> Rendez-vous, annulations et clients, au même endroit.</li><li><b>Relié à l'agenda de votre téléphone.</b> Chaque réservation s'ajoute toute seule dans l'agenda que vous utilisez déjà. Et vos rendez-vous perso bloquent le créneau : personne ne peut le réserver.</li></ul>
-    <div class="sync rv" aria-label="Agendas compatibles"><span><i></i>Google Agenda</span><span><i></i>Outlook</span><span><i></i>iPhone (iCloud)</span></div>
+    <div class="sync rv" aria-label="Agendas compatibles">
+      <p class="sync-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 20.5V16h-4.5"/></svg>Synchronisé dans les deux sens</p>
+      <div class="sync-l"><span class="ag-s" style="--k:0"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="3" y="4" width="22" height="21" rx="5" class="cb"/><path d="M3 9a5 5 0 0 1 5-5h3v6H3z" fill="#4285F4"/><path d="M11 4h6v6h-6z" fill="#EA4335"/><path d="M17 4h3a5 5 0 0 1 5 5v1h-8z" fill="#FBBC05"/><path d="M3 10h22v1H3z" fill="#34A853"/><path d="M9 2.5v4M19 2.5v4" class="ca"/><text x="14" y="21.5" text-anchor="middle">4</text></svg><b>Google<small>Agenda</small></b><em aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="m5 12 4.5 4.5L19 7"/></svg></em></span><span class="ag-s" style="--k:1"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="3" y="4" width="22" height="21" rx="5" class="cb"/><path d="M3 9a5 5 0 0 1 5-5h12a5 5 0 0 1 5 5v2H3z" fill="#0F6CBD"/><path d="M9 2.5v4M19 2.5v4" class="ca"/><text x="14" y="21.5" text-anchor="middle">4</text></svg><b>Outlook<small>Microsoft</small></b><em aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="m5 12 4.5 4.5L19 7"/></svg></em></span><span class="ag-s" style="--k:2"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="3" y="4" width="22" height="21" rx="5" class="cb"/><path d="M3 9a5 5 0 0 1 5-5h12a5 5 0 0 1 5 5v2H3z" fill="#FF3B30"/><path d="M9 2.5v4M19 2.5v4" class="ca"/><text x="14" y="21.5" text-anchor="middle">4</text></svg><b>iPhone<small>iCloud</small></b><em aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="m5 12 4.5 4.5L19 7"/></svg></em></span></div>
+    </div>
   </div>
   <div class="card resa-d lis rv" aria-hidden="true">
     <div class="rd-t"><b>Studio Nova</b><small>Coupe + brushing · 1 h</small></div>
