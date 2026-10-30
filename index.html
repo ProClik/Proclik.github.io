@@ -1239,10 +1239,11 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
 #pc-charge{position:fixed;inset:0;z-index:300;display:grid;place-items:center;align-content:center;gap:34px;background:var(--bg);opacity:0;animation:chArrive .6s ease .8s forwards;transition:opacity .5s ease}
 #pc-charge.parti{opacity:0!important;pointer-events:none}
 /* l'animation suit la vidéo choisie par Cyril : le galet reste immobile ; une goutte monte du liseré (effet liquide) et devient le point,
-   puis le liseré se penche et tourne autour du galet immobile, d'un seul mouvement lent et continu, avant de se reposer */
-.ch-z{position:relative;width:104px;height:104px;perspective:460px;color:var(--acc)}
-.ch-d{position:absolute;inset:6px;border-radius:50%;background:var(--bg);box-shadow:inset 5px 5px 12px rgba(26,34,64,.16),inset -5px -5px 12px var(--hi)}
-:root[data-theme="dark"] .ch-d{box-shadow:inset 6px 6px 14px rgba(0,0,0,.5),inset -5px -5px 12px rgba(255,255,255,.04)}
+   puis le liseré se penche et tourne autour du galet immobile (sa moitié arrière passe derrière), d'un seul mouvement lent et continu */
+.ch-z{position:relative;width:104px;height:104px;perspective:460px;transform-style:preserve-3d;color:var(--acc)}
+/* le bouton est plus petit que le liseré : quand le liseré se penche, sa moitié arrière passe derrière le bouton, sans le traverser */
+.ch-d{position:absolute;inset:15px;border-radius:50%;background:var(--bg);box-shadow:-5px -5px 12px var(--hi),6px 6px 14px rgba(26,34,64,.2),inset 1.5px 1.5px 1px rgba(255,255,255,.95),inset -1.5px -1.5px 2px rgba(26,34,64,.13)}
+:root[data-theme="dark"] .ch-d{box-shadow:-5px -5px 12px rgba(255,255,255,.05),6px 6px 14px rgba(0,0,0,.55),inset 1.5px 1.5px 1px rgba(255,255,255,.07),inset -1.5px -1.5px 2px rgba(0,0,0,.4)}
 .ch-l{position:absolute;inset:0;animation:chTour 6s cubic-bezier(.45,0,.3,1) infinite}
 .ch-l svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;animation:chLueur 6s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(168,130,63,.35))}
 .ch-l .an{fill:none;stroke:currentColor;stroke-width:4.2}
@@ -1257,8 +1258,8 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
 @keyframes chBase{0%{transform:scale(0)}9%,21%{transform:scale(1)}32%,100%{transform:scale(0)}}
 @keyframes chCou{0%,3%{transform:scale(1.2,0)}27%{transform:scale(1,.9)}31%{transform:scale(.45,.55)}37%,100%{transform:scale(0,0)}}
 @keyframes chMonte{0%,3%{transform:translateY(0) scale(.4);opacity:1}27%{transform:translateY(-43px) scale(1);opacity:1}28%,100%{transform:translateY(-43px) scale(1);opacity:0}}
-@keyframes chPoint{0%,27%{transform:scale(1);opacity:0}28%,46%{transform:scale(1);opacity:1}62%{transform:scale(.8)}78%{transform:scale(1)}92%{transform:scale(.4);opacity:1}97%,100%{transform:scale(0);opacity:0}}
-@keyframes chRide{0%,42%{transform:scale(1);opacity:0}46%{opacity:.55}72%,100%{transform:scale(4.6);opacity:0}}
+@keyframes chPoint{0%,27%{transform:translateZ(3px) scale(1);opacity:0}28%,46%{transform:translateZ(3px) scale(1);opacity:1}62%{transform:translateZ(3px) scale(.8)}78%{transform:translateZ(3px) scale(1)}92%{transform:translateZ(3px) scale(.4);opacity:1}97%,100%{transform:translateZ(3px) scale(0);opacity:0}}
+@keyframes chRide{0%,42%{transform:translateZ(3px) scale(1);opacity:0}46%{opacity:.55}72%,100%{transform:translateZ(3px) scale(4.6);opacity:0}}
 @media (prefers-reduced-motion:reduce){.ch-l,.ch-l *,.ch-c{animation:none!important}.ch-l .bl,.ch-l .co,.ch-l .ba{display:none}.ch-o{animation:none;opacity:1}}
 
 
