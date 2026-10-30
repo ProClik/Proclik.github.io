@@ -1109,7 +1109,7 @@ footer a{text-decoration:none}
 .vapeur{opacity:.7;animation:vapeur 3.5s ease-in-out infinite}
 @keyframes vapeur{0%,100%{opacity:.15;transform:translateY(3px)}50%{opacity:.8;transform:translateY(-3px)}}
 .app{animation:derive 6s ease-in-out infinite}
-.a2{animation-delay:-1.2s}.a3{animation-delay:-2.4s}.a4{animation-delay:-3.6s}.a5{animation-delay:-4.8s}
+.a2{animation-delay:-1.2s}.a3{animation-delay:-2.4s}.a4{animation-delay:-6s}.a5{animation-delay:-4.8s}
 @keyframes derive{0%,100%{transform:translate(0,0) rotate(0)}33%{transform:translate(4px,-5px) rotate(5deg)}66%{transform:translate(-4px,3px) rotate(-4deg)}}
 .qm{animation:scintille 2.4s ease-in-out infinite}
 /* étape 1 : le site se construit bloc par bloc */
@@ -1123,9 +1123,9 @@ footer a{text-decoration:none}
 .envol{animation:envol 6s var(--doux) infinite}
 @keyframes envol{0%,40%{opacity:0;transform:translate(-14px,10px)}55%,80%{opacity:1;transform:none}95%,100%{opacity:0;transform:translate(16px,-10px)}}
 /* étape 3 : un doigt appuie sur le gros bouton */
-.doigt{fill:var(--acc-bg);stroke:var(--acc);animation:doigt 3.6s var(--doux) infinite}
+.doigt{fill:var(--acc-bg);stroke:var(--acc);animation:doigt 6s var(--doux) infinite}
 @keyframes doigt{0%,20%{opacity:0;transform:translate(14px,14px)}40%{opacity:1;transform:translate(0,0)}50%{transform:scale(.85)}60%,80%{opacity:1;transform:none}100%{opacity:0}}
-.gros{animation:appui 3.6s var(--doux) infinite}
+.gros{animation:appui 6s var(--doux) infinite}
 @keyframes appui{0%,45%{transform:none}50%{transform:scale(.94)}60%,100%{transform:none}}
 .etape .pastille{position:relative}
 
@@ -1239,26 +1239,26 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
 #pc-charge{position:fixed;inset:0;z-index:300;display:grid;place-items:center;align-content:center;gap:34px;background:var(--bg);opacity:0;animation:chArrive .6s ease .8s forwards;transition:opacity .5s ease}
 #pc-charge.parti{opacity:0!important;pointer-events:none}
 /* l'animation suit la vidéo choisie par Cyril : le galet reste immobile ; une goutte monte du liseré (effet liquide) et devient le point,
-   puis le liseré tourne autour du galet en 3D (il passe derrière et revient par le bas), d'un seul mouvement continu */
-.ch-z{position:relative;width:104px;height:104px;perspective:420px;transform-style:preserve-3d;color:var(--acc)}
+   puis le liseré se penche et tourne autour du galet immobile, d'un seul mouvement lent et continu, avant de se reposer */
+.ch-z{position:relative;width:104px;height:104px;perspective:460px;color:var(--acc)}
 .ch-d{position:absolute;inset:6px;border-radius:50%;background:var(--bg);box-shadow:inset 5px 5px 12px rgba(26,34,64,.16),inset -5px -5px 12px var(--hi)}
 :root[data-theme="dark"] .ch-d{box-shadow:inset 6px 6px 14px rgba(0,0,0,.5),inset -5px -5px 12px rgba(255,255,255,.04)}
-.ch-l{position:absolute;inset:0;animation:chTour 3.6s cubic-bezier(.45,0,.3,1) infinite}
-.ch-l svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;animation:chLueur 3.6s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(168,130,63,.35))}
+.ch-l{position:absolute;inset:0;animation:chTour 6s cubic-bezier(.45,0,.3,1) infinite}
+.ch-l svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;animation:chLueur 6s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(168,130,63,.35))}
 .ch-l .an{fill:none;stroke:currentColor;stroke-width:4.2}
 .ch-l .bl,.ch-l .co,.ch-l .ba{fill:currentColor;transform-box:view-box;transform-origin:50px 93px}
-.ch-l .ba{animation:chBase 3.6s ease-in-out infinite}
-.ch-l .co{animation:chCou 3.6s cubic-bezier(.45,0,.35,1) infinite}
-.ch-l .bl{animation:chMonte 3.6s cubic-bezier(.45,0,.3,1) infinite}
-.ch-o{position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:var(--acc);opacity:0;transform:translateZ(1px);animation:chPoint 3.6s cubic-bezier(.45,0,.35,1) infinite}
-.ch-c{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:1px solid var(--acc);opacity:0;animation:chRide 3.6s cubic-bezier(.2,.6,.35,1) infinite}
-@keyframes chTour{0%,46%{transform:rotate3d(1,.32,0,0deg)}94%,100%{transform:rotate3d(1,.32,0,360deg)}}
+.ch-l .ba{animation:chBase 6s ease-in-out infinite}
+.ch-l .co{animation:chCou 6s cubic-bezier(.45,0,.35,1) infinite}
+.ch-l .bl{animation:chMonte 6s cubic-bezier(.45,0,.3,1) infinite}
+.ch-o{position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:var(--acc);opacity:0;animation:chPoint 6s cubic-bezier(.45,0,.35,1) infinite}
+.ch-c{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:1px solid var(--acc);opacity:0;animation:chRide 6s cubic-bezier(.2,.6,.35,1) infinite}
+@keyframes chTour{0%,40%{transform:rotateZ(0deg) rotateX(0deg) rotateZ(0deg);animation-timing-function:cubic-bezier(.5,0,.9,.6)}52%{transform:rotateZ(90deg) rotateX(52deg) rotateZ(-90deg);animation-timing-function:linear}64%{transform:rotateZ(210deg) rotateX(64deg) rotateZ(-210deg);animation-timing-function:linear}76%{transform:rotateZ(330deg) rotateX(52deg) rotateZ(-330deg);animation-timing-function:cubic-bezier(.1,.4,.4,1)}92%,100%{transform:rotateZ(450deg) rotateX(0deg) rotateZ(-450deg)}}
 @keyframes chLueur{0%,4%{opacity:.5}30%,90%{opacity:1}100%{opacity:.5}}
 @keyframes chBase{0%{transform:scale(0)}9%,21%{transform:scale(1)}32%,100%{transform:scale(0)}}
 @keyframes chCou{0%,3%{transform:scale(1.2,0)}27%{transform:scale(1,.9)}31%{transform:scale(.45,.55)}37%,100%{transform:scale(0,0)}}
 @keyframes chMonte{0%,3%{transform:translateY(0) scale(.4);opacity:1}27%{transform:translateY(-43px) scale(1);opacity:1}28%,100%{transform:translateY(-43px) scale(1);opacity:0}}
-@keyframes chPoint{0%,27%{transform:translateZ(1px) scale(1);opacity:0}28%,52%{transform:translateZ(1px) scale(1);opacity:1}88%{transform:translateZ(1px) translateY(6px) scale(.2);opacity:.9}96%,100%{transform:translateZ(1px) translateY(8px) scale(0);opacity:0}}
-@keyframes chRide{0%,50%{transform:translateZ(1px) scale(1);opacity:0}55%{opacity:.6}80%,100%{transform:translateZ(1px) scale(4.4);opacity:0}}
+@keyframes chPoint{0%,27%{transform:scale(1);opacity:0}28%,46%{transform:scale(1);opacity:1}62%{transform:scale(.8)}78%{transform:scale(1)}92%{transform:scale(.4);opacity:1}97%,100%{transform:scale(0);opacity:0}}
+@keyframes chRide{0%,42%{transform:scale(1);opacity:0}46%{opacity:.55}72%,100%{transform:scale(4.6);opacity:0}}
 @media (prefers-reduced-motion:reduce){.ch-l,.ch-l *,.ch-c{animation:none!important}.ch-l .bl,.ch-l .co,.ch-l .ba{display:none}.ch-o{animation:none;opacity:1}}
 
 
@@ -1331,7 +1331,7 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
       <!-- 1. le client cherche, l'artisan sort en tête -->
       <div class="sc" data-l="Votre client vous cherche">
         <div class="e " style="--d:0s"><div class="cherche c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="frappe">plaquiste fenêtres Grenoble</span></div></div>
-        <div class="e res r presse" style="--d:1.9s;--p:3.6s"><i class="doigt-t"></i><span class="lg cl rs">DR</span><div><b>Dupont Rénovation</b><small><span class="et">★★★★★</span> 4,9 (86 avis) · Plaquiste</small><small class="ouv">Ouvert · Grenoble</small></div></div>
+        <div class="e res r presse" style="--d:1.9s;--p:6s"><i class="doigt-t"></i><span class="lg cl rs">DR</span><div><b>Dupont Rénovation</b><small><span class="et">★★★★★</span> 4,9 (86 avis) · Plaquiste</small><small class="ouv">Ouvert · Grenoble</small></div></div>
         <div class="e " style="--d:2.3s"><div class="res2 rs"><i></i><i></i></div></div>
         <div class="e " style="--d:2.6s"><div class="res2 rs"><i></i><i></i></div></div>
       </div>
@@ -1394,7 +1394,7 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
         <div class="e " style="--d:0s"><div class="sh"><span class="lg rs"><svg class="pp" viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><div><b>Novembre</b><small class="enl">Chiffres d'exemple</small></div></div></div>
         <div class="e " style="--d:0.3s"><div class="tuiles"><div class="rs"><small>Demandes</small><b class="cpt" data-v="14" data-t="400">14</b></div><div class="rs"><small>Visites</small><b class="cpt" data-v="11" data-t="500">11</b></div><div class="rs"><small>Devis signés</small><b class="cpt" data-v="6" data-t="600">6</b></div><div class="rs"><small>Encaissé</small><b><span class="cpt" data-v="12480" data-t="700">12 480</span> €</b></div></div></div>
         <div class="e " style="--d:0.9s"><div class="courbe c"><svg viewBox="0 0 240 80" preserveAspectRatio="none" aria-hidden="true"><path class="aire" d="M0 70 C30 64 40 52 70 54 S110 34 140 38 S190 16 240 12 V80 H0z"/><path class="ligne-c" pathLength="1" d="M0 70 C30 64 40 52 70 54 S110 34 140 38 S190 16 240 12"/><circle cx="240" cy="12" r="5"/></svg><small>Juin</small><small>Nov.</small></div></div>
-        <div class="e " style="--d:3.6s"><div class="ping rs"><i></i><div><b>Devis signé · Mme Rossi</b><span>Fenêtres et cloison · à l'instant</span></div></div></div>
+        <div class="e " style="--d:6s"><div class="ping rs"><i></i><div><b>Devis signé · Mme Rossi</b><span>Fenêtres et cloison · à l'instant</span></div></div></div>
       </div>
       <span class="ex">Exemple</span>
     </div>
