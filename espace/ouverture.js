@@ -76,7 +76,7 @@ var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');
 o.innerHTML='<div class="ond"><i style="--i:0"></i><i style="--i:1"></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
-if(!site)window.PC_OUV_MS=8400;
+if(!site)window.PC_OUV_MS=8650;
 var fini=false;
 function fin(){if(fini)return;fini=true;o.classList.add('fin');setTimeout(function(){o.remove()},650)}
 if(!site)o.addEventListener('click',fin);
@@ -140,16 +140,19 @@ function vise(){
  var ph=d.createElement('span');ph.style.cssText='width:'+b.width+'px;height:'+b.height+'px;flex:none';pb.parentNode.insertBefore(ph,pb);
  pb.style.cssText+=';position:fixed;left:'+b.left+'px;top:'+b.top+'px;margin:0';
  var px=T.x-b.left-ps*(G.x-b.left),py=T.y-b.top-ps*(G.y-b.top);
- /* le trajet : une courbe (il part d'abord sur le côté, puis monte), un léger penché dans le virage, et il se pose en douceur */
- var ex=bez(.5,0,.2,1),ey=bez(.7,0,.3,1),es=bez(.55,0,.3,1),t1=performance.now()+100,DU=1100,pose=false;
+ /* le trajet reste droit ; c'est le P qui vit : il s'étire dans le sens du déplacement quand il file,
+    puis s'écrase un peu en se posant et se détend */
+ var e=bez(.65,0,.35,1),t1=performance.now()+100,DU=1100,FIN=1600,pose=false,cx=G.x-b.left,cy=G.y-b.top,th=Math.atan2(py,px)*180/Math.PI,k0=0,e0=0;
  function vol(now){
-  var k=Math.max(0,Math.min(1,(now-t1)/DU)),s=1+(ps-1)*es(k),a=-7*Math.sin(Math.PI*Math.pow(k,.8));
-  pb.style.transform='translate('+(px*ex(k)).toFixed(2)+'px,'+(py*ey(k)).toFixed(2)+'px) rotate('+a.toFixed(2)+'deg) scale('+s.toFixed(4)+')';
+  var ms=now-t1,k=Math.max(0,Math.min(1,ms/DU)),ek=e(k),v=k>k0?(ek-e0)/(k-k0):0,s=1+(ps-1)*ek,sx=1,sy=1;k0=k;e0=ek;
+  if(ms<DU){var st=1+.16*Math.min(1,v/1.9);sx=st;sy=1/Math.sqrt(st)}
+  else{var q=Math.min(1,(ms-DU)/(FIN-DU)),w=Math.sin(Math.PI*Math.min(1,q*1.5))*(1-q);sx=1-.12*w;sy=1+.08*w}
+  pb.style.transform='translate('+(px*ek).toFixed(2)+'px,'+(py*ek).toFixed(2)+'px) scale('+s.toFixed(4)+') translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px) rotate('+th.toFixed(1)+'deg) scale('+sx.toFixed(4)+','+sy.toFixed(4)+') rotate('+(-th).toFixed(1)+'deg) translate('+(-cx).toFixed(2)+'px,'+(-cy).toFixed(2)+'px)';
   if(k>.9&&!pose){pose=true;var gal=cible.parentNode;if(gal){gal.classList.remove('pc-pose');void gal.offsetWidth;gal.classList.add('pc-pose');setTimeout(function(){gal.classList.remove('pc-pose')},1100)}}
-  if(k<1)requestAnimationFrame(vol);
+  if(ms<FIN)requestAnimationFrame(vol);
  }
  requestAnimationFrame(vol);
 }
-function lance(){prepare();if(!site){setTimeout(vise,7100);setTimeout(fin,8350)}}
+function lance(){prepare();if(!site){setTimeout(vise,7100);setTimeout(fin,8600)}}
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',lance);else lance();
 })();
