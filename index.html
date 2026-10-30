@@ -141,7 +141,8 @@ section{padding:clamp(64px,9vw,112px) 0}
 /* Le téléphone raconte l'histoire, au style de l'Espace : rien ne glisse, tout ÉMERGE de la matière.
    Chaque bloc arrive à plat (même teinte que le fond, invisible), puis son relief se lève doucement.
    Appuis comme dans l'Espace : creux visible ≥ 0,3 s, retour lent (~1,4 s), flèche laiton qui file de 10 px. */
-.ecran{position:relative;height:100%;border-radius:41px;box-shadow:var(--in);overflow:hidden;font-size:13px;line-height:1.35;--cl:#B5603A}
+/* écran à bord fin et net, sans creux, comme le téléphone de l'Espace */
+.ecran{position:relative;height:100%;border-radius:41px;box-shadow:inset 1px 1px 3px var(--ilo),inset -1px -1px 2px var(--ihi);overflow:hidden;font-size:13px;line-height:1.35;--cl:#B5603A}
 :root[data-theme="dark"] .ecran{--cl:#D98A63}
 .statut{position:absolute;top:12px;left:24px;right:22px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:800;color:var(--muted);z-index:2}
 .statut i{width:20px;height:9px;border:1.5px solid currentColor;border-radius:3px;position:relative}
@@ -1053,7 +1054,8 @@ footer a{text-decoration:none}
 @keyframes dessine{to{stroke-dashoffset:0}}
 
 /* galets autour du téléphone : un par étape ; celui de l'étape en cours s'enfonce, icône laiton */
-.scene{position:relative;justify-self:center;width:min(310px,100%)}
+/* le téléphone tient toujours entier à l'écran, sous la barre du haut (iPad, téléphone) */
+.scene{position:relative;justify-self:center;width:min(310px,100%,calc((100svh - 150px) * 390 / 844))}
 .scene .tel{width:100%}
 .flot{position:absolute;z-index:2;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);animation:flotte 8s ease-in-out infinite;transition:box-shadow 1.4s var(--doux),color 1.2s var(--doux)}
 .flot svg{width:22px;height:22px}.flot .pp{width:22px;height:25px}
@@ -1064,7 +1066,7 @@ footer a{text-decoration:none}
 .f4{left:-34px;top:68%;animation-delay:-5.3s}.f5{right:-30px;top:82%;animation-delay:-6.6s}
 @keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @media (max-width:880px){.sc{inset:34px 11px 34px;gap:8px}.ecran .pill{padding:10px 10px;font-size:12px}.lig{padding:4px 0;font-size:11px}.pdv{padding:10px 12px}.tot b{font-size:15px}.msg{font-size:11.5px}.banniere{padding:8px 10px}.ecran .bj b{font-size:17px}.toast-s{bottom:52px}.frappe{max-width:calc(100% - 26px)}.tuiles b{font-size:16px;white-space:nowrap}}
-@media (max-width:880px){.scene{width:min(300px,76%)}.flot{width:44px;height:44px}.flot svg{width:19px;height:19px}.f0,.f2,.f4{left:-28px}.f1,.f3,.f5{right:-28px}}
+@media (max-width:880px){.scene{width:min(300px,76%,calc((100svh - 150px) * 390 / 844))}.flot{width:44px;height:44px}.flot svg{width:19px;height:19px}.f0,.f2,.f4{left:-28px}.f1,.f3,.f5{right:-28px}}
 
 /* petites scènes au trait */
 .illu{height:128px;margin:-4px 0 20px;display:grid;place-items:center;overflow:hidden}
