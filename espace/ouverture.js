@@ -4,9 +4,12 @@
    Sur le site (data-mode="site"), toujours la longue, et le logo reste affiché à la fin. Un appui sur l'écran passe l'ouverture. */
 (function(){
 var d=document,root=d.documentElement,me=d.currentScript,site=me&&me.getAttribute('data-mode')==='site';
+/* vitrine (data-mode="vitrine") : longue à la toute première visite, courte ensuite ; data-cible = où le P se range */
+var vitrine=me&&me.getAttribute('data-mode')==='vitrine',CIB=(me&&me.getAttribute('data-cible'))||'.brand>svg,.brand>span:first-child,.brand>img';
 var reduit=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 var t=new Date(),jour=t.getFullYear()+'-'+(t.getMonth()+1)+'-'+t.getDate(),court=false;
-if(!site){try{court=localStorage.getItem('pc-ouv')===jour;localStorage.setItem('pc-ouv',jour)}catch(e){}}
+if(vitrine){try{court=!!localStorage.getItem('pc-ouv-site');localStorage.setItem('pc-ouv-site','1')}catch(e){}}
+else if(!site){try{court=localStorage.getItem('pc-ouv')===jour;localStorage.setItem('pc-ouv',jour)}catch(e){}}
 var css=
 '#pc-ouv{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--mlc:#E2C68C;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .6s ease;-webkit-tap-highlight-color:transparent}'+
 ':root[data-theme="dark"] #pc-ouv{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620;--mlc:#FBEFD6}'+
@@ -52,7 +55,10 @@ var css=
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
 '.pc-court .brand>svg .pcl{stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcTrace .7s cubic-bezier(.5,0,.3,1) .15s forwards}'+
-'.pc-court .brand>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}';
+'.pc-court .brand>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}'+
+'.pc-court .logo .g>svg{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
+'.pc-court .logo .g>svg .pcl{stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcTrace .7s cubic-bezier(.5,0,.3,1) .15s forwards}'+
+'.pc-court .logo .g>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}';
 var st=d.createElement('style');st.textContent=css;d.head.appendChild(st);
 window.PC_OUV_MS=0;
 if(reduit&&!site)return;
@@ -83,7 +89,7 @@ function prepare(){
 /* juste avant de se ranger, on vise le P du bouton en haut de l'Espace (la page a fini de se mettre en place) */
 function vise(){
  /* si l'artisan a mis son logo, le P se pose à sa place puis s'efface devant lui */
- var cible=d.querySelector('.brand>svg,.brand>span:first-child,.brand>img'),pb=o.querySelector('.pbox'),svg=o.querySelector('.pb');
+ var cible=d.querySelector(CIB),pb=o.querySelector('.pbox'),svg=o.querySelector('.pb');
  if(!cible){fin();return}
  var r=cible.getBoundingClientRect();if(!r.width||r.bottom<0){fin();return}
  var k=cible.tagName.toLowerCase()==='svg'?cible.getScreenCTM().a:(r.width-12)/76;
