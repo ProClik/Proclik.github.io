@@ -35,8 +35,10 @@ var css=
 '#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
 /* une vague : un bourrelet sans bord net, éclairé en haut à gauche, ombré en bas à droite */
 '#pc-ouv .ond i::before,#pc-ouv .ond i::after{content:"";position:absolute;inset:0;border-radius:50%}'+
-'#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 76%,var(--mo) 87%,transparent 98%);transform:translate(1%,1.2%);opacity:.7}'+
-'#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%)}'+
+'#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 76%,var(--mo) 87%,transparent 98%);transform:translate(1%,1.2%);opacity:.2}'+
+'#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%);opacity:.3}'+
+/* sur la crête, un liseré laiton fin, comme le socle du téléphone de l'accueil */
+'#pc-ouv .ond b{position:absolute;inset:7.5%;border-radius:50%;border:1px solid var(--ml);z-index:1;opacity:.4}'+
 '#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s linear 1.15s forwards,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
 '#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s linear 1.15s forwards}'+
@@ -58,7 +60,7 @@ var css=
 '@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{transform:scale(.93);animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{transform:scale(.97)}}'+
 '@keyframes pcOmbre{0%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%,100%{opacity:0}}'+
 '@keyframes pcCreux{0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{opacity:1;animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{opacity:0}}'+
-'@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}12%{opacity:.4}55%{opacity:.22}100%{width:150vmax;height:150vmax;opacity:0}}'+
+'@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}12%{opacity:1}55%{opacity:.55}100%{width:150vmax;height:150vmax;opacity:0}}'+
 '@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
@@ -73,7 +75,7 @@ if(reduit&&!site)return;
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},1500);return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
-o.innerHTML='<div class="ond"><i style="--i:0"></i><i style="--i:1"></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
+o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
 if(!site)window.PC_OUV_MS=8650;
