@@ -32,7 +32,11 @@ var css=
 '#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
 '#pc-ouv.espace .pbox{animation:pcRange 1.1s cubic-bezier(.65,0,.35,1) 7.2s forwards}'+
 '#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
-'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;box-shadow:-4px -4px 20px var(--mh),4px 4px 22px var(--mo),inset 4px 4px 22px var(--mo),inset -4px -4px 20px var(--mh);animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.42s + var(--i) * 1.1s)}'+
+'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.42s + var(--i) * 1.1s)}'+
+/* une vague : un bourrelet sans bord net, éclairé en haut à gauche, ombré en bas à droite */
+'#pc-ouv .ond i::before,#pc-ouv .ond i::after{content:"";position:absolute;inset:0;border-radius:50%}'+
+'#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 72%,var(--mo) 86%,transparent 100%);transform:translate(1.4%,1.6%);opacity:.8}'+
+'#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 70%,var(--mh) 83%,transparent 96%);transform:translate(-1.4%,-1.6%)}'+
 '#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s cubic-bezier(.3,0,.2,1) 1.15s,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
 '#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s cubic-bezier(.3,0,.2,1) 1.15s}'+
