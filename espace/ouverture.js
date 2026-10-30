@@ -1,5 +1,5 @@
 /* Ouverture ProClik (validée par Cyril le 28/10).
-   Longue (~9,7 s) : un bouton galet au centre reçoit un clic, le point trace le P, le nom arrive, puis le P se range dans le bouton du haut de l'Espace.
+   Longue (~8,9 s) : un bouton galet au centre reçoit un clic, le point trace le P, le nom arrive, puis le P se range dans le bouton du haut de l'Espace.
    Courte (~1,5 s) : pour les ouvertures suivantes de la journée, le P se trace dans son bouton en haut de l'Espace.
    Sur le site (data-mode="site"), toujours la longue, et le logo reste affiché à la fin. Un appui sur l'écran passe l'ouverture. */
 (function(){
@@ -20,17 +20,19 @@ var css=
 '#pc-ouv .pbox{position:relative;display:grid;place-items:center;transform-origin:0 0}'+
 '#pc-ouv .pb{width:48px;height:56px;overflow:visible;flex:none}'+
 '#pc-ouv .pb path{fill:none;stroke-linecap:round;stroke-linejoin:round}'+
-'#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
-'#pc-ouv .l{stroke:var(--ml);stroke-width:3.3;stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcFineL 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
-'#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 4.15s forwards}'+
-'#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;animation:pcPoint .45s var(--d) .45s forwards,pcFineD 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
-'#pc-ouv .filet{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pcFilet .55s var(--d) 5.1s forwards}'+
+'#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit .8s cubic-bezier(.65,0,.35,1) 5.05s forwards}'+
+'#pc-ouv .l{stroke:var(--ml);stroke-width:3.3;stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcFineL .8s cubic-bezier(.65,0,.35,1) 5.05s forwards}'+
+'#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 4.75s forwards}'+
+'#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;animation:pcPoint .45s var(--d) .45s forwards,pcFineD .8s cubic-bezier(.65,0,.35,1) 5.05s forwards}'+
+'#pc-ouv .filet{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pcFilet .45s var(--d) 5.45s forwards}'+
 '#pc-ouv .nom{font-weight:300;font-size:21px;letter-spacing:.32em;line-height:1;white-space:nowrap;margin-right:-.32em}'+
-'#pc-ouv .nom .lt{display:inline-block;opacity:0;animation:pcLettre .55s var(--d) calc(5.25s + var(--i) * 55ms) forwards}'+
-'#pc-ouv .nom small{display:block;font-size:7.5px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:8px;opacity:0;animation:pcApparait .6s ease 5.85s forwards}'+
-'#pc-ouv.espace .filet{animation:pcFilet .55s var(--d) 5.1s forwards,pcEfface .55s ease 7.3s forwards}'+
-'#pc-ouv.espace .nom{animation:pcEfface .55s ease 7.3s forwards}'+
-'#pc-ouv.espace .pbox{animation:pcRange 1.3s cubic-bezier(.65,0,.35,1) 7.75s forwards}'+
+'#pc-ouv .nom .lt{display:inline-block;opacity:0;animation:pcLettre .5s var(--d) calc(5.55s + var(--i) * 45ms) forwards}'+
+'#pc-ouv .nom small{display:block;font-size:7.5px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:8px;opacity:0;animation:pcApparait .5s ease 5.95s forwards}'+
+'#pc-ouv.espace .filet{animation:pcFilet .45s var(--d) 5.45s forwards,pcEfface .5s ease 6.85s forwards}'+
+'#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
+'#pc-ouv.espace .pbox{animation:pcRange 1.1s cubic-bezier(.65,0,.35,1) 7.2s forwards}'+
+'#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
+'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;box-shadow:-5px -5px 12px var(--mh),5px 5px 14px var(--mo),inset 5px 5px 14px var(--mo),inset -5px -5px 12px var(--mh);animation:pcOnde 3s cubic-bezier(.25,.5,.35,1) calc(1.42s + var(--i) * .22s)}'+
 '#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s cubic-bezier(.3,0,.2,1) 1.15s,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
 '#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s cubic-bezier(.3,0,.2,1) 1.15s}'+
@@ -51,6 +53,7 @@ var css=
 '@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,0,.2,1)}23%,35%{transform:scale(.925);animation-timing-function:cubic-bezier(.3,0,.25,1)}100%{transform:scale(1)}}'+
 '@keyframes pcOmbre{0%{opacity:1}23%,35%{opacity:0}100%{opacity:1}}'+
 '@keyframes pcCreux{0%{opacity:0}23%,35%{opacity:1}100%{opacity:0}}'+
+'@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}6%{opacity:1}100%{width:150vmax;height:150vmax;opacity:0}}'+
 '@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
@@ -65,14 +68,14 @@ if(reduit&&!site)return;
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},1500);return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
-o.innerHTML='<div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
+o.innerHTML='<div class="ond"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
-if(!site)window.PC_OUV_MS=9200;
+if(!site)window.PC_OUV_MS=8400;
 var fini=false;
 function fin(){if(fini)return;fini=true;o.classList.add('fin');setTimeout(function(){o.remove()},650)}
 if(!site)o.addEventListener('click',fin);
-if(reduit){o.querySelectorAll('*').forEach(function(e){e.style.animation='none'});o.querySelector('.big').style.transform='none';o.querySelector('.pen').style.display='none';o.querySelector('.l').style.cssText='stroke-dasharray:none;stroke-width:5';o.querySelector('.sh').style.display='none';o.querySelector('.g').style.display='none';o.querySelector('.filet').style.transform='none';o.querySelectorAll('.lt,small').forEach(function(e){e.style.opacity=1});o.querySelector('.pb').insertAdjacentHTML('beforeend','<circle cx="56" cy="47" r="6" fill="var(--ml)"/>');return}
+if(reduit){o.querySelectorAll('*').forEach(function(e){e.style.animation='none'});o.querySelector('.big').style.transform='none';o.querySelector('.pen').style.display='none';o.querySelector('.l').style.cssText='stroke-dasharray:none;stroke-width:5';o.querySelector('.sh').style.display='none';o.querySelector('.g').style.display='none';o.querySelector('.ond').style.display='none';o.querySelector('.filet').style.transform='none';o.querySelectorAll('.lt,small').forEach(function(e){e.style.opacity=1});o.querySelector('.pb').insertAdjacentHTML('beforeend','<circle cx="56" cy="47" r="6" fill="var(--ml)"/>');return}
 
 /* la pointe : elle glisse jusqu'au bout de la boucle, trace le P (le trait la suit exactement), se lève et se pose au cœur.
    Elle s'étire dans le sens du mouvement selon sa vitesse, et s'écrase un peu en se posant. */
@@ -89,9 +92,9 @@ function plume(svg,centre){
    var a=t-1.15,dz=a<0?0:a<.3?bez(.3,0,.2,1)(a/.3):a<.45?1:a<1.2?1-bez(.3,0,.2,1)((a-.45)/.75):0,pop=a>.45&&a<1?Math.sin(Math.PI*(a-.45)/.55)*.12:0;
    return [cx,cy,1-.2*dz+pop]}
   if(t<2.85){var k=e1((t-2.45)/.4);return [cx+(52-cx)*k,cy+(69.7-cy)*k,1]}
-  if(t<4.15){var k=e2((t-2.85)/1.3),q=P.getPointAtLength(k*L);l.style.strokeDashoffset=101-101*k;sh.style.strokeDashoffset=8-100*k;return [q.x,q.y,1]}
+  if(t<4.75){var k=e2((t-2.85)/1.9),q=P.getPointAtLength(k*L);l.style.strokeDashoffset=101-101*k;sh.style.strokeDashoffset=8-100*k;return [q.x,q.y,1]}
   l.style.strokeDashoffset=0;sh.style.strokeDashoffset=-92;
-  if(t<4.5){var k=e3((t-4.15)/.35),q=H.getPointAtLength(k*LH);return [q.x,q.y,1-.16*Math.sin(Math.PI*k)]}
+  if(t<5.05){var k=e3((t-4.75)/.3),q=H.getPointAtLength(k*LH);return [q.x,q.y,1-.16*Math.sin(Math.PI*k)]}
   return [56,47,1];
  }
  function pas(now){
@@ -100,10 +103,10 @@ function plume(svg,centre){
   var cible=1+Math.min(.55,v/380);s+=(cible-s)*.45;
   var sx=s,sy=1/Math.sqrt(s);
   /* posé au cœur : petit écrasement qui se détend */
-  if(t>=4.5&&t<5.1){var k=(t-4.5)/.6,w=Math.sin(Math.PI*Math.min(1,k*1.6))*(1-k);sx=1+.22*w;sy=1-.18*w;ang=0}
+  if(t>=5.05&&t<5.65){var k=(t-5.05)/.6,w=Math.sin(Math.PI*Math.min(1,k*1.6))*(1-k);sx=1+.22*w;sy=1-.18*w;ang=0}
   g.setAttribute('transform','translate('+p[0].toFixed(2)+' '+p[1].toFixed(2)+') rotate('+ang.toFixed(1)+') scale('+(sx*p[2]).toFixed(3)+' '+(sy*p[2]).toFixed(3)+')');
   px=p[0];py=p[1];pt0=t;
-  if(t<5.2)requestAnimationFrame(pas);else g.setAttribute('transform','translate(56 47)');
+  if(t<5.75)requestAnimationFrame(pas);else g.setAttribute('transform','translate(56 47)');
  }
  g.setAttribute('transform','translate('+cx.toFixed(2)+' '+cy.toFixed(2)+')');
  requestAnimationFrame(pas);
@@ -135,6 +138,6 @@ function vise(){
  pb.style.setProperty('--px',(T.x-b.left-ps*(G.x-b.left))+'px');
  pb.style.setProperty('--py',(T.y-b.top-ps*(G.y-b.top))+'px');
 }
-function lance(){prepare();if(!site){setTimeout(vise,7600);setTimeout(fin,9100)}}
+function lance(){prepare();if(!site){setTimeout(vise,7100);setTimeout(fin,8350)}}
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',lance);else lance();
 })();
