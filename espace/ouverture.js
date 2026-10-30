@@ -32,7 +32,7 @@ var css=
 '#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
 '#pc-ouv.espace .pbox{animation:pcRange 1.1s cubic-bezier(.65,0,.35,1) 7.2s forwards}'+
 '#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
-'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;box-shadow:-5px -5px 12px var(--mh),5px 5px 14px var(--mo),inset 5px 5px 14px var(--mo),inset -5px -5px 12px var(--mh);animation:pcOnde 3s cubic-bezier(.25,.5,.35,1) calc(1.42s + var(--i) * .22s)}'+
+'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;box-shadow:-4px -4px 20px var(--mh),4px 4px 22px var(--mo),inset 4px 4px 22px var(--mo),inset -4px -4px 20px var(--mh);animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.42s + var(--i) * 1.1s)}'+
 '#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s cubic-bezier(.3,0,.2,1) 1.15s,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
 '#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s cubic-bezier(.3,0,.2,1) 1.15s}'+
@@ -53,7 +53,7 @@ var css=
 '@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,0,.2,1)}23%,35%{transform:scale(.925);animation-timing-function:cubic-bezier(.3,0,.25,1)}100%{transform:scale(1)}}'+
 '@keyframes pcOmbre{0%{opacity:1}23%,35%{opacity:0}100%{opacity:1}}'+
 '@keyframes pcCreux{0%{opacity:0}23%,35%{opacity:1}100%{opacity:0}}'+
-'@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}6%{opacity:1}100%{width:150vmax;height:150vmax;opacity:0}}'+
+'@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}12%{opacity:.75}60%{opacity:.45}100%{width:150vmax;height:150vmax;opacity:0}}'+
 '@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
@@ -68,7 +68,7 @@ if(reduit&&!site)return;
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},1500);return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
-o.innerHTML='<div class="ond"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
+o.innerHTML='<div class="ond"><i style="--i:0"></i><i style="--i:1"></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
 if(!site)window.PC_OUV_MS=8400;
