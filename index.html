@@ -522,6 +522,22 @@ p.cliky svg{width:16px;height:16px}
 
 /* tarifs */
 .bloc-t{margin-top:12px}
+/* tarifs en onglets galets : une partie à la fois, rien n'est retiré */
+.t-ong{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:620px;margin:8px auto 34px;padding:6px;border-radius:28px;box-shadow:var(--in)}
+.t-ong button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border:0;border-radius:22px;background:transparent;color:var(--muted);font:700 13.5px/1.1 Manrope,system-ui,sans-serif;cursor:pointer;transition:box-shadow .6s var(--doux),color .5s,background .5s}
+.t-ong .to-g{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;box-shadow:var(--gal);color:var(--muted);transition:color .5s}
+.t-ong .to-g svg{width:19px;height:19px}
+.t-ong button.on{background:var(--bg);box-shadow:var(--up-s);color:var(--fg)}
+.t-ong button.on .to-g{color:var(--acc)}
+.t-ong button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#tarifs .bloc-t[hidden]{display:none}
+#tarifs .bloc-t,#tarifs .bloc-t+.bloc-t{margin-top:0}
+#tarifs .bloc-t>h3{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#tarifs .bloc-t>p:not(.t-suite){margin-left:0;text-align:center}
+#tarifs .bloc-t.entre{animation:tEntre .6s var(--doux)}
+@keyframes tEntre{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.t-suite{display:flex;justify-content:center;margin:30px 0 0}
+@media (max-width:420px){.t-ong{gap:3px;padding:4px}.t-ong button{font-size:12px}.t-ong .to-g{width:34px;height:34px}}
 .bloc-t+.bloc-t{margin-top:56px}
 .bloc-t>h3{display:flex;align-items:center;gap:14px;font-size:21px;margin-bottom:8px}
 .bloc-t>h3 .n{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--gal);color:var(--accx);font-size:16px}
@@ -985,6 +1001,29 @@ a.fr-p:active{box-shadow:var(--in)}
 @media (max-width:880px){.scene::before{width:136%}.scene::after,.orbite{width:118%}}
 @media (prefers-reduced-motion:reduce){.orbite{animation:none}}
 /* ===== téléphone : les blocs se regroupent pour une page moins longue ===== */
+/* téléphone : textes longs repliés, points dépliables, sections plus serrées et ouvertures centrées */
+.rz-b,.pl-c{display:none}
+.pliable li>div>span>i{font-style:normal}
+@media (max-width:600px){
+  section{padding:52px 0}
+  .head{margin-bottom:28px;text-align:center;margin-left:auto;margin-right:auto}
+  .head .embleme,.head .eyebrow{margin-left:auto;margin-right:auto}
+  .cliky .wrap>div:first-child>.embleme,.resa .wrap>div:first-child>.embleme{display:flex;justify-content:center;width:max-content;margin-left:auto;margin-right:auto}
+  .cliky .wrap>div:first-child>h2,.cliky .wrap>div:first-child>.lead,.resa .wrap>div:first-child>h2,.resa .wrap>div:first-child>.lead{text-align:center}
+  .repli:not(.ouvert) .rz{display:none}
+  .rz-b{display:inline-flex;align-items:center;gap:8px;margin:2px 0 14px;padding:8px 16px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--up-s);color:var(--accx);font:700 14px Manrope,system-ui,sans-serif;cursor:pointer}
+  .rz-b svg{width:14px;height:14px;transition:transform .5s var(--doux)}
+  .repli.ouvert .rz-b svg{transform:rotate(180deg)}
+  .pliable li{cursor:pointer}
+  .pliable li>div{flex:1}
+  .pliable li b{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .pl-c{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:50%;box-shadow:var(--gal);color:var(--acc)}
+  .pl-c svg{width:13px;height:13px;transition:transform .5s var(--doux)}
+  .pliable li.ouvert .pl-c svg{transform:rotate(180deg)}
+  .pliable li>div>span{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .5s var(--doux),opacity .5s,margin .5s;margin-top:0}
+  .pliable li>div>span>i{overflow:hidden;font-style:normal}
+  .pliable li.ouvert>div>span{grid-template-rows:1fr;opacity:1;margin-top:4px}
+}
 @media (max-width:600px){
   .glisse-m{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin:0 -16px;padding:14px 16px 22px;scrollbar-width:none}
   .glisse-m::-webkit-scrollbar{display:none}
@@ -1527,10 +1566,10 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
   </div>
   <div class="factures card lis rv" id="factures">
     <div class="embleme"><span class="em-g"><svg class="em-fac" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h15l7 7v29H14z"/><path d="M29 6v7h7"/><path class="l1" pathLength="1" d="M19 21h12"/><path class="l2" pathLength="1" d="M19 27h8"/><path class="sceau" pathLength="1" d="M27 35l3 3 6-7"/></svg></span><span class="em-f"></span><span class="em-n">Devis et factures<small>conformes 2026<svg class="fr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/><path class="fr-c" d="m9 11.5 2.2 2.2 4-4.2"/><path class="fr-b1" d="M8.6 22.2h2.1"/><path class="fr-b2" d="M10.95 22.2h2.1"/><path class="fr-b3" d="M13.3 22.2h2.1"/></svg></small></span></div>
-    <div class="fac-txt"><h3>Vos devis et vos factures, <span class="or-t">conformes sans y penser.</span></h3>
-      <p>Depuis le 1<sup>er</sup> septembre 2026, toute entreprise doit pouvoir recevoir des factures électroniques. Le 1<sup>er</sup> septembre 2027, les PME, TPE et micro-entreprises devront aussi les envoyer ainsi.</p>
-      <p class="fac-esp"><b>C'est votre Espace ProClik qui s'en occupe.</b> Vous préparez vos devis et vos factures depuis votre téléphone, comme d'habitude, et l'Espace fait le reste : numérotation, mentions obligatoires, envoi au bon format, rangement. Un devis accepté devient une facture sans rien retaper.</p>
-      <p>En coulisses, tout passe par <b>VosFactures</b>, plateforme agréée par l'État. Vous, vous n'avez rien à changer.</p>
+    <div class="fac-txt repli"><h3>Vos devis et vos factures, <span class="or-t">conformes sans y penser.</span></h3>
+      <p class="rz">Depuis le 1<sup>er</sup> septembre 2026, toute entreprise doit pouvoir recevoir des factures électroniques. Le 1<sup>er</sup> septembre 2027, les PME, TPE et micro-entreprises devront aussi les envoyer ainsi.</p>
+      <p class="fac-esp"><b>C'est votre Espace ProClik qui s'en occupe.</b><span class="rz"> Vous préparez vos devis et vos factures depuis votre téléphone, comme d'habitude, et l'Espace fait le reste : numérotation, mentions obligatoires, envoi au bon format, rangement. Un devis accepté devient une facture sans rien retaper.</span></p>
+      <p class="rz">En coulisses, tout passe par <b>VosFactures</b>, plateforme agréée par l'État. Vous, vous n'avez rien à changer.</p>
       <div class="fr-b"><a class="fr-p" href="#espace"><span class="fr-g"><svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M52 64.7 A23 23 0 1 0 33 42 V70" fill="none" stroke="var(--acc)" stroke-width="7" stroke-linecap="round"/><circle cx="56" cy="42" r="7" fill="var(--acc)"/></svg></span><span><b>Tout depuis votre Espace</b><small>Sur votre téléphone, en un clic</small></span></a><span class="fr-p"><span class="fr-g"><svg class="fr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/><path class="fr-c" d="m9 11.5 2.2 2.2 4-4.2"/><path class="fr-b1" d="M8.6 22.2h2.1"/><path class="fr-b2" d="M10.95 22.2h2.1"/><path class="fr-b3" d="M13.3 22.2h2.1"/></svg></span><span><b>Conforme à la loi française</b><small>Réforme de la facture électronique</small></span></span><a class="fr-p" href="https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees" target="_blank" rel="noopener"><span class="fr-g"><svg class="fr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/><path class="fr-c" d="m9 11.5 2.2 2.2 4-4.2"/><path class="fr-b1" d="M8.6 22.2h2.1"/><path class="fr-b2" d="M10.95 22.2h2.1"/><path class="fr-b3" d="M13.3 22.2h2.1"/></svg></span><span><b>VosFactures, plateforme agréée</b><small>Sur la liste officielle impots.gouv.fr ↗</small></span></a></div></div>
     <ul class="fac-pts"><li><b>Devis</b>Clairs, complets, prêts à signer par votre client.</li><li><b>Reçues</b>Les factures de vos fournisseurs arrivent rangées.</li><li><b>Envoyées</b>Au format officiel, en un clic depuis l'Espace.</li><li><b>Archivées</b>Gardées pour vous, prêtes pour votre comptable.</li></ul>
   </div>
@@ -1572,7 +1611,7 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
         <div class="creux on"><b>Le soir, avec Cliky</b><span>Le devis est déjà prêt. Vous relisez, vous validez, et la soirée est à vous.</span></div>
       </div>
     </div>
-    <ul class="points">
+    <ul class="points pliable">
       <li><div><b>Vos prix, jamais inventés.</b><span>Cliky chiffre avec votre catalogue et votre main-d'œuvre. Cliky est fort en calcul, mais c'est vous le patron.</span></div></li>
       <li><div><b>Rien ne part sans vous.</b><span>Chaque pré-devis attend votre validation, ligne par ligne.</span></div></li>
       <li><div><b>Une photo suffit.</b><span>Un plan griffonné, une note sur un coin de carton : vous la prenez en photo, Cliky la lit et prépare le devis. Pareil pour un ticket de caisse : la dépense se range toute seule.</span></div></li>
@@ -1581,7 +1620,7 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
       <li><div><b>Tout à la voix.</b><span>Le micro marche partout : vous dictez une note, une correction ou un ajout, l'Espace l'écrit.</span></div></li>
     </ul>
   </div>
-  <div class="cl-col">
+  <div class="cl-col glisse-m">
   <div class="card predevis lis rv">
     <div class="ph"><span class="robot"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg></span><div class="pt"><b>Pré-devis · cloison et doublage</b><span>Mme Rossi · Meylan · reçu à 21 h 47</span></div><span class="etat">À valider</span></div>
     <div class="creux lignes">
@@ -1644,7 +1683,9 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
 <section id="tarifs"><div class="wrap">
   <div class="head center"><span class="eyebrow">Tarifs</span><h2>Composez <span class="or">votre ProClik.</span></h2><p class="lead">Un site, un abonnement, et seulement les options qui vous aident. Pas besoin de site ? L'Espace existe aussi tout seul.</p></div>
 
-  <div class="bloc-t">
+  <div class="t-ong" role="tablist" aria-label="Tarifs"><button type="button" role="tab" id="to-abo" aria-controls="tp-abo" aria-selected="true" class="on"><span class="to-g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><b>Abonnement</b></button><button type="button" role="tab" id="to-site" aria-controls="tp-site" aria-selected="false"><span class="to-g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><b>Site</b></button><button type="button" role="tab" id="to-opt" aria-controls="tp-opt" aria-selected="false"><span class="to-g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg></span><b>Options</b></button><button type="button" role="tab" id="to-calc" aria-controls="tp-calc" aria-selected="false"><span class="to-g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8 7h8M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01" stroke-width="2.2"/></svg></span><b>Calculer</b></button></div>
+
+  <div class="bloc-t" role="tabpanel" id="tp-abo" aria-labelledby="to-abo">
     <h3><span class="n">1</span>Votre abonnement</h3>
     <p>Chaque mois : l'appli ProClik, votre suivi, et l'hébergement de votre site. Sans engagement.</p>
     <div class="prix x4">
@@ -1653,9 +1694,10 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
       <div class="card offre mis rv"><span class="reco">CONSEILLÉ</span><span class="ico"><svg class="bars" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="14" width="4" height="6" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1.6"/><rect x="10" y="10" width="4" height="10" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1.6"/><rect x="16" y="6" width="4" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><h3>Connexion</h3><span class="q">Connaître et suivre vos clients.</span><span class="m"><b class="compte" data-v="99">99</b> € <small>/ mois</small></span><span class="eng creux">94 € sur 12 mois · 89 € sur 24 mois</span><ul><li class="li-i"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>Tout Présence</li><li class="li-i"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg>Fichier clients</li><li class="li-i"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg>Discussion sur le site</li></ul></div>
       <div class="card offre rv"><span class="ico"><svg class="bars" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="14" width="4" height="6" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1.6"/><rect x="10" y="10" width="4" height="10" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1.6"/><rect x="16" y="6" width="4" height="14" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1.6"/></svg></span><h3>Accélération</h3><span class="q">Faire revenir vos clients.</span><span class="m"><b class="compte" data-v="179">179</b> € <small>/ mois</small></span><span class="eng creux">170 € sur 12 mois · 161 € sur 24 mois</span><ul><li class="li-i"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>Tout Connexion</li><li class="li-i"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>Avis Google demandés automatiquement</li><li class="li-i"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>Campagnes e-mail</li></ul></div>
     </div>
+    <p class="t-suite"><button type="button" class="btn" data-va="site">Suivant : site<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></button></p>
   </div>
 
-  <div class="bloc-t">
+  <div class="bloc-t" role="tabpanel" id="tp-site" aria-labelledby="to-site" hidden>
     <h3><span class="n">2</span>Votre site</h3>
     <p>Création payée une seule fois, ou raccordement de votre site actuel. Avec le forfait Espace, rien à payer ici.</p>
     <div class="prix">
@@ -1664,9 +1706,10 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
       <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 4.5 9-4.5" opacity=".6"/></svg></span><h3>Expert-Business</h3><span class="q">Pour les entreprises qui ont beaucoup à montrer.</span><span class="m"><b class="compte" data-v="1990">1 990</b> €</span><span class="q">une fois, mise en service comprise</span><ul><li>10 pages et plus</li><li>Une page par prestation ou par ville</li><li>Réalisations, actualités, recrutement</li></ul><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>Mise en ligne de votre site et tous les réglages</li><li>Raccordé à votre Espace ProClik et à vos alertes</li><li>Prise en main de l'appli avec vous, chez vous ou en visio</li></ul></div></div>
       <div class="card offre rv"><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><h3>J'ai déjà un site</h3><span class="q">On le garde et on le relie à votre appli ProClik.</span><span class="m"><b class="compte" data-v="149">149</b> €</span><span class="q">une fois, mise en service comprise</span><ul><li>Formulaire de demande sur votre site</li><li>Offert avec un engagement de 24 mois</li></ul><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Mise en service comprise</b><ul><li>Le formulaire installé sur votre site</li><li>Raccordé à votre Espace ProClik et à vos alertes</li><li>Prise en main de l'appli avec vous</li></ul></div></div>
     </div>
+    <p class="t-suite"><button type="button" class="btn" data-va="opt">Suivant : options<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></button></p>
   </div>
 
-  <div class="bloc-t">
+  <div class="bloc-t" role="tabpanel" id="tp-opt" aria-labelledby="to-opt" hidden>
     <h3><span class="n">3</span>Vos options</h3>
     <p>Facultatives. Vous pourrez en ajouter plus tard.</p>
     <div class="options">
@@ -1676,9 +1719,10 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
       <div class="card option rv"><span class="tag">Tous les commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 9a5 5 0 0 1-7.3 4.4L3 14.5l1-3.2A5 5 0 1 1 14 9z"/><path d="M10 16.5a5 5 0 0 0 7.3 1.9l3.7 1.1-1-3.2a5 5 0 0 0-3.5-7.2"/></svg></span><h3>Assistant du site</h3><p>Répond aux questions de vos visiteurs, jour et nuit, et les guide vers une demande.</p><p class="plus-cl">Encore mieux avec Cliky : la conversation devient une demande chiffrée.</p><span class="px">39 € <small>/ mois</small></span></div>
       <div class="card option rv"><span class="tag">Tous les commerces</span><span class="ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.2-1-1.5-1-2.6 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="7.2" r="1.2" fill="currentColor" stroke="none"/></svg></span><h3>Votre image</h3><p>Votre logo et vos couleurs, créés avec vous, pour un site et des cartes qui vous ressemblent.</p><span class="px">590 € <small>une fois · 490 € avec un site</small></span><div class="mes"><b><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Dans le pack</b><ul><li>Logo en couleur et en noir et blanc</li><li>Couleurs, polices et une charte d'une page</li><li>Carte de visite prête à imprimer</li><li>Deux propositions, deux séries de retouches</li></ul></div></div>
     </div>
+    <p class="t-suite"><button type="button" class="btn" data-va="calc">Suivant : je calcule mon prix<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></button></p>
   </div>
 
-  <div class="bloc-t">
+  <div class="bloc-t" role="tabpanel" id="tp-calc" aria-labelledby="to-calc" hidden>
     <h3 id="calcul"><span class="n">4</span>Composez le vôtre</h3>
     <p>Touchez vos choix : votre prix et tout ce qui est compris s'affichent tout seuls.</p>
     <form class="card calc-t lis rv" onsubmit="return false" aria-label="Composer votre abonnement"><p class="bravo" role="status" aria-live="polite"></p>
@@ -1842,6 +1886,22 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
     var pz=z.querySelector(".mt-p"),pt=[];s.forEach(function(im,i){var b=document.createElement("button");b.type="button";b.title=im.alt;b.setAttribute("aria-label",im.alt);b.addEventListener("click",function(){montre(i);relance()});pz.appendChild(b);pt.push(b)});
     montre(0);
     if("IntersectionObserver" in window)new IntersectionObserver(function(e){vis=e[0].isIntersecting;if(vis&&!vu){vu=true;src()}clearTimeout(tm);if(vis&&!calme)tm=setTimeout(suit,duree())},{rootMargin:"200px 0px"}).observe(f);else{vu=true;src()}})();
+  /* téléphone : « En savoir plus » sur les textes repliés, et points de Cliky qui se déplient d'un toucher */
+  (function(){var CH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    [].forEach.call(document.querySelectorAll(".repli"),function(z){var b=document.createElement("button");b.type="button";b.className="rz-b";b.setAttribute("aria-expanded","false");b.innerHTML="<span>En savoir plus</span>"+CH;
+      var ap=z.querySelector(".fac-esp")||z.lastElementChild;ap.after(b);
+      b.addEventListener("click",function(){var o=z.classList.toggle("ouvert");b.setAttribute("aria-expanded",o);b.firstChild.textContent=o?"Réduire":"En savoir plus"})});
+    [].forEach.call(document.querySelectorAll(".pliable li"),function(li){var b=li.querySelector("b"),sp=li.querySelector("div>span");if(!b||!sp)return;
+      var c=document.createElement("span");c.className="pl-c";c.innerHTML=CH;b.appendChild(c);sp.innerHTML="<i>"+sp.innerHTML+"</i>";
+      li.setAttribute("aria-expanded","false");li.addEventListener("click",function(){var o=li.classList.toggle("ouvert");li.setAttribute("aria-expanded",o)})})})();
+  /* tarifs en onglets : une partie à la fois ; le lien « #calcul » ouvre la calculette */
+  (function(){var z=document.querySelector(".t-ong");if(!z)return;var bt=[].slice.call(z.querySelectorAll("button"));
+    function va(k,defile){bt.forEach(function(b){var o=b.id==="to-"+k;b.classList.toggle("on",o);b.setAttribute("aria-selected",o);var p=document.getElementById("tp-"+b.id.slice(3));p.hidden=!o;if(o){p.classList.remove("entre");void p.offsetWidth;p.classList.add("entre")}});
+      dispatchEvent(new Event("resize"));if(defile){var y=z.getBoundingClientRect().top+scrollY-110;scrollTo({top:y,behavior:"smooth"})}}
+    bt.forEach(function(b){b.addEventListener("click",function(){va(b.id.slice(3),false)})});
+    [].forEach.call(document.querySelectorAll("[data-va]"),function(b){b.addEventListener("click",function(){va(b.getAttribute("data-va"),true)})});
+    function ancre(){if(location.hash==="#calcul")va("calc",false)}ancre();addEventListener("hashchange",ancre);
+    [].forEach.call(document.querySelectorAll('a[href="#calcul"]'),function(a){a.addEventListener("click",function(){va("calc",false)})})})();
   /* même hauteur pour les encadrés du bas d'une rangée de cartes (tarifs) */
   (function(){function egal(){[].forEach.call(document.querySelectorAll("#tarifs .prix,#tarifs .options"),function(r){var m=[].slice.call(r.querySelectorAll(".mes"));m.forEach(function(x){x.style.minHeight=""});
       var h=Math.max.apply(null,m.map(function(x){return x.offsetHeight}).concat(0));m.forEach(function(x){x.style.minHeight=h+"px"})})}
