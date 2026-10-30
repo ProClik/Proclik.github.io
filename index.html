@@ -27,6 +27,8 @@
   --gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(26,34,64,.27),var(--ch);
   --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
   --lis:0 0 0 1px rgba(168,130,63,.4),0 0 30px -8px rgba(168,130,63,.4);
+  --lis-in:inset 0 0 14px -2px rgba(168,130,63,.22),inset 2px 2px 5px -3px rgba(168,130,63,.3);
+  --barre:-3px -3px 9px var(--hi),4px 4px 12px rgba(26,34,64,.11);
   --doux:cubic-bezier(.22,1,.36,1)}
 :root[data-theme="dark"]{
   --bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
@@ -36,7 +38,9 @@
   --ch:inset 1.5px 1.5px 1px rgba(255,255,255,.07),inset -1.5px -1.5px 2px rgba(0,0,0,.4);
   --gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(0,0,0,.62),var(--ch);
   --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
-  --lis:0 0 0 1px rgba(212,180,131,.32),0 0 30px -8px rgba(212,180,131,.3)}
+  --lis:0 0 0 1px rgba(212,180,131,.32),0 0 30px -8px rgba(212,180,131,.3);
+  --lis-in:inset 0 0 14px -2px rgba(212,180,131,.16),inset 2px 2px 5px -3px rgba(212,180,131,.24);
+  --barre:-3px -3px 9px var(--hi),4px 4px 12px rgba(0,0,0,.32)}
 *{box-sizing:border-box}
 html{background:var(--bg);color:var(--fg);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{color:var(--fg);margin:0;font-family:Manrope,system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.55;background:var(--bg);-webkit-tap-highlight-color:transparent;overflow-x:hidden}
@@ -78,8 +82,8 @@ section{padding:clamp(64px,9vw,112px) 0}
 
 /* haut de page */
 .top{position:sticky;top:0;z-index:20;padding:12px 16px 6px;background:linear-gradient(var(--bg) 70%,transparent)}
-.top .wrap{max-width:1100px;display:flex;align-items:center;gap:14px;height:66px;padding:0 10px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s);transition:box-shadow .6s ease}
-.top.ombre .wrap{box-shadow:var(--up)}
+.top .wrap{max-width:1100px;display:flex;align-items:center;gap:14px;height:66px;padding:0 10px;border-radius:999px;background:var(--bg);box-shadow:var(--barre);transition:box-shadow .6s ease}
+.top.ombre .wrap{box-shadow:var(--barre)}
 .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--fg);flex:none}
 .logo .g{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--gal);flex:none}
 .logo svg{width:30px;height:34px;overflow:visible}
@@ -141,6 +145,8 @@ section{padding:clamp(64px,9vw,112px) 0}
 /* Le téléphone raconte l'histoire, au style de l'Espace : rien ne glisse, tout ÉMERGE de la matière.
    Chaque bloc arrive à plat (même teinte que le fond, invisible), puis son relief se lève doucement.
    Appuis comme dans l'Espace : creux visible ≥ 0,3 s, retour lent (~1,4 s), flèche laiton qui file de 10 px. */
+/* les deux téléphones : le liseré laiton laisse une ombre très douce vers l'intérieur de l'écran */
+.tel::after,.mt-f::after{content:"";position:absolute;inset:0;z-index:5;border-radius:inherit;box-shadow:var(--lis-in);pointer-events:none}
 /* l'écran va jusqu'au bord du téléphone, sans cadre visible, comme le téléphone de l'Espace */
 .ecran{position:relative;height:100%;border-radius:41px;overflow:hidden;font-size:13px;line-height:1.35;--cl:#B5603A}
 :root[data-theme="dark"] .ecran{--cl:#D98A63}
@@ -228,7 +234,7 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .photos span:nth-child(1){background-image:linear-gradient(135deg,#D9C3A5,#9C7B57)}
 .photos span:nth-child(2){background-image:linear-gradient(135deg,#CFC6BC,#8E7F72)}
 .photos span:nth-child(3){background-image:linear-gradient(135deg,#E3D6C8,#B7957A)}
-.envoye{position:absolute;inset:0;border-radius:20px;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:var(--bg);opacity:0;transition:opacity 1s var(--doux)}
+.envoye{position:absolute;inset:0 -20px;border-radius:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:var(--bg);opacity:0;transition:opacity 1s var(--doux)}
 .sc.on .envoye{opacity:1;transition-delay:var(--d)}
 .envoye .rond{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;color:var(--acc);margin-bottom:12px}
 .envoye .rond svg{width:38px;height:38px;stroke-dasharray:30;stroke-dashoffset:30;transition:stroke-dashoffset 1s ease}
@@ -288,10 +294,11 @@ p.cliky svg{width:16px;height:16px}
 .ping i{width:9px;height:9px;border-radius:50%;background:var(--acc);flex:none;box-shadow:0 0 0 4px var(--acc-bg)}
 .ping b{display:block;font-size:12.5px}.ping span{color:var(--muted)}
 /* l'assistant s'ouvre depuis la bulle du site : un cercle de matière qui grandit, par-dessus le site */
-.sc.sur{z-index:2;background:var(--bg);border-radius:20px;clip-path:circle(0 at calc(100% - 34px) calc(100% - 34px));transition:clip-path 1.5s cubic-bezier(.4,0,.2,1),visibility 0s 1.5s}
+.sc.sur{z-index:2;background:var(--bg);border-radius:20px;box-shadow:16px 0 0 var(--bg),-16px 0 0 var(--bg);clip-path:circle(0 at calc(100% - 34px) calc(100% - 34px));transition:clip-path 1.5s cubic-bezier(.4,0,.2,1),visibility 0s 1.5s}
 .sc.sur.on{clip-path:circle(160% at calc(100% - 34px) calc(100% - 34px));transition:clip-path 1.5s cubic-bezier(.4,0,.2,1)}
-.sc.pardessus{z-index:2;background:var(--bg);border-radius:20px}
-.fil-c{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;overflow:hidden}
+/* l'écran qui passe par-dessus couvre aussi, sur les côtés, les ombres de celui du dessous */
+.sc.pardessus{z-index:2;background:var(--bg);border-radius:20px;box-shadow:16px 0 0 var(--bg),-16px 0 0 var(--bg)}
+.fil-c{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;overflow:hidden;margin:0 -14px;padding:0 14px 6px;-webkit-mask-image:linear-gradient(transparent,#000 26px);mask-image:linear-gradient(transparent,#000 26px)}
 .fil-c>.e{max-height:0;margin-top:-8px;transition:opacity 1.3s cubic-bezier(.25,.1,.25,1),transform 1.6s cubic-bezier(.25,.1,.25,1),max-height 1.2s cubic-bezier(.25,.1,.25,1),margin .9s}
 .sc.on .fil-c>.e{max-height:220px;margin-top:0}
 .sc.on .fil-c>.pts-b{animation:part-b .8s ease 2.9s forwards}
@@ -996,7 +1003,7 @@ a.fr-p:active{box-shadow:var(--in)}
 .mt-leg{margin:0;max-width:300px;text-align:center;font-size:13px;color:var(--muted);min-height:3.4em}
 .mt-leg small{display:block;font-size:11.5px;margin-top:3px;opacity:.8}
 .mt-leg .mt-ck{vertical-align:1px}
-.mt-f{width:236px;padding:9px;border-radius:40px;background:var(--bg);box-shadow:var(--up),var(--lis);transition:width .8s var(--doux),border-radius .8s var(--doux)}
+.mt-f{position:relative;width:236px;padding:9px;border-radius:40px;background:var(--bg);box-shadow:var(--up),var(--lis);transition:width .8s var(--doux),border-radius .8s var(--doux)}
 .mt-f .mt-e{position:relative;aspect-ratio:390/844;height:auto;border-radius:31px;overflow:hidden;box-shadow:var(--in)}
 .mt-f.ipad{width:min(100%,600px);border-radius:28px;padding:11px}
 .mt-f.ipad .mt-e{aspect-ratio:1180/820;border-radius:18px}
@@ -1054,8 +1061,8 @@ footer a{text-decoration:none}
 @keyframes dessine{to{stroke-dashoffset:0}}
 
 /* galets autour du téléphone : un par étape ; celui de l'étape en cours s'enfonce, icône laiton */
-/* le téléphone tient toujours entier à l'écran, sous la barre du haut (iPad, téléphone) */
-.scene{position:relative;justify-self:center;width:min(310px,100%,calc((100svh - 150px) * 390 / 844))}
+/* le téléphone tient toujours entier à l'écran, sous la barre du haut (iPad, téléphone) : réduit d'un bloc par le script */
+.scene{position:relative;justify-self:center;width:310px}
 .scene .tel{width:100%}
 .flot{position:absolute;z-index:2;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);animation:flotte 8s ease-in-out infinite;transition:box-shadow 1.4s var(--doux),color 1.2s var(--doux)}
 .flot svg{width:22px;height:22px}.flot .pp{width:22px;height:25px}
@@ -1066,7 +1073,7 @@ footer a{text-decoration:none}
 .f4{left:-34px;top:68%;animation-delay:-5.3s}.f5{right:-30px;top:82%;animation-delay:-6.6s}
 @keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @media (max-width:880px){.sc{inset:34px 11px 34px;gap:8px}.ecran .pill{padding:10px 10px;font-size:12px}.lig{padding:4px 0;font-size:11px}.pdv{padding:10px 12px}.tot b{font-size:15px}.msg{font-size:11.5px}.banniere{padding:8px 10px}.ecran .bj b{font-size:17px}.toast-s{bottom:52px}.frappe{max-width:calc(100% - 26px)}.tuiles b{font-size:16px;white-space:nowrap}}
-@media (max-width:880px){.scene{width:min(300px,76%,calc((100svh - 150px) * 390 / 844))}.flot{width:44px;height:44px}.flot svg{width:19px;height:19px}.f0,.f2,.f4{left:-28px}.f1,.f3,.f5{right:-28px}}
+@media (max-width:880px){.scene{width:300px}.flot{width:44px;height:44px}.flot svg{width:19px;height:19px}.f0,.f2,.f4{left:-28px}.f1,.f3,.f5{right:-28px}}
 
 /* petites scènes au trait */
 .illu{height:128px;margin:-4px 0 20px;display:grid;place-items:center;overflow:hidden}
@@ -1819,6 +1826,11 @@ footer a{text-decoration:none}
   if(!("IntersectionObserver" in window)){[].forEach.call(els,function(e){e.classList.add("vu")})}
   else{var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){vu(e.target);io.unobserve(e.target)}})},{rootMargin:"0px 0px -8% 0px"});
     [].forEach.call(els,function(e){io.observe(e)})}
+  /* le téléphone de l'accueil tient entier à l'écran (sous la barre du haut) : on le réduit d'un bloc, sans toucher à son dessin */
+  (function(){var sc=d.querySelector(".hero .scene"),lw=0;if(!sc)return;
+   function ajuste(){if(innerWidth===lw)return;lw=innerWidth;sc.style.zoom="";var w=sc.offsetWidth,h=w*844/390,hb=(d.querySelector(".top")||{}).offsetHeight||80,pw=sc.parentNode.clientWidth;
+    var k=Math.min(1,(innerHeight-hb-50)/h,pw*.78/w);sc.style.zoom=k<1?k.toFixed(3):""}
+   ajuste();addEventListener("resize",ajuste)})();
   /* le téléphone raconte l'histoire : une étape après l'autre, en boucle, seulement quand il est à l'écran.
      L'étape qui part s'aplatit d'abord, puis la suivante émerge. */
   var tel=d.querySelector(".tel"),scs=tel?tel.querySelectorAll(".sc"):[],fil=d.querySelector(".fil"),flots=d.querySelectorAll(".flot"),n=-1,minu=null,visible=false,cpts=[];
