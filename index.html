@@ -141,8 +141,8 @@ section{padding:clamp(64px,9vw,112px) 0}
 /* Le téléphone raconte l'histoire, au style de l'Espace : rien ne glisse, tout ÉMERGE de la matière.
    Chaque bloc arrive à plat (même teinte que le fond, invisible), puis son relief se lève doucement.
    Appuis comme dans l'Espace : creux visible ≥ 0,3 s, retour lent (~1,4 s), flèche laiton qui file de 10 px. */
-/* écran à bord fin et net, sans creux, comme le téléphone de l'Espace */
-.ecran{position:relative;height:100%;border-radius:41px;box-shadow:inset 1px 1px 3px var(--ilo),inset -1px -1px 2px var(--ihi);overflow:hidden;font-size:13px;line-height:1.35;--cl:#B5603A}
+/* l'écran va jusqu'au bord du téléphone, sans cadre visible, comme le téléphone de l'Espace */
+.ecran{position:relative;height:100%;border-radius:41px;overflow:hidden;font-size:13px;line-height:1.35;--cl:#B5603A}
 :root[data-theme="dark"] .ecran{--cl:#D98A63}
 .statut{position:absolute;top:12px;left:24px;right:22px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:800;color:var(--muted);z-index:2}
 .statut i{width:20px;height:9px;border:1.5px solid currentColor;border-radius:3px;position:relative}
