@@ -30,7 +30,7 @@ var css=
 '#pc-ouv .nom small{display:block;font-size:7.5px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:8px;opacity:0;animation:pcApparait .5s ease 5.95s forwards}'+
 '#pc-ouv.espace .filet{animation:pcFilet .45s var(--d) 5.45s forwards,pcEfface .5s ease 6.85s forwards}'+
 '#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
-'#pc-ouv.espace .pbox{animation:pcRange 1.1s cubic-bezier(.65,0,.35,1) 7.2s forwards}'+
+
 '#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
 '#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
 /* une vague : un bourrelet sans bord net, éclairé en haut à gauche, ombré en bas à droite */
@@ -52,7 +52,8 @@ var css=
 '@keyframes pcLettre{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}'+
 '@keyframes pcApparait{from{opacity:0}to{opacity:1}}'+
 '@keyframes pcEfface{to{opacity:0;transform:translateX(6px)}}'+
-'@keyframes pcRange{to{transform:translate(var(--px),var(--py)) scale(var(--ps,.66))}}'+
+/* le bouton du haut reçoit le P : il s'enfonce un peu, comme le bouton du départ */
+'.pc-pose{animation:pcPose 1s cubic-bezier(.35,0,.3,1)}@keyframes pcPose{35%{transform:scale(.93)}}'+
 '@keyframes pcLeve{from{opacity:0}to{opacity:1}}'+
 '@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{transform:scale(.93);animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{transform:scale(.97)}}'+
 '@keyframes pcOmbre{0%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%,100%{opacity:0}}'+
@@ -138,9 +139,16 @@ function vise(){
  /* le P quitte la mise en page avant de se ranger : rien ne bouge s'il y a un changement de largeur pendant le trajet */
  var ph=d.createElement('span');ph.style.cssText='width:'+b.width+'px;height:'+b.height+'px;flex:none';pb.parentNode.insertBefore(ph,pb);
  pb.style.cssText+=';position:fixed;left:'+b.left+'px;top:'+b.top+'px;margin:0';
- pb.style.setProperty('--ps',ps);
- pb.style.setProperty('--px',(T.x-b.left-ps*(G.x-b.left))+'px');
- pb.style.setProperty('--py',(T.y-b.top-ps*(G.y-b.top))+'px');
+ var px=T.x-b.left-ps*(G.x-b.left),py=T.y-b.top-ps*(G.y-b.top);
+ /* le trajet : une courbe (il part d'abord sur le côté, puis monte), un léger penché dans le virage, et il se pose en douceur */
+ var ex=bez(.5,0,.2,1),ey=bez(.7,0,.3,1),es=bez(.55,0,.3,1),t1=performance.now()+100,DU=1100,pose=false;
+ function vol(now){
+  var k=Math.max(0,Math.min(1,(now-t1)/DU)),s=1+(ps-1)*es(k),a=-7*Math.sin(Math.PI*Math.pow(k,.8));
+  pb.style.transform='translate('+(px*ex(k)).toFixed(2)+'px,'+(py*ey(k)).toFixed(2)+'px) rotate('+a.toFixed(2)+'deg) scale('+s.toFixed(4)+')';
+  if(k>.9&&!pose){pose=true;var gal=cible.parentNode;if(gal){gal.classList.remove('pc-pose');void gal.offsetWidth;gal.classList.add('pc-pose');setTimeout(function(){gal.classList.remove('pc-pose')},1100)}}
+  if(k<1)requestAnimationFrame(vol);
+ }
+ requestAnimationFrame(vol);
 }
 function lance(){prepare();if(!site){setTimeout(vise,7100);setTimeout(fin,8350)}}
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',lance);else lance();
