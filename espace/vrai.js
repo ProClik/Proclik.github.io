@@ -175,6 +175,7 @@ function toastV(t,s){var tt=$('#tt'),ts=$('#ts'),to=$('#toast');if(!to)return;tt
 
 /* ---------- devis et factures (VosFactures en coulisses, routes /espace/documents… du service) ---------- */
 // Un seul gros bouton : l'étape suivante. Rien ne part chez le client sans une confirmation de l'artisan.
+function pctDef(){var v=lsG('pc-acompte');return v!=null&&v>=0&&v<100?v:30}
 var TYP={devis:'Devis',facture:'Facture',acompte:'Facture d\'acompte',solde:'Facture finale',avoir:'Avoir'},DOCS=null,DOCC=null,ARME='';
 function pillDoc(d){var c=d.statut==='paid'||d.statut==='accepted'?'t':d.statut==='rejected'||d.statut==='issued'?'w':'';return '<span class="vp '+c+'">'+esc(d.statut_libelle||d.statut)+'</span>'}
 function jourDoc(s){var m=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||'');return m?m[3]+'/'+m[2]+'/'+m[1]:''}
@@ -194,7 +195,9 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
   if(arm)h+='<p class="vst" style="padding:0 0 6px">Touchez encore pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'. <a href="#" data-vdoc="annuler">Annuler</a></p>';
   else if(n.s)h+='<p class="vst" style="padding:0 0 6px">'+esc(n.s)+'</p>';
   if(n.b)h+='<button class="vbtn sm" type="button" style="margin-bottom:8px" data-vdoc="'+n.b.a+'" data-id="'+n.b.id+'">'+esc(n.b.t)+'</button>';
-  if(ARME==='acompte'+n.id)h+='<div class="vli" style="align-items:center"><span>Acompte demandé</span><span class="x"><input id="vpct" type="number" inputmode="decimal" min="1" max="99" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div><button class="vbtn go sm" type="button" data-vdoc="acompte-ok" data-id="'+n.id+'">Créer l\'acompte</button>';
+  var champ='<div class="vli" style="align-items:center"><span>Acompte demandé<small style="display:block">0 = pas d\'acompte</small></span><span class="x"><input id="vpct" type="number" inputmode="decimal" min="0" max="99" value="'+pctDef()+'" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div>';
+  if(arm&&n.a==='accepted')h+=champ+'<p class="vst" style="padding:0 0 6px">La facture d\'acompte se crée toute seule. Elle ne part pas sans vous.</p>';
+  if(ARME==='acompte'+n.id)h+=champ+'<button class="vbtn go sm" type="button" data-vdoc="acompte-ok" data-id="'+n.id+'">Créer l\'acompte</button>';
  }
  h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
  z.innerHTML=h}
@@ -213,7 +216,8 @@ function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  else if(a==='forcer')p=api('/espace/devis',{method:'POST',body:{contact:c,forcer:true}});
  else if(a==='envoyer')p=api('/espace/envoyer',{method:'POST',body:{id:+id}});
  else if(a==='finale')p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'finale'}});
- else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
+ else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}lsS('pc-acompte',v);p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
+ else if(a==='accepted'){var w=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(w>=0&&w<100)){toastV('Pourcentage d\'acompte illisible','Entre 0 et 99 %.');return}lsS('pc-acompte',w);p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a,pourcentage:w}})}
  else p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a}});
  ARME='';var z=$('#vdocs');if(z)z.querySelectorAll('button').forEach(function(b){b.disabled=true});
  p.then(function(x){toastV(a==='envoyer'?'Envoyé au client':x.deja?'Déjà fait':'C\'est fait',k?k.nom:'');chargerDocs(c);chargerFa()},
