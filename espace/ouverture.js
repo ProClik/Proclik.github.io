@@ -10,6 +10,8 @@ var reduit=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').mat
 var t=new Date(),jour=t.getFullYear()+'-'+(t.getMonth()+1)+'-'+t.getDate(),court=false;
 if(vitrine){try{court=!!localStorage.getItem('pc-ouv-site');localStorage.setItem('pc-ouv-site','1')}catch(e){}}
 else if(!site){try{court=localStorage.getItem('pc-ouv')===jour;localStorage.setItem('pc-ouv',jour)}catch(e){}}
+/* ondes : taille finale fixe et mise à l'échelle (transform), pour rester fluides même pendant le chargement de la page */
+var OV=Math.round(1.5*Math.max(innerWidth,innerHeight,600)),OD=(70/OV).toFixed(4);
 var css=
 '#pc-ouv{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--mlc:#E2C68C;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .6s ease;-webkit-tap-highlight-color:transparent}'+
 ':root[data-theme="dark"] #pc-ouv{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620;--mlc:#FBEFD6}'+
@@ -32,13 +34,13 @@ var css=
 '#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
 
 '#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
-'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
+'#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:'+OV+'px;height:'+OV+'px;margin:-'+OV/2+'px 0 0 -'+OV/2+'px;border-radius:50%;transform:scale('+OD+');opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
 /* une vague : un bourrelet sans bord net, éclairé en haut à gauche, ombré en bas à droite */
 '#pc-ouv .ond i::before,#pc-ouv .ond i::after{content:"";position:absolute;inset:0;border-radius:50%}'+
 '#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 76%,var(--mo) 87%,transparent 98%);transform:translate(1%,1.2%);opacity:.38}'+
 '#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%);opacity:.45}'+
 /* sur la crête, un liseré laiton fin, comme le socle du téléphone de l'accueil */
-'#pc-ouv .ond b{position:absolute;inset:7.5%;border-radius:50%;border:1px solid var(--ml);z-index:1;opacity:.4}'+
+'#pc-ouv .ond b{position:absolute;inset:7.5%;border-radius:50%;border:2px solid var(--ml);z-index:1;opacity:.4}'+
 '#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s linear 1.15s forwards,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
 '#pc-ouv .g::before{box-shadow:-7px -7px 16px var(--mh),9px 9px 20px var(--mo),inset 1.5px 1.5px 1px var(--mh),inset -1.5px -1.5px 2px var(--mo);animation:pcOmbre 1.3s linear 1.15s forwards}'+
@@ -60,7 +62,7 @@ var css=
 '@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{transform:scale(.93);animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{transform:scale(.97)}}'+
 '@keyframes pcOmbre{0%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%,100%{opacity:0}}'+
 '@keyframes pcCreux{0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{opacity:1;animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{opacity:0}}'+
-'@keyframes pcOnde{0%{width:70px;height:70px;opacity:0}12%{opacity:1}55%{opacity:.55}100%{width:150vmax;height:150vmax;opacity:0}}'+
+'@keyframes pcOnde{0%{transform:scale('+OD+');opacity:0}12%{opacity:1}55%{opacity:.55}100%{transform:scale(1);opacity:0}}'+
 '@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
