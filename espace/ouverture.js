@@ -21,9 +21,9 @@ var css=
 '#pc-ouv .pb{width:48px;height:56px;overflow:visible;flex:none}'+
 '#pc-ouv .pb path{fill:none;stroke-linecap:round;stroke-linejoin:round}'+
 '#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
-'#pc-ouv .l{stroke:var(--ml);stroke-width:3.3;stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcTrace 1.3s cubic-bezier(.5,0,.3,1) 2.85s forwards,pcFineL 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
-'#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcReflet 1.3s cubic-bezier(.5,0,.3,1) 2.85s forwards,pcEteint .35s ease 4.15s forwards}'+
-'#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;offset-path:path("M52 69.7 A23 23 0 1 0 33 47 V75 L56 47");offset-rotate:0deg;offset-distance:0%;animation:pcPoint .45s var(--d) .45s forwards,pcPlume 2.05s linear 2.45s forwards,pcFineD 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
+'#pc-ouv .l{stroke:var(--ml);stroke-width:3.3;stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcFineL 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
+'#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 4.15s forwards}'+
+'#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;animation:pcPoint .45s var(--d) .45s forwards,pcFineD 1s cubic-bezier(.65,0,.35,1) 4.5s forwards}'+
 '#pc-ouv .filet{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pcFilet .55s var(--d) 5.1s forwards}'+
 '#pc-ouv .nom{font-weight:300;font-size:21px;letter-spacing:.32em;line-height:1;white-space:nowrap;margin-right:-.32em}'+
 '#pc-ouv .nom .lt{display:inline-block;opacity:0;animation:pcLettre .55s var(--d) calc(5.25s + var(--i) * 55ms) forwards}'+
@@ -48,9 +48,9 @@ var css=
 '@keyframes pcEfface{to{opacity:0;transform:translateX(6px)}}'+
 '@keyframes pcRange{to{transform:translate(var(--px),var(--py)) scale(var(--ps,.66))}}'+
 '@keyframes pcLeve{from{opacity:0}to{opacity:1}}'+
-'@keyframes pcAppui{0%{transform:scale(1)}18%,30%{transform:scale(.955)}100%{transform:scale(1)}}'+
-'@keyframes pcOmbre{0%{opacity:1}18%,30%{opacity:0}100%{opacity:1}}'+
-'@keyframes pcCreux{0%{opacity:0}18%,30%{opacity:1}100%{opacity:0}}'+
+'@keyframes pcAppui{0%{transform:scale(1);animation-timing-function:cubic-bezier(.3,0,.2,1)}23%,35%{transform:scale(.925);animation-timing-function:cubic-bezier(.3,0,.25,1)}100%{transform:scale(1)}}'+
+'@keyframes pcOmbre{0%{opacity:1}23%,35%{opacity:0}100%{opacity:1}}'+
+'@keyframes pcCreux{0%{opacity:0}23%,35%{opacity:1}100%{opacity:0}}'+
 '@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
@@ -65,7 +65,7 @@ if(reduit&&!site)return;
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},1500);return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
-o.innerHTML='<div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="pen" d="M0 0 h0.01"/></g></svg></span><span class="filet"></span><div class="nom">'+
+o.innerHTML='<div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
 if(!site)window.PC_OUV_MS=9200;
@@ -74,16 +74,50 @@ function fin(){if(fini)return;fini=true;o.classList.add('fin');setTimeout(functi
 if(!site)o.addEventListener('click',fin);
 if(reduit){o.querySelectorAll('*').forEach(function(e){e.style.animation='none'});o.querySelector('.big').style.transform='none';o.querySelector('.pen').style.display='none';o.querySelector('.l').style.cssText='stroke-dasharray:none;stroke-width:5';o.querySelector('.sh').style.display='none';o.querySelector('.g').style.display='none';o.querySelector('.filet').style.transform='none';o.querySelectorAll('.lt,small').forEach(function(e){e.style.opacity=1});o.querySelector('.pb').insertAdjacentHTML('beforeend','<circle cx="56" cy="47" r="6" fill="var(--ml)"/>');return}
 
+/* la pointe : elle glisse jusqu'au bout de la boucle, trace le P (le trait la suit exactement), se lève et se pose au cœur.
+   Elle s'étire dans le sens du mouvement selon sa vitesse, et s'écrase un peu en se posant. */
+function bez(x1,y1,x2,y2){return function(x){var a=0,b=1,t=x;for(var i=0;i<24;i++){t=(a+b)/2;var u=1-t,xx=3*u*u*t*x1+3*u*t*t*x2+t*t*t;if(xx<x)a=t;else b=t}var u=1-t;return 3*u*u*t*y1+3*u*t*t*y2+t*t*t}}
+function plume(svg,centre){
+ var c0=centre(),cx=c0[0],cy=c0[1];
+ var NS='http://www.w3.org/2000/svg',g=svg.querySelector('.penw'),l=svg.querySelector('.l'),sh=svg.querySelector('.sh');
+ var P=d.createElementNS(NS,'path');P.setAttribute('d','M52 69.7 A23 23 0 1 0 33 47 V75');var L=P.getTotalLength();
+ var H=d.createElementNS(NS,'path');H.setAttribute('d','M33 75 C34 62 47 41 56 47');var LH=H.getTotalLength();
+ var e1=bez(.45,0,.3,1),e2=bez(.5,0,.3,1),e3=bez(.45,0,.25,1),t0=performance.now(),px=cx,py=cy,pt0=0,ang=0,s=1;
+ function pos(t){
+  if(t<2.45){var c=centre();cx=c[0];cy=c[1];
+   /* l'appui : la pointe s'enfonce avec le bouton, puis ressort un peu plus grosse quand il remonte */
+   var a=t-1.15,dz=a<0?0:a<.3?bez(.3,0,.2,1)(a/.3):a<.45?1:a<1.2?1-bez(.3,0,.2,1)((a-.45)/.75):0,pop=a>.45&&a<1?Math.sin(Math.PI*(a-.45)/.55)*.12:0;
+   return [cx,cy,1-.2*dz+pop]}
+  if(t<2.85){var k=e1((t-2.45)/.4);return [cx+(52-cx)*k,cy+(69.7-cy)*k,1]}
+  if(t<4.15){var k=e2((t-2.85)/1.3),q=P.getPointAtLength(k*L);l.style.strokeDashoffset=101-101*k;sh.style.strokeDashoffset=8-100*k;return [q.x,q.y,1]}
+  l.style.strokeDashoffset=0;sh.style.strokeDashoffset=-92;
+  if(t<4.5){var k=e3((t-4.15)/.35),q=H.getPointAtLength(k*LH);return [q.x,q.y,1-.16*Math.sin(Math.PI*k)]}
+  return [56,47,1];
+ }
+ function pas(now){
+  var t=(now-t0)/1000,p=pos(t),dt=Math.max(.001,t-pt0),vx=(p[0]-px)/dt,vy=(p[1]-py)/dt,v=Math.hypot(vx,vy);
+  if(v>4){var a=Math.atan2(vy,vx)*180/Math.PI,da=((a-ang+540)%360)-180;ang+=da*.5}
+  var cible=1+Math.min(.55,v/380);s+=(cible-s)*.45;
+  var sx=s,sy=1/Math.sqrt(s);
+  /* posé au cœur : petit écrasement qui se détend */
+  if(t>=4.5&&t<5.1){var k=(t-4.5)/.6,w=Math.sin(Math.PI*Math.min(1,k*1.6))*(1-k);sx=1+.22*w;sy=1-.18*w;ang=0}
+  g.setAttribute('transform','translate('+p[0].toFixed(2)+' '+p[1].toFixed(2)+') rotate('+ang.toFixed(1)+') scale('+(sx*p[2]).toFixed(3)+' '+(sy*p[2]).toFixed(3)+')');
+  px=p[0];py=p[1];pt0=t;
+  if(t<5.2)requestAnimationFrame(pas);else g.setAttribute('transform','translate(56 47)');
+ }
+ g.setAttribute('transform','translate('+cx.toFixed(2)+' '+cy.toFixed(2)+')');
+ requestAnimationFrame(pas);
+}
 function pt(svg,x,y){var m=svg.getScreenCTM();return {x:m.a*x+m.e,y:m.d*y+m.f}}
 function prepare(){
- var svg=o.querySelector('.pb'),m=svg.getScreenCTM(),W=window.innerWidth,H=window.innerHeight;
- /* le grand P est centré à l'écran, même si l'ensemble P + nom ne l'est pas */
- var dxu=((W/2-m.e)/m.a)-68;svg.querySelector('.big').style.setProperty('--dxu',dxu+'px');
- /* la pointe part du centre de l'écran (le bouton), glisse au bout de la boucle, trace le P, puis se pose au cœur */
- var cx=((W/2-m.e)/m.a-dxu-50)/3+50,cy=((H/2-m.f)/m.d-50)/3+50;
- var Lg=Math.hypot(52-cx,69.7-cy),T=Lg+140.4+36.2;
- o.querySelector('.pen').style.offsetPath='path("M'+cx.toFixed(2)+' '+cy.toFixed(2)+' L52 69.7 A23 23 0 1 0 33 47 V75 L56 47")';
- st.textContent+='@keyframes pcPlume{0%{offset-distance:0%;animation-timing-function:cubic-bezier(.45,0,.3,1)}19.5%{offset-distance:'+(100*Lg/T).toFixed(2)+'%;animation-timing-function:cubic-bezier(.5,0,.3,1)}82.9%{offset-distance:'+(100*(Lg+140.4)/T).toFixed(2)+'%;animation-timing-function:cubic-bezier(.45,0,.25,1)}100%{offset-distance:100%}}';
+ var svg=o.querySelector('.pb'),gal=o.querySelector('.g');
+ /* le grand P est centré sur le bouton, même si l'ensemble P + nom ne l'est pas ; recalculé tant que la pointe est dans le bouton
+    (la police peut arriver après coup et décaler le nom) */
+ function centre(){var m=svg.getScreenCTM(),r=gal.getBoundingClientRect(),X=r.left+r.width/2,Y=r.top+r.height/2;
+  var dxu=((X-m.e)/m.a)-68;svg.querySelector('.big').style.setProperty('--dxu',dxu+'px');
+  /* la pointe part du centre du bouton */
+  return [((X-m.e)/m.a-dxu-50)/3+50,((Y-m.f)/m.d-50)/3+50]}
+ plume(svg,centre);
  o.classList.add('go');
 }
 /* juste avant de se ranger, on vise le P du bouton en haut de l'Espace (la page a fini de se mettre en place) */
@@ -93,7 +127,7 @@ function vise(){
  if(!cible){fin();return}
  var r=cible.getBoundingClientRect();if(!r.width||r.bottom<0){fin();return}
  var k=cible.tagName.toLowerCase()==='svg'?cible.getScreenCTM().a:(r.width-12)/76;
- var T={x:r.left+r.width/2,y:r.top+r.height/2},G=pt(svg,56,49.5),b=pb.getBoundingClientRect(),ps=k/svg.getScreenCTM().a;
+ var T={x:r.left+r.width/2,y:r.top+r.height/2},G=(function(){var vb=cible.viewBox&&cible.viewBox.baseVal;return vb&&vb.width?pt(svg,vb.x+vb.width/2,vb.y+vb.height/2+5):pt(svg,56,49.5)})(),b=pb.getBoundingClientRect(),ps=k/svg.getScreenCTM().a;
  /* le P quitte la mise en page avant de se ranger : rien ne bouge s'il y a un changement de largeur pendant le trajet */
  var ph=d.createElement('span');ph.style.cssText='width:'+b.width+'px;height:'+b.height+'px;flex:none';pb.parentNode.insertBefore(ph,pb);
  pb.style.cssText+=';position:fixed;left:'+b.left+'px;top:'+b.top+'px;margin:0';
