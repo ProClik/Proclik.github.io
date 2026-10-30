@@ -881,6 +881,10 @@ a.fr-p:active{box-shadow:var(--in)}
 .resa .points li::before{content:"";position:absolute;left:0;top:8px;width:10px;height:10px;border-radius:50%;background:var(--acc)}
 .resa .points li{display:block}
 .resa .points b{display:block;color:var(--fg)}
+/* agendas compatibles : trois galets plats, sans logo de marque */
+.sync{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.sync span{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px;border-radius:999px;background:var(--bg);box-shadow:var(--up);font-size:14px;font-weight:600;color:var(--fg)}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--acc)}
 /* la carte Studio Nova prend la couleur du salon (prune), comme son site */
 .resa-d{--acc:#A8667A;--accx:#7B4B5E;--lis:0 0 0 1px rgba(123,75,94,.38),0 0 30px -8px rgba(123,75,94,.4)}
 :root[data-theme="dark"] .resa-d{--acc:#D49BAA;--accx:#E0AEBB;--lis:0 0 0 1px rgba(212,155,170,.32),0 0 30px -8px rgba(212,155,170,.3)}
@@ -1565,7 +1569,8 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
     <div class="embleme rv"><span class="em-g"><svg class="em-cal" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="11" width="32" height="29" rx="6"/><path d="M8 20h32M17 7v8M31 7v8"/><path class="coche-c" pathLength="1" d="m18 30 4 4 8-8"/></svg></span><span class="em-f"></span><span class="em-n">Réservation<small>rendez-vous et acompte · salons, commerces</small></span></div>
     <h2>Vos clients réservent, <span class="or">même quand vous travaillez.</span></h2>
     <p class="lead">Coiffeur, esthéticienne, garage, coach : votre client choisit son créneau sur votre site, reçoit sa confirmation et un rappel la veille. Le rendez-vous arrive dans votre planning.</p>
-    <ul class="points"><li><b>Moins d'oublis.</b> Un rappel part tout seul avant chaque rendez-vous.</li><li><b>L'acompte anti-lapin.</b> Le client peut régler un acompte en réservant. Les lapins se font beaucoup plus rares.</li><li><b>Votre agenda à jour.</b> Rendez-vous, annulations et clients, au même endroit.</li></ul>
+    <ul class="points"><li><b>Moins d'oublis.</b> Un rappel part tout seul avant chaque rendez-vous.</li><li><b>L'acompte anti-lapin.</b> Le client peut régler un acompte en réservant. Les lapins se font beaucoup plus rares.</li><li><b>Votre agenda à jour.</b> Rendez-vous, annulations et clients, au même endroit.</li><li><b>Relié à l'agenda de votre téléphone.</b> Chaque réservation s'ajoute toute seule dans l'agenda que vous utilisez déjà. Et vos rendez-vous perso bloquent le créneau : personne ne peut le réserver.</li></ul>
+    <div class="sync rv" aria-label="Agendas compatibles"><span><i></i>Google Agenda</span><span><i></i>Outlook</span><span><i></i>iPhone (iCloud)</span></div>
   </div>
   <div class="card resa-d lis rv" aria-hidden="true">
     <div class="rd-t"><b>Studio Nova</b><small>Coupe + brushing · 1 h</small></div>
