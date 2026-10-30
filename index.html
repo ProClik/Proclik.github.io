@@ -1235,28 +1235,32 @@ footer a{text-decoration:none}
 main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-size:auto 900px}
 /* une fois la page ouverte, tout est dessiné pour que les liens du menu tombent juste */
 .tout-pret main>section:not(.hero):not(.bonjour){content-visibility:visible}
-/* ===== écran de chargement : n'apparaît que si la page tarde (connexion lente) ; une goutte laiton tombe dans le galet et devient le point du P ===== */
+/* ===== écran de chargement : n'apparaît que si la page tarde (connexion lente) ; un anneau laiton : une goutte monte du bord, devient le point du P, puis l'anneau bascule et revient ===== */
 #pc-charge{position:fixed;inset:0;z-index:300;display:grid;place-items:center;align-content:center;gap:34px;background:var(--bg);opacity:0;animation:chArrive .6s ease .8s forwards;transition:opacity .5s ease}
 #pc-charge.parti{opacity:0!important;pointer-events:none}
 .ch-z{position:relative;width:96px;height:96px;perspective:420px}
-.ch-g{position:absolute;inset:0;border-radius:50%;background:var(--bg);box-shadow:var(--gal),0 0 0 1px rgba(168,130,63,.35);animation:chBascule 3s cubic-bezier(.65,0,.35,1) infinite}
-.ch-g::after{content:"";position:absolute;inset:42px;border-radius:50%;border:1px solid var(--acc);opacity:0;animation:chRide 3s cubic-bezier(.2,.6,.3,1) infinite}
-.ch-o{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50% 50% 50% 50%/58% 58% 42% 42%;background:var(--acc);opacity:0;animation:chGoutte 3s cubic-bezier(.5,0,.3,1) infinite}
+.ch-a{position:absolute;inset:0;border-radius:50%;border:3px solid var(--acc);box-shadow:inset 5px 5px 12px rgba(26,34,64,.16),inset -5px -5px 12px var(--hi),-5px -5px 12px var(--hi),6px 6px 14px rgba(26,34,64,.16);animation:chAnneau 3.4s cubic-bezier(.55,0,.35,1) infinite}
+:root[data-theme="dark"] .ch-a{box-shadow:inset 5px 5px 12px rgba(0,0,0,.45),inset -5px -5px 12px rgba(255,255,255,.04),-5px -5px 12px rgba(255,255,255,.04),6px 6px 14px rgba(0,0,0,.45)}
+.ch-t{position:absolute;left:50%;bottom:3px;width:8px;height:42px;margin-left:-4px;border-radius:4px;background:var(--acc);transform-origin:50% 100%;transform:scale(1,0);animation:chTige 3.4s linear infinite}
+.ch-o{position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:var(--acc);transform:translateY(42px) scale(0);animation:chGoutte 3.4s linear infinite}
+.ch-c{position:absolute;inset:42px;border-radius:50%;border:1px solid var(--acc);opacity:0;animation:chRide 3.4s ease-out infinite}
+@keyframes chAnneau{0%{transform:translateY(0) rotateX(0) rotateZ(0);opacity:.5}30%{opacity:.5}38%,56%{transform:translateY(0) rotateX(0) rotateZ(0);opacity:1}70%{transform:translate(14px,-10px) rotateZ(-35deg) rotateX(66deg);opacity:.9}80%{transform:translate(34px,-26px) rotateZ(-50deg) rotateX(88deg);opacity:0}81%{transform:translateY(46px) rotateX(70deg);opacity:0}100%{transform:translateY(0) rotateX(0);opacity:.5}}
+@keyframes chTige{0%{transform:scale(1.3,0)}10%{transform:scale(1.3,.14)}30%{transform:scale(.6,.86)}36%{transform:scale(.25,.7)}42%,100%{transform:scale(0,0)}}
+@keyframes chGoutte{0%{transform:translateY(42px) scale(0)}10%{transform:translateY(38px) scale(1,.8);animation-timing-function:cubic-bezier(.5,0,.3,1)}32%{transform:translateY(2px) scale(.8,1.25)}38%{transform:translateY(0) scale(1.12,.88)}44%,58%{transform:translateY(0) scale(1)}76%{transform:translateY(5px) scale(.4)}88%,100%{transform:translateY(8px) scale(0)}}
+@keyframes chRide{0%,58%{inset:42px;opacity:0}62%{opacity:.6}80%,100%{inset:26px;opacity:0}}
+@media (prefers-reduced-motion:reduce){.ch-a,.ch-t,.ch-c{animation:none}.ch-a{opacity:1}.ch-o{animation:none;transform:none}}
 .ch-m{margin:0;min-height:3em;max-width:280px;text-align:center;font-size:15px;line-height:1.5;color:var(--muted);transition:opacity .5s ease}
 .ch-m span{transition:opacity .45s ease}
 .ch-m b{display:block;color:var(--fg);font-weight:700;margin-bottom:2px}
 .ch-r{display:none;margin-top:-14px}
 #pc-charge.long .ch-r{display:inline-flex}
 @keyframes chArrive{to{opacity:1}}
-@keyframes chGoutte{0%{transform:translateY(-78px) scale(.7,1.25);opacity:0}8%{opacity:1}24%{transform:translateY(0) scale(.7,1.25);animation-timing-function:ease-out}30%{transform:scale(1.35,.65)}38%,52%{transform:scale(1);opacity:1}62%,100%{transform:scale(0);opacity:0}}
-@keyframes chRide{0%,24%{inset:42px;opacity:0}26%{opacity:.7}52%,100%{inset:5px;opacity:0}}
-@keyframes chBascule{0%,52%{transform:rotateX(0) rotateY(0)}70%{transform:rotateX(58deg) rotateY(18deg)}88%,100%{transform:rotateX(0) rotateY(0)}}
-@media (prefers-reduced-motion:reduce){.ch-g,.ch-g::after{animation:none}.ch-o{animation:none;opacity:1}}
+
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
-<div id="pc-charge" role="status" aria-live="polite"><div class="ch-z" aria-hidden="true"><div class="ch-g"></div><i class="ch-o"></i></div><p class="ch-m"><b>Un instant…</b><span>On visse les derniers boutons.</span></p><button type="button" class="btn ch-r" onclick="location.reload()">Recharger la page</button></div>
+<div id="pc-charge" role="status" aria-live="polite"><div class="ch-z" aria-hidden="true"><div class="ch-a"></div><i class="ch-t"></i><i class="ch-o"></i><i class="ch-c"></i></div><p class="ch-m"><b>Un instant…</b><span>On visse les derniers boutons.</span></p><button type="button" class="btn ch-r" onclick="location.reload()">Recharger la page</button></div>
 <noscript><style>#pc-charge{display:none}</style></noscript>
 <script>
 /* écran de chargement : quelques phrases pour patienter, puis une proposition de recharger si la connexion traîne vraiment */
