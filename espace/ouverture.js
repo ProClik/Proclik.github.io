@@ -146,16 +146,17 @@ function vise(){
  var px=T.x-b.left-ps*(G.x-b.left),py=T.y-b.top-ps*(G.y-b.top);
  /* le trajet reste droit ; c'est le P qui vit : il s'étire dans le sens du déplacement quand il file,
     puis s'écrase un peu en se posant et se détend */
- var e=bez(.65,0,.35,1),t1=performance.now()+100,DU=1100,FIN=1600,pose=false,cx=G.x-b.left,cy=G.y-b.top,th=Math.atan2(py,px)*180/Math.PI,k0=0,e0=0;
- function vol(now){
-  var ms=now-t1,k=Math.max(0,Math.min(1,ms/DU)),ek=e(k),v=k>k0?(ek-e0)/(k-k0):0,s=1+(ps-1)*ek,sx=1,sy=1;k0=k;e0=ek;
+ var e=bez(.65,0,.35,1),DU=1100,FIN=1600,cx=G.x-b.left,cy=G.y-b.top,th=Math.atan2(py,px)*180/Math.PI,k0=0,e0=0,im=[];
+ /* le trajet est calculé d'avance puis confié au navigateur (animation composée par la puce graphique) : il reste fluide même si la page travaille */
+ for(var ms=0;ms<=FIN;ms+=16){
+  var k=Math.min(1,ms/DU),ek=e(k),v=k>k0?(ek-e0)/(k-k0):0,sc=1+(ps-1)*ek,sx=1,sy=1;k0=k;e0=ek;
   if(ms<DU){var st=1+.16*Math.min(1,v/1.9);sx=st;sy=1/Math.sqrt(st)}
   else{var q=Math.min(1,(ms-DU)/(FIN-DU)),w=Math.sin(Math.PI*Math.min(1,q*1.5))*(1-q);sx=1-.12*w;sy=1+.08*w}
-  pb.style.transform='translate('+(px*ek).toFixed(2)+'px,'+(py*ek).toFixed(2)+'px) scale('+s.toFixed(4)+') translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px) rotate('+th.toFixed(1)+'deg) scale('+sx.toFixed(4)+','+sy.toFixed(4)+') rotate('+(-th).toFixed(1)+'deg) translate('+(-cx).toFixed(2)+'px,'+(-cy).toFixed(2)+'px)';
-  if(k>.9&&!pose){pose=true;var gal=cible.parentNode;if(gal){gal.classList.remove('pc-pose');void gal.offsetWidth;gal.classList.add('pc-pose');setTimeout(function(){gal.classList.remove('pc-pose')},1100)}}
-  if(ms<FIN)requestAnimationFrame(vol);
+  im.push({offset:Math.min(1,ms/FIN),transform:'translate('+(px*ek).toFixed(2)+'px,'+(py*ek).toFixed(2)+'px) scale('+sc.toFixed(4)+') translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px) rotate('+th.toFixed(1)+'deg) scale('+sx.toFixed(4)+','+sy.toFixed(4)+') rotate('+(-th).toFixed(1)+'deg) translate('+(-cx).toFixed(2)+'px,'+(-cy).toFixed(2)+'px)'});
  }
- requestAnimationFrame(vol);
+ im[im.length-1].offset=1;pb.style.willChange='transform';pb.style.transform=im[0].transform;
+ if(pb.animate)pb.animate(im,{duration:FIN,delay:100,fill:'forwards',easing:'linear'});else pb.style.transform=im[im.length-1].transform;
+ setTimeout(function(){var gal=cible.parentNode;if(gal){gal.classList.remove('pc-pose');void gal.offsetWidth;gal.classList.add('pc-pose');setTimeout(function(){gal.classList.remove('pc-pose')},1100)}},100+DU*.9);
 }
 function lance(){prepare();if(!site){setTimeout(vise,7100);setTimeout(fin,8600)}}
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',lance);else lance();
