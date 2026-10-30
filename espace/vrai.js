@@ -156,11 +156,13 @@ function afficher(d){COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0]
   h+=liste('Alertes',p.alertes)+liste('Hypothèses de Cliky',p.hypotheses);
   if(p.controles.length)h+='<details class="card vd"><summary>Contrôles du calcul ('+p.controles.length+')</summary><ul class="vul" style="margin-top:8px">'+p.controles.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></details>';
  }
+ h+='<div class="card vsec" id="vdocs"><h3>Devis et factures</h3><p class="vst" style="padding:0">Chargement…</p></div>';
  h+=demandeHTML(d.demande);
  if(d.pre_devis.length>1)h+='<details class="card vd"><summary>'+(d.pre_devis.length-1)+' pré-devis plus ancien'+(d.pre_devis.length>2?'s':'')+'</summary>'+d.pre_devis.slice(1).map(function(x){return '<p class="vst">'+esc(quand(x.le))+(x.totaux&&x.totaux.total_ht!=null?' · '+eur(x.totaux.total_ht)+' HT':'')+'</p><pre class="vpre">'+esc(x.texte)+'</pre>'}).join('')+'</details>';
- h+='<p class="vst" style="font-size:12.5px">🔒 Rien n\'est envoyé au client depuis cet écran. Les montants viennent de votre base de prix ; le devis définitif se fait avec vous.</p>';
+ h+='<p class="vst" style="font-size:12.5px">🔒 Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
  var foot='<button class="vbtn" type="button" data-vfermer>Fermer</button>'+(o?'<button class="vbtn go" type="button" data-vetapes>Changer d\'étape…</button>':'');
- ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,foot);}
+ ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,foot);
+ if(DOCC===k.id&&DOCS)rendreDocs();else chargerDocs(k.id);}
 function etapes(){var d=COUR,o=d&&d.opportunites[0];if(!o)return;var L=d.etapes||ETAPES,i=L.findIndex(function(e){return e.id===o.etape_id});
  var h='<div class="card"><p style="margin:0 0 10px">La demande de <b>'+esc(d.contact.nom)+'</b> est à l\'étape <b>'+esc(o.etape||'—')+'</b>. Choisissez où la ranger :</p><div class="vl">'+
   L.map(function(e,j){var tag=e.id===o.etape_id?'actuelle':j===i+1?'suivante':'';return '<button class="vcard'+(j===i+1?' vav':'')+'" type="button" data-vset="'+esc(e.id)+'"'+(e.id===o.etape_id?' disabled':'')+'><div class="r"><b>'+esc(e.nom)+'</b><span class="vp'+(j===i+1?' t':'')+'"'+(tag?'':' hidden')+'>'+tag+'</span></div>'+(/envoy/i.test(e.nom)?'<small>⚠ Les relances automatiques au client partent de cette étape (e-mail après 3 jours).</small>':'')+'</button>'}).join('')+
@@ -171,8 +173,59 @@ function changer(id){var d=COUR,o=d&&d.opportunites[0],e=(d.etapes||ETAPES).filt
  api('/espace/etape',{method:'POST',body:{opportunite:o.opportunite,etape:id}}).then(function(){o.etape=e.nom;o.etape_id=e.id;afficher(d);charger();toastV('Rangée dans « '+e.nom+' »',d.contact.nom)},function(err){if(b){b.disabled=false;bp.textContent='erreur'}toastV('Étape non changée',err.message)})}
 function toastV(t,s){var tt=$('#tt'),ts=$('#ts'),to=$('#toast');if(!to)return;tt.textContent=t;ts.textContent=s||'';to.classList.add('on');clearTimeout(toastV.t);toastV.t=setTimeout(function(){to.classList.remove('on')},3400)}
 
+/* ---------- devis et factures (VosFactures en coulisses, routes /espace/documents… du service) ---------- */
+// Un seul gros bouton : l'étape suivante. Rien ne part chez le client sans une confirmation de l'artisan.
+var TYP={devis:'Devis',facture:'Facture',acompte:'Facture d\'acompte',solde:'Facture finale',avoir:'Avoir'},DOCS=null,DOCC=null,ARME='';
+function pillDoc(d){var c=d.statut==='paid'||d.statut==='accepted'?'t':d.statut==='rejected'||d.statut==='issued'?'w':'';return '<span class="vp '+c+'">'+esc(d.statut_libelle||d.statut)+'</span>'}
+function jourDoc(s){var m=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||'');return m?m[3]+'/'+m[2]+'/'+m[1]:''}
+function ligneDoc(d){return '<div class="vli"><span>'+esc(TYP[d.type]||d.type)+' n° '+esc(d.numero)+'</span><span class="x">'+eur(d.ht)+' HT</span><small>'+esc(jourDoc(d.date))+' · '+pillDoc(d)+' · <a href="#" style="color:inherit;font-weight:800" data-vdoc="pdf" data-id="'+d.id+'">📄 Voir le PDF</a></small></div>'}
+function suite(L,pre){var dv=L.filter(function(d){return d.type==='devis'&&d.statut!=='rejected'})[0],F=L.filter(function(d){return d.type!=='devis'&&d.type!=='avoir'});
+ var aEnv=F.filter(function(d){return d.statut==='issued'})[0],aPay=F.filter(function(d){return d.statut==='sent'||d.statut==='partial'})[0],solde=F.filter(function(d){return d.type==='solde'||d.type==='facture'})[0],ac=F.filter(function(d){return d.type==='acompte'})[0];
+ if(!dv)return pre?{t:'Valider le pré-devis et créer le devis',a:'creer',s:'Le devis est créé dans vos documents. Il ne part pas chez le client tant que vous ne l\'envoyez pas.'}:null;
+ if(dv.statut==='issued')return {t:'Envoyer le devis n° '+dv.numero+' au client',a:'envoyer',id:dv.id,s:'Vérifiez le PDF avant : le client le reçoit par e-mail.'};
+ if(dv.statut==='sent')return {t:'Le client a accepté le devis',a:'accepted',id:dv.id,b:{t:'Refusé',a:'rejected',id:dv.id}};
+ if(aEnv)return {t:'Envoyer la '+(TYP[aEnv.type]||'facture').toLowerCase()+' n° '+aEnv.numero,a:'envoyer',id:aEnv.id,s:'Vérifiez le PDF avant : le client la reçoit par e-mail.'};
+ if(dv.statut==='accepted'&&!solde)return ac?{t:'Fin de chantier : créer la facture finale',a:'finale',id:dv.id,s:'L\'acompte déjà facturé est déduit tout seul.'}:{t:'Créer la facture d\'acompte',a:'acompte',id:dv.id,b:{t:'Pas d\'acompte : facture finale',a:'finale',id:dv.id}};
+ if(aPay)return {t:'Facture n° '+aPay.numero+' payée',a:'paid',id:aPay.id};
+ return null}
+function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre_devis[0],n=suite(DOCS,p&&p.lue),h='<h3>Devis et factures</h3>';
+ if(n){var arm=ARME===n.a+(n.id||'');
+  h+='<button class="vbtn go" style="width:100%;margin:4px 0 6px" type="button" data-vdoc="'+n.a+'" data-id="'+(n.id||'')+'">'+(arm?'Oui, '+esc(n.t.charAt(0).toLowerCase()+n.t.slice(1)):esc(n.t))+'</button>';
+  if(arm)h+='<p class="vst" style="padding:0 0 6px">Touchez encore pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'. <a href="#" data-vdoc="annuler">Annuler</a></p>';
+  else if(n.s)h+='<p class="vst" style="padding:0 0 6px">'+esc(n.s)+'</p>';
+  if(n.b)h+='<button class="vbtn sm" type="button" style="margin-bottom:8px" data-vdoc="'+n.b.a+'" data-id="'+n.b.id+'">'+esc(n.b.t)+'</button>';
+  if(ARME==='acompte'+n.id)h+='<div class="vli" style="align-items:center"><span>Acompte demandé</span><span class="x"><input id="vpct" type="number" inputmode="decimal" min="1" max="99" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div><button class="vbtn go sm" type="button" data-vdoc="acompte-ok" data-id="'+n.id+'">Créer l\'acompte</button>';
+ }
+ h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
+ z.innerHTML=h}
+function chargerDocs(c){DOCC=c;DOCS=null;ARME='';var z=$('#vdocs');
+ api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
+function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=lsG(KJ);
+ fetch(SERVICE+'/espace/document/pdf?id='+encodeURIComponent(id),{headers:j?{Authorization:'Bearer '+j}:{}}).then(function(r){if(!r.ok)throw new Error('PDF indisponible ('+r.status+')');return r.blob()})
+  .then(function(b){var u=URL.createObjectURL(b);if(w)w.location=u;else location.href=u},function(err){if(w)w.close();toastV('PDF non ouvert',err.message)})}
+function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
+ if(a==='annuler'){ARME='';return rendreDocs()}
+ if(a==='pdf')return pdfDoc(id);
+ if(a==='acompte'){ARME='acompte'+id;rendreDocs();var i=$('#vpct');if(i)i.focus();return}
+ if((a==='envoyer'||a==='creer'||a==='accepted'||a==='rejected'||a==='paid'||a==='finale')&&ARME!==a+(id||'')){ARME=a+(id||'');return rendreDocs()}
+ var p;
+ if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c}});
+ else if(a==='forcer')p=api('/espace/devis',{method:'POST',body:{contact:c,forcer:true}});
+ else if(a==='envoyer')p=api('/espace/envoyer',{method:'POST',body:{id:+id}});
+ else if(a==='finale')p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'finale'}});
+ else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
+ else p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a}});
+ ARME='';var z=$('#vdocs');if(z)z.querySelectorAll('button').forEach(function(b){b.disabled=true});
+ p.then(function(x){toastV(a==='envoyer'?'Envoyé au client':x.deja?'Déjà fait':'C\'est fait',k?k.nom:'');chargerDocs(c);chargerFa()},
+  function(err){if(a==='creer'&&/fournisseur/i.test(err.message)){var z2=$('#vdocs');rendreDocs();if(z2)z2.insertAdjacentHTML('beforeend','<p class="vst" style="padding:8px 0 0">⏳ '+esc(err.message)+'. <a href="#" data-vdoc="forcer">Créer le devis quand même</a></p>');return}toastV('Pas fait',err.message);rendreDocs()})}
+// Onglet « Devis et factures » : les vrais documents en haut, l'exemple en dessous.
+function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){z=document.createElement('div');z.id='vfa';z.className='card vsec';var b=v.querySelector('.vexemple');v.insertBefore(z,b?b.nextSibling:v.firstChild)}
+ api('/espace/documents').then(function(x){var L=x.documents||[],du=0;L.forEach(function(d){if(d.type!=='devis'&&d.type!=='avoir'&&d.statut!=='paid'&&d.ttc!=null)du+=d.ttc-(d.paye||0)});
+  z.innerHTML='<h3>Vos vrais devis et factures</h3>'+(L.length?'<p class="vst" style="padding:0 0 6px">Reste à encaisser : <b>'+eur(Math.round(du*100)/100)+' TTC</b></p>'+L.slice(0,30).map(function(d){return ligneDoc(d).replace('<span>','<span>'+esc(d.client)+' · ')}).join(''):'<p class="vst" style="padding:0">Pas encore de devis ni de facture. Ils se créent depuis la fiche d\'une demande.</p>')},
+  function(err){z.innerHTML='<h3>Vos vrais devis et factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vrais devis et factures (branchement en cours).':err.message)+'</p>'})}
+
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vc'))ouvrirDemande(b.getAttribute('data-vc'));
  else if(b.hasAttribute('data-vfermer'))fermer();
  else if(b.hasAttribute('data-vetapes'))etapes();
@@ -183,6 +236,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-vout')){deconnecter(false)}
  else if(b.hasAttribute('data-vtab')){var t=$('#nb-devis')||$('#tt-devis');if(t)t.click()}
  else if(b.hasAttribute('data-vlogin'))connexion();
+ else if(b.hasAttribute('data-vdoc'))actionDoc(b.getAttribute('data-vdoc'),b.getAttribute('data-id'));
 },true);
 
 /* ---------- démarrage ---------- */
@@ -193,7 +247,8 @@ function demarrer(){var art=lsG(KA)||{};document.documentElement.classList.add('
  var col=$('#v-devis .grid2 .col');if(col&&!$('#vd')){var v=document.createElement('div');v.id='vd';col.insertBefore(v,col.firstChild)}
  var td=$('#todo');if(td&&!$('#va')){var a=document.createElement('div');a.id='va';td.parentNode.insertBefore(a,td)}
  var ex='<b>Exemple de démonstration.</b> Ici rien n\'est encore branché : seules vos demandes (Accueil, Clients et Devis) sont réelles.';
- ['#v-planning','#v-chantiers','#v-prix','#v-factures'].forEach(function(s){bandeauExemple(s,ex)});
+ ['#v-planning','#v-chantiers','#v-prix'].forEach(function(s){bandeauExemple(s,ex)});
+ bandeauExemple('#v-factures','<b>En dessous : exemple de démonstration.</b> Vos vrais devis et factures sont dans le premier cadre.');chargerFa();
  var ag=$('#v-accueil .agenda');if(ag&&!ag.previousElementSibling.classList.contains('vexemple')){var d=document.createElement('div');d.className='vexemple';d.innerHTML='<b>Agenda : exemple.</b> Le vrai planning arrive plus tard.';ag.parentNode.insertBefore(d,ag)}
  // Le message de démonstration « Nouvelle demande : Mme Durand » ne doit pas apparaître ici.
  setTimeout(function(){var t=$('#toast'),tt=$('#tt');if(t&&tt&&/Nouvelle demande de devis/.test(tt.textContent))t.classList.remove('on')},2200);
