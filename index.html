@@ -1793,8 +1793,22 @@ footer a{text-decoration:none}
   /* accueil : le téléphone recule tout doucement quand on descend (façon Apple, sans excès) */
   (function(){var sc=document.querySelector(".hero .scene");if(!sc||matchMedia("(prefers-reduced-motion: reduce)").matches)return;var att=false;
     var hero=document.querySelector(".hero");
-    function maj(){att=false;var y=Math.max(0,Math.min(scrollY-hero.offsetTop,innerHeight)),r=y/innerHeight;sc.style.transform="translateY("+(y*.1).toFixed(1)+"px) scale("+(1-r*.05).toFixed(4)+")";sc.style.opacity=(1-r*.35).toFixed(3)}
+    function maj(){att=false;var y=Math.max(0,Math.min(scrollY-hero.offsetTop,innerHeight)),r=y/innerHeight,e=r*r*(3-2*r);sc.style.transform="translateY("+(y*.12).toFixed(1)+"px) scale("+(1-e*.06).toFixed(4)+")";sc.style.opacity=(1-e*.4).toFixed(3)}
     addEventListener("scroll",function(){if(!att){att=true;requestAnimationFrame(maj)}},{passive:true})})();
+  /* le même effet sur le reste du site, lié au défilement : chaque bloc monte doucement et se pose en arrivant,
+     puis recule un peu en partant vers le haut. On joue sur « translate » et « scale », qui s'ajoutent aux autres mouvements sans les gêner. */
+  (function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches||!("IntersectionObserver" in window)||!CSS.supports("translate","0 1px"))return;
+    var els=[].slice.call(document.querySelectorAll("main .card,main h2,.mt-z,.maquette,.g-b,.em-g,.esp-t>*")).filter(function(e){return !e.closest(".hero")&&!e.parentElement.closest(".card,.mt-z,.maquette")});
+    var act=new Set(),att=false;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)act.add(e.target);else{act.delete(e.target);e.target.style.translate="";e.target.style.scale="";e.target._ty=0}});dem()},{rootMargin:"15% 0px"});
+    els.forEach(function(e){e._ty=0;io.observe(e)});
+    function lisse(k){k=Math.max(0,Math.min(1,k));return k*k*(3-2*k)}
+    function maj(){att=false;var vh=innerHeight;act.forEach(function(el){var r=el.getBoundingClientRect(),c=r.top+r.height/2-el._ty,ty=0,s=1,
+      ar=lisse((c-vh*.7)/(vh*.38)),pa=lisse((vh*.25-c)/(vh*.5));
+      if(ar>0){ty=24*ar;s=1-.04*ar}else if(pa>0){ty=-10*pa;s=1-.035*pa}
+      el._ty=ty;el.style.translate=ty?"0 "+ty.toFixed(1)+"px":"";el.style.scale=s<1?s.toFixed(4):""})}
+    function dem(){if(!att){att=true;requestAnimationFrame(maj)}}
+    addEventListener("scroll",dem,{passive:true});addEventListener("resize",dem)})();
   /* mode présentation : ?presentation (et &client=Prénom pour l'accueil) — une page par section, flèches en galets */
   (function(){var q=new URLSearchParams(location.search),lien=document.querySelector(".lien-pres");
     lien.addEventListener("click",function(e){e.preventDefault();lancer()});
