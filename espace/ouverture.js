@@ -35,13 +35,13 @@ var css=
 '#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
 /* une vague : un bourrelet sans bord net, éclairé en haut à gauche, ombré en bas à droite */
 '#pc-ouv .ond i::before,#pc-ouv .ond i::after{content:"";position:absolute;inset:0;border-radius:50%}'+
-'#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 76%,var(--mo) 87%,transparent 98%);transform:translate(1%,1.2%);opacity:.2}'+
-'#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%);opacity:.3}'+
+'#pc-ouv .ond i::before{background:radial-gradient(closest-side,transparent 76%,var(--mo) 87%,transparent 98%);transform:translate(1%,1.2%);opacity:.38}'+
+'#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%);opacity:.45}'+
 /* sur la crête, un liseré laiton fin, comme le socle du téléphone de l'accueil */
 '#pc-ouv .ond b{position:absolute;inset:7.5%;border-radius:50%;border:1px solid var(--ml);z-index:1;opacity:.4}'+
 '#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s linear 1.15s forwards,pcFond .5s var(--d) 2.5s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
-'#pc-ouv .g::before{box-shadow:-6px -6px 14px var(--mh),6px 6px 16px var(--mo);animation:pcOmbre 1.3s linear 1.15s forwards}'+
+'#pc-ouv .g::before{box-shadow:-7px -7px 16px var(--mh),9px 9px 20px var(--mo),inset 1.5px 1.5px 1px var(--mh),inset -1.5px -1.5px 2px var(--mo);animation:pcOmbre 1.3s linear 1.15s forwards}'+
 '#pc-ouv .g::after{box-shadow:inset 4px 4px 9px var(--mo),inset -4px -4px 9px var(--mh);opacity:0;animation:pcCreux 1.3s linear 1.15s forwards}'+
 '@keyframes pcTrace{from{stroke-dashoffset:101}to{stroke-dashoffset:0}}'+
 '@keyframes pcReflet{from{stroke-dashoffset:8}to{stroke-dashoffset:-92}}'+
