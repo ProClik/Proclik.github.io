@@ -8,6 +8,7 @@ var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');
 if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))SERVICE='';
 var KJ='pc-vrai-jeton',KA='pc-vrai-artisan',KL='pc-vrai-liste';
 var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var lsG=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 var lsS=function(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
@@ -46,13 +47,17 @@ css.textContent=[
 '.vsec h3{margin:0 0 8px;font-size:15px}.vkv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}.vkv span{color:var(--muted)}.vph{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}.vph a{display:block;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--line,#2a3140)}.vph img{width:100%;height:100%;object-fit:cover;display:block}',
 '.vli{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.vli:first-child{border-top:0}',
 '.vli small{grid-column:1/-1;color:var(--muted);font-size:12.5px}.vli .x{font-weight:800;white-space:nowrap}.vli.vv{background:var(--warn-bg);margin:0 -8px;padding:8px;border-radius:10px}',
+'.vedit{width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);font:inherit;color:inherit;cursor:pointer}.vedit:first-of-type{border-top:0}',
+'.vform{display:grid;gap:12px}.vform label{display:grid;gap:6px;font-size:13.5px;font-weight:700}.vform input,.vform select,.vform textarea{width:100%;min-height:46px;padding:10px 12px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:600;color:inherit;border:1px solid var(--line)}.vrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+'.vbtn.arme{color:var(--cor-ink)}.vbtn.go.varm{box-shadow:0 0 0 2px var(--acc,#A8823F)}',
+'details.vd>summary{cursor:pointer;font-weight:700}details.vd>.card{box-shadow:none;margin:10px 0 0;padding:0;background:none}',
 '.vtot{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:14px}.vtot .big{font-size:18px;font-weight:800}',
 '.vul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}',
 '.vbtns{display:flex;gap:8px;flex-wrap:wrap}',
 '.vpre{white-space:pre-wrap;font:13px/1.5 var(--mono);margin:0}',
 '.vlog{display:grid;gap:10px}.vlog input{font:600 17px var(--f);padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);width:100%}',
 '.verr{color:var(--cor-ink);background:var(--cor-bg);border-radius:12px;padding:8px 12px;font-size:13.5px}.verr:empty{display:none}',
-'.vfoot{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--card);flex-wrap:wrap}.vfoot .vbtn{flex:1 1 140px}',
+'.vfoot .vbtn.go{flex:2 1 200px}.vfoot{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--card);flex-wrap:wrap}.vfoot .vbtn{flex:1 1 140px}',
 'details.vd summary{cursor:pointer;font-weight:700;font-size:14px}'
 ].join('\n');
 document.head.appendChild(css);
@@ -96,10 +101,17 @@ var LISTE=null,ETAPES=[],charge=0;
 function carte(d){var av=valider(d.etape);
  return '<button class="vcard'+(av?' vav':'')+'" type="button" data-vc="'+esc(d.contact||'')+'"><div class="r"><span><b>'+esc(d.client)+'</b><small>'+esc(d.resume||d.titre||'')+'</small></span><span class="vp '+(av?'t':'')+'">'+esc(d.etape||'—')+'</span></div>'+
   '<div class="r"><span class="vamt">'+(d.total_ht!=null?eur(d.total_ht)+'<small>HT</small>':'<small style="margin:0">pré-devis pas encore prêt</small>')+'</span><small style="text-align:right">'+esc(quand(d.pre_devis_le||d.cree_le))+(d.a_verifier?'<br><span class="vp w">'+d.a_verifier+' à vérifier</span>':'')+'</small></div></button>'}
+/* Onglet Devis : le même petit menu à icônes que la démo (Pré-devis · Fournisseur · Validés) */
+var VSEG=null,FOURN=function(e){return /fournisseur/i.test(e||'')};
+var ICS={pre:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/></svg>',
+ four:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg>',
+ val:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 14l2 2 3.5-3.5"/></svg>'};
 function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){return valider(d.etape)}),o=L.filter(function(d){return !valider(d.etape)});
  var art=lsG(KA)||{},etat=LISTE?(LISTE._cache?'Hors connexion · liste du '+esc(quand(LISTE._le)):'À jour · '+esc(quand(LISTE._le))):'Chargement…';
- var h='<div class="vh"><h2>À valider</h2><span>'+etat+'</span></div>'+(a.length?'<div class="vl">'+a.map(carte).join('')+'</div>':'<p class="vst">'+(LISTE?'Rien à valider pour l\'instant. Le café peut rester chaud.':'…')+'</p>');
- if(o.length)h+='<div class="vh" style="margin-top:14px"><h2>Autres demandes en cours</h2><span>'+o.length+'</span></div><div class="vl">'+o.map(carte).join('')+'</div>';
+ var f=o.filter(function(d){return FOURN(d.etape)}),v=o.filter(function(d){return !FOURN(d.etape)});if(!VSEG&&LISTE)VSEG=a.length?'pre':f.length?'four':'val';
+ var G={pre:[a,'Pré-devis à valider','Rien à valider pour l\'instant. Le café peut rester chaud.'],four:[f,'En attente du fournisseur','Aucune demande n\'attend un fournisseur.'],val:[v,'Validés et suivantes','Aucune autre demande en cours.']}[VSEG||'pre'];
+ var h='<div class="cf"><div class="vh"><h2>Devis</h2><span>'+etat+'</span></div><div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',a.length],['four','Fournisseur',f.length],['val','Validés',0]].map(function(x){return '<button role="tab" type="button" data-vseg="'+x[0]+'" aria-selected="'+((VSEG||'pre')===x[0])+'">'+ICS[x[0]]+'<span>'+x[1]+'</span>'+(x[2]?'<i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div></div>'+
+  '<div class="vh" style="margin-top:14px"><h2>'+G[1]+'</h2><span>'+G[0].length+'</span></div>'+(G[0].length?'<div class="vl">'+G[0].map(carte).join('')+'</div>':'<p class="vst">'+(LISTE?G[2]:'…')+'</p>');
  h+='<div class="vbtns" style="margin-top:12px"><button class="vbtn sm" type="button" data-vrefresh>↻ Actualiser</button><button class="vbtn sm" type="button" data-vout>Se déconnecter</button></div>';
  var vd=$('#vd');if(vd)vd.innerHTML=h;
  var va=$('#va');if(va)va.innerHTML=a.length?'<div class="vl">'+a.slice(0,4).map(carte).join('')+'</div>'+(a.length>4?'<button class="vbtn sm" type="button" data-vtab style="margin-top:8px">Voir les '+a.length+' demandes ›</button>':''):'<p class="vst">'+(LISTE?'Rien à valider. Profitez-en, ça ne durera pas.':'Chargement…')+'</p>';
@@ -139,30 +151,70 @@ function voirPlan(){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan;if(!
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
  if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||''},'*')}});
-function afficher(d){COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],t=p&&p.totaux||{};
+/* Le pré-devis à valider, comme un devis qu'on travaille (Cyril, 31/10) : le total, le plan, les lignes modifiables d'un appui,
+   « + Ajouter une ligne », puis un seul gros bouton en bas, en deux appuis. Plus de « Changer d'étape » : l'étape suit les validations.
+   Les retouches restent sur cet appareil jusqu'à la création du devis, qui les envoie (mêmes taux de marge et de frais généraux). */
+var ED=null;
+function cleLg(){return 'pc-lg-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le)return s;var c=function(L){return L.map(function(l){return {libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier}})};
+ return {le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0}}
+function garderEd(){ED.touche=1;lsS(cleLg(),ED)}
+/* Mêmes taux que le serveur (calcul/vosfactures.js, lignesDevis) : marge sur les matériaux, frais généraux sur tout */
+function totauxEd(p){var t=p.totaux||{},s=function(L){return L.reduce(function(a,l){return a+(+l.total||0)},0)},sm0=s(p.materiaux),so0=s(p.main_oeuvre),tm=sm0>0&&t.marge?t.marge/sm0:0,b0=sm0*(1+tm)+so0+(t.deplacement||0),tf=b0>0&&t.frais_generaux?t.frais_generaux/b0:0;
+ var sm=s(ED.materiaux),so=s(ED.main_oeuvre),mg=sm*tm,b=sm+mg+so+(t.deplacement||0),fg=b*tf,r=function(x){return Math.round(x*100)/100};
+ return {materiaux:r(sm),marge:r(mg),main_oeuvre:r(so),deplacement:t.deplacement||0,frais_generaux:r(fg),total_ht:r(b+fg)}}
+function lignesEd(cle,titre){var L=ED[cle];if(!L.length&&cle==='main_oeuvre')return '';
+ return '<div class="card vsec"><h3>'+titre+'</h3>'+(L.length?L.map(function(l,i){return '<button type="button" class="vli vedit'+(l.a_verifier?' vv':'')+'" data-vlg="'+cle+'|'+i+'"><span>'+esc(l.libelle)+'</span><span class="x">'+eur(l.total)+' ›</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small></button>'}).join(''):'<p class="vst">Aucune ligne.</p>')+'</div>'}
+function afficher(d){COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan;
  var h='<div class="card"><div class="vkv">'+(k.telephone?'<span>Téléphone</span><b><a href="tel:'+esc(k.telephone)+'">'+esc(k.telephone)+'</a></b>':'')+(k.email?'<span>E-mail</span><b style="word-break:break-all"><a href="mailto:'+esc(k.email)+'">'+esc(k.email)+'</a></b>':'')+
-  '<span>Commune</span><b>'+esc([k.cp,k.ville].filter(Boolean).join(' ')||'non renseignée')+'</b><span>Reçue</span><b>'+esc(quand(k.cree_le)||'—')+'</b>'+(o?'<span>Étape</span><b>'+esc(o.etape)+'</b>':'')+'</div>'+
+  '<span>Commune</span><b>'+esc([k.cp,k.ville].filter(Boolean).join(' ')||'non renseignée')+'</b><span>Reçue</span><b>'+esc(quand(k.cree_le)||'—')+'</b>'+(o?'<span>Où on en est</span><b>'+esc(o.etape)+'</b>':'')+'</div>'+
   '<div class="vbtns" style="margin-top:10px">'+(k.telephone?'<a class="vbtn sm" href="tel:'+esc(k.telephone)+'" style="text-decoration:none">📞 Appeler</a><a class="vbtn sm" href="sms:'+esc(k.telephone)+'" style="text-decoration:none">💬 SMS</a>':'')+(k.ville||k.cp?'<a class="vbtn sm" target="_blank" rel="noopener" style="text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent([k.adresse,k.cp,k.ville].filter(Boolean).join(' '))+'">Itinéraire</a>':'')+'</div></div>';
- if(!p)h+='<div class="card"><b>Pas encore de pré-devis Cliky</b><p class="vst" style="padding:4px 0 0">La note « CLIKY – PRÉ-DEVIS À VALIDER » n\'est pas (encore) dans la fiche. Si la demande vient d\'arriver, patientez une minute et actualisez.</p></div>';
- else if(!p.lue)h+='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3><p class="vst" style="padding:0 0 8px">Ancienne présentation : affichée telle quelle.</p><pre class="vpre">'+esc(p.texte)+'</pre></div>';
- else{
-  h+='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3>'+(p.resume?'<p style="margin:0 0 10px">'+esc(p.resume)+'</p>':'')+
-   '<div class="vtot"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc(t.marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc(t.frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b><span class="big">Total HT</span><b class="big">'+eur(t.total_ht)+'</b></div>'+
+ if(!p){ED=null;h+='<div class="card"><b>Pas encore de pré-devis Cliky</b><p class="vst" style="padding:4px 0 0">La note « CLIKY – PRÉ-DEVIS À VALIDER » n\'est pas (encore) dans la fiche. Si la demande vient d\'arriver, patientez une minute et actualisez.</p></div>';}
+ else if(!p.lue){ED=null;h+='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3><p class="vst" style="padding:0 0 8px">Ancienne présentation : affichée telle quelle.</p><pre class="vpre">'+esc(p.texte)+'</pre></div>';}
+ else{ED=edition(p);var t=totauxEd(p);
+  h+='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</h3>'+(p.resume?'<p style="margin:0 0 10px">'+esc(p.resume)+'</p>':'')+
+   '<div class="vtot"><span class="big">Total HT</span><b class="big">'+eur(t.total_ht)+'</b><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div>'+
    '<p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></div>';
+  if(P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length}))h+='<button class="vbtn" type="button" data-vplan style="width:100%">📐 Voir le plan dessiné par le client</button>';
   h+=liste('⚠ À vérifier ('+p.a_verifier.length+')',p.a_verifier);
-  h+='<div class="card vsec"><h3>Matériaux · prix d\'achat HT</h3>'+lignes(p.materiaux,'Aucun matériau.')+'</div>';
-  if(p.main_oeuvre.length)h+='<div class="card vsec"><h3>Main-d\'œuvre</h3>'+lignes(p.main_oeuvre,'')+'</div>';
+  h+=lignesEd('materiaux','Matériaux · prix d\'achat HT')+lignesEd('main_oeuvre','Main-d\'œuvre');
+  h+='<button class="vbtn" type="button" data-vlg="+" style="width:100%">＋ Ajouter une ligne</button>';
+  if(ED.touche)h+='<p class="vst" style="padding:6px 0 0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>';
   if(p.attente.length)h+='<div class="card vsec"><h3>En attente du devis fournisseur (0 €)</h3><ul class="vul">'+p.attente.map(function(a){return '<li>'+esc(a.libelle)+(a.quantite!=null?' × '+qte(a.quantite):'')+'</li>'}).join('')+'</ul></div>';
-  h+=liste('Alertes',p.alertes)+liste('Hypothèses de Cliky',p.hypotheses);
-  if(p.controles.length)h+='<details class="card vd"><summary>Contrôles du calcul ('+p.controles.length+')</summary><ul class="vul" style="margin-top:8px">'+p.controles.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></details>';
  }
  h+='<div class="card vsec" id="vdocs"><h3>Devis et factures</h3><p class="vst" style="padding:0">Chargement…</p></div>';
- h+=demandeHTML(d.demande);
+ h+='<details class="card vd"><summary>Les réponses du client</summary>'+demandeHTML(d.demande).replace(/<button class="vbtn go" type="button" data-vplan[^>]*>[^<]*<\/button>/,'')+'</details>';
+ if(p&&p.lue){var plus=liste('Alertes',p.alertes)+liste('Hypothèses de Cliky',p.hypotheses)+(p.controles.length?'<div class="card vsec"><h3>Contrôles du calcul</h3><ul class="vul">'+p.controles.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>':'');
+  if(plus)h+='<details class="card vd"><summary>Le détail du calcul de Cliky</summary>'+plus+'</details>'}
  if(d.pre_devis.length>1)h+='<details class="card vd"><summary>'+(d.pre_devis.length-1)+' pré-devis plus ancien'+(d.pre_devis.length>2?'s':'')+'</summary>'+d.pre_devis.slice(1).map(function(x){return '<p class="vst">'+esc(quand(x.le))+(x.totaux&&x.totaux.total_ht!=null?' · '+eur(x.totaux.total_ht)+' HT':'')+'</p><pre class="vpre">'+esc(x.texte)+'</pre>'}).join('')+'</details>';
  h+='<p class="vst" style="font-size:12.5px">🔒 Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
- var foot='<button class="vbtn" type="button" data-vfermer>Fermer</button>'+(o?'<button class="vbtn go" type="button" data-vetapes>Changer d\'étape…</button>':'');
- ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,foot);
+ ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,'<button class="vbtn" type="button" data-vfermer>Fermer</button>');
  if(DOCC===k.id&&DOCS)rendreDocs();else chargerDocs(k.id);}
+/* Une ligne : la changer, l'enlever (deux appuis), ou en ajouter une */
+function ligneV(ref){var p=COUR&&COUR.pre_devis[0];if(!p||!ED)return;
+ if(ref==='raz'){lsS(cleLg(),null);toastV('Calcul de Cliky remis','Vos retouches sont effacées.');return afficher(COUR)}
+ var nv=ref==='+',c=nv?'main_oeuvre':ref.split('|')[0],i=nv?-1:+ref.split('|')[1],l=nv?{libelle:'',quantite:1,unite:'u',pu:0}:ED[c][i];if(!l)return;
+ var h='<div class="card vform">'+(nv?'<label>C\'est<select id="vl-c"><option value="materiaux">Un matériau (prix d\'achat)</option><option value="main_oeuvre" selected>De la main-d\'œuvre</option></select></label>':'')+
+  '<label>Ce qui est fait<textarea id="vl-l" rows="2">'+esc(l.libelle)+'</textarea></label>'+
+  '<div class="vrow"><label>Quantité<input id="vl-q" inputmode="decimal" value="'+qte(l.quantite)+'"></label><label>Unité<input id="vl-u" value="'+esc(l.unite||'')+'"></label></div>'+
+  '<label>Prix unitaire HT'+(c==='materiaux'&&!nv?' (achat)':'')+'<input id="vl-p" inputmode="decimal" value="'+(l.pu?String(Math.round(l.pu*10000)/10000).replace('.',','):'')+'" placeholder="0,00"></label>'+
+  '<p class="vst" style="padding:0">Total de la ligne : <b id="vl-t">'+eur((+l.quantite||0)*(+l.pu||0))+'</b>. La marge et les frais généraux s\'ajoutent comme dans le calcul de Cliky.</p></div>';
+ ouvrir((nv?'Ajouter une ligne':'Modifier la ligne')+'<small>'+esc(k0())+'</small>',h,'<button class="vbtn" type="button" data-vretour>‹ Retour</button>'+(nv?'':'<button class="vbtn" type="button" data-vlsup="'+c+'|'+i+'">Enlever</button>')+'<button class="vbtn go" type="button" data-vlok="'+(nv?'+':c+'|'+i)+'">Enregistrer</button>');
+ ['#vl-q','#vl-p'].forEach(function(s){$(s).addEventListener('input',function(){$('#vl-t').textContent=eur(nb($('#vl-q').value)*nb($('#vl-p').value))})})}
+function k0(){return COUR&&COUR.contact?COUR.contact.nom:''}
+function nb(s){var n=parseFloat(String(s||'').replace(/\s/g,'').replace(',','.'));return isFinite(n)?n:0}
+function ligneVok(ref){var lib=$('#vl-l').value.trim(),q=nb($('#vl-q').value),pu=nb($('#vl-p').value);
+ if(!lib){toastV('Il manque la description','Une ligne suffit.');return $('#vl-l').focus()}
+ if(!(q>0)||!(pu>0)){toastV('Il manque la quantité ou le prix','Hors taxes, en euros.');return}
+ var l={libelle:lib,quantite:q,unite:$('#vl-u').value.trim(),pu:pu,total:Math.round(q*pu*100)/100};
+ if(ref==='+')ED[$('#vl-c').value].push(l);else{var c=ref.split('|')[0],i=+ref.split('|')[1];ED[c][i]=l}
+ garderEd();afficher(COUR);toastV(ref==='+'?'Ligne ajoutée':'Ligne modifiée',lib)}
+function ligneVsup(b){if(!b.classList.contains('arme')){b.classList.add('arme');b.textContent='Oui, l\'enlever';return}
+ var r=b.getAttribute('data-vlsup').split('|'),x=ED[r[0]].splice(+r[1],1)[0];garderEd();afficher(COUR);toastV('Ligne enlevée',x&&x.libelle)}
+/* L'étape suit les validations : on range la demande dans l'étape qui porte le bon nom, si elle existe */
+var AVANCE={creer:/devis.*(cr[ée]|pr[eê]t|à envoyer)/i,envoyer:/devis.*envoy/i,accepted:/(accept|gagn|sign)/i,rejected:/(refus|perdu)/i,paid:/(pay|termin)/i,acompte:/chantier/i};
+function avancer(a){var d=COUR,o=d&&d.opportunites[0],re=AVANCE[a];if(!o||!re)return;var e=(d.etapes||ETAPES).filter(function(x){return re.test(x.nom)})[0];if(!e||e.id===o.etape_id)return;
+ api('/espace/etape',{method:'POST',body:{opportunite:o.opportunite,etape:e.id}}).then(function(){o.etape=e.nom;o.etape_id=e.id;charger()},function(){})}
 function etapes(){var d=COUR,o=d&&d.opportunites[0];if(!o)return;var L=d.etapes||ETAPES,i=L.findIndex(function(e){return e.id===o.etape_id});
  var h='<div class="card"><p style="margin:0 0 10px">La demande de <b>'+esc(d.contact.nom)+'</b> est à l\'étape <b>'+esc(o.etape||'—')+'</b>. Choisissez où la ranger :</p><div class="vl">'+
   L.map(function(e,j){var tag=e.id===o.etape_id?'actuelle':j===i+1?'suivante':'';return '<button class="vcard'+(j===i+1?' vav':'')+'" type="button" data-vset="'+esc(e.id)+'"'+(e.id===o.etape_id?' disabled':'')+'><div class="r"><b>'+esc(e.nom)+'</b><span class="vp'+(j===i+1?' t':'')+'"'+(tag?'':' hidden')+'>'+tag+'</span></div>'+(/envoy/i.test(e.nom)?'<small>⚠ Les relances automatiques au client partent de cette étape (e-mail après 3 jours).</small>':'')+'</button>'}).join('')+
@@ -190,9 +242,13 @@ function suite(L,pre){var dv=L.filter(function(d){return d.type==='devis'&&d.sta
  if(aPay)return {t:'Facture n° '+aPay.numero+' payée',a:'paid',id:aPay.id};
  return null}
 function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre_devis[0],n=suite(DOCS,p&&p.lue),h='<h3>Devis et factures</h3>';
+ if(DOCS.some(function(d){return d.type==='devis'&&d.statut!=='rejected'})){$$('#vov-b [data-vlg]').forEach(function(b){if(b.tagName==='A'||b.getAttribute('data-vlg')==='+')b.remove();else{b.disabled=true;b.querySelector('.x').textContent=b.querySelector('.x').textContent.replace(' ›','')}});var rt=$('#vov-b .vp.t');if(rt)rt.textContent='devis créé'}
+ if(!n){var f0=$('#vov-f');if(f0)f0.innerHTML='<button class="vbtn" type="button" data-vfermer>Fermer</button>'}
  if(n){var arm=ARME===n.a+(n.id||'');
-  h+='<button class="vbtn go" style="width:100%;margin:4px 0 6px" type="button" data-vdoc="'+n.a+'" data-id="'+(n.id||'')+'">'+(arm?'Oui, '+esc(n.t.charAt(0).toLowerCase()+n.t.slice(1)):esc(n.t))+'</button>';
-  if(arm)h+='<p class="vst" style="padding:0 0 6px">Touchez encore pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'. <a href="#" data-vdoc="annuler">Annuler</a></p>';
+  var C={creer:['Valider le pré-devis','Oui, créer le devis'],envoyer:['Envoyer au client','Oui, envoyer'],accepted:['Le client a accepté','Oui, accepté'],acompte:['Créer l\'acompte','Créer l\'acompte'],finale:['Créer la facture finale','Oui, la créer'],paid:['Marquer payée','Oui, payée']}[n.a]||[n.t,'Oui, '+n.t.charAt(0).toLowerCase()+n.t.slice(1)];
+  var f=$('#vov-f');if(f){f.innerHTML='<button class="vbtn" type="button" '+(arm?'data-vdoc="annuler">Annuler':'data-vfermer>Fermer')+'</button><button class="vbtn go'+(arm?' varm':'')+'" type="button" data-vdoc="'+n.a+'" data-id="'+(n.id||'')+'">'+esc(arm?C[1]:C[0])+'</button>';f.hidden=false}
+  if(!arm&&n.a!=='creer')h+='<p style="margin:0 0 6px;font-weight:700">'+esc(n.t)+'</p>';
+  if(arm)h+='<p class="vst" style="padding:0 0 6px"><b>Touchez encore le bouton du bas pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'.</b></p>';
   else if(n.s)h+='<p class="vst" style="padding:0 0 6px">'+esc(n.s)+'</p>';
   if(n.b)h+='<button class="vbtn sm" type="button" style="margin-bottom:8px" data-vdoc="'+n.b.a+'" data-id="'+n.b.id+'">'+esc(n.b.t)+'</button>';
   var champ='<div class="vli" style="align-items:center"><span>Acompte demandé<small style="display:block">0 = pas d\'acompte</small></span><span class="x"><input id="vpct" type="number" inputmode="decimal" min="0" max="99" value="'+pctDef()+'" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div>';
@@ -212,24 +268,25 @@ function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  if(a==='acompte'){ARME='acompte'+id;rendreDocs();var i=$('#vpct');if(i)i.focus();return}
  if((a==='envoyer'||a==='creer'||a==='accepted'||a==='rejected'||a==='paid'||a==='finale')&&ARME!==a+(id||'')){ARME=a+(id||'');return rendreDocs()}
  var p;
- if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c}});
- else if(a==='forcer')p=api('/espace/devis',{method:'POST',body:{contact:c,forcer:true}});
+ var lg=ED&&ED.touche?{materiaux:ED.materiaux,main_oeuvre:ED.main_oeuvre}:undefined;
+ if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c,lignes:lg}});
+ else if(a==='forcer')p=api('/espace/devis',{method:'POST',body:{contact:c,forcer:true,lignes:lg}});
  else if(a==='envoyer')p=api('/espace/envoyer',{method:'POST',body:{id:+id}});
  else if(a==='finale')p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'finale'}});
  else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}lsS('pc-acompte',v);p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
  else if(a==='accepted'){var w=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(w>=0&&w<100)){toastV('Pourcentage d\'acompte illisible','Entre 0 et 99 %.');return}lsS('pc-acompte',w);p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a,pourcentage:w}})}
  else p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a}});
  ARME='';var z=$('#vdocs');if(z)z.querySelectorAll('button').forEach(function(b){b.disabled=true});
- p.then(function(x){toastV(a==='envoyer'?'Envoyé au client':x.deja?'Déjà fait':'C\'est fait',k?k.nom:'');chargerDocs(c);chargerFa()},
+ p.then(function(x){toastV(a==='envoyer'?'Envoyé au client':x.deja?'Déjà fait':'C\'est fait',k?k.nom:'');if(a==='creer'||a==='forcer'){if(!x.deja)lsS(cleLg(),null);avancer('creer')}else if(a==='envoyer'){var dv=(DOCS||[]).filter(function(d){return d.id==id})[0];if(dv&&dv.type==='devis')avancer('envoyer')}else if(a==='paid'){var fp=(DOCS||[]).filter(function(d){return d.id==id})[0];avancer(fp&&fp.type==='acompte'?'acompte':'paid')}else avancer(a);chargerDocs(c);chargerFa()},
   function(err){if(a==='creer'&&/fournisseur/i.test(err.message)){var z2=$('#vdocs');rendreDocs();if(z2)z2.insertAdjacentHTML('beforeend','<p class="vst" style="padding:8px 0 0">⏳ '+esc(err.message)+'. <a href="#" data-vdoc="forcer">Créer le devis quand même</a></p>');return}toastV('Pas fait',err.message);rendreDocs()})}
-// Onglet « Devis et factures » : les vrais documents en haut, l'exemple en dessous.
+// Onglet « Factures » : les vraies factures en haut (les devis ont leur onglet), l'exemple en dessous.
 function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){z=document.createElement('div');z.id='vfa';z.className='card vsec';var b=v.querySelector('.vexemple');v.insertBefore(z,b?b.nextSibling:v.firstChild)}
- api('/espace/documents').then(function(x){var L=x.documents||[],du=0;L.forEach(function(d){if(d.type!=='devis'&&d.type!=='avoir'&&d.statut!=='paid'&&d.ttc!=null)du+=d.ttc-(d.paye||0)});
-  z.innerHTML='<h3>Vos vrais devis et factures</h3>'+(L.length?'<p class="vst" style="padding:0 0 6px">Reste à encaisser : <b>'+eur(Math.round(du*100)/100)+' TTC</b></p>'+L.slice(0,30).map(function(d){return ligneDoc(d).replace('<span>','<span>'+esc(d.client)+' · ')}).join(''):'<p class="vst" style="padding:0">Pas encore de devis ni de facture. Ils se créent depuis la fiche d\'une demande.</p>')},
-  function(err){z.innerHTML='<h3>Vos vrais devis et factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vrais devis et factures (branchement en cours).':err.message)+'</p>'})}
+ api('/espace/documents').then(function(x){var L=(x.documents||[]).filter(function(d){return d.type!=='devis'}),du=0;L.forEach(function(d){if(d.type!=='devis'&&d.type!=='avoir'&&d.statut!=='paid'&&d.ttc!=null)du+=d.ttc-(d.paye||0)});
+  z.innerHTML='<h3>Vos vraies factures</h3>'+(L.length?'<p class="vst" style="padding:0 0 6px">Reste à encaisser : <b>'+eur(Math.round(du*100)/100)+' TTC</b></p>'+L.slice(0,30).map(function(d){return ligneDoc(d).replace('<span>','<span>'+esc(d.client)+' · ')}).join(''):'<p class="vst" style="padding:0">Pas encore de devis ni de facture. Ils se créent depuis la fiche d\'une demande.</p>')},
+  function(err){z.innerHTML='<h3>Vos vraies factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vraies factures (branchement en cours).':err.message)+'</p>'})}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vc'))ouvrirDemande(b.getAttribute('data-vc'));
  else if(b.hasAttribute('data-vfermer'))fermer();
  else if(b.hasAttribute('data-vetapes'))etapes();
@@ -241,6 +298,10 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-vtab')){var t=$('#nb-devis')||$('#tt-devis');if(t)t.click()}
  else if(b.hasAttribute('data-vlogin'))connexion();
  else if(b.hasAttribute('data-vdoc'))actionDoc(b.getAttribute('data-vdoc'),b.getAttribute('data-id'));
+ else if(b.hasAttribute('data-vseg')){VSEG=b.getAttribute('data-vseg');rendre();}
+ else if(b.hasAttribute('data-vlg'))ligneV(b.getAttribute('data-vlg'));
+ else if(b.hasAttribute('data-vlok'))ligneVok(b.getAttribute('data-vlok'));
+ else if(b.hasAttribute('data-vlsup'))ligneVsup(b);
 },true);
 
 /* ---------- démarrage ---------- */

@@ -1596,7 +1596,7 @@ $$('.tip[data-tip]').forEach(function(t){if(tipsOff[t.dataset.tip])t.hidden=true
 /* ---------- démarrage du module ---------- */
 renderFour();renderChList();relUI();renderList();
 /* Clients et Factures (clients.js) se servent des mêmes données et du même panneau */
-window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet,saveCH:saveCH,showCh:showCh,VX:VX};
+window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet,saveD:save,renderList:renderList,SUP:SUP,curCh:function(){return curCh},saveCH:saveCH,showCh:showCh,VX:VX};
 if(!lsGet('pc-welcome',0))setTimeout(showWelcome,200);
 
 /* ---------- fiche identité : état de lecture ---------- */
@@ -1699,12 +1699,15 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 </script>
 
 <script src="config.js?v=2"></script>
-<script src="vrai.js?v=10"></script>
+<script src="vrai.js?v=11"></script>
 <link rel="stylesheet" href="relief.css?v=17">
 <link rel="stylesheet" href="planning.css?v=3">
 <script src="accueil.js?v=6"></script>
 <link rel="stylesheet" href="clients.css?v=1">
-<script src="clients.js?v=1"></script>
+<script src="clients.js?v=2"></script>
+<link rel="stylesheet" href="devis.css?v=1">
+<script src="devis.js?v=1"></script>
+<script src="commandes.js?v=1"></script>
 <link rel="stylesheet" href="depenses.css?v=1">
 <script src="depenses.js?v=1"></script>
 <script src="relief.js?v=4"></script>
