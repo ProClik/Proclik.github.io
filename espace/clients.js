@@ -32,6 +32,7 @@ var FA0=[
 var FA=X.lsGet('pc-fa1',null)||FA0;
 var NEW=X.lsGet('pc-cl1',{});Object.keys(NEW).forEach(function(k){if(!DOS[k])DOS[k]=NEW[k]});
 var DVN=X.lsGet('pc-dvn1',[]);
+X.cf={DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
 function save(){X.lsSet('pc-fa1',FA);X.lsSet('pc-cl1',NEW);X.lsSet('pc-dvn1',DVN);}
 function fa(id){return FA.filter(function(f){return f.id===id})[0]}
 function ftot(f){var t=0;f.L.forEach(function(l){t+=l[1]});t=r2(t);var ht=r2(t-(f.ac||0)),tv=r2(ht*f.tva/100);return{total:t,ht:ht,tv:tv,ttc:r2(ht+tv)}}
@@ -48,7 +49,9 @@ var IC={fact:I('<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9
  sms:I('<path d="M4 5h16v11H9l-5 4z"/>'),
  route:I('<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a4 4 0 0 0 0-8h-4a4 4 0 0 1 0-8h6"/>'),
  cherche:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),
- perso:I('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/><path d="M19 3v4M17 5h4"/>')};
+ perso:I('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/><path d="M19 3v4M17 5h4"/>'),
+ acompte:I('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/>'),
+ recue:I('<path d="M3 13h5l2 3h4l2-3h5"/><path d="M3 13l3-8h12l3 8v6H3z"/>')};
 /* Écusson au trait laiton, coche et petit ruban tricolore (même dessin que le site) */
 var ECU='<svg class="ecu" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l7 2.8v5.2c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.6z"/><path d="M8.8 11.6l2.3 2.3 4.3-4.6"/><g stroke="none"><rect x="8.9" y="16.9" width="2.1" height="1.3" rx=".3" fill="#2B4C9B"/><rect x="11" y="16.9" width="2" height="1.3" fill="#E9ECF2"/><rect x="13" y="16.9" width="2.1" height="1.3" rx=".3" fill="#C8463C"/></g></svg>';
 
@@ -137,7 +140,7 @@ var seg='fa';
 function vueFactures(){
  var P=FA.filter(function(f){return f.st==='pret'}),A=FA.filter(function(f){return f.st==='attente'}),Y=FA.filter(function(f){return f.st==='payee'});
  var enc=0;A.forEach(function(f){enc+=ftot(f).ht});enc=r2(enc);
- var h='<div class="row cf-top"><h2>Devis et factures</h2><button type="button" class="cf-badge" data-cconf>'+ECU+'<span>Conformes à la loi française</span></button></div>'+
+ var h='<div class="row cf-top"><h2>Factures</h2><button type="button" class="cf-badge" data-cconf>'+ECU+'<span>Conformes à la loi française</span></button></div>'+
   '<div class="grid2"><div class="col">'+
   '<div class="card cf-hero"><small>À encaisser</small><b>'+eur(enc)+' <em>HT</em></b><span>'+(A.length?A.length+' facture'+(A.length>1?'s':'')+' envoyée'+(A.length>1?'s':'')+(A[0]&&A[0].rel&&A.length===1?' · relance automatique '+esc(A[0].rel):''):'Tout est payé. Rare, savourez.')+'</span></div>';
  if(P.length){var f=P[0],t=ftot(f);
@@ -145,13 +148,13 @@ function vueFactures(){
    '<div class="card cf-pret"><div class="dem-h"><div><b>'+TY[f.ty]+' · '+esc(DOS[f.cli].n)+'</b><small>'+(f.ty==='ac'?'Créée toute seule à la signature du devis '+f.dv+'. Vérifiez, puis envoyez.':f.ty==='fin'?'Créée toute seule à la fin du chantier, acompte déduit. Vérifiez, puis envoyez.':'Préparée par vous. Vérifiez, puis envoyez.')+'</small></div><div class="prix">'+eur(t.ttc)+' <small>TTC</small></div></div></div>'+
    '<button class="btn go cf-go" type="button" data-cfa="'+f.id+'"><span class="lab"><span class="ic">'+IC.env+'</span><span>Vérifier et envoyer</span></span></button>';
  }else h+='<div class="card cf-rien"><b>Rien à envoyer</b><span>Les factures se préparent toutes seules : l\'acompte à la signature du devis, la facture finale à la fin du chantier. Vous n\'avez plus qu\'à vérifier.</span></div>';
- h+='<div class="cf-main"><button type="button" class="btn sm" data-cnew="facture">'+IC.plus+'Facture à la main</button><button type="button" class="btn sm" data-cnew="devis">'+IC.plus+'Devis à la main</button></div>'+
+ h+='<div class="cf-main"><button type="button" class="btn sm" data-cnew="facture">'+IC.plus+'Nouvelle facture à la main</button></div>'+
   '</div><div class="col">'+
-  '<div class="seg cf-seg" role="tablist" aria-label="Documents"><button role="tab" data-cseg="fa" aria-selected="'+(seg==='fa')+'">Factures</button><button role="tab" data-cseg="dv" aria-selected="'+(seg==='dv')+'">Devis</button><button role="tab" data-cseg="rc" aria-selected="'+(seg==='rc')+'">Reçues</button></div>';
- if(seg==='fa')h+=(A.length?'<div class="sec-h"><h2>En attente de paiement</h2><span>relances automatiques</span></div><div class="card lst cf-l">'+A.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
-  (P.length>1?'<div class="sec-h"><h2>À envoyer</h2></div><div class="card lst cf-l">'+P.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
-  (Y.length?'<div class="sec-h"><h2>Payées</h2><span>les plus récentes</span></div><div class="card lst cf-l">'+Y.map(function(f){return ligneFa(f)}).join('')+'</div>':'');
- else if(seg==='dv')h+='<div class="sec-h"><h2>Vos devis</h2><span>du plus récent au plus ancien</span></div><div class="card lst cf-l">'+tousDevis().map(function(v){return ligneDv(v)}).join('')+'</div><p class="hint">Un devis signé crée tout seul sa facture d\'acompte.</p>';
+  '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Factures">'+[['fa','Factures',IC.fact],['ac','Acomptes',IC.acompte],['rc','Reçues',IC.recue]].map(function(x){return '<button role="tab" data-cseg="'+x[0]+'" aria-selected="'+(seg===x[0])+'">'+x[2]+'<span>'+x[1]+'</span></button>'}).join('')+'</div>';
+ var K=seg==='ac'?function(f){return f.ty==='ac'}:function(f){return f.ty!=='ac'};A=A.filter(K);Y=Y.filter(K);var P2=P.filter(K);
+ if(seg==='fa'||seg==='ac')h+=(P2.length?'<div class="sec-h"><h2>À envoyer</h2><span>préparées pour vous</span></div><div class="card lst cf-l">'+P2.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+(A.length?'<div class="sec-h"><h2>En attente de paiement</h2><span>relances automatiques</span></div><div class="card lst cf-l">'+A.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
+  (Y.length?'<div class="sec-h"><h2>Payées</h2><span>les plus récentes</span></div><div class="card lst cf-l">'+Y.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
+  (seg==='ac'?'<p class="hint">Une facture d\'acompte se crée toute seule quand le client signe le devis.</p>':'');
  else h+='<div class="sec-h"><h2>Reçues des fournisseurs</h2><span>arrivées toutes seules</span></div><div class="card lst cf-l">'+RC.map(ligneRc).join('')+'</div><p class="hint">Depuis le 1<sup>er</sup> septembre 2026, vos fournisseurs peuvent vous envoyer des factures électroniques. Elles arrivent ici et se rangent dans le bon chantier.</p>';
  h+='<span class="exemple">Exemples de démonstration · rien n\'est envoyé</span></div></div>';
  poser('#v-factures',h);
@@ -229,7 +232,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-cdv'))ficheDv(a('data-cdv'));
  else if(b.hasAttribute('data-crc'))ficheRc(a('data-crc'));
  else if(b.hasAttribute('data-cseg')){seg=a('data-cseg');vueFactures();}
- else if(b.hasAttribute('data-cnew')){var p=a('data-cnew').split('|');formDoc(p[0],p[1]);}
+ else if(b.hasAttribute('data-cnew')){var p=a('data-cnew').split('|');if(X.nouveauDoc)X.nouveauDoc(p[0],p[1]);else formDoc(p[0],p[1]);}
  else if(b.hasAttribute('data-cdocok'))addDoc(a('data-cdocok'));
  else if(b.hasAttribute('data-ctva')){nTva=+a('data-ctva');$$('[data-ctva]').forEach(function(x){x.setAttribute('aria-selected',String(x===b))});ttc();}
  else if(b.hasAttribute('data-cfsend')){var f=fa(a('data-cfsend'));f.st='attente';f.env='aujourd\'hui';f.rel='dans 7 jours si besoin';save();X.xclose();vueFactures();vueClients();X.toast('Facture envoyée à '+DOS[f.cli].n,'Démo : rien n\'est parti. En vrai, par e-mail via VosFactures, avec le lien pour payer.');}
