@@ -8,8 +8,19 @@
   var d=document,$=function(s,r){return (r||d).querySelector(s)},$$=function(s,r){return [].slice.call((r||d).querySelectorAll(s))};
   if($("#pb")||!$("#nb-accueil"))return;
   var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
-  var BAS=["accueil","clients","planning","devis"];
-  var EVENTAIL=["factures","depenses","chantiers","prix","produits","reglages"];
+  /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
+  var TOUS=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","reglages"];
+  var DEFAUT=["accueil","clients","planning","devis"];
+  function lit(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}}
+  function choisis(){
+    var b=lit("pc-barre",null);
+    if(!b||b.length!==4||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||(v!=="reglages"&&!$("#nb-"+v))})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
+    return b;
+  }
+  var BAS=choisis(),EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+  var STYLE="encoche";
+  /* côtés (Cyril, 2/11) : bord du haut droit avec petits arrondis, bas arrondi comme les coins de l'écran du téléphone */
+  var COINS=lit("pc-barre-coins","telephone")==="pilule"?"pilule":"telephone",RH=8,RB=42;
   var ICO_REGL='<svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>';
   var ICO_MIC='<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
   function info(v){
@@ -26,16 +37,20 @@
   }
 
   /* ---------- construction ---------- */
-  var pb=d.createElement("div");pb.className="pb";pb.id="pb";
+  var pb=d.createElement("div");pb.className="pb"+(STYLE==="ronde"?" pb-ronde":"");pb.id="pb";
   pb.innerHTML='<svg class="pb-fond" aria-hidden="true"><path/></svg>'+
-    '<nav class="pb-l" aria-label="Menu principal">'+bouton("accueil","pb-i")+bouton("clients","pb-i")+'<span class="pb-trou"></span>'+bouton("planning","pb-i")+bouton("devis","pb-i")+'</nav>'+
+    '<nav class="pb-l" aria-label="Menu principal"></nav>'+
     '<button type="button" class="pb-c" id="pb-c" aria-expanded="false" aria-controls="pb-menu" aria-label="Ouvrir le menu">'+
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="l1" d="M5 7h14"/><path class="l2" d="M5 12h14"/><path class="l3" d="M5 17h14"/></svg>'+
       '<span class="badge pb-bc" hidden></span></button>';
   var scrim=d.createElement("div");scrim.className="pb-scrim";scrim.id="pb-scrim";
   var menu=d.createElement("div");menu.className="pb-menu";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
-  menu.innerHTML='<button type="button" class="pb-mic" data-pb="micro" aria-label="Parler à ProClik (dictée)" tabindex="-1"><span class="pb-g" aria-hidden="true">'+ICO_MIC+'</span></button>'+
-    EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("");
+  function remplit(){
+    $(".pb-l",pb).innerHTML=bouton(BAS[0],"pb-i")+bouton(BAS[1],"pb-i")+'<span class="pb-trou"></span>'+bouton(BAS[2],"pb-i")+bouton(BAS[3],"pb-i");
+    menu.innerHTML='<button type="button" class="pb-mic" data-pb="micro" aria-label="Parler à ProClik (dictée)" tabindex="-1"><span class="pb-g" aria-hidden="true">'+ICO_MIC+'</span></button>'+
+      EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("");
+  }
+  remplit();
   d.body.appendChild(scrim);d.body.appendChild(menu);d.body.appendChild(pb);
   var path=$(".pb-fond path",pb),svg=$(".pb-fond",pb),centre=$("#pb-c");
 
@@ -43,13 +58,32 @@
   var H=68,R=34,W=0,t=0,anim=0;
   function forme(t){
     var c=W/2,s=1-2.2*t,y=function(v){return (v*s).toFixed(2)};
-    return "M"+R+",0 L"+(c-55)+",0 C"+(c-43)+",0 "+(c-37)+","+y(4)+" "+(c-35)+","+y(14)+
+    return debut()+" L"+(c-55)+",0 C"+(c-43)+",0 "+(c-37)+","+y(4)+" "+(c-35)+","+y(14)+
       " C"+(c-29.9)+","+y(28.9)+" "+(c-15.8)+","+y(39)+" "+c+","+y(39)+
       " C"+(c+15.8)+","+y(39)+" "+(c+29.9)+","+y(28.9)+" "+(c+35)+","+y(14)+
       " C"+(c+37)+","+y(4)+" "+(c+43)+",0 "+(c+55)+",0"+
+      cotes();
+  }
+  function debut(){return COINS==="pilule"?"M"+R+",0":"M"+RH+",0"}
+  function cotes(){
+    if(COINS==="pilule")return " L"+(W-R)+",0 A"+R+" "+R+" 0 0 1 "+(W-R)+","+H+" L"+R+","+H+" A"+R+" "+R+" 0 0 1 "+R+",0 Z";
+    return " L"+(W-RH)+",0 A"+RH+" "+RH+" 0 0 1 "+W+","+RH+" L"+W+","+(H-RB)+" A"+RB+" "+RB+" 0 0 1 "+(W-RB)+","+H+
+      " L"+RB+","+H+" A"+RB+" "+RB+" 0 0 1 0,"+(H-RB)+" L0,"+RH+" A"+RH+" "+RH+" 0 0 1 "+RH+",0 Z";
+  }
+  /* variante « ronde » (test du 2/11, image de Cyril) : le galet est posé DANS une encoche ronde, avec un anneau de vide autour */
+  var RON=null,EC={cy:10,r:40,f:20}; /* galet centré 10 px sous le bord, anneau de vide de 8 px, arrondis larges comme l'image */
+  function ronde(t){
+    var c=W/2,s=1-2.2*t;
+    if(!RON){RON=[];var i,a,cy=EC.cy,r=EC.r,f=EC.f,dd=r+f,dx=Math.sqrt(dd*dd-(f-cy)*(f-cy)),a0=Math.atan2(cy-f,dx);
+      var tx=dx-f*dx/dd,ty=f+f*(cy-f)/dd,A0=Math.atan2(ty-cy,-tx),A1=Math.atan2(ty-cy,tx);if(A0<0)A0+=2*Math.PI;
+      for(i=0;i<=10;i++){a=-Math.PI/2+(Math.PI/2+a0)*i/10;RON.push([-dx+f*Math.cos(a),f+f*Math.sin(a)])}
+      for(i=1;i<48;i++){a=A0-(A0-A1)*i/48;RON.push([r*Math.cos(a),cy+r*Math.sin(a)])}
+      for(i=10;i>=0;i--){a=-Math.PI/2-(Math.PI/2+a0)*i/10;RON.push([dx+f*Math.cos(a),f+f*Math.sin(a)])}
+    }
+    return "M"+R+",0 "+RON.map(function(q){return "L"+(c+q[0]).toFixed(2)+","+(q[1]*s).toFixed(2)}).join(" ")+
       " L"+(W-R)+",0 A"+R+" "+R+" 0 0 1 "+(W-R)+","+H+" L"+R+","+H+" A"+R+" "+R+" 0 0 1 "+R+",0 Z";
   }
-  function dessine(){path.setAttribute("d",forme(t))}
+  function dessine(){path.setAttribute("d",STYLE==="ronde"?ronde(t):forme(t))}
   function mesure(){
     W=pb.getBoundingClientRect().width;if(!W)return;
     svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine();
@@ -109,7 +143,22 @@
   if(nav)new MutationObserver(suit).observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-selected","hidden"],childList:true,characterData:true});
   suit();
 
-  mesure();addEventListener("resize",mesure);
+  /* iPad (fenêtres, Split View) : la largeur change sans toujours prévenir, on remesure dès que la barre change de taille */
+  function remesure(){mesure();requestAnimationFrame(mesure);setTimeout(mesure,250)}
+  mesure();addEventListener("resize",remesure);addEventListener("orientationchange",remesure);
+  if(window.visualViewport)visualViewport.addEventListener("resize",remesure);
+  if(window.ResizeObserver)new ResizeObserver(function(){mesure()}).observe(pb);
   if(mq.addEventListener)mq.addEventListener("change",function(){ferme();mesure()});
   if(d.fonts&&d.fonts.ready)d.fonts.ready.then(mesure);
+
+  /* ---------- pour les Réglages (reglages.js) : changer la disposition ou le style sans recharger ---------- */
+  window.PCBarre={
+    TOUS:TOUS,DEFAUT:DEFAUT,info:info,
+    bas:function(){return BAS.slice()},style:function(){return STYLE},
+    applique:function(){
+      ferme();BAS=choisis();EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+      pb.classList.toggle("pb-ronde",STYLE==="ronde");
+      remplit();suit();mesure();
+    }
+  };
 })();
