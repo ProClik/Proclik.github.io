@@ -18,7 +18,7 @@
     return b;
   }
   var BAS=choisis(),EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
-  var STYLE=lit("pc-barre-style","encoche")==="ronde"?"ronde":"encoche";
+  var STYLE="ronde"; /* forme de l'image de Cyril (2/11), couleurs Relief doux inchangées */
   var ICO_REGL='<svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>';
   var ICO_MIC='<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
   function info(v){
@@ -63,16 +63,14 @@
       " L"+(W-R)+",0 A"+R+" "+R+" 0 0 1 "+(W-R)+","+H+" L"+R+","+H+" A"+R+" "+R+" 0 0 1 "+R+",0 Z";
   }
   /* variante « ronde » (test du 2/11, image de Cyril) : le galet est posé DANS une encoche ronde, avec un anneau de vide autour */
-  var RON=null;
+  var RON=null,EC={cy:10,r:40,f:20}; /* galet centré 10 px sous le bord, anneau de vide de 8 px, arrondis larges comme l'image */
   function ronde(t){
     var c=W/2,s=1-2.2*t;
-    if(!RON){RON=[];var i,a,
-      f1=function(a){return [-48+10*Math.cos(a),10+10*Math.sin(a)]},
-      a0=Math.atan2(.2,10);
-      for(i=0;i<=8;i++){a=-Math.PI/2+(Math.PI/2+a0)*i/8;RON.push(f1(a))}
-      var b0=Math.atan2(10.2-11,-38),b1=Math.atan2(10.2-11,38);if(b0<0)b0+=2*Math.PI;
-      for(i=1;i<36;i++){a=b0-(b0-b1-0)*i/36;RON.push([38*Math.cos(a),11+38*Math.sin(a)])}
-      for(i=8;i>=0;i--){a=-Math.PI/2-(Math.PI/2+a0)*i/8;RON.push([48+10*Math.cos(a),10+10*Math.sin(a)])}
+    if(!RON){RON=[];var i,a,cy=EC.cy,r=EC.r,f=EC.f,dd=r+f,dx=Math.sqrt(dd*dd-(f-cy)*(f-cy)),a0=Math.atan2(cy-f,dx);
+      var tx=dx-f*dx/dd,ty=f+f*(cy-f)/dd,A0=Math.atan2(ty-cy,-tx),A1=Math.atan2(ty-cy,tx);if(A0<0)A0+=2*Math.PI;
+      for(i=0;i<=10;i++){a=-Math.PI/2+(Math.PI/2+a0)*i/10;RON.push([-dx+f*Math.cos(a),f+f*Math.sin(a)])}
+      for(i=1;i<48;i++){a=A0-(A0-A1)*i/48;RON.push([r*Math.cos(a),cy+r*Math.sin(a)])}
+      for(i=10;i>=0;i--){a=-Math.PI/2-(Math.PI/2+a0)*i/10;RON.push([dx+f*Math.cos(a),f+f*Math.sin(a)])}
     }
     return "M"+R+",0 "+RON.map(function(q){return "L"+(c+q[0]).toFixed(2)+","+(q[1]*s).toFixed(2)}).join(" ")+
       " L"+(W-R)+",0 A"+R+" "+R+" 0 0 1 "+(W-R)+","+H+" L"+R+","+H+" A"+R+" "+R+" 0 0 1 "+R+",0 Z";
@@ -151,7 +149,7 @@
     bas:function(){return BAS.slice()},style:function(){return STYLE},
     applique:function(){
       ferme();BAS=choisis();EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
-      STYLE=lit("pc-barre-style","encoche")==="ronde"?"ronde":"encoche";pb.classList.toggle("pb-ronde",STYLE==="ronde");
+      pb.classList.toggle("pb-ronde",STYLE==="ronde");
       remplit();suit();mesure();
     }
   };

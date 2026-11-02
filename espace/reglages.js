@@ -155,7 +155,7 @@ function messages(){
 /* ---------- ma barre du bas ---------- */
 function barre(){
   var B=window.PCBarre;if(!B)return;
-  var choix=B.bas(),style=B.style();
+  var choix=B.bas();
   var dispo=B.TOUS.filter(function(v){return v!=='reglages'&&B.info(v)});
   function rend(){
     var p=$('#rg-pos');if(!p)return;
@@ -168,13 +168,11 @@ function barre(){
   X.xopen('Ma barre du bas','Les 4 boutons toujours sous votre pouce',
    '<p class="rg-lead">Touchez les menus dans l\'ordre où vous les voulez, de gauche à droite. Touchez un menu choisi pour l\'enlever.</p>'+
    '<div class="rg-pos" id="rg-pos"></div><p class="rg-sous" id="rg-reste"></p>'+
-   '<div class="rg-grille">'+dispo.map(function(v){var x=B.info(v);return '<button type="button" data-rgb="'+v+'" aria-pressed="false"><span class="rg-g">'+x.ico+'<span class="rg-n"></span></span><b>'+esc(x.nom)+'</b></button>'}).join('')+'</div>'+
-   '<div class="xsec"><h3>Forme de la barre (essai)</h3><div class="rg-choix rg-formes" role="radiogroup"><button type="button" role="radio" data-rgs="encoche" aria-checked="'+(style!=='ronde')+'"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M14 10h26c6 0 8 2 9 6 3 9 19 9 22 0 1-4 3-6 9-6h26a10 10 0 0 1 0 22H14a10 10 0 0 1 0-22z"/><circle cx="60" cy="9" r="8"/></svg>Encoche douce</button><button type="button" role="radio" data-rgs="ronde" aria-checked="'+(style==='ronde')+'"><svg viewBox="0 0 120 40" aria-hidden="true"><path d="M14 12h30a3 3 0 0 1 3 3a13 13 0 0 0 26 0a3 3 0 0 1 3-3h30a10 10 0 0 1 0 20H14a10 10 0 0 1 0-20z"/><circle cx="60" cy="14" r="9"/></svg>Encoche ronde</button></div></div>',
+   '<div class="rg-grille">'+dispo.map(function(v){var x=B.info(v);return '<button type="button" data-rgb="'+v+'" aria-pressed="false"><span class="rg-g">'+x.ico+'<span class="rg-n"></span></span><b>'+esc(x.nom)+'</b></button>'}).join('')+'</div>',
    '<button class="btn" id="rg-defaut">Par défaut</button><button class="btn go" id="rg-ok">Enregistrer</button>',function(){
     $$('[data-rgb]').forEach(function(b){b.addEventListener('click',function(){var v=b.dataset.rgb,k=choix.indexOf(v);if(k>=0)choix.splice(k,1);else if(choix.length<4)choix.push(v);else{toast('Déjà 4 menus','Touchez un menu choisi pour l\'enlever d\'abord.');return}rend()})});
-    $$('[data-rgs]').forEach(function(b){b.addEventListener('click',function(){style=b.dataset.rgs;$$('[data-rgs]').forEach(function(y){y.setAttribute('aria-checked',String(y===b))})})});
-    $('#rg-defaut').addEventListener('click',function(){choix=B.DEFAUT.slice();style='encoche';$$('[data-rgs]').forEach(function(y){y.setAttribute('aria-checked',String(y.dataset.rgs==='encoche'))});rend()});
-    $('#rg-ok').addEventListener('click',function(){if(choix.length!==4)return;lsS('pc-barre',choix);lsS('pc-barre-style',style);B.applique();X.xclose();toast('Barre enregistrée',innerWidth<900?'Votre nouvelle barre est en bas de l\'écran.':'Elle s\'affiche sur téléphone et sur iPad en portrait.')});
+    $('#rg-defaut').addEventListener('click',function(){choix=B.DEFAUT.slice();rend()});
+    $('#rg-ok').addEventListener('click',function(){if(choix.length!==4)return;lsS('pc-barre',choix);B.applique();X.xclose();toast('Barre enregistrée',innerWidth<900?'Votre nouvelle barre est en bas de l\'écran.':'Elle s\'affiche sur téléphone et sur iPad en portrait.')});
     rend();
   },true);
 }
