@@ -136,29 +136,27 @@ var RC=[{id:'r1',ch:'alpes',four:'Négoce Isère Matériaux',d:'mar. 13/10',ht:4
  {id:'r2',ch:'perrin',four:'Négoce Isère Matériaux',d:'jeu. 8/10',ht:618,st:'payee',note:'Rangée dans le chantier de Mme Perrin'}];
 var RCs=X.lsGet('pc-rc1',{});RC.forEach(function(r){if(RCs[r.id])r.st=RCs[r.id]});
 function ligneRc(r){return '<button class="cf-li" type="button" data-crc="'+r.id+'"><span class="cf-av cf-doc">'+I('<path d="M3 13h5l2 3h4l2-3h5"/><path d="M3 13l3-8h12l3 8v6H3z"/>')+'</span><span class="tx"><b>'+esc(r.four)+'</b><small>reçue '+esc(r.d)+' · '+esc(CH[r.ch]?CH[r.ch].n:'')+'</small></span><span class="cf-m"><b>'+eur(r.ht)+'</b><span class="pill '+(r.st==='payee'?'ok':'warn')+'">'+(r.st==='payee'?'Payée':'À payer')+'</span></span></button>'}
-var seg='fa';
+var seg='fa',segChoisi=false;
+/* Factures (Cyril, 2/11) : plus de bloc « À encaisser » (il est sur l'accueil). Dans chaque menu, trois groupes :
+   À envoyer (en avant, avec la pastille rouge du menu), En attente de paiement, Payées. */
 function vueFactures(){
- var P=FA.filter(function(f){return f.st==='pret'}),A=FA.filter(function(f){return f.st==='attente'}),Y=FA.filter(function(f){return f.st==='payee'});
- var enc=0;A.forEach(function(f){enc+=ftot(f).ht});enc=r2(enc);
+ var K=function(t){return t==='ac'?function(f){return f.ty==='ac'}:function(f){return f.ty!=='ac'}},nEnv=function(t){return FA.filter(K(t)).filter(function(f){return f.st==='pret'}).length};
+ /* tant que l'artisan n'a pas choisi, on ouvre le menu qui a une facture à envoyer */
+ if(!segChoisi&&seg==='fa'&&!nEnv('fa')&&nEnv('ac'))seg='ac';
  var h='<div class="row cf-top"><h2>Factures</h2><button type="button" class="cf-badge" data-cconf>'+ECU+'<span>Conformes à la loi française</span></button></div>'+
   '<div class="grid2"><div class="col">'+
-  '<div class="card cf-hero"><small>À encaisser</small><b>'+eur(enc)+' <em>HT</em></b><span>'+(A.length?A.length+' facture'+(A.length>1?'s':'')+' envoyée'+(A.length>1?'s':'')+(A[0]&&A[0].rel&&A.length===1?' · relance automatique '+esc(A[0].rel):''):'Tout est payé. Rare, savourez.')+'</span></div>';
- if(P.length){var f=P[0],t=ftot(f);
-  h+='<div class="sec-h"><h2>À envoyer</h2><span>'+(P.length>1?P.length+' factures prêtes':'préparée pour vous')+'</span></div>'+
-   '<div class="card cf-pret"><div class="dem-h"><div><b>'+TY[f.ty]+' · '+esc(DOS[f.cli].n)+'</b><small>'+(f.ty==='ac'?'Créée toute seule à la signature du devis '+f.dv+'. Vérifiez, puis envoyez.':f.ty==='fin'?'Créée toute seule à la fin du chantier, acompte déduit. Vérifiez, puis envoyez.':'Préparée par vous. Vérifiez, puis envoyez.')+'</small></div><div class="prix">'+eur(t.ttc)+' <small>TTC</small></div></div></div>'+
-   '<button class="btn go cf-go" type="button" data-cfa="'+f.id+'"><span class="lab"><span class="ic">'+IC.env+'</span><span>Vérifier et envoyer</span></span></button>';
- }else h+='<div class="card cf-rien"><b>Rien à envoyer</b><span>Les factures se préparent toutes seules : l\'acompte à la signature du devis, la facture finale à la fin du chantier. Vous n\'avez plus qu\'à vérifier.</span></div>';
- h+='<div class="cf-main"><button type="button" class="btn sm" data-cnew="facture">'+IC.plus+'Nouvelle facture à la main</button></div>'+
+  '<button class="btn go cf-go" type="button" data-cnew="facture"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Nouvelle facture</span></span></button>'+
+  '<p class="hint fa-aide">Les factures se préparent aussi toutes seules : l\'acompte quand le client signe, la facture finale à la fin du chantier. Vous vérifiez, puis vous envoyez.</p>'+
   '</div><div class="col">'+
-  '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Factures">'+[['fa','Factures',IC.fact],['ac','Acomptes',IC.acompte],['rc','Reçues',IC.recue]].map(function(x){return '<button role="tab" data-cseg="'+x[0]+'" aria-selected="'+(seg===x[0])+'">'+x[2]+'<span>'+x[1]+'</span></button>'}).join('')+'</div>';
- var K=seg==='ac'?function(f){return f.ty==='ac'}:function(f){return f.ty!=='ac'};A=A.filter(K);Y=Y.filter(K);var P2=P.filter(K);
- if(seg==='fa'||seg==='ac')h+=(P2.length?'<div class="sec-h"><h2>À envoyer</h2><span>préparées pour vous</span></div><div class="card lst cf-l">'+P2.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+(A.length?'<div class="sec-h"><h2>En attente de paiement</h2><span>relances automatiques</span></div><div class="card lst cf-l">'+A.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
-  (Y.length?'<div class="sec-h"><h2>Payées</h2><span>les plus récentes</span></div><div class="card lst cf-l">'+Y.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
-  (seg==='ac'?'<p class="hint">Une facture d\'acompte se crée toute seule quand le client signe le devis.</p>':'');
+  '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Factures">'+[['fa','Factures',IC.fact],['ac','Acomptes',IC.acompte],['rc','Reçues',IC.recue]].map(function(x){var n=x[0]==='rc'?0:nEnv(x[0]);return '<button role="tab" data-cseg="'+x[0]+'" aria-selected="'+(seg===x[0])+'">'+x[2]+'<span>'+x[1]+'</span>'+(n?'<i class="rouge">'+n+'</i>':'')+'</button>'}).join('')+'</div>';
+ if(seg==='fa'||seg==='ac'){var L=FA.filter(K(seg)),P=L.filter(function(f){return f.st==='pret'}),A=L.filter(function(f){return f.st==='attente'}),Y=L.filter(function(f){return f.st==='payee'});
+  h+=(P.length?'<div class="card fa-env"><div class="fa-env-h"><h2>À envoyer <i class="rouge">'+P.length+'</i></h2><span>vérifiez, puis envoyez</span></div><div class="cf-l fa-l">'+P.map(function(f){return ligneFa(f)}).join('')+'</div></div>':'<div class="card fa-env vide"><div class="fa-env-h"><h2>À envoyer</h2><span>rien en attente</span></div><p class="hint">Tout est parti. '+(seg==='ac'?'Une facture d\'acompte se crée toute seule quand le client signe le devis.':'La prochaine se préparera toute seule.')+'</p></div>')+
+   (A.length?'<div class="sec-h"><h2>En attente de paiement</h2><span>relances automatiques</span></div><div class="card lst cf-l">'+A.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
+   (Y.length?'<div class="sec-h"><h2>Payées</h2><span>les plus récentes</span></div><div class="card lst cf-l">'+Y.map(function(f){return ligneFa(f)}).join('')+'</div>':'');}
  else h+='<div class="sec-h"><h2>Reçues des fournisseurs</h2><span>arrivées toutes seules</span></div><div class="card lst cf-l">'+RC.map(ligneRc).join('')+'</div><p class="hint">Depuis le 1<sup>er</sup> septembre 2026, vos fournisseurs peuvent vous envoyer des factures électroniques. Elles arrivent ici et se rangent dans le bon chantier.</p>';
  h+='<span class="exemple">Exemples de démonstration · rien n\'est envoyé</span></div></div>';
  poser('#v-factures',h);
- var b=$('#badge-f');if(b){b.textContent=P.length;b.hidden=!P.length}}
+ if(!document.documentElement.classList.contains('pcvrai')){var b=$('#badge-f'),n=nEnv('fa')+nEnv('ac');if(b){b.textContent=n;b.hidden=!n}}}
 
 /* Aperçu de la facture, tel que le client la recevra (le vrai PDF viendra de VosFactures) */
 function pdfFa(f){var t=ftot(f),c=DOS[f.cli],st=f.st==='payee'?['Payée','ok']:f.st==='attente'?['Envoyée','sent']:['À vérifier','draft'];
@@ -231,7 +229,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-cfa'))ficheFa(a('data-cfa'));
  else if(b.hasAttribute('data-cdv'))ficheDv(a('data-cdv'));
  else if(b.hasAttribute('data-crc'))ficheRc(a('data-crc'));
- else if(b.hasAttribute('data-cseg')){seg=a('data-cseg');vueFactures();}
+ else if(b.hasAttribute('data-cseg')){seg=a('data-cseg');segChoisi=true;vueFactures();}
  else if(b.hasAttribute('data-cnew')){var p=a('data-cnew').split('|');if(X.nouveauDoc)X.nouveauDoc(p[0],p[1]);else formDoc(p[0],p[1]);}
  else if(b.hasAttribute('data-cdocok'))addDoc(a('data-cdocok'));
  else if(b.hasAttribute('data-ctva')){nTva=+a('data-ctva');$$('[data-ctva]').forEach(function(x){x.setAttribute('aria-selected',String(x===b))});ttc();}
