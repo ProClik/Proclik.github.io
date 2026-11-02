@@ -175,7 +175,7 @@ button:focus-visible,input:focus,textarea:focus{outline:3px solid rgba(168,130,6
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .embed .wrap>header,.embed .wrap>header+div{display:none}
 .client .panel,.client #v3-cut,.client #legend,.client #t-libre{display:none!important}
-html:not(.client) .cl-only{display:none!important}
+html:not(.client):not(.pro) .cl-only{display:none!important}
 #todo-bar[hidden]{display:none!important}
 /* ---------- mode client : plein écran, grosses tuiles ---------- */
 html.client,html.client body{height:100%;overflow:hidden}
@@ -256,7 +256,72 @@ html.client body{padding-bottom:12px}
 .embed .wrap{padding-top:12px}
 </style>
 <link rel="stylesheet" href="../devis/plan-relief.css?v=7">
-<script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(!/[?&]client/.test(location.search)&&/[?&]attendre/.test(location.search))document.documentElement.classList.add("attendre","bloque");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
+<style>
+/* ---------- Plan dans l'Espace (demande de Cyril, 02/11) : la même interface que le plan du formulaire ----------
+   Le plan seul, à la taille de l'écran (plus de défilement qui le bouge), « Tracer » en haut à gauche, les outils en icônes en bas.
+   Un menu en haut : Plan · Les cotes · Pour le pré-devis. Un cadenas au style ProClik à côté de Plan / 3D bloque tout,
+   même le mouvement. Le bouton plein écran pose le plan sur tout l'écran de l'Espace. */
+html:not(.pro) .pro-only{display:none!important}
+html.pro,html.pro body{height:100%}
+html.pro body{padding-bottom:0;overflow:hidden}
+html.pro[data-pv="cotes"] body,html.pro[data-pv="devis"] body{overflow:auto;padding-bottom:24px}
+html.pro .wrap{gap:8px;padding-top:4px!important}
+html.pro[data-pv="plan"] .wrap{height:100%;display:flex;flex-direction:column;padding-bottom:10px}
+html.pro #rooms,html.pro #cap,html.pro #z-lock,html.pro #clbanner,html.pro #todo-bar,html.pro .cl-client,html.pro .verrou,html.pro .gorecap{display:none!important}
+html.pro:not([data-pv="plan"]) .board,html.pro:not([data-pv="cotes"]) #pn-cotes,html.pro:not([data-pv="devis"]) #pn-devis{display:none!important}
+html.pro[data-pv="devis"] #floors{display:none}
+html.pro #floors .lab{display:none}
+html.pro #floors .chip{padding:6px 12px;font-size:12.5px}
+html.pro[data-pv="plan"] .board{flex:1 1 0;min-height:0;border-radius:18px}
+html.pro .board>svg{aspect-ratio:auto!important;height:100%!important}
+html.pro.bloque .board{touch-action:none}
+/* Menu du haut : trois galets, le choisi creusé, icône laiton */
+html body .pro-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;border-radius:20px;background:var(--bg);box-shadow:var(--up-s);flex:none}
+html body .pro-menu button{appearance:none;border:0;background:transparent;border-radius:15px;padding:7px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;font:700 12.5px/1.15 var(--f);color:var(--muted);cursor:pointer;min-width:0}
+html body .pro-menu button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .pro-menu svg{width:20px;height:20px}
+html body .pro-menu button[aria-selected="true"]{color:var(--fg);box-shadow:var(--in)}
+html body .pro-menu button[aria-selected="true"] svg{color:var(--mint-ink)}
+@media (min-width:600px){html body .pro-menu button{flex-direction:row;justify-content:center;gap:8px;font-size:14px;padding:10px 8px}}
+/* Galets ronds à côté de Plan / 3D : cadenas et plein écran */
+html body .pro-rond{appearance:none;border:0;width:42px;height:42px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s);color:var(--muted);display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
+html body .pro-rond svg{width:21px;height:21px;display:block}
+html body .pro-rond[aria-pressed="true"]{box-shadow:var(--in);color:var(--mint-ink)}
+html body #p-lock .anse{transition:transform .35s cubic-bezier(.22,1,.36,1);transform-origin:16px 10.5px}
+html body #p-lock[aria-pressed="false"] .anse{transform:translateY(-1.6px) rotate(28deg)}
+html body #p-full .f,html body #p-full[aria-pressed="true"] .o{display:none}
+html body #p-full[aria-pressed="true"] .f{display:inline}
+html.pro .board .fl.tl{flex-wrap:nowrap}
+/* Bloqué : on voit le plan, rien ne bouge ; les outils restent visibles mais en retrait */
+html.pro.bloque #cltools .cltool:not([data-cl="leg"]),html.pro.bloque #cltrace{opacity:.42}
+html.pro.bloque #ctr-bar{display:none}
+html.pro body #cltrace{display:flex}
+html.pro body .board.v3 #cltrace,html.pro body .board.v3 #cltools{display:none}
+html.pro .fl.mr{top:auto;bottom:96px}
+html.pro .rotb{bottom:96px}
+html.pro #bar3d{bottom:96px!important}
+/* En traçant : seulement « Angle libre » et « Terminer », au-dessus des outils */
+html.pro #bar2d{bottom:92px!important}
+html.pro #bar2d [data-mode]{display:none}
+html.pro:not(.pro-tr) #bar2d{display:none!important}
+/* Matériaux : la légende du plan, posée au-dessus des outils */
+html.pro #legend{position:absolute;z-index:5;left:8px;right:8px;bottom:92px;border-radius:16px;background:var(--bg);box-shadow:var(--up-s);border:0}
+html.pro:not(.pro-leg) #legend{display:none!important}
+/* Les petits messages du plan : une bulle qui s'efface toute seule */
+html.pro #pro-bulle{position:absolute;z-index:6;left:50%;top:62px;transform:translate(-50%,-6px);max-width:min(92%,460px);width:max-content;padding:9px 14px;border-radius:16px;background:var(--bg);box-shadow:var(--up-s);font:600 13.5px/1.35 var(--f);color:var(--fg);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+html.pro #pro-bulle.on{opacity:1;transform:translate(-50%,0)}
+html.pro #cltrace~#pro-bulle{top:62px}
+@media (max-width:520px){html.pro #pro-bulle{top:auto;bottom:96px}}
+html.pro.pro-leg #pro-bulle{display:none}
+/* Plein écran : seul le plan reste */
+html.pro.plein .pro-menu,html.pro.plein #floors{display:none!important}
+html.pro.plein .wrap{max-width:none;padding:calc(6px + env(safe-area-inset-top,0px)) 0 calc(6px + env(safe-area-inset-bottom,0px))!important}
+html.pro.plein body{padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}
+html.pro .panel{margin-top:2px}
+@media (max-width:560px){html.pro .ud{font-size:0!important;width:40px;padding:8px 0!important}html.pro #t-undo::before{content:"↶";font-size:19px}html.pro #t-redo::before{content:"↷";font-size:19px}}
+html.pro #pro-bulle{font-size:13px}
+</style>
+<script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(!/[?&]client/.test(location.search)&&/[?&]attendre/.test(location.search))document.documentElement.classList.add("attendre","bloque");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client");else if(/[?&]embed/.test(location.search)){document.documentElement.classList.add("pro");document.documentElement.dataset.pv="plan"}}catch(e){}</script>
 
 <div class="wrap">
   <header>
@@ -264,16 +329,18 @@ html.client body{padding-bottom:12px}
     <div class="hdr-r"><span class="tag">Maquette</span><button class="hotbtn" id="t-demo" type="button">▶ Démo</button></div>
   </header>
   <div><h1>Plan du logement</h1><p class="lead">Pièces en 2 cotes, collées les unes aux autres. Touchez un mur ou un sol pour dire ce qu'on y fait. Vue 3D avec étages et toit.</p></div>
+  <nav class="pro-menu pro-only" role="tablist" aria-label="Plan du client"><button type="button" role="tab" data-vue="plan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v16H3z"/><path d="M3 12h8v8M11 4v5M15 12h6"/></svg><span>Plan</span></button><button type="button" role="tab" data-vue="cotes" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span>Les cotes</span></button><button type="button" role="tab" data-vue="devis" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21H6V3h8l4 4v6"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M15 18l2 2 4-4"/></svg><span>Pré-devis</span></button></nav>
   <div class="tabs" id="floors"></div>
   <div class="tabs" id="rooms"></div>
   <button class="verrou" id="verrou" type="button" aria-pressed="true"><b aria-hidden="true">🔒</b><span id="verrou-t">Plan bloqué<small>Rien ne peut être modifié par erreur.</small></span><em id="verrou-b">Débloquer</em></button>
-  <div class="board" id="board">
-    <div class="fl tl"><div class="pill" role="group" aria-label="Affichage"><button id="v-2d" aria-pressed="true">Plan</button><button id="v-3d" aria-pressed="false">3D</button></div></div>
+  <div class="board" id="board"><div id="pro-bulle" class="pro-only" role="status" aria-live="polite"></div>
+    <div class="fl tl"><div class="pill" role="group" aria-label="Affichage"><button id="v-2d" aria-pressed="true">Plan</button><button id="v-3d" aria-pressed="false">3D</button></div><button type="button" class="pro-only pro-rond" id="p-lock" aria-pressed="false" aria-label="Bloquer le plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="3.5"/><path class="anse" d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.6" r="1.7" fill="#B8924F" stroke="none"/></svg></button><button type="button" class="pro-only pro-rond" id="p-full" aria-pressed="false" aria-label="Plein écran"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="o" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="f" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button></div>
     <div class="fl tr"><div class="pill"><button id="t-undo" class="ud" aria-label="Annuler">↶ Annuler</button><button id="t-redo" class="ud" aria-label="Rétablir" disabled>↷ Rétablir</button></div></div>
-    <div class="fl mr"><div class="pill v"><button id="z-in" aria-label="Zoomer">＋</button><button id="z-out" aria-label="Dézoomer">−</button><button id="z-fit" aria-label="Recentrer">⤢</button><button id="z-lock" class="lk" aria-pressed="false" aria-label="Verrouiller le plan">🔓</button></div></div>
+    <div class="fl mr"><div class="pill v"><button id="z-in" aria-label="Zoomer">＋</button><button id="z-out" aria-label="Dézoomer">−</button><button id="z-fit" aria-label="Recentrer le plan"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block;margin:auto"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button><button id="z-lock" class="lk" aria-pressed="false" aria-label="Verrouiller le plan">🔓</button></div></div>
     <button class="rotb l" id="r-l" hidden aria-label="Quart de tour à gauche">↺</button><button class="rotb r" id="r-r" hidden aria-label="Quart de tour à droite">↻</button>
     <div class="cl-only" id="clbanner"><button type="button" id="clb-p" hidden aria-label="Étape précédente">‹</button><span class="pcl" aria-hidden="true"><i></i></span><p id="clb-t"></p><button type="button" id="clb-b" hidden>Terminé</button></div>
-    <div class="cl-only" id="cltools"><button type="button" class="cltool" data-cl="room" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="19" height="19" rx="4" stroke="currentColor" stroke-width="2.2"/><circle cx="24" cy="8" r="6" fill="#B8924F"/><path d="M24 5v6M21 8h6" stroke="#0B1226" stroke-width="2"/></svg><span>Pièce</span></button><button type="button" class="cltool" data-cl="win" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="22" height="22" rx="4" stroke="currentColor" stroke-width="2.2"/><rect x="8.5" y="8.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".85"/><rect x="17.5" y="8.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".55"/><rect x="8.5" y="17.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".55"/><rect x="17.5" y="17.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".85"/></svg><span>Fenêtre</span></button><button type="button" class="cltool" data-cl="door" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 27V8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v19" stroke="currentColor" stroke-width="2.2"/><path d="M4 27h24" stroke="currentColor" stroke-width="2.2"/><rect x="10" y="8" width="12" height="16" rx="2" fill="#B8924F" opacity=".3"/><circle cx="19" cy="17" r="1.9" fill="#B8924F"/></svg><span>Porte</span></button><button type="button" class="cltool" data-cl="clo" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="24" height="22" rx="4" stroke="currentColor" stroke-width="2.2"/><rect x="14" y="5" width="4" height="22" fill="#B8924F"/><path d="M14.5 10l3 2M14.5 15l3 2M14.5 20l3 2" stroke="#0B1226" stroke-width="1.2" opacity=".6"/></svg><span>Cloison</span></button><button type="button" class="cltool" data-cl="todo" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="20" height="20" rx="4" stroke="currentColor" stroke-width="2.2"/><circle cx="23" cy="9" r="7" fill="#B8924F"/><path d="M19.8 9.2l2.2 2.2 4-4.2" stroke="#0B1226" stroke-width="2.2"/></svg><span>Travaux</span><em class="lk">🔒 Étape 4</em></button></div>
+    <div class="cl-only" id="cltools"><button type="button" class="cltool" data-cl="plan" aria-pressed="true"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16s5-9 13-9 13 9 13 9-5 9-13 9S3 16 3 16Z" stroke="currentColor" stroke-width="2.2"/><circle cx="16" cy="16" r="4.5" fill="#B8924F"/></svg><span>Regarder</span></button><button type="button" class="cltool" data-cl="room" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="19" height="19" rx="4" stroke="currentColor" stroke-width="2.2"/><circle cx="24" cy="8" r="6" fill="#B8924F"/><path d="M24 5v6M21 8h6" stroke="#0B1226" stroke-width="2"/></svg><span>Pièce</span></button><button type="button" class="cltool" data-cl="win" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="22" height="22" rx="4" stroke="currentColor" stroke-width="2.2"/><rect x="8.5" y="8.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".85"/><rect x="17.5" y="8.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".55"/><rect x="8.5" y="17.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".55"/><rect x="17.5" y="17.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".85"/></svg><span>Fenêtre</span></button><button type="button" class="cltool" data-cl="door" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 27V8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v19" stroke="currentColor" stroke-width="2.2"/><path d="M4 27h24" stroke="currentColor" stroke-width="2.2"/><rect x="10" y="8" width="12" height="16" rx="2" fill="#B8924F" opacity=".3"/><circle cx="19" cy="17" r="1.9" fill="#B8924F"/></svg><span>Porte</span></button><button type="button" class="cltool cl-client" data-cl="todo" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="20" height="20" rx="4" stroke="currentColor" stroke-width="2.2"/><circle cx="23" cy="9" r="7" fill="#B8924F"/><path d="M19.8 9.2l2.2 2.2 4-4.2" stroke="#0B1226" stroke-width="2.2"/></svg><span>Travaux</span><em class="lk">🔒 Étape 4</em></button><button type="button" class="cltool pro-only" data-cl="leg" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="7" height="5" rx="1.5" fill="#B8924F" opacity=".85"/><rect x="4" y="13.5" width="7" height="5" rx="1.5" fill="#B8924F" opacity=".5"/><rect x="4" y="21" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/><path d="M15 8.5h13M15 16h13M15 23.5h9" stroke="currentColor" stroke-width="2.2"/></svg><span>Matériaux</span></button></div>
+    <div class="cl-only" id="cltrace"><button type="button" id="ctr-b" aria-pressed="false" aria-expanded="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 25.5l1.4-5.6L20.2 8.1a2.2 2.2 0 0 1 3.1 0l1.6 1.6a2.2 2.2 0 0 1 0 3.1L13.1 24.6 7 25.5Z" stroke="currentColor" stroke-width="2.2"/><path d="M18.4 10l4.6 4.6" stroke="currentColor" stroke-width="2.2"/><circle cx="8" cy="24.5" r="2.4" fill="#B8924F"/></svg><span>Tracer</span></button><div id="ctr-bar" hidden><button type="button" data-tr="trace" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h22v12H16v9H5Z" stroke="currentColor" stroke-width="2.6"/><circle cx="5" cy="6" r="2.6" fill="#B8924F"/><circle cx="27" cy="18" r="2.6" fill="#B8924F"/><circle cx="16" cy="27" r="2.6" fill="#B8924F"/></svg><span>Mur</span></button><button type="button" data-tr="clo" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="24" height="22" rx="4" stroke="currentColor" stroke-width="2.2"/><rect x="14" y="5" width="4" height="22" fill="#B8924F"/><path d="M14.5 10l3 2M14.5 15l3 2M14.5 20l3 2" stroke="#0B1226" stroke-width="1.2" opacity=".6"/></svg><span>Cloison</span></button></div></div>
     <div class="fl tl2 cl-only" id="todo-bar" hidden><div class="pill"><button id="t-all" class="hotb">☐ Tout cocher</button></div></div>
     <div class="fl bc" id="bar2d"><div class="pill" role="group" aria-label="Outil"><button data-mode="plan" aria-pressed="true">Pièces</button><button data-mode="clo" aria-pressed="false">Cloison</button><button data-mode="trace" aria-pressed="false">Tracer</button><button data-mode="todo" aria-pressed="false" class="cl-only">✓ À faire</button><button data-mode="win" aria-pressed="false">＋ Fenêtre</button><button data-mode="door" aria-pressed="false">＋ Porte</button><button id="t-libre" aria-pressed="false">Angle libre</button><button id="t-end">Terminer</button></div></div>
     <div class="fl bc" id="bar3d" hidden><div class="pill" role="group" aria-label="Vue 3D"><button id="v3-etage" aria-pressed="false">Cet étage</button><button id="v3-maison" aria-pressed="true">Maison</button><button id="v3-roof" aria-pressed="true">Toit</button><button id="v3-cut" aria-pressed="false">Combles</button></div></div>
@@ -284,8 +351,8 @@ html.client body{padding-bottom:12px}
   </div>
   <button class="gorecap" id="go-recap" type="button"><i aria-hidden="true">↓</i>Voir le récapitulatif<i aria-hidden="true">↓</i></button>
   <div class="cap idle" id="cap"><b id="capn">i</b><p id="capt"></p></div>
-  <section class="panel"><h2>Les cotes<small id="list-sub"></small></h2><div id="list"></div></section>
-  <section class="panel"><h2>Pour le pré-devis<small>tous étages</small></h2><div class="tot" id="tot"></div><div class="combsum"><span id="comb-sum"></span><button class="btn" id="open-comb" type="button">Toit et combles</button></div><button class="send" id="send" type="button">Voir le récapitulatif</button><div id="recap" hidden></div></section>
+  <section class="panel" id="pn-cotes"><h2>Les cotes<small id="list-sub"></small></h2><div id="list"></div></section>
+  <section class="panel" id="pn-devis"><h2>Pour le pré-devis<small>tous étages</small></h2><div class="tot" id="tot"></div><div class="combsum"><span id="comb-sum"></span><button class="btn" id="open-comb" type="button">Toit et combles</button></div><button class="send" id="send" type="button">Voir le récapitulatif</button><div id="recap" hidden></div></section>
 </div>
 
 <div class="bigconf" id="bigconf" hidden role="alertdialog" aria-modal="true" aria-labelledby="bc-t"><div class="bc-in"><div class="bc-ic">⚠️</div><h2 id="bc-t"></h2><p id="bc-p"></p><div class="bc-b"><button type="button" class="bc-no" id="bc-no">Non, garder</button><button type="button" class="bc-ok" id="bc-ok">Oui</button></div></div></div>
@@ -294,7 +361,7 @@ html.client body{padding-bottom:12px}
 
 <script>
 (function(){
-const CL=/[?&]client/.test(location.search);let READY=!CL,NTF=null;
+const CL=/[?&]client/.test(location.search);const PRO=document.documentElement.classList.contains("pro");let READY=!CL,NTF=null;
 // ---------- Outils ----------
 const $=id=>document.getElementById(id),svg=$("svg"),s3=$("s3");
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -793,7 +860,7 @@ $("send").addEventListener("click",()=>{const box=$("recap");box.hidden=false;le
  ST.floors.forEach(f=>{h+=`<div class="rc"><b>${esc(f.nom)}</b> · hauteur ${fr(f.H)} m · ${dal(f).type==="Bois"?"plancher bois":"dalle béton"} ${dal(f).ep}</div>`;f.rooms.forEach(rm=>{h+=`<div class="rc">— <b>${esc(rm.nom)}</b> · ${fr1(Math.abs(sarea(rm.pts)))} m²${solTxt(rm)?" · sol : "+esc(solTxt(rm)):""}${(NT.get(rm)||"").trim()?" · « "+esc(NT.get(rm))+" »":""}${rth(rm)}</div>`;
   segs(f).filter(sg=>sg.rm===rm).forEach(sg=>{const t=[compTxt(sg),opTxt(sg),(NT.get(sg.a)||"").trim()?"« "+esc(NT.get(sg.a))+" »":""].filter(Boolean).join(" · "),ph=rth(sg.a);if(t||ph)h+=`<div class="rc" style="padding-left:18px">${segName(sg)} · ${fr(dist(sg.a,sg.b))} m${t?" · "+t:""}${ph}</div>`})})});
  const cc=combCalc();if(cc)h+=`<div class="rc"><b>Toiture et combles</b> · ${esc(cc.txt)}${(NT.get(ST.comb)||"").trim()?" · « "+esc(NT.get(ST.comb))+" »":""}${rth(ST.comb)}</div>`;box.innerHTML=h});
-function say(n,t){if(CL&&t){t=t.replace(/ Touchez son sol pour choisir le sol, ou un mur pour sa composition\./," Touchez son sol pour indiquer le sol, une cote pour la corriger, ou « + Pièce » pour la suivante.").replace(/Touchez son sol pour la nommer et choisir le sol, ou un mur pour sa composition\./,"Touchez une cote pour la corriger.")}const c=$("cap");c.classList.toggle("idle",n==null);$("capn").textContent=n==null?"i":n;$("capt").textContent=t;if(CL)clBanner(t)}
+function say(n,t){if(CL&&t){t=t.replace(/ Touchez son sol pour choisir le sol, ou un mur pour sa composition\./," Touchez son sol pour indiquer le sol, une cote pour la corriger, ou « + Pièce » pour la suivante.").replace(/Touchez son sol pour la nommer et choisir le sol, ou un mur pour sa composition\./,"Touchez une cote pour la corriger.")}const c=$("cap");c.classList.toggle("idle",n==null);$("capn").textContent=n==null?"i":n;$("capt").textContent=t;if(CL)clBanner(t);if(PRO)bulle(t)}
 const CLIDLE="Touchez une cote pour la changer. Touchez une pièce pour la nommer et choisir le sol. Doigt appuyé sur une pièce pour la déplacer.";
 const G={m1:false,skip:{}},GT={1:["Étape 1 sur 4 · Votre logement","Mesurez l'intérieur de votre maison ou appartement, d'un mur extérieur à l'autre. Touchez 4,00 puis 3,50 pour mettre la longueur et la largeur."],2:["Étape 2 sur 4 · Les pièces","Touchez « Cloison » pour séparer les pièces à l'intérieur, ou « Pièce » pour en ajouter une à côté."],3:["Étape 3 sur 4 · Fenêtres et portes","Touchez « Fenêtre » ou « Porte », puis l'endroit exact sur le mur."],4:["Étape 4 sur 4 · Les travaux","Touchez « Travaux », puis les murs ou cloisons à refaire. Tout refaire ? « Tout cocher »."],5:["C'est tout bon ! 🎉","Vérifiez votre plan, puis touchez « ✓ J'ai terminé » en haut de l'écran."]},GTOOL={2:"clo",3:"win",4:"todo"};let GMSG=null,GTM=null;
 function gStep(){const a=gAuto();if(G.view&&G.view<a)return G.view;G.view=null;return a}
@@ -971,9 +1038,45 @@ const ATT=!CL&&/[?&]attendre/.test(location.search);const RST=restore();if(CL){S
 function bloquer(on){document.documentElement.classList.toggle("bloque",on);const v=$("verrou");v.setAttribute("aria-pressed",on);v.querySelector("b").textContent=on?"🔒":"🔓";
  $("verrou-t").innerHTML=on?"Plan bloqué<small>Rien ne peut être modifié par erreur.</small>":"Modifications ouvertes<small>Un doigt déplace le plan, deux doigts zooment. Pensez à rebloquer.</small>";$("verrou-b").textContent=on?"Débloquer":"Rebloquer";
  if(on){closeSheet(true);closeEd();if(ST.mode==="clo")endClo();setMode("plan");ST.cam=null;ST.frozen=false;ST.view==="3d"?draw3():draw()}
- say(null,on?"Plan bloqué 🔒 : faites défiler la page vers le bas pour le récapitulatif ↓.":"Plan débloqué 🔓 : touchez une pièce ou un mur pour le modifier. Vos retouches restent sur cet appareil.")}
+ say(null,on?(PRO?"Plan bloqué : rien ne bouge, rien ne se modifie. Le cadenas le débloque.":"Plan bloqué 🔒 : faites défiler la page vers le bas pour le récapitulatif ↓."):"Plan débloqué 🔓 : touchez une pièce ou un mur pour le modifier. Vos retouches restent sur cet appareil.");if(PRO)proLock()}
 if(ATT){bloquer(true);$("verrou").addEventListener("click",()=>bloquer(!document.documentElement.classList.contains("bloque")))}
-if(ATT){addEventListener("message",e=>{const d=e.data||{};if(e.source!==parent||d.type!=="proclik-plan-load")return;if(RST){say(null,"Vous aviez retouché ce plan sur cet appareil : c'est votre version qui est affichée.");return}if(d.plan)importPlan(d.plan);HIST.length=0;REDO.length=0;all();say(null,(d.prenom?`Plan dessiné par ${d.prenom}`:"Plan dessiné par le client")+" : il est bloqué 🔒, faites défiler la page vers le bas pour le récapitulatif ↓. Pour le retoucher pendant la visite, touchez « Débloquer ».")});try{parent.postMessage({type:"proclik-plan-ready"},"*")}catch(e){}}
+if(ATT){addEventListener("message",e=>{const d=e.data||{};if(e.source!==parent||d.type!=="proclik-plan-load")return;if(RST){say(null,"Vous aviez retouché ce plan sur cet appareil : c'est votre version qui est affichée.");return}if(d.plan)importPlan(d.plan);HIST.length=0;REDO.length=0;all();say(null,(d.prenom?`Plan dessiné par ${d.prenom}`:"Plan dessiné par le client")+(PRO?" : il est bloqué, rien ne bouge. Pour le retoucher pendant la visite, touchez le cadenas. Les cotes et le récapitulatif sont dans le menu du haut.":" : il est bloqué 🔒, faites défiler la page vers le bas pour le récapitulatif ↓. Pour le retoucher pendant la visite, touchez « Débloquer »."))});try{parent.postMessage({type:"proclik-plan-ready"},"*")}catch(e){}}
 function placeBar(){try{const l=$("legend");$("bar2d").style.bottom=(l.hidden?12:l.offsetHeight+10)+"px"}catch(e){}}placeBar();addEventListener("resize",()=>{placeBar();ST.view==="3d"?draw3():draw()});if(CL){say(null,"");try{parent.postMessage({type:"proclik-plan-ready"},"*")}catch(e){}}else if(ATT&&!RST)say(null,"Chargement du plan du client…");else if(RST)say(null,`Plan récupéré : vous reprenez où vous en étiez (sauvegardé sur cet appareil le ${new Date(RST.t).toLocaleString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})}${RST.sansPhotos?", sans les photos : mémoire pleine":""}).`);else say(null,"Exemple : une maison sur 2 étages. Un doigt déplace le plan, deux doigts zooment. Touchez un sol ou un mur pour le régler, appui long sur une pièce pour la déplacer, appui long sur une cote pour la dicter.");
+// ---------- Plan dans l'Espace (demande de Cyril, 02/11) : interface du formulaire, menu, cadenas, plein écran ----------
+var BT=null;function bulle(t){const b=$("pro-bulle");if(!b)return;if(!t){b.classList.remove("on");return}b.textContent=t;b.classList.add("on");clearTimeout(BT);BT=setTimeout(()=>b.classList.remove("on"),Math.min(9000,2600+t.length*45))}
+function proLock(){const on=document.documentElement.classList.contains("bloque"),l=$("p-lock");if(!l)return;l.setAttribute("aria-pressed",on);l.setAttribute("aria-label",on?"Débloquer le plan":"Bloquer le plan")}
+if(PRO){const H=document.documentElement,B=$("ctr-b"),R=$("ctr-bar"),bloque=()=>H.classList.contains("bloque");
+ const dit=()=>bulle("Plan bloqué : touchez le cadenas, à côté de Plan et 3D, pour le modifier.");
+ function ouvre(o){R.hidden=!o;B.setAttribute("aria-expanded",o)}
+ function sync(){const m=ST.mode,on=m==="trace"||m==="clo";B.setAttribute("aria-pressed",on);R.querySelectorAll("[data-tr]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.tr===m));if(on&&R.hidden)ouvre(true);
+  document.querySelectorAll("#cltools .cltool").forEach(x=>{const c=x.dataset.cl;x.setAttribute("aria-pressed",c==="leg"?H.classList.contains("pro-leg"):c===m)});H.classList.toggle("pro-tr",on)}
+ // Tracer, en haut à gauche : Mur ou Cloison (comme le formulaire)
+ B.addEventListener("click",()=>{if(bloque()){dit();return}const o=R.hidden;if(!o&&(ST.mode==="trace"||ST.mode==="clo")){if(ST.mode==="clo"&&ST.cur)endClo();setMode("plan")}ouvre(o);if(o)bulle("Tracer : « Mur » pour ajouter un mur extérieur, « Cloison » pour séparer une pièce.");sync()});
+ R.addEventListener("click",e=>{const b=e.target.closest("[data-tr]");if(!b)return;const m=b.dataset.tr;if(ST.mode==="clo"&&ST.cur)endClo();
+  if(ST.mode===m)setMode("plan");else{setMode(m);if(m==="trace")bulle("Mur : touchez les coins un par un. Pour fermer la forme, touchez de nouveau le premier coin.")}sync()});
+ ["click","pointerup"].forEach(t=>document.addEventListener(t,()=>setTimeout(sync,0)));
+ // Outils du bas : bloqués avec le plan ; « Matériaux » ouvre la légende (BA13, laine…)
+ addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".cltool");if(!b)return;
+  if(b.dataset.cl==="leg"){e.stopImmediatePropagation();H.classList.toggle("pro-leg");sync();return}
+  if(bloque()){e.stopImmediatePropagation();dit()}},true);
+ // Cadenas : bloque tout, même le mouvement du plan
+ function verrou(on){if(ATT){bloquer(on);return}H.classList.toggle("bloque",on);if(on){closeSheet(true);closeEd();if(ST.mode==="clo"&&ST.cur)endClo();setMode("plan");ST.cam=null;ST.frozen=false;ST.view==="3d"?draw3():draw()}
+  proLock();sync();bulle(on?"Plan bloqué : rien ne bouge, rien ne se modifie. Le cadenas le débloque.":"Plan débloqué : touchez une pièce ou un mur pour le modifier. Un doigt déplace, deux doigts zooment.")}
+ $("p-lock").addEventListener("click",()=>verrou(!bloque()));
+ // Menu du haut : Plan · Les cotes · Pour le pré-devis (avec le récapitulatif)
+ function vue(v){H.dataset.pv=v;document.querySelectorAll(".pro-menu [data-vue]").forEach(x=>x.setAttribute("aria-selected",x.dataset.vue===v));closeSheet(true);closeEd();bulle("");
+  if(v==="plan")requestAnimationFrame(()=>{ST.view==="3d"?draw3():draw()});else{window.scrollTo(0,0);if(v==="devis")$("send").click()}}
+ document.querySelectorAll(".pro-menu [data-vue]").forEach(b=>b.addEventListener("click",()=>vue(b.dataset.vue)));
+ // Plein écran : dans l'Espace, le plan passe par-dessus tout ; ouvert seul, vrai plein écran du navigateur
+ function plein(on){H.classList.toggle("plein",on);const f=$("p-full");f.setAttribute("aria-pressed",on);f.setAttribute("aria-label",on?"Quitter le plein écran":"Plein écran");
+  if(parent!==window){try{parent.postMessage({type:"proclik-plan-plein",on:on},"*")}catch(e){}}
+  else{try{if(on&&H.requestFullscreen)H.requestFullscreen().catch(()=>{});else if(!on&&document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+  setTimeout(()=>{ST.cam=null;ST.frozen=false;ST.view==="3d"?draw3():draw()},80)}
+ $("p-full").addEventListener("click",()=>plein(!H.classList.contains("plein")));
+ addEventListener("keydown",e=>{if(e.key==="Escape"&&H.classList.contains("plein"))plein(false)});
+ addEventListener("message",e=>{const d=e.data||{};if(e.source===parent&&d.type==="proclik-plan-plein-off"&&H.classList.contains("plein"))plein(false)});
+ try{new ResizeObserver(()=>{if(H.dataset.pv==="plan")ST.view==="3d"?draw3():draw()}).observe($("board"))}catch(e){}
+ proLock();sync()}
+
 })();
 </script>
