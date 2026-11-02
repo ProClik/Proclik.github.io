@@ -1,0 +1,58 @@
+/* Accueil (2/11, demande de Cyril) : les chiffres et le graphique en haut, puis « À faire » en blocs.
+   Chaque bloc : une icône en relief avec le nombre en pastille rouge (comme sur les boutons du menu),
+   ce que c'est (pré-devis, facture, dépense…) et ce qu'il faut faire, avec une couleur par action :
+   à valider = laiton, à envoyer = rouge, à ranger = encre, à suivre = gris. Même dessin jour et nuit. */
+
+/* Chiffres : le graphique toujours visible, sous le grand chiffre */
+.acc .stats-h{align-items:flex-start}
+.acc .stats-h .exemple{margin:4px 0 0;flex:none}
+.acc .graph{display:grid;gap:10px;margin-top:14px}
+.acc .leg{align-items:center;flex-wrap:wrap}
+.acc .leg b{flex:1 1 auto;font-size:13px;font-weight:700;color:var(--fg)}
+.acc .graph .mois{min-height:1.3em}
+.acc .stats .flux{margin-top:14px}
+
+/* « À faire » */
+.acc .afa-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:2px}
+.acc .afa-h h2{margin:0;font-size:19px;font-weight:800}
+.acc .afa-h span{font-size:13px;color:var(--muted);font-weight:600}
+.acc .afa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.acc .afa-b{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;padding:14px;border:0;border-radius:20px;background:var(--rs);box-shadow:var(--up);color:var(--fg);font:inherit;text-align:left;cursor:pointer;transition:box-shadow .3s var(--doux,ease),transform .3s var(--doux,ease)}
+.acc .afa-b:active{box-shadow:var(--in);background:var(--cx)}
+.acc .afa-ic{position:relative;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+.acc .afa-ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.acc .afa-ic i{position:absolute;top:-5px;right:-7px;min-width:21px;height:21px;padding:0 6px;border-radius:11px;background:var(--cor,#E0603C);color:#fff;font:800 11.5px/21px var(--f,inherit);font-style:normal;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.acc .afa-tx{display:grid;gap:1px;min-width:0;width:100%}
+.acc .afa-tx b{font-size:15px;font-weight:800;line-height:1.2}
+.acc .afa-tx em{font-style:normal;font-size:13px;font-weight:700}
+.acc .afa-tx small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+/* Une couleur par action, pour s'y retrouver d'un coup d'œil */
+.acc .t-valider .afa-ic{color:var(--accx)}.acc .t-valider em{color:var(--accx)}
+.acc .t-envoyer .afa-ic{color:var(--cor-ink,#E0603C)}.acc .t-envoyer em{color:var(--cor-ink,#E0603C)}
+.acc .t-ranger em{color:var(--fg)}
+.acc .t-suivre em{color:var(--muted)}
+/* À suivre : simple information, pas d'alerte rouge */
+.acc .t-suivre .afa-ic i{background:var(--rs);color:var(--fg);box-shadow:var(--up-s)}
+.acc .afa-rien{display:grid;gap:4px}.acc .afa-rien span{font-size:13.5px;color:var(--muted)}
+.acc .dem-h small.urg{margin:0 0 4px;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accx)}
+/* Très petits téléphones : une colonne */
+@media (max-width:340px){.acc .afa{grid-template-columns:1fr}}
+/* Grand écran : trois blocs par ligne dans la colonne de droite quand il y a la place */
+@media (min-width:1200px){.acc .afa{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* « Le plus urgent » : 3 grandes étapes nommées au lieu des numéros 1 à 7 */
+.acc .parc{display:flex;align-items:center;gap:6px;margin-top:2px}
+.acc .parc-e{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;min-width:64px}
+.acc .parc-e b{font-size:12.5px;font-weight:700;color:var(--muted)}
+.acc .parc-ic{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--muted)}
+.acc .parc-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.acc .parc-e.ici .parc-ic{width:50px;height:50px;background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+.acc .parc-e.ici b{color:var(--fg);font-weight:800}
+.acc .parc-e.fait .parc-ic{color:var(--accx)}
+.acc .parc-e.fait .parc-ic svg{stroke-width:2.4}
+.acc .parc-l{flex:1;height:2px;margin-bottom:22px;border-radius:2px;background:color-mix(in srgb,var(--muted) 30%,transparent)}
+.acc .parc-l.fait{background:var(--acc)}
+.acc .parc-tx{display:grid;gap:2px;margin-top:4px}
+.acc .parc-tx span{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.acc .parc-tx b{font-size:16px;font-weight:800}
+.acc .parc-tx small{font-size:13px;color:var(--muted)}
