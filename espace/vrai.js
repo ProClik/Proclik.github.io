@@ -76,7 +76,10 @@ css.textContent=[
 '.vsug-i>span{flex:1;min-width:0}.vsug-i small{display:block;font-size:12px;color:var(--muted)}.vsug-i>b{white-space:nowrap;font-size:13px}.vsug-i svg{width:22px;height:22px;flex:none}',
 '.vsug-new{justify-self:start}',
 '.vfg{margin-top:6px}.vfg .vh h2{font-size:15.5px;display:flex;align-items:center;gap:8px}.vfg-env{padding:10px 12px;margin:6px -4px 10px;border-radius:14px;background:var(--soft)}',
-'.vrouge{display:inline-block;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#D9534F;color:#fff;font:800 11.5px/20px var(--f,inherit);font-style:normal;text-align:center}'
+'.vrouge{display:inline-block;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#D9534F;color:#fff;font:800 11.5px/20px var(--f,inherit);font-style:normal;text-align:center}',
+'.vminis{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;margin:0 -2px 6px;scroll-snap-type:x mandatory}.vmini{appearance:none;border:0;background:none;padding:0;text-align:left;cursor:pointer;flex:0 0 auto;width:min(46%,190px);scroll-snap-align:start;color:var(--fg);font:inherit}.vminis .vmini:only-child{width:min(62%,240px)}',
+'.vmp{display:block;position:relative;aspect-ratio:210/297;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 6px 18px rgba(11,18,38,.18),0 0 0 1px var(--line);margin-bottom:6px}.vmp img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .3s}.vmini.pret .vmp img{opacity:1}.vmp i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12.5px;color:#6b7280}.vmini.pret .vmp i{display:none}.vmini.rate .vmp i::after{content:" (indisponible)"}',
+'.vmini b{display:block;font-size:13.5px}.vmini small{display:block;font-size:12px;color:var(--muted)}'
 ].join('\n');
 document.head.appendChild(css);
 
@@ -325,6 +328,18 @@ function suite(L,pre){var dv=L.filter(function(d){return d.type==='devis'&&d.sta
  if(dv.statut==='accepted'&&!solde)return ac?{t:'Fin de chantier : créer la facture finale',a:'finale',id:dv.id,s:'L\'acompte déjà facturé est déduit tout seul.'}:{t:'Créer la facture d\'acompte',a:'acompte',id:dv.id,b:{t:'Pas d\'acompte : facture finale',a:'finale',id:dv.id}};
  if(aPay)return {t:'Facture n° '+aPay.numero+' payée',a:'paid',id:aPay.id};
  return null}
+// Miniature de la 1re page du vrai PDF (pdf.js chargé à la demande) : le devis saute aux yeux, un appui l'ouvre en grand.
+var PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',MINI={},pdfjsP=null;
+function chargerPdfjs(){if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);if(pdfjsP)return pdfjsP;
+ pdfjsP=new Promise(function(ok,ko){var s=document.createElement('script');s.src=PDFJS+'pdf.min.js';s.onload=function(){if(!window.pdfjsLib)return ko(new Error('pdf.js'));window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+'pdf.worker.min.js';ok(window.pdfjsLib)};s.onerror=function(){pdfjsP=null;ko(new Error('pdf.js'))};document.head.appendChild(s)});return pdfjsP}
+function miniature(id){if(MINI[id])return MINI[id];var j=lsG(KJ);
+ MINI[id]=fetch(SERVICE+'/espace/document/pdf?id='+encodeURIComponent(id),{headers:j?{Authorization:'Bearer '+j}:{}}).then(function(r){if(!r.ok)throw new Error(r.status);return r.arrayBuffer()})
+  .then(function(buf){return chargerPdfjs().then(function(L){return L.getDocument({data:buf}).promise})}).then(function(doc){return doc.getPage(1)})
+  .then(function(pg){var v=pg.getViewport({scale:1}),k=Math.min(3,(window.devicePixelRatio||1))*320/v.width,vv=pg.getViewport({scale:k}),c=document.createElement('canvas');c.width=vv.width;c.height=vv.height;
+   return pg.render({canvasContext:c.getContext('2d'),viewport:vv}).promise.then(function(){return c.toDataURL('image/jpeg',.82)})})
+  .catch(function(e){delete MINI[id];throw e});return MINI[id]}
+function poserMinis(){$$('#vdocs [data-vmini]').forEach(function(b){var id=b.getAttribute('data-id');miniature(id).then(function(u){var i=b.querySelector('img');if(i){i.src=u;b.classList.add('pret')}},function(){b.classList.add('rate')})})}
+function blocMinis(L){L=L.slice(0,4);if(!L.length)return '';return '<div class="vminis">'+L.map(function(d){return '<button type="button" class="vmini" data-vmini data-vdoc="pdf" data-id="'+d.id+'"><span class="vmp"><img alt=""><i>Aperçu…</i></span><b>'+esc(TYP[d.type]||d.type)+' n° '+esc(d.numero)+'</b><small>'+eur(d.ht)+' HT · toucher pour ouvrir</small></button>'}).join('')+'</div>'}
 function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre_devis[0],n=suite(DOCS,p&&p.lue),h='<h3>Devis et factures</h3>';
  if(DOCS.some(function(d){return d.type==='devis'&&d.statut!=='rejected'})){$$('#vov-b [data-vlg]').forEach(function(b){if(b.tagName==='A'||b.getAttribute('data-vlg')==='+')b.remove();else{b.disabled=true;b.querySelector('.x').textContent=b.querySelector('.x').textContent.replace(' ›','')}});var rt=$('#vov-b .vp.t');if(rt)rt.textContent='devis créé'}
  if(!n){var f0=$('#vov-f');if(f0)f0.innerHTML='<button class="vbtn" type="button" data-vfermer>Fermer</button>'}
@@ -343,8 +358,9 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
   if(arm&&n.a==='accepted')h+=champ+'<p class="vst" style="padding:0 0 6px">La facture d\'acompte se crée toute seule. Elle ne part pas sans vous.</p>';
   if(ARME==='acompte'+n.id)h+=champ+'<button class="vbtn go sm" type="button" data-vdoc="acompte-ok" data-id="'+n.id+'">Créer l\'acompte</button>';
  }
+ h+=blocMinis(DOCS);
  h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
- z.innerHTML=h}
+ z.innerHTML=h;poserMinis()}
 function chargerDocs(c){DOCC=c;DOCS=null;ARME='';ERRDOC='';var z=$('#vdocs');
  api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
 function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=lsG(KJ);
