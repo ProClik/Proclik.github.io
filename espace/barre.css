@@ -79,3 +79,16 @@ html body .prod-add{width:100%;justify-content:center;gap:10px;opacity:.75}
   .pb.pb-ronde .pb-l{grid-template-columns:1fr 1fr 104px 1fr 1fr}
   .pb-ouvert .pb.pb-ronde .pb-c{transform:translateY(-31px)}
 }
+
+/* Retouches du 2/11 au soir (Cyril) */
+@media (max-width:899px){
+  /* la page s'efface en douceur derrière la barre : plus de contenu qui passe dans l'encoche */
+  .pb::after{content:"";position:absolute;z-index:-1;left:-5px;right:-5px;bottom:calc(-1 * var(--pb-bas));height:150px;pointer-events:none;
+    background:linear-gradient(to top,var(--bg) 0,var(--bg) 55%,color-mix(in srgb,var(--bg) 0%,transparent) 100%)}
+  /* contenu de la barre 2 px plus haut (loin de la barre d'accueil d'iOS) */
+  .pb .pb-l{padding-bottom:4px}
+  /* noms plus lisibles */
+  .pb-i{font-size:12px}
+  /* sur le galet du milieu, un simple point : le chiffre reste dans l'éventail */
+  .pb-c .badge.pb-bc{font-size:0;min-width:0;width:12px;height:12px;padding:0;top:4px;right:4px}
+}
