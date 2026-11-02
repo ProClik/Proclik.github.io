@@ -18,7 +18,9 @@
     return b;
   }
   var BAS=choisis(),EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
-  var STYLE="ronde"; /* forme de l'image de Cyril (2/11), couleurs Relief doux inchangées */
+  var STYLE="encoche";
+  /* côtés (Cyril, 2/11) : bord du haut droit avec petits arrondis, bas arrondi comme les coins de l'écran du téléphone */
+  var COINS=lit("pc-barre-coins","telephone")==="pilule"?"pilule":"telephone",RH=16,RB=42;
   var ICO_REGL='<svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>';
   var ICO_MIC='<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
   function info(v){
@@ -56,11 +58,17 @@
   var H=68,R=34,W=0,t=0,anim=0;
   function forme(t){
     var c=W/2,s=1-2.2*t,y=function(v){return (v*s).toFixed(2)};
-    return "M"+R+",0 L"+(c-55)+",0 C"+(c-43)+",0 "+(c-37)+","+y(4)+" "+(c-35)+","+y(14)+
+    return debut()+" L"+(c-55)+",0 C"+(c-43)+",0 "+(c-37)+","+y(4)+" "+(c-35)+","+y(14)+
       " C"+(c-29.9)+","+y(28.9)+" "+(c-15.8)+","+y(39)+" "+c+","+y(39)+
       " C"+(c+15.8)+","+y(39)+" "+(c+29.9)+","+y(28.9)+" "+(c+35)+","+y(14)+
       " C"+(c+37)+","+y(4)+" "+(c+43)+",0 "+(c+55)+",0"+
-      " L"+(W-R)+",0 A"+R+" "+R+" 0 0 1 "+(W-R)+","+H+" L"+R+","+H+" A"+R+" "+R+" 0 0 1 "+R+",0 Z";
+      cotes();
+  }
+  function debut(){return COINS==="pilule"?"M"+R+",0":"M"+RH+",0"}
+  function cotes(){
+    if(COINS==="pilule")return " L"+(W-R)+",0 A"+R+" "+R+" 0 0 1 "+(W-R)+","+H+" L"+R+","+H+" A"+R+" "+R+" 0 0 1 "+R+",0 Z";
+    return " L"+(W-RH)+",0 A"+RH+" "+RH+" 0 0 1 "+W+","+RH+" L"+W+","+(H-RB)+" A"+RB+" "+RB+" 0 0 1 "+(W-RB)+","+H+
+      " L"+RB+","+H+" A"+RB+" "+RB+" 0 0 1 0,"+(H-RB)+" L0,"+RH+" A"+RH+" "+RH+" 0 0 1 "+RH+",0 Z";
   }
   /* variante « ronde » (test du 2/11, image de Cyril) : le galet est posé DANS une encoche ronde, avec un anneau de vide autour */
   var RON=null,EC={cy:10,r:40,f:20}; /* galet centré 10 px sous le bord, anneau de vide de 8 px, arrondis larges comme l'image */
