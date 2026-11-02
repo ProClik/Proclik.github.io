@@ -13,8 +13,17 @@
   var IC_VERIF='<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 14l2 2 3.5-3.5"/></svg>';
   var IC_LISTE='<svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>';
 
-  function chaine(n,i){var h="";for(var k=0;k<n;k++)h+='<span class="pas'+(k<i?" fait":k===i?" ici":"")+'">'+(k<i?'<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>':k+1)+"</span>";
-    return '<div class="chaine" style="--fait:'+(n>1?Math.max(0,i)/(n-1):0)+'">'+h+"</div>"}
+  /* Où en est la demande : 3 grandes étapes que tout le monde comprend (Devis › Chantier › Facture),
+     puis en clair ce qu'il faut faire maintenant et ce qui vient ensuite. (Cyril, 2/11 : les chiffres 1 à 7 ne parlaient à personne.) */
+  var IC_ET=['<svg viewBox="0 0 24 24"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/></svg>',
+    '<svg viewBox="0 0 24 24"><path d="M3 20h18M6 20V10l6-4 6 4v10"/><path d="M10 20v-5h4v5"/></svg>',
+    '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>'];
+  var OK='<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>';
+  function phase(nom){nom=String(nom||"");return /factur|pay|solde|termin|clos/i.test(nom)?2:/chantier|accept|sign|acompte|travaux|planif/i.test(nom)?1:0}
+  function parcours(p,maint,ensuite){
+    return '<div class="parc" role="img" aria-label="Étape en cours : '+["devis","chantier","facture"][p]+'">'+["Devis","Chantier","Facture"].map(function(t,k){
+      return (k?'<i class="parc-l'+(k<=p?" fait":"")+'"></i>':"")+'<span class="parc-e'+(k<p?" fait":k===p?" ici":"")+'"><span class="parc-ic">'+(k<p?OK:IC_ET[k])+"</span><b>"+t+"</b></span>"}).join("")+"</div>"+
+      '<div class="parc-tx"><span>Maintenant</span><b>'+esc(maint)+"</b>"+(ensuite?"<small>Ensuite : "+esc(ensuite)+"</small>":"")+"</div>"}
   function bouton(ic,txt,attr){return '<button class="btn go acc-go" type="button" '+attr+'><span class="lab"><span class="ic">'+ic+"</span><span>"+esc(txt)+"</span></span></button>"}
 
   /* Courbe sur 6 mois (exemple de la planche) : encaissé en trait plein, signé en trait fin, détail d'un mois au toucher */
@@ -62,7 +71,7 @@
       [sr,"attente",pl(sr,"Devis envoyé","Devis envoyés"),"sans réponse","suivre","devis",""],
       [ch,"chantier",pl(ch,"Chantier","Chantiers"),"en cours","suivre","chantiers",""]]);
     h+='<div class="card dem"><div class="dem-h"><div><small class="urg">Le plus urgent</small><b>Mme Durand · Grenoble</b><small>Cloisons du séjour</small></div><div class="prix">765,08 € <small>HT</small></div></div>'+
-      chaine(7,0)+'<div class="etape-nom"><b>Vérifier le pré-devis</b><span>étape 1 sur 7</span></div>'+
+      parcours(0,"Vérifier le pré-devis","le devis est prêt à envoyer au client")+
       '<div class="ligne corr"><span>Bâti de porte<span class="cote">730 × 2 040 mm</span></span><span class="q">à vérifier</span></div></div>'+
       bouton(IC_VERIF,"Vérifier le pré-devis","data-accdemo")+
       '<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>›</span></button>';
@@ -82,7 +91,7 @@
     else if(d){var i=-1,n=E.length;E.forEach(function(e,k){if(i<0&&(e===d.etape||(e&&(e.id===d.etape_id||e.nom===d.etape))))i=k});
       h+='<div class="card dem"><div class="dem-h"><div><small class="urg">Le plus urgent</small><b>'+esc(d.client)+"</b><small class=\"resume\">"+esc(d.resume||d.titre||"")+"</small></div>"+
         (d.total_ht!=null?'<div class="prix">'+eur(d.total_ht)+" <small>HT</small></div>":"")+"</div>"+
-        (n>1&&i>=0?chaine(n,i)+'<div class="etape-nom"><b>'+esc(d.etape)+"</b><span>étape "+(i+1)+" sur "+n+"</span></div>":"")+
+        parcours(phase(d.etape),"Vérifier le pré-devis",i>=0&&E[i+1]?(E[i+1].nom||E[i+1]):"")+
         (d.a_verifier?'<div class="ligne corr"><span>'+(d.a_verifier>1?d.a_verifier+" lignes":"1 ligne")+' à vérifier</span><span class="q">à vérifier</span></div>':"")+"</div>"+
         bouton(IC_VERIF,"Vérifier le pré-devis",'data-vc="'+esc(d.contact||"")+'"')}
     if(D.length)h+='<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+D.length+" ›</span></button>";

@@ -39,3 +39,20 @@
 @media (max-width:340px){.acc .afa{grid-template-columns:1fr}}
 /* Grand écran : trois blocs par ligne dans la colonne de droite quand il y a la place */
 @media (min-width:1200px){.acc .afa{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* « Le plus urgent » : 3 grandes étapes nommées au lieu des numéros 1 à 7 */
+.acc .parc{display:flex;align-items:center;gap:6px;margin-top:2px}
+.acc .parc-e{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;min-width:64px}
+.acc .parc-e b{font-size:12.5px;font-weight:700;color:var(--muted)}
+.acc .parc-ic{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--muted)}
+.acc .parc-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.acc .parc-e.ici .parc-ic{width:50px;height:50px;background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+.acc .parc-e.ici b{color:var(--fg);font-weight:800}
+.acc .parc-e.fait .parc-ic{color:var(--accx)}
+.acc .parc-e.fait .parc-ic svg{stroke-width:2.4}
+.acc .parc-l{flex:1;height:2px;margin-bottom:22px;border-radius:2px;background:color-mix(in srgb,var(--muted) 30%,transparent)}
+.acc .parc-l.fait{background:var(--acc)}
+.acc .parc-tx{display:grid;gap:2px;margin-top:4px}
+.acc .parc-tx span{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.acc .parc-tx b{font-size:16px;font-weight:800}
+.acc .parc-tx small{font-size:13px;color:var(--muted)}
