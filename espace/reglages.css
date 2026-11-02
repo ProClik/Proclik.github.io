@@ -1,0 +1,69 @@
+/* Réglages (2/11) : bêta-test, message à Cyril, aides à l'écran, ma barre du bas, iPad installé. Voir reglages.js. */
+
+/* aides cachées */
+html.pc-sans-aides .tip,html.pc-sans-aides .pc-aide{display:none!important}
+
+/* iPad, appli installée : les boutons de fenêtre (•••) sont en haut à gauche, on laisse leur place */
+html.pc-ipad-app .head{padding-top:calc(16px + 30px)!important}
+html.pc-ipad-app .pcov-h{padding-top:calc(10px + 30px + env(safe-area-inset-top,0px))!important}
+
+/* icônes au trait des Réglages */
+.rg-g svg,#x-in .av svg,.rg-photo svg,.rg-formes svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#x-in .av svg{width:19px;height:19px;color:var(--accx)}
+.rg-g{display:grid;place-items:center;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--accx);position:relative;flex:none}
+.rg-g svg{width:20px;height:20px}
+
+/* gros bouton bêta en tête des Réglages */
+.rg-beta{margin:0 0 14px}
+html body .rg-gros{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border-radius:20px;background:var(--rs);box-shadow:var(--up);color:var(--fg);font:inherit;cursor:pointer;
+  border:1.5px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+.rg-gros:active{box-shadow:var(--in)}
+.rg-gros .rg-g{width:46px;height:46px}
+.rg-gros .tx{flex:1;display:flex;flex-direction:column;gap:3px}
+.rg-gros .tx b{font-size:16px}.rg-gros .tx small{color:var(--muted);font-size:13px;line-height:1.35}
+.rg-gros .go{color:var(--accx);font-size:22px}
+
+/* formulaire */
+.rg-lead{margin:0 0 14px;color:var(--muted);font-size:14.5px;line-height:1.5}
+.rg-types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+html body .rg-types button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 6px;border-radius:18px;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);font:600 13.5px/1.2 inherit;font-family:inherit;cursor:pointer}
+.rg-types button .rg-g{width:42px;height:42px;box-shadow:none;background:transparent;color:inherit}
+html body .rg-types button[aria-checked="true"]{box-shadow:var(--in);color:var(--fg)}
+.rg-types button[aria-checked="true"] .rg-g{color:var(--accx)}
+.rg-sous{margin:10px 2px 14px;color:var(--muted);font-size:13.5px;min-height:1em}
+.rg-txt{position:relative}
+.rg-txt textarea{padding-right:58px!important;min-height:120px}
+html body .rg-mic{position:absolute;right:8px;bottom:8px;padding:0;background:none;border:0;cursor:pointer}
+.rg-mic .rg-g{width:42px;height:42px}
+.rg-mic.on .rg-g{box-shadow:var(--in),0 0 0 4px color-mix(in srgb,var(--acc) 22%,transparent);animation:rgPulse 1.2s ease-in-out infinite}
+@keyframes rgPulse{50%{box-shadow:var(--in),0 0 0 8px color-mix(in srgb,var(--acc) 10%,transparent)}}
+.rg-photo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 14px}
+.rg-photo .btn{display:inline-flex;align-items:center;gap:8px}
+.rg-photo .btn svg{width:18px;height:18px;color:var(--accx)}
+#rg-phok{position:relative;display:inline-block}
+#rg-phok img{width:56px;height:56px;object-fit:cover;border-radius:12px;box-shadow:var(--up-s);display:block}
+#rg-phok button{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font-size:15px;line-height:1;padding:0}
+.rg-rep>span{display:block;font-size:13.5px;font-weight:600;color:var(--muted);margin:0 0 8px}
+.rg-choix{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--cx);box-shadow:var(--in);margin-bottom:12px}
+html body .rg-choix button{flex:1;padding:10px 12px;border-radius:999px;font:700 14px/1.2 inherit;font-family:inherit;color:var(--muted);background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+html body .rg-choix button[aria-checked="true"]{background:var(--rs);box-shadow:var(--up-s);color:var(--fg)}
+.rg-note{margin:4px 0 0;padding:10px 14px;border-radius:14px;background:var(--rs);box-shadow:var(--in);color:var(--muted);font-size:13px;line-height:1.45}
+.rg-etat{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:999px;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);white-space:nowrap}
+.rg-etat.att{color:var(--accx)}
+
+/* ma barre du bas */
+.rg-pos{display:grid;grid-template-columns:1fr 1fr 54px 1fr 1fr;align-items:center;gap:4px;padding:12px 8px;border-radius:26px;background:var(--rs);box-shadow:var(--up)}
+.rg-pos-i{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.rg-pos-i .rg-g{width:38px;height:38px}
+.rg-pos-i small{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rg-c{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up);margin:-18px auto 0}
+.rg-c svg{width:20px;height:20px;fill:none;stroke:var(--fg);stroke-width:2.2;stroke-linecap:round}
+.rg-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px;margin-top:4px}
+html body .rg-grille button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 4px;border-radius:16px;background:transparent;color:var(--muted);font:600 12.5px/1.2 inherit;font-family:inherit;cursor:pointer}
+.rg-grille .rg-g{width:46px;height:46px}
+.rg-grille button[aria-pressed="true"]{color:var(--fg)}
+.rg-grille button[aria-pressed="true"] .rg-g{box-shadow:var(--in)}
+.rg-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--acc);color:#fff;font:800 11.5px/20px Manrope,system-ui,sans-serif;text-align:center}
+.rg-n:empty{display:none}
+.rg-formes button svg{width:96px;height:32px}
+.rg-formes button svg path,.rg-formes button svg circle{fill:var(--rs);stroke:currentColor;stroke-width:1.5}

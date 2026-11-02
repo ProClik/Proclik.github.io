@@ -20,8 +20,8 @@ var css=
 '#pc-ouv *,#pc-ouv *::before,#pc-ouv *::after{animation-play-state:paused}#pc-ouv.go *,#pc-ouv.go *::before,#pc-ouv.go *::after{animation-play-state:running}'+
 '#pc-ouv .lock{position:relative;z-index:1;display:flex;align-items:center;gap:14px;color:var(--mt)}'+
 '#pc-ouv .pbox{position:relative;display:grid;place-items:center;transform-origin:0 0}'+
-'#pc-ouv .pb{width:48px;height:56px;overflow:visible;flex:none}'+
-'#pc-ouv .pb path{fill:none;stroke-linecap:round;stroke-linejoin:round}'+
+'#pc-ouv .ouvp{width:48px;height:56px;overflow:visible;flex:none}'+
+'#pc-ouv .ouvp path{fill:none;stroke-linecap:round;stroke-linejoin:round}'+
 '#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit .8s cubic-bezier(.65,0,.35,1) 5.05s forwards}'+
 '#pc-ouv .l{stroke:var(--ml);stroke-width:3.3;stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcFineL .8s cubic-bezier(.65,0,.35,1) 5.05s forwards}'+
 '#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 4.75s forwards}'+
@@ -77,14 +77,14 @@ if(reduit&&!site)return;
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},1500);return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
-o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="pb" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
+o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="ouvp" viewBox="10 4 80 92"><g class="big"><path class="l" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><path class="sh" pathLength="100" d="M52 69.7 A23 23 0 1 0 33 47 V75"/><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
 if(!site)window.PC_OUV_MS=8650;
 var fini=false;
 function fin(){if(fini)return;fini=true;o.classList.add('fin');setTimeout(function(){o.remove()},650)}
 if(!site)o.addEventListener('click',fin);
-if(reduit){o.querySelectorAll('*').forEach(function(e){e.style.animation='none'});o.querySelector('.big').style.transform='none';o.querySelector('.pen').style.display='none';o.querySelector('.l').style.cssText='stroke-dasharray:none;stroke-width:5';o.querySelector('.sh').style.display='none';o.querySelector('.g').style.display='none';o.querySelector('.ond').style.display='none';o.querySelector('.filet').style.transform='none';o.querySelectorAll('.lt,small').forEach(function(e){e.style.opacity=1});o.querySelector('.pb').insertAdjacentHTML('beforeend','<circle cx="56" cy="47" r="6" fill="var(--ml)"/>');return}
+if(reduit){o.querySelectorAll('*').forEach(function(e){e.style.animation='none'});o.querySelector('.big').style.transform='none';o.querySelector('.pen').style.display='none';o.querySelector('.l').style.cssText='stroke-dasharray:none;stroke-width:5';o.querySelector('.sh').style.display='none';o.querySelector('.g').style.display='none';o.querySelector('.ond').style.display='none';o.querySelector('.filet').style.transform='none';o.querySelectorAll('.lt,small').forEach(function(e){e.style.opacity=1});o.querySelector('.ouvp').insertAdjacentHTML('beforeend','<circle cx="56" cy="47" r="6" fill="var(--ml)"/>');return}
 
 /* la pointe : elle glisse jusqu'au bout de la boucle, trace le P (le trait la suit exactement), se lève et se pose au cœur.
    Elle s'étire dans le sens du mouvement selon sa vitesse, et s'écrase un peu en se posant. */
@@ -122,7 +122,7 @@ function plume(svg,centre){
 }
 function pt(svg,x,y){var m=svg.getScreenCTM();return {x:m.a*x+m.e,y:m.d*y+m.f}}
 function prepare(){
- var svg=o.querySelector('.pb'),gal=o.querySelector('.g');
+ var svg=o.querySelector('.ouvp'),gal=o.querySelector('.g');
  /* le grand P est centré sur le bouton, même si l'ensemble P + nom ne l'est pas ; recalculé tant que la pointe est dans le bouton
     (la police peut arriver après coup et décaler le nom) */
  function centre(){var m=svg.getScreenCTM(),r=gal.getBoundingClientRect(),X=r.left+r.width/2,Y=r.top+r.height/2;
@@ -135,7 +135,7 @@ function prepare(){
 /* juste avant de se ranger, on vise le P du bouton en haut de l'Espace (la page a fini de se mettre en place) */
 function vise(){
  /* si l'artisan a mis son logo, le P se pose à sa place puis s'efface devant lui */
- var cible=d.querySelector(CIB),pb=o.querySelector('.pbox'),svg=o.querySelector('.pb');
+ var cible=d.querySelector(CIB),pb=o.querySelector('.pbox'),svg=o.querySelector('.ouvp');
  if(!cible){fin();return}
  var r=cible.getBoundingClientRect();if(!r.width||r.bottom<0){fin();return}
  var k=cible.tagName.toLowerCase()==='svg'?cible.getScreenCTM().a:(r.width-12)/76;
