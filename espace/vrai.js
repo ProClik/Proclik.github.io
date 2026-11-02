@@ -325,6 +325,8 @@ function proposer(){if(!SERVICE)return;var ph=$('#phrase');if(!ph||$('#vco'))ret
 function lienDirect(){var h=location.hash;try{h=decodeURIComponent(h)}catch(e){}var m=/[#&]c=[\s"'<>]*([A-Za-z0-9_-]{6,64})/.exec(h);return m?m[1]:null}
 
 if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore branché','<div class="card"><p style="margin:0">Ce lien ouvre une vraie demande, mais l\'adresse du service ProClik n\'est pas encore réglée dans l\'Espace. Prévenez Cyril : c\'est une ligne à ajouter.</p></div>','<button class="vbtn" type="button" data-vfermer>Fermer</button>')},1500);return}
+/* Pour l'onglet Clients (clients.js) : appels au service, ouverture d'une demande, PDF d'un document */
+window.PCV={api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc};
 if(lsG(KJ))demarrer();else proposer();
 var c0=lienDirect();if(c0)setTimeout(function(){ouvrirDemande(c0)},lsG(KJ)?300:1500);
 window.addEventListener('hashchange',function(){var c=lienDirect();if(c)ouvrirDemande(c)});
