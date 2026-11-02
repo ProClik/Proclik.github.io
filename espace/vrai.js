@@ -228,7 +228,7 @@ function toastV(t,s){var tt=$('#tt'),ts=$('#ts'),to=$('#toast');if(!to)return;tt
 /* ---------- devis et factures (VosFactures en coulisses, routes /espace/documents… du service) ---------- */
 // Un seul gros bouton : l'étape suivante. Rien ne part chez le client sans une confirmation de l'artisan.
 function pctDef(){var v=lsG('pc-acompte');return v!=null&&v>=0&&v<100?v:30}
-var TYP={devis:'Devis',facture:'Facture',acompte:'Facture d\'acompte',solde:'Facture finale',avoir:'Avoir'},DOCS=null,DOCC=null,ARME='';
+var TYP={devis:'Devis',facture:'Facture',acompte:'Facture d\'acompte',solde:'Facture finale',avoir:'Avoir'},DOCS=null,DOCC=null,ARME='',ERRDOC='';
 function pillDoc(d){var c=d.statut==='paid'||d.statut==='accepted'?'t':d.statut==='rejected'||d.statut==='issued'?'w':'';return '<span class="vp '+c+'">'+esc(d.statut_libelle||d.statut)+'</span>'}
 function jourDoc(s){var m=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||'');return m?m[3]+'/'+m[2]+'/'+m[1]:''}
 function ligneDoc(d){return '<div class="vli"><span>'+esc(TYP[d.type]||d.type)+' n° '+esc(d.numero)+'</span><span class="x">'+eur(d.ht)+' HT</span><small>'+esc(jourDoc(d.date))+' · '+pillDoc(d)+' · <a href="#" style="color:inherit;font-weight:800" data-vdoc="pdf" data-id="'+d.id+'">📄 Voir le PDF</a></small></div>'}
@@ -247,6 +247,7 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
  if(n){var arm=ARME===n.a+(n.id||'');
   var C={creer:['Valider le pré-devis','Oui, créer le devis'],envoyer:['Envoyer au client','Oui, envoyer'],accepted:['Le client a accepté','Oui, accepté'],acompte:['Créer l\'acompte','Créer l\'acompte'],finale:['Créer la facture finale','Oui, la créer'],paid:['Marquer payée','Oui, payée']}[n.a]||[n.t,'Oui, '+n.t.charAt(0).toLowerCase()+n.t.slice(1)];
   var f=$('#vov-f');if(f){f.innerHTML='<button class="vbtn" type="button" '+(arm?'data-vdoc="annuler">Annuler':'data-vfermer>Fermer')+'</button><button class="vbtn go'+(arm?' varm':'')+'" type="button" data-vdoc="'+n.a+'" data-id="'+(n.id||'')+'">'+esc(arm?C[1]:C[0])+'</button>';f.hidden=false}
+  if(ERRDOC)h+='<p class="vst" style="padding:8px 10px;margin:0 0 8px;border-radius:10px;background:var(--warn-bg);color:var(--warn)"><b>Pas fait :</b> '+esc(ERRDOC)+'</p>';
   if(!arm&&n.a!=='creer')h+='<p style="margin:0 0 6px;font-weight:700">'+esc(n.t)+'</p>';
   if(arm)h+='<p class="vst" style="padding:0 0 6px"><b>Touchez encore le bouton du bas pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'.</b></p>';
   else if(n.s)h+='<p class="vst" style="padding:0 0 6px">'+esc(n.s)+'</p>';
@@ -257,7 +258,7 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
  }
  h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
  z.innerHTML=h}
-function chargerDocs(c){DOCC=c;DOCS=null;ARME='';var z=$('#vdocs');
+function chargerDocs(c){DOCC=c;DOCS=null;ARME='';ERRDOC='';var z=$('#vdocs');
  api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
 function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=lsG(KJ);
  fetch(SERVICE+'/espace/document/pdf?id='+encodeURIComponent(id),{headers:j?{Authorization:'Bearer '+j}:{}}).then(function(r){if(!r.ok)throw new Error('PDF indisponible ('+r.status+')');return r.blob()})
@@ -276,9 +277,9 @@ function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}lsS('pc-acompte',v);p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
  else if(a==='accepted'){var w=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(w>=0&&w<100)){toastV('Pourcentage d\'acompte illisible','Entre 0 et 99 %.');return}lsS('pc-acompte',w);p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a,pourcentage:w}})}
  else p=api('/espace/statut',{method:'POST',body:{id:+id,statut:a}});
- ARME='';var z=$('#vdocs');if(z)z.querySelectorAll('button').forEach(function(b){b.disabled=true});
+ ARME='';ERRDOC='';var z=$('#vdocs');if(z)z.querySelectorAll('button').forEach(function(b){b.disabled=true});var fb=$('#vov-f .vbtn.go');if(fb){fb.disabled=true;fb.textContent='En cours…'}
  p.then(function(x){toastV(a==='envoyer'?'Envoyé au client':x.deja?'Déjà fait':'C\'est fait',k?k.nom:'');if(a==='creer'||a==='forcer'){if(!x.deja)lsS(cleLg(),null);avancer('creer')}else if(a==='envoyer'){var dv=(DOCS||[]).filter(function(d){return d.id==id})[0];if(dv&&dv.type==='devis')avancer('envoyer')}else if(a==='paid'){var fp=(DOCS||[]).filter(function(d){return d.id==id})[0];avancer(fp&&fp.type==='acompte'?'acompte':'paid')}else avancer(a);chargerDocs(c);chargerFa()},
-  function(err){if(a==='creer'&&/fournisseur/i.test(err.message)){var z2=$('#vdocs');rendreDocs();if(z2)z2.insertAdjacentHTML('beforeend','<p class="vst" style="padding:8px 0 0">⏳ '+esc(err.message)+'. <a href="#" data-vdoc="forcer">Créer le devis quand même</a></p>');return}toastV('Pas fait',err.message);rendreDocs()})}
+  function(err){if(a==='creer'&&/fournisseur/i.test(err.message)){var z2=$('#vdocs');rendreDocs();if(z2)z2.insertAdjacentHTML('beforeend','<p class="vst" style="padding:8px 0 0">⏳ '+esc(err.message)+'. <a href="#" data-vdoc="forcer">Créer le devis quand même</a></p>');return}toastV('Pas fait',err.message);ERRDOC=err.message;rendreDocs();var zz=$('#vdocs');if(zz&&zz.scrollIntoView)zz.scrollIntoView({block:'center',behavior:'smooth'})})}
 // Onglet « Factures » : les vraies factures en haut (les devis ont leur onglet), l'exemple en dessous.
 function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){z=document.createElement('div');z.id='vfa';z.className='card vsec';var b=v.querySelector('.vexemple');v.insertBefore(z,b?b.nextSibling:v.firstChild)}
  api('/espace/documents').then(function(x){var L=(x.documents||[]).filter(function(d){return d.type!=='devis'}),du=0;L.forEach(function(d){if(d.type!=='devis'&&d.type!=='avoir'&&d.statut!=='paid'&&d.ttc!=null)du+=d.ttc-(d.paye||0)});
