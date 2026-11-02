@@ -32,7 +32,7 @@ var FA0=[
 var FA=X.lsGet('pc-fa1',null)||FA0;
 var NEW=X.lsGet('pc-cl1',{});Object.keys(NEW).forEach(function(k){if(!DOS[k])DOS[k]=NEW[k]});
 var DVN=X.lsGet('pc-dvn1',[]);
-X.cf={DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
+X.cf={nouveauClient:function(r){formClient(r)},ficheClient:function(k){fseg=null;if(DOS[k]&&!DOS[k].vrai)ficheClient(k);else ficheVraie(k)},DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
 function save(){X.lsSet('pc-fa1',FA);X.lsSet('pc-cl1',NEW);X.lsSet('pc-dvn1',DVN);}
 function fa(id){return FA.filter(function(f){return f.id===id})[0]}
 function ftot(f){var t=0;f.L.forEach(function(l){t+=l[1]});t=r2(t);var ht=r2(t-(f.ac||0)),tv=r2(ht*f.tva/100);return{total:t,ht:ht,tv:tv,ttc:r2(ht+tv)}}
@@ -55,10 +55,15 @@ var IC={fact:I('<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9
 /* Écusson au trait laiton, coche et petit ruban tricolore (même dessin que le site) */
 var ECU='<svg class="ecu" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l7 2.8v5.2c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.6z"/><path d="M8.8 11.6l2.3 2.3 4.3-4.6"/><g stroke="none"><rect x="8.9" y="16.9" width="2.1" height="1.3" rx=".3" fill="#2B4C9B"/><rect x="11" y="16.9" width="2" height="1.3" fill="#E9ECF2"/><rect x="13" y="16.9" width="2.1" height="1.3" rx=".3" fill="#C8463C"/></g></svg>';
 
-/* ---------- clients ---------- */
+/* ---------- clients ----------
+   Demande de Cyril (2/11) : plus de grandes listes. Un menu à icônes comme les Factures (Tous · À suivre · Pros),
+   une ligne par client ; la fiche montre ses coordonnées, les boutons Appeler / SMS / Mail / Itinéraire,
+   puis un menu Pré-devis · Devis validés · Factures (acomptes compris). */
 var ORDRE=['durand','martin','lopez','fabre','garcia','bernard','alpes','tilleuls','perrin','rey'];
 function cles(){var k=ORDRE.filter(function(x){return DOS[x]});Object.keys(NEW).forEach(function(x){if(k.indexOf(x)<0)k.unshift(x)});return k}
 function init(n){var w=String(n).replace(/^(M\.|Mme|Mlle|SCI|SARL|SAS)\s+/i,'').split(/\s+/).filter(function(x){return x&&!/^(les?|la|des|de|du)$/i.test(x)});return ((w[0]||'?').charAt(0)+(w[1]?w[1].charAt(0):'')).toUpperCase()}
+var RXPRO=/^(SCI|SARL|SAS|SASU|EURL|SA|Cabinet|Boulangerie|Société|Entreprise|Garage|Restaurant|Mairie|Copropriété)\b/i;
+function estPro(o){return o.type?o.type==='pro':RXPRO.test(o.n||'')}
 function avc(c){var s=0;c.ouv.forEach(function(o){s+=o[1]*o[2]/100});return Math.round(s)}
 function faDe(k){return FA.filter(function(f){return f.cli===k})}
 function dvDe(k){var L=[];D.forEach(function(d){if(DOS[k]&&DOS[k].dv===d.id)L.push({id:d.id,ht:X.tot(d).ht,st:d.statut==='signed'?'signe':d.statut==='sent'?'envoye':'avalider',d:d.signedAt||d.sentAt||d.recu,live:true})});
@@ -76,53 +81,117 @@ function etat(k){var o=DOS[k],d=o.dv&&X.find(o.dv),p=faDe(k).filter(function(f){
  if(c&&c.st==='start')return ['Chantier prévu le '+c.dates.split('→')[0].trim(),0];
  if(o.nouveau)return ['Nouveau client',0];
  return ['Terminé · tout est payé',0];}
+var ICP={tous:I('<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.6a6 6 0 0 1 3 5.4"/>'),
+ suivre:I('<path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/>'),
+ pro:I('<path d="M4 21V6l8-3v18M12 9h8v12"/><path d="M7 9h2M7 13h2M7 17h2M15 13h2M15 17h2"/>'),
+ mail:I('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>'),
+ ok:I('<path d="M5 12l5 5 9-10"/>'),
+ kbis:I('<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M12 11v6M9 14l3-3 3 3"/>')};
+function avatar(o){return '<span class="cf-av'+(estPro(o)?' cf-doc':'')+'">'+(estPro(o)?ICP.pro:esc(init(o.n)))+'</span>'}
 function ligneCli(k){var o=DOS[k],e=etat(k);
- return '<button class="cf-li" type="button" data-cli="'+k+'"><span class="cf-av">'+esc(init(o.n))+'</span><span class="tx"><b>'+esc(o.n)+'</b><small>'+esc(o.v||'')+(o.t?' · '+esc(o.t):'')+'</small><small class="cf-et'+(e[1]?' on':'')+'">'+esc(e[0])+'</small></span><span class="go">›</span></button>'}
-var filtre='';
-function vueClients(){var h,vrai=document.documentElement.classList.contains('pcvrai');
+ return '<button class="cf-li" type="button" data-cli="'+k+'">'+avatar(o)+'<span class="tx"><b>'+esc(o.n)+'</b><small>'+esc(o.v||'')+(o.t?' · '+esc(o.t):'')+'</small><small class="cf-et'+(e[1]?' on':'')+'">'+esc(e[0])+'</small></span><span class="go">›</span></button>'}
+var filtre='',cseg='tous';
+function menuClients(n){return '<div class="seg cf-seg dv-seg cl-seg" role="tablist" aria-label="Clients">'+[['tous','Tous'],['suivre','À suivre'],['pro','Pros']].map(function(x){
+  return '<button role="tab" data-clseg="'+x[0]+'" aria-selected="'+(cseg===x[0])+'">'+ICP[x[0]]+'<span>'+x[1]+'</span>'+(n[x[0]]?'<i class="cl-nb'+(x[0]==='suivre'?' on':'')+'">'+n[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'}
+function enTete(n,txt){return '<div class="row cf-top"><h2>Clients</h2><span class="cf-n">'+txt+'</span></div>'+
+ '<button class="btn go cf-go" type="button" data-cadd><span class="lab"><span class="ic">'+IC.perso+'</span><span>Ajouter un client</span></span></button>'+
+ menuClients(n)+'<label class="cf-cherche">'+IC.cherche+'<input type="search" id="cf-q" placeholder="Nom, ville ou travaux" autocomplete="off" value="'+esc(filtre)+'" aria-label="Chercher un client"></label>'}
+var AIDE={tous:'Tous vos clients, de A à Z. Chaque demande du site, du chatbot ou du téléphone crée la fiche toute seule.',suivre:'Les clients pour qui il y a quelque chose à faire : un pré-devis, une facture, une réponse à attendre.',pro:'Entreprises, commerces, syndics : les clients professionnels.'};
+function vueClients(){var vrai=document.documentElement.classList.contains('pcvrai');
  if(vrai)return clientsVrais();
- var K=cles().filter(function(k){var o=DOS[k];return !filtre||(o.n+' '+(o.v||'')+' '+(o.t||'')).toLowerCase().indexOf(filtre)>=0});
- var a=K.filter(function(k){return etat(k)[1]}),b=K.filter(function(k){return !etat(k)[1]}).sort(function(x,y){return DOS[x].n.replace(/^(M\.|Mme)\s+/,'').localeCompare(DOS[y].n.replace(/^(M\.|Mme)\s+/,''),'fr')});
- h='<div class="row cf-top"><h2>Clients</h2><span class="cf-n">'+cles().length+' clients</span></div>'+
-  '<div class="grid2"><div class="col">'+
-  '<label class="cf-cherche">'+IC.cherche+'<input type="search" id="cf-q" placeholder="Nom, ville ou travaux" autocomplete="off" value="'+esc(filtre)+'" aria-label="Chercher un client"></label>'+
-  '<button class="btn go cf-go" type="button" data-cadd><span class="lab"><span class="ic">'+IC.perso+'</span><span>Ajouter un client</span></span></button>'+
-  (a.length?'<div class="sec-h"><h2>À suivre</h2><span>il y a quelque chose à faire</span></div><div class="card lst cf-l">'+a.map(ligneCli).join('')+'</div>':'')+
-  '</div><div class="col">'+
-  (b.length?'<div class="sec-h"><h2>'+(a.length?'Les autres':'Vos clients')+'</h2><span>de A à Z</span></div><div class="card lst cf-l">'+b.map(ligneCli).join('')+'</div>':'')+
-  (!K.length?'<p class="hint">Personne ne s\'appelle comme ça… pour l\'instant.</p>':'')+
-  '<p class="hint">Chaque demande du site, du chatbot ou du téléphone crée la fiche toute seule.</p><span class="exemple">Clients fictifs de démonstration</span>'+
-  '</div></div>';
- poser('#v-clients',h);
- var q=$('#cf-q');if(q)q.addEventListener('input',function(){filtre=q.value.trim().toLowerCase();var p=q.selectionStart;vueClients();var n=$('#cf-q');n.focus();try{n.setSelectionRange(p,p)}catch(e){}});}
-/* Vraies demandes : un client par contact (même s'il a plusieurs demandes), on ouvre sa demande */
-function clientsVrais(){var L=null;try{L=JSON.parse(localStorage.getItem('pc-vrai-liste')||'null')}catch(e){}
- var vu={},C=[];((L&&L.demandes)||[]).forEach(function(d){var k=d.contact||d.client;if(!k||vu[k])return;vu[k]=1;C.push(d)});
- var h='<div class="vexemple"><b>Vos vrais clients</b>, tirés de vos demandes. Leurs devis, factures et l\'historique complet arriveront avec le branchement de VosFactures.</div>'+
-  '<div class="row cf-top"><h2>Clients</h2><span class="cf-n">'+(L?C.length+' client'+(C.length>1?'s':''):'Chargement…')+'</span></div>'+
-  (C.length?'<div class="card lst cf-l">'+C.map(function(d){return '<button class="cf-li" type="button" data-vc="'+esc(d.contact||'')+'"><span class="cf-av">'+esc(init(d.client))+'</span><span class="tx"><b>'+esc(d.client)+'</b><small>'+esc(d.resume||d.titre||'')+'</small><small class="cf-et">'+esc(d.etape||'')+'</small></span><span class="go">›</span></button>'}).join('')+'</div>':(L?'<p class="hint">Pas encore de client. Le premier arrivera avec la première demande.</p>':''));
- poser('#v-clients',h);}
+ var tous=cles(),nom=function(x){return DOS[x].n.replace(/^(M\.|Mme)\s+/,'')};
+ var n={tous:tous.length,suivre:tous.filter(function(k){return etat(k)[1]}).length,pro:tous.filter(function(k){return estPro(DOS[k])}).length};
+ var K=tous.filter(function(k){return cseg==='suivre'?etat(k)[1]:cseg==='pro'?estPro(DOS[k]):1}).filter(function(k){var o=DOS[k];return !filtre||(o.n+' '+(o.v||'')+' '+(o.t||'')).toLowerCase().indexOf(filtre)>=0});
+ if(cseg!=='suivre')K.sort(function(x,y){return nom(x).localeCompare(nom(y),'fr')});
+ var h='<div class="cl">'+enTete(n,tous.length+' clients')+
+  (K.length?'<div class="card lst cf-l">'+K.map(ligneCli).join('')+'</div>':'<p class="hint">'+(filtre?'Personne ne s\'appelle comme ça… pour l\'instant.':cseg==='suivre'?'Rien à suivre : tout le monde est servi.':'Aucun client ici pour l\'instant.')+'</p>')+
+  '<p class="hint">'+AIDE[cseg]+'</p><span class="exemple">Clients fictifs de démonstration</span></div>';
+ poser('#v-clients',h);ecoute();}
+function ecoute(){var q=$('#cf-q');if(q)q.addEventListener('input',function(){filtre=q.value.trim().toLowerCase();var p=q.selectionStart;vueClients();var n=$('#cf-q');n.focus();try{n.setSelectionRange(p,p)}catch(e){}});}
+
+/* Vraies demandes : un client par contact (demandes GHL + clients VosFactures + clients ajoutés ici) ; toucher un client ouvre SA FICHE, plus la page du pré-devis */
+var KVC='pc-vrai-clients';
+function lsJ(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function lsW(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var VC={},vcCharge=0;
+function vraisClients(){var L=lsJ('pc-vrai-liste'),M={},out=[];
+ (lsJ(KVC)||[]).forEach(function(c){if(c.contact)M[c.contact]=Object.assign({},c)});
+ ((L&&L.demandes)||[]).forEach(function(d){var k=d.contact;if(!k)return;var c=M[k]||(M[k]={contact:k,nom:d.client});c.nom=c.nom||d.client;
+  if(!c.demande){c.demande=d.resume||d.titre||'';c.etape=d.etape||'';c.suivre=1}});
+ Object.keys(M).forEach(function(k){out.push(M[k])});VC=M;return {liste:out,charge:!!L};}
+function chargerVC(){var V=window.PCV;if(!V||!V.api||Date.now()-vcCharge<60000)return;vcCharge=Date.now();
+ V.api('/espace/clients').then(function(x){var loc=(lsJ(KVC)||[]).filter(function(c){return c.ici}),M={};
+  (x.clients||[]).forEach(function(c){if(c.contact)M[c.contact]=c});loc.forEach(function(c){if(!M[c.contact])M[c.contact]=c});
+  lsW(KVC,Object.keys(M).map(function(k){return M[k]}));if($('#v-clients .cl'))clientsVrais()},function(){});}
+function ligneVC(c){var o={n:c.nom,type:c.type};
+ return '<button class="cf-li" type="button" data-cvf="'+esc(c.contact)+'">'+avatar(o)+'<span class="tx"><b>'+esc(c.nom)+'</b><small>'+esc([c.ville,c.demande].filter(Boolean).join(' · '))+'</small>'+(c.etape?'<small class="cf-et on">'+esc(c.etape)+'</small>':'')+'</span><span class="go">›</span></button>'}
+function clientsVrais(){chargerVC();var R=vraisClients(),C=R.liste;
+ var n={tous:C.length,suivre:C.filter(function(c){return c.suivre}).length,pro:C.filter(function(c){return c.type==='pro'}).length};
+ var K=C.filter(function(c){return cseg==='suivre'?c.suivre:cseg==='pro'?c.type==='pro':1}).filter(function(c){return !filtre||((c.nom||'')+' '+(c.ville||'')+' '+(c.demande||'')).toLowerCase().indexOf(filtre)>=0})
+  .sort(function(x,y){return String(x.nom||'').replace(/^(M\.|Mme)\s+/,'').localeCompare(String(y.nom||'').replace(/^(M\.|Mme)\s+/,''),'fr')});
+ var h='<div class="cl">'+enTete(n,R.charge?C.length+' client'+(C.length>1?'s':''):'Chargement…')+
+  (K.length?'<div class="card lst cf-l">'+K.map(ligneVC).join('')+'</div>':(R.charge?'<p class="hint">'+(filtre?'Personne ne s\'appelle comme ça… pour l\'instant.':'Aucun client ici pour l\'instant.')+'</p>':''))+
+  '<p class="hint">'+AIDE[cseg]+' Les clients ajoutés ici sont créés aussi dans VosFactures.</p></div>';
+ poser('#v-clients',h);ecoute();}
 function poser(sel,h){var v=$(sel);if(!v)return;var c=v.querySelector(':scope>.cf');if(!c){c=document.createElement('div');c.className='cf';v.appendChild(c)}c.innerHTML=h}
 
-/* Fiche d'un client */
-function ficheClient(k,keep){var o=DOS[k];if(!o)return;var F=faDe(k),V=dvDe(k),e=etat(k),r=reste(k);
- var sig=0,fac=0,pay=0;V.forEach(function(v){if(v.st==='signe')sig+=v.ht});F.forEach(function(f){if(f.st!=='pret'){var t=ftot(f).ht;fac+=t;if(f.st==='payee')pay+=t}});
- var h='<div class="cf-act"><button type="button" class="btn sm" data-call>'+IC.tel+'Appeler</button><button type="button" class="btn sm" data-sms>'+IC.sms+'SMS</button>'+
-  (o.v?'<a class="btn sm" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(o.v+', Isère')+'" target="_blank" rel="noopener">'+IC.route+'Itinéraire</a>':'')+'</div>'+
-  '<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b></div>';
- if(sig||fac)h+='<div class="xsec"><h3>L\'argent <small>HT</small></h3><div class="card cf-arg"><div><span>Devis signés</span><b>'+eur(r2(sig))+'</b></div><div><span>Facturé</span><b>'+eur(r2(fac))+'</b></div><div><span>Payé</span><b>'+eur(r2(pay))+'</b></div><div class="'+(r?'cor':'')+'"><span>Reste à payer</span><b>'+eur(r)+'</b></div></div></div>';
- if(V.length||F.length)h+='<div class="xsec"><h3>Ses devis et factures</h3><div class="card lst cf-l">'+V.map(function(v){return ligneDv(v,1)}).join('')+F.map(function(f){return ligneFa(f,1)}).join('')+'</div></div>';
- h+='<div class="xsec"><h3>Coordonnées</h3><div class="card"><div class="kv">'+(o.adr?'<span>Adresse</span><b>'+esc(o.adr)+'</b>':'')+'<span>Téléphone</span><b>'+esc(o.tel||'—')+'</b>'+(o.mail?'<span>E-mail</span><b>'+esc(o.mail)+'</b>':'')+(o.contact?'<span>Contact</span><b>'+esc(o.contact)+'</b>':'')+'<span>Origine</span><b>'+esc(o.src||'—')+'</b></div></div></div>';
- if(o.hist&&o.hist.length)h+='<div class="xsec"><h3>Historique</h3><div class="card"><ul class="tl">'+o.hist.map(function(x,i,a){return '<li class="'+(i===a.length-1?'last':'')+'"><small>'+esc(x[0])+'</small>'+esc(x[1])+'</li>'}).join('')+'</ul></div></div>';
+/* ---------- la fiche d'un client ---------- */
+var fseg=null;
+function telLien(t){var s=String(t||'').replace(/[^\d+]/g,'');return s.length>=6?s:''}
+function actions(o){var t=telLien(o.tel),m=o.mail,adr=o.adr||[o.rue,o.cp,o.v].filter(Boolean).join(' '),demo=!o.vrai&&o.tel&&!t;
+ var b=function(on,href,ic,txt,attr){if(demo&&/^(tel|sms):/.test(href))return '<button type="button" class="btn sm" data-'+(href.charAt(0)==='t'?'call':'sms')+'>'+ic+'<span>'+txt+'</span></button>';return on?'<a class="btn sm" href="'+href+'"'+(attr||'')+'>'+ic+'<span>'+txt+'</span></a>':'<button type="button" class="btn sm" disabled>'+ic+'<span>'+txt+'</span></button>'};
+ return '<div class="cf-act cl-act">'+b(t,'tel:'+t,IC.tel,'Appeler')+b(t,'sms:'+t,IC.sms,'SMS')+b(m,'mailto:'+encodeURIComponent(m||''),ICP.mail,'Mail')+
+  b(adr,'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(adr+(o.cp?'':', Isère')),IC.route,'Itinéraire',' target="_blank" rel="noopener"')+'</div>'}
+function coord(o){var adr=o.adr||[o.rue,[o.cp,o.v].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+ return '<div class="card cl-fiche">'+avatar(o)+'<div class="cl-id"><b>'+esc(o.n)+'</b><span class="pill grey">'+(estPro(o)?'Professionnel':'Particulier')+'</span></div>'+
+  '<div class="kv">'+(o.entreprise&&o.entreprise!==o.n?'<span>Entreprise</span><b>'+esc(o.entreprise)+'</b>':'')+(estPro(o)&&(o.prenom||o.nom)?'<span>Contact</span><b>'+esc([o.prenom,o.nom].filter(Boolean).join(' '))+'</b>':'')+
+  '<span>Adresse</span><b>'+esc(adr||'—')+'</b><span>Téléphone</span><b>'+esc(o.tel||'—')+'</b><span>E-mail</span><b>'+esc(o.mail||'—')+'</b>'+
+  (o.siret?'<span>SIRET</span><b>'+esc(o.siret)+'</b>':'')+(o.kbis?'<span>Kbis</span><b>'+(/^https:/.test(o.kbis)?'<a href="'+esc(o.kbis)+'" target="_blank" rel="noopener">Voir le Kbis</a>':esc(o.kbis))+'</b>':'')+'</div></div>'+actions(o)}
+function menuFiche(n,sel){sel=sel||fseg;return '<div class="seg cf-seg dv-seg cl-seg" role="tablist" aria-label="Documents du client">'+[['pre','Pré-devis',I('<path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/>')],['dv','Devis validés',ICP.ok],['fa','Factures',IC.fact]].map(function(x){
+  return '<button role="tab" data-cfseg="'+x[0]+'" aria-selected="'+(sel===x[0])+'">'+x[2]+'<span>'+x[1]+'</span>'+(n[x[0]]?'<i class="cl-nb">'+n[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'}
+var FK=null;
+function ficheClient(k,keep){var o=DOS[k];if(!o)return;FK=k;var F=faDe(k),V=dvDe(k),e=etat(k);
+ var P=V.filter(function(v){return v.st==='avalider'||v.st==='brouillon'}),S=V.filter(function(v){return v.st==='signe'||v.st==='envoye'});
+ if(!fseg)fseg=P.length?'pre':S.length?'dv':F.length?'fa':'pre';
+ var corps;
+ if(fseg==='pre')corps=P.length?'<div class="card lst cf-l">'+P.map(function(v){return ligneDv(v,1)}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun pré-devis en cours</b><span>Quand le client remplit le formulaire, Cliky prépare son pré-devis ici. Vous pouvez aussi faire un devis à la main.</span></div>';
+ else if(fseg==='dv')corps=S.length?'<div class="card lst cf-l">'+S.map(function(v){return ligneDv(v,1)}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun devis validé</b><span>Un pré-devis validé devient un devis, il arrive ici.</span></div>';
+ else corps=F.length?'<div class="card lst cf-l">'+F.map(function(f){return ligneFa(f,1)}).join('')+'</div><p class="hint">Les factures d\'acompte sont rangées ici aussi.</p>':'<div class="card cf-rien"><b>Aucune facture</b><span>La facture d\'acompte se crée toute seule quand le client signe le devis.</span></div>';
+ var h='<div class="cf cl-f">'+coord(o)+'<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b></div>'+menuFiche({pre:P.length,dv:S.length,fa:F.length})+'<div class="cl-docs">'+corps+'</div>';
+ if(o.hist&&o.hist.length)h+='<details class="xsec cl-hist"><summary>Historique</summary><div class="card"><ul class="tl">'+o.hist.map(function(x,i,a){return '<li class="'+(i===a.length-1?'last':'')+'"><small>'+esc(x[0])+'</small>'+esc(x[1])+'</li>'}).join('')+'</ul></div></details>';
  if(o.chat&&(o.chat.length||o.ph.length))h+='<button type="button" class="btn sm cf-tout" data-dos="'+k+'">Sa demande complète : conversation, photos ›</button>';
- var p=F.filter(function(f){return f.st==='pret'})[0],d=o.dv&&X.find(o.dv),go;
+ h+='</div>';
+ var p=F.filter(function(f){return f.st==='pret'})[0],d=o.dv&&X.find(o.dv),r=reste(k),go;
  if(p)go='<button class="btn go" data-cfa="'+p.id+'">Vérifier la facture</button>';
- else if(d&&d.statut!=='signed')go='<button class="btn go" data-opendv="'+d.id+'">Ouvrir le devis '+d.id+'</button>';
+ else if(d&&d.statut!=='signed')go='<button class="btn go" data-opendv="'+d.id+'">Ouvrir le pré-devis</button>';
  else if(r)go='<button class="btn go" data-cfa="'+F.filter(function(f){return f.st==='attente'})[0].id+'">Voir la facture</button>';
  else if(o.ch&&CH[o.ch])go='<button class="btn go" data-ch="'+o.ch+'">Voir le chantier</button>';
  else if(o.k==='visite')go='<button class="btn go" data-dos="'+k+'">Préparer la visite</button>';
  else go='<button class="btn go" data-cnew="devis|'+k+'">Faire un devis</button>';
  X.xopen(o.n,(o.t?o.t+' · ':'')+(o.v||''),h,'<button class="btn" data-xclose>Fermer</button>'+go,null,keep);}
+
+/* Fiche d'un vrai client : coordonnées (GHL), pré-devis (notes Cliky), devis et factures (VosFactures) */
+var VF={c:null,dem:null,docs:null,err:''};
+var TYPV={devis:'Devis',facture:'Facture',acompte:'Facture d\'acompte',solde:'Facture finale',avoir:'Avoir'};
+function jour(s){var m=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||'');return m?m[3]+'/'+m[2]+'/'+m[1]:''}
+function ligneVdoc(d){var ok=d.statut==='paid'||d.statut==='accepted';
+ return '<button class="cf-li" type="button" data-cpdf="'+esc(d.id)+'"><span class="cf-av cf-doc">'+(d.type==='devis'?ICP.ok:IC.fact)+'</span><span class="tx"><b>'+esc(TYPV[d.type]||d.type)+' n° '+esc(d.numero||'')+'</b><small>'+esc(jour(d.date))+' · Voir le PDF</small></span><span class="cf-m"><b>'+eur(+d.ht||0)+'</b><span class="pill '+(ok?'ok':'warn')+'">'+esc(d.statut_libelle||d.statut||'')+'</span></span></button>'}
+function ficheVraie(c){var V=window.PCV;if(!V||!V.api)return;
+ if(VF.c!==c){VF={c:c,dem:null,docs:null,err:''};fseg=null;
+  V.api('/espace/demande?c='+encodeURIComponent(c)).then(function(x){if(VF.c!==c)return;VF.dem=x.demande;rendreVraie(1)},function(e){if(VF.c!==c)return;VF.err=e.message;rendreVraie(1)});
+  V.api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(VF.c!==c)return;VF.docs=x.documents||[];rendreVraie(1)},function(e){if(VF.c!==c)return;VF.docs=[];VF.err=VF.err||e.message;rendreVraie(1)});}
+ rendreVraie(0);}
+function rendreVraie(maj){var c=VF.c,base=VC[c]||{nom:'Client'},d=VF.dem,k=(d&&d.contact)||{};
+ if(maj&&!document.querySelector('#xsheet.on .cl-f[data-c="'+c+'"]'))return;
+ var o={vrai:1,n:base.nom||k.nom,type:base.type,prenom:k.prenom||base.prenom,tel:k.telephone||base.telephone,mail:k.email||base.email,rue:k.adresse||base.adresse,cp:k.cp||base.cp,v:k.ville||base.ville,siret:base.siret,entreprise:base.entreprise,kbis:base.kbis};
+ var P=d?d.pre_devis||[]:null,Dv=VF.docs?VF.docs.filter(function(x){return x.type==='devis'}):null,Fa=VF.docs?VF.docs.filter(function(x){return x.type!=='devis'&&x.type!=='avoir'}):null;
+ if(!fseg&&P&&VF.docs)fseg=P.length?'pre':Dv.length?'dv':Fa.length?'fa':'pre';
+ var att='<div class="card cf-rien"><span>Chargement…</span></div>',corps,fs=fseg||'pre';
+ if(fs==='pre')corps=!P?att:P.length?'<div class="card lst cf-l">'+P.slice(0,4).map(function(p,i){return '<button class="cf-li" type="button" data-vc="'+esc(c)+'"><span class="cf-av cf-doc">'+I('<path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/>')+'</span><span class="tx"><b>'+(i?'Pré-devis plus ancien':'Pré-devis')+'</b><small>'+esc(jour(p.le)||'')+(p.resume?' · '+esc(p.resume):'')+'</small></span><span class="cf-m"><b>'+(p.totaux&&p.totaux.total_ht!=null?eur(+p.totaux.total_ht):'')+'</b><span class="pill '+(i?'grey':'todo')+'">'+(i?'Ancien':'Ouvrir')+'</span></span></button>'}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun pré-devis</b><span>Quand ce client remplit le formulaire, Cliky prépare son pré-devis ici.</span></div>';
+ else if(fs==='dv')corps=!Dv?att:Dv.length?'<div class="card lst cf-l">'+Dv.map(ligneVdoc).join('')+'</div>':'<div class="card cf-rien"><b>Aucun devis</b><span>Un pré-devis validé devient un devis VosFactures, il arrive ici.</span></div>';
+ else corps=!Fa?att:Fa.length?'<div class="card lst cf-l">'+Fa.map(ligneVdoc).join('')+'</div><p class="hint">Les factures d\'acompte sont rangées ici aussi.</p>':'<div class="card cf-rien"><b>Aucune facture</b><span>La facture d\'acompte se crée à l\'acceptation du devis.</span></div>';
+ var h='<div class="cf cl-f" data-c="'+esc(c)+'">'+coord(o)+(VF.err?'<p class="hint cl-err">'+esc(VF.err)+'</p>':'')+menuFiche({pre:P?P.length&&1:0,dv:Dv?Dv.length:0,fa:Fa?Fa.length:0},fs)+'<div class="cl-docs">'+corps+'</div></div>';
+ X.xopen(o.n||'Client',[o.v,base.demande].filter(Boolean).join(' · '),h,'<button class="btn" data-xclose>Fermer</button>'+(P&&P.length?'<button class="btn go" data-vc="'+esc(c)+'">Ouvrir le pré-devis</button>':''),null,false);}
 
 /* ---------- devis et factures ---------- */
 function ligneFa(f,ici){var t=ftot(f),s=ST[f.st];
@@ -185,13 +254,58 @@ function ficheRc(id){var r=RC.filter(function(x){return x.id===id})[0];if(!r)ret
  X.xopen('Facture '+r.four,'reçue '+r.d+' · '+eur(r.ht)+' HT',h,(r.st==='payee'?'<button class="btn" data-xclose>Fermer</button>':'<button class="btn" data-xclose>Plus tard</button><button class="btn go" data-crcpay="'+r.id+'">Marquer payée</button>')+(c?'':''),null,$('#xsheet').classList.contains('on'));}
 
 /* ---------- à la main : un client, une facture, un devis ---------- */
-function formClient(){
- X.xopen('Nouveau client','Il suffit du nom et du téléphone',
- '<div class="cf-form"><label>Nom<input id="cf-n" autocomplete="off" placeholder="Ex. : Mme Roux"></label><label>Téléphone<input id="cf-t" type="tel" inputmode="tel" placeholder="06…"></label><label>Ville<input id="cf-v" autocomplete="off" placeholder="Ex. : Meylan"></label><label>E-mail <small>facultatif</small><input id="cf-m" type="email" inputmode="email" placeholder="pour envoyer devis et factures"></label><p class="hint">Vous pouvez aussi dicter : touchez le micro.</p></div>',
- '<button class="btn" data-xclose>Annuler</button><button class="btn go" data-caddok>Enregistrer</button>',function(){var n=$('#cf-n');if(n)setTimeout(function(){n.focus()},250)});}
-function addClient(){var n=$('#cf-n').value.trim();if(!n){$('#cf-n').focus();X.toast('Il manque le nom','Juste le nom, le reste peut attendre.');return}
- var k='c'+Date.now().toString(36);NEW[k]={n:n,v:$('#cf-v').value.trim(),tel:$('#cf-t').value.trim(),mail:$('#cf-m').value.trim(),t:'',k:'nouveau',nouveau:1,src:'Ajouté par vous',chat:[],ph:[],docs:[],hist:[['à l\'instant','Fiche créée par vous']]};
- DOS[k]=NEW[k];save();vueClients();ficheClient(k);X.toast('Client ajouté','Démo : dans la vraie appli, il rejoint vos contacts.');}
+/* Nouveau client : particulier (en premier) ou professionnel ; le formulaire change selon la case cochée.
+   Pro : nom de l'entreprise, SIRET et Kbis (photo ou PDF). En mode direct, le client est créé dans GHL et dans VosFactures. */
+var ctype='part',rappelClient=null;
+function champ(id,lab,ph,attr,opt){return '<label><span>'+lab+(opt?' <small>facultatif</small>':'')+'</span><input id="'+id+'" autocomplete="off" placeholder="'+ph+'"'+(attr||'')+'></label>'}
+function formHTML(){var pro=ctype==='pro';
+ return '<div class="cf-form cl-form">'+
+  '<div class="cl-type" role="radiogroup" aria-label="Type de client">'+[['part','Particulier','Une personne, une famille'],['pro','Professionnel','Entreprise, commerce, syndic']].map(function(x){
+   return '<button type="button" role="radio" data-ctype="'+x[0]+'" aria-checked="'+(ctype===x[0])+'"><span class="cl-case">'+ICP.ok+'</span><span><b>'+x[1]+'</b><small>'+x[2]+'</small></span></button>'}).join('')+'</div>'+
+  (pro?champ('cf-e','Nom de l\'entreprise','Ex. : Boulangerie Rey')+champ('cf-siret','SIRET','14 chiffres',' inputmode="numeric"',1)+
+   '<label class="cl-kbis"><span>Kbis <small>facultatif · photo ou PDF</small></span><span class="cl-file">'+ICP.kbis+'<span id="cf-kbis-n">Ajouter le Kbis</span><input id="cf-kbis" type="file" accept="image/*,application/pdf"></span></label>'+
+   '<p class="cl-sous">La personne à contacter</p>':
+   '<div class="cl-civ" role="radiogroup" aria-label="Civilité">'+['M.','Mme'].map(function(c){return '<button type="button" role="radio" data-cciv="'+c+'" aria-checked="false">'+c+'</button>'}).join('')+'</div>')+
+  '<div class="cl-2">'+champ('cf-p','Prénom','Ex. : Julie','',pro)+champ('cf-n','Nom','Ex. : Roux','',pro)+'</div>'+
+  '<div class="cl-2">'+champ('cf-t','Téléphone','06…',' type="tel" inputmode="tel"')+champ('cf-m','E-mail','pour envoyer devis et factures',' type="email" inputmode="email"',1)+'</div>'+
+  champ('cf-a',pro?'Adresse du siège':'Adresse','N° et rue','')+
+  '<div class="cl-2 cl-cp">'+champ('cf-cp','Code postal','38000',' inputmode="numeric"')+champ('cf-v','Ville','Ex. : Meylan')+'</div>'+
+  '<p class="hint">Vous pouvez aussi dicter : touchez le micro.</p><p class="cl-err" id="cf-err" hidden></p></div>'}
+function garder(){var g={};['cf-e','cf-siret','cf-p','cf-n','cf-t','cf-m','cf-a','cf-cp','cf-v'].forEach(function(i){var x=$('#'+i);if(x)g[i]=x.value});return g}
+function remettre(g){Object.keys(g).forEach(function(i){var x=$('#'+i);if(x)x.value=g[i]})}
+function formClient(rappel){rappelClient=typeof rappel==='function'?rappel:null;ctype='part';
+ X.xopen('Nouveau client','Particulier ou professionnel',formHTML(),
+ '<button class="btn" data-xclose>Annuler</button><button class="btn go" data-caddok>Enregistrer</button>',function(){var n=$('#cf-p');if(n)setTimeout(function(){n.focus()},250)});}
+function val(i){var x=$('#'+i);return x?x.value.trim():''}
+function erreur(t){var e=$('#cf-err');if(e){e.textContent=t;e.hidden=!t;if(t)e.scrollIntoView({block:'nearest',behavior:'smooth'})}}
+function addClient(){var pro=ctype==='pro',cv=$('[data-cciv][aria-checked="true"]'),civ=!pro&&cv?cv.getAttribute('data-cciv'):'';
+ var c={type:pro?'pro':'particulier',civilite:civ,prenom:val('cf-p'),nom:val('cf-n'),entreprise:val('cf-e'),siret:val('cf-siret').replace(/\s/g,''),telephone:val('cf-t'),email:val('cf-m'),adresse:val('cf-a'),cp:val('cf-cp'),ville:val('cf-v')};
+ if(pro&&!c.entreprise){$('#cf-e').focus();return erreur('Il manque le nom de l\'entreprise.')}
+ if(!pro&&!c.nom){$('#cf-n').focus();return erreur('Il manque le nom du client.')}
+ if(c.siret&&!/^\d{14}$/.test(c.siret)){$('#cf-siret').focus();return erreur('Le SIRET a 14 chiffres.')}
+ if(!c.telephone&&!c.email){$('#cf-t').focus();return erreur('Il faut au moins un téléphone ou un e-mail pour joindre le client.')}
+ erreur('');var nom=pro?c.entreprise:[c.civilite,c.prenom,c.nom].filter(Boolean).join(' ');
+ var fic=$('#cf-kbis')&&$('#cf-kbis').files[0];
+ if(document.documentElement.classList.contains('pcvrai')&&window.PCV&&window.PCV.api)return addVrai(c,nom,fic);
+ var k='c'+Date.now().toString(36);
+ NEW[k]={n:nom,type:pro?'pro':'part',prenom:c.prenom,nom:c.nom,entreprise:c.entreprise,siret:c.siret,kbis:fic?fic.name:'',rue:c.adresse,cp:c.cp,v:c.ville,adr:[c.adresse,[c.cp,c.ville].filter(Boolean).join(' ')].filter(Boolean).join(', '),tel:c.telephone,mail:c.email,t:'',k:'nouveau',nouveau:1,src:'Ajouté par vous',chat:[],ph:[],docs:[],hist:[['à l\'instant','Fiche créée par vous']]};
+ DOS[k]=NEW[k];save();vueClients();var r=rappelClient;rappelClient=null;
+ if(r){X.xclose();r(k)}else{fseg=null;ficheClient(k)}
+ X.toast('Client ajouté','Démo : dans la vraie appli, il est créé aussi dans VosFactures.');}
+function addVrai(c,nom,fic){var b=$('[data-caddok]');if(b){b.disabled=true;b.textContent='Enregistrement…'}
+ var fin=function(){if(b){b.disabled=false;b.textContent='Enregistrer'}};
+ var kb=fic?envoyerKbis(fic,nom):Promise.resolve('');
+ kb.then(function(u){c.kbis=u||'';return window.PCV.api('/espace/client',{method:'POST',body:c})}).then(function(x){fin();var cl=x.client||{},k=cl.contact;
+   var e={contact:k,vf:cl.vf,nom:cl.nom_affiche||nom,type:c.type,prenom:c.prenom,telephone:c.telephone,email:c.email,adresse:c.adresse,cp:c.cp,ville:c.ville,siret:c.siret,entreprise:c.entreprise,kbis:c.kbis,ici:1};
+   var L=(lsJ(KVC)||[]).filter(function(y){return y.contact!==k});L.unshift(e);lsW(KVC,L);
+   DOS[k]={n:e.nom,type:c.type==='pro'?'pro':'part',prenom:c.prenom,nom:c.nom,entreprise:c.entreprise,siret:c.siret,rue:c.adresse,cp:c.cp,v:c.ville,tel:c.telephone,mail:c.email,t:'',k:'nouveau',nouveau:1,src:'Ajouté par vous',chat:[],ph:[],docs:[],hist:[],vrai:1};
+   vueClients();var r=rappelClient;rappelClient=null;
+   if(r){X.xclose();r(k)}else ficheVraie(k);
+   X.toast('Client ajouté',cl.nouveau===false?'Il existait déjà dans vos contacts : sa fiche est complétée, dans VosFactures aussi.':'Créé dans vos contacts et dans VosFactures.')},
+  function(err){fin();erreur('Pas enregistré : '+err.message)});}
+function envoyerKbis(f,nom){if(f.size>3.5*1024*1024)return Promise.reject(new Error('le Kbis est trop lourd (3,5 Mo au plus). Prenez une photo plutôt.'));
+ var art=lsJ('pc-vrai-artisan')||{},fd=new FormData();fd.append('artisan',art.code||'');fd.append('nom','kbis '+nom);fd.append('plan_1',f,f.name);
+ return fetch(String(window.PC_SERVICE||'').replace(/\/+$/,'')+'/photos',{method:'POST',body:fd}).then(function(r){return r.json()}).then(function(x){var u=x&&x.plans&&x.plans[0]&&x.plans[0].url;if(!u)throw new Error('le Kbis n\'a pas pu être déposé'+(x&&x.erreur?' ('+x.erreur+')':''));return u});}
 var nTva=10;
 function formDoc(type,k){var K=cles();nTva=10;var dv=type==='devis';
  X.xopen(dv?'Devis à la main':'Facture à la main',dv?'Pour un petit travail, sans pré-devis':'Pour un travail hors devis',
@@ -221,9 +335,15 @@ function conf(){X.xopen('Devis et factures conformes','Ce que ProClik fait pour 
  '<button class="btn" data-xclose>Fermer</button>');}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-cli],[data-cadd],[data-caddok],[data-cfa],[data-cdv],[data-crc],[data-cseg],[data-cnew],[data-cdocok],[data-ctva],[data-cfsend],[data-cfpay],[data-cfrel],[data-cfedit],[data-crcpay],[data-cdvsend],[data-cconf]');if(!b)return;
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-clseg],[data-cfseg],[data-ctype],[data-cciv],[data-cvf],[data-cpdf],[data-cli],[data-cadd],[data-caddok],[data-cfa],[data-cdv],[data-crc],[data-cseg],[data-cnew],[data-cdocok],[data-ctva],[data-cfsend],[data-cfpay],[data-cfrel],[data-cfedit],[data-crcpay],[data-cdvsend],[data-cconf]');if(!b)return;
  var a=function(n){return b.getAttribute(n)};
- if(b.hasAttribute('data-cli'))ficheClient(a('data-cli'));
+ if(b.hasAttribute('data-clseg')){cseg=a('data-clseg');vueClients();}
+ else if(b.hasAttribute('data-cfseg')){fseg=a('data-cfseg');if(VF.c&&document.querySelector('#xsheet .cl-f[data-c]'))rendreVraie(1);else if(FK)ficheClient(FK);}
+ else if(b.hasAttribute('data-ctype')){if(ctype!==a('data-ctype')){var g=garder();ctype=a('data-ctype');$('#x-in').innerHTML=formHTML();remettre(g);}}
+ else if(b.hasAttribute('data-cciv')){var on=a('data-cciv');$$('[data-cciv]').forEach(function(x){x.setAttribute('aria-checked',String(x===b&&x.getAttribute('aria-checked')!=='true'))});}
+ else if(b.hasAttribute('data-cvf')){fseg=null;ficheVraie(a('data-cvf'));}
+ else if(b.hasAttribute('data-cpdf')){if(window.PCV&&window.PCV.pdf)window.PCV.pdf(a('data-cpdf'));}
+ else if(b.hasAttribute('data-cli')){fseg=null;ficheClient(a('data-cli'));}
  else if(b.hasAttribute('data-cadd'))formClient();
  else if(b.hasAttribute('data-caddok'))addClient();
  else if(b.hasAttribute('data-cfa'))ficheFa(a('data-cfa'));
@@ -241,6 +361,8 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-cdvsend')){var v=DVN.filter(function(x){return x.id===a('data-cdvsend')})[0];if(v){v.st='envoye';v.d='envoyé à l\'instant';save();}X.xclose();vueFactures();X.toast('Devis envoyé','Démo : rien n\'est parti. En vrai, le client le reçoit et le signe en ligne.');}
  else if(b.hasAttribute('data-cconf'))conf();
 });
+/* Kbis choisi : son nom s'affiche à la place de « Ajouter le Kbis » */
+document.addEventListener('change',function(e){if(e.target&&e.target.id==='cf-kbis'){var f=e.target.files[0],n=$('#cf-kbis-n');if(n)n.textContent=f?f.name:'Ajouter le Kbis'}});
 /* À chaque ouverture d'onglet, l'écran est à jour (les vraies demandes peuvent avoir changé) */
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v]');if(!t)return;if(t.dataset.v==='clients')vueClients();if(t.dataset.v==='factures')vueFactures();});
 new MutationObserver(function(){vueClients()}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
