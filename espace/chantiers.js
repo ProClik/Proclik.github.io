@@ -107,7 +107,7 @@ function cliCard(c,o,court){if(!o)return '<div class="card"><b>Client</b><p clas
  var adr=o.adr||o.v||'';
  return '<div class="card"><div class="ch-cli"><b>'+esc(o.prenom?o.prenom+' '+(o.nom||o.n):o.contact||o.n)+'</b>'+(o.contact&&!o.prenom?'<span>'+esc(o.n)+'</span>':'')+'<span>'+esc(adr)+'</span>'+(court?'':'<span>'+esc(o.tel||'')+(o.mail?' · '+esc(o.mail):'')+'</span>')+'</div>'+
   '<div class="ch-acts">'+[['tel','Appeler',IC.tel],['sms','SMS',IC.sms],['mail','E-mail',IC.mail],['route','Itinéraire',IC.route]].map(function(x){return '<button type="button" data-cact="'+x[0]+'"><span class="r">'+x[2]+'</span>'+x[1]+'</button>'}).join('')+'</div>'+
-  (court?'':'<button class="btn" style="width:100%;margin-top:14px" data-dos="'+c.dos+'">Ouvrir le dossier complet</button>')+'</div>';}
+  (court?'':'<button class="btn" style="width:100%;margin-top:14px" data-chdos="'+c.dos+'">Ouvrir le dossier complet</button>')+'</div>';}
 
 function partie(c,o){
  if(o==='trav')return travaux(c);
@@ -125,7 +125,7 @@ function travaux(c){var a=avc(c),run=c.st!=='done';
  var h='<div class="card" id="ch-trav"><div class="row"><b>Avancement</b><b>'+a+' %</b></div><div class="prog" style="margin-top:10px"><i style="width:'+a+'%"></i></div></div>'+
  '<div class="card"><div class="row" style="margin-bottom:4px"><b>Avancement par ouvrage</b><small style="color:var(--muted)">pondéré</small></div><div class="ch-ouv">'+c.ouv.map(function(x,i){
   var ed=edit&&edit.i===i;
-  return '<div class="ch-o"><span class="nm">'+esc(x[0])+' <small>· '+x[1]+' % du chantier</small></span><span class="pc">'+(ed?edit.v:x[2])+' %</span>'+(!ed&&run?'<span class="bt">'+(x[3]?'<button type="button" class="ch-lock" data-odeb="'+i+'" title="Ligne validée" aria-label="Ligne validée, toucher deux fois pour débloquer">'+IC.cadenas+'<span>Validée</span></button>':'<button type="button" class="btn sm" data-omod="'+i+'">'+IC.crayon+'Modifier</button>')+'</span>':'<span></span>')+'<div class="prog"><i style="width:'+(ed?edit.v:x[2])+'%"></i></div>'+
+  return '<div class="ch-o"><span class="nm">'+esc(x[0])+' <small>'+x[1]+' % du chantier</small></span><span class="pc">'+(ed?edit.v:x[2])+' %</span>'+(!ed&&run?'<span class="bt">'+(x[3]?'<button type="button" class="ch-lock" data-odeb="'+i+'" title="Ligne validée" aria-label="Ligne validée, toucher deux fois pour débloquer">'+IC.cadenas+'<span>Validée</span></button>':'<button type="button" class="btn sm" data-omod="'+i+'">'+IC.crayon+'Modifier</button>')+'</span>':'<span></span>')+'<div class="prog"><i style="width:'+(ed?edit.v:x[2])+'%"></i></div>'+
    (ed?'<div class="ch-ed"><div class="v"><button type="button" class="btn" data-ev="-5" aria-label="Moins 5 %">−</button><b>'+edit.v+' %</b><button type="button" class="btn" data-ev="5" aria-label="Plus 5 %">+</button></div>'+
      '<input type="range" min="0" max="100" step="5" value="'+edit.v+'" id="ch-rg" aria-label="Avancement de la ligne">'+
      '<div class="q">'+[0,25,50,75,100].map(function(v){return '<button type="button" class="btn" data-eq="'+v+'" aria-pressed="'+(edit.v===v)+'">'+v+' %</button>'}).join('')+'</div>'+
@@ -264,7 +264,7 @@ function documents(c){var o=dos(c),L=[];
  if(o)(o.docs||[]).forEach(function(x){if(X.DOCS&&X.DOCS[x])L.push({ic:x==='devis'?IC.devis:x==='acompte'?IC.acompte:x==='plan'?IC.plan:IC.docs,t:X.DOCS[x][0]+(x==='devis'&&c.dv?' '+c.dv:''),s:X.DOCS[x][1],a:'data-odoc="'+c.dos+'|'+x+'"'})});
  var G={devis:[],fact:[],autre:[]};L.forEach(function(x){(/Devis|Pré-devis/.test(x.t)?G.devis:/Facture|acompte/i.test(x.t)?G.fact:G.autre).push(x)});
  var li=function(x){return '<button class="cf-li" type="button" '+x.a+'><span class="cf-av cf-doc">'+x.ic+'</span><span class="tx"><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="go">›</span></button>'};
- return '<div class="card"><b style="font-size:14px">Créer</b><div class="ch-new" style="margin-top:10px">'+[['pre','Pré-devis',IC.devis],['devis','Devis',IC.devis],['ac','Facture d\'acompte',IC.acompte],['fact','Facture',IC.fact]].map(function(x){return '<button type="button" class="btn" data-cnew="'+x[0]+'">'+x[2]+x[1]+'</button>'}).join('')+'</div>'+
+ return '<div class="card"><b style="font-size:14px">Créer</b><div class="ch-new" style="margin-top:10px">'+[['pre','Pré-devis',IC.devis],['devis','Devis',IC.devis],['ac','Facture d\'acompte',IC.acompte],['fact','Facture',IC.fact]].map(function(x){return '<button type="button" class="btn" data-chnew="'+x[0]+'">'+x[2]+x[1]+'</button>'}).join('')+'</div>'+
   '<p class="hint" style="margin-top:8px">Tout passe d\'abord par un brouillon que vous vérifiez. Factures et devis partent ensuite dans VosFactures.</p></div>'+
   [['Devis',G.devis],['Factures',G.fact],['Autres documents',G.autre]].map(function(g){return g[1].length?'<div><div class="sec-h"><h2>'+g[0]+'</h2><span>'+g[1].length+'</span></div><div class="card lst cf-l ch-docs">'+g[1].map(li).join('')+'</div></div>':''}).join('')+
   (L.length?'':'<p class="hint">Aucun document pour ce chantier.</p>');}
@@ -312,7 +312,7 @@ function action(c,a){var o=dos(c);if(!o)return;var tel=String(o.tel||'').replace
 function lier(c){var id=c.id;
  $$('#chx [data-aller]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,b.dataset.aller)})});
  $$('#chx [data-cact]').forEach(function(b){b.addEventListener('click',function(){action(c,b.dataset.cact)})});
- $$('#chx [data-dos]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.dos;if(X.cf&&X.cf.ficheClient)X.cf.ficheClient(k);else X.openDossier(k)})});
+ $$('#chx [data-chdos]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.chdos;if(X.cf&&X.cf.ficheClient)X.cf.ficheClient(k);else X.openDossier(k)})});
  /* travaux */
  $$('#chx [data-omod]').forEach(function(b){b.addEventListener('click',function(){var i=+b.dataset.omod;edit={i:i,v:c.ouv[i][2]};recharger('trav')})});
  $$('#chx [data-odeb]').forEach(function(b){b.addEventListener('click',function(){var i=+b.dataset.odeb;if(b.dataset.arm){c.ouv[i][3]=false;saveCH();edit={i:i,v:c.ouv[i][2]};recharger('trav');return}b.dataset.arm='1';b.lastChild.textContent='Encore pour débloquer';setTimeout(function(){if(b.isConnected){delete b.dataset.arm;b.lastChild.textContent='Validée'}},3500)})});
@@ -347,7 +347,7 @@ function lier(c){var id=c.id;
  /* notes, photos, documents */
  var na=$('#ch-nadd');if(na)na.addEventListener('click',function(){noteSheet(c)});
  var pa=$('#ch-padd');if(pa)pa.addEventListener('click',function(){photoSheet(c)});
- $$('#chx [data-cnew]').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.cnew;if((t==='ac'||t==='fact')&&!c.fin.ht){X.toast('Créez d\'abord le devis','La facture reprend les lignes du devis.');return}preFacture(c,t==='fact'?'solde':t)})});
+ $$('#chx [data-chnew]').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.chnew;if((t==='ac'||t==='fact')&&!c.fin.ht){X.toast('Créez d\'abord le devis','La facture reprend les lignes du devis.');return}preFacture(c,t==='fact'?'solde':t)})});
  $$('#chx [data-cdoc]').forEach(function(b){b.addEventListener('click',function(){voirDoc(c,b.dataset.cdoc)})});
  $$('#chx [data-odoc]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.odoc.split('|');X.openDoc(p[0],p[1])})});}
 
