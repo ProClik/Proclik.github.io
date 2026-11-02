@@ -24,10 +24,26 @@ function applique(){
 function verifie(){if(!prevu)prevu=requestAnimationFrame(applique)}
 new MutationObserver(verifie).observe(b,{subtree:true,attributes:true,attributeFilter:['class','hidden','style','aria-modal'],childList:true});
 new MutationObserver(verifie).observe(root,{attributes:true,attributeFilter:['class']});
+/* iPhone : un glissé sur une partie de la fenêtre qui ne défile pas (titre, boutons, fond grisé) faisait bouger tout l'écran.
+   Tant qu'une fenêtre est ouverte, on n'autorise le glissé que dans une zone qui peut vraiment défiler dans ce sens. */
+var y0=0;
+d.addEventListener('touchstart',function(e){if(e.touches.length===1)y0=e.touches[0].clientY},{passive:true});
+d.addEventListener('touchmove',function(e){
+  if(!fige||e.touches.length!==1)return;
+  var dy=e.touches[0].clientY-y0,n=e.target;
+  for(;n&&n!==b&&n.nodeType===1;n=n.parentNode){
+    var s=getComputedStyle(n);
+    if(/(auto|scroll)/.test(s.overflowY)&&n.scrollHeight>n.clientHeight+1){
+      if((dy>0&&n.scrollTop>0)||(dy<0&&n.scrollTop+n.clientHeight<n.scrollHeight-1))return;
+      break;
+    }
+  }
+  if(e.cancelable)e.preventDefault();
+},{passive:false});
 /* les transitions d'ouverture finissent après le changement de classe */
 b.addEventListener('transitionend',verifie,true);
 var st=d.createElement('style');
-st.textContent='html.pc-fige body{position:fixed!important;left:0;right:0;width:100%;overflow:hidden!important}'+
+st.textContent='html.pc-fige{overscroll-behavior:none}html.pc-fige body{position:fixed!important;left:0;right:0;width:100%;overflow:hidden!important}'+
  '.sheet-in,#x-in,.pcov,.pcov-b,.sheet{overscroll-behavior:contain}'+
  '.scrim{touch-action:none}';
 d.head.appendChild(st);
