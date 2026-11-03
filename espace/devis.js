@@ -73,7 +73,7 @@ function vue(){var v=$('#v-devis');if(!v)return;var c=v.querySelector(':scope>.d
   '<div class="grid2"><div class="col">'+
   (p?'<div class="card cf-hero"><small>À valider ce soir</small><b>'+eur(X.tot(p).ht)+' <em>HT</em></b><span>'+esc(p.client)+' · '+esc(p.titre)+'</span>':'<div class="card cf-rien"><b>Aucun pré-devis à valider</b><span>Les demandes de vos clients arrivent ici, déjà calculées avec vos prix.</span>')+
   '<button class="btn go cf-go cf-in" type="button" '+big[1]+'><span class="lab"><span class="ic">'+big[2]+'</span><span>'+esc(big[0])+'</span></span></button></div>'+
-  (p?'<div class="cf-main"><button type="button" class="btn sm" data-dvnew>'+IC.plus+'Créer un devis</button></div>':'')+
+  (p?'<button type="button" class="btn go cf-go" data-dvnew><span class="lab"><span class="ic">'+IC.plus+'</span><span>Créer un devis</span></span></button>':'')+
   '</div><div class="col">'+
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',P.length],['four','Fournisseur',F.length],['val','Validés',0]].map(function(s){return '<button role="tab" data-dvseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+IC[s[0]]+'<span>'+s[1]+'</span>'+(s[2]?'<i>'+s[2]+'</i>':'')+'</button>'}).join('')+'</div>';
  if(seg==='pre')h+=P.length?'<div class="sec-h"><h2>Pré-devis à valider</h2><span>préparés avec vos prix</span></div><div class="card lst cf-l">'+P.map(lignePre).join('')+'</div><p class="hint">Touchez un pré-devis pour l\'ouvrir : vous changez une ligne d\'un appui, puis vous validez.</p>':'<p class="hint">Rien à valider. Le café peut rester chaud.</p>';

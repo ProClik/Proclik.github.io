@@ -91,7 +91,7 @@ function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="butto
 function vue(){var v=$('#v-produits');if(!v)return;
  var L=chercher(q),P=L.filter(function(p){return genre(p)===(seg==='cliky'?'produit':seg)}),nP=liste().filter(function(p){return genre(p)==='produit'}).length,nS=liste().length-nP;
  var h='<div class="row cf-top"><h2>Produits</h2><span class="cf-n">'+liste().length+' dans votre base</span></div>'+
-  '<button class="btn go cf-go pr-go" type="button" data-prodnew><span class="lab"><span class="ic">'+IC.plus+'</span><span>Créer un produit ou une prestation</span></span></button>'+
+  '<button class="btn go cf-go pr-go" type="button" data-prodnew><span class="lab"><span class="ic">'+IC.plus+'</span><span>Créer un produit</span></span></button>'+
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Produits">'+[['produit','Produits',IC.prod,nP],['prestation','Prestations',IC.presta,nS],['cliky','Base Cliky',IC.cliky,0]].map(function(s){return '<button role="tab" type="button" data-prodseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+s[2]+'<span>'+s[1]+'</span>'+(s[3]?'<i>'+s[3]+'</i>':'')+'</button>'}).join('')+'</div>';
  if(seg==='cliky'){
   h+='<div class="card pr-info"><span class="pr-ci">'+IC.cliky+'</span><div><b>Avec Cliky, votre base est déjà remplie</b><p>Les prix de matériaux et de pose qu\'il utilise pour vos pré-devis sont là dès le départ. Un produit que vous créez vous-même rejoint aussi la base de Cliky, après vérification par ProClik.</p></div></div>'+

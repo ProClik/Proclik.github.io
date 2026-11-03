@@ -32,7 +32,7 @@ var FA0=[
 var FA=X.lsGet('pc-fa1',null)||FA0;
 var NEW=X.lsGet('pc-cl1',{});Object.keys(NEW).forEach(function(k){if(!DOS[k])DOS[k]=NEW[k]});
 var DVN=X.lsGet('pc-dvn1',[]);
-X.cf={nouveauClient:function(r){formClient(r)},ficheClient:function(k){fseg=null;if(DOS[k]&&!DOS[k].vrai)ficheClient(k);else ficheVraie(k)},DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
+X.cf={FA:function(){return FA},RC:function(){return RC},ftot:function(f){return ftot(f)},nouveauClient:function(r){formClient(r)},ficheClient:function(k){fseg=null;if(DOS[k]&&!DOS[k].vrai)ficheClient(k);else ficheVraie(k)},DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
 function save(){X.lsSet('pc-fa1',FA);X.lsSet('pc-cl1',NEW);X.lsSet('pc-dvn1',DVN);}
 function fa(id){return FA.filter(function(f){return f.id===id})[0]}
 function ftot(f){var t=0;f.L.forEach(function(l){t+=l[1]});t=r2(t);var ht=r2(t-(f.ac||0)),tv=r2(ht*f.tva/100);return{total:t,ht:ht,tv:tv,ttc:r2(ht+tv)}}
