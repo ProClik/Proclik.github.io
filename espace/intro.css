@@ -75,7 +75,7 @@ html.pc-ipad-app .pi-w{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 .pi-dv .li.doigt::after{content:"";position:absolute;left:46%;top:50%;width:30px;height:30px;margin:-15px;border-radius:50%;background:var(--acc-g);opacity:0}
 .pi.go .pi-dv .li.doigt::after{animation:piTouche 1.2s ease 1.2s 1}
 @keyframes piTouche{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
-.pi-dv .val{margin-top:6px;align-self:stretch;height:46px;border-radius:23px;background:var(--rs);box-shadow:var(--up-s);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--fg);position:relative}
+.pi-dv .val{margin-top:6px;padding:0 46px;align-self:stretch;height:46px;border-radius:23px;background:var(--rs);box-shadow:var(--up-s);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--fg);position:relative}
 .pi-dv .val::after{content:"";position:absolute;right:5px;top:5px;width:36px;height:36px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s)}
 .pi.go .pi-dv .val{animation:piAppui 1.4s ease 2.6s 1}
 @keyframes piAppui{30%{box-shadow:var(--in)}100%{box-shadow:var(--up-s)}}

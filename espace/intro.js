@@ -5,25 +5,30 @@ var d=document;
 var P='M52 64.7 A23 23 0 1 0 33 42 V70';
 var MIC='<svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>';
 var DOC='<svg class="ic" viewBox="0 0 24 24"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/></svg>';
+var PHO='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8.5 6l1.5-2.5h4L15.5 6"/></svg>';
 var OK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function mots(t){return t.split(' ').map(function(m,k){return '<span style="--k:'+k+'">'+m+'&nbsp;</span>'}).join('')}
-var E=[
+var CK=true,E=[];
+function ecrans(){
+/* Option Cliky (PCOPT) : sans elle, pas de pré-devis promis ; l'artisan fait ses devis lui-même */
+CK=window.PCOPT?!!PCOPT.cliky:true;
+E=[
  {s:'<div class="pi-logo"><b></b><b></b><span class="pi-galet"><svg viewBox="18 6.5 76 76"><path class="l" pathLength="100" d="'+P+'"/><circle class="p" cx="56" cy="42" r="6"/></svg></span></div>',
   h:'Bienvenue dans votre Espace',
   p:'Vos demandes, vos devis, vos chantiers et vos factures, au même endroit. Voici l\'essentiel en trois images.'},
- {s:'<div class="pi-dem pi-carte pi-arrive"><div class="t"><i></i>Nouvelle demande</div><div class="qui"><span class="av pi-galet">MD</span><span><b>Mme Durand</b><small>Cloisons du séjour</small></span></div><div class="pd pi-creux">'+DOC+'<span>Pré-devis</span><em>Prêt</em></div></div>',
+ {s:'<div class="pi-dem pi-carte pi-arrive"><div class="t"><i></i>Nouvelle demande</div><div class="qui"><span class="av pi-galet">MD</span><span><b>Mme Durand</b><small>Cloisons du séjour</small></span></div><div class="pd pi-creux">'+(CK?DOC+'<span>Pré-devis</span><em>Prêt</em>':PHO+'<span>Photos du client</span><em>Jointes</em>')+'</div></div>',
   h:'Les demandes arrivent toutes seules',
-  p:'Vos clients décrivent leurs travaux sur votre site. La demande arrive ici, avec un pré-devis déjà calculé.'},
- {s:'<div class="pi-dv pi-carte"><div class="li pi-creux"><span>Cloison en plaques</span><i class="ok" style="--k:0">'+OK+'</i></div><div class="li pi-creux doigt"><span>Bandes et enduit</span><i class="ok" style="--k:1">'+OK+'</i></div><div class="li pi-creux"><span>Peinture</span><i class="ok" style="--k:2">'+OK+'</i></div><div class="val">Valider</div></div>',
-  h:'Vous vérifiez, vous validez',
-  p:'Touchez une ligne pour la corriger. Rien ne part chez le client sans votre accord.'},
+  p:CK?'Vos clients décrivent leurs travaux sur votre site. La demande arrive ici, avec un pré-devis déjà calculé.':'Vos clients décrivent leurs travaux sur votre page. La demande arrive ici, avec leurs coordonnées et leurs photos.'},
+ {s:'<div class="pi-dv pi-carte"><div class="li pi-creux"><span>Cloison en plaques</span><i class="ok" style="--k:0">'+OK+'</i></div><div class="li pi-creux doigt"><span>Bandes et enduit</span><i class="ok" style="--k:1">'+OK+'</i></div><div class="li pi-creux"><span>Peinture</span><i class="ok" style="--k:2">'+OK+'</i></div><div class="val">'+(CK?'Valider':'Envoyer le devis')+'</div></div>',
+  h:CK?'Vous vérifiez, vous validez':'Vos devis en quelques gestes',
+  p:CK?'Touchez une ligne pour la corriger. Rien ne part chez le client sans votre accord.':'Choisissez vos lignes dans vos produits, les calculs se font tout seuls. Une fois accepté, le devis devient facture.'},
  {s:'<div class="pi-mic"><b></b><b></b><span class="pi-galet">'+MIC+'</span><div class="pi-bulle">« '+mots('Ajoute une porte au devis')+'»</div></div>',
   h:'Parlez, ProClik écrit',
   p:'Touchez le micro en bas de l\'écran et parlez normalement. ProClik range tout au bon endroit.'},
  {choix:1,
   h:'Comment préférez-vous l\'affichage ?',
   p:'Vous pourrez changer à tout moment dans les Réglages.'}
-];
+];}
 var box,i=0,mode='std',fini,sens='';
 function ap(gros){var r='';for(var k=0;k<(gros?5:8);k++)r+='<i class="'+(k===0?'c':k%3===1?'m':k%3===2?'s':'')+'"></i>';return r}
 function rend(){
@@ -54,7 +59,7 @@ function tfin(e){if(x0==null)return;var t=e.changedTouches[0],dx=t.clientX-x0,dy
 /* si l'ouverture du logo est encore à l'écran, on attend qu'elle parte pour lancer les animations */
 function guette(){if(!box||box.hidden)return;if(d.getElementById('pc-ouv')||d.getElementById('pc-ouk'))return setTimeout(guette,150);box.classList.add('go')}
 window.PCIntro={ouvre:function(el,m,cb){
- box=el;mode=m||'std';fini=cb;i=0;sens='';
+ box=el;mode=m||'std';fini=cb;i=0;sens='';ecrans();
  box.classList.add('pi');box.hidden=false;
  if(!box._pi){box._pi=1;box.addEventListener('touchstart',tdeb,{passive:true});box.addEventListener('touchend',tfin,{passive:true})}
  rend();guette();
