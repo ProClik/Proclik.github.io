@@ -4,7 +4,7 @@
    Deux propositions : A « Anneau fin » (par défaut) et B « Poussoir » (html[data-pk="b"]). */
 :root{--up0:var(--up);--ups0:var(--up-s);--in0:var(--in);
   --pk-e:rgba(14,19,34,.24);--pk-o:rgba(26,34,64,.16);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10);--pk-f:rgba(26,34,64,.07);--pk-s1:rgba(26,34,64,.12);--pk-s2:rgba(255,255,255,.95);
-  --pk-logement:-.5px -.5px 0 1.5px var(--pk-s1),.5px .5px 0 1.5px var(--pk-s2)}
+  --pk-logement:-.5px -.5px 0 1px var(--pk-s1),.5px .5px 0 1px var(--pk-s2)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.45);--pk-s2:rgba(255,255,255,.07);--pk-f:rgba(0,0,0,.18)}}
 :root[data-theme="dark"]{--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.45);--pk-s2:rgba(255,255,255,.07);--pk-f:rgba(0,0,0,.18)}
 
