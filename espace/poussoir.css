@@ -1,7 +1,7 @@
 /* Boutons « poussoir » (demande de Cyril, 3/11) : seul ce qu'on peut toucher porte un anneau, comme un vrai bouton.
    Les blocs, pastilles et icônes décoratives gardent le Relief doux tel quel : on voit d'un coup d'œil ce qui s'appuie.
    poussoir.js pose .pk sur chaque élément cliquable (et .pk-v sur le galet qui le dessine) ; ici on ne change que les ombres.
-   Deux propositions : A « Anneau fin » (par défaut) et B « Poussoir » (html[data-pk="b"]). */
+   Retenu par Cyril : A « Anneau fin » (bouton à fleur, face légèrement creusée, chanfrein de 1 px). B « Poussoir » reste disponible pour essai (?bouton=b). */
 :root{--up0:var(--up);--ups0:var(--up-s);--in0:var(--in);
   --pk-e:rgba(14,19,34,.24);--pk-o:rgba(26,34,64,.16);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10);--pk-f:rgba(26,34,64,.11);--pk-p:rgba(26,34,64,.22);--pk-s1:rgba(26,34,64,.12);--pk-s2:rgba(255,255,255,.95);
   --pk-logement:-.5px -.5px 0 1px var(--pk-s1),.5px .5px 0 1px var(--pk-s2)}
