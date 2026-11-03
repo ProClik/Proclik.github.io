@@ -14,10 +14,10 @@ var OPTS=[['cliky','Cliky','Le pré-devis se prépare tout seul, puis devis et f
  ['sms','SMS','Une alerte à chaque nouvelle demande'],
  ['avis','Avis Google','La demande d\'avis part toute seule']];
 function optHTML(){var L=window.PCOPT&&PCOPT.liste||{};
- return '<div class="pi-op">'+OPTS.map(function(o,k){var on=window.PCOPT&&PCOPT.actif&&PCOPT.actif(o[0])===true,ic=L[o[0]]&&L[o[0]].i||'';
-  return '<div class="pi-oi pi-carte" style="--k:'+k+'"><span class="pi-galet oic">'+ic+'</span><span class="otx"><b>'+o[1]+(on?' <em>Active</em>':'')+'</b><small>'+o[2]+'</small></span></div>'}).join('')+'</div>'}
+ return '<div class="pi-op">'+OPTS.map(function(o,k){var ic=L[o[0]]&&L[o[0]].i||'';
+  return '<div class="pi-oi pi-carte" style="--k:'+k+'"><span class="pi-galet oic">'+ic+'</span><span class="otx"><b>'+o[1]+'</b><small>'+o[2]+'</small></span></div>'}).join('')+'</div>'}
 function ecrans(){
-/* Présentation de l'Espace DE BASE (Cyril, 3/11) ; les options et ce qu'elles apportent arrivent à la fin */
+/* Présentation de l'Espace DE BASE (Cyril, 3/11), NEUTRE du début à la fin (aucun état d'option ou de compte) ; les options et ce qu'elles apportent arrivent à la fin */
 E=[
  {s:'<div class="pi-logo"><b></b><b></b><span class="pi-galet"><svg viewBox="18 6.5 76 76"><path class="l" pathLength="100" d="'+P+'"/><circle class="p" cx="56" cy="42" r="6"/></svg></span></div>',
   h:'Bienvenue dans votre Espace',
