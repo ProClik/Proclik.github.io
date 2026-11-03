@@ -157,10 +157,6 @@ function ficheClient(k,keep){var o=DOS[k];if(!o)return;FK=k;var F=faDe(k),V=dvDe
  if(fseg==='pre')corps=P.length?'<div class="card lst cf-l">'+P.map(function(v){return ligneDv(v,1)}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun pré-devis en cours</b><span>Quand le client remplit le formulaire, Cliky prépare son pré-devis ici. Vous pouvez aussi faire un devis à la main.</span></div>';
  else if(fseg==='dv')corps=S.length?'<div class="card lst cf-l">'+S.map(function(v){return ligneDv(v,1)}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun devis validé</b><span>Un pré-devis validé devient un devis, il arrive ici.</span></div>';
  else corps=F.length?'<div class="card lst cf-l">'+F.map(function(f){return ligneFa(f,1)}).join('')+'</div><p class="hint">Les factures d\'acompte sont rangées ici aussi.</p>':'<div class="card cf-rien"><b>Aucune facture</b><span>La facture d\'acompte se crée toute seule quand le client signe le devis.</span></div>';
- var h='<div class="cf cl-f">'+coord(o)+'<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b></div>'+menuFiche({pre:P.length,dv:S.length,fa:F.length})+'<div class="cl-docs">'+corps+'</div>';
- if(o.hist&&o.hist.length)h+='<details class="xsec cl-hist"><summary>Historique</summary><div class="card"><ul class="tl">'+o.hist.map(function(x,i,a){return '<li class="'+(i===a.length-1?'last':'')+'"><small>'+esc(x[0])+'</small>'+esc(x[1])+'</li>'}).join('')+'</ul></div></details>';
- if(o.chat&&(o.chat.length||o.ph.length))h+='<button type="button" class="btn sm cf-tout" data-dos="'+k+'">Sa demande complète : conversation, photos ›</button>';
- h+='</div>';
  var p=F.filter(function(f){return f.st==='pret'})[0],d=o.dv&&X.find(o.dv),r=reste(k),go;
  if(p)go='<button class="btn go" data-cfa="'+p.id+'">Vérifier la facture</button>';
  else if(d&&d.statut!=='signed')go='<button class="btn go" data-opendv="'+d.id+'">Ouvrir le pré-devis</button>';
@@ -168,7 +164,11 @@ function ficheClient(k,keep){var o=DOS[k];if(!o)return;FK=k;var F=faDe(k),V=dvDe
  else if(o.ch&&CH[o.ch])go='<button class="btn go" data-ch="'+o.ch+'">Voir le chantier</button>';
  else if(o.k==='visite')go='<button class="btn go" data-dos="'+k+'">Préparer la visite</button>';
  else go='<button class="btn go" data-cnew="devis|'+k+'">Faire un devis</button>';
- X.xopen(o.n,(o.t?o.t+' · ':'')+(o.v||''),h,'<button class="btn" data-xclose>Fermer</button>'+go,null,keep);}
+ var h='<div class="cf cl-f">'+coord(o)+'<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b>'+go.replace('class="btn go"','class="btn go cf-in"')+'</div>'+menuFiche({pre:P.length,dv:S.length,fa:F.length})+'<div class="cl-docs">'+corps+'</div>';
+ if(o.hist&&o.hist.length)h+='<details class="xsec cl-hist"><summary>Historique</summary><div class="card"><ul class="tl">'+o.hist.map(function(x,i,a){return '<li class="'+(i===a.length-1?'last':'')+'"><small>'+esc(x[0])+'</small>'+esc(x[1])+'</li>'}).join('')+'</ul></div></details>';
+ if(o.chat&&(o.chat.length||o.ph.length))h+='<button type="button" class="btn sm cf-tout" data-dos="'+k+'">Sa demande complète : conversation, photos ›</button>';
+ h+='</div>';
+ X.xopen(o.n,(o.t?o.t+' · ':'')+(o.v||''),h,'<button class="btn" data-xclose>Fermer</button>',null,keep);}
 
 /* Fiche d'un vrai client : coordonnées (GHL), pré-devis (notes Cliky), devis et factures (VosFactures) */
 var VF={c:null,dem:null,docs:null,err:''};
