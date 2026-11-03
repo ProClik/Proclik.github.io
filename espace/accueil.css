@@ -195,3 +195,30 @@ html body .tdb .acc-go{min-height:54px}
 .mini i:first-child{background:var(--acc)}
 .tdb .afa-tx small em{font-style:normal;font-weight:700}
 
+
+/* ---------- Retouches 3/11 21h30 (Cyril : disposition B, couleurs actuelles) ---------- */
+/* Une seule mention des exemples, sous la salutation */
+.tdb .tdb-ex{margin:-6px 0 14px;font-size:12.5px;font-style:italic;color:var(--muted)}
+.tdb.edite .tdb-ex{visibility:hidden}
+/* Petites tuiles : titre en haut, chiffre au milieu, petite tendance en bas */
+.tdb .tu{gap:4px;justify-content:space-between}
+.tdb .tu-h{gap:10px;justify-content:flex-start;margin-bottom:0}
+.tdb .tu-h small{flex:1;min-width:0}
+.tdb .tu b{margin-top:auto}
+.tdb .tu-sp{display:flex;align-items:flex-end;gap:4px;width:100%;height:24px;margin-top:6px}
+.tdb .tu-sp i{flex:1;max-width:14px;border-radius:3px;background:color-mix(in srgb,var(--muted) 32%,transparent)}
+.tdb .tu-sp i.on{background:var(--acc)}
+.tdb .tu-pa{display:grid;gap:4px;align-content:end;width:100%;height:30px;margin-top:0}
+.tdb .tu-pa>span{height:8px;border-radius:5px;background:var(--cx);box-shadow:var(--in);overflow:hidden}
+.tdb .tu-pa i{display:block;height:100%;border-radius:5px;background:var(--acc)}
+.tdb .tu-pa small{font-size:11.5px;color:var(--muted);font-weight:600}
+.tdb .tu em{order:0}
+/* Nouveau pré-devis : icône plus grande, une petite phrase sous chaque bouton */
+.tdb .nv button{grid-template-columns:auto;gap:8px;padding:10px 6px}
+.tdb .nv-ic{width:46px;height:46px}.tdb .nv-ic svg{width:22px;height:22px}
+.tdb .nv-t{display:grid;gap:1px;justify-items:center}.tdb .nv-t b{font-size:13.5px}.tdb .nv-t small{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.2}
+@container tdb (max-width:640px){.tdb .nv-t small{display:none}}
+/* Tablette : un bloc haut « À faire » prend deux colonnes, pour ne plus couper les textes */
+@container tdb (min-width:641px) and (max-width:1100px){.tdb .sz-h[data-w=afaire]{grid-column:span 2}}
+/* Grand écran : l'accueil ne s'étire plus au-delà d'une largeur confortable */
+@media (min-width:1560px){html.pcacc #v-accueil{max-width:1400px;margin-inline:auto}}

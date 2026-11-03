@@ -37,7 +37,6 @@
     moins:I('<path d="M6 12h12"/>'),plus:I('<path d="M12 6v12M6 12h12"/>'),
     taille:I('<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>'),
     grille:I('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>')};
-  var EX='<span class="exemple">Exemple</span>';
 
   /* ---------- les blocs disponibles : nom, tailles possibles (s petit 1×1, m large 2×1, l grand 2×2, h haut 1×2) ---------- */
   var W={
@@ -65,7 +64,7 @@
   var CLE="pc-tdb1",essai=(location.search.match(/[?&]accueil=([abc])/)||[])[1];
   function lire(){if(essai)return {p:essai,L:PRESETS[essai].L.slice()};
     try{var o=JSON.parse(localStorage.getItem(CLE)||"null");if(o&&o.L&&o.L.length!=null)return {p:o.p||"",L:o.L.filter(function(x){return W[x[0]]&&W[x[0]].t.indexOf(x[1])>=0})}}catch(e){}
-    return {p:"a",L:PRESETS.a.L.slice()}}
+    return {p:"b",L:PRESETS.b.L.slice()}}
   var etat=lire();
   function garder(){if(essai)return;try{localStorage.setItem(CLE,JSON.stringify(etat))}catch(e){}}
 
@@ -127,7 +126,7 @@
   var MOIS=[["Mai","mai",6100,9200],["Juin","juin",8400,12500],["Juil.","juillet",7200,7800],["Août","août",9600,13100],["Sept.","septembre",7900,11000],["Oct.","octobre",8640,14210]];
   R.argent=function(t){var sel=acc._mois==null?5:acc._mois,m=MOIS[sel],max=10000,moy=MOIS.reduce(function(s,x){return s+x[2]},0)/MOIS.length;
     var ev=sel>0?Math.round((m[2]-MOIS[sel-1][2])/MOIS[sel-1][2]*100):null;
-    return tete("argent","Chiffre d'affaires",'<span class="exemple">Chiffres d\'exemple</span>')+
+    return tete("argent","Chiffre d'affaires")+
       '<div class="ar"><div class="ar-c"><small>Encaissé en '+m[1]+'</small><b>'+eur0(m[2])+' <em>HT</em></b>'+
       (ev!=null?'<span class="ar-ev'+(ev<0?" bas":"")+'">'+(ev<0?"▾ ":"▴ ")+Math.abs(ev)+" % par rapport à "+MOIS[sel-1][1]+"</span>":"")+
       (t==="l"?'<span class="ar-s">Signé en '+m[1]+" : <b>"+eur0(m[3])+"</b></span>":"")+"</div>"+
@@ -142,27 +141,31 @@
   R.agenda=function(t){var auj=new Date(2026,9,16),lun=new Date(auj);lun.setDate(auj.getDate()-((auj.getDay()+6)%7));
     var sel=acc._jour||iso(auj),j=[],k;for(k=0;k<6;k++){var d=new Date(lun);d.setDate(lun.getDate()+k);j.push(d)}
     var ds=new Date(sel+"T12:00:00"),L=evs(sel),max=t==="m"?1:3;
-    return tete("agenda",ds.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,function(c){return c.toUpperCase()}),EX)+
+    return tete("agenda",ds.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+
       '<div class="ag-j">'+j.map(function(d,k){var s=iso(d),n=evs(s).length;return '<button type="button" class="ag-d'+(s===sel?" on":"")+(s===iso(auj)?" auj":"")+'" data-jour="'+s+'"><small>'+JS[k]+"</small><b>"+d.getDate()+"</b>"+(n?"<i></i>":"<i class=\"vide\"></i>")+"</button>"}).join("")+"</div>"+
       '<div class="ag-l">'+(L.length?L.slice(0,max).map(function(e){return '<div class="ag-e k-'+e.k+'"><span class="ag-h">'+e.s.replace(":"," h ")+'</span><span class="ag-t"><b>'+esc(e.t)+"</b><small>"+esc(e.w)+"</small></span></div>"}).join("")+
         (L.length>max&&t!=="m"?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":""):'<p class="vide">Rien de prévu ce jour-là.</p>')+"</div>"};
   R.chantiers=function(t){var CH=(window.PCX&&PCX.CH)||{},av=(window.PCX&&PCX.avc)||function(){return 0};
     var L=Object.keys(CH).map(function(k){return CH[k]}).filter(function(c){return c.st==="run"||c.st==="start"}).slice(0,t==="m"?2:4);
-    return tete("chantier","Chantiers en cours",vrai()?EX:"")+(L.length?'<div class="ch">'+L.map(function(c){var p=av(c);
+    return tete("chantier","Chantiers en cours")+(L.length?'<div class="ch">'+L.map(function(c){var p=av(c);
       return '<button type="button" class="ch-b" data-accv="chantiers"><span class="ch-t"><b>'+esc(c.n)+"</b><small>"+esc(c.v)+" · "+esc(c.dates||"")+'</small></span><span class="ch-p"><span class="ch-r"><span style="width:'+p+'%"></span></span><em>'+(p?p+" %":"à démarrer")+"</em></span></button>"}).join("")+"</div>":'<p class="vide">Aucun chantier en cours.</p>')};
   R.nouveau=function(t){if(t==="s")return tete("plan","Nouveau")+'<button type="button" class="nv-1" data-nv="0"><span class="nv-ic">'+IC.plan+"</span><b>Nouveau pré-devis</b></button>";
     return tete("plan","Nouveau pré-devis",'<span class="w-sub">3 façons, au choix</span>')+'<div class="nv">'+
-      [["plan","Plan et cotes"],["micro","Dicter"],["photo","Photo des notes"]].map(function(x,k){return '<button type="button" data-nv="'+k+'"><span class="nv-ic">'+IC[x[0]]+"</span><b>"+x[1]+"</b></button>"}).join("")+"</div>"};
-  function tuile(ic,titre,val,sous,v,cor){return function(){return '<button type="button" class="tu" data-accv="'+v+'"><span class="tu-h"><span class="w-ic">'+IC[ic]+"</span>"+EX+'</span><small>'+titre+'</small><b'+(cor?' class="cor"':"")+">"+val+"</b><em>"+sous+"</em></button>"}}
-  R.encaisse=tuile("argent","Encaissé en octobre","8 640 €","HT · ce mois-ci","factures");
-  R.signes=tuile("signe","Devis signés","14 210 €","3 sur 5 · 60 %","devis");
-  R.aencaisser=tuile("facture","À encaisser","2 760 €","1 facture","factures",1);
-  R.envoyes=tuile("attente","Devis envoyés","9 850 €","2 sans réponse","devis");
+      [["plan","Plan et cotes","Tracez la pièce"],["micro","Dicter","Parlez, ça s'écrit"],["photo","Photo des notes","Votre feuille papier"]].map(function(x,k){return '<button type="button" data-nv="'+k+'"><span class="nv-ic">'+IC[x[0]]+"</span><span class=\"nv-t\"><b>"+x[1]+"</b><small>"+x[2]+"</small></span></button>"}).join("")+"</div>"};
+  /* Petites tuiles : le titre en haut, le chiffre bien visible, et une petite tendance en bas (barres des 6 mois, ou part d'un total) */
+  function spark(k){var max=Math.max.apply(null,MOIS.map(function(x){return x[k]}));
+    return '<span class="tu-sp" aria-hidden="true">'+MOIS.map(function(x,i){return '<i'+(i===5?' class="on"':"")+' style="height:'+Math.max(12,x[k]/max*100).toFixed(0)+'%"></i>'}).join("")+"</span>"}
+  function part(p,txt){return '<span class="tu-pa" aria-hidden="true"><span><i style="width:'+p+'%"></i></span><small>'+txt+"</small></span>"}
+  function tuile(ic,titre,val,sous,v,cor,bas){return function(){return '<button type="button" class="tu" data-accv="'+v+'"><span class="tu-h"><span class="w-ic">'+IC[ic]+"</span><small>"+titre+'</small></span><b'+(cor?' class="cor"':"")+">"+val+"</b><em>"+sous+"</em>"+bas()+"</button>"}}
+  R.encaisse=tuile("argent","Encaissé","8 640 €","HT · en octobre","factures",0,function(){return spark(2)});
+  R.signes=tuile("signe","Devis signés","14 210 €","3 sur 5 · 60 %","devis",0,function(){return spark(3)});
+  R.aencaisser=tuile("facture","À encaisser","2 760 €","1 facture","factures",1,function(){return part(24,"24 % du facturé")});
+  R.envoyes=tuile("attente","Devis envoyés","9 850 €","2 sans réponse","devis",0,function(){return part(40,"2 sur 5 en attente")});
   R.reseaux=function(t){var tag=window.PCTAG?PCTAG("reseaux"):"";
     return tag+(t==="s"?'<button type="button" class="tu op" data-accv="reseaux"><small>Prochaine publication</small><b>jeu. 22/10</b><em>2 messages à lire</em></button>':
-      '<button type="button" class="op-b" data-accv="reseaux"><span class="op-t"><small>Prochaine publication · jeu. 22/10 à 18 h</small><b>Avant / après : salle de bain à Échirolles</b></span><span class="op-n"><i>2</i>messages à lire</span></button>')+EX};
+      '<button type="button" class="op-b" data-accv="reseaux"><span class="op-t"><small>Prochaine publication · jeu. 22/10 à 18 h</small><b>Avant / après : salle de bain à Échirolles</b></span><span class="op-n"><i>2</i>messages à lire</span></button>')};
   R.avis=function(t){var tag=window.PCTAG?PCTAG("avis"):"";
-    return tag+'<div class="av"><b>4,8 <span class="et">★★★★★</span></b><small>23 avis'+(t==="m"?" · dernier : « Travail propre, délais tenus »":"")+"</small></div>"+EX};
+    return tag+'<div class="av"><b>4,8 <span class="et">★★★★★</span></b><small>23 avis'+(t==="m"?" · dernier : « Travail propre, délais tenus »":"")+"</small></div>"};
 
   /* ---------- la grille ---------- */
   var edition=false;
@@ -171,7 +174,7 @@
       '<button type="button" class="w-x" data-wx aria-label="Retirer le bloc '+esc(w.n)+'">'+IC.moins+"</button>"+
       (w.t.length>1?'<button type="button" class="w-s" data-ws aria-label="Changer la taille du bloc '+esc(w.n)+'">'+IC.taille+"</button>":"")+"</section>"}
   function rendre(){if(acc._glisse)return;var D=donnees();
-    var h='<div class="tdb-bar" '+(edition?"":"hidden")+'><div><b>Personnaliser l\'accueil</b><small>Gardez le doigt sur un bloc pour le déplacer</small></div><button type="button" class="btn" data-tdbajout>'+IC.plus+' Ajouter un bloc</button><button type="button" class="btn go" data-tdbfin>Terminé</button></div>'+
+    var h='<p class="tdb-ex">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</p>"+'<div class="tdb-bar" '+(edition?"":"hidden")+'><div><b>Personnaliser l\'accueil</b><small>Gardez le doigt sur un bloc pour le déplacer</small></div><button type="button" class="btn" data-tdbajout>'+IC.plus+' Ajouter un bloc</button><button type="button" class="btn go" data-tdbfin>Terminé</button></div>'+
       '<div class="tdb-g">'+etat.L.map(function(x){return bloc(x,D)}).join("")+"</div>"+
       '<div class="tdb-pied">'+(D.total?'<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+(D.demo?"":D.total+" ")+"›</span></button>":"")+
       '<button type="button" class="tdb-perso" data-tdbperso>'+IC.grille+"<span>Personnaliser l'accueil</span></button></div>";
