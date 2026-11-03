@@ -1,0 +1,34 @@
+/* Boutons « poussoir » (demande de Cyril, 3/11) : seul ce qu'on peut toucher porte un anneau, comme un vrai bouton.
+   Les blocs, pastilles et icônes décoratives gardent le Relief doux tel quel : on voit d'un coup d'œil ce qui s'appuie.
+   poussoir.js pose .pk sur chaque élément cliquable (et .pk-v sur le galet qui le dessine) ; ici on ne change que les ombres.
+   Retenu par Cyril : A « Anneau fin » (bouton à fleur, face légèrement creusée, chanfrein de 1 px). B « Poussoir » reste disponible pour essai (?bouton=b). */
+:root{--up0:var(--up);--ups0:var(--up-s);--in0:var(--in);
+  --pk-e:rgba(14,19,34,.24);--pk-o:rgba(26,34,64,.16);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10);--pk-f:rgba(26,34,64,.11);--pk-p:rgba(26,34,64,.22);--pk-s1:rgba(26,34,64,.12);--pk-s2:rgba(255,255,255,.95);
+  --pk-logement:-.5px -.5px 0 1px var(--pk-s1),.5px .5px 0 1px var(--pk-s2)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.45);--pk-s2:rgba(255,255,255,.07);--pk-f:rgba(0,0,0,.3);--pk-p:rgba(0,0,0,.55)}}
+:root[data-theme="dark"]{--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.45);--pk-s2:rgba(255,255,255,.07);--pk-f:rgba(0,0,0,.3);--pk-p:rgba(0,0,0,.55)}
+
+/* A — Anneau fin : le galet garde son relief doux, cerclé d'un trait fin foncé (clair la nuit) doublé d'un liseré,
+   posé à fleur de surface dans un logement au chanfrein très fin (sombre en haut à gauche, clair en bas à droite) */
+html body .pk,html body .pk-v{
+  --up:var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l),inset 3px 3px 7px var(--pk-f),inset -3px -3px 6px var(--ihi);
+  --up-s:var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l),inset 3px 3px 7px var(--pk-f),inset -3px -3px 6px var(--ihi);
+  --in:var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 5px 5px 11px var(--pk-p),inset 2px 2px 3px var(--pk-p),inset -4px -4px 9px var(--ihi)}
+
+/* B — Poussoir : rebord clair en biseau, creux léger au centre, ombre nette posée en bas à droite (le bouton « dépasse ») */
+:root[data-pk="b"] body .pk,:root[data-pk="b"] body .pk-v{
+  --up:0 0 0 1px var(--pk-c),3px 4px 3px var(--pk-d),7px 9px 16px var(--lo),-4px -4px 10px var(--hi),inset 0 0 0 3.5px var(--pk-l),inset 0 0 0 4.5px var(--pk-c),inset 4px 5px 8px var(--pk-c);
+  --up-s:0 0 0 1px var(--pk-c),2px 3px 2px var(--pk-d),5px 7px 12px var(--lo),-3px -3px 8px var(--hi),inset 0 0 0 3px var(--pk-l),inset 0 0 0 4px var(--pk-c),inset 3px 4px 6px var(--pk-c);
+  --in:0 0 0 1px var(--pk-c),inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}
+:root[data-pk="b"]{--pk-l:rgba(255,255,255,1)}
+@media (prefers-color-scheme:dark){:root[data-pk="b"]:not([data-theme="light"]){--pk-l:rgba(255,255,255,.12);--pk-c:rgba(0,0,0,.4)}}
+:root[data-pk="b"][data-theme="dark"]{--pk-l:rgba(255,255,255,.12);--pk-c:rgba(0,0,0,.4)}
+
+/* Ce qui est à l'intérieur d'un bouton (pastilles, icônes, prix) garde son relief d'origine */
+html body .pk :not(.pk):not(.pk-v){--up:var(--up0);--up-s:var(--ups0);--in:var(--in0)}
+/* Un bouton qu'on ne peut pas utiliser ne porte pas d'anneau */
+html body .pk:disabled,html body .pk[aria-disabled="true"],html body :disabled .pk-v{--up:var(--up0);--up-s:var(--ups0);--in:var(--in0)}
+
+/* Gros bouton d'action : la pilule et son galet flèche prennent tous deux l'anneau */
+html body .btn.go.pk,html body .vbtn.go.pk{box-shadow:var(--up)}
+html body .btn.go.pk:not([disabled]):active,html body .btn.go.pk.appui,html body .vbtn.go.pk:not([disabled]):active,html body .vbtn.go.pk.appui{box-shadow:var(--in)}
