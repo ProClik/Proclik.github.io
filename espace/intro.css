@@ -1,0 +1,111 @@
+/* Présentation de l'Espace au premier lancement (Cyril, 3/11 : « la première chose qu'un nouveau client va voir »).
+   Style Relief doux : même matière que le fond, laiton seule couleur, une seule action par écran. */
+#welcome.pi{padding:0;display:block;overflow:hidden;background:var(--bg)}
+.pi-w{position:relative;height:100%;max-width:460px;margin:0 auto;display:flex;flex-direction:column;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 24px calc(20px + env(safe-area-inset-bottom,0px))}
+html.pc-ipad-app .pi-w{padding-top:calc(44px + env(safe-area-inset-top,0px))}
+.pi-haut{display:flex;align-items:center;justify-content:space-between;min-height:44px}
+.pi-pts{display:flex;gap:7px}
+.pi-pts i{width:8px;height:8px;border-radius:4px;background:var(--cx);box-shadow:var(--in);transition:width .5s var(--doux),background .5s}
+.pi-pts i.on{width:26px;background:var(--accx);box-shadow:none}
+.pi-passer{font:600 15px var(--f,Manrope,system-ui,sans-serif);color:var(--muted);padding:10px 4px;background:none;border:0}
+.pi-passer[hidden]{display:block;visibility:hidden}
+/* la scène illustrée */
+.pi-scene{flex:1 1 auto;min-height:220px;display:grid;place-items:center;position:relative}
+.pi-txt{flex:none;min-height:150px}
+.pi-txt h2{font-size:clamp(24px,7vw,28px);line-height:1.15;letter-spacing:-.6px;margin:0 0 12px;color:var(--fg)}
+.pi-txt p{margin:0;font-size:17px;line-height:1.5;color:var(--muted)}
+.pi-bas{flex:none;display:flex;align-items:center;gap:14px;margin-top:22px}
+.pi-bas .btn.go{flex:1;min-height:58px;font-size:17px}
+.pi-ret{flex:none;width:52px;height:52px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);border:0;display:grid;place-items:center;color:var(--muted)}
+.pi-ret svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pi-ret[hidden]{display:none}
+/* entrée de chaque écran : doux, sans rebond */
+.pi-anim{opacity:0;transform:translateY(14px)}
+.pi.go .pi-anim{animation:piEntre .7s var(--doux) forwards;animation-delay:calc(var(--r,0) * 90ms)}
+.pi.go.pi-arr .pi-anim{animation-name:piEntreG}.pi.go.pi-av .pi-anim{animation-name:piEntreD}
+@keyframes piEntre{to{opacity:1;transform:none}}
+@keyframes piEntreD{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes piEntreG{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+
+/* matières communes des scènes */
+.pi-carte{background:var(--rs);box-shadow:var(--up);border-radius:22px}
+.pi-creux{background:var(--cx);box-shadow:var(--in);border-radius:14px}
+.pi-galet{border-radius:50%;background:var(--rs);box-shadow:var(--up);display:grid;place-items:center}
+.pi-scene svg.ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* 0 · bienvenue : le P dans son galet, des ondes douces */
+.pi-logo{position:relative;width:200px;height:200px;display:grid;place-items:center}
+.pi-logo .pi-galet{width:104px;height:104px;position:relative;z-index:1}
+.pi-logo .pi-galet svg{width:62px;height:62px}
+.pi-logo .l{fill:none;stroke:var(--acc);stroke-width:5;stroke-linecap:round;stroke-dasharray:100 110;stroke-dashoffset:101}
+.pi-logo .p{fill:var(--acc);transform-box:fill-box;transform-origin:center;transform:scale(0)}
+.pi.go .pi-logo .l{animation:piTrace 1s cubic-bezier(.65,0,.35,1) .35s forwards}
+.pi.go .pi-logo .p{animation:piPoint .4s var(--doux) 1.25s forwards}
+.pi-logo b{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--acc);opacity:0}
+.pi.go .pi-logo b{animation:piOnde 3.6s ease-out 1.4s infinite}.pi.go .pi-logo b+b{animation-delay:2.6s}
+@keyframes piTrace{to{stroke-dashoffset:0}}@keyframes piPoint{to{transform:scale(1)}}
+@keyframes piOnde{0%{transform:scale(.5);opacity:.35}100%{transform:scale(1.15);opacity:0}}
+
+/* 1 · une demande arrive */
+.pi-dem{width:min(300px,100%);padding:18px;display:flex;flex-direction:column;gap:14px}
+.pi-dem .t{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accx)}
+.pi-dem .t i{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px var(--acc-g)}
+.pi.go .pi-dem .t i{animation:piBat 2.4s ease-in-out 1s infinite}
+@keyframes piBat{50%{box-shadow:0 0 0 8px transparent}}
+.pi-dem .qui{display:flex;align-items:center;gap:12px}
+.pi-dem .av{width:44px;height:44px;flex:none;font-weight:800;color:var(--accx);font-size:16px}
+.pi-dem .qui b{display:block;font-size:17px;color:var(--fg)}.pi-dem .qui small{color:var(--muted);font-size:14px}
+.pi-dem .pd{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:14.5px;font-weight:600;color:var(--fg)}
+.pi-dem .pd svg{width:20px;height:20px;color:var(--accx);flex:none}
+.pi-dem .pd span{flex:1}.pi-dem .pd em{font-style:normal;font-size:12.5px;color:var(--accx);font-weight:700}
+.pi-arrive{transform:translateY(-26px);opacity:0}
+.pi.go .pi-arrive{animation:piArrive .9s var(--doux) .25s forwards}
+@keyframes piArrive{to{transform:none;opacity:1}}
+
+/* 2 · vérifier et valider */
+.pi-dv{width:min(300px,100%);padding:16px;display:flex;flex-direction:column;gap:10px}
+.pi-dv .li{display:flex;align-items:center;gap:12px;padding:12px 14px;font-size:15px;font-weight:600;color:var(--fg)}
+.pi-dv .li span{flex:1}
+.pi-dv .ok{width:26px;height:26px;flex:none;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);display:grid;place-items:center;color:transparent;transition:color .4s,background .4s}
+.pi-dv .ok svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pi.go .pi-dv .ok{animation:piCoche .5s var(--doux) forwards;animation-delay:calc(.8s + var(--k) * .55s)}
+@keyframes piCoche{to{color:var(--acc)}}
+.pi-dv .li.doigt{position:relative}
+.pi-dv .li.doigt::after{content:"";position:absolute;left:46%;top:50%;width:30px;height:30px;margin:-15px;border-radius:50%;background:var(--acc-g);opacity:0}
+.pi.go .pi-dv .li.doigt::after{animation:piTouche 1.2s ease 1.2s 1}
+@keyframes piTouche{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+.pi-dv .val{margin-top:6px;align-self:stretch;height:46px;border-radius:23px;background:var(--rs);box-shadow:var(--up-s);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--fg);position:relative}
+.pi-dv .val::after{content:"";position:absolute;right:5px;top:5px;width:36px;height:36px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s)}
+.pi.go .pi-dv .val{animation:piAppui 1.4s ease 2.6s 1}
+@keyframes piAppui{30%{box-shadow:var(--in)}100%{box-shadow:var(--up-s)}}
+
+/* 3 · dictée */
+.pi-mic{position:relative;width:220px;height:220px;display:grid;place-items:center}
+.pi-mic .pi-galet{width:88px;height:88px;position:relative;z-index:1;color:var(--accx)}
+.pi-mic .pi-galet svg{width:36px;height:36px}
+.pi-mic b{position:absolute;left:50%;top:50%;width:88px;height:88px;margin:-44px;border-radius:50%;border:1.5px solid var(--acc);opacity:0}
+.pi.go .pi-mic b{animation:piOndeM 2.4s ease-out .6s infinite}.pi.go .pi-mic b+b{animation-delay:1.4s}
+@keyframes piOndeM{0%{transform:scale(1);opacity:.4}100%{transform:scale(2.3);opacity:0}}
+.pi-bulle{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);white-space:nowrap;padding:11px 16px;border-radius:18px;background:var(--rs);box-shadow:var(--up-s);font-size:15px;font-weight:600;color:var(--fg)}
+.pi-bulle::before{content:"";position:absolute;left:50%;top:-6px;width:12px;height:12px;margin-left:-6px;background:var(--rs);transform:rotate(45deg);border-radius:2px}
+.pi-bulle span{display:inline-block;opacity:0}
+.pi.go .pi-bulle span{animation:piMot .35s var(--doux) forwards;animation-delay:calc(1s + var(--k) * .28s)}
+@keyframes piMot{to{opacity:1}}
+
+/* 4 · affichage */
+.pi-ch{display:flex;gap:14px;width:100%}
+.pi-choix{flex:1;border:0;background:var(--rs);box-shadow:var(--up);border-radius:22px;padding:14px 12px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--fg);font:inherit;transition:box-shadow .4s var(--doux)}
+.pi-choix[aria-pressed="true"]{box-shadow:var(--in)}
+.pi-choix .ap{width:100%;aspect-ratio:3/4;max-height:170px;border-radius:14px;background:var(--cx);box-shadow:var(--in);padding:12px 10px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.pi-choix[aria-pressed="true"] .ap{box-shadow:var(--up-s)}
+.pi-choix .ap i{display:block;height:7px;border-radius:4px;background:var(--muted);opacity:.28}
+.pi-choix .ap i.c{background:var(--acc);opacity:.75;width:45%}
+.pi-choix .ap i.m{width:70%}.pi-choix .ap i.s{width:55%}
+.pi-choix.gros .ap{gap:11px}.pi-choix.gros .ap i{height:13px;border-radius:7px}
+.pi-choix b{font-size:17px}.pi-choix small{font-size:13px;color:var(--muted);line-height:1.35;text-align:center}
+.pi-choix .rd{width:22px;height:22px;border-radius:50%;background:var(--cx);box-shadow:var(--in);display:grid;place-items:center}
+.pi-choix[aria-pressed="true"] .rd::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--acc)}
+
+@media (max-height:640px){.pi-scene{min-height:170px}.pi-logo,.pi-mic{transform:scale(.8)}.pi-txt{min-height:130px}.pi-txt h2{margin-bottom:8px}}
+@media (prefers-reduced-motion:reduce){.pi .pi-anim,.pi .pi-arrive{opacity:1;transform:none;animation:none!important}.pi-logo .l{stroke-dashoffset:0}.pi-logo .p{transform:none}.pi-bulle span{opacity:1}.pi-dv .ok{color:var(--acc)}}

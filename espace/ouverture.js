@@ -82,25 +82,27 @@ if(!site&&!vitrine){
  '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}}'+
  '#pc-ouk.fin{opacity:0;pointer-events:none}'+
  '#pc-ouk .lk{display:flex;align-items:center;gap:14px;color:var(--mt)}'+
- '#pc-ouk .gk{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--m);box-shadow:-6px -6px 14px var(--mh),7px 7px 16px var(--mo),inset 1px 1px 1px var(--mh),inset -1px -1px 2px var(--mo);opacity:0;transform:scale(.9);animation:pkLeve .45s var(--d) .05s forwards}'+
+ '#pc-ouk .gk{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--m);box-shadow:-6px -6px 14px var(--mh),7px 7px 16px var(--mo),inset 1px 1px 1px var(--mh),inset -1px -1px 2px var(--mo);opacity:0;transform:translateX(var(--dx,0px)) scale(.9);animation:pkLeve .45s var(--d) .05s forwards,pkGlisse .55s cubic-bezier(.65,0,.35,1) 1.15s forwards}'+
  '#pc-ouk svg{width:40px;height:40px;overflow:visible}'+
  '#pc-ouk .l{fill:none;stroke:var(--ml);stroke-width:5;stroke-linecap:round;stroke-dasharray:100 110;stroke-dashoffset:101;animation:pkTrace .7s cubic-bezier(.65,0,.35,1) .35s forwards}'+
  '#pc-ouk .p{fill:var(--ml);transform-box:fill-box;transform-origin:center;transform:scale(0);animation:pkPoint .35s var(--d) 1.0s forwards}'+
- '#pc-ouk .f{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pkFilet .35s var(--d) 1.05s forwards}'+
+ '#pc-ouk .f{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pkFilet .35s var(--d) 1.45s forwards}'+
  '#pc-ouk .n{font-weight:300;font-size:19px;letter-spacing:.32em;line-height:1;white-space:nowrap;margin-right:-.32em}'+
- '#pc-ouk .n i{font-style:normal;display:inline-block;opacity:0;animation:pkLettre .4s var(--d) calc(1.15s + var(--i) * 40ms) forwards}'+
- '#pc-ouk .n small{display:block;font-size:7px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:7px;opacity:0;animation:pkApp .4s ease 1.45s forwards}'+
- '@keyframes pkLeve{to{opacity:1;transform:none}}@keyframes pkTrace{to{stroke-dashoffset:0}}@keyframes pkPoint{to{transform:scale(1)}}'+
+ '#pc-ouk .n i{font-style:normal;display:inline-block;opacity:0;animation:pkLettre .4s var(--d) calc(1.55s + var(--i) * 40ms) forwards}'+
+ '#pc-ouk .n small{display:block;font-size:7px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:7px;opacity:0;animation:pkApp .4s ease 1.85s forwards}'+
+ '@keyframes pkLeve{to{opacity:1;transform:translateX(var(--dx,0px))}}@keyframes pkGlisse{from{opacity:1;transform:translateX(var(--dx,0px))}to{opacity:1;transform:none}}@keyframes pkTrace{to{stroke-dashoffset:0}}@keyframes pkPoint{to{transform:scale(1)}}'+
  '@keyframes pkFilet{to{transform:scaleY(1)}}@keyframes pkLettre{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@keyframes pkApp{to{opacity:1}}'+
  '@media (prefers-reduced-motion:reduce){#pc-ouk *{animation-duration:.01s!important;animation-delay:0s!important}}';
  var stk=d.createElement('style');stk.textContent=K;d.head.appendChild(stk);
- var DUK=reduit?700:2300;
+ var DUK=reduit?700:2700;
  function couvre(){
   var a=d.getElementById('pc-ouk');if(a)a.remove();
   var o=d.createElement('div');o.id='pc-ouk';o.setAttribute('aria-hidden','true');
   o.innerHTML='<div class="lk"><span class="gk"><svg viewBox="18 6.5 76 76"><path class="l" pathLength="100" d="M52 64.7 A23 23 0 1 0 33 42 V70"/><circle class="p" cx="56" cy="42" r="6"/></svg></span><span class="f"></span><div class="n">'+
    'PROCLIK'.split('').map(function(c,i){return '<i style="--i:'+i+'">'+c+'</i>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
   (d.body||root).appendChild(o);
+  /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
+  var lk=o.querySelector('.lk'),gk=o.querySelector('.gk');gk.style.setProperty('--dx',((lk.offsetWidth-gk.offsetWidth)/2)+'px');
   var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},500)}
   o.addEventListener('click',fin);setTimeout(fin,DUK);
  }

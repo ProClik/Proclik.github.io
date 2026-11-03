@@ -563,7 +563,7 @@ button.pill{cursor:pointer}
 :root[data-theme="dark"] .istep .in{background:var(--turq);color:#0B1226}
 </style>
 
-<script src="ouverture.js?v=7"></script>
+<script src="ouverture.js?v=8"></script>
 
 <div class="app">
 <header class="head">
@@ -1554,7 +1554,7 @@ var WS=[['📥','Vos demandes arrivent toutes seules','Le chatbot et le formulai
  ['👉','Vous validez d\'un geste','Glissez une carte vers la droite : le devis part pour signature. Touchez une ligne pour l\'ajuster. Rien ne part sans vous.'],
  ['🎙','Parlez-lui comme à un collègue','« Ajoute une porte », « il me manque 6 plaques », « note pour Alpes Kiné »… ProClik range tout au bon endroit, même sans réseau.']];
 var wi=0,wmode=simple?'simple':'std';
-function showWelcome(){wi=0;wmode=simple?'simple':'std';$('#welcome').hidden=false;wrender();}
+function showWelcome(){if(window.PCIntro)return PCIntro.ouvre($('#welcome'),simple?'simple':'std',function(m){simple=m==='simple';lsSet('pc-simple',simple);simpleUI();lsSet('pc-welcome',1);});wi=0;wmode=simple?'simple':'std';$('#welcome').hidden=false;wrender();}
 function wrender(){var b=$('#wbox');if(wi<WS.length){var w=WS[wi];b.innerHTML='<div class="wdots">'+[0,1,2,3].map(function(i){return '<i class="'+(i===wi?'on':'')+'"></i>'}).join('')+'</div><div class="wicon">'+w[0]+'</div><h2>'+w[1]+'</h2><p>'+w[2]+'</p><button class="btn go wgo" id="wnext">Suivant</button><button class="btn" id="wskip" style="flex:0 0 auto;background:none;color:var(--muted)">Passer</button>';}
  else b.innerHTML='<div class="wdots">'+[0,1,2,3].map(function(i){return '<i class="'+(i===3?'on':'')+'"></i>'}).join('')+'</div><h2>Comment préférez-vous l\'affichage ?</h2><button class="wchoice" data-wm="std" aria-pressed="'+(wmode==='std')+'"><b>Standard</b><span>Tous les détails : marge, légendes, astuces.</span></button><button class="wchoice" data-wm="simple" aria-pressed="'+(wmode==='simple')+'"><b>Simple</b><span>Plus gros, plus aéré. L\'essentiel seulement. Modifiable à tout moment.</span></button><button class="btn go wgo" id="wnext">C\'est parti</button>';
  var n=$('#wnext');n.addEventListener('click',function(){if(wi<WS.length){wi++;wrender();}else{simple=wmode==='simple';lsSet('pc-simple',simple);simpleUI();lsSet('pc-welcome',1);$('#welcome').hidden=true;}});
@@ -1568,7 +1568,7 @@ renderFour();renderChList();relUI();renderList();
 /* Clients et Factures (clients.js) se servent des mêmes données et du même panneau */
 window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet,saveD:save,renderList:renderList,SUP:SUP,curCh:function(){return curCh},saveCH:saveCH,showCh:showCh,VX:VX};
 Object.assign(window.PCX,{avc:avc,fourHTML:fourHTML,coutHTML:coutHTML,openFact:openFact,updPin:updPin,online:online,attente:function(t){Q.push({t:t});save();netUI();},renderFour:renderFour,renderTodo:renderTodo,dicter:function(n){vsel=n;listen();},SOON:SOON,CX:CX,FST:FST,CATA:CATA,DP:DP,saveDP:saveDP,openDoc:openDoc,DOCS:DOCS,pdfAcompte:pdfAcompte,setCurCh:function(v){curCh=v},EV:EV,CK:CK,calKey:calKey,renderCalWeek:renderCalWeek,renderCalMonth:renderCalMonth,calWeek:function(d){if(d)calWk=monday(d);return calWk},TODAY:TODAY,iso:iso,evDetail:evDetail});
-if(!lsGet('pc-welcome',0))setTimeout(showWelcome,200);
+if(!lsGet('pc-welcome',0)){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(showWelcome,200)});else setTimeout(showWelcome,200);}
 
 /* ---------- fiche identité : état de lecture ---------- */
 function showID(){var I=PCID,st=I._st==='brut'?['ko','GHL n\'a pas rempli les valeurs : les {{ }} sont arrivés tels quels. Utilisez l\'option B (texte écrit directement dans la fiche).']:I._st==='absent'?['ko','Fiche identité introuvable en haut du bloc.']:I._lu?['ok','Valeurs bien lues ('+I._lu+' sur 9). Les champs vides reprennent l\'exemple de la démo.']:['ok','Fiche lue, mais toutes les valeurs sont vides : la démo garde ses exemples fictifs.'];
@@ -1613,7 +1613,7 @@ function showInstall(){
 
 /* ---------- démarrage ---------- */
 renderList();netUI();
-setTimeout(function(){toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.')},(window.PC_OUV_MS||0)+2100);
+(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.')},(window.PC_OUV_MS||0)+2100)})();
 })();
 </script>
 
@@ -1673,6 +1673,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="options.js?v=1"></script>
 <script src="vrai.js?v=19"></script>
 <link rel="stylesheet" href="relief.css?v=17">
+<link rel="stylesheet" href="intro.css?v=1"><script src="intro.js?v=1"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=3">
 <script src="accueil.js?v=9"></script>
