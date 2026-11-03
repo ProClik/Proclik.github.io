@@ -65,6 +65,10 @@ css.textContent=[
 '.dv-seg button i.r{background:#D9534F}.vmenu .dv-seg button svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}',
 '.vpan{display:grid;gap:12px}.vpan[hidden]{display:none}',
 '.vtotc .vtot1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.vtot1>span{font-size:13.5px;color:var(--muted);font-weight:700}.vtot1>b{font-size:26px;font-weight:800;letter-spacing:-.4px}',
+'.vverif h3{display:flex;gap:8px;align-items:baseline}details.vgrp{border-top:1px solid var(--line);padding:2px 0}details.vgrp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 0;font-weight:800;font-size:15px}details.vgrp>summary::-webkit-details-marker{display:none}.vgi{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--cx,var(--bg));box-shadow:var(--in)}.vgi svg *{fill:none!important}.vgi svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.vgn{margin-left:auto;min-width:24px;height:24px;padding:0 7px;border-radius:999px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;background:#C2552E}.vgn.ok{background:#2F7D5B}',
+'.vq{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 0;border-top:1px dashed var(--line)}.vq label{display:grid;gap:4px;cursor:pointer}.vq label b{font-size:14.5px;font-weight:700;line-height:1.35}.vq.fait label b{color:var(--muted);text-decoration:line-through}.vchip{justify-self:start;font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px}.vchip.z{color:#C2552E;border-color:#C2552E}',
+'.vtick{appearance:none;-webkit-appearance:none;width:26px;height:26px;margin:1px 0 0;border-radius:50%;border:1.5px solid var(--line);background:var(--cx,var(--bg));box-shadow:var(--in);cursor:pointer;display:grid;place-items:center}.vtick:checked{background:#2F7D5B;border-color:#2F7D5B}.vtick:checked::after{content:"";width:9px;height:5px;border:2.5px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}',
+'.vmod2{appearance:none;cursor:pointer;min-height:36px;font:800 12.5px var(--f,inherit);padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--accx,var(--fg))}details.vmsg{padding:4px 0 10px}details.vmsg>summary{list-style:none;display:flex;justify-content:center;width:100%}details.vmsg>summary::-webkit-details-marker{display:none}details.vmsg textarea{width:100%;margin:10px 0 8px;font:500 14px var(--f,inherit);padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--cx,var(--bg));color:var(--fg)}',
 'details.vcomm>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}details.vcomm>summary::-webkit-details-marker{display:none}.vred{flex:none;font:800 12px var(--f,inherit);padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--fg)}.vred::after{content:"Afficher"}details.vcomm[open] .vred::after{content:"Réduire"}',
 '.vtotc details.vd{margin-top:8px}.vtotc details.vd>summary{font-size:13px;color:var(--muted)}',
 '.vpart-h{display:grid;gap:2px;margin:0 0 6px}.vpart-h h3{margin:0}.vpart-h small{font-size:12.5px;color:var(--muted)}',
@@ -148,7 +152,7 @@ function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){retur
  if(art.prenom){var hl=$('#hello');if(hl)hl.textContent='Bonjour '+art.prenom+'.';var ph=$('#phrase');if(ph)ph.textContent=a.length?(a.length===1?'Une demande attend votre validation. Le calcul est fait, il ne manque que votre œil.':a.length+' demandes attendent votre validation. Les calculs sont faits.'):'Aucune demande en attente : tout est à jour.'}
 }
 function charger(){if(!lsG(KJ))return;charge=Date.now();
- api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;ETAPES=x.etapes||[];lsS(KL,x);rendre()},
+ api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{};ka.options=x.artisan.options;lsS(KA,ka)}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
   function(e){var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();var vd=$('#vd');if(vd&&lsG(KJ))vd.insertAdjacentHTML('afterbegin','<div class="verr" style="margin-bottom:10px">'+esc(e.message)+'</div>')})}
 
 /* ---------- une demande ---------- */
@@ -200,6 +204,51 @@ function totauxEd(p){var t=p.totaux||{},s=function(L){return L.reduce(function(a
 function lignesEd(cle,titre,aide,ajout){var L=ED[cle];
  return '<div class="card vsec vpart"><div class="vpart-h"><h3>'+titre+'</h3><small>'+aide+'</small></div>'+(L.length?L.map(function(l,i){return '<div class="vli vedit'+(l.a_verifier?' vv':'')+'"><span>'+esc(l.libelle)+(l.four!=null?' <span class="vp t">prix fournisseur</span>':'')+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small><button type="button" class="vmod" data-vlg="'+cle+'|'+i+'">Modifier</button></div>'}).join(''):'<p class="vst">Aucune ligne pour l\'instant.</p>')+
   '<button class="vbtn vadd" type="button" data-vlg="+'+cle+'">＋ '+ajout+'</button></div>'}
+/* ---------- À vérifier : rangé par qui répond (option Cliky). Une case « c'est bon » par question,
+   « Modifier » quand la question touche une ligne qu'on retrouve, questions du client envoyées en un message. ---------- */
+function vokCle(p){return 'pc-vok-'+(COUR&&COUR.contact&&COUR.contact.id||'')+'-'+(p&&p.le||'')}
+function vcap(x){x=String(x||'').trim();return x.charAt(0).toUpperCase()+x.slice(1)}
+function vcourt(s){s=String(s||'').trim();var r='',g='vis',m;
+ if(/mis à 0 €/i.test(s))return {g:'prix',q:vcap(s.replace(/\s*:?\s*mis à 0 €.*$/i,'')),r:'0 € pour l\'instant'};
+ if(/client|à changer ou à garder|sens d'ouverture|poignée|à choisir|plaque hydro|phonique|finition|grand format|renforcée/i.test(s))g='cli';
+ m=s.match(/\s*\(([^()]*(?:retenu|chiffr|dépose)[^()]*)\)/i);if(m){r=m[1];s=s.replace(m[0],'')}
+ if(!r){m=s.match(/([,?])\s*((?:chiffrée?s?|considérée?s?|réponses détaillées retenues|doublage sur)[^,?]*)/i);if(m){r=m[2];s=s.replace(m[0],m[1]==='?'?' ?':'')}}
+ s=s.replace(/,\s*à valider\s*$/i,'').replace(/,?\s*à (?:confirmer|valider) avec le client/ig,'').replace(/\s*,\s*$/,'').replace(/\s+\?/,' ?').trim();
+ if(r){r=r.trim().replace(/\s*\bretenue?s?\b/i,'').replace(/^chiffrée?s? /i,'chiffré ');r='Retenu : '+r}
+ return {g:g,q:vcap(s),r:r}}
+/* la ligne du pré-devis que touche la question, quand on la retrouve sans hésiter */
+function vligne(x){if(!ED)return null;var C=[];['materiaux','main_oeuvre'].forEach(function(c){(ED[c]||[]).forEach(function(l,i){C.push([c,i,String(l.libelle||'').toLowerCase()])})});
+ var q=x.q.toLowerCase(),A=C.filter(function(c){return c[2]&&(c[2].indexOf(q)===0||q.indexOf(c[2])===0)});if(A.length===1)return {lg:A[0][0]+'|'+A[0][1]};
+ var suj=q.split(' : ')[0].split(/[\s()']+/).filter(function(w){return w.length>=5}).map(function(w){return w.replace(/s$/,'')});if(!suj.length)return null;
+ A=C.filter(function(c){return suj.every(function(w){return c[2].indexOf(w)>=0})});if(A.length===1)return {lg:A[0][0]+'|'+A[0][1]};
+ if(A.length>1&&A.every(function(c){return c[0]===A[0][0]}))return {tab:A[0][0]==='materiaux'?'mat':'mo'};return null}
+var VGR=[['cli','À demander au client','<path d="M4 5h16v11H9l-5 4z"/>'],['vis','À voir à la visite','<path d="M3 17 17 3l4 4L7 21H3z"/><path d="m12 8 2 2m-5 1 2 2m-5 1 2 2"/>'],['prix','À chiffrer','<circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3.5 0 1 0 0 5M7.5 11h5m-5 2h5"/>']];
+function verifHTML(p){var L=(p.a_verifier||[]);if(!L.length)return '';var tag=window.PCTAG?PCTAG('cliky','a relevé ces points'):'';
+ if(window.PCOPT&&!PCOPT.cliky)return '<div class="card vsec">'+tag+'<p class="vst" style="padding:0">Avec l\'option Cliky, les points à vérifier de chaque demande sont rangés ici : à demander au client, à voir à la visite, à chiffrer.</p></div>';
+ var ok=lsG(vokCle(p))||[],Q=L.map(vcourt),k=COUR&&COUR.contact||{};
+ return '<div class="card vsec vverif">'+tag+'<h3 style="margin:0 0 2px">À vérifier</h3>'+
+  VGR.map(function(G){var I=[];Q.forEach(function(x,i){if(x.g===G[0])I.push(i)});if(!I.length)return '';var reste=I.filter(function(i){return ok.indexOf(i)<0}).length;
+   return '<details class="vgrp" data-vgrp="'+G[0]+'"'+(reste?' open':'')+'><summary><span class="vgi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+G[2]+'</svg></span>'+G[1]+'<span class="vgn'+(reste?'':' ok')+'">'+(reste||'✓')+'</span></summary>'+
+    I.map(function(i){var x=Q[i],li=vligne(x),fait=ok.indexOf(i)>=0;
+     return '<div class="vq'+(fait?' fait':'')+'"><input type="checkbox" class="vtick" id="vq'+i+'" data-vok="'+i+'"'+(fait?' checked':'')+' aria-label="C\'est bon"><label for="vq'+i+'"><b>'+esc(x.q)+'</b>'+(x.r?'<span class="vchip'+(G[0]==='prix'?' z':'')+'">'+esc(x.r)+'</span>':'')+'</label>'+
+      (li?'<button type="button" class="vmod2" '+(li.lg?'data-vlg="'+li.lg+'"':'data-vtabd="'+li.tab+'"')+'>Modifier</button>':'')+'</div>'}).join('')+
+    (G[0]==='cli'&&(k.telephone||k.email)?'<details class="vmsg"><summary class="vbtn sm">Envoyer ces questions au client</summary><textarea id="vmsg-t" rows="7" aria-label="Message au client">'+esc(vmsgTexte(p))+'</textarea><div class="vbtns">'+
+     (k.telephone?'<a class="vbtn sm" id="vmsg-sms" href="#" style="text-decoration:none">💬 Par SMS</a>':'')+(k.email?'<a class="vbtn sm" id="vmsg-mail" href="#" style="text-decoration:none">✉️ Par e-mail</a>':'')+'<button type="button" class="vbtn sm" id="vmsg-cp">Copier</button></div><p class="vst" style="padding:4px 0 0;font-size:12px">Le message s\'ouvre dans votre appli SMS ou e-mail : vous le relisez avant de l\'envoyer.</p></details>':'')+
+   '</details>'}).join('')+'</div>'}
+function vmsgTexte(p){var ok=lsG(vokCle(p))||[],k=COUR&&COUR.contact||{},art=lsG(KA)||{};
+ var Q=(p.a_verifier||[]).map(vcourt).map(function(x,i){return [x,i]}).filter(function(z){return z[0].g==='cli'&&ok.indexOf(z[1])<0}).map(function(z){return '- '+z[0].q.replace(/^([^:]+) : (.+)$/,'$1 : $2')});
+ return 'Bonjour'+(k.prenom?' '+k.prenom:'')+',\nPour finaliser votre devis, j\'ai besoin de quelques précisions :\n'+Q.join('\n')+'\nMerci !\n'+(art.prenom||'')+(art.entreprise?' · '+art.entreprise:'')}
+function vverifMaj(){var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];if(!p)return;var ok=lsG(vokCle(p))||[];
+ $$('#vov-b .vgrp').forEach(function(g){var I=$$('.vtick',g),r=I.filter(function(c){return !c.checked}).length,n=$('.vgn',g);n.textContent=r||'✓';n.classList.toggle('ok',!r)});
+ $$('#vov-b .vtick').forEach(function(c){c.parentNode.classList.toggle('fait',c.checked)});
+ var t=$('#vmsg-t');if(t&&!t._touche)t.value=vmsgTexte(p)}
+document.addEventListener('change',function(e){var c=e.target;if(!c||!c.hasAttribute||!c.hasAttribute('data-vok'))return;var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];if(!p)return;
+ var ok=lsG(vokCle(p))||[],i=+c.getAttribute('data-vok');ok=ok.filter(function(x){return x!==i});if(c.checked)ok.push(i);lsS(vokCle(p),ok.length?ok:null);vverifMaj()});
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='vmsg-t')e.target._touche=true});
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('#vmsg-sms,#vmsg-mail,#vmsg-cp');if(!a)return;e.preventDefault();var t=$('#vmsg-t'),k=COUR&&COUR.contact||{},txt=t?t.value:'';
+ if(a.id==='vmsg-cp'){var f=function(){t.select();try{document.execCommand('copy')}catch(x){}};if(navigator.clipboard)navigator.clipboard.writeText(txt).then(function(){a.textContent='Copié ✓'},f);else f();return}
+ if(a.id==='vmsg-sms')location.href='sms:'+String(k.telephone||'').replace(/\s/g,'')+'?&body='+encodeURIComponent(txt);
+ else location.href='mailto:'+(k.email||'')+'?subject='+encodeURIComponent('Votre demande de devis')+'&body='+encodeURIComponent(txt)});
 function alerteFour(p){var M=manque(p);if(!M.length)return '';
  return '<div class="card valerte" role="alert"><b>⚠ Il manque le devis du fournisseur</b><span>Vous ne pouvez pas valider ce pré-devis avant d\'avoir ses prix. Dès que vous les avez, tapez-les ici : '+(M.length>1?M.length+' lignes':'une ligne')+'.</span>'+
   M.map(function(x){return '<div class="vli vedit"><span>'+esc(x[0].libelle)+'</span><span class="x">0,00 €</span><small>'+(x[0].quantite!=null?qte(x[0].quantite)+' '+esc(x[0].unite||'')+' · ':'')+'prix fournisseur pas encore reçu</small><button type="button" class="vmod" data-vlg="f|'+x[1]+'">Saisir le prix</button></div>'}).join('')+'</div>'}
@@ -216,9 +265,9 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  if(!p){ED=null;dv='<div class="card"><b>Pas encore de pré-devis Cliky</b><p class="vst" style="padding:4px 0 0">Si la demande vient d\'arriver, patientez une minute : il s\'affiche tout seul.</p></div>';}
  else if(!p.lue){ED=null;dv='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3><p class="vst" style="padding:0 0 8px">Ancienne présentation : affichée telle quelle.</p><pre class="vpre">'+esc(p.texte)+'</pre></div>';}
  else{ED=edition(p);var t=totauxEd(p);
-  dv=alerteFour(p)+'<div class="card vsec vtotc"><div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+
+  dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
-   liste('⚠ À vérifier ('+p.a_verifier.length+')',p.a_verifier)+
+   verifHTML(p)+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
   mat=lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;

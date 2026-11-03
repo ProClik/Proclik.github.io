@@ -26,6 +26,7 @@
 .dp-tva summary b{color:var(--fg)}
 .dp-tva .seg{display:flex;margin-top:10px}.dp-tva .seg button{flex:1}
 .dp-opt{margin:0;padding:10px 14px;border-radius:14px;background:var(--cx);box-shadow:var(--in);font-size:12.5px;color:var(--muted);line-height:1.45}.dp-opt b{color:var(--accx)}
+.dp-opt .opt-tag{margin:0 0 6px}
 /* Fiche : la photo du ticket */
 .dp-ph{display:grid;place-items:center;margin-bottom:12px;border-radius:18px;overflow:hidden;background:var(--cx);box-shadow:var(--in)}
 .dp-ph img{display:block;width:100%;max-height:340px;object-fit:contain}
