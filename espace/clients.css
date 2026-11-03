@@ -160,3 +160,16 @@ html body .cf .cl-seg button{overflow:visible}
 .card>.btn.cf-in,.card>.cf-in{margin-top:14px}
 .cf-ou>.btn.cf-in{width:100%}
 .cf-hero>.btn.cf-in,.cf-rien>.btn.cf-in{margin-top:14px}
+
+/* Supprimer un client (3/11) : discret en bas de la fiche, la page suivante explique tout avant le bouton rouge */
+.cl-sup{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 4px;padding:10px 18px;min-height:44px;border-radius:999px;background:transparent;color:#C2413B;font:700 14px/1 var(--f,inherit);border:0}
+.cl-sup svg,.cl-sup-go svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cl-sup-p{display:flex;flex-direction:column;gap:12px}
+.cl-sup-c b{display:block;font-size:15.5px;margin-bottom:4px}
+.cl-sup-c p{margin:4px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+.cl-sup-err{border:1.5px solid #D9534F}
+.cl-sup-def{margin:2px 4px 0;font-weight:800;color:#C2413B;font-size:14px}
+.btn.cl-sup-go{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#D9534F;color:#fff}
+.btn.cl-sup-go[disabled]{opacity:.6}
+:root[data-theme="dark"] .cl-sup,:root[data-theme="dark"] .cl-sup-def{color:#FF8A80}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cl-sup,:root:not([data-theme="light"]) .cl-sup-def{color:#FF8A80}}

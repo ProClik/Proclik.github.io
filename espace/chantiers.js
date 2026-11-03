@@ -307,7 +307,7 @@ function action(c,a){var o=dos(c);if(!o)return;var tel=String(o.tel||'').replace
  if(a==='tel'||a==='sms'){if(fake)return X.toast('Numéro d\'exemple','Dans votre Espace, '+(a==='tel'?'l\'appel part':'le SMS s\'ouvre')+' directement vers '+o.n+'.');location.href=(a==='tel'?'tel:':'sms:')+tel;return}
  if(a==='mail'){if(!o.mail)return X.toast('Pas d\'e-mail pour ce client','Ajoutez-le dans sa fiche.');location.href='mailto:'+o.mail;return}
  var adr=/\[/.test(o.adr||'')?(o.v||c.v)+', Isère':(o.adr||o.v||c.v),q=encodeURIComponent(adr);
- X.xopen('Itinéraire',adr,'<div class="col" style="gap:10px">'+[['Waze','https://waze.com/ul?q='+q+'&navigate=yes'],['Plans (iPhone)','https://maps.apple.com/?daddr='+q],['Google Maps','https://www.google.com/maps/dir/?api=1&destination='+q]].map(function(x){return '<a class="btn" style="display:flex;align-items:center;justify-content:center;min-height:54px;text-decoration:none" href="'+x[1]+'" target="_blank" rel="noopener">'+x[0]+'</a>'}).join('')+'</div>','<button class="btn" data-xclose>Fermer</button>',null);}
+ if(X.itineraire)X.itineraire(adr);else location.href='https://www.google.com/maps/dir/?api=1&destination='+q;}
 
 /* ---------- les gestes de la page ---------- */
 function lier(c){var id=c.id;
