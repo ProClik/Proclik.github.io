@@ -1151,16 +1151,16 @@ function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 function nowH(){var n=new Date();return n.getHours()+n.getMinutes()/60;}
 function shortT(t){return t.replace('Chantier ','').replace('Cabinet ','').replace('Réception ','Récep. ').replace('Créneau libre','Libre').replace('Visite ','').replace('Point ProClik','ProClik').replace(/^(Mme|M\.) /,'');}
 function renderCalWeek(){
- var wide=matchMedia('(min-width:900px)').matches,nd=wide?7:5,H0=7,H1=19,PX=wide?46:42,days=[];for(var i=0;i<nd;i++)days.push(addD(calWk,i));
+ var wide=matchMedia('(min-width:900px)').matches,nd=wide?7:5,H0=7.5,H1=18.5,PX=Math.max(32,Math.min(66,Math.floor((innerHeight-(wide?250:390))/(H1-H0)))),days=[];for(var i=0;i<nd;i++)days.push(addD(calWk,i));
  var last=days[nd-1],m1=MOIS[calWk.getMonth()],m2=MOIS[last.getMonth()];
  $('#wk-t').innerHTML=cap(m1)+(m1!==m2?' – '+m2:'')+' <span>'+last.getFullYear()+'</span>';
  var cols='38px repeat('+nd+',minmax(0,1fr))';
  var h='<div class="wkc-h" style="grid-template-columns:'+cols+'"><div></div>'+days.map(function(d,i){return '<div class="'+(same(d,TODAY)?'tdy':'')+(i>4?' we':'')+'">'+JS[i]+'<b>'+d.getDate()+'</b></div>';}).join('')+'</div>';
  h+='<div class="wkc-s"><div class="wkc-b" style="grid-template-columns:'+cols+';height:'+((H1-H0)*PX+8)+'px"><div class="wkc-hr">';
- for(var t=H0+1;t<H1;t++)h+='<span style="top:'+((t-H0)*PX)+'px">'+t+' h</span>';
+ for(var t=Math.floor(H0)+1;t<H1;t++)h+='<span style="top:'+((t-H0)*PX)+'px">'+t+' h</span>';
  h+='</div>';
  days.forEach(function(d){var L=evOf(d);h+='<div class="wkc-col">';
-  for(var t=H0+1;t<H1;t++)h+='<div class="wkc-line" style="top:'+((t-H0)*PX)+'px"></div>';
+  for(var t=Math.floor(H0)+1;t<H1;t++)h+='<div class="wkc-line" style="top:'+((t-H0)*PX)+'px"></div>';
   L.forEach(function(e){var a=hm(e.s),b=hm(e.e),top=(a-H0)*PX,ht=Math.max(18,(b-a)*PX-2),c=CK[e.k][0],i=EV.indexOf(e);
    h+='<button class="ev'+(ht<30?' court':'')+(e.k==='free'?' free':'')+(e.x.tent?' tent':'')+(evSel===i?' sel':'')+'" data-ev="'+i+'" style="--c:'+c+';top:'+top+'px;height:'+ht+'px"><b>'+(wide?e.t:shortT(e.t))+'</b>'+(ht>34?'<small>'+e.s.replace(':','h')+'</small>':'')+'</button>';});
   if(same(d,TODAY)){var n=nowH();if(n>H0&&n<H1)h+='<div class="nowl" style="top:'+((n-H0)*PX)+'px"></div>';}
@@ -1205,6 +1205,8 @@ $('#mo-prev').addEventListener('click',function(){calMo=new Date(calMo.getFullYe
 $('#mo-next').addEventListener('click',function(){calMo=new Date(calMo.getFullYear(),calMo.getMonth()+1,1);renderCalMonth();});
 $('#mo-today').addEventListener('click',function(){calMo=new Date(2026,9,1);calSel=TODAY;renderCalMonth();});
 $$('.cal-key').forEach(function(x){x.innerHTML=calKey();});
+/* La semaine tient sur l'écran (Cyril, 3/11) : la hauteur d'une heure suit la hauteur de l'écran */
+var calRz=0;addEventListener('resize',function(){clearTimeout(calRz);calRz=setTimeout(renderCalWeek,150)});
 var calMQ=matchMedia('(min-width:900px)');if(calMQ.addEventListener)calMQ.addEventListener('change',function(){renderCalWeek();});
 renderCalWeek();renderCalMonth();
 
@@ -1705,4 +1707,4 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <link rel="stylesheet" href="poussoir.css?v=1">
 <script src="poussoir.js?v=2"></script>
 <script src="titres.js?v=2"></script>
-<link rel="stylesheet" href="blocs.css?v=3"><script src="blocs.js?v=4"></script>
+<link rel="stylesheet" href="blocs.css?v=4"><script src="blocs.js?v=5"></script>

@@ -66,3 +66,23 @@ html[data-tu="menu"] body .seg.tm button[aria-selected="true"]{box-shadow:var(--
 html[data-tu="menu"] .seg.tm button>svg{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 html[data-tu="menu"] .seg.tm button[aria-selected="true"]>svg{color:var(--accx)}
 html[data-tu="menu"] .seg.tm .tm-n{text-align:right;padding:0!important;min-width:0!important;margin:0!important}
+/* Planning (Cyril, 3/11 23h22) : plus de tuiles, un menu compact, la semaine entière sur l'écran.
+   Téléphone : « Planning » + petit bouton Ajouter, puis Jour / Semaine / Mois / Carte.
+   iPad et ordinateur : tout sur une ligne, nom à gauche, menu au milieu, Ajouter à droite. */
+#v-planning.ord-a{display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:12px;align-items:center;max-width:none}
+#v-planning.ord-a>.oi-a,#v-planning.ord-a>.fl-a>.oi-a{grid-column:1/-1}
+#v-planning.ord-a [data-r="10"]{grid-column:1!important;order:10!important;margin:0!important}
+#v-planning.ord-a [data-r="30"]{grid-column:2!important;order:11!important;width:auto!important;justify-self:end}
+#v-planning.ord-a [data-r="50"]{order:20!important}
+html body #v-planning .pl-go{width:auto;min-height:46px;padding:0 54px 0 16px;font-size:15px}
+html body #v-planning .pl-go::after{width:36px;height:36px;margin-top:-18px;right:5px}
+html body #v-planning .pl-go::before{right:14px}
+#v-planning .pl-go .lab>span:last-child{white-space:nowrap}
+#v-planning .wkc-s{max-height:none!important;overflow:visible}
+#v-planning .cal-top{margin-bottom:8px}
+@media (max-width:899px){#v-planning .pl-go .lab>span:last-child{font-size:0}#v-planning .pl-go .lab>span:last-child::after{content:"Ajouter";font-size:15px}}
+@media (min-width:900px){
+  #v-planning.ord-a{grid-template-columns:auto minmax(0,1fr) auto;column-gap:20px}
+  #v-planning.ord-a [data-r="50"]{grid-column:2!important;order:11!important;justify-self:center;width:auto;min-width:min(440px,100%)}
+  #v-planning.ord-a [data-r="30"]{grid-column:3!important;order:12!important}
+}

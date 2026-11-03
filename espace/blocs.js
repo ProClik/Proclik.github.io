@@ -55,11 +55,7 @@
     prix:function(){var D=P.DP||[],C=P.CMD?P.CMD():[],k=function(s){return D.filter(function(x){return x.st===s}).length},
       r=C.filter(function(c){return c.st==="envoyee"||c.st==="conf"}).length;
       return [["horloge","En attente",k("wait"),"demandes de prix"],["chat","Réponses",k("recu"),"à lire"],["camion","Commandes",r,r?"en route":"rien en route"]]},
-    /* Planning : la semaine affichée dans le calendrier (elle suit les flèches), pas une semaine figée */
-    planning:function(){var E=P.EV||[],lun=P.wk?new Date(P.wk()):new Date(2026,9,12);lun.setHours(0,0,0,0);var dim=new Date(lun);dim.setDate(dim.getDate()+6);
-      var iso=function(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)},sem="semaine du "+lun.getDate()+"/"+(lun.getMonth()+1);
-      var S=E.filter(function(e){return e.d>=iso(lun)&&e.d<=iso(dim)}),k=function(x){return S.filter(function(e){return e.k===x}).length};
-      return [["maison","Chantier",S.filter(function(e){return /^(run|plan|done)$/.test(e.k)}).map(function(e){return e.d}).filter(function(d,i,a){return a.indexOf(d)===i}).length,"jours"],["visite","Visites",k("visit"),"rdv"],["libre","Libres",k("free"),"créneaux"],["agenda","ProClik",k("pc"),"20 min"]]},
+    /* Planning : plus de tuiles (Cyril, 3/11 23h22), la semaine se lit d'un coup d'œil */
     produits:function(){var v=$("#v-produits");return [["boite","Produits",$$(".pr-li",v).length,"dans votre base"],["pile","Familles",$$(".pr-fam",v).length,"bien rangées"]]}
   };
 
