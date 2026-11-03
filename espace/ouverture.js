@@ -30,8 +30,8 @@ var css=
 '#pc-ouv .nom{font-weight:300;font-size:21px;letter-spacing:.32em;line-height:1;white-space:nowrap;margin-right:-.32em}'+
 '#pc-ouv .nom .lt{display:inline-block;opacity:0;animation:pcLettre .5s var(--d) calc(5.55s + var(--i) * 45ms) forwards}'+
 '#pc-ouv .nom small{display:block;font-size:7.5px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:8px;opacity:0;animation:pcApparait .5s ease 5.95s forwards}'+
-'#pc-ouv.espace .filet{animation:pcFilet .45s var(--d) 5.45s forwards,pcEfface .5s ease 6.85s forwards}'+
-'#pc-ouv.espace .nom{animation:pcEfface .5s ease 6.85s forwards}'+
+/* Espace : le nom reste à côté du P (logo centré comme sur le site) et ne s'efface qu'au moment où le P part vers son bouton */
+'#pc-ouv.espace .filet,#pc-ouv.espace .nom{transition:opacity .4s ease}#pc-ouv.espace.part .filet,#pc-ouv.espace.part .nom{opacity:0!important}'+
 
 '#pc-ouv .ond{position:absolute;inset:0;overflow:hidden;pointer-events:none}'+
 '#pc-ouv .ond i{position:absolute;left:var(--ox,50%);top:var(--oy,50%);width:'+OV+'px;height:'+OV+'px;margin:-'+OV/2+'px 0 0 -'+OV/2+'px;border-radius:50%;transform:scale('+OD+');opacity:0;animation:pcOnde 5.5s cubic-bezier(.3,.3,.4,1) calc(1.5s + var(--i) * 1.1s)}'+
@@ -193,6 +193,7 @@ function vise(){
   im.push({offset:Math.min(1,ms/FIN),transform:'translate('+(px*ek).toFixed(2)+'px,'+(py*ek).toFixed(2)+'px) scale('+sc.toFixed(4)+') translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px) rotate('+th.toFixed(1)+'deg) scale('+sx.toFixed(4)+','+sy.toFixed(4)+') rotate('+(-th).toFixed(1)+'deg) translate('+(-cx).toFixed(2)+'px,'+(-cy).toFixed(2)+'px)'});
  }
  im[im.length-1].offset=1;pb.style.willChange='transform';pb.style.transform=im[0].transform;
+ o.classList.add('part');
  if(pb.animate)pb.animate(im,{duration:FIN,delay:100,fill:'forwards',easing:'linear'});else pb.style.transform=im[im.length-1].transform;
  setTimeout(function(){var gal=cible.parentNode;if(gal){gal.classList.remove('pc-pose');void gal.offsetWidth;gal.classList.add('pc-pose');setTimeout(function(){gal.classList.remove('pc-pose')},1100)}},100+DU*.9);
 }
