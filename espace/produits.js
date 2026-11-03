@@ -78,7 +78,7 @@ function ajouter(p){p=p||{};if(!p.c)p.c='P'+Date.now().toString(36);delete p.ex;
 function retirer(c){var x=EX.filter(function(p){return p.c===c})[0];if(x){lsS('pc-prod-ex-'+c,1)}lsS('pc-base1',lire().filter(function(p){return p.c!==c}))}
 function favoris(){var n={};liste().forEach(function(p){var i=icoDe(p);if(i)n[i]=(n[i]||0)+(p.ex?0.5:1)});
  var L=Object.keys(n).sort(function(a,b){return n[b]-n[a]});FAV0.forEach(function(i){if(L.indexOf(i)<0)L.push(i)});return L.slice(0,6)}
-var CLIKY=true; /* Démo : l'option Cliky est active (comme dans le pré-devis) */
+var CLIKY=!!(window.PCOPT&&PCOPT.cliky); /* Option Cliky prise (PCOPT) */
 
 /* ---------- l'écran ---------- */
 var IC={plus:I('<path d="M12 5v14M5 12h14"/>'),cherche:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),

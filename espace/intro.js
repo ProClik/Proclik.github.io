@@ -15,7 +15,7 @@ var OPTS=[['cliky','Cliky','Le pré-devis se prépare tout seul, puis devis et f
  ['avis','Avis Google','La demande d\'avis part toute seule']];
 function optHTML(){var L=window.PCOPT&&PCOPT.liste||{};
  return '<div class="pi-op">'+OPTS.map(function(o,k){var on=window.PCOPT&&PCOPT.actif&&PCOPT.actif(o[0])===true,ic=L[o[0]]&&L[o[0]].i||'';
-  return '<div class="pi-oi pi-carte" style="--k:'+k+'"><span class="pi-galet oic">'+ic+'</span><span class="otx"><b>'+o[1]+(on?' <em>Incluse</em>':'')+'</b><small>'+o[2]+'</small></span></div>'}).join('')+'</div>'}
+  return '<div class="pi-oi pi-carte" style="--k:'+k+'"><span class="pi-galet oic">'+ic+'</span><span class="otx"><b>'+o[1]+(on?' <em>Active</em>':'')+'</b><small>'+o[2]+'</small></span></div>'}).join('')+'</div>'}
 function ecrans(){
 /* Présentation de l'Espace DE BASE (Cyril, 3/11) ; les options et ce qu'elles apportent arrivent à la fin */
 E=[
