@@ -8,23 +8,32 @@ var DOC='<svg class="ic" viewBox="0 0 24 24"><path d="M13 21H6V3h8l4 4v4"/><path
 var PHO='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8.5 6l1.5-2.5h4L15.5 6"/></svg>';
 var OK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function mots(t){return t.split(' ').map(function(m,k){return '<span style="--k:'+k+'">'+m+'&nbsp;</span>'}).join('')}
-var CK=true,E=[];
+var E=[];
+var OPTS=[['cliky','Cliky','Le pré-devis se prépare tout seul, puis devis et factures'],
+ ['reservation','Réservation','Vos clients prennent rendez-vous en ligne'],
+ ['sms','SMS','Une alerte à chaque nouvelle demande'],
+ ['avis','Avis Google','La demande d\'avis part toute seule']];
+function optHTML(){var L=window.PCOPT&&PCOPT.liste||{};
+ return '<div class="pi-op">'+OPTS.map(function(o,k){var on=window.PCOPT&&PCOPT.actif&&PCOPT.actif(o[0])===true,ic=L[o[0]]&&L[o[0]].i||'';
+  return '<div class="pi-oi pi-carte" style="--k:'+k+'"><span class="pi-galet oic">'+ic+'</span><span class="otx"><b>'+o[1]+(on?' <em>Incluse</em>':'')+'</b><small>'+o[2]+'</small></span></div>'}).join('')+'</div>'}
 function ecrans(){
-/* Option Cliky (PCOPT) : sans elle, pas de pré-devis promis ; l'artisan fait ses devis lui-même */
-CK=window.PCOPT?!!PCOPT.cliky:true;
+/* Présentation de l'Espace DE BASE (Cyril, 3/11) ; les options et ce qu'elles apportent arrivent à la fin */
 E=[
  {s:'<div class="pi-logo"><b></b><b></b><span class="pi-galet"><svg viewBox="18 6.5 76 76"><path class="l" pathLength="100" d="'+P+'"/><circle class="p" cx="56" cy="42" r="6"/></svg></span></div>',
   h:'Bienvenue dans votre Espace',
-  p:'Vos demandes, vos devis, vos chantiers et vos factures, au même endroit. Voici l\'essentiel en trois images.'},
- {s:'<div class="pi-dem pi-carte pi-arrive"><div class="t"><i></i>Nouvelle demande</div><div class="qui"><span class="av pi-galet">MD</span><span><b>Mme Durand</b><small>Cloisons du séjour</small></span></div><div class="pd pi-creux">'+(CK?DOC+'<span>Pré-devis</span><em>Prêt</em>':PHO+'<span>Photos du client</span><em>Jointes</em>')+'</div></div>',
+  p:'Vos demandes, vos devis, vos chantiers et vos factures, au même endroit. Voici l\'essentiel en quelques images.'},
+ {s:'<div class="pi-dem pi-carte pi-arrive"><div class="t"><i></i>Nouvelle demande</div><div class="qui"><span class="av pi-galet">MD</span><span><b>Mme Durand</b><small>Cloisons du séjour</small></span></div><div class="pd pi-creux">'+PHO+'<span>Photos du client</span><em>Jointes</em></div></div>',
   h:'Les demandes arrivent toutes seules',
-  p:CK?'Vos clients décrivent leurs travaux sur votre site. La demande arrive ici, avec un pré-devis déjà calculé.':'Vos clients décrivent leurs travaux sur votre page. La demande arrive ici, avec leurs coordonnées et leurs photos.'},
- {s:'<div class="pi-dv pi-carte"><div class="li pi-creux"><span>Cloison en plaques</span><i class="ok" style="--k:0">'+OK+'</i></div><div class="li pi-creux doigt"><span>Bandes et enduit</span><i class="ok" style="--k:1">'+OK+'</i></div><div class="li pi-creux"><span>Peinture</span><i class="ok" style="--k:2">'+OK+'</i></div><div class="val">'+(CK?'Valider':'Envoyer le devis')+'</div></div>',
-  h:CK?'Vous vérifiez, vous validez':'Vos devis en quelques gestes',
-  p:CK?'Touchez une ligne pour la corriger. Rien ne part chez le client sans votre accord.':'Choisissez vos lignes dans vos produits, les calculs se font tout seuls. Une fois accepté, le devis devient facture.'},
- {s:'<div class="pi-mic"><b></b><b></b><span class="pi-galet">'+MIC+'</span><div class="pi-bulle">« '+mots('Ajoute une porte au devis')+'»</div></div>',
-  h:'Parlez, ProClik écrit',
-  p:'Touchez le micro en bas de l\'écran et parlez normalement. ProClik range tout au bon endroit.'},
+  p:'Vos clients décrivent leurs travaux sur votre page. La demande arrive ici, avec leurs coordonnées et leurs photos.'},
+ {s:'<div class="pi-dv pi-carte"><div class="li pi-creux"><span>Cloison en plaques</span><i class="ok" style="--k:0">'+OK+'</i></div><div class="li pi-creux doigt"><span>Bandes et enduit</span><i class="ok" style="--k:1">'+OK+'</i></div><div class="li pi-creux"><span>Peinture</span><i class="ok" style="--k:2">'+OK+'</i></div><div class="val">Envoyer le devis</div></div>',
+  h:'Vos devis en quelques gestes',
+  p:'Choisissez vos lignes dans vos produits, les calculs se font tout seuls. Une fois accepté, le devis devient facture.'},
+ {s:'<div class="pi-pl pi-carte"><div class="pi-sem">'+['L','M','M','J','V'].map(function(j,k){return '<div class="pi-jr"><small>'+j+'</small><span class="pi-creux pi-col">'+(k===0||k===1?'<i class="pi-ev a" style="--k:'+k+'"></i>':'')+(k===2?'<i class="pi-ev b" style="--k:2"></i>':'')+(k===3||k===4?'<i class="pi-ev c" style="--k:'+k+'"></i>':'')+'</span></div>'}).join('')+'</div><div class="pi-ca pi-creux">'+[38,52,45,64,58,80].map(function(h,k){return '<i style="--h:'+h+'%;--k:'+k+'"></i>'}).join('')+'</div></div>',
+  h:'Votre semaine et vos chiffres',
+  p:'Le planning se met à jour avec l\'agenda de votre téléphone. Votre chiffre d\'affaires se suit d\'un coup d\'œil.'},
+ {s:optHTML(),
+  h:'Et pour aller plus loin, les options',
+  p:'Elles s\'ajoutent à votre Espace quand vous le souhaitez. Retrouvez-les dans le menu, «&nbsp;Mes options&nbsp;».'},
  {choix:1,
   h:'Comment préférez-vous l\'affichage ?',
   p:'Vous pourrez changer à tout moment dans les Réglages.'}

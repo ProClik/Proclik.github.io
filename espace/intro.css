@@ -107,5 +107,35 @@ html.pc-ipad-app .pi-w{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 .pi-choix .rd{width:22px;height:22px;border-radius:50%;background:var(--cx);box-shadow:var(--in);display:grid;place-items:center}
 .pi-choix[aria-pressed="true"] .rd::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--acc)}
 
+/* 3 · planning de la semaine + courbe du chiffre d'affaires */
+.pi-pl{width:300px;max-width:100%;padding:16px;display:flex;flex-direction:column;gap:14px}
+.pi-pl .pi-sem{display:flex;gap:8px}
+.pi-pl .pi-jr{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.pi-pl .pi-jr small{font-size:12px;font-weight:700;color:var(--muted)}
+.pi-pl .pi-col{width:100%;height:92px;border-radius:10px;padding:6px 5px;display:flex;flex-direction:column;justify-content:center}
+.pi-pl .pi-ev{display:block;height:46px;border-radius:7px;opacity:0;transform:scaleY(.4);transform-origin:top}
+.pi-pl .pi-ev.a{background:var(--acc);opacity:0}.pi-pl .pi-ev.b{background:var(--muted)}.pi-pl .pi-ev.c{background:var(--acc-g)}
+.pi.go .pi-pl .pi-ev{animation:piBloc .6s var(--doux) forwards;animation-delay:calc(.5s + var(--k) * .18s)}
+.pi.go .pi-pl .pi-ev.a{--o:.85}.pi.go .pi-pl .pi-ev.b{--o:.35}.pi.go .pi-pl .pi-ev.c{--o:1}
+@keyframes piBloc{to{opacity:var(--o,1);transform:none}}
+.pi-pl .pi-ca{height:70px;border-radius:12px;padding:10px 12px;display:flex;align-items:flex-end;gap:9px}
+.pi-pl .pi-ca i{flex:1;height:var(--h);border-radius:5px 5px 2px 2px;background:var(--muted);opacity:.3;transform:scaleY(0);transform-origin:bottom}
+.pi-pl .pi-ca i:last-child{background:var(--acc);opacity:.85}
+.pi.go .pi-pl .pi-ca i{animation:piBarre .7s var(--doux) forwards;animation-delay:calc(1.4s + var(--k) * .1s)}
+@keyframes piBarre{to{transform:none}}
+
+/* 4 · les options et ce qu'elles apportent */
+.pi-op{width:330px;max-width:100%;display:flex;flex-direction:column;gap:10px}
+.pi-oi{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:18px;opacity:0;transform:translateX(18px)}
+.pi.go .pi-oi{animation:piOpt .6s var(--doux) forwards;animation-delay:calc(.35s + var(--k) * .2s)}
+@keyframes piOpt{to{opacity:1;transform:none}}
+.pi-oi .oic{width:40px;height:40px;flex:none;color:var(--accx);box-shadow:var(--up-s)}
+.pi-oi .oic svg{width:20px;height:20px}
+.pi-oi .otx{min-width:0}
+.pi-oi b{display:flex;align-items:center;gap:8px;font-size:15.5px;color:var(--fg)}
+.pi-oi b em{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accx);padding:2px 7px;border-radius:999px;box-shadow:var(--in)}
+.pi-oi small{display:block;font-size:13px;line-height:1.35;color:var(--muted);margin-top:2px}
+@media (prefers-reduced-motion:reduce){.pi .pi-oi,.pi .pi-pl .pi-ev,.pi .pi-pl .pi-ca i{opacity:1;transform:none}}
+
 @media (max-height:640px){.pi-scene{min-height:170px}.pi-logo,.pi-mic{transform:scale(.8)}.pi-txt{min-height:130px}.pi-txt h2{margin-bottom:8px}}
 @media (prefers-reduced-motion:reduce){.pi .pi-anim,.pi .pi-arrive{opacity:1;transform:none;animation:none!important}.pi-logo .l{stroke-dashoffset:0}.pi-logo .p{transform:none}.pi-bulle span{opacity:1}.pi-dv .ok{color:var(--acc)}}
