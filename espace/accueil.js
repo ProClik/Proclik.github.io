@@ -72,8 +72,8 @@
       [ch,"chantier",pl(ch,"Chantier","Chantiers"),"en cours","suivre","chantiers",""]]);
     h+='<div class="card dem"><div class="dem-h"><div><small class="urg">Le plus urgent</small><b>Mme Durand · Grenoble</b><small>Cloisons du séjour</small></div><div class="prix">765,08 € <small>HT</small></div></div>'+
       parcours(0,"Vérifier le pré-devis","le devis est prêt à envoyer au client")+
-      '<div class="ligne corr"><span>Bâti de porte<span class="cote">730 × 2 040 mm</span></span><span class="q">à vérifier</span></div></div>'+
-      bouton(IC_VERIF,"Vérifier le pré-devis","data-accdemo")+
+      '<div class="ligne corr"><span>Bâti de porte<span class="cote">730 × 2 040 mm</span></span><span class="q">à vérifier</span></div>'+
+      bouton(IC_VERIF,"Vérifier le pré-devis","data-accdemo")+"</div>"+
       '<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>›</span></button>';
     poser('<div class="acc-g">'+chiffres()+'</div><div class="acc-d">'+h+"</div>");
   }
@@ -92,8 +92,8 @@
       h+='<div class="card dem"><div class="dem-h"><div><small class="urg">Le plus urgent</small><b>'+esc(d.client)+"</b><small class=\"resume\">"+esc(d.resume||d.titre||"")+"</small></div>"+
         (d.total_ht!=null?'<div class="prix">'+eur(d.total_ht)+" <small>HT</small></div>":"")+"</div>"+
         parcours(phase(d.etape),"Vérifier le pré-devis",i>=0&&E[i+1]?(E[i+1].nom||E[i+1]):"")+
-        (d.a_verifier?'<div class="ligne corr"><span>'+(d.a_verifier>1?d.a_verifier+" lignes":"1 ligne")+' à vérifier</span><span class="q">à vérifier</span></div>':"")+"</div>"+
-        bouton(IC_VERIF,"Vérifier le pré-devis",'data-vc="'+esc(d.contact||"")+'"')}
+        (d.a_verifier?'<div class="ligne corr"><span>'+(d.a_verifier>1?d.a_verifier+" lignes":"1 ligne")+' à vérifier</span><span class="q">à vérifier</span></div>':"")+
+        bouton(IC_VERIF,"Vérifier le pré-devis",'data-vc="'+esc(d.contact||"")+'"')+"</div>"}
     if(D.length)h+='<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+D.length+" ›</span></button>";
     poser('<div class="acc-g">'+chiffres()+'</div><div class="acc-d">'+h+"</div>");
   }
