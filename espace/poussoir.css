@@ -3,15 +3,15 @@
    poussoir.js pose .pk sur chaque élément cliquable (et .pk-v sur le galet qui le dessine) ; ici on ne change que les ombres.
    Deux propositions : A « Anneau fin » (par défaut) et B « Poussoir » (html[data-pk="b"]). */
 :root{--up0:var(--up);--ups0:var(--up-s);--in0:var(--in);
-  --pk-e:rgba(14,19,34,.58);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pk-e:rgba(225,231,245,.30);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22)}}
-:root[data-theme="dark"]{--pk-e:rgba(225,231,245,.30);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22)}
+  --pk-e:rgba(14,19,34,.16);--pk-o:rgba(26,34,64,.16);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pk-e:rgba(225,231,245,.11);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22)}}
+:root[data-theme="dark"]{--pk-e:rgba(225,231,245,.11);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22)}
 
 /* A — Anneau fin : le galet garde son relief doux, cerclé d'un trait fin foncé (clair la nuit) doublé d'un liseré */
 html body .pk,html body .pk-v{
-  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 0 0 1.5px var(--pk-e),inset 0 0 0 3px var(--pk-l);
-  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 0 0 1.5px var(--pk-e),inset 0 0 0 3px var(--pk-l);
-  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi),inset 0 0 0 1.5px var(--pk-e)}
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),1px 2px 3px var(--pk-o),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),1px 2px 3px var(--pk-o),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi),inset 0 0 0 1px var(--pk-e)}
 
 /* B — Poussoir : rebord clair en biseau, creux léger au centre, ombre nette posée en bas à droite (le bouton « dépasse ») */
 :root[data-pk="b"] body .pk,:root[data-pk="b"] body .pk-v{
