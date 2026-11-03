@@ -87,7 +87,7 @@
     if(c.contains("tb"))return 20;
     if((c.contains("cf-main")&&!c.contains("dp-bas"))||c.contains("cf-go")||el.id==="ev-add"||c.contains("fa-aide")||c.contains("dp-aide"))return 30;
     if(el.id==="vfa")return 40;
-    if(c.contains("seg")||c.contains("dp-mois"))return 50;
+    if(c.contains("tm"))return 20;if(c.contains("seg")||c.contains("dp-mois"))return 50;
     if(c.contains("cf-cherche")||c.contains("pr-q"))return 60;
     return 70}
   function range(c,plat,suf,id){c.classList.add("ord-"+suf);
@@ -100,6 +100,7 @@
       else{var c=$(":scope>.cf",v);if(c)range(c,[".grid2",".col"],"t","factures")}},
     planning:function(v){range(v,[".row"],"a","planning")},
     depenses:function(v){var c=$(":scope>.cf",v);if(c)range(c,[".grid2",".col"],"t","depenses")},
+    clients:function(v){if(essai){var c=$(".cl",v);if(c)range(c,[],"a","clients")}},
     prix:function(v){range(v,[".row"],"a","prix")}
   };
 
@@ -107,8 +108,30 @@
   function blocs(v){$$(".sec-h",v).forEach(function(h){if(h.closest(".bk,.tdb,.card,.sheet"))return;var c=h.nextElementSibling;
     if(!c||!c.classList.contains("card"))return;var b=document.createElement("div");b.className="bk";h.parentNode.insertBefore(b,h);b.appendChild(h);b.appendChild(c)})}
 
+
+  /* ---------- ESSAI (Cyril, 3/11 23h) : les tuiles DEVIENNENT le menu ----------
+     Plus de doublon tuiles + menu : le menu de l'onglet (Pré-devis / Fournisseur / Validés…) prend la forme de tuiles
+     chiffrées qui se touchent. Seul ce qui demande une action est teinté. Essai : ?tuiles=menu (Devis et Clients). */
+  var essai=(function(){try{var q=new URLSearchParams(location.search).get("tuiles");if(q)sessionStorage.setItem("pc-tu",q);return (q||sessionStorage.getItem("pc-tu"))==="menu"}catch(e){return /tuiles=menu/.test(location.search)}})();
+  if(essai)document.documentElement.setAttribute("data-tu","menu");
+  var TM={
+    devis:function(v){var c=$(vrai()?"#vd":".cf.dv",v),bs=c?$$(".dv-seg button",c).slice(0,3):[];if(bs.length<3)return null;var N,S;
+      if(vrai()){var R=window.PCVD||{a:0,f:0,v:0};N=[R.a,R.f,R.v];S=[R.a?"à vérifier ce soir":"rien ce soir",R.f?"prix attendus":"aucun en attente","et suivantes"]}
+      else{var D=P.D||[],f=function(s){return D.filter(function(d){return d.statut===s})},a=f("todo"),w=f("warn");
+        N=[Math.max(a.length,badge("#badge")),w.length,f("sent").length+f("signed").length];S=[N[0]?eur0(somme(a))+" HT":"rien ce soir",N[1]?"prix changé":"à jour","envoyés"]}
+      return {b:bs,N:N,S:S,T:[N[0]?"acc":"",N[1]?"acc":"",""]}},
+    clients:function(v){var c=$(".cl",v),bs=c?$$(":scope>.cl-seg button",c):[];if(bs.length<3)return null;
+      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises"],T:["",N[1]?"acc":"",""]}}
+  };
+  function menuTuiles(v){var id=v.id.replace(/^v-/,""),f=TM[id];if(!essai||!f)return false;var r=null;try{r=f(v)}catch(e){}if(!r)return false;
+    r.b[0].parentNode.classList.add("tm");
+    r.b.forEach(function(b,i){var k=r.N[i]+"|"+r.S[i]+"|"+r.T[i];if(b._tm===k&&b.querySelector(".tm-n"))return;b._tm=k;
+      $$(".tm-n,.tm-s",b).forEach(function(x){x.remove()});
+      b.insertAdjacentHTML("beforeend",'<b class="tm-n'+(r.T[i]?" "+r.T[i]:"")+'">'+esc(r.N[i])+'</b><em class="tm-s">'+esc(r.S[i])+"</em>")});
+    var old=v.querySelector(":scope .tb");if(old)old.remove();return true}
+
   var fil=0;
-  function tout(){fil=0;titreDepenses();$$("section.view").forEach(function(v){if(v.id==="v-accueil"||v.id==="v-reseaux")return;blocs(v);poseTuiles(v);
+  function tout(){fil=0;titreDepenses();$$("section.view").forEach(function(v){if(v.id==="v-accueil"||v.id==="v-reseaux")return;blocs(v);if(!menuTuiles(v))poseTuiles(v);
     var o=ORD[v.id.replace(/^v-/,"")];if(o)try{o(v)}catch(e){}})}
   function plusTard(){if(!fil)fil=setTimeout(tout,80)}
   var main=$("main")||document.body;
