@@ -140,11 +140,12 @@ var ICS={pre:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 21H6V3h8l
  doc:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg>',
  calc:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h.01M12 11h.01M15 11h.01M9 15h.01M12 15h.01M15 15h.01"/></svg>'};
 function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){return valider(d.etape)}),o=L.filter(function(d){return !valider(d.etape)});
+ window.PCVD=LISTE?{a:a.length,f:o.filter(function(d){return FOURN(d.etape)}).length,v:o.filter(function(d){return !FOURN(d.etape)}).length}:null;
  var art=lsG(KA)||{},etat=LISTE?(LISTE._cache?'Hors connexion · liste du '+esc(quand(LISTE._le)):'À jour · '+esc(quand(LISTE._le))):'Chargement…';
  var f=o.filter(function(d){return FOURN(d.etape)}),v=o.filter(function(d){return !FOURN(d.etape)});if(!VSEG&&LISTE)VSEG=a.length?'pre':f.length?'four':'val';
  var G={pre:[a,'Pré-devis à valider','Rien à valider pour l\'instant. Le café peut rester chaud.'],four:[f,'En attente du fournisseur','Aucune demande n\'attend un fournisseur.'],val:[v,'Validés et suivantes','Aucune autre demande en cours.']}[VSEG||'pre'];
- var h='<div class="cf"><div class="vh"><h2>Devis</h2><span>'+etat+'</span></div><div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',a.length],['four','Fournisseur',f.length],['val','Validés',0]].map(function(x){return '<button role="tab" type="button" data-vseg="'+x[0]+'" aria-selected="'+((VSEG||'pre')===x[0])+'">'+ICS[x[0]]+'<span>'+x[1]+'</span>'+(x[2]?'<i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div>'+
-  '<button class="btn go cf-go vnew" type="button" data-vnd><span class="lab"><span class="ic">'+ICS.plus+'</span><span>Créer un devis</span></span></button></div>'+
+ var h='<div class="cf"><div class="vh"><h2>Devis</h2><span>'+etat+'</span></div><button class="btn go cf-go vnew" type="button" data-vnd><span class="lab"><span class="ic">'+ICS.plus+'</span><span>Créer un devis</span></span></button>'+
+  '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',a.length],['four','Fournisseur',f.length],['val','Validés',0]].map(function(x){return '<button role="tab" type="button" data-vseg="'+x[0]+'" aria-selected="'+((VSEG||'pre')===x[0])+'">'+ICS[x[0]]+'<span>'+x[1]+'</span>'+(x[2]?'<i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div></div>'+
   '<div class="vh" style="margin-top:14px"><h2>'+G[1]+'</h2><span>'+G[0].length+'</span></div>'+(G[0].length?'<div class="vl">'+G[0].map(carte).join('')+'</div>':'<p class="vst">'+(LISTE?G[2]:'…')+'</p>');
  var vd=$('#vd');if(vd)vd.innerHTML=h;
  var va=$('#va');if(va)va.innerHTML=a.length?'<div class="vl">'+a.slice(0,4).map(carte).join('')+'</div>'+(a.length>4?'<button class="vbtn sm" type="button" data-vtab style="margin-top:8px">Voir les '+a.length+' demandes ›</button>':''):'<p class="vst">'+(LISTE?'Rien à valider. Profitez-en, ça ne durera pas.':'Chargement…')+'</p>';
@@ -445,7 +446,7 @@ function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){
   var G=[['À envoyer','à vérifier puis envoyer',L.filter(function(d){return d.statut==='issued'}),1],['En attente de paiement','envoyées au client',L.filter(function(d){return d.statut==='sent'||d.statut==='partial'}),0],['Payées','les plus récentes',L.filter(function(d){return d.statut==='paid'}),0]];
   var R=L.filter(function(d){return !/^(issued|sent|partial|paid)$/.test(d.statut)});if(R.length)G.push(['Autres','',R,0]);
   z.innerHTML='<h3>Vos vraies factures</h3>'+(L.length?G.filter(function(g){return g[2].length}).map(function(g){return '<div class="vfg'+(g[3]?' vfg-env':'')+'"><div class="vh"><h2>'+g[0]+(g[3]?' <i class="vrouge">'+g[2].length+'</i>':'')+'</h2><span>'+g[1]+'</span></div>'+g[2].map(li).join('')+'</div>'}).join(''):'<p class="vst" style="padding:0">Pas encore de facture. Elles se créent depuis la fiche d\'une demande, ou toutes seules quand le client signe.</p>');
-  var bf=$('#badge-f'),ne=G[0][2].length;if(bf){bf.textContent=ne;bf.hidden=!ne}},
+  if(window.PCV)window.PCV.factures=L;var bf=$('#badge-f'),ne=G[0][2].length;if(bf){bf.textContent=ne;bf.hidden=!ne}},
   function(err){z.innerHTML='<h3>Vos vraies factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vraies factures (branchement en cours).':err.message)+'</p>'})}
 
 /* ---------- clics ---------- */

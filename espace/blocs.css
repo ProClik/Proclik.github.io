@@ -1,0 +1,68 @@
+/* Tout l'Espace en blocs (Cyril, 3/11) : petites tuiles chiffrées en haut de chaque onglet, et une section = un bloc en relief, titre dedans.
+   Même dessin que les tuiles-menu (icône + chiffre, nom, détail) sur UNE ligne. Ces tuiles-là ne se touchent pas (pas de bouton poussoir) : elles informent. */
+.tb{margin:2px 0 16px;container-type:inline-size}
+.tb-g{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:10px}
+@container (max-width:520px){.tb-g.long{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tb-t{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ic n" "l l" "s s";align-items:center;justify-items:start;column-gap:8px;row-gap:1px;min-width:0;padding:11px 12px 10px;border-radius:20px;background:var(--rs);box-shadow:var(--up)}
+.tb-ic{grid-area:ic;display:grid;place-items:center;color:var(--muted)}
+.tb-ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tb-t b{grid-area:n;justify-self:end;font-size:22px;font-weight:800;line-height:1;letter-spacing:-.3px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--fg)}
+.tb-t b.cor{color:var(--cor-ink,#E0603C)}.tb-t b.chaud{color:var(--accx)}
+.tb-l{grid-area:l;font-weight:700;font-size:13.5px;color:var(--fg);max-width:100%;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-t em{grid-area:s;font-style:normal;font-size:12.5px;color:var(--muted);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-ex{margin:8px 2px 0;font-size:12px;font-style:italic;color:var(--muted)}
+/* Une section = un bloc : le titre (avec son icône) dans le bloc, la liste dessous sans second relief */
+.bk{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:16px;border-radius:24px;background:var(--rs);box-shadow:var(--up);min-width:0}
+.bk+.bk,.bk+.sec-h,.card+.bk{margin-top:16px}
+html body .bk>.sec-h{margin:0!important}
+html body .bk>.card{margin:0!important;padding:0!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important}
+.bk>.card.lst{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.bk>*{min-width:0}
+.bk>.sec-h{flex-wrap:wrap;row-gap:2px}
+.bk .cf-li{box-sizing:border-box;max-width:100%}
+/* Le même ordre sur chaque onglet (Cyril, 3/11) : nom, tuiles, gros bouton, menu, recherche, blocs.
+   blocs.js range les morceaux ; ici on les affiche dans cet ordre, sans rien déplacer dans la page. */
+.ord-a{display:flex!important;flex-direction:column;gap:14px}
+.ord-a .fl-a{display:contents!important}
+.ord-a .oi-a{margin-top:0!important;margin-bottom:0!important;min-width:0}
+/* iPad et ordinateur (Cyril, 3/11) : la même page que sur téléphone, mise à plat sur la largeur.
+   En haut : le nom de l'onglet à gauche, son gros bouton à droite ; puis les tuiles sur une ligne ; puis les blocs en pleine largeur. */
+@media (min-width:900px){
+  .ord-a{display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:16px;align-items:center;max-width:1180px}
+  .ord-a .oi-a{grid-column:1/-1}
+  .ord-a [data-r="10"]{grid-column:1;order:10!important}
+  .ord-a [data-r="30"]{grid-column:2;order:11!important;width:clamp(300px,32vw,400px)!important;justify-self:end}
+  .ord-a [data-r="31"]{order:21!important;text-align:left;margin:-6px 0 0!important}
+  .ord-a .cf-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,380px);column-gap:24px;align-items:center}
+  .ord-a .cf-hero>*:not(.cf-go){grid-column:1}
+  .ord-a .cf-hero>.cf-go{grid-column:2;grid-row:1/span 3;margin:0!important}
+}
+.dp-titre{margin:0 0 12px}
+/* Planning : « Ajouter au planning » prend le même gros bouton que les autres onglets */
+html body #v-planning .pl-go{width:100%;min-height:clamp(54px,15vw,62px);border-radius:999px;font-size:clamp(15px,4.2vw,17px);padding:0 clamp(58px,16vw,66px) 0 18px;display:flex;align-items:center}
+html body #v-planning .pl-go::after{width:clamp(38px,11vw,44px);height:clamp(38px,11vw,44px);margin-top:calc(clamp(38px,11vw,44px)/-2);right:8px}
+html body #v-planning .pl-go::before{right:calc(8px + (clamp(38px,11vw,44px) - 18px)/2)}
+#v-planning .pl-go .lab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+#v-planning .pl-go .ic{display:grid;place-items:center;width:20px;height:20px;flex:none;color:var(--muted)}
+#v-planning .pl-go .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+/* Tuiles-menu (par défaut, ?tuiles=avant pour l ancien) : le menu de l'onglet en tuiles chiffrées qui se touchent (plus de doublon tuiles + menu) */
+html[data-tu="menu"] body .seg.tm{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:10px;padding:0;background:transparent;box-shadow:none;border-radius:0}
+html[data-tu="menu"] body .seg.tm button{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ic n" "l l" "s s";align-items:center;justify-items:start;column-gap:8px;row-gap:1px;
+  padding:11px 12px 10px;border-radius:20px;text-align:left;font-size:13px;min-width:0}
+html[data-tu="menu"] .seg.tm button>svg{grid-area:ic;width:19px;height:19px}
+html[data-tu="menu"] .seg.tm button>span{grid-area:l;font-weight:700;font-size:13.5px;color:var(--fg);max-width:100%;margin-top:4px}
+html[data-tu="menu"] .seg.tm button>i{display:none!important}
+html[data-tu="menu"] .seg.tm .tm-n{grid-area:n;justify-self:end;font-size:22px;font-weight:800;line-height:1;letter-spacing:-.3px;font-variant-numeric:tabular-nums;color:var(--fg)}
+html[data-tu="menu"] .seg.tm .tm-n.chaud{color:var(--accx)}
+html[data-tu="menu"] .seg.tm .tm-s{grid-area:s;font-style:normal;font-size:12.5px;color:var(--muted);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-tu="menu"] .seg.tm button[aria-selected="true"]>span{color:var(--accx)}
+/* lisibilité : petits textes un cran plus grands et plus foncés */
+html[data-tu="menu"]{--muted:#474E62}
+@media (prefers-color-scheme:dark){html[data-tu="menu"]:not([data-theme="light"]){--muted:#C9D0E2}}
+html[data-tu="menu"][data-theme="dark"]{--muted:#C9D0E2}
+html[data-tu="menu"] .cf-li small,html[data-tu="menu"] .cf .hint{font-size:13px}
+html[data-tu="menu"] body .seg.tm button{background:var(--rs)!important;box-shadow:var(--up)!important}
+html[data-tu="menu"] body .seg.tm button[aria-selected="true"]{box-shadow:var(--in)!important}
+html[data-tu="menu"] .seg.tm button>svg{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+html[data-tu="menu"] .seg.tm button[aria-selected="true"]>svg{color:var(--accx)}
+html[data-tu="menu"] .seg.tm .tm-n{text-align:right;padding:0!important;min-width:0!important;margin:0!important}

@@ -1566,7 +1566,7 @@ $$('.tip[data-tip]').forEach(function(t){if(tipsOff[t.dataset.tip])t.hidden=true
 /* ---------- démarrage du module ---------- */
 renderFour();renderChList();relUI();renderList();
 /* Clients et Factures (clients.js) se servent des mêmes données et du même panneau */
-window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet,saveD:save,renderList:renderList,SUP:SUP,curCh:function(){return curCh},saveCH:saveCH,showCh:showCh,VX:VX,EV:EV};
+window.PCX={xopen:xopen,xclose:xclose,go:go,toast:toast,eur:eur,r2:r2,esc:esc2,find:find,tot:tot,D:D,DOS:DOS,CH:CH,openDossier:openDossier,pdfDevis:pdfDevis,cfin:cfin,lsGet:lsGet,lsSet:lsSet,saveD:save,renderList:renderList,SUP:SUP,curCh:function(){return curCh},saveCH:saveCH,showCh:showCh,VX:VX,EV:EV,DP:DP,wk:function(){return calWk}};
 Object.assign(window.PCX,{avc:avc,fourHTML:fourHTML,coutHTML:coutHTML,openFact:openFact,updPin:updPin,online:online,attente:function(t){Q.push({t:t});save();netUI();},renderFour:renderFour,renderTodo:renderTodo,dicter:function(n){vsel=n;listen();},SOON:SOON,CX:CX,FST:FST,CATA:CATA,DP:DP,saveDP:saveDP,openDoc:openDoc,DOCS:DOCS,pdfAcompte:pdfAcompte,setCurCh:function(v){curCh=v},EV:EV,CK:CK,calKey:calKey,renderCalWeek:renderCalWeek,renderCalMonth:renderCalMonth,calWeek:function(d){if(d)calWk=monday(d);return calWk},TODAY:TODAY,iso:iso,evDetail:evDetail});
 if(!lsGet('pc-welcome',0)){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(showWelcome,200)});else setTimeout(showWelcome,200);}
 
@@ -1673,7 +1673,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 
 <script src="config.js?v=2"></script>
 <script src="options.js?v=2"></script>
-<script src="vrai.js?v=21"></script>
+<script src="vrai.js?v=22"></script>
 <link rel="stylesheet" href="relief.css?v=17">
 <link rel="stylesheet" href="intro.css?v=4"><script src="intro.js?v=7"></script>
 <link rel="stylesheet" href="planning.css?v=3">
@@ -1681,17 +1681,17 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="accueil.js?v=11"></script>
 <link rel="stylesheet" href="clients.css?v=5">
 <script src="gps.js?v=1"></script>
-<script src="clients.js?v=6"></script>
+<script src="clients.js?v=8"></script>
 <link rel="stylesheet" href="devis.css?v=3">
-<script src="devis.js?v=6"></script>
-<script src="commandes.js?v=1"></script>
+<script src="devis.js?v=7"></script>
+<script src="commandes.js?v=2"></script>
 <link rel="stylesheet" href="chantiers.css?v=1">
 <script src="chantiers.js?v=4"></script>
-<script src="planning-ajout.js?v=1"></script>
+<script src="planning-ajout.js?v=2"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
 <script src="depenses.js?v=3"></script>
 <link rel="stylesheet" href="produits.css?v=1">
-<script src="produits.js?v=3"></script>
+<script src="produits.js?v=4"></script>
 <link rel="stylesheet" href="reseaux.css?v=1">
 <script src="reseaux.js?v=2"></script>
 <script src="plan-plein.js?v=1"></script>
@@ -1704,4 +1704,5 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="fige.js?v=3"></script>
 <link rel="stylesheet" href="poussoir.css?v=1">
 <script src="poussoir.js?v=2"></script>
-<script src="titres.js?v=1"></script>
+<script src="titres.js?v=2"></script>
+<link rel="stylesheet" href="blocs.css?v=3"><script src="blocs.js?v=3"></script>
