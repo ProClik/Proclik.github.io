@@ -1,4 +1,4 @@
-/* Espace ProClik : les options de l'abonnement (Cliky, Réservation, SMS, Avis Google, Mise en service).
+/* Espace ProClik : les options de l'abonnement (celles du site ProClik : Cliky, Réservation, SMS, Assistant du site, Votre image ; plus Avis Google et Réseaux sociaux, demande de Cyril du 3/11).
    window.PCOPT.actif('cliky') dit si l'option est prise ; window.PCTAG('cliky') donne le bandeau à poser en haut d'un bloc
    (icône + nom bien visibles), pour que l'artisan voie tout de suite ce qui vient d'une option.
    Source : la connexion de l'Espace (artisan.options, renvoyé par le service ProClik). Sans réponse du service, Cliky compte
@@ -10,7 +10,9 @@ var O={
  reservation:{n:'Réservation',i:I('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="m9 15 2 2 4-4"/>')},
  sms:{n:'SMS',i:I('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>')},
  avis:{n:'Avis Google',i:I('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>')},
- service:{n:'Mise en service',i:I('<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/>')}
+ assistant:{n:'Assistant du site',i:I('<path d="M4 5h16v11H9l-5 4z"/><path d="M12 8.5v4M10 10.5h4"/>')},
+ image:{n:'Votre image',i:I('<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.3-1.7-.4-1 .2-2.3 1.4-2.3H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r="1.2" fill="currentColor" stroke="none"/>')},
+ reseaux:{n:'Réseaux sociaux',i:I('<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>')}
 };
 var lit=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 function actif(k){var a=lit('pc-vrai-artisan');if(a&&a.options&&a.options[k]!=null)return !!a.options[k];
