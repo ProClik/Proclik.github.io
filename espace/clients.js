@@ -51,7 +51,8 @@ var IC={fact:I('<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9
  cherche:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),
  perso:I('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/><path d="M19 3v4M17 5h4"/>'),
  acompte:I('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/>'),
- recue:I('<path d="M3 13h5l2 3h4l2-3h5"/><path d="M3 13l3-8h12l3 8v6H3z"/>')};
+ recue:I('<path d="M3 13h5l2 3h4l2-3h5"/><path d="M3 13l3-8h12l3 8v6H3z"/>'),
+ poub:I('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/>')};
 /* Écusson au trait laiton, coche et petit ruban tricolore (même dessin que le site) */
 var ECU='<svg class="ecu" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l7 2.8v5.2c0 4.6-3 8.1-7 10.4-4-2.3-7-5.8-7-10.4V5.6z"/><path d="M8.8 11.6l2.3 2.3 4.3-4.6"/><g stroke="none"><rect x="8.9" y="16.9" width="2.1" height="1.3" rx=".3" fill="#2B4C9B"/><rect x="11" y="16.9" width="2" height="1.3" fill="#E9ECF2"/><rect x="13" y="16.9" width="2.1" height="1.3" rx=".3" fill="#C8463C"/></g></svg>';
 
@@ -60,7 +61,7 @@ var ECU='<svg class="ecu" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.
    une ligne par client ; la fiche montre ses coordonnées, les boutons Appeler / SMS / Mail / Itinéraire,
    puis un menu Pré-devis · Devis validés · Factures (acomptes compris). */
 var ORDRE=['durand','martin','lopez','fabre','garcia','bernard','alpes','tilleuls','perrin','rey'];
-function cles(){var k=ORDRE.filter(function(x){return DOS[x]});Object.keys(NEW).forEach(function(x){if(k.indexOf(x)<0)k.unshift(x)});return k}
+function cles(){var sup=X.lsGet('pc-cl-sup',[])||[],k=ORDRE.filter(function(x){return DOS[x]});Object.keys(NEW).forEach(function(x){if(k.indexOf(x)<0)k.unshift(x)});return k.filter(function(x){return sup.indexOf(x)<0})}
 function init(n){var w=String(n).replace(/^(M\.|Mme|Mlle|SCI|SARL|SAS)\s+/i,'').split(/\s+/).filter(function(x){return x&&!/^(les?|la|des|de|du)$/i.test(x)});return ((w[0]||'?').charAt(0)+(w[1]?w[1].charAt(0):'')).toUpperCase()}
 var RXPRO=/^(SCI|SARL|SAS|SASU|EURL|SA|Cabinet|Boulangerie|Société|Entreprise|Garage|Restaurant|Mairie|Copropriété)\b/i;
 function estPro(o){return o.type?o.type==='pro':RXPRO.test(o.n||'')}
@@ -114,11 +115,11 @@ var KVC='pc-vrai-clients';
 function lsJ(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function lsW(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 var VC={},vcCharge=0;
-function vraisClients(){var L=lsJ('pc-vrai-liste'),M={},out=[];
+function vraisClients(){var L=lsJ('pc-vrai-liste'),M={},out=[],sup=lsJ('pc-cl-supv')||[];
  (lsJ(KVC)||[]).forEach(function(c){if(c.contact)M[c.contact]=Object.assign({},c)});
  ((L&&L.demandes)||[]).forEach(function(d){var k=d.contact;if(!k)return;var c=M[k]||(M[k]={contact:k,nom:d.client});c.nom=c.nom||d.client;
   if(!c.demande){c.demande=d.resume||d.titre||'';c.etape=d.etape||'';c.suivre=1}});
- Object.keys(M).forEach(function(k){out.push(M[k])});VC=M;return {liste:out,charge:!!L};}
+ Object.keys(M).forEach(function(k){if(sup.indexOf(k)<0)out.push(M[k])});VC=M;return {liste:out,charge:!!L};}
 function chargerVC(){var V=window.PCV;if(!V||!V.api||Date.now()-vcCharge<60000)return;vcCharge=Date.now();
  V.api('/espace/clients').then(function(x){var loc=(lsJ(KVC)||[]).filter(function(c){return c.ici}),M={};
   (x.clients||[]).forEach(function(c){if(c.contact)M[c.contact]=c});loc.forEach(function(c){if(!M[c.contact])M[c.contact]=c});
@@ -141,7 +142,8 @@ function telLien(t){var s=String(t||'').replace(/[^\d+]/g,'');return s.length>=6
 function actions(o){var t=telLien(o.tel),m=o.mail,adr=o.adr||[o.rue,o.cp,o.v].filter(Boolean).join(' '),demo=!o.vrai&&o.tel&&!t;
  var b=function(on,href,ic,txt,attr){if(demo&&/^(tel|sms):/.test(href))return '<button type="button" class="btn sm" data-'+(href.charAt(0)==='t'?'call':'sms')+'>'+ic+'<span>'+txt+'</span></button>';return on?'<a class="btn sm" href="'+href+'"'+(attr||'')+'>'+ic+'<span>'+txt+'</span></a>':'<button type="button" class="btn sm" disabled>'+ic+'<span>'+txt+'</span></button>'};
  return '<div class="cf-act cl-act">'+b(t,'tel:'+t,IC.tel,'Appeler')+b(t,'sms:'+t,IC.sms,'SMS')+b(m,'mailto:'+encodeURIComponent(m||''),ICP.mail,'Mail')+
-  b(adr,'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(adr+(o.cp?'':', Isère')),IC.route,'Itinéraire',' target="_blank" rel="noopener"')+'</div>'}
+  /* Itinéraire : le choix du GPS (Google Maps, Waze, Plans) s'ouvre, gps.js */
+  (adr?'<button type="button" class="btn sm" data-gps="'+esc(adr+(o.cp?'':', Isère'))+'">'+IC.route+'<span>Itinéraire</span></button>':'<button type="button" class="btn sm" disabled>'+IC.route+'<span>Itinéraire</span></button>')+'</div>'}
 function coord(o){var adr=o.adr||[o.rue,[o.cp,o.v].filter(Boolean).join(' ')].filter(Boolean).join(', ');
  return '<div class="card cl-fiche">'+avatar(o)+'<div class="cl-id"><b>'+esc(o.n)+'</b><span class="pill grey">'+(estPro(o)?'Professionnel':'Particulier')+'</span></div>'+
   '<div class="kv">'+(o.entreprise&&o.entreprise!==o.n?'<span>Entreprise</span><b>'+esc(o.entreprise)+'</b>':'')+(estPro(o)&&(o.prenom||o.nom)?'<span>Contact</span><b>'+esc([o.prenom,o.nom].filter(Boolean).join(' '))+'</b>':'')+
@@ -167,7 +169,7 @@ function ficheClient(k,keep){var o=DOS[k];if(!o)return;FK=k;var F=faDe(k),V=dvDe
  var h='<div class="cf cl-f">'+coord(o)+'<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b>'+go.replace('class="btn go"','class="btn go cf-in"')+'</div>'+menuFiche({pre:P.length,dv:S.length,fa:F.length})+'<div class="cl-docs">'+corps+'</div>';
  if(o.hist&&o.hist.length)h+='<details class="xsec cl-hist"><summary>Historique</summary><div class="card"><ul class="tl">'+o.hist.map(function(x,i,a){return '<li class="'+(i===a.length-1?'last':'')+'"><small>'+esc(x[0])+'</small>'+esc(x[1])+'</li>'}).join('')+'</ul></div></details>';
  if(o.chat&&(o.chat.length||o.ph.length))h+='<button type="button" class="btn sm cf-tout" data-dos="'+k+'">Sa demande complète : conversation, photos ›</button>';
- h+='</div>';
+ h+=supBouton('data-csup="'+k+'"')+'</div>';
  X.xopen(o.n,(o.t?o.t+' · ':'')+(o.v||''),h,'<button class="btn" data-xclose>Fermer</button>',null,keep);}
 
 /* Fiche d'un vrai client : coordonnées (GHL), pré-devis (notes Cliky), devis et factures (VosFactures) */
@@ -190,8 +192,37 @@ function rendreVraie(maj){var c=VF.c,base=VC[c]||{nom:'Client'},d=VF.dem,k=(d&&d
  if(fs==='pre')corps=!P?att:P.length?'<div class="card lst cf-l">'+P.slice(0,4).map(function(p,i){return '<button class="cf-li" type="button" data-vc="'+esc(c)+'"><span class="cf-av cf-doc">'+I('<path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/>')+'</span><span class="tx"><b>'+(i?'Pré-devis plus ancien':'Pré-devis')+'</b><small>'+esc(jour(p.le)||'')+(p.resume?' · '+esc(p.resume):'')+'</small></span><span class="cf-m"><b>'+(p.totaux&&p.totaux.total_ht!=null?eur(+p.totaux.total_ht):'')+'</b><span class="pill '+(i?'grey':'todo')+'">'+(i?'Ancien':'Ouvrir')+'</span></span></button>'}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun pré-devis</b><span>Quand ce client remplit le formulaire, Cliky prépare son pré-devis ici.</span></div>';
  else if(fs==='dv')corps=!Dv?att:Dv.length?'<div class="card lst cf-l">'+Dv.map(ligneVdoc).join('')+'</div>':'<div class="card cf-rien"><b>Aucun devis</b><span>Un pré-devis validé devient un devis VosFactures, il arrive ici.</span></div>';
  else corps=!Fa?att:Fa.length?'<div class="card lst cf-l">'+Fa.map(ligneVdoc).join('')+'</div><p class="hint">Les factures d\'acompte sont rangées ici aussi.</p>':'<div class="card cf-rien"><b>Aucune facture</b><span>La facture d\'acompte se crée à l\'acceptation du devis.</span></div>';
- var h='<div class="cf cl-f" data-c="'+esc(c)+'">'+coord(o)+(VF.err?'<p class="hint cl-err">'+esc(VF.err)+'</p>':'')+menuFiche({pre:P?P.length&&1:0,dv:Dv?Dv.length:0,fa:Fa?Fa.length:0},fs)+'<div class="cl-docs">'+corps+'</div></div>';
+ var h='<div class="cf cl-f" data-c="'+esc(c)+'">'+coord(o)+(VF.err?'<p class="hint cl-err">'+esc(VF.err)+'</p>':'')+menuFiche({pre:P?P.length&&1:0,dv:Dv?Dv.length:0,fa:Fa?Fa.length:0},fs)+'<div class="cl-docs">'+corps+'</div>'+supBouton('data-csupv="'+esc(c)+'"')+'</div>';
  X.xopen(o.n||'Client',[o.v,base.demande].filter(Boolean).join(' · '),h,'<button class="btn" data-xclose>Fermer</button>'+(P&&P.length?'<button class="btn go" data-vc="'+esc(c)+'">Ouvrir le pré-devis</button>':''),null,false);}
+
+/* ---------- supprimer un client (demande de Cyril, 3/11) ----------
+   Un petit bouton discret tout en bas de la fiche, puis une page qui dit exactement ce qui va se passer, avant le bouton rouge.
+   Le service (Worker) vérifie ses devis et factures : sans document, le client disparaît partout (Espace, GHL, VosFactures) ;
+   avec des documents, ils restent dans VosFactures (factures gardées 10 ans, numéros sans trou) ; facture pas payée : on attend. */
+function supBouton(attr){return '<button type="button" class="cl-sup" '+attr+'>'+IC.poub+'<span>Supprimer ce client</span></button>'}
+var pl=function(n,un,plus){return n+' '+(n>1?plus:un)};
+function supTexte(nom,b){var docs=[b.devis?pl(b.devis,'devis','devis'):'',b.factures?pl(b.factures,'facture','factures'):'',b.avoirs?pl(b.avoirs,'avoir','avoirs'):''].filter(Boolean).join(' et ').replace(/ et (?=.* et )/,', ');
+ if(b.impayees&&b.impayees.length)return {ok:0,h:'<div class="card cl-sup-c"><b>Pas tout de suite</b><p>'+esc(nom)+' a '+(b.impayees.length>1?b.impayees.length+' factures pas encore payées':'une facture pas encore payée')+'\u00a0: '+
+  b.impayees.map(function(f){return esc((f.numero?'n° '+f.numero:'facture')+(f.ttc!=null?', '+eur(+f.ttc)+' TTC':''))}).join(' ; ')+'.</p><p>Une fois payée, ou annulée par un avoir, vous pourrez supprimer ce client. Comme ça, aucun argent dû ne se perd de vue.</p></div>'};
+ var h='<div class="card cl-sup-c"><b>Ce qui part</b><p>'+esc(nom)+' disparaît de votre Espace et de vos contacts (GHL), avec sa demande, ses photos et ses messages. Plus de SMS ni de rappel à son nom.</p></div>';
+ if(b.garde)h+='<div class="card cl-sup-c"><b>Ce qui reste : '+esc(docs)+'</b><p>La loi oblige à garder les factures pendant 10 ans, et leurs numéros doivent se suivre sans trou. '+'Tout reste donc rangé dans VosFactures et dans votre onglet Factures, avec la fiche VosFactures qui les porte. Ce client n\'apparaît simplement plus dans votre liste.</p></div>';
+ else h+='<div class="card cl-sup-c"><b>Dans VosFactures aussi</b><p>Sa fiche VosFactures est supprimée aussi : aucun devis ni facture n\'est à son nom.</p></div>';
+ return {ok:1,h:h+'<p class="cl-sup-def">C\'est définitif : impossible de revenir en arrière.</p>'};}
+function supPied(ok,attr){return '<button class="btn" type="button" data-csupnon>'+(ok?'Annuler':'Retour')+'</button>'+(ok?'<button class="btn cl-sup-go" type="button" '+attr+'>'+IC.poub+'<span>Supprimer définitivement</span></button>':'')}
+function supPoser(t,pied){var i=$('#x-in .cl-sup-p');if(!i)return;i.innerHTML=t;$('#x-foot').innerHTML=pied;$('#x-foot').hidden=false;}
+/* démonstration : rien n'est supprimé pour de vrai, le client est seulement caché de la liste sur cet appareil */
+function supDemo(k){var o=DOS[k];if(!o)return;var F=faDe(k),V=dvDe(k);
+ var b={devis:V.length,factures:F.length,avoirs:0,garde:F.length+V.length>0,impayees:F.filter(function(f){return f.st!=='payee'}).map(function(f){return {numero:f.id,ttc:ftot(f).ttc}})};
+ var t=supTexte(o.n,b);X.xopen('Supprimer '+o.n+' ?','Client fictif de démonstration','<div class="cl-sup-p">'+t.h+'</div>',supPied(t.ok,'data-csupok="'+k+'"'),null,true);}
+function supVrai(c){var V=window.PCV,nom=(VC[c]&&VC[c].nom)||'ce client';if(!V||!V.api)return;
+ X.xopen('Supprimer '+nom+' ?','Je regarde ses devis et factures…','<div class="cl-sup-p"><div class="card cf-rien"><span>Vérification dans VosFactures…</span></div></div>',supPied(0),null,true);
+ V.api('/espace/client/supprimer',{method:'POST',body:{contact:c,verifier:true}}).then(function(x){var t=supTexte(nom,x.bilan||{});$('#x-s').textContent='';supPoser(t.h,supPied(t.ok,'data-csupvok="'+esc(c)+'"'))},
+  function(e){supPoser('<div class="card cl-sup-c"><b>Vérification impossible</b><p>'+esc(e.message)+'</p></div>',supPied(0))});}
+function supFait(c,b){var nom=(VC[c]&&VC[c].nom)||'Le client',sup=(lsJ('pc-cl-supv')||[]).concat([c]).slice(-50);lsW('pc-cl-supv',sup);
+ lsW(KVC,(lsJ(KVC)||[]).filter(function(x){return x.contact!==c}));
+ var L=lsJ('pc-vrai-liste');if(L&&L.demandes){L.demandes=L.demandes.filter(function(d){return d.contact!==c});lsW('pc-vrai-liste',L)}
+ delete VC[c];vcCharge=0;VF={c:null,dem:null,docs:null,err:''};X.xclose();vueClients();
+ X.toast('Client supprimé',nom+(b&&b.garde?' : ses devis et factures restent dans VosFactures, comme la loi le demande.':' n\'est plus ni dans GHL ni dans VosFactures.'));}
 
 /* ---------- devis et factures ---------- */
 function ligneFa(f,ici){var t=ftot(f),s=ST[f.st];
@@ -335,7 +366,7 @@ function conf(){X.xopen('Devis et factures conformes','Ce que ProClik fait pour 
  '<button class="btn" data-xclose>Fermer</button>');}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-clseg],[data-cfseg],[data-ctype],[data-cciv],[data-cvf],[data-cpdf],[data-cli],[data-cadd],[data-caddok],[data-cfa],[data-cdv],[data-crc],[data-cseg],[data-cnew],[data-cdocok],[data-ctva],[data-cfsend],[data-cfpay],[data-cfrel],[data-cfedit],[data-crcpay],[data-cdvsend],[data-cconf]');if(!b)return;
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-clseg],[data-cfseg],[data-ctype],[data-cciv],[data-cvf],[data-cpdf],[data-cli],[data-cadd],[data-caddok],[data-cfa],[data-cdv],[data-crc],[data-cseg],[data-cnew],[data-cdocok],[data-ctva],[data-cfsend],[data-cfpay],[data-cfrel],[data-cfedit],[data-crcpay],[data-cdvsend],[data-cconf],[data-csup],[data-csupv],[data-csupok],[data-csupvok],[data-csupnon]');if(!b)return;
  var a=function(n){return b.getAttribute(n)};
  if(b.hasAttribute('data-clseg')){cseg=a('data-clseg');vueClients();}
  else if(b.hasAttribute('data-cfseg')){fseg=a('data-cfseg');if(VF.c&&document.querySelector('#xsheet .cl-f[data-c]'))rendreVraie(1);else if(FK)ficheClient(FK);}
@@ -360,6 +391,12 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-crcpay')){RCs[a('data-crcpay')]='payee';X.lsSet('pc-rc1',RCs);RC.forEach(function(r){if(RCs[r.id])r.st=RCs[r.id]});X.xclose();vueFactures();X.toast('Facture fournisseur payée','Elle reste rangée avec le chantier.');}
  else if(b.hasAttribute('data-cdvsend')){var v=DVN.filter(function(x){return x.id===a('data-cdvsend')})[0];if(v){v.st='envoye';v.d='envoyé à l\'instant';save();}X.xclose();vueFactures();X.toast('Devis envoyé','Démo : rien n\'est parti. En vrai, le client le reçoit et le signe en ligne.');}
  else if(b.hasAttribute('data-cconf'))conf();
+ else if(b.hasAttribute('data-csupnon')){var xb=$('#x-back');if(xb&&!xb.hidden)xb.click();else X.xclose();}
+ else if(b.hasAttribute('data-csup'))supDemo(a('data-csup'));
+ else if(b.hasAttribute('data-csupv'))supVrai(a('data-csupv'));
+ else if(b.hasAttribute('data-csupok')){var k=a('data-csupok'),n=DOS[k]?DOS[k].n:'';var L=X.lsGet('pc-cl-sup',[])||[];if(L.indexOf(k)<0)L.push(k);X.lsSet('pc-cl-sup',L);X.xclose();vueClients();X.toast('Client supprimé (démo)',n+' est caché de la liste sur cet appareil. Dans votre Espace, il part aussi de GHL et de VosFactures.');}
+ else if(b.hasAttribute('data-csupvok')){if(b.disabled)return;b.disabled=true;b.lastChild.textContent='Suppression…';var c=a('data-csupvok');
+  window.PCV.api('/espace/client/supprimer',{method:'POST',body:{contact:c}}).then(function(x){supFait(c,x.bilan)},function(e){b.disabled=false;b.lastChild.textContent='Réessayer';var p=$('#x-in .cl-sup-p'),v=p&&p.querySelector('.cl-sup-err');if(v)v.remove();if(p)p.insertAdjacentHTML('afterbegin','<div class="card cl-sup-c cl-sup-err"><b>Pas supprimé</b><p>'+esc(e.message)+'</p></div>')});}
 });
 /* Kbis choisi : son nom s'affiche à la place de « Ajouter le Kbis » */
 document.addEventListener('change',function(e){if(e.target&&e.target.id==='cf-kbis'){var f=e.target.files[0],n=$('#cf-kbis-n');if(n)n.textContent=f?f.name:'Ajouter le Kbis'}});
