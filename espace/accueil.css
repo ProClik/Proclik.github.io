@@ -195,35 +195,3 @@ html body .tdb .acc-go{min-height:54px}
 .mini i:first-child{background:var(--acc)}
 .tdb .afa-tx small em{font-style:normal;font-weight:700}
 
-/* ---------- Essai « plus de couleur » (Cyril 3/11 21h) : le jaune de son image de référence, en aplat, comme dans l'image
-   (pastille du jour, étiquette, icône active). Les alertes restent rouges, le texte reste encre. Essai : ?couleur=jaune ---------- */
-html[data-couleur="jaune"]{--jn:#EFC356;--jn-ink:#2A2310;--jn-doux:color-mix(in srgb,#EFC356 22%,var(--rs))}
-html[data-couleur="jaune"][data-theme="dark"]{--jn:#DDB24E;--jn-ink:#1E1A0E}
-html[data-couleur="jaune"] .tdb .w-h .w-ic,html[data-couleur="jaune"] .tdb .tu-h .w-ic{background:var(--jn);color:var(--jn-ink);box-shadow:var(--up-s)}
-html[data-couleur="jaune"] .tdb .w-h.urg>small{padding:4px 10px;border-radius:999px;background:var(--jn);color:var(--jn-ink)}
-html[data-couleur="jaune"] .tdb .parc-e.ici .parc-ic{background:var(--jn);color:var(--jn-ink);box-shadow:var(--up-s)}
-html[data-couleur="jaune"] .tdb .parc-e.fait .parc-ic{color:var(--jn-ink);background:var(--jn-doux)}
-html[data-couleur="jaune"] .tdb .parc-l.fait{background:var(--jn)}
-html[data-couleur="jaune"] .tdb .ag-d.on{background:var(--jn);box-shadow:var(--up-s)}
-html[data-couleur="jaune"] .tdb .ag-d.on b,html[data-couleur="jaune"] .tdb .ag-d.on small{color:var(--jn-ink)}
-html[data-couleur="jaune"] .tdb .ag-d.on i{background:var(--jn-ink)}
-html[data-couleur="jaune"] .tdb .ag-d i{background:var(--jn)}
-html[data-couleur="jaune"] .tdb .ag-e.k-run{border-left-color:var(--jn)}
-html[data-couleur="jaune"] .tdb .bar.on .bar-f>span{background:var(--jn)}
-html[data-couleur="jaune"] .tdb .ch-r span{background:var(--jn)}
-html[data-couleur="jaune"] .tdb .ch-p em{color:var(--fg)}
-html[data-couleur="jaune"] .tdb .nv-ic{background:var(--jn);color:var(--jn-ink);box-shadow:var(--up-s)}
-html[data-couleur="jaune"] .tdb .t-valider .afa-ic{background:var(--jn);color:var(--jn-ink);box-shadow:var(--up-s)}
-html[data-couleur="jaune"] .tdb .ar-ev{padding:2px 8px;border-radius:999px;background:var(--jn-doux);color:var(--jn-ink)}
-html[data-couleur="jaune"] .tdb .tdb-perso svg{color:var(--jn-ink)}
-
-/* ---------- Essai « fond et blocs teintés » (Cyril 3/11 21h19) : les teintes de son image de référence, en jour.
-   Fond de page beige clair chaud, blocs presque blancs, et ce qui compte à l'intérieur (lignes à faire, jours, chantiers,
-   boutons) un cran plus foncé pour ressortir. Même dessin, seules les couleurs changent. Essai : ?fond=chaud ---------- */
-html[data-fond="chaud"]:not([data-theme="dark"]){--bg:#EEECE6;--rs:#EEECE6;--cx:#EEECE6;--lo:rgba(60,48,24,.18);--ilo:rgba(60,48,24,.15)}
-html[data-fond="chaud"]:not([data-theme="dark"]) body{background:#EEECE6}
-html[data-fond="chaud"]:not([data-theme="dark"]) .tdb .w{--rs:#FCFBF9;--cx:#EFEDE7;--hi:#FFFFFF;--lo:rgba(60,48,24,.16);--ilo:rgba(60,48,24,.14);--ihi:rgba(255,255,255,.9);background:#FCFBF9}
-html[data-fond="chaud"]:not([data-theme="dark"]) .tdb .w :is(.af-b,.ch-b,.ag-d,.nv button,.nv-1,.op-b,.ligne,.acc-go){background:#F2F0EA}
-html[data-fond="chaud"]:not([data-theme="dark"]) .tdb .w .ag-d.on{background:#E6E3DA}
-html[data-fond="chaud"]:not([data-theme="dark"]) .tdb .tu{background:#FCFBF9}
-html[data-fond="chaud"]:not([data-theme="dark"]) .tdb-perso,html[data-fond="chaud"]:not([data-theme="dark"]) .tdb-bar{background:#FCFBF9}

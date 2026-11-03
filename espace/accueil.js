@@ -62,7 +62,6 @@
   };
 
   /* ---------- ce qui est enregistré ---------- */
-  try{var cj=(location.search.match(/[?&]couleur=(\w+)/)||[])[1];if(cj)document.documentElement.setAttribute("data-couleur",cj);var fd=(location.search.match(/[?&]fond=(\w+)/)||[])[1];if(fd)document.documentElement.setAttribute("data-fond",fd)}catch(e){}
   var CLE="pc-tdb1",essai=(location.search.match(/[?&]accueil=([abc])/)||[])[1];
   function lire(){if(essai)return {p:essai,L:PRESETS[essai].L.slice()};
     try{var o=JSON.parse(localStorage.getItem(CLE)||"null");if(o&&o.L&&o.L.length!=null)return {p:o.p||"",L:o.L.filter(function(x){return W[x[0]]&&W[x[0]].t.indexOf(x[1])>=0})}}catch(e){}
