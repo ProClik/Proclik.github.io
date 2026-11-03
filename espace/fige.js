@@ -6,7 +6,7 @@
 var d=document,root=d.documentElement,b=d.body,fige=false,Y=0,prevu=0;
 var CONNUS='.sheet.on,.scrim.on,.pcov:not([hidden]),#welcome:not([hidden]),[aria-modal="true"]:not([hidden])';
 var IGNORE=/(^|\s)(pb|pb-menu|pb-scrim|toast|head|nav)(\s|$)/;
-function visible(e){var s=getComputedStyle(e);if(s.display==='none'||s.visibility==='hidden'||+s.opacity<.05)return false;var r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight}
+function visible(e){var s=getComputedStyle(e);if(s.display==='none'||s.visibility==='hidden'||+s.opacity<.05)return false;var r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth}
 function ouverte(){
   if(root.classList.contains('pb-ouvert'))return true;
   var L=d.querySelectorAll(CONNUS);for(var i=0;i<L.length;i++)if(visible(L[i]))return true;
