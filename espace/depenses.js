@@ -151,7 +151,7 @@ function form(id){var pre=/^ch:/.test(id||'')?id.slice(3):null,mo=/^mois:/.test(
   '<label>Où <small>facultatif</small><input id="dp-ou" autocomplete="off" placeholder="Ex. : Station du Versoud" value="'+esc(x&&x.ou||'')+'"></label>'+
   '<details class="dp-tva"><summary>TVA : <b id="dp-tv">'+String(F.tva).replace('.',',')+' %</b> · changer</summary><div class="seg" role="tablist">'+[0,5.5,10,20].map(function(t){return '<button type="button" role="tab" data-dptva="'+t+'" aria-selected="'+(t===F.tva)+'">'+String(t).replace('.',',')+' %</button>'}).join('')+'</div></details>'+
   '<p class="hint">Vous pouvez aussi dicter : touchez le micro, « 72 euros de gazole ».</p>'+
-  '<p class="dp-opt"><b>Option Cliky</b> : le ticket photographié est lu tout seul, montant et magasin remplis. Sans l\'option, vous tapez ou dictez le montant.</p></div>';
+  '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'<b>Option Cliky</b> ')+'Le ticket photographié est lu tout seul, montant et magasin remplis. Sans l\'option, vous tapez ou dictez le montant.</div></div>';
  X.xopen(x?(x.ranger?'Ranger le ticket':'Modifier la dépense'):'Ajouter une dépense',x&&x.ranger?'Il ne manque que le chantier':'Trois choses, et c\'est rangé',h,'<button class="btn" data-xclose>Annuler</button><button class="btn go" data-depok>Enregistrer</button>',function(){
   var f=$('#dp-file');if(f)f.addEventListener('change',function(){if(f.files&&f.files[0])photo(f.files[0])});
   var mm=$('#dp-m');if(mm)mm.addEventListener('input',majTtc);majTtc();

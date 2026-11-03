@@ -150,7 +150,7 @@ function pointCard(c){var txt=c.pointTxt||pointTexte(c);
   '<div class="row" style="gap:8px"><button class="btn" style="flex:1" id="ch-ptr">Refaire</button><button class="btn go" style="flex:1" id="ch-pts">'+(c.pointSent?'Renvoyer':'Envoyer le SMS')+'</button></div></div>';}
 var QUAND=[['jour','Le jour de la facture finale'],['lendemain','Le lendemain (conseillé)'],['3j','3 jours après']];
 function avisCard(c){var a=c.avis||(c.avis={on:true,quand:'lendemain'});
- return '<div class="card" id="ch-avis"><div class="ch-sw"><span>Demander un avis Google<small>Option. Part tout seul quand la facture finale est envoyée.</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+!!a.on+'" id="ch-avt" aria-label="Demander un avis Google"></button></div>'+
+ return '<div class="card" id="ch-avis">'+(window.PCTAG?PCTAG('avis'):'')+'<div class="ch-sw"><span>Demander un avis Google<small>Part tout seul quand la facture finale est envoyée.</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+!!a.on+'" id="ch-avt" aria-label="Demander un avis Google"></button></div>'+
   (a.on?'<div class="ch-quand">'+QUAND.map(function(q){return '<button type="button" class="btn" data-avq="'+q[0]+'" aria-pressed="'+(a.quand===q[0])+'">'+q[1]+'</button>'}).join('')+'</div>':'')+
   (c.st==='done'?'<p class="hint" style="margin-top:8px">'+(a.on?'Chantier terminé : demande d\'avis envoyée après la facture finale.':'Pas de demande d\'avis pour ce chantier.')+'</p>':'')+'</div>';}
 

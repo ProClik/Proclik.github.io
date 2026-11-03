@@ -156,7 +156,7 @@ function aLaMain(){var doc=CUR.doc,P=pieces(doc),pre=filtre;
   '<div class="dl-q"><span>Quantité</span><input id="dm-q" inputmode="decimal" value="1" aria-label="Quantité"><input id="dm-u" class="dl-u" value="u" aria-label="Unité"></div>'+
   '<label>Prix unitaire HT<input id="dm-p" inputmode="decimal" placeholder="0,00"></label>'+
   (P.length?'<label>Pièce<select id="dm-pc">'+P.map(function(p){return '<option>'+esc(p)+'</option>'}).join('')+'</select></label>':'')+
-  '<p class="dp-opt"><b>'+(CLIKY?'Avec Cliky':'Option Cliky')+'</b> : '+(CLIKY?'ce produit entre aussi dans votre base de prix, pour les prochains devis.':'le produit tapé entrerait dans votre base. Sans l\'option, il reste dans ce document.')+'</p>'+
+  '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'<b>Option Cliky</b> ')+(CLIKY?'Ce produit entre aussi dans votre base de prix, pour les prochains devis.':'Le produit tapé entrerait dans votre base. Sans l\'option, il reste dans ce document.')+'</div>'+
   '<p class="hint">Vous pouvez aussi dicter : touchez le micro.</p></div>';
  X.xopen('Créer un produit','Il rejoint ce devis'+(CLIKY?' et votre base':''),h,'<button class="btn" data-dvback>Retour</button><button class="btn go" data-dmok>Ajouter</button>',function(){setTimeout(function(){var d=$('#dm-d');if(d&&!matchMedia('(pointer:coarse)').matches)d.focus()},200)},true);}
 function aLaMainOk(){var doc=CUR.doc,d=$('#dm-d').value.trim(),p=r2(num($('#dm-p').value)),q=r2(num($('#dm-q').value))||1,u=$('#dm-u').value.trim()||'u',s=$('#dm-pc');

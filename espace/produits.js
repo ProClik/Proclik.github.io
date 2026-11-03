@@ -95,7 +95,7 @@ function vue(){var v=$('#v-produits');if(!v)return;
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Produits">'+[['produit','Produits',IC.prod,nP],['prestation','Prestations',IC.presta,nS],['cliky','Base Cliky',IC.cliky,0]].map(function(s){return '<button role="tab" type="button" data-prodseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+s[2]+'<span>'+s[1]+'</span>'+(s[3]?'<i>'+s[3]+'</i>':'')+'</button>'}).join('')+'</div>';
  if(seg==='cliky'){
   h+='<div class="card pr-info"><span class="pr-ci">'+IC.cliky+'</span><div><b>Avec Cliky, votre base est déjà remplie</b><p>Les prix de matériaux et de pose qu\'il utilise pour vos pré-devis sont là dès le départ. Un produit que vous créez vous-même rejoint aussi la base de Cliky, après vérification par ProClik.</p></div></div>'+
-   '<div class="card pr-info"><span class="pr-ci">'+IC.cle+'</span><div><b>Mise en service <span class="pill">Option</span></b><p>On crée votre base complète avec vous, ou à partir de vos documents (tarifs fournisseurs, anciens devis). Vous arrivez sur un Espace prêt pour faire vos devis.</p><button class="btn sm" type="button" data-prodmes>Ça m\'intéresse</button></div></div>'+
+   '<div class="card pr-info"><div style="flex:1;min-width:0">'+(window.PCTAG?PCTAG('cliky','Mise en service'):'<b>Mise en service</b>')+'<p>On crée votre base complète avec vous, ou à partir de vos documents (tarifs fournisseurs, anciens devis). Vous arrivez sur un Espace prêt pour faire vos devis.</p><button class="btn sm" type="button" data-prodmes>Ça m\'intéresse</button></div></div>'+
    '<p class="hint">Un produit manque dans la base de Cliky ? Créez-le ici : il part tout seul chez ProClik pour être ajouté.</p>';
  }else{
   h+='<label class="pr-q">'+IC.cherche+'<input id="pr-q" type="search" autocomplete="off" placeholder="'+(seg==='prestation'?'Chercher : cloison, pose…':'Chercher : BA13, vis, laine…')+'" value="'+esc(q)+'"></label>';
@@ -126,7 +126,7 @@ function corps(){var p=F;
   '<div class="pr-pu"><label>Prix HT<input id="pr-p" inputmode="decimal" autocomplete="off" placeholder="0,00" value="'+(p.p?String(p.p).replace('.',','):'')+'"></label><span class="pr-par">par</span></div>'+
   '<div class="pr-u" role="group" aria-label="Unité">'+UNITES.map(function(u){return '<button type="button" data-pru="'+esc(u)+'" aria-pressed="'+(p.u===u)+'">'+esc(u)+'</button>'}).join('')+'</div>'+
   '<label>Famille<select id="pr-f">'+FAMS.map(function(f){return '<option'+(f===p.f?' selected':'')+'>'+esc(f)+'</option>'}).join('')+'</select></label>'+
-  (CLIKY?'<p class="dp-opt"><b>Option Cliky</b> : '+(p.c&&!p.neuf?'vos changements comptent aussi pour vos prochains pré-devis.':'ce produit rejoint aussi la base de Cliky, après vérification par ProClik.')+'</p>':'')+
+  (CLIKY?'<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'<b>Option Cliky</b> ')+(p.c&&!p.neuf?'Vos changements comptent aussi pour vos prochains pré-devis.':'Ce produit rejoint aussi la base de Cliky, après vérification par ProClik.')+'</div>':'')+
   '</div>'}
 function form(c,nom){var x=c&&liste().filter(function(p){return p.c===c})[0];
  F=x?{c:x.c,d:x.d,x:x.x||'',p:x.p,u:x.u||'u',i:icoDe(x),k:genre(x),f:famille(x),ex:x.ex}:{neuf:1,d:nom||'',u:'u',i:'',k:seg==='prestation'?'prestation':'produit',f:'Divers',ouvert:!nom};
