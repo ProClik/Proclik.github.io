@@ -1,0 +1,158 @@
+/* Chantiers de l'Espace (chantiers.js, demandes de Cyril du 2/11) : même matière « Relief doux » que clients.css et devis.css.
+   Le résumé s'ouvre seul, puis un menu à icônes ouvre une partie à la fois. */
+#chx .ch-top{display:flex;flex-direction:column;gap:14px}
+#chx .ch-go{margin-bottom:2px}
+#chx .kpis{margin-top:0}
+/* Le menu du haut : deux galets (En cours, Tous les chantiers) */
+html body #chx .ch-seg{grid-template-columns:repeat(2,1fr)}
+/* Le menu à icônes d'un chantier : 4 galets par ligne, le choisi est creusé */
+html body #chx .ch-menu{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px;border-radius:22px}
+html body #chx .ch-menu button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 2px 8px;border-radius:16px;font-size:12px;min-width:0}
+#chx .ch-menu svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#chx .ch-menu button[aria-selected="true"] svg{color:var(--accx)}
+#chx .ch-menu button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#chx .ch-menu button i{position:absolute;top:4px;right:calc(50% - 24px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--acc);color:#fff;font:800 10px/16px var(--f,inherit);font-style:normal}
+@media (min-width:900px){html body #chx .ch-menu{grid-template-columns:repeat(8,1fr)}}
+#chx .ch-pane{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+#chx .ch-pane .grid2{margin:0}
+#chx .ch-back2{align-self:flex-start;font-size:13px;font-weight:700;color:var(--muted);background:none;border:0;padding:2px 0;cursor:pointer}
+/* Résumé : l'anneau d'avancement, la prochaine étape, ce qu'il reste à faire */
+.ch-res{display:flex;align-items:center;gap:16px}
+.ch-res .ring{width:84px;height:84px;flex:none}
+.ch-res .ring span{font-size:19px}
+.ch-res .tx{min-width:0;display:grid;gap:4px}
+.ch-res .tx b{font-size:16px}
+.ch-res .tx small{font-size:13px;color:var(--muted);line-height:1.4}
+.ch-afaire{display:grid;gap:8px}
+.ch-afaire button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:16px;border:0;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font:600 14px var(--f,inherit);cursor:pointer}
+.ch-afaire button .n{flex:none;min-width:28px;height:28px;padding:0 8px;border-radius:14px;display:grid;place-items:center;background:var(--cx);box-shadow:var(--in);color:var(--accx);font-weight:800;font-size:13px}
+.ch-afaire button .tx{flex:1;min-width:0}
+.ch-afaire button .go{color:var(--muted)}
+/* Le client : l'essentiel, et quatre boutons ronds */
+.ch-cli{display:grid;gap:4px}
+.ch-cli b{font-size:16px}
+.ch-cli span{font-size:13.5px;color:var(--muted);line-height:1.4}
+.ch-acts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.ch-acts a,.ch-acts button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;border:0;background:none;color:var(--fg);font:600 12px var(--f,inherit);text-decoration:none;cursor:pointer}
+.ch-acts .r{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up-s);color:var(--accx)}
+.ch-acts .r svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ch-acts a:active .r,.ch-acts button:active .r{box-shadow:var(--in)}
+/* Avancement par ouvrage : une ligne, un bouton Modifier, puis la ligne se bloque */
+.ch-ouv{display:flex;flex-direction:column}
+.ch-o{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:6px 10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.ch-o:last-child{border-bottom:0}
+.ch-o .nm{min-width:0}.ch-o .nm small{color:var(--muted)}
+.ch-o .pc{font-weight:800;font-variant-numeric:tabular-nums}
+.ch-o .prog{grid-column:1/-1;height:8px}
+.ch-o .bt{display:flex}
+.ch-o .bt button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ch-o .bt svg,.ch-ed svg,.ch-lock svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ch-lock{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--muted);padding:6px 12px;border-radius:999px;background:var(--cx);box-shadow:var(--in);border:0;cursor:pointer}
+.ch-lock svg{color:var(--accx)}
+.ch-ed{grid-column:1/-1;display:grid;gap:10px;padding:12px;border-radius:16px;background:var(--cx);box-shadow:var(--in)}
+.ch-ed .v{display:flex;align-items:center;justify-content:center;gap:14px}
+.ch-ed .v b{font-size:26px;font-weight:800;min-width:84px;text-align:center;font-variant-numeric:tabular-nums}
+html body .ch-ed .v button{width:48px;height:48px;min-width:0;flex:none;padding:0;border-radius:50%;font-size:22px;font-weight:700}
+.ch-ed input[type=range]{width:100%;accent-color:var(--acc)}
+.ch-ed .q{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ch-ed .q button{padding:8px 0;border-radius:12px;font-size:13px;font-weight:700}
+.ch-ed .q button[aria-pressed="true"]{box-shadow:var(--in);color:var(--accx)}
+.ch-ed .ok{display:flex;gap:8px}.ch-ed .ok .btn{flex:1}
+.ch-prev{display:grid;gap:10px}
+.ch-prev .ok{display:flex;gap:8px}.ch-prev .ok .btn{flex:1}
+/* Point client et avis Google */
+.ch-sms{width:100%;min-height:150px;border-radius:14px;padding:12px;font:500 14px/1.45 var(--f,inherit);resize:vertical}
+.ch-sw{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:14px}
+.ch-sw small{display:block;font-weight:500;font-size:12.5px;color:var(--muted);margin-top:2px}
+.ch-tg{flex:none;width:52px;height:30px;border-radius:15px;border:0;background:var(--cx);box-shadow:var(--in);position:relative;cursor:pointer}
+.ch-tg::after{content:"";position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);transition:transform .35s ease}
+.ch-tg[aria-checked="true"]::after{transform:translateX(22px);background:var(--acc)}
+.ch-quand{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.ch-quand button{padding:9px 4px;border-radius:12px;font-size:12.5px;font-weight:700;line-height:1.25}
+.ch-quand button[aria-pressed="true"]{box-shadow:var(--in);color:var(--accx)}
+/* Notes rangées par pièce */
+.ch-pcs{display:flex;flex-wrap:wrap;gap:6px}
+.ch-pcs button{padding:8px 13px;border-radius:999px;font-size:13px;font-weight:700}
+.ch-pcs button[aria-pressed="true"]{box-shadow:var(--in);color:var(--accx)}
+.ch-nt h3{font-size:13px;color:var(--muted);margin:12px 0 6px;font-weight:700}
+.ch-nt h3:first-child{margin-top:0}
+.ch-nt .n{padding:10px 12px;border-radius:12px;background:var(--cx);box-shadow:var(--in);font-size:14px;line-height:1.4;margin-bottom:6px}
+.ch-nt .n small{display:block;color:var(--muted);font-size:11.5px;margin-top:3px}
+.ch-txt{width:100%;min-height:110px;border-radius:14px;padding:12px;font:500 15px/1.45 var(--f,inherit);resize:vertical}
+.ch-dic{display:flex;align-items:center;gap:8px}
+.ch-dic.on{color:var(--accx)}
+.ch-dic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+/* Photos : vraies vignettes quand elles sont prises ici */
+.ch-ph{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:700px){.ch-ph{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ch-ph figure{margin:0;border-radius:16px;overflow:hidden;background:var(--rs);box-shadow:var(--up-s);display:flex;flex-direction:column}
+.ch-ph figure .im{display:block;aspect-ratio:4/3;background:linear-gradient(135deg,#C9D3E3,#8FA3C4) center/cover}
+.ch-ph figure:nth-child(4n+2) .im{background-image:linear-gradient(135deg,#E9E2D6,#BFA887)}
+.ch-ph figure:nth-child(4n+3) .im{background-image:linear-gradient(135deg,#D7E4F2,#9DB6D6)}
+.ch-ph figure:nth-child(4n+4) .im{background-image:linear-gradient(135deg,#B9C2D0,#7C8AA3)}
+.ch-ph figcaption{padding:8px 10px 10px;font-size:12.5px;display:grid;gap:3px}
+.ch-ph figcaption small{color:var(--muted)}
+.ch-ph .ck{font-size:11.5px;color:var(--accx);line-height:1.35}
+.ch-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ch-pick label{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:18px;background:var(--rs);box-shadow:var(--up-s);font-weight:700;font-size:14px;cursor:pointer;text-align:center}
+.ch-pick label svg{width:26px;height:26px;fill:none;stroke:var(--accx);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ch-pick input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.ch-apercu{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:16px;box-shadow:var(--up-s)}
+/* Documents */
+.ch-docs .cf-li .tx small{white-space:normal}
+.ch-new{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ch-new button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 10px;border-radius:16px;font-size:13.5px;font-weight:700;text-align:center;line-height:1.2}
+.ch-new svg{width:17px;height:17px;flex:none;fill:none;stroke:var(--accx);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* Pré-facture : on vérifie avant que VosFactures ne la fige */
+.pf-l{display:flex;flex-direction:column}
+.pf-li{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.pf-li:last-child{border-bottom:0}
+.pf-li textarea{grid-column:1/-1;width:100%;min-height:44px;border-radius:12px;padding:8px 10px;font:600 14px/1.35 var(--f,inherit);resize:vertical}
+.pf-nb{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:8px;align-items:end}
+.pf-nb label{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+html body .pf-nb input{width:100%;min-width:0;min-height:42px;text-align:right;padding:6px 10px;font:700 15px var(--f,inherit);border-radius:12px}
+.pf-nb .tt{display:grid;gap:4px;text-align:right;font-weight:800;font-size:15px;white-space:nowrap;padding-bottom:10px}
+.pf-nb .tt small{font-size:12px;font-weight:600;color:var(--muted)}
+.pf-li .tt{align-self:center;font-weight:800;white-space:nowrap}
+.pf-li .x{grid-column:1/-1;justify-self:end;font-size:12.5px;font-weight:700;color:var(--muted);background:none;border:0;cursor:pointer;padding:2px 0}
+.pf-li.ded .tt{color:var(--muted)}
+.pf-tot{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px}
+.pf-tot b{text-align:right;font-variant-numeric:tabular-nums}
+.pf-tot .ttc{font-size:18px;font-weight:800}
+.pf-warn{padding:10px 12px;border-radius:14px;background:var(--cx);box-shadow:var(--in);font-size:13px;line-height:1.4;color:var(--accx);font-weight:600}
+html body .btn.go.ch-arm{box-shadow:0 0 0 2px var(--acc),-6px -6px 14px var(--hi),8px 8px 18px var(--lo)}
+/* Suggestions de produits sous le champ (remplace la liste du navigateur qui bloquait l'effacement) */
+.chs-wrap{position:relative}
+.chs-sug{margin-top:8px;border-radius:16px;background:var(--rs);box-shadow:var(--up-s);padding:4px;max-height:250px;overflow:auto;-webkit-overflow-scrolling:touch}
+.chs-sug button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border:0;border-radius:12px;background:none;color:var(--fg);font:600 14px var(--f,inherit);cursor:pointer}
+.chs-sug button:active,.chs-sug button:focus-visible{background:var(--cx);box-shadow:var(--in);outline:0}
+.chs-sug button .pi{flex:none;width:22px;height:22px;color:var(--accx);display:grid;place-items:center}
+.chs-sug button .pi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.chs-sug button small{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+.chs-sug .chs-h{font-size:11.5px;font-weight:700;color:var(--muted);padding:6px 12px 2px}
+.chs-sug mark{background:none;color:var(--accx)}
+/* Nouveau chantier */
+.ch-f{display:grid;gap:12px}
+.ch-f label{display:grid;gap:6px;font-size:13.5px;font-weight:700}
+.ch-f input,.ch-f select{min-height:48px;border-radius:14px;padding:10px 12px;font:600 15px var(--f,inherit)}
+.ch-f .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ch-f .seg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ch-f .seg2 button{min-height:46px;border-radius:14px;font-weight:700}
+.ch-f .seg2 button[aria-pressed="true"]{box-shadow:var(--in);color:var(--accx)}
+.ch-f .lnk{justify-self:start;font-size:13.5px;font-weight:700;color:var(--accx);background:none;border:0;padding:0;cursor:pointer}
+.ch-res .ring::before{width:66px;height:66px}
+.ch-o .nm small{display:block;font-size:12px;margin-top:2px}
+/* Planning : livraisons fournisseurs et ajout rapide (planning-ajout.js) */
+:root{--k-liv:#6F7E99;--k-autre:#9AA3B2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--k-liv:#8E9BB5;--k-autre:#7D8697}}
+:root[data-theme="dark"]{--k-liv:#8E9BB5;--k-autre:#7D8697}
+.ev-add{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:10px 16px 10px 12px;border-radius:999px;border:0;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font:700 14px var(--f,inherit);cursor:pointer}
+.ev-add svg{width:18px;height:18px;fill:none;stroke:var(--accx);stroke-width:2;stroke-linecap:round}
+.ev-add:active{box-shadow:var(--in)}
+.ev-ty{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ev-ty button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 2px;border-radius:14px;font-size:12.5px;font-weight:700;min-width:0}
+.ev-ty button i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.ev-ty button[aria-pressed="true"]{box-shadow:var(--in);color:var(--accx)}
+#wkc .wkc-col{cursor:copy}
+#ch-livadd svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--accx);stroke-width:2;stroke-linecap:round}
+.ch-livl .cf-li .tx b,.ch-livl .cf-li .tx small{white-space:normal}
