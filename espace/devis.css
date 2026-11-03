@@ -52,3 +52,10 @@ html body .btn.go.dv-arm{box-shadow:0 0 0 2px var(--acc),-6px -6px 14px var(--hi
 .cm-add svg,.cm-ch svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;color:var(--accx)}
 .cm-ch{margin-top:10px;display:inline-flex!important;align-items:center;gap:8px}
 #a-cmd .cf{margin-top:4px}
+
+/* Devis plus clair (Cyril, 2/11) : « Modifier » visible sur chaque ligne, alerte fournisseur qui bloque la validation */
+.dv-mod{font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--rs);box-shadow:var(--up-s);color:var(--accx)}
+.dv-aide{margin:-4px 4px 0;text-align:center;font-size:12.5px}
+.dv-tt{display:block;margin:2px 4px -4px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.dv-alerte{display:grid;gap:6px;border:1.5px solid rgba(217,83,79,.4)}.dv-alerte b{color:#C8463C;font-size:15.5px}.dv-alerte span{font-size:13.5px;color:var(--muted);line-height:1.45}
+#x-foot .btn.go[disabled]{opacity:.55;cursor:not-allowed}

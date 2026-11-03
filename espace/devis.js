@@ -34,6 +34,12 @@ var BASE0=[{c:'PLA-CLO',d:'Cloison sur ossature, une plaque par face',u:'m²',p:
  {c:'MO-H',d:'Main-d\'œuvre (heure)',u:'h',p:42,t:'Main-d\'œuvre'},{c:'SOL-POSE',d:'Pose de parquet flottant (main-d\'œuvre)',u:'m²',p:18,t:'Sols',ex:1},
  {c:'PRO-NET',d:'Protection et nettoyage du chantier',u:'forfait',p:120,t:'Divers',ex:1}];
 var BASE=X.lsGet('pc-base1',null)||BASE0;
+/* La base est partagée avec l'onglet Produits : relue à chaque appel (un produit créé ailleurs apparaît tout de suite) */
+function relire(){var b=X.lsGet('pc-base1',null);if(b&&b.length)BASE=b;return BASE}
+X.base=function(){return relire()};
+X.ajoutBase=function(p){relire();if(!p||!p.d)return;if(BASE.some(function(b){return b.d.toLowerCase()===String(p.d).toLowerCase()}))return;var n={c:p.c||'M'+Date.now().toString(36),d:p.d,u:p.u||'u',p:+p.p||0,t:p.t||'Ajouté par vous'};Object.keys(p).forEach(function(k){if(!(k in n))n[k]=p[k]});BASE.push(n);X.lsSet('pc-base1',BASE)};
+var usage=function(){return X.lsGet('pc-base-usage',{})||{}};
+function compter(d){var U=usage(),k=String(d||'').toLowerCase();if(!k)return;U[k]=(U[k]||0)+1;X.lsSet('pc-base-usage',U)}
 var CLIKY=true; /* Démo : l'option Cliky est active ; sans elle, le produit tapé reste dans ce devis seulement */
 
 /* ---------- les pré-devis de la démo : pièces, plan, et un dossier en attente du fournisseur ---------- */
@@ -62,12 +68,12 @@ var seg=null;
 function vue(){var v=$('#v-devis');if(!v)return;var c=v.querySelector(':scope>.dv');if(!c){c=document.createElement('div');c.className='cf dv';v.appendChild(c)}
  if(document.documentElement.classList.contains('pcvrai')){c.innerHTML='';return}
  var P=D.filter(PRE),F=D.filter(FOUR),V=validesTous();if(!seg)seg=P.length?'pre':F.length?'four':'val';
- var p=P[0],big=p?['Vérifier le pré-devis','data-dvo="'+p.id+'"',IC.pre]:['Nouveau devis','data-dvnew',IC.plus];
+ var p=P[0],big=p?['Vérifier le pré-devis','data-dvo="'+p.id+'"',IC.pre]:['Créer un devis','data-dvnew',IC.plus];
  var h='<div class="row cf-top"><h2>Devis</h2><span class="cf-n">'+(P.length?P.length+' à valider':'tout est à jour')+'</span></div>'+
   '<div class="grid2"><div class="col">'+
   (p?'<div class="card cf-hero"><small>À valider ce soir</small><b>'+eur(X.tot(p).ht)+' <em>HT</em></b><span>'+esc(p.client)+' · '+esc(p.titre)+'</span></div>':'<div class="card cf-rien"><b>Aucun pré-devis à valider</b><span>Les demandes de vos clients arrivent ici, déjà calculées avec vos prix.</span></div>')+
   '<button class="btn go cf-go" type="button" '+big[1]+'><span class="lab"><span class="ic">'+big[2]+'</span><span>'+esc(big[0])+'</span></span></button>'+
-  (p?'<div class="cf-main"><button type="button" class="btn sm" data-dvnew>'+IC.plus+'Nouveau devis à la main</button></div>':'')+
+  (p?'<div class="cf-main"><button type="button" class="btn sm" data-dvnew>'+IC.plus+'Créer un devis</button></div>':'')+
   '</div><div class="col">'+
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',P.length],['four','Fournisseur',F.length],['val','Validés',0]].map(function(s){return '<button role="tab" data-dvseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+IC[s[0]]+'<span>'+s[1]+'</span>'+(s[2]?'<i>'+s[2]+'</i>':'')+'</button>'}).join('')+'</div>';
  if(seg==='pre')h+=P.length?'<div class="sec-h"><h2>Pré-devis à valider</h2><span>préparés avec vos prix</span></div><div class="card lst cf-l">'+P.map(lignePre).join('')+'</div><p class="hint">Touchez un pré-devis pour l\'ouvrir : vous changez une ligne d\'un appui, puis vous validez.</p>':'<p class="hint">Rien à valider. Le café peut rester chaud.</p>';
@@ -92,7 +98,7 @@ function editeur(doc,mode,garder){CUR={doc:doc,mode:mode};var t=totaux(doc),fige
  var h='';
  if(mode!=='pre'){var K=Object.keys(DOS);h+='<div class="cf-form dv-qui"><label>Pour qui<select id="dv-c">'+K.map(function(k){return '<option value="'+k+'"'+(k===doc.cli?' selected':'')+'>'+esc(DOS[k].n)+'</option>'}).join('')+'</select></label>'+
   '<label>Les travaux, en une ligne<input id="dv-t" autocomplete="off" value="'+esc(doc.titre||'')+'" placeholder="'+(mode==='devis'?'Ex. : cloison du bureau':'Ex. : reprise d\'une fissure')+'"></label></div>';}
- if(mode==='pre'&&FOUR(doc))h+='<div class="card cf-ou dv-att"><small>En attente du fournisseur</small><b>Demande envoyée à '+esc(doc.four.n)+' · '+esc(doc.four.env)+'</b><span>'+esc(doc.four.att)+'. '+(CLIKY?'Cliky reportera ses prix ici dès sa réponse.':'Vous reporterez ses prix ici.')+'</span></div>';
+ if(mode==='pre'&&FOUR(doc))h+='<div class="card dv-alerte" role="alert"><b>⚠ Il manque le devis du fournisseur</b><span>Vous ne pouvez pas valider ce pré-devis avant d\'avoir ses prix. Demande envoyée à '+esc(doc.four.n)+' · '+esc(doc.four.env)+' ('+esc(doc.four.att)+'). '+(CLIKY?'Cliky reportera ses prix ici dès sa réponse.':'Vous reporterez ses prix ici.')+'</span></div>';
  if(mode==='pre'&&doc.statut==='warn')h+='<div class="card cf-ou"><small>Le fournisseur a répondu</small><b>Un prix a changé : la ligne est marquée ⚠</b></div>';
  var plan='';if(mode==='pre'&&doc.plan)plan='<div class="card dv-plan"><div class="dv-plan-m">'+planMini()+'</div><div class="dv-plan-t"><b>Le plan de '+esc(doc.client)+'</b><small>Dessiné avec sa demande</small><button type="button" class="btn sm" data-openclient="1">'+IC.plan+'Ouvrir le plan</button></div></div>';
  h+='<div class="card dv-tot"><div><small>Total HT</small><b>'+eur(t.ht)+'</b></div><div><small>TVA '+tva(doc.tva)+'</small><span>'+eur(t.tv)+'</span></div><div><small>Total TTC</small><span>'+eur(t.ttc)+'</span></div></div>'+plan;
@@ -100,9 +106,9 @@ function editeur(doc,mode,garder){CUR={doc:doc,mode:mode};var t=totaux(doc),fige
  var P=pieces(doc);
  h+=P.map(function(p){var L=[],s=0;doc.L.forEach(function(l,i){if((l.pc||'Ensemble')===p){L.push(i);s+=r2(l.q*l.p)}});
   return '<div class="xsec dv-pc">'+(P.length===1&&p==='Ensemble'?'':'<h3>'+esc(p)+' <small>'+eur(r2(s))+' HT</small></h3>')+'<div class="card lst cf-l">'+L.map(function(i){var l=doc.L[i];
-   return '<button class="cf-li dv-li'+(l.v?' verif':'')+'" type="button" '+(fige?'disabled':'data-dvl="'+i+'"')+'><span class="tx"><b>'+esc(l.d)+'</b><small>'+q2(l.q)+' '+esc(l.u)+' × '+(l.p?eur(l.p):'prix à venir')+'</small>'+(l.v?'<small class="dv-v">⚠ '+esc(l.v)+'</small>':'')+'</span><span class="cf-m"><b>'+eur(r2(l.q*l.p))+'</b></span>'+(fige?'':'<span class="go">›</span>')+'</button>'}).join('')+'</div></div>'}).join('');
+   return '<button class="cf-li dv-li'+(l.v?' verif':'')+'" type="button" '+(fige?'disabled':'data-dvl="'+i+'"')+'><span class="tx"><b>'+esc(l.d)+'</b><small>'+q2(l.q)+' '+esc(l.u)+' × '+(l.p?eur(l.p):'prix à venir')+'</small>'+(l.v?'<small class="dv-v">⚠ '+esc(l.v)+'</small>':'')+'</span><span class="cf-m"><b>'+eur(r2(l.q*l.p))+'</b>'+(fige?'':'<span class="dv-mod">Modifier</span>')+'</span></button>'}).join('')+'</div></div>'}).join('');
  if(!doc.L.length)h+='<div class="card cf-rien"><b>Pas encore de ligne</b><span>Ajoutez la première : depuis votre base de prix, ou écrite à la main.</span></div>';
- if(!fige)h+='<button type="button" class="btn dv-add" data-dvadd>'+IC.plus+'Ajouter une ligne</button>';
+ if(!fige)h+='<button type="button" class="btn dv-add" data-dvadd>'+IC.plus+'Ajouter une ligne</button><p class="hint dv-aide">Touchez une ligne pour la modifier ou l\'enlever.</p>';
  if(mode==='pre'&&doc.ask)h+='<details class="card dv-ask"><summary>La demande du client <span>›</span></summary><div class="kv" style="margin-top:10px">'+doc.ask.map(function(a){return '<span>'+esc(a[0])+'</span><b>'+esc(a[1])+'</b>'}).join('')+'</div></details>';
  if(mode==='pre')h+='<p class="hint">🔒 Rien ne part chez le client sans vous. Une fois validé, le devis est créé dans vos documents ; vous l\'envoyez quand vous voulez.</p>';
  var titre=mode==='devis'?'Nouveau devis':mode==='facture'?'Nouvelle facture':(PRE(doc)||FOUR(doc)?'Pré-devis · ':'Devis '+doc.id+' · ')+doc.client,
@@ -112,7 +118,7 @@ function editeur(doc,mode,garder){CUR={doc:doc,mode:mode};var t=totaux(doc),fige
 function pied(doc,mode){var a=function(k,t1,t2){var on=ARME===k+(doc.id||'');return on?'<button class="btn" data-dvarm="">Annuler</button><button class="btn go dv-arm" data-dvgo="'+k+'">'+t2+'</button>':'<button class="btn" data-xclose>Fermer</button><button class="btn go" data-dvarm="'+k+'">'+t1+'</button>'};
  if(mode==='devis')return a('creer','Créer le devis','Oui, créer le devis');
  if(mode==='facture')return a('fact','Préparer la facture','Oui, préparer la facture');
- if(FOUR(doc))return '<button class="btn" data-xclose>Fermer</button><button class="btn go" data-dvrep>Déposer la réponse</button>';
+ if(FOUR(doc))return '<button class="btn" data-dvrep>Déposer sa réponse</button><button class="btn go" disabled>⏳ En attente du fournisseur</button>';
  if(PRE(doc))return a('valider','Valider le pré-devis','Oui, créer le devis');
  if(doc.statut==='valide')return a('envoyer','Envoyer au client','Oui, envoyer à '+doc.client);
  return '<button class="btn" data-xclose>Fermer</button><button class="btn go" data-share>Partager le PDF</button>';}
@@ -137,26 +143,27 @@ var filtre='';
 function ajout(){var doc=CUR.doc,P=pieces(doc);
  var h='<label class="cf-cherche">'+IC.cherche+'<input type="search" id="db-q" placeholder="Chercher dans ma base : cloison, pose…" autocomplete="off" value="'+esc(filtre)+'" aria-label="Chercher dans ma base"></label>'+
   (P.length>1?'<div class="dl-pcs"><span>Dans</span><select id="db-pc">'+P.map(function(p){return '<option>'+esc(p)+'</option>'}).join('')+'</select></div>':'')+
-  '<div class="card lst cf-l" id="db-l"></div>'+
-  '<button type="button" class="btn dv-add" data-dbmain>'+IC.main+'Pas dans la liste ? L\'écrire à la main</button>';
+  '<small class="dv-tt" id="db-tt">Les plus utilisés</small><div class="card lst cf-l" id="db-l"></div>'+
+  '<button type="button" class="btn dv-add" data-dbmain>'+IC.plus+'Pas dans la liste ? Créer un produit</button>';
  X.xopen('Ajouter une ligne','Depuis votre base de prix, ou à la main',h,'<button class="btn" data-dvback>Retour</button>',function(){var q=$('#db-q');q.addEventListener('input',function(){filtre=q.value.trim().toLowerCase();liste()});liste()},true);}
-function liste(){var z=$('#db-l');if(!z)return;var L=BASE.filter(function(b){return !filtre||(b.d+' '+b.t+' '+b.c).toLowerCase().indexOf(filtre)>=0});
+function liste(){var z=$('#db-l');if(!z)return;relire();var U=usage(),L=BASE.filter(function(b){return !filtre||(b.d+' '+b.t+' '+b.c).toLowerCase().indexOf(filtre)>=0}).slice().sort(function(a,b){return (U[b.d.toLowerCase()]||0)-(U[a.d.toLowerCase()]||0)});if(!filtre)L=L.slice(0,5);
+ var tt=$('#db-tt');if(tt)tt.textContent=filtre?'Dans votre base':'Les plus utilisés';
  z.innerHTML=L.length?L.map(function(b){return '<button class="cf-li dv-li" type="button" data-db="'+esc(b.c)+'">'+AV(BASEI)+'<span class="tx"><b>'+esc(b.d)+'</b><small>'+esc(b.t)+(b.ex?' · prix d\'exemple':'')+'</small></span><span class="cf-m"><b>'+eur(b.p)+'</b><small class="dv-u">/ '+esc(b.u)+'</small></span></button>'}).join(''):'<p class="hint" style="padding:12px 0">Rien de tel dans votre base. Écrivez-le à la main juste en dessous.</p>'}
 function depuisBase(c){var b=BASE.filter(function(x){return x.c===c})[0],doc=CUR.doc;if(!b)return;var s=$('#db-pc'),pc=s?s.value:(pieces(doc)[0]||'Ensemble');
- doc.L.push({c:b.c,d:b.d,u:b.u,q:1,p:b.p,step:1,pc:pc});filtre='';if(CUR.mode==='pre')sauver();ligne(doc.L.length-1);}
-function aLaMain(){var doc=CUR.doc,P=pieces(doc);
- var h='<div class="cf-form"><label>Ce qui est fait<textarea id="dm-d" rows="2" placeholder="Ex. : habillage du coffre de volet"></textarea></label>'+
+ doc.L.push({c:b.c,d:b.d,u:b.u,q:1,p:b.p,step:1,pc:pc});compter(b.d);filtre='';if(CUR.mode==='pre')sauver();ligne(doc.L.length-1);}
+function aLaMain(){var doc=CUR.doc,P=pieces(doc),pre=filtre;
+ var h='<div class="cf-form"><label>Ce qui est fait<textarea id="dm-d" rows="2" placeholder="Ex. : habillage du coffre de volet">'+esc(pre||'')+'</textarea></label>'+
   '<div class="dl-q"><span>Quantité</span><input id="dm-q" inputmode="decimal" value="1" aria-label="Quantité"><input id="dm-u" class="dl-u" value="u" aria-label="Unité"></div>'+
   '<label>Prix unitaire HT<input id="dm-p" inputmode="decimal" placeholder="0,00"></label>'+
   (P.length?'<label>Pièce<select id="dm-pc">'+P.map(function(p){return '<option>'+esc(p)+'</option>'}).join('')+'</select></label>':'')+
   '<p class="dp-opt"><b>'+(CLIKY?'Avec Cliky':'Option Cliky')+'</b> : '+(CLIKY?'ce produit entre aussi dans votre base de prix, pour les prochains devis.':'le produit tapé entrerait dans votre base. Sans l\'option, il reste dans ce document.')+'</p>'+
   '<p class="hint">Vous pouvez aussi dicter : touchez le micro.</p></div>';
- X.xopen('Ligne à la main','',h,'<button class="btn" data-dvback>Retour</button><button class="btn go" data-dmok>Ajouter</button>',function(){setTimeout(function(){var d=$('#dm-d');if(d&&!matchMedia('(pointer:coarse)').matches)d.focus()},200)},true);}
+ X.xopen('Créer un produit','Il rejoint ce devis'+(CLIKY?' et votre base':''),h,'<button class="btn" data-dvback>Retour</button><button class="btn go" data-dmok>Ajouter</button>',function(){setTimeout(function(){var d=$('#dm-d');if(d&&!matchMedia('(pointer:coarse)').matches)d.focus()},200)},true);}
 function aLaMainOk(){var doc=CUR.doc,d=$('#dm-d').value.trim(),p=r2(num($('#dm-p').value)),q=r2(num($('#dm-q').value))||1,u=$('#dm-u').value.trim()||'u',s=$('#dm-pc');
  if(!d){$('#dm-d').focus();X.toast('Il manque la description','Une ligne suffit : le client doit comprendre ce qu\'il paie.');return}
  if(!(p>0)){$('#dm-p').focus();X.toast('Il manque le prix','Le prix unitaire hors taxes, en euros.');return}
  doc.L.push({c:'MAIN',d:d,u:u,q:q,p:p,step:1,pc:s?s.value:'Ensemble'});
- if(CLIKY&&!BASE.some(function(b){return b.d.toLowerCase()===d.toLowerCase()})){BASE.push({c:'M'+Date.now().toString(36),d:d,u:u,p:p,t:'Ajouté par vous'});X.lsSet('pc-base1',BASE)}
+ if(CLIKY)X.ajoutBase({d:d,u:u,p:p,t:'Ajouté par vous'});compter(d);
  fini('Ligne ajoutée',CLIKY?'Et rangée dans votre base de prix.':'');}
 
 /* Les gros boutons, en deux appuis */
