@@ -65,6 +65,7 @@ css.textContent=[
 '.dv-seg button i.r{background:#D9534F}.vmenu .dv-seg button svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}',
 '.vpan{display:grid;gap:12px}.vpan[hidden]{display:none}',
 '.vtotc .vtot1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.vtot1>span{font-size:13.5px;color:var(--muted);font-weight:700}.vtot1>b{font-size:26px;font-weight:800;letter-spacing:-.4px}',
+'details.vcomm>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}details.vcomm>summary::-webkit-details-marker{display:none}.vred{flex:none;font:800 12px var(--f,inherit);padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--fg)}.vred::after{content:"Afficher"}details.vcomm[open] .vred::after{content:"Réduire"}',
 '.vtotc details.vd{margin-top:8px}.vtotc details.vd>summary{font-size:13px;color:var(--muted)}',
 '.vpart-h{display:grid;gap:2px;margin:0 0 6px}.vpart-h h3{margin:0}.vpart-h small{font-size:12.5px;color:var(--muted)}',
 '.vedit{position:relative;padding-right:96px!important}.vedit .vmod{position:absolute;right:0;top:50%;transform:translateY(-50%);appearance:none;cursor:pointer;min-height:38px;font:800 12.5px var(--f,inherit);padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--accx,var(--fg))}.vedit.fige{padding-right:0!important}',
@@ -216,7 +217,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  else if(!p.lue){ED=null;dv='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3><p class="vst" style="padding:0 0 8px">Ancienne présentation : affichée telle quelle.</p><pre class="vpre">'+esc(p.texte)+'</pre></div>';}
  else{ED=edition(p);var t=totauxEd(p);
   dv=alerteFour(p)+'<div class="card vsec vtotc"><div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+
-   '<details class="vd"><summary>Comment ce total est fait</summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
+   '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
    liste('⚠ À vérifier ('+p.a_verifier.length+')',p.a_verifier)+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
@@ -448,5 +449,6 @@ if(lsG(KJ))demarrer();else proposer();
 var c0=lienDirect();if(c0)setTimeout(function(){ouvrirDemande(c0)},lsG(KJ)?300:1500);
 window.addEventListener('hashchange',function(){var c=lienDirect();if(c)ouvrirDemande(c)});
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="devis"]');if(t&&lsG(KJ)&&Date.now()-charge>30000)charger()});
+document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('vcomm'))lsS('pc-calc-ferme',d.open?null:1)},true);
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&lsG(KJ)&&Date.now()-charge>60000)charger()});
 })();
