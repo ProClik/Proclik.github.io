@@ -578,6 +578,7 @@ button.pill{cursor:pointer}
 <button role="tab" data-v="chantiers" id="tt-chantiers" aria-selected="false">Chantiers</button>
 <button role="tab" data-v="prix" id="tt-prix" aria-selected="false">Achats</button>
 <button role="tab" data-v="produits" id="tt-produits" aria-selected="false">Produits</button>
+<button role="tab" data-v="reseaux" id="tt-reseaux" aria-selected="false">Réseaux</button>
 <button class="speak" id="tt-speak" type="button">🎙 Parler</button>
 </nav>
 <div class="head-r"><span class="chip-demo">DÉMO</span><button class="icon-b" id="search" aria-label="Rechercher">🔍</button><button class="icon-b mic-h" id="speak" aria-label="Parler à ProClik">🎙</button><button class="icon-b" id="net" aria-pressed="false" aria-label="Simuler une coupure de réseau" title="Simuler une coupure de réseau">📶</button><button class="icon-b" id="theme" aria-label="Thème clair ou sombre" title="Thème clair ou sombre"><svg class="lune" width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="sol" width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button class="icon-b" id="menu" aria-label="Votre espace et réglages">☰</button></div>
@@ -694,6 +695,7 @@ button.pill{cursor:pointer}
 </div>
 <button class="btn prod-add" type="button" disabled>+ Créer un produit <span class="soon">Bientôt</span></button>
 </section>
+<section class="view" id="v-reseaux" aria-label="Réseaux sociaux" hidden></section>
 <div class="scrim" id="scrim"></div>
 </main>
 </div>
@@ -712,6 +714,7 @@ button.pill{cursor:pointer}
 <button role="tab" data-v="chantiers" id="nb-chantiers" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h7M6 20V10l6-4 5 3.4"/><g transform="translate(10.6 10.4) scale(.56)"><path vector-effect="non-scaling-stroke" d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path vector-effect="non-scaling-stroke" d="M14 6a6 6 0 0 1 6 6v3"/><path vector-effect="non-scaling-stroke" d="M4 15v-3a6 6 0 0 1 6-6"/><rect vector-effect="non-scaling-stroke" x="2" y="15" width="20" height="4" rx="1"/></g></svg></span>Chantiers</button>
 <button role="tab" data-v="prix" id="nb-prix" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h2l2 10h10l2-7H7"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg></span>Achats</button>
 <button role="tab" data-v="produits" id="nb-produits" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></span>Produits</button>
+<button role="tab" data-v="reseaux" id="nb-reseaux" aria-selected="false"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></svg></span>Réseaux</button>
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"><span class="ti"><svg width="22" height="22" viewBox="0 0 100 100"><rect x="24" y="14" width="18" height="72" rx="9" fill="#FFFFFF"/><circle cx="54" cy="40" r="26" fill="#FFFFFF"/><circle cx="56" cy="40" r="9" fill="#0B1226" stroke="#B08A48" stroke-width="3"/></svg></span><span><b id="tt"></b><small id="ts"></small></span></div>
 
@@ -1685,11 +1688,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="depenses.js?v=3"></script>
 <link rel="stylesheet" href="produits.css?v=1">
 <script src="produits.js?v=2"></script>
+<link rel="stylesheet" href="reseaux.css?v=1">
+<script src="reseaux.js?v=1"></script>
 <script src="plan-plein.js?v=1"></script>
 <script src="relief.js?v=4"></script>
 <link rel="stylesheet" href="barre.css?v=5">
-<script src="barre.js?v=5"></script>
+<script src="barre.js?v=6"></script>
 <link rel="stylesheet" href="reglages.css?v=1">
-<script src="reglages.js?v=3"></script>
+<script src="reglages.js?v=4"></script>
 <script src="mes-options.js?v=2"></script>
 <script src="fige.js?v=2"></script>
