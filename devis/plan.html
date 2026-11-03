@@ -112,6 +112,7 @@ h1{margin:2px 0 0;font-size:clamp(24px,5.5vw,32px);font-weight:800;letter-spacin
 .sheet::before{content:"";display:block;width:42px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
 .sh-in{max-width:860px;margin:0 auto;display:grid;gap:12px}
 .sh-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sh-h>div:first-child{flex:1;min-width:0}
 .sh-h h2{margin:0;font-size:19px;font-weight:800}
 .sh-h small{display:block;font:600 12.5px var(--f);color:var(--muted)}
 .sec{display:grid;gap:8px;background:var(--bg);border-radius:14px;padding:12px}
@@ -672,7 +673,7 @@ function openNew(){shSeg=null;SH={type:"new",nom:"Chambre",L:"3,80",l:"2,90",pos
 function openComb(){closeEd();shSeg=null;SH={type:"comb",key:ST.comb};autoMsg="";renderSheet()}
 function renderSheet(){const b=$("sh-body");if(!SH){$("sheet").hidden=true;return}$("sheet").hidden=false;if(CL)try{parent.postMessage({type:"proclik-plan-sheet"},"*")}catch(e){}let h="";
  if(SH.type==="seg"){const sg=segs()[SH.x];if(!sg){closeSheet();return}const k=kind(sg),c=getComp(sg),L=OP.get(sg.a)||[];
-  h=`<div class="sh-h"><div><h2>${esc(sg.rm.nom)} · ${segName(sg)}</h2><small>${fr(dist(sg.a,sg.b))} m × ${fr(F().H)} m de haut</small></div><button class="btn solid" data-close="1">OK</button></div>
+  h=`<div class="sh-h"><div><h2>${esc(sg.rm.nom)} · ${segName(sg)}</h2><small>${fr(dist(sg.a,sg.b))} m × ${fr(F().H)} m de haut</small></div>${sg.kind==="clo"?`<button type="button" class="btn danger" data-delclo="1" title="Supprimer toute la cloison" aria-label="Supprimer toute la cloison">🗑</button>`:""}<button class="btn solid" data-close="1">OK</button></div>
   ${photoBlock(sg.a,k==="mur"?"Photos de ce mur":"Photos de cette cloison")}
   ${CL&&sg.kind==="clo"?`<div class="sec etat${c.etat?"":" ask"}"><span>Cette cloison est…</span><div class="qk">${ETATS.map(v=>`<button type="button" data-cet="${esc(v)}" aria-pressed="${c.etat===v}">${esc(v)}</button>`).join("")}</div><p class="${c.etat==="À changer"?"auto":"muted"}">${c.etat==="Déjà en place"?"Elle reste telle quelle : notez juste sa longueur pour le plan. Rien n'est chiffré.":c.etat==="À changer"?"✓ Dépose de l'ancienne cloison comprise, puis création de la nouvelle.":c.etat==="À créer"?"Nouvelle cloison : composition ci-dessous.":"Choisissez d'abord : la suite de la fiche s'adapte à votre réponse."}</p></div>`:CL?`<div class="sec"><span>Travaux sur ce mur</span><div class="qk">${["Rien à faire","À refaire","Rénover l'existant"].concat(sg.kind==="mur"&&!sg.sh?["Isoler"]:[]).concat(sg.kind==="clo"?["Créer"]:[]).map(v=>`<button type="button" data-td="${esc(v)}" aria-pressed="${(TD.get(sg.a)||"Rien à faire")===v}">${esc(v)}</button>`).join("")}</div></div>`:""}<div class="sec"><span>Cote</span><div class="inl"><input type="text" id="sh-len" inputmode="decimal" value="${fr(dist(sg.a,sg.b))}" aria-label="Cote en mètres"><span class="muted">m (on peut écrire « deux soixante-quinze »)</span></div></div>
   <div class="sec"><span>Favoris</span><div class="qk fav">${FAV[k].map(([n,v],i)=>`<button type="button" data-fav="${i}" aria-pressed="${Object.entries(v).every(([g,y])=>c[g]===y)}">${n}</button>`).join("")}</div>
@@ -680,7 +681,8 @@ function renderSheet(){const b=$("sh-body");if(!SH){$("sheet").hidden=true;retur
   <div class="inl"><button class="btn" data-allroom="1">${k==="mur"?"Appliquer à tous les murs de la pièce":"Appliquer à toutes les cloisons"}</button></div></div>
   ${sg.kind==="mur"?(()=>{const N=opNums(),ex=opExt(sg);return`<div class="sec"><span>Fenêtres et portes</span>${L.map((o,i)=>`<div class="op"><div class="op-h"><span>${N.get(o)} · ${esc(opName(o,ex))} ${Math.round(o.w*100)} × ${Math.round(o.h*100)}${o.ouv&&o.k!=="porte"?" · "+o.ouv.toLowerCase():""}</span><button class="lnk" data-editop="${i}">Modifier</button></div></div>`).join("")}
    <div class="inl">${ex?`<button class="btn" data-addop="fenetre">+ Fenêtre</button><button class="btn" data-addop="pf">+ Porte-fenêtre</button><button class="btn" data-addop="porte">+ Porte extérieure</button>`:`<button class="btn" data-addop="porte">+ Porte</button><span class="muted">Pas de fenêtre sur un mur entre deux pièces.</span>`}</div></div>`})():""}
-  ${notePhotos(sg.a,QUICK[k])}`}
+  ${notePhotos(sg.a,QUICK[k])}
+  ${sg.kind==="clo"?`<div class="sec delclo"><button type="button" class="btn danger" data-delclo="1">🗑 Supprimer toute la cloison</button><p class="muted">Efface la cloison en entier, d'un bout à l'autre${(sg.rm.clos[sg.ci]||[]).length>2?" (ses "+((sg.rm.clos[sg.ci]||[]).length-1)+" morceaux d'un coup)":""}, avec sa porte et ses travaux.</p></div>`:""}`}
  if(SH.type==="room"){const rm0=F().rooms[SH.ri];if(!rm0){closeSheet();return}const ZZ=SH.z&&zinfo(rm0),zp=ZZ&&(ZZ.find(x=>x.z===SH.z)||{}).poly,rm=zp?{...rm0,nom:SH.z.nom,sol:SH.z.sol,pts:zp}:rm0;const s=rm.sol;
   h=`<div class="sh-h"><div><h2>${esc(rm.nom)}</h2><small>${fr1(Math.abs(sarea(rm.pts)))} m² au sol · ${esc(F().nom)} · hauteur ${fr(F().H)} m</small></div><button class="btn solid" data-close="1">OK</button></div>
   ${photoBlock(rm0,"Photos de la pièce")}
@@ -733,6 +735,9 @@ $("sheet").addEventListener("click",e=>{const t=e.target.closest("button");if(!t
  if(d.close){closeSheet();return}
  if(d.view!=null){viewPhoto(SH.key,+d.view);return}
  const MUT=d.cet||d.fav!=null||d.cg||d.allroom||d.addop||d.delop!=null||d.sol||d.pf||d.copyroom||d.delroom==="2"||d.create||d.q!=null||d.comb||d.dal||d.openc!=null||d.td||d.opt||d.opw||d.oph||d.openc2;if(MUT)hist();
+ // Supprimer une cloison entière (demande de Cyril, 03/11) : tous ses morceaux d'un coup, avec portes, travaux, notes et photos.
+ if(d.delclo&&SH&&SH.type==="seg"){const sg=segs()[SH.x];if(!sg||sg.kind!=="clo")return;if(ST.lock){say(null,"Plan verrouillé 🔒 : touchez le cadenas pour pouvoir supprimer une cloison.");return}const rm=sg.rm,c=rm.clos[sg.ci]||[],Lc=c.slice(1).reduce((a,p,i)=>a+dist(c[i],p),0),n=c.length-1;
+  confirmBig("Supprimer toute la cloison ?",`La cloison de ${fr(Lc)} m dans « ${rm.nom} »${n>1?` (${n} morceaux)`:""} sera effacée du plan, avec sa porte et ses travaux. Vous pourrez revenir en arrière avec « Annuler ».`,"Oui, supprimer la cloison",()=>{const i=rm.clos.indexOf(c);if(i<0)return;hist();c.forEach(p=>{COMP.delete(p);OP.delete(p);TD.delete(p);NT.delete(p);PH.delete(p)});rm.clos.splice(i,1);closeSheet(true);all();if(typeof notify==="function")notify();say(null,"Cloison supprimée. Touchez « ↶ Annuler » si c'était une erreur.")});return}
  if(SH&&SH.type==="seg"){const sg=segs()[SH.x],c=getComp(sg),k=kind(sg);
   if(d.fav!=null){Object.assign(c,FAV[k][+d.fav][1]);autoMsg=""}
   if(d.cg){c[d.cg]=d.v;autoMsg="";if(k==="clo"){if(d.cg==="oss"&&d.v==="M70"&&c.laine==="45 mm"){c.laine="70 mm";autoMsg="Laine passée en 70 mm pour l'ossature 70."}if(d.cg==="porte"&&d.v.startsWith("Galandage")&&c.oss==="M48"){c.oss="M70";if(c.laine==="45 mm")c.laine="70 mm";autoMsg="Galandage : ossature passée en M70 et laine en 70 mm."}}

@@ -1104,7 +1104,7 @@ var PINS=[{k:'chantier',kind:'run',pc:75,name:'Cabinet Alpes Kiné',sub:'Meylan 
  {k:'devis',kind:'devis',name:'SCI Les Tilleuls',sub:'Voiron · demande reçue',lat:45.364,lon:5.589,t:'SCI Les Tilleuls · Voiron',s:'Demande reçue hier · rénovation de 3 bureaux · hors de votre zone de 25 km',q:'Voiron'}];
 var flt='all',MAP=null,mapShown=false;
 var KC={run:'var(--k-run)',start:'var(--k-run)',devis:'var(--k-devis)',visit:'var(--k-visit)',done:'var(--k-done)'};
-function pinCard(p){$('#pin-card').innerHTML='<div class="row"><b>'+p.t+'</b><span class="pill" style="background:color-mix(in srgb,'+KC[p.kind]+' 22%,transparent);color:var(--fg)">'+{chantier:'Chantier',devis:'Devis',visite:'Visite'}[p.k]+'</span></div><p class="hint" style="margin:6px 0 12px">'+p.s+'</p><div class="acts" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm go" style="display:inline-flex;align-items:center;text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(p.q+', Isère')+'" target="_blank" rel="noopener">Itinéraire</a>'+(p.open?'<button class="btn sm" id="pin-open">Ouvrir le devis</button>':(p.kind==='run'||p.kind==='start')?'<button class="btn sm" id="pin-ch">Voir le chantier</button>':'')+(p.dos?'<button class="btn sm" data-dos="'+p.dos+'">Dossier</button>':'')+'</div>';
+function pinCard(p){$('#pin-card').innerHTML='<div class="row"><b>'+p.t+'</b><span class="pill" style="background:color-mix(in srgb,'+KC[p.kind]+' 22%,transparent);color:var(--fg)">'+{chantier:'Chantier',devis:'Devis',visite:'Visite'}[p.k]+'</span></div><p class="hint" style="margin:6px 0 12px">'+p.s+'</p><div class="acts" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn sm go" data-gps="'+esc2(p.q+', Isère')+'">Itinéraire</button>'+(p.open?'<button class="btn sm" id="pin-open">Ouvrir le devis</button>':(p.kind==='run'||p.kind==='start')?'<button class="btn sm" id="pin-ch">Voir le chantier</button>':'')+(p.dos?'<button class="btn sm" data-dos="'+p.dos+'">Dossier</button>':'')+'</div>';
   var o=$('#pin-open');if(o)o.addEventListener('click',function(){go('devis');open(p.open)});var c=$('#pin-ch');if(c)c.addEventListener('click',function(){go('chantiers');showCh(p.ch||'alpes')});}
 function renderPins(){var L=PINS.filter(function(p){return flt==='all'||p.k===flt});
   if(!MAP)MAP=(window.ProClikCarte||ProClikMap)($('#pcmap'),{base:{lat:45.203,lon:5.839},radius:25,start:'full',pins:L,onPin:pinCard});else MAP.setPins(L);}
@@ -1175,7 +1175,7 @@ function evDetail(sel,e){if(!e){$(sel).innerHTML='';return;}var c=CK[e.k],d=new 
  $(sel).innerHTML='<div class="card"><div class="row"><b>'+e.t+'</b><span class="pill" style="background:color-mix(in srgb,'+c[0]+' 22%,transparent);color:var(--fg)">'+c[1]+'</span></div>'+
   '<p class="hint" style="margin:6px 0 10px">'+JL[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' · '+e.s.replace(':','h')+' – '+e.e.replace(':','h')+(e.w?' · '+e.w:'')+'</p>'+
   '<div style="display:flex;gap:8px;flex-wrap:wrap">'+(e.k==='free'?'<button class="btn sm go" data-propose>Proposer à un client</button>':
-  (town&&e.k!=='pc'?'<a class="btn sm go" style="display:inline-flex;align-items:center;text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(town+', Isère')+'" target="_blank" rel="noopener">Itinéraire</a>':'')+
+  (town&&e.k!=='pc'?'<button type="button" class="btn sm go" data-gps="'+esc2(town+', Isère')+'">Itinéraire</button>':'')+
   (e.x.ch?'<button class="btn sm" data-goch>Voir le chantier</button>':'')+(e.x.dv?'<button class="btn sm" data-godv="'+e.x.dv+'">Ouvrir le devis</button>':''))+'</div></div>';
  var b=$(sel+' [data-goch]');if(b)b.addEventListener('click',function(){go('chantiers');showCh(e.x.ch===1?'alpes':e.x.ch)});
  b=$(sel+' [data-godv]');if(b)b.addEventListener('click',function(){go('devis');open(this.dataset.godv)});
@@ -1333,7 +1333,7 @@ function colisOf(k){var o=DOS[k],d=o.dv&&find(o.dv),step=o.k==='chantier'?4:d?(d
  return '<div class="colis">'+L.map(function(s,i){return '<div class="'+(i<=step?'on':'')+'">'+s+'</div>'}).join('')+'</div>';}
 function openDossier(k){var o=DOS[k];if(!o)return;
  var h='<div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="kv"><span>Adresse</span><b>'+o.adr+'</b><span>Téléphone</span><b>'+o.tel+'</b>'+(o.contact?'<span>Contact</span><b>'+o.contact+'</b>':'')+'<span>Origine</span><b>'+o.src+'</b></div>'+
-  '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" data-call>📞 Appeler</button><button class="btn sm" data-sms>💬 SMS</button><a class="btn sm go" style="display:inline-flex;align-items:center;text-decoration:none" href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(o.v+', Isère')+'" target="_blank" rel="noopener">Itinéraire</a></div></div>'+
+  '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" data-call>📞 Appeler</button><button class="btn sm" data-sms>💬 SMS</button><button type="button" class="btn sm go" data-gps="'+esc2(o.v+', Isère')+'">Itinéraire</button></div></div>'+
   '<div class="xsec"><h3>Ce que voit le client</h3><div class="card">'+colisOf(k)+'</div></div>';
  if(o.chat.length)h+='<div class="xsec"><h3>Conversation avec le chatbot <span class="pill grey">'+o.src+'</span></h3><div class="card chat">'+o.chat.map(function(c){return '<div class="bub '+c[0]+'">'+esc2(c[1])+'<small>'+c[2]+'</small></div>'}).join('')+'</div></div>';
  var d=o.dv&&find(o.dv);if(d&&d.ask)h+='<div class="xsec"><h3>Réponses au formulaire</h3><div class="card"><div class="ask">'+d.ask.map(function(a){return '<span>'+a[0]+'</span><b>'+a[1]+'</b>'}).join('')+'</div></div></div>';
@@ -1629,6 +1629,7 @@ renderList();netUI();
 .pcclient svg{width:100%;height:auto;max-height:170px;color:var(--fg)}
 .pcc-b{display:flex;gap:8px;flex-wrap:wrap}.pcc-b .btn{flex:1}
 .pcplan svg{width:100%;height:auto;color:var(--fg);display:block;margin:6px 0}
+.pcplan svg.pm-j,.pcplan svg.pm-n{border-radius:12px}.pcplan svg.pm-n,html[data-theme=dark] .pcplan svg.pm-j{display:none}html[data-theme=dark] .pcplan svg.pm-n{display:block}
 .pcstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:6px 0 10px}
 .pcstats div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}.pcstats b{display:block;font-size:16px}.pcstats span{font-size:11.5px;color:var(--muted)}
 .pcov{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column}
@@ -1646,14 +1647,15 @@ renderList();netUI();
 </style>
 <div class="pcov" id="pcov" hidden role="dialog" aria-label="Plan et cotes"><div class="pcov-h"><b id="pcov-t">Plan &amp; cotes<small>Mode démo · « Voir le récapitulatif » résume le plan (le recalcul du pré-devis arrivera plus tard)</small></b><button class="pcov-x" id="pcov-x" type="button">Fermer</button></div><iframe id="pcov-f" title="Plan et cotes" allow="camera; microphone"></iframe><div class="pcbody" id="pcov-b" hidden></div></div>
 <div class="pcmsg" id="pcmsg" hidden></div>
+<script src="plan-mini.js?v=1"></script>
 <script>
 (function(){
 var MINI='<svg viewBox="-.4 -.4 8.8 4.8" aria-hidden="true"><g stroke="currentColor" stroke-width=".14"><rect width="5" height="4" fill="#EAD6B5"/><rect x="5" width="3" height="4" fill="#D3E5EF"/></g><g fill="#C9955B"><rect x=".07" y=".07" width="4.86" height=".16"/><rect x=".07" y=".07" width=".16" height="3.86"/><rect x="7.77" y=".07" width=".16" height="3.86"/></g><g fill="#2F7DE1"><rect x="1.8" y="-.07" width="1.4" height=".14"/><rect x="6" y="-.07" width="1" height=".14"/></g><g font-family="Manrope,sans-serif" font-weight="800" font-size=".42" fill="#0B1226" text-anchor="middle"><text x="2.5" y="2.1">Séjour</text><text x="6.5" y="2.1">Cuisine</text></g></svg>';
-window.pcPlanCard=function(c){return '<div class="card pcplan" id="ch-plan"><div class="row"><b>📐 Plan &amp; cotes</b><span class="pill ok">Relevé du 21/10</span></div>'+MINI+
+window.pcPlanCard=function(c){return '<div class="card pcplan" id="ch-plan"><div class="row"><b>📐 Plan &amp; cotes</b><span class="pill ok">Relevé du 21/10</span></div>'+(window.PC_PLAN_MINI||MINI)+
  '<div class="pcstats"><div><b>2</b><span>pièces</span></div><div><b>32 m²</b><span>au sol</span></div><div><b>6</b><span>photos</span></div></div>'+
  '<button class="btn go" style="width:100%" type="button" data-openplan="Chantier '+(c&&c.n?c.n:'')+'">Ouvrir le plan</button><p class="hint" style="margin-top:6px">Cotes, compositions, sols, combles et photos mur par mur. Modifiable sur place, puis « Envoyer à Cliky ».</p></div>'};
 var ov=document.getElementById('pcov'),fr=document.getElementById('pcov-f'),bd=document.getElementById('pcov-b'),msg=document.getElementById('pcmsg'),tm;
-function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=6':'plan.html?embed=1&v=6';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
+function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=7':'plan.html?embed=1&v=7';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
 function openClient(){document.getElementById('pcov-t').firstChild.nodeValue='📐 Plan dessiné par Mme Durand';fr.hidden=true;bd.hidden=false;
  bd.innerHTML='<p style="margin:0;color:var(--muted)">Envoyé avec sa demande Clik\'Devis. Les tailles en pointillés sont estimées par le client.</p>'+document.querySelector('.pcclient svg').outerHTML+
  '<div class="card" style="display:grid;gap:6px"><b>Pièces</b><span>Séjour · 5,00 × 4,00 m · isoler les murs</span><span>Cuisine · 3,20 × 3,00 m · isoler les murs</span><span>Chambre 1 · 3,80 × 2,90 m · isoler les murs, créer une cloison</span><span>Chambre 2 · ≈ 3,50 × 3,00 m (estimé) · isoler les murs</span><span>Salle de bain · 2,40 × 2,00 m · isoler les murs</span><span style="color:var(--muted)">Hauteur sous plafond 2,50 m · objectif : avoir droit aux aides</span></div>'+
@@ -1671,19 +1673,20 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 
 <script src="config.js?v=2"></script>
 <script src="options.js?v=2"></script>
-<script src="vrai.js?v=19"></script>
+<script src="vrai.js?v=21"></script>
 <link rel="stylesheet" href="relief.css?v=17">
 <link rel="stylesheet" href="intro.css?v=4"><script src="intro.js?v=7"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=4">
 <script src="accueil.js?v=10"></script>
-<link rel="stylesheet" href="clients.css?v=4">
-<script src="clients.js?v=5"></script>
+<link rel="stylesheet" href="clients.css?v=5">
+<script src="gps.js?v=1"></script>
+<script src="clients.js?v=6"></script>
 <link rel="stylesheet" href="devis.css?v=3">
 <script src="devis.js?v=6"></script>
 <script src="commandes.js?v=1"></script>
 <link rel="stylesheet" href="chantiers.css?v=1">
-<script src="chantiers.js?v=3"></script>
+<script src="chantiers.js?v=4"></script>
 <script src="planning-ajout.js?v=1"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
 <script src="depenses.js?v=3"></script>
