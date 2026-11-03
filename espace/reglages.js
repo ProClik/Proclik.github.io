@@ -41,8 +41,8 @@ new MutationObserver(function(M){M.forEach(function(m){m.addedNodes.forEach(func
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))SERVICE='';
 var jeton=function(){return lsG('pc-vrai-jeton',null)};
 var KA='pc-retours-attente',KE='pc-retours-envoyes';
-var ECRANS=['Accueil','Clients','Devis','Factures','Planning','Chantiers','Dépenses','Achats','Produits','Plan','Formulaire de demande','Autre'];
-var VUE={accueil:'Accueil',clients:'Clients',devis:'Devis',factures:'Factures',planning:'Planning',chantiers:'Chantiers',depenses:'Dépenses',prix:'Achats',produits:'Produits'};
+var ECRANS=['Accueil','Clients','Devis','Factures','Planning','Chantiers','Dépenses','Achats','Produits','Réseaux sociaux','Plan','Formulaire de demande','Autre'];
+var VUE={accueil:'Accueil',clients:'Clients',devis:'Devis',factures:'Factures',planning:'Planning',chantiers:'Chantiers',depenses:'Dépenses',prix:'Achats',produits:'Produits',reseaux:'Réseaux sociaux'};
 function ecranActuel(){var b=$('nav.nav [aria-selected=true]');return (b&&VUE[b.dataset.v])||'Accueil'}
 function appareil(){
   var o=/iPad/.test(UA)||ipad?'iPad':/iPhone/.test(UA)?'iPhone':/Android/i.test(UA)?'Android':'Ordinateur';
