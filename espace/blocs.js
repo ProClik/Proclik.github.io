@@ -59,12 +59,12 @@
     planning:function(){var E=P.EV||[],lun=P.wk?new Date(P.wk()):new Date(2026,9,12);lun.setHours(0,0,0,0);var dim=new Date(lun);dim.setDate(dim.getDate()+6);
       var iso=function(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)},sem="semaine du "+lun.getDate()+"/"+(lun.getMonth()+1);
       var S=E.filter(function(e){return e.d>=iso(lun)&&e.d<=iso(dim)}),k=function(x){return S.filter(function(e){return e.k===x}).length};
-      return [["maison","Jours de chantier",S.filter(function(e){return /^(run|plan|done)$/.test(e.k)}).map(function(e){return e.d}).filter(function(d,i,a){return a.indexOf(d)===i}).length,sem],["visite","Visites",k("visit"),sem],["libre","Créneaux libres",k("free"),"à proposer"],["agenda","Points ProClik",k("pc"),"20 min avec Cyril"]]},
+      return [["maison","Chantier",S.filter(function(e){return /^(run|plan|done)$/.test(e.k)}).map(function(e){return e.d}).filter(function(d,i,a){return a.indexOf(d)===i}).length,"jours"],["visite","Visites",k("visit"),"rdv"],["libre","Libres",k("free"),"créneaux"],["agenda","ProClik",k("pc"),"20 min"]]},
     produits:function(){var v=$("#v-produits");return [["boite","Produits",$$(".pr-li",v).length,"dans votre base"],["pile","Familles",$$(".pr-fam",v).length,"bien rangées"]]}
   };
 
-  function tuiles(id,L){var ex=L.some(function(x){return x[4]});
-    return '<div class="tb" data-tb="'+id+'"><div class="tb-g">'+L.map(function(x){return '<div class="tb-t"><span class="tb-h"><span class="tb-ic">'+I(IC[x[0]])+"</span><small>"+esc(x[1])+'</small></span><b'+(x[5]?' class="'+x[5]+'"':"")+">"+esc(x[2])+"</b><em>"+esc(x[3])+"</em></div>"}).join("")+"</div>"+
+  function tuiles(id,L){var ex=L.some(function(x){return x[4]}),lg=L.some(function(x){return String(x[2]).length>6});
+    return '<div class="tb" data-tb="'+id+'"><div class="tb-g'+(lg?" long":"")+'" style="--n:'+L.length+'">'+L.map(function(x){return '<div class="tb-t"><span class="tb-ic">'+I(IC[x[0]])+'</span><b'+(x[5]?' class="'+x[5]+'"':"")+">"+esc(x[2])+'</b><span class="tb-l">'+esc(x[1])+"</span><em>"+esc(x[3])+"</em></div>"}).join("")+"</div>"+
       (ex?'<p class="tb-ex">Chiffres d\'exemple</p>':"")+"</div>"}
   function poseTuiles(v){var id=v.id.replace(/^v-/,""),f=TU[id];if(!f)return;var L=null;try{L=f()}catch(e){}
     var old=v.querySelector(":scope .tb");if(!L){if(old)old.remove();return}
@@ -73,9 +73,10 @@
     var ref=(vrai()&&v.querySelector("#vd .vh"))||v.querySelector(".cf-top")||v.querySelector(":scope>.row")||v.querySelector(".dp-mois");
     if(old)old.replaceWith(t);else if(ref&&ref.parentNode)ref.parentNode.insertBefore(t,ref.nextSibling);else v.insertBefore(t,v.firstChild)}
 
-  /* Dépenses n'avait pas de titre : chaque onglet commence par son nom */
-  function titreDepenses(){var c=$("#v-depenses>.cf");if(!c||c.querySelector(":scope>.cf-top"))return;
-    var r=document.createElement("div");r.className="row cf-top dp-titre";r.innerHTML="<h2>Dépenses</h2>";c.insertBefore(r,c.firstChild)}
+  /* Dépenses et Chantiers n'avaient pas de titre : chaque onglet commence par son nom */
+  function titre(sel,nom){var c=$(sel);if(!c||c.querySelector(":scope>.cf-top"))return;
+    var r=document.createElement("div");r.className="row cf-top dp-titre";r.innerHTML="<h2>"+nom+"</h2>";c.insertBefore(r,c.firstChild)}
+  function titreDepenses(){titre("#v-depenses>.cf","Dépenses");titre("#v-chantiers .ch-top","Chantiers")}
 
   /* ---------- le même ordre partout (Cyril, 3/11 : « désordonné d'une page à l'autre ») ----------
      1. le nom de l'onglet  2. les tuiles  3. le gros bouton (Créer, Ajouter…) et sa phrase d'aide
@@ -85,7 +86,8 @@
     if(c.contains("vexemple"))return id==="factures"?42:0;
     if(c.contains("cf-top")||c.contains("dp-titre")||el.tagName==="H2"||(c.contains("vh")&&!el.previousElementSibling))return 10;
     if(c.contains("tb"))return 20;
-    if((c.contains("cf-main")&&!c.contains("dp-bas"))||c.contains("cf-go")||el.id==="ev-add"||c.contains("fa-aide")||c.contains("dp-aide"))return 30;
+    if(c.contains("fa-aide")||c.contains("dp-aide"))return 31;
+    if((c.contains("cf-main")&&!c.contains("dp-bas"))||c.contains("cf-go")||el.id==="ev-add")return 30;
     if(el.id==="vfa")return 40;
     if(c.contains("tm"))return 20;if(c.contains("seg")||c.contains("dp-mois"))return 50;
     if(c.contains("cf-cherche")||c.contains("pr-q"))return 60;
@@ -93,16 +95,18 @@
   function range(c,plat,suf,id){c.classList.add("ord-"+suf);
     (function tour(p){[].forEach.call(p.children,function(x){if(x.tagName==="SCRIPT"||x.tagName==="STYLE")return;
       if(plat.some(function(s){return x.matches(s)})){x.classList.add("fl-"+suf);tour(x)}
-      else{x.classList.add("oi-"+suf);x.style.order=rang(x,id)}})})(c)}
+      else{var o=rang(x,id);x.classList.add("oi-"+suf);x.style.order=o;x.setAttribute("data-r",o)}})})(c)}
   var ORD={
-    devis:function(v){if(!vrai()){var c=$(".cf.dv",v);if(c)range(c,[".grid2",".col"],"t","devis")}},
-    factures:function(v){if(vrai()){range(v,[".cf"],"a","factures");range(v,[".cf",".grid2",".col"],"t","factures")}
-      else{var c=$(":scope>.cf",v);if(c)range(c,[".grid2",".col"],"t","factures")}},
+    devis:function(v){var c=vrai()?$("#vd",v):$(".cf.dv",v);if(c)range(c,vrai()?[".cf"]:[".grid2",".col"],"a","devis")},
+    factures:function(v){if(vrai())range(v,[".cf",".grid2",".col"],"a","factures");else{var c=$(":scope>.cf",v);if(c)range(c,[".grid2",".col"],"a","factures")}},
+    clients:function(v){var c=$(".cl",v);if(c)range(c,[],"a","clients")},
     planning:function(v){range(v,[".row"],"a","planning")},
-    depenses:function(v){var c=$(":scope>.cf",v);if(c)range(c,[".grid2",".col"],"t","depenses")},
-    clients:function(v){if(essai){var c=$(".cl",v);if(c)range(c,[],"a","clients")}},
-    prix:function(v){range(v,[".row"],"a","prix")}
+    depenses:function(v){var c=$(":scope>.cf",v);if(c)range(c,[".grid2",".col"],"a","depenses")},
+    produits:function(v){var c=$(".cf.pr",v);if(c)range(c,[],"a","produits")},
+    prix:function(v){range(v,[".row"],"a","prix")},
+    chantiers:function(v){var c=$(".ch-top",v);if(c)range(c,[],"a","chantiers")}
   };
+
 
   /* ---------- chaque section (titre + liste) devient un seul bloc ---------- */
   function blocs(v){$$(".sec-h",v).forEach(function(h){if(h.closest(".bk,.tdb,.card,.sheet"))return;var c=h.nextElementSibling;
@@ -111,22 +115,38 @@
 
   /* ---------- ESSAI (Cyril, 3/11 23h) : les tuiles DEVIENNENT le menu ----------
      Plus de doublon tuiles + menu : le menu de l'onglet (Pré-devis / Fournisseur / Validés…) prend la forme de tuiles
-     chiffrées qui se touchent. Seul ce qui demande une action est teinté. Essai : ?tuiles=menu (Devis et Clients). */
-  var essai=(function(){try{var q=new URLSearchParams(location.search).get("tuiles");if(q)sessionStorage.setItem("pc-tu",q);return (q||sessionStorage.getItem("pc-tu"))==="menu"}catch(e){return /tuiles=menu/.test(location.search)}})();
+     chiffrées qui se touchent. Seul ce qui demande une action est teinté. Par défaut sur Devis, Clients, Factures, Produits (?tuiles=avant pour revoir l ancien). */
+  var essai=(function(){try{var q=new URLSearchParams(location.search).get("tuiles");if(q)sessionStorage.setItem("pc-tu",q);return (q||sessionStorage.getItem("pc-tu"))!=="avant"}catch(e){return !/tuiles=avant/.test(location.search)}})();
   if(essai)document.documentElement.setAttribute("data-tu","menu");
   var TM={
     devis:function(v){var c=$(vrai()?"#vd":".cf.dv",v),bs=c?$$(".dv-seg button",c).slice(0,3):[];if(bs.length<3)return null;var N,S;
       if(vrai()){var R=window.PCVD||{a:0,f:0,v:0};N=[R.a,R.f,R.v];S=[R.a?"à vérifier ce soir":"rien ce soir",R.f?"prix attendus":"aucun en attente","et suivantes"]}
       else{var D=P.D||[],f=function(s){return D.filter(function(d){return d.statut===s})},a=f("todo"),w=f("warn");
         N=[Math.max(a.length,badge("#badge")),w.length,f("sent").length+f("signed").length];S=[N[0]?eur0(somme(a))+" HT":"rien ce soir",N[1]?"prix changé":"à jour","envoyés"]}
-      return {b:bs,N:N,S:S,T:[N[0]?"acc":"",N[1]?"acc":"",""]}},
+      return {b:bs,N:N,S:S,T:[N[0]?"chaud":"",N[1]?"chaud":"",""]}},
+    /* Factures : en direct, le menu ne pilote que l'exemple du dessous, on garde donc les tuiles des vraies factures */
+    factures:function(v){if(vrai())return null;var c=$(":scope>.cf",v),bs=c?$$(".dv-seg button",c).slice(0,3):[];if(bs.length<3)return null;
+      var cf=P.cf||{},F=cf.FA?cf.FA():[],R=cf.RC?cf.RC():[],ht=0,t=function(f){try{return cf.ftot(f).ht}catch(e){return 0}};
+      F.forEach(function(f){if(f.st==="attente")ht+=t(f)});
+      var nf=F.filter(function(f){return f.ty!=="ac"&&f.st==="pret"}).length,na=F.filter(function(f){return f.ty==="ac"&&f.st==="pret"}).length,nr=R.filter(function(r){return r.st!=="payee"}).length;
+      return {b:bs,N:[nf,na,nr],S:[ht?eur0(ht)+" dus":"à envoyer","à envoyer",nr?"à payer":"tout est payé"],T:[nf?"chaud":"",na?"chaud":"",nr?"chaud":""]}},
+    chantiers:function(v){var c=$(".ch-top",v),bs=c?$$(":scope>.ch-seg button",c):[];if(bs.length<2)return null;var CH=P.CH||{},L=Object.keys(CH).map(function(k){return CH[k]}),
+      act=L.filter(function(x){return x.st==="run"||x.st==="cours"}),moy=0;act.forEach(function(x){try{moy+=P.avc(x)}catch(e){}});
+      var N=bs.map(function(b){var i=b.querySelector("i");return i?(parseInt(txt(i),10)||0):L.length});
+      return {b:bs,N:N,S:[N[0]?"chantiers ouverts":"aucun en cours","depuis le début"],T:[N[0]?"chaud":"",""]}},
+    prix:function(v){var bs=$$("#achseg button",v);if(bs.length<3)return null;var D=P.DP||[],C=P.CMD?P.CMD():[],k=function(x){return D.filter(function(d){return d.st===x}).length},
+      w=k("wait"),r=k("recu"),c=C.filter(function(x){return x.st==="envoyee"||x.st==="conf"}).length;
+      return {b:bs,N:[w+r,"",c],S:[r?nb(r,"réponse","réponses"):w?"en attente":"aucune demande","vos tarifs",c?"en route":"rien en route"],T:[r?"chaud":"","",""],I:["camion","euro","boite"]}},
+    produits:function(v){var c=$(".cf.pr",v),bs=c?$$(":scope>.dv-seg button",c):[];if(bs.length<3)return null;
+      var N=bs.map(function(b){var i=b.querySelector("i");return i?(parseInt(txt(i),10)||0):""});return {b:bs,N:N,S:["fournitures","main-d'œuvre","référence"],T:["","",""]}},
     clients:function(v){var c=$(".cl",v),bs=c?$$(":scope>.cl-seg button",c):[];if(bs.length<3)return null;
-      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises"],T:["",N[1]?"acc":"",""]}}
+      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises"],T:["",N[1]?"chaud":"",""]}}
   };
   function menuTuiles(v){var id=v.id.replace(/^v-/,""),f=TM[id];if(!essai||!f)return false;var r=null;try{r=f(v)}catch(e){}if(!r)return false;
-    r.b[0].parentNode.classList.add("tm");
+    r.b[0].parentNode.classList.add("tm");r.b[0].parentNode.style.setProperty("--n",r.b.length);
     r.b.forEach(function(b,i){var k=r.N[i]+"|"+r.S[i]+"|"+r.T[i];if(b._tm===k&&b.querySelector(".tm-n"))return;b._tm=k;
       $$(".tm-n,.tm-s",b).forEach(function(x){x.remove()});
+      if(r.I&&!b.querySelector("svg"))b.insertAdjacentHTML("afterbegin",I(IC[r.I[i]]));
       b.insertAdjacentHTML("beforeend",'<b class="tm-n'+(r.T[i]?" "+r.T[i]:"")+'">'+esc(r.N[i])+'</b><em class="tm-s">'+esc(r.S[i])+"</em>")});
     var old=v.querySelector(":scope .tb");if(old)old.remove();return true}
 
