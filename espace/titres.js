@@ -14,7 +14,7 @@
     [/à faire|attente/i,'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>'],
     [/document/i,'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>']];
   var DEF='<path d="M5 6h14M5 12h14M5 18h9"/>';
-  function pose(h){if(h.dataset.ti||h.closest("#v-accueil,.tdb"))return;h.dataset.ti="1";
+  function pose(h){if(h.dataset.ti||h.closest("#v-accueil,.tdb,.pr-fam"))return;h.dataset.ti="1";
     var t=h.textContent||"",p=DEF;for(var i=0;i<ICONES.length;i++)if(ICONES[i][0].test(t)){p=ICONES[i][1];break}
     var s=document.createElement("span");s.className="ti-ic";s.innerHTML=I(p);h.insertBefore(s,h.firstChild);h.classList.add("ti")}
   function tout(r){[].forEach.call((r||document).querySelectorAll(".sec-h>h2"),pose)}

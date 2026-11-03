@@ -1,0 +1,23 @@
+/* Tout l'Espace en blocs (Cyril, 3/11) : petites tuiles chiffrées en haut de chaque onglet, et une section = un bloc en relief, titre dedans.
+   Même matière que l'Accueil. Les tuiles ne se touchent pas (pas de bouton poussoir) : elles informent. */
+.tb{margin:2px 0 16px;container-type:inline-size}
+.tb-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@container (max-width:560px){.tb-g{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+.tb-t{display:flex;flex-direction:column;gap:2px;min-width:0;padding:14px 16px;border-radius:22px;background:var(--rs);box-shadow:var(--up)}
+.tb-h{display:flex;align-items:center;gap:9px;min-width:0;margin-bottom:8px}
+.tb-h small{font-size:12.5px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-ic{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:50%;background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+.tb-ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tb-t b{font-size:clamp(20px,5.2cqi,27px);font-weight:800;letter-spacing:-.4px;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tb-t b.cor{color:var(--cor-ink,#E0603C)}
+.tb-t em{font-style:normal;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-ex{margin:8px 2px 0;font-size:12px;font-style:italic;color:var(--muted)}
+/* Une section = un bloc : le titre (avec son icône) dans le bloc, la liste dessous sans second relief */
+.bk{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:16px;border-radius:24px;background:var(--rs);box-shadow:var(--up);min-width:0}
+.bk+.bk,.bk+.sec-h,.card+.bk{margin-top:16px}
+html body .bk>.sec-h{margin:0!important}
+html body .bk>.card{margin:0!important;padding:0!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important}
+.bk>.card.lst{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.bk>*{min-width:0}
+.bk>.sec-h{flex-wrap:wrap;row-gap:2px}
+.bk .cf-li{box-sizing:border-box;max-width:100%}
