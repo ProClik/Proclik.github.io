@@ -1629,6 +1629,7 @@ renderList();netUI();
 .pcclient svg{width:100%;height:auto;max-height:170px;color:var(--fg)}
 .pcc-b{display:flex;gap:8px;flex-wrap:wrap}.pcc-b .btn{flex:1}
 .pcplan svg{width:100%;height:auto;color:var(--fg);display:block;margin:6px 0}
+.pcplan svg.pm-j,.pcplan svg.pm-n{border-radius:12px}.pcplan svg.pm-n,html[data-theme=dark] .pcplan svg.pm-j{display:none}html[data-theme=dark] .pcplan svg.pm-n{display:block}
 .pcstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:6px 0 10px}
 .pcstats div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}.pcstats b{display:block;font-size:16px}.pcstats span{font-size:11.5px;color:var(--muted)}
 .pcov{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column}
@@ -1646,14 +1647,15 @@ renderList();netUI();
 </style>
 <div class="pcov" id="pcov" hidden role="dialog" aria-label="Plan et cotes"><div class="pcov-h"><b id="pcov-t">Plan &amp; cotes<small>Mode démo · « Voir le récapitulatif » résume le plan (le recalcul du pré-devis arrivera plus tard)</small></b><button class="pcov-x" id="pcov-x" type="button">Fermer</button></div><iframe id="pcov-f" title="Plan et cotes" allow="camera; microphone"></iframe><div class="pcbody" id="pcov-b" hidden></div></div>
 <div class="pcmsg" id="pcmsg" hidden></div>
+<script src="plan-mini.js?v=1"></script>
 <script>
 (function(){
 var MINI='<svg viewBox="-.4 -.4 8.8 4.8" aria-hidden="true"><g stroke="currentColor" stroke-width=".14"><rect width="5" height="4" fill="#EAD6B5"/><rect x="5" width="3" height="4" fill="#D3E5EF"/></g><g fill="#C9955B"><rect x=".07" y=".07" width="4.86" height=".16"/><rect x=".07" y=".07" width=".16" height="3.86"/><rect x="7.77" y=".07" width=".16" height="3.86"/></g><g fill="#2F7DE1"><rect x="1.8" y="-.07" width="1.4" height=".14"/><rect x="6" y="-.07" width="1" height=".14"/></g><g font-family="Manrope,sans-serif" font-weight="800" font-size=".42" fill="#0B1226" text-anchor="middle"><text x="2.5" y="2.1">Séjour</text><text x="6.5" y="2.1">Cuisine</text></g></svg>';
-window.pcPlanCard=function(c){return '<div class="card pcplan" id="ch-plan"><div class="row"><b>📐 Plan &amp; cotes</b><span class="pill ok">Relevé du 21/10</span></div>'+MINI+
+window.pcPlanCard=function(c){return '<div class="card pcplan" id="ch-plan"><div class="row"><b>📐 Plan &amp; cotes</b><span class="pill ok">Relevé du 21/10</span></div>'+(window.PC_PLAN_MINI||MINI)+
  '<div class="pcstats"><div><b>2</b><span>pièces</span></div><div><b>32 m²</b><span>au sol</span></div><div><b>6</b><span>photos</span></div></div>'+
  '<button class="btn go" style="width:100%" type="button" data-openplan="Chantier '+(c&&c.n?c.n:'')+'">Ouvrir le plan</button><p class="hint" style="margin-top:6px">Cotes, compositions, sols, combles et photos mur par mur. Modifiable sur place, puis « Envoyer à Cliky ».</p></div>'};
 var ov=document.getElementById('pcov'),fr=document.getElementById('pcov-f'),bd=document.getElementById('pcov-b'),msg=document.getElementById('pcmsg'),tm;
-function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=6':'plan.html?embed=1&v=6';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
+function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=7':'plan.html?embed=1&v=7';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
 function openClient(){document.getElementById('pcov-t').firstChild.nodeValue='📐 Plan dessiné par Mme Durand';fr.hidden=true;bd.hidden=false;
  bd.innerHTML='<p style="margin:0;color:var(--muted)">Envoyé avec sa demande Clik\'Devis. Les tailles en pointillés sont estimées par le client.</p>'+document.querySelector('.pcclient svg').outerHTML+
  '<div class="card" style="display:grid;gap:6px"><b>Pièces</b><span>Séjour · 5,00 × 4,00 m · isoler les murs</span><span>Cuisine · 3,20 × 3,00 m · isoler les murs</span><span>Chambre 1 · 3,80 × 2,90 m · isoler les murs, créer une cloison</span><span>Chambre 2 · ≈ 3,50 × 3,00 m (estimé) · isoler les murs</span><span>Salle de bain · 2,40 × 2,00 m · isoler les murs</span><span style="color:var(--muted)">Hauteur sous plafond 2,50 m · objectif : avoir droit aux aides</span></div>'+
