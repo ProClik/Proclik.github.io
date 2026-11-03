@@ -41,8 +41,8 @@ new MutationObserver(function(M){M.forEach(function(m){m.addedNodes.forEach(func
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))SERVICE='';
 var jeton=function(){return lsG('pc-vrai-jeton',null)};
 var KA='pc-retours-attente',KE='pc-retours-envoyes';
-var ECRANS=['Accueil','Clients','Devis','Factures','Planning','Chantiers','Dépenses','Achats','Produits','Plan','Formulaire de demande','Autre'];
-var VUE={accueil:'Accueil',clients:'Clients',devis:'Devis',factures:'Factures',planning:'Planning',chantiers:'Chantiers',depenses:'Dépenses',prix:'Achats',produits:'Produits'};
+var ECRANS=['Accueil','Clients','Devis','Factures','Planning','Chantiers','Dépenses','Achats','Produits','Réseaux sociaux','Plan','Formulaire de demande','Autre'];
+var VUE={accueil:'Accueil',clients:'Clients',devis:'Devis',factures:'Factures',planning:'Planning',chantiers:'Chantiers',depenses:'Dépenses',prix:'Achats',produits:'Produits',reseaux:'Réseaux sociaux'};
 function ecranActuel(){var b=$('nav.nav [aria-selected=true]');return (b&&VUE[b.dataset.v])||'Accueil'}
 function appareil(){
   var o=/iPad/.test(UA)||ipad?'iPad':/iPhone/.test(UA)?'iPhone':/Android/i.test(UA)?'Android':'Ordinateur';
@@ -81,7 +81,7 @@ var IC={
 };
 var TYPES=[['probleme','Un problème',IC.bug,'Ce qui ne marche pas, ou pas comme vous pensiez'],['idee','Une idée',IC.idee,'Ce qui vous ferait gagner du temps'],['message','Un message',IC.msg,'Une question, une demande, un mot pour Cyril']];
 
-function formulaire(type){
+function formulaire(type,pre){
   var t=type||'probleme',photo=null,rappel='appli',tel=(window.PCID&&PCID._telephone&&PCID.telephone)||'';
   var h='<p class="rg-lead">Vous testez l\'Espace en avant-première : tout ce que vous dites ici arrive directement chez Cyril. Rien n\'est trop petit.</p>'+
    '<div class="rg-types" role="radiogroup" aria-label="Type d\'envoi">'+TYPES.map(function(x){return '<button type="button" role="radio" data-rgt="'+x[0]+'" aria-checked="'+(x[0]===t)+'"><span class="rg-g" aria-hidden="true">'+x[2]+'</span><b>'+x[1]+'</b></button>'}).join('')+'</div>'+
@@ -95,6 +95,7 @@ function formulaire(type){
    (jeton()&&SERVICE?'':'<p class="rg-note">Mode démonstration : votre envoi est gardé sur cet appareil et partira dès que l\'Espace sera connecté avec votre code.</p>');
   X.xopen(t==='message'?'Écrire à Cyril':'Un problème ? Une idée ?','Bêta-test · réponse sous 24 h ouvrées',h,
    '<button class="btn" data-xclose>Annuler</button><button class="btn go" id="rg-go">Envoyer à Cyril</button>',function(){
+    if(pre){$('#rg-texte').value=pre;var se=$('#rg-ecran');if(se)se.value='Autre'}
     function maj(){
       $$('[data-rgt]').forEach(function(b){b.setAttribute('aria-checked',String(b.dataset.rgt===t))});
       var x=TYPES.filter(function(y){return y[0]===t})[0];$('#rg-sous').textContent=x[3];
@@ -176,6 +177,9 @@ function barre(){
     rend();
   },true);
 }
+
+/* Pour « Mes options » (mes-options.js) : écrire à Cyril avec un texte déjà prêt */
+window.PCREG={ecrire:function(txt){formulaire('message',txt)}};
 
 /* ---------- dans le panneau Réglages ---------- */
 var menu=$('#menu');

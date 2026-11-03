@@ -71,8 +71,8 @@ function vue(){var v=$('#v-devis');if(!v)return;var c=v.querySelector(':scope>.d
  var p=P[0],big=p?['Vérifier le pré-devis','data-dvo="'+p.id+'"',IC.pre]:['Créer un devis','data-dvnew',IC.plus];
  var h='<div class="row cf-top"><h2>Devis</h2><span class="cf-n">'+(P.length?P.length+' à valider':'tout est à jour')+'</span></div>'+
   '<div class="grid2"><div class="col">'+
-  (p?'<div class="card cf-hero"><small>À valider ce soir</small><b>'+eur(X.tot(p).ht)+' <em>HT</em></b><span>'+esc(p.client)+' · '+esc(p.titre)+'</span></div>':'<div class="card cf-rien"><b>Aucun pré-devis à valider</b><span>Les demandes de vos clients arrivent ici, déjà calculées avec vos prix.</span></div>')+
-  '<button class="btn go cf-go" type="button" '+big[1]+'><span class="lab"><span class="ic">'+big[2]+'</span><span>'+esc(big[0])+'</span></span></button>'+
+  (p?'<div class="card cf-hero"><small>À valider ce soir</small><b>'+eur(X.tot(p).ht)+' <em>HT</em></b><span>'+esc(p.client)+' · '+esc(p.titre)+'</span>':'<div class="card cf-rien"><b>Aucun pré-devis à valider</b><span>Les demandes de vos clients arrivent ici, déjà calculées avec vos prix.</span>')+
+  '<button class="btn go cf-go cf-in" type="button" '+big[1]+'><span class="lab"><span class="ic">'+big[2]+'</span><span>'+esc(big[0])+'</span></span></button></div>'+
   (p?'<div class="cf-main"><button type="button" class="btn sm" data-dvnew>'+IC.plus+'Créer un devis</button></div>':'')+
   '</div><div class="col">'+
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',P.length],['four','Fournisseur',F.length],['val','Validés',0]].map(function(s){return '<button role="tab" data-dvseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+IC[s[0]]+'<span>'+s[1]+'</span>'+(s[2]?'<i>'+s[2]+'</i>':'')+'</button>'}).join('')+'</div>';
@@ -156,7 +156,7 @@ function aLaMain(){var doc=CUR.doc,P=pieces(doc),pre=filtre;
   '<div class="dl-q"><span>Quantité</span><input id="dm-q" inputmode="decimal" value="1" aria-label="Quantité"><input id="dm-u" class="dl-u" value="u" aria-label="Unité"></div>'+
   '<label>Prix unitaire HT<input id="dm-p" inputmode="decimal" placeholder="0,00"></label>'+
   (P.length?'<label>Pièce<select id="dm-pc">'+P.map(function(p){return '<option>'+esc(p)+'</option>'}).join('')+'</select></label>':'')+
-  '<p class="dp-opt"><b>'+(CLIKY?'Avec Cliky':'Option Cliky')+'</b> : '+(CLIKY?'ce produit entre aussi dans votre base de prix, pour les prochains devis.':'le produit tapé entrerait dans votre base. Sans l\'option, il reste dans ce document.')+'</p>'+
+  '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'<b>Option Cliky</b> ')+(CLIKY?'Ce produit entre aussi dans votre base de prix, pour les prochains devis.':'Le produit tapé entrerait dans votre base. Sans l\'option, il reste dans ce document.')+'</div>'+
   '<p class="hint">Vous pouvez aussi dicter : touchez le micro.</p></div>';
  X.xopen('Créer un produit','Il rejoint ce devis'+(CLIKY?' et votre base':''),h,'<button class="btn" data-dvback>Retour</button><button class="btn go" data-dmok>Ajouter</button>',function(){setTimeout(function(){var d=$('#dm-d');if(d&&!matchMedia('(pointer:coarse)').matches)d.focus()},200)},true);}
 function aLaMainOk(){var doc=CUR.doc,d=$('#dm-d').value.trim(),p=r2(num($('#dm-p').value)),q=r2(num($('#dm-q').value))||1,u=$('#dm-u').value.trim()||'u',s=$('#dm-pc');

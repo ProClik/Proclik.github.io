@@ -9,7 +9,7 @@
   if($("#pb")||!$("#nb-accueil"))return;
   var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
-  var TOUS=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","reglages"];
+  var TOUS=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","reseaux","reglages"];
   var DEFAUT=["accueil","clients","planning","devis"];
   function lit(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}}
   function choisis(){

@@ -150,19 +150,20 @@ function pointCard(c){var txt=c.pointTxt||pointTexte(c);
   '<div class="row" style="gap:8px"><button class="btn" style="flex:1" id="ch-ptr">Refaire</button><button class="btn go" style="flex:1" id="ch-pts">'+(c.pointSent?'Renvoyer':'Envoyer le SMS')+'</button></div></div>';}
 var QUAND=[['jour','Le jour de la facture finale'],['lendemain','Le lendemain (conseillé)'],['3j','3 jours après']];
 function avisCard(c){var a=c.avis||(c.avis={on:true,quand:'lendemain'});
- return '<div class="card" id="ch-avis"><div class="ch-sw"><span>Demander un avis Google<small>Option. Part tout seul quand la facture finale est envoyée.</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+!!a.on+'" id="ch-avt" aria-label="Demander un avis Google"></button></div>'+
+ return '<div class="card" id="ch-avis">'+(window.PCTAG?PCTAG('avis'):'')+'<div class="ch-sw"><span>Demander un avis Google<small>Part tout seul quand la facture finale est envoyée.</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+!!a.on+'" id="ch-avt" aria-label="Demander un avis Google"></button></div>'+
   (a.on?'<div class="ch-quand">'+QUAND.map(function(q){return '<button type="button" class="btn" data-avq="'+q[0]+'" aria-pressed="'+(a.quand===q[0])+'">'+q[1]+'</button>'}).join('')+'</div>':'')+
   (c.st==='done'?'<p class="hint" style="margin-top:8px">'+(a.on?'Chantier terminé : demande d\'avis envoyée après la facture finale.':'Pas de demande d\'avis pour ce chantier.')+'</p>':'')+'</div>';}
 
 /* ---------- Finances : pré-factures à vérifier avant VosFactures ---------- */
 function finances(c){var f=cfin(c),a=avc(c),D2=c.docs||[];
  var acF=D2.some(function(d){return d.ty==='ac'}),soF=c.soldeCree||D2.some(function(d){return d.ty==='solde'});
- var h='<div class="card" id="ch-fin"><div class="row" style="margin-bottom:8px"><b>Finances</b><span class="pill '+(c.fin.ac?'ok':'warn')+'">'+(!c.fin.ht?'Pas encore de devis':!c.fin.ac?'Acompte à recevoir':f.rest?'Acompte reçu':'Payé')+'</span></div><div class="fin"><span>Devis signé (HT)</span><b>'+eur(c.fin.ht)+'</b><span>TVA '+fr(c.fin.tva)+' %</span><b>'+eur(f.tv)+'</b><span>Total TTC</span><b>'+eur(f.ttc)+'</b><span>Acompte reçu</span><b>− '+eur(c.fin.ac)+'</b>'+(c.fin.paid?'<span>Solde réglé</span><b>− '+eur(f.ttc-c.fin.ac)+'</b>':'')+'<span>Reste à encaisser</span><b>'+eur(f.rest)+'</b></div></div>';
- if(c.fin.ht&&f.rest)h+='<div class="col" style="gap:10px">'+
+ var h='<div class="card" id="ch-fin"><div class="row" style="margin-bottom:8px"><b>Finances</b><span class="pill '+(c.fin.ac?'ok':'warn')+'">'+(!c.fin.ht?'Pas encore de devis':!c.fin.ac?'Acompte à recevoir':f.rest?'Acompte reçu':'Payé')+'</span></div><div class="fin"><span>Devis signé (HT)</span><b>'+eur(c.fin.ht)+'</b><span>TVA '+fr(c.fin.tva)+' %</span><b>'+eur(f.tv)+'</b><span>Total TTC</span><b>'+eur(f.ttc)+'</b><span>Acompte reçu</span><b>− '+eur(c.fin.ac)+'</b>'+(c.fin.paid?'<span>Solde réglé</span><b>− '+eur(f.ttc-c.fin.ac)+'</b>':'')+'<span>Reste à encaisser</span><b>'+eur(f.rest)+'</b></div>';
+ if(c.fin.ht&&f.rest)h+='<div class="col cf-in" style="gap:10px">'+
   (!c.fin.ac&&!acF?'<button class="btn go" style="width:100%" data-pf="ac">Préparer la facture d\'acompte</button>':'')+
   (a>0&&a<100&&!soF?'<button class="btn" style="width:100%" data-pf="sit">Préparer une facture de situation ('+a+' %)</button>':'')+
   (!soF?'<button class="btn'+(a>=100?' go':'')+'" style="width:100%" data-pf="solde">Préparer la facture de solde</button>':'<p class="hint">Facture de solde créée : elle est dans Documents et dans Factures.</p>')+
   '<p class="hint">Vous voyez d\'abord une pré-facture : vous enlevez ou ajoutez des lignes, vous vérifiez, puis vous validez. Une facture ne se modifie plus une fois créée.</p></div>';
+ h+='</div>';
  if(c.fact&&X.coutHTML)h+='<div class="card" id="ch-cout"><div class="row" style="margin-bottom:8px"><b>Coût réel du chantier</b><span class="pill '+(c.closed?'ok':'warn')+'">'+(c.closed?'Définitif':'En cours')+'</span></div>'+X.coutHTML(c)+'</div>';
  return h;}
 function achats(c){if(!c.prev)return '';var reel=(c.reel||[]).reduce(function(s,r){return s+num(r[1])},0);
