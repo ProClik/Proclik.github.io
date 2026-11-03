@@ -40,7 +40,7 @@ X.base=function(){return relire()};
 X.ajoutBase=function(p){relire();if(!p||!p.d)return;if(BASE.some(function(b){return b.d.toLowerCase()===String(p.d).toLowerCase()}))return;var n={c:p.c||'M'+Date.now().toString(36),d:p.d,u:p.u||'u',p:+p.p||0,t:p.t||'Ajouté par vous'};Object.keys(p).forEach(function(k){if(!(k in n))n[k]=p[k]});BASE.push(n);X.lsSet('pc-base1',BASE)};
 var usage=function(){return X.lsGet('pc-base-usage',{})||{}};
 function compter(d){var U=usage(),k=String(d||'').toLowerCase();if(!k)return;U[k]=(U[k]||0)+1;X.lsSet('pc-base-usage',U)}
-var CLIKY=true; /* Démo : l'option Cliky est active ; sans elle, le produit tapé reste dans ce devis seulement */
+var CLIKY=!!(window.PCOPT&&PCOPT.cliky); /* Option Cliky prise (PCOPT) ; sans elle, le produit tapé reste dans ce devis seulement */
 
 /* ---------- les pré-devis de la démo : pièces, plan, et un dossier en attente du fournisseur ---------- */
 function prep(){

@@ -61,7 +61,7 @@ function tag(dit){return window.PCTAG?PCTAG('reseaux',dit):'<b>Réseaux sociaux<
 var ecran='home',F=null;
 function tete(titre,sous,retour){
  return '<div class="rs-tete">'+(retour?'<button type="button" class="rs-ret" data-rs="home" aria-label="Retour">'+IC.retour+'</button>':'')+
-  '<div><h2>'+titre+'</h2><small>'+sous+'</small></div></div><div class="card rs-tag">'+tag(prise()?'Option incluse':'Option à ajouter')+'</div>'}
+  '<div><h2>'+titre+'</h2><small>'+sous+'</small></div></div><div class="card rs-tag">'+tag(prise()?'Option active':'Option à ajouter')+'</div>'}
 function ligneBtn(act,ico,titre,sous,badge){
  return '<button type="button" class="card rs-row" data-rs="'+act+'"><span class="rs-ri">'+ico+'</span><span class="tx"><b>'+titre+'</b><small>'+sous+'</small></span>'+
   (badge?'<span class="badge rs-bd">'+badge+'</span>':'<span class="rs-fl">'+IC.fl+'</span>')+'</button>'}
