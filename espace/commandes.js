@@ -12,7 +12,7 @@ var IC={cmd:I('<path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="
  env:I('<path d="M3 11l18-8-8 18-2-8z"/><path d="M11 13l10-10"/>'),plus:I('<path d="M12 5v14M5 12h14"/>')};
 var CMD0=[{id:'C-0012',sup:'pd',ch:'alpes',d:'jeu. 15/10',st:'livree',liv:'Sur le chantier',L:[['Plaques BA13 · 1,20 × 2,50 m','12 u'],['Fourrures F530 · 3,00 m','26 u']]},
  {id:'C-0013',sup:'nim',ch:'lopez',d:'mer. 28/10',st:'conf',liv:'Au dépôt',quand:'jeu. 5/11',L:[['Plaques BA13 hydro','8 u'],['Rail R48','4 u']]}];
-var CMD=X.lsGet('pc-cmd1',null)||CMD0;
+var CMD=X.lsGet('pc-cmd1',null)||CMD0;X.CMD=function(){return CMD};
 function save(){X.lsSet('pc-cmd1',CMD)}
 var ST={envoyee:['Envoyée','todo'],conf:['Confirmée','warn'],livree:['Livrée','ok']};
 /* Ce qui reste à commander, chantier par chantier */

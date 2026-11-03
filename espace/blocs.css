@@ -21,3 +21,22 @@ html body .bk>.card{margin:0!important;padding:0!important;background:transparen
 .bk>*{min-width:0}
 .bk>.sec-h{flex-wrap:wrap;row-gap:2px}
 .bk .cf-li{box-sizing:border-box;max-width:100%}
+/* Le même ordre sur chaque onglet (Cyril, 3/11) : nom, tuiles, gros bouton, menu, recherche, blocs.
+   blocs.js range les morceaux ; ici on les affiche dans cet ordre, sans rien déplacer dans la page. */
+.ord-a{display:flex!important;flex-direction:column;gap:16px}
+.ord-a .fl-a{display:contents!important}
+.ord-a .oi-a{margin-top:0!important;margin-bottom:0!important}
+.dp-titre{margin:0 0 12px}
+@media (max-width:899px){
+  .ord-t{display:flex!important;flex-direction:column;gap:14px}
+  .ord-t .fl-t{display:contents!important}
+  .ord-t .oi-t{margin-top:0!important;margin-bottom:0!important}
+  .ord-t>.oi-t.tb,.ord-t .fl-t>.oi-t.tb{margin:0!important}
+}
+/* Planning : « Ajouter au planning » prend le même gros bouton que les autres onglets */
+html body #v-planning .pl-go{width:100%;min-height:clamp(54px,15vw,62px);border-radius:999px;font-size:clamp(15px,4.2vw,17px);padding:0 clamp(58px,16vw,66px) 0 18px;display:flex;align-items:center}
+html body #v-planning .pl-go::after{width:clamp(38px,11vw,44px);height:clamp(38px,11vw,44px);margin-top:calc(clamp(38px,11vw,44px)/-2);right:8px}
+html body #v-planning .pl-go::before{right:calc(8px + (clamp(38px,11vw,44px) - 18px)/2)}
+#v-planning .pl-go .lab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+#v-planning .pl-go .ic{display:grid;place-items:center;width:20px;height:20px;flex:none;color:var(--muted)}
+#v-planning .pl-go .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}

@@ -65,7 +65,7 @@ function valider(){lire();
 
 /* ---------- le bouton « + » du planning ---------- */
 var tete=$('#v-planning>.row');
-if(tete&&!$('#ev-add')){(tete.querySelector('h2')||tete).insertAdjacentHTML(tete.querySelector('h2')?'afterend':'beforeend','<button type="button" class="ev-add" id="ev-add" aria-label="Ajouter un évènement">'+IC.plus+'<span>Ajouter</span></button>');
+if(tete&&!$('#ev-add')){(tete.querySelector('h2')||tete).insertAdjacentHTML(tete.querySelector('h2')?'afterend':'beforeend','<button type="button" class="btn go cf-go pl-go" id="ev-add" aria-label="Ajouter un évènement"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter au planning</span></span></button>');
  $('#ev-add').addEventListener('click',function(){var wk=X.calWeek(),t=X.TODAY,d=(t>=wk&&t<new Date(wk.getTime()+7*864e5))?t:wk;fiche({d:iso(d)})});}
 var h=$('#p-semaine .hint');if(h)h.textContent='Touchez un moment libre pour y ajouter un rendez-vous, ou le bouton « Ajouter » en haut. Touchez un évènement pour l\'ouvrir.';
 
