@@ -2,7 +2,7 @@
    4 images simples + le choix de l'affichage. Un seul gros bouton par écran, on peut glisser du doigt. Cyril, 3/11. */
 (function(){
 var d=document;
-var P='M52 64.7 A23 23 0 1 0 33 42 V70';
+var P='M35.97 74.34V40A20.03 20.03 0 0 1 76.03 40V17.1V40A20.03 20.03 0 0 1 35.97 40',PF='M32.47 40A23.53 23.53 0 1 1 79.53 40A23.53 23.53 0 1 1 32.47 40ZM39.46 40A16.54 16.54 0 1 0 72.54 40A16.54 16.54 0 1 0 39.46 40ZM32.47 38.09H39.46V63.76C39.46 70.21 36.28 72.44 33.1 72.44Q32.47 72.44 32.47 70.53ZM38.19 54.63H45.82V61.22Q39.46 58.17 39.46 63.76H38.19ZM79.53 41.91H72.54V21.24C72.54 18.87 75.72 18.06 78.9 18.06Q79.53 18.06 79.53 19.65ZM73.81 25.37H66.18V18.78Q72.54 21.83 72.54 21.24H73.81Z';
 var MIC='<svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>';
 var DOC='<svg class="ic" viewBox="0 0 24 24"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/></svg>';
 var PHO='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8.5 6l1.5-2.5h4L15.5 6"/></svg>';
@@ -19,7 +19,7 @@ function optHTML(){var L=window.PCOPT&&PCOPT.liste||{};
 function ecrans(){
 /* Présentation de l'Espace DE BASE (Cyril, 3/11), NEUTRE du début à la fin (aucun état d'option ou de compte) ; les options et ce qu'elles apportent arrivent à la fin */
 E=[
- {s:'<div class="pi-logo"><b></b><b></b><span class="pi-galet"><svg viewBox="18 6.5 76 76"><path class="l" pathLength="100" d="'+P+'"/><circle class="p" cx="56" cy="42" r="6"/></svg></span></div>',
+ {s:'<div class="pi-logo"><b></b><b></b><span class="pi-galet"><svg viewBox="18 6.5 76 76"><mask id="plmi" maskUnits="userSpaceOnUse" x="0" y="-20" width="120" height="130"><path class="l" pathLength="100" d="'+P+'" style="fill:none;stroke:#fff;stroke-width:14px;stroke-linecap:butt"/></mask><path d="'+PF+'" mask="url(#plmi)" style="fill:var(--acc);stroke:none"/></svg></span></div>',
   h:'Bienvenue dans votre Espace',
   p:'Vos demandes, vos devis, vos chantiers et vos factures, au même endroit. Voici l\'essentiel en quelques images.'},
  {s:'<div class="pi-dem pi-carte pi-arrive"><div class="t"><i></i>Nouvelle demande</div><div class="qui"><span class="av pi-galet">MD</span><span><b>Mme Durand</b><small>Cloisons du séjour</small></span></div><div class="pd pi-creux">'+PHO+'<span>Photos du client</span><em>Jointes</em></div></div>',
