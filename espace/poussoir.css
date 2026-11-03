@@ -3,16 +3,16 @@
    poussoir.js pose .pk sur chaque élément cliquable (et .pk-v sur le galet qui le dessine) ; ici on ne change que les ombres.
    Deux propositions : A « Anneau fin » (par défaut) et B « Poussoir » (html[data-pk="b"]). */
 :root{--up0:var(--up);--ups0:var(--up-s);--in0:var(--in);
-  --pk-e:rgba(14,19,34,.24);--pk-o:rgba(26,34,64,.16);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10);--pk-s1:rgba(26,34,64,.13);--pk-s2:rgba(255,255,255,.95);
-  --pk-logement:-1px -1px 0 3px var(--pk-s1),1px 1px 0 3px var(--pk-s2)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.42);--pk-s2:rgba(255,255,255,.07)}}
-:root[data-theme="dark"]{--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.42);--pk-s2:rgba(255,255,255,.07)}
+  --pk-e:rgba(14,19,34,.24);--pk-o:rgba(26,34,64,.16);--pk-l:rgba(255,255,255,.95);--pk-d:rgba(26,34,64,.30);--pk-c:rgba(26,34,64,.10);--pk-f:rgba(26,34,64,.07);--pk-s1:rgba(26,34,64,.12);--pk-s2:rgba(255,255,255,.95);
+  --pk-logement:-.5px -.5px 0 1.5px var(--pk-s1),.5px .5px 0 1.5px var(--pk-s2)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.45);--pk-s2:rgba(255,255,255,.07);--pk-f:rgba(0,0,0,.18)}}
+:root[data-theme="dark"]{--pk-e:rgba(225,231,245,.16);--pk-o:rgba(0,0,0,.4);--pk-l:rgba(0,0,0,.30);--pk-d:rgba(0,0,0,.62);--pk-c:rgba(0,0,0,.22);--pk-s1:rgba(0,0,0,.45);--pk-s2:rgba(255,255,255,.07);--pk-f:rgba(0,0,0,.18)}
 
 /* A — Anneau fin : le galet garde son relief doux, cerclé d'un trait fin foncé (clair la nuit) doublé d'un liseré,
-   posé dans un logement chanfreiné creusé dans la surface (sombre en haut à gauche, clair en bas à droite) */
+   posé à fleur de surface dans un logement au chanfrein très fin (sombre en haut à gauche, clair en bas à droite) */
 html body .pk,html body .pk-v{
-  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),1px 2px 3px var(--pk-o),var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l);
-  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),1px 2px 3px var(--pk-o),var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l);
+  --up:var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l),inset 3px 3px 6px var(--ihi),inset -3px -3px 7px var(--pk-f);
+  --up-s:var(--pk-logement),inset 0 0 0 1px var(--pk-e),inset 0 0 0 2.5px var(--pk-l),inset 3px 3px 6px var(--ihi),inset -3px -3px 7px var(--pk-f);
   --in:var(--pk-logement),inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi),inset 0 0 0 1px var(--pk-e)}
 
 /* B — Poussoir : rebord clair en biseau, creux léger au centre, ombre nette posée en bas à droite (le bouton « dépasse ») */
