@@ -150,12 +150,16 @@
       b.insertAdjacentHTML("beforeend",'<b class="tm-n'+(r.T[i]?" "+r.T[i]:"")+'">'+esc(r.N[i])+'</b><em class="tm-s">'+esc(r.S[i])+"</em>")});
     var old=v.querySelector(":scope .tb");if(old)old.remove();return true}
 
-  var fil=0;
-  function tout(){fil=0;titreDepenses();$$("section.view").forEach(function(v){if(v.id==="v-accueil"||v.id==="v-reseaux")return;blocs(v);if(!menuTuiles(v))poseTuiles(v);
+  var fil=0,obs=null,surv=null;
+  /* 3/11 (vidéo de Cyril) : on remet en blocs AVANT que l'écran soit dessiné. Avec un délai de 80 ms, chaque clic
+     montrait l'ancienne mise en page (pastilles, pas de blocs) pendant 5 à 6 images, puis tout sautait. */
+  function tout(){fil=0;if(obs)obs.disconnect();try{tout0()}finally{if(obs)obs.observe(surv,{childList:true,subtree:true,characterData:true})}}
+  function tout0(){titreDepenses();$$("section.view").forEach(function(v){if(v.id==="v-accueil"||v.id==="v-reseaux")return;blocs(v);if(!menuTuiles(v))poseTuiles(v);
     var o=ORD[v.id.replace(/^v-/,"")];if(o)try{o(v)}catch(e){}})}
   function plusTard(){if(!fil)fil=setTimeout(tout,80)}
-  var main=$("main")||document.body;
-  new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(!(t.closest&&t.closest(".tb")))return plusTard()}}).observe(main,{childList:true,subtree:true,characterData:true});
+  surv=$("main")||document.body;
+  obs=new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.nodeType!==1)t=t.parentNode;if(!(t&&t.closest&&t.closest(".tb"))){if(fil){clearTimeout(fil);fil=0}return tout()}}});
+  obs.observe(surv,{childList:true,subtree:true,characterData:true});
   ["#badge","#badge-f","#badge-d"].forEach(function(id){var b=$(id);if(b)new MutationObserver(plusTard).observe(b,{childList:true,characterData:true,subtree:true,attributes:true})});
   tout();addEventListener("load",tout);
 })();
