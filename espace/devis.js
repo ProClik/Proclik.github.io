@@ -71,8 +71,8 @@ function vue(){var v=$('#v-devis');if(!v)return;var c=v.querySelector(':scope>.d
  var p=P[0],big=p?['Vérifier le pré-devis','data-dvo="'+p.id+'"',IC.pre]:['Créer un devis','data-dvnew',IC.plus];
  var h='<div class="row cf-top"><h2>Devis</h2><span class="cf-n">'+(P.length?P.length+' à valider':'tout est à jour')+'</span></div>'+
   '<div class="grid2"><div class="col">'+
-  (p?'<div class="card cf-hero"><small>À valider ce soir</small><b>'+eur(X.tot(p).ht)+' <em>HT</em></b><span>'+esc(p.client)+' · '+esc(p.titre)+'</span></div>':'<div class="card cf-rien"><b>Aucun pré-devis à valider</b><span>Les demandes de vos clients arrivent ici, déjà calculées avec vos prix.</span></div>')+
-  '<button class="btn go cf-go" type="button" '+big[1]+'><span class="lab"><span class="ic">'+big[2]+'</span><span>'+esc(big[0])+'</span></span></button>'+
+  (p?'<div class="card cf-hero"><small>À valider ce soir</small><b>'+eur(X.tot(p).ht)+' <em>HT</em></b><span>'+esc(p.client)+' · '+esc(p.titre)+'</span>':'<div class="card cf-rien"><b>Aucun pré-devis à valider</b><span>Les demandes de vos clients arrivent ici, déjà calculées avec vos prix.</span>')+
+  '<button class="btn go cf-go cf-in" type="button" '+big[1]+'><span class="lab"><span class="ic">'+big[2]+'</span><span>'+esc(big[0])+'</span></span></button></div>'+
   (p?'<div class="cf-main"><button type="button" class="btn sm" data-dvnew>'+IC.plus+'Créer un devis</button></div>':'')+
   '</div><div class="col">'+
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',P.length],['four','Fournisseur',F.length],['val','Validés',0]].map(function(s){return '<button role="tab" data-dvseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+IC[s[0]]+'<span>'+s[1]+'</span>'+(s[2]?'<i>'+s[2]+'</i>':'')+'</button>'}).join('')+'</div>';

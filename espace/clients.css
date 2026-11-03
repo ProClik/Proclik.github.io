@@ -156,3 +156,7 @@ html body .cf .cl-seg button{overflow:visible}
 .cl-file svg{width:20px;height:20px;flex:none;fill:none;stroke:var(--accx);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .cl-file input{position:absolute;inset:0;opacity:0;cursor:pointer;min-height:0!important}
 .cl-file #cf-kbis-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Le bouton d'action vit DANS le bloc qu'il concerne (Cyril, 3/11 : un galet séparé sous la carte prêtait à confusion) */
+.card>.btn.cf-in,.card>.cf-in{margin-top:14px}
+.cf-ou>.btn.cf-in{width:100%}
+.cf-hero>.btn.cf-in,.cf-rien>.btn.cf-in{margin-top:14px}
