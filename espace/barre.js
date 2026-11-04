@@ -38,7 +38,12 @@
 
   /* ---------- construction ---------- */
   var pb=d.createElement("div");pb.className="pb"+(STYLE==="ronde"?" pb-ronde":"");pb.id="pb";
-  pb.innerHTML='<svg class="pb-fond" aria-hidden="true"><path/></svg>'+
+  /* ombre de la barre dessinée DANS le svg (filtre SVG à grande zone) : le filtre CSS drop-shadow sur un svg
+     laissait un rectangle autour du galet central sur iPhone (Cyril, 3/11) */
+  pb.innerHTML='<svg class="pb-fond" aria-hidden="true"><defs><filter id="pb-ombre" filterUnits="userSpaceOnUse" x="-40" y="-60" width="2000" height="400" color-interpolation-filters="sRGB">'+
+    '<feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/><feOffset dy="-2" result="o1"/><feFlood class="pb-of"/><feComposite in2="o1" operator="in" result="s1"/>'+
+    '<feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dx="4" dy="6" result="o2"/><feFlood class="pb-of"/><feComposite in2="o2" operator="in" result="s2"/>'+
+    '<feMerge><feMergeNode in="s1"/><feMergeNode in="s2"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path filter="url(#pb-ombre)"/></svg>'+
     '<nav class="pb-l" aria-label="Menu principal"></nav>'+
     '<button type="button" class="pb-c" id="pb-c" aria-expanded="false" aria-controls="pb-menu" aria-label="Ouvrir le menu">'+
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="l1" d="M5 7h14"/><path class="l2" d="M5 12h14"/><path class="l3" d="M5 17h14"/></svg>'+
