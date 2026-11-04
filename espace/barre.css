@@ -6,7 +6,7 @@
   html body header.head #speak,html body header.head #menu{display:none!important}
   html body .app{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
 
-  .pb{--pb-bas:5px;display:block;position:fixed;z-index:25;left:5px;right:5px;bottom:var(--pb-bas);height:68px}
+  .pb{--pb-bas:5px;display:block;position:fixed;z-index:25;left:5px;right:5px;bottom:var(--pb-bas);height:68px;-webkit-transform:translateZ(0);transform:translateZ(0)}
   .pb-fond{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
   .pb-fond .pb-of{flood-color:var(--lo)}
   .pb-fond path{fill:var(--rs);stroke:var(--hi);stroke-width:1}
