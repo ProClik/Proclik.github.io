@@ -13,7 +13,7 @@
     if(charge)return charge;
     charge=new Promise(function(ok,ko){
       var l=document.createElement("link");l.rel="stylesheet";l.href=LIB+".css";document.head.appendChild(l);
-      var s=document.createElement("script");s.src=LIB+".js";s.onload=function(){window.maplibregl?ok():ko()};s.onerror=ko;document.head.appendChild(s);
+      var s=document.createElement("script");s.crossOrigin="anonymous";s.src=LIB+".js";s.onload=function(){window.maplibregl?ok():ko()};s.onerror=ko;document.head.appendChild(s);
     });
     return charge;
   }
