@@ -233,7 +233,7 @@ body.tv{cursor:none}
 #fin .p circle{fill:var(--lai);transform-box:fill-box;transform-origin:center;transform:scale(0)}
 #fin.in .p path{transition:stroke-dashoffset 1.4s cubic-bezier(.5,0,.3,1) .3s;stroke-dashoffset:0}
 #fin.in .p circle{transition:transform .6s var(--doux) 1.6s;transform:none}
-#fin .p .pcb{opacity:0;transform:rotate(-540deg);transform-box:fill-box;transform-origin:center;transition:transform 1.6s cubic-bezier(.4,0,.2,1) .3s,opacity 0s .3s}#fin.in .p .pcb{opacity:1;transform:none}#fin .p .pcj,#fin .p .pch{transform-box:fill-box;transform:scaleY(.04);transition:transform 1.6s cubic-bezier(.45,0,.3,1) .3s}#fin .p .pcj{transform-origin:50% 43%}#fin .p .pch{transform-origin:50% 39%}#fin.in .p .pcj,#fin.in .p .pch{transform:none}
+#fin .p .pcb{opacity:0;transform-box:fill-box;transform-origin:center}#fin.in .p .pcb{animation:pcTourne 2.2s linear .3s both}@keyframes pcTourne{0%{opacity:0;transform:translateY(2.5px) scale(.97)}14%{opacity:.6;transform:translateY(-1.2px) scale(.99)}26%{opacity:1;transform:translateY(.8px)}36%{transform:translateY(-.4px)}44%{transform:none;animation-timing-function:cubic-bezier(.55,0,.25,1)}100%{opacity:1;transform:rotate(720deg)}}#fin .p .pcj,#fin .p .pch{transform:none}#fin .p .pcj{transform-origin:50% 43%}#fin .p .pch{transform-origin:50% 39%}#fin.in .p .pcj,#fin.in .p .pch{transform:none}
 #fin .filet{width:1.5px;height:120px;background:var(--lai);opacity:.7;transform:scaleY(0);transition:transform .8s var(--doux) 1.9s}
 #fin.in .filet{transform:none}
 #fin .nom{text-align:left;font-weight:300;font-size:64px;letter-spacing:.32em;line-height:1}
