@@ -1,5 +1,5 @@
 /* Ouverture ProClik (validée par Cyril le 28/10).
-   Longue (~8,9 s) : un bouton galet au centre reçoit un clic, le point trace le P, le nom arrive, puis le P se range dans le bouton du haut de l'Espace.
+   Longue (~10,7 s) : un bouton galet au centre reçoit un clic, le point trace le P, le nom arrive, puis le P se range dans le bouton du haut de l'Espace.
    Courte (~1,5 s) : pour les ouvertures suivantes de la journée, le P se trace dans son bouton en haut de l'Espace.
    Sur le site (data-mode="site"), toujours la longue, et le logo reste affiché à la fin. Un appui sur l'écran passe l'ouverture. */
 (function(){
@@ -22,14 +22,14 @@ var css=
 '#pc-ouv .pbox{position:relative;display:grid;place-items:center;transform-origin:0 0}'+
 '#pc-ouv .ouvp{width:48px;height:56px;overflow:visible;flex:none}'+
 '#pc-ouv .ouvp path{fill:none;stroke-linecap:round;stroke-linejoin:round}'+
-'#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit .8s cubic-bezier(.65,0,.35,1) 5.05s forwards}'+
+'#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit .8s cubic-bezier(.65,0,.35,1) 6.85s forwards}'+
 '#pc-ouv .l{stroke-dasharray:100 110;stroke-dashoffset:101}'+
-'#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 4.75s forwards}'+
-'#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;animation:pcPoint .45s var(--d) .45s forwards,pcEteint .35s ease 4.7s forwards}'+
-'#pc-ouv .filet{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pcFilet .45s var(--d) 5.45s forwards}'+
+'#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 6.55s forwards}'+
+'#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;animation:pcPoint .45s var(--d) .45s forwards,pcEteint .35s ease 6.5s forwards}'+
+'#pc-ouv .filet{width:1px;align-self:stretch;background:var(--ml);opacity:.7;transform:scaleY(0);animation:pcFilet .45s var(--d) 7.25s forwards}'+
 '#pc-ouv .nom{font-weight:300;font-size:21px;letter-spacing:.32em;line-height:1;white-space:nowrap;margin-right:-.32em}'+
-'#pc-ouv .nom .lt{display:inline-block;opacity:0;animation:pcLettre .5s var(--d) calc(5.55s + var(--i) * 45ms) forwards}'+
-'#pc-ouv .nom small{display:block;font-size:7.5px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:8px;opacity:0;animation:pcApparait .5s ease 5.95s forwards}'+
+'#pc-ouv .nom .lt{display:inline-block;opacity:0;animation:pcLettre .5s var(--d) calc(7.35s + var(--i) * 45ms) forwards}'+
+'#pc-ouv .nom small{display:block;font-size:7.5px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:8px;opacity:0;animation:pcApparait .5s ease 7.75s forwards}'+
 /* Espace : le nom reste à côté du P (logo centré comme sur le site) et ne s'efface qu'au moment où le P part vers son bouton */
 '#pc-ouv.espace .filet,#pc-ouv.espace .nom{transition:opacity .4s ease}#pc-ouv.espace.part .filet,#pc-ouv.espace.part .nom{opacity:0!important}'+
 
@@ -70,7 +70,7 @@ var css=
 '.pc-court .brand>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}'+
 '.pc-court .logo .g>svg{animation:pcLeve .45s cubic-bezier(.45,0,.25,1) both}'+
 '.pc-court .logo .g>svg .pcl{stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcTrace .7s cubic-bezier(.5,0,.3,1) .15s forwards}'+
-'.pc-court .logo .g>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}'+'@keyframes pcTourne{0%{opacity:0;transform:translateY(2.5px) scale(.97)}18%{opacity:1;transform:translateY(-1px)}30%{transform:translateY(.5px)}38%{transform:none;animation-timing-function:cubic-bezier(.45,0,.55,1)}100%{opacity:1;transform:rotate(360deg)}}@keyframes pcPousse{0%{transform:none}20%{transform:scaleY(.72)}40%{transform:scaleY(1.07)}60%{transform:scaleY(.78)}80%{transform:scaleY(1.03)}100%{transform:none}}.pcb>.pcj,.pcb>.pch{transform-box:fill-box;animation-name:pcPousse;animation-duration:inherit;animation-delay:inherit;animation-timing-function:cubic-bezier(.45,.05,.55,.95);animation-fill-mode:both}.pcb>.pcj{transform-origin:50% 43%}.pcb>.pch{transform-origin:50% 39%}.pc-court .brand>svg .pcb,.pc-court .logo .g>svg .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 2.6s linear .1s both}'+'#pc-ouv .pen{display:none}#pc-ouv .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 2.7s linear 2.4s both}#pc-ouv .pcr{transform-box:fill-box;transform-origin:center;animation:pcRond .6s cubic-bezier(.3,0,.2,1) 2.45s both}@keyframes pcRond{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}';
+'.pc-court .logo .g>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}'+'@keyframes pcTourne{0%{transform:translateY(3px) scale(.96)}16%{transform:translateY(-1.2px)}27%{transform:translateY(.5px)}34%{transform:none;animation-timing-function:cubic-bezier(.42,0,.58,1)}100%{transform:rotate(360deg)}}@keyframes pcFlotte{0%{transform:translateY(3px) scale(.96)}16%{transform:translateY(-1.2px)}27%{transform:translateY(.5px)}34%{transform:none}100%{transform:none}}@keyframes pcVoile{0%{opacity:0}16%,100%{opacity:1}}@keyframes pcPousse{0%,4%{transform:none}14%{transform:scaleY(.7)}24%{transform:scaleY(1.07)}32%{transform:scaleY(.9)}42%,52%{transform:none}62%{transform:scaleY(.7)}72%{transform:scaleY(1.07)}80%{transform:scaleY(.9)}90%,100%{transform:none}}.pcb>.pcj,.pcb>.pch{transform-box:fill-box;animation-name:pcPousse;animation-duration:inherit;animation-delay:inherit;animation-timing-function:cubic-bezier(.45,.05,.55,.95);animation-fill-mode:both}.pcb>.pcj{transform-origin:50% 43%}.pcb>.pch{transform-origin:50% 39%}.pc-court .brand>svg .pcb,.pc-court .logo .g>svg .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 4.4s linear .1s both}.pc-court .brand>svg .pcr,.pc-court .logo .g>svg .pcr{transform-box:fill-box;transform-origin:center;animation:pcFlotte 4.4s linear .1s both}.pc-court .brand>svg .pcv,.pc-court .logo .g>svg .pcv{animation:pcVoile 4.4s linear .1s both}'+'#pc-ouv .pen{display:none}#pc-ouv .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 4.4s linear 2.4s both}#pc-ouv .pcr{transform-box:fill-box;transform-origin:center;animation:pcFlotte 4.4s linear 2.4s both}#pc-ouv .pcv{animation:pcVoile 4.4s linear 2.4s both}';
 var st=d.createElement('style');st.textContent=css;d.head.appendChild(st);
 window.PC_OUV_MS=0;
 if(reduit&&!site)return;
@@ -92,14 +92,15 @@ if(!site&&!vitrine){
  '#pc-ouk .n small{display:block;font-size:7px;font-weight:600;letter-spacing:.1em;color:var(--md);margin-top:7px;opacity:0;animation:pkApp .4s ease 1.85s forwards}'+
  '@keyframes pkLeve{to{opacity:1;transform:translateX(var(--dx,0px))}}@keyframes pkGlisse{from{opacity:1;transform:translateX(var(--dx,0px))}to{opacity:1;transform:none}}@keyframes pkTrace{to{stroke-dashoffset:0}}@keyframes pkPoint{to{transform:scale(1)}}'+
  '@keyframes pkFilet{to{transform:scaleY(1)}}@keyframes pkLettre{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@keyframes pkApp{to{opacity:1}}'+
- '#pc-ouk .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 2.6s linear .3s both}'+
+ '#pc-ouk .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 4.4s linear .3s both}'+
+ '#pc-ouk .pcr{transform-box:fill-box;transform-origin:center;animation:pcFlotte 4.4s linear .3s both}#pc-ouk .pcv{animation:pcVoile 4.4s linear .3s both}'+
  '@media (prefers-reduced-motion:reduce){#pc-ouk *{animation-duration:.01s!important;animation-delay:0s!important}}';
  var stk=d.createElement('style');stk.textContent=K;d.head.appendChild(stk);
- var DUK=reduit?700:3200;
+ var DUK=reduit?700:5000;
  function couvre(){
   var a=d.getElementById('pc-ouk');if(a)a.remove();
   var o=d.createElement('div');o.id='pc-ouk';o.setAttribute('aria-hidden','true');
-  o.innerHTML='<div class="lk"><span class="gk"><svg viewBox="18 6.5 76 76"><path class="pcf pcr" d="M32.47 40A23.53 23.53 0 1 1 79.53 40A23.53 23.53 0 1 1 32.47 40ZM39.46 40A16.54 16.54 0 1 0 72.54 40A16.54 16.54 0 1 0 39.46 40Z" style="fill:var(--ml);stroke:none"/><g class="pcb l"><path class="pcf pcj" d="M32.47 38.09H39.46V63.76C39.46 70.21 36.28 72.44 33.1 72.44Q32.47 72.44 32.47 70.53ZM38.19 54.63H45.82V61.22Q39.46 58.17 39.46 63.76H38.19Z" style="fill:var(--ml);stroke:none"/><path class="pcf pch" d="M79.53 41.91H72.54V21.24C72.54 18.87 75.72 18.06 78.9 18.06Q79.53 18.06 79.53 19.65ZM73.81 25.37H66.18V18.78Q72.54 21.83 72.54 21.24H73.81Z" style="fill:var(--ml);stroke:none"/></g></svg></span><span class="f"></span><div class="n">'+
+  o.innerHTML='<div class="lk"><span class="gk"><svg viewBox="18 6.5 76 76"><g class="pcv"><path class="pcf pcr" d="M32.47 40A23.53 23.53 0 1 1 79.53 40A23.53 23.53 0 1 1 32.47 40ZM39.46 40A16.54 16.54 0 1 0 72.54 40A16.54 16.54 0 1 0 39.46 40Z" style="fill:var(--ml);stroke:none"/><g class="pcb l"><path class="pcf pcj" d="M32.47 38.09H39.46V63.76C39.46 70.21 36.28 72.44 33.1 72.44Q32.47 72.44 32.47 70.53ZM38.19 54.63H45.82V61.22Q39.46 58.17 39.46 63.76H38.19Z" style="fill:var(--ml);stroke:none"/><path class="pcf pch" d="M79.53 41.91H72.54V21.24C72.54 18.87 75.72 18.06 78.9 18.06Q79.53 18.06 79.53 19.65ZM73.81 25.37H66.18V18.78Q72.54 21.83 72.54 21.24H73.81Z" style="fill:var(--ml);stroke:none"/></g></g></svg></span><span class="f"></span><div class="n">'+
    'PROCLIK'.split('').map(function(c,i){return '<i style="--i:'+i+'">'+c+'</i>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
   (d.body||root).appendChild(o);
   /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
@@ -113,13 +114,13 @@ if(!site&&!vitrine){
  d.addEventListener('visibilitychange',function(){if(d.hidden){cache=Date.now()}else if(cache&&Date.now()-cache>30000){cache=0;couvre()}});
  window.addEventListener('pageshow',function(e){if(e.persisted)couvre()});
  if(court)return}
-if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},2900);return}
+if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},4700);return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
-o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="ouvp" viewBox="10 4 80 92"><g class="big"><path class="pcf pcr" d="M32.47 45A23.53 23.53 0 1 1 79.53 45A23.53 23.53 0 1 1 32.47 45ZM39.46 45A16.54 16.54 0 1 0 72.54 45A16.54 16.54 0 1 0 39.46 45Z" style="fill:var(--ml);stroke:none"/><g class="pcb l"><path class="pcf pcj" d="M32.47 43.09H39.46V68.76C39.46 75.21 36.28 77.44 33.1 77.44Q32.47 77.44 32.47 75.53ZM38.19 59.63H45.82V66.22Q39.46 63.17 39.46 68.76H38.19Z" style="fill:var(--ml);stroke:none"/><path class="pcf pch" d="M79.53 46.91H72.54V26.24C72.54 23.87 75.72 23.06 78.9 23.06Q79.53 23.06 79.53 24.65ZM73.81 30.37H66.18V23.78Q72.54 26.83 72.54 26.24H73.81Z" style="fill:var(--ml);stroke:none"/></g><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
+o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="ouvp" viewBox="10 4 80 92"><g class="big"><g class="pcv"><path class="pcf pcr" d="M32.47 45A23.53 23.53 0 1 1 79.53 45A23.53 23.53 0 1 1 32.47 45ZM39.46 45A16.54 16.54 0 1 0 72.54 45A16.54 16.54 0 1 0 39.46 45Z" style="fill:var(--ml);stroke:none"/><g class="pcb l"><path class="pcf pcj" d="M32.47 43.09H39.46V68.76C39.46 75.21 36.28 77.44 33.1 77.44Q32.47 77.44 32.47 75.53ZM38.19 59.63H45.82V66.22Q39.46 63.17 39.46 68.76H38.19Z" style="fill:var(--ml);stroke:none"/><path class="pcf pch" d="M79.53 46.91H72.54V26.24C72.54 23.87 75.72 23.06 78.9 23.06Q79.53 23.06 79.53 24.65ZM73.81 30.37H66.18V23.78Q72.54 26.83 72.54 26.24H73.81Z" style="fill:var(--ml);stroke:none"/></g></g><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
  'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
-if(!site)window.PC_OUV_MS=8650;
+if(!site)window.PC_OUV_MS=10450;
 var fini=false;
 function fin(){if(fini)return;fini=true;o.classList.add('fin');setTimeout(function(){o.remove()},650)}
 if(!site)o.addEventListener('click',fin);
@@ -197,6 +198,6 @@ function vise(){
  if(pb.animate)pb.animate(im,{duration:FIN,delay:100,fill:'forwards',easing:'linear'});else pb.style.transform=im[im.length-1].transform;
  setTimeout(function(){var gal=cible.parentNode;if(gal){gal.classList.remove('pc-pose');void gal.offsetWidth;gal.classList.add('pc-pose');setTimeout(function(){gal.classList.remove('pc-pose')},1100)}},100+DU*.9);
 }
-function lance(){prepare();if(!site){setTimeout(vise,7100);setTimeout(fin,8600)}}
+function lance(){prepare();if(!site){setTimeout(vise,8900);setTimeout(fin,10400)}}
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',lance);else lance();
 })();
