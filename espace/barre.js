@@ -136,14 +136,10 @@
   menu.addEventListener("click",function(e){var b=e.target.closest("[data-pb]");if(!b)return;ferme();setTimeout(function(){agit(b.dataset.pb)},b.dataset.pb==="micro"?0:180)});
 
   /* ---------- onglet en cours et pastilles, recopiés des vrais boutons ---------- */
-  var dernier=null;
   function suit(){
     var cur=($("nav.nav [aria-selected=true]")||{dataset:{}}).dataset.v;
     $$("[data-pb]").forEach(function(b){var on=b.dataset.pb===cur;b.classList.toggle("on",on);if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
     centre.classList.toggle("on",EVENTAIL.indexOf(cur)>=0);
-    /* iPhone (Cyril, 4/11) : Safari ne redessinait pas toujours la barre au changement d'onglet (« Clients » restait allumé sur le Planning).
-       On l'oblige à repeindre la barre et l'éventail dès que l'onglet change. */
-    if(cur!==dernier){dernier=cur;[pb,menu].forEach(function(e){e.style.opacity=".999"});requestAnimationFrame(function(){requestAnimationFrame(function(){pb.style.opacity="";menu.style.opacity=""})})}
     var tot=0;
     $$(".pb-b").forEach(function(x){var s=$(x.dataset.src),n=s&&!s.hidden?+(s.textContent||0)||0:0;x.textContent=n;x.hidden=!n;if(x.closest(".pb-menu"))tot+=n});
     var bc=$(".pb-bc",pb);bc.textContent=tot;bc.hidden=!tot;
