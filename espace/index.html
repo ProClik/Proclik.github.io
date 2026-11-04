@@ -563,7 +563,7 @@ button.pill{cursor:pointer}
 :root[data-theme="dark"] .istep .in{background:var(--turq);color:#0B1226}
 </style>
 
-<script src="ouverture.js?v=20"></script>
+<script src="ouverture.js?v=23"></script>
 
 <div class="app">
 <header class="head">
@@ -718,9 +718,9 @@ button.pill{cursor:pointer}
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"><span class="ti"><svg width="22" height="22" viewBox="0 0 100 100"><rect x="24" y="14" width="18" height="72" rx="9" fill="#FFFFFF"/><circle cx="54" cy="40" r="26" fill="#FFFFFF"/><circle cx="56" cy="40" r="9" fill="#0B1226" stroke="#B08A48" stroke-width="3"/></svg></span><span><b id="tt"></b><small id="ts"></small></span></div>
 
-<script src="carte.js?v=4"></script>
+<script src="carte.js?v=5"></script>
 <script>
-window.addEventListener('error',function(ev){try{var b=document.getElementById('pc-err');if(!b){b=document.createElement('div');b.id='pc-err';b.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#FFF1EC;color:#8A3A22;border:1px solid #FF7A59;border-radius:12px;padding:8px 12px;font:12px/1.4 monospace';document.body.appendChild(b);}b.textContent='Erreur ProClik : '+(ev.message||'')+' (ligne '+(ev.lineno||'?')+')';}catch(e){}});
+window.addEventListener('error',function(ev){try{if(!ev.lineno&&/^Script error\.?$/i.test(ev.message||''))return;var b=document.getElementById('pc-err');if(!b){b=document.createElement('div');b.id='pc-err';b.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#FFF1EC;color:#8A3A22;border:1px solid #FF7A59;border-radius:12px;padding:8px 12px;font:12px/1.4 monospace';document.body.appendChild(b);}b.textContent='Erreur ProClik : '+(ev.message||'')+' (ligne '+(ev.lineno||'?')+')';}catch(e){}});
 /* ---------- identité du client (lue dans la fiche en haut du bloc) ---------- */
 window.PCID=(function(){
  var D={entreprise:'Dupont Rénovation',prenom:'Julien',logo:'',couleur:'',adresse:'[Adresse]',telephone:'[Téléphone]',siret:'[numéro]',tva:'[numéro]',email_tarifs:'tarifs.dupont@proclik.fr'};
@@ -1677,9 +1677,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 
 <script src="config.js?v=2"></script>
 <script src="options.js?v=2"></script>
-<script src="vrai.js?v=22"></script>
+<script src="vrai.js?v=23"></script>
 <link rel="stylesheet" href="relief.css?v=17">
-<link rel="stylesheet" href="intro.css?v=14"><script src="intro.js?v=11"></script>
+<link rel="stylesheet" href="intro.css?v=16"><script src="intro.js?v=11"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
 <script src="accueil.js?v=11"></script>
