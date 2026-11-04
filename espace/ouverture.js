@@ -94,9 +94,12 @@ if(!site&&!vitrine){
  '@keyframes pkFilet{to{transform:scaleY(1)}}@keyframes pkLettre{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@keyframes pkApp{to{opacity:1}}'+
  '#pc-ouk .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 4.4s linear .05s both}'+
  '#pc-ouk .pcr{transform-box:fill-box;transform-origin:center;animation:pcFlotte 4.4s linear .05s both}#pc-ouk .pcv{animation:pcVoile 4.4s linear .05s both}'+
+ '#pc-ouk:not(.go),#pc-ouk:not(.go) *{animation-play-state:paused!important}'+
  '@media (prefers-reduced-motion:reduce){#pc-ouk *{animation-duration:.01s!important;animation-delay:0s!important}}';
  var stk=d.createElement('style');stk.textContent=K;d.head.appendChild(stk);
  var DUK=reduit?700:5000;
+ /* on attend que la page ait fini de se charger (ou 1,5 s au plus) pour lancer l'animation : sinon l'iPhone, occupé à charger, la fait saccader au tout début */
+ function pret(cb){var ok=false;function go(){if(ok)return;ok=true;requestAnimationFrame(function(){requestAnimationFrame(cb)})}if(d.readyState==='complete')go();else{window.addEventListener('load',go);setTimeout(go,1500)}}
  function couvre(){
   var a=d.getElementById('pc-ouk');if(a)a.remove();
   var o=d.createElement('div');o.id='pc-ouk';o.setAttribute('aria-hidden','true');
@@ -106,7 +109,7 @@ if(!site&&!vitrine){
   /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
   var lk=o.querySelector('.lk'),gk=o.querySelector('.gk');gk.style.setProperty('--dx',((lk.offsetWidth-gk.offsetWidth)/2)+'px');
   var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},500)}
-  o.addEventListener('click',fin);setTimeout(fin,DUK);
+  o.addEventListener('click',fin);pret(function(){o.classList.add('go');setTimeout(fin,DUK)});
  }
  if(court){window.PC_OUV_MS=DUK;couvre()}
  /* retour dans l'appli après au moins 30 s ailleurs : on rejoue la courte ouverture */
@@ -114,7 +117,7 @@ if(!site&&!vitrine){
  d.addEventListener('visibilitychange',function(){if(d.hidden){cache=Date.now()}else if(cache&&Date.now()-cache>30000){cache=0;couvre()}});
  window.addEventListener('pageshow',function(e){if(e.persisted)couvre()});
  if(court)return}
-if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;setTimeout(function(){root.classList.remove('pc-court')},4700);return}
+if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;var stc=d.createElement('style');stc.textContent='html.pc-court:not(.pc-go) .brand>svg,html.pc-court:not(.pc-go) .brand>svg *,html.pc-court:not(.pc-go) .logo .g>svg,html.pc-court:not(.pc-go) .logo .g>svg *{animation-play-state:paused!important}';d.head.appendChild(stc);var gc=function(){root.classList.add('pc-go');setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};if(d.readyState==='complete')gc();else{var gd=false,g1=function(){if(gd)return;gd=true;requestAnimationFrame(function(){requestAnimationFrame(gc)})};window.addEventListener('load',g1);setTimeout(g1,1500)}return}
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
 o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="ouvp" viewBox="10 4 80 92"><g class="big"><g class="pcv"><path class="pcf pcr" d="M32.47 45A23.53 23.53 0 1 1 79.53 45A23.53 23.53 0 1 1 32.47 45ZM39.46 45A16.54 16.54 0 1 0 72.54 45A16.54 16.54 0 1 0 39.46 45Z" style="fill:var(--ml);stroke:none"/><g class="pcb l"><path class="pcf pcj" d="M32.47 43.09H39.46V68.76C39.46 75.21 36.28 77.44 33.1 77.44Q32.47 77.44 32.47 75.53ZM38.19 59.63H45.82V66.22Q39.46 63.17 39.46 68.76H38.19Z" style="fill:var(--ml);stroke:none"/><path class="pcf pch" d="M79.53 46.91H72.54V26.24C72.54 23.87 75.72 23.06 78.9 23.06Q79.53 23.06 79.53 24.65ZM73.81 30.37H66.18V23.78Q72.54 26.83 72.54 26.24H73.81Z" style="fill:var(--ml);stroke:none"/></g></g><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
