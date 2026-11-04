@@ -42,6 +42,7 @@ html.pc-ipad-app .pi-w{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 .pi-logo .p{fill:var(--acc);transform-box:fill-box;transform-origin:center;transform:scale(0)}
 .pi.go .pi-logo .l{animation:piTrace 1s cubic-bezier(.65,0,.35,1) .35s forwards}
 .pi.go .pi-logo .p{animation:piPoint .4s var(--doux) 1.25s forwards}
+@keyframes pcTourne{0%{opacity:0;transform:translateY(2.5px) scale(.97)}14%{opacity:.6;transform:translateY(-1.2px) scale(.99)}26%{opacity:1;transform:translateY(.8px)}36%{transform:translateY(-.4px)}44%{transform:none;animation-timing-function:cubic-bezier(.55,0,.25,1)}100%{opacity:1;transform:rotate(720deg)}}@keyframes pcPousse{0%{transform:none}18%{transform:scaleY(.84)}36%{transform:scaleY(1.05)}54%{transform:scaleY(.88)}72%{transform:scaleY(1.03)}88%{transform:scaleY(.97)}100%{transform:none}}.pcb>.pcj,.pcb>.pch{transform-box:fill-box;animation-name:pcPousse;animation-duration:inherit;animation-delay:inherit;animation-timing-function:cubic-bezier(.45,.05,.55,.95);animation-fill-mode:both}.pcb>.pcj{transform-origin:50% 43%}.pcb>.pch{transform-origin:50% 39%}.pi-logo .pcb{transform-box:fill-box;transform-origin:50% 40.35%;animation:pcTourne 1.8s linear .35s both}
 .pi-logo b{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--acc);opacity:0}
 .pi.go .pi-logo b{animation:piOnde 3.6s ease-out 1.4s infinite}.pi.go .pi-logo b+b{animation-delay:2.6s}
 @keyframes piTrace{to{stroke-dashoffset:0}}@keyframes piPoint{to{transform:scale(1)}}
@@ -138,4 +139,4 @@ html.pc-ipad-app .pi-w{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 @media (prefers-reduced-motion:reduce){.pi .pi-oi,.pi .pi-pl .pi-ev,.pi .pi-pl .pi-ca i{opacity:1;transform:none}}
 
 @media (max-height:640px){.pi-scene{min-height:170px}.pi-logo,.pi-mic{transform:scale(.8)}.pi-txt{min-height:130px}.pi-txt h2{margin-bottom:8px}}
-@media (prefers-reduced-motion:reduce){.pi .pi-anim,.pi .pi-arrive{opacity:1;transform:none;animation:none!important}.pi-logo .l{stroke-dashoffset:0}.pi-logo .p{transform:none}.pi-bulle span{opacity:1}.pi-dv .ok{color:var(--acc)}}
+@media (prefers-reduced-motion:reduce){.pi .pi-anim,.pi .pi-arrive{opacity:1;transform:none;animation:none!important}.pi-logo .l{stroke-dashoffset:0}.pi-logo .pcb{animation:none}.pi-logo .p{transform:none}.pi-bulle span{opacity:1}.pi-dv .ok{color:var(--acc)}}
