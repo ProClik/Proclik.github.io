@@ -28,7 +28,7 @@ html body .bk>.card{margin:0!important;padding:0!important;background:transparen
 /* iPad et ordinateur (Cyril, 3/11) : la même page que sur téléphone, mise à plat sur la largeur.
    En haut : le nom de l'onglet à gauche, son gros bouton à droite ; puis les tuiles sur une ligne ; puis les blocs en pleine largeur. */
 @media (min-width:900px){
-  .ord-a{display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:16px;align-items:center;max-width:1180px}
+  .ord-a:not([hidden]){display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:16px;align-items:center;max-width:1180px}
   .ord-a .oi-a{grid-column:1/-1}
   .ord-a [data-r="10"]{grid-column:1;order:10!important}
   .ord-a [data-r="30"]{grid-column:2;order:11!important;width:clamp(300px,32vw,400px)!important;justify-self:end}
@@ -69,7 +69,7 @@ html[data-tu="menu"] .seg.tm .tm-n{text-align:right;padding:0!important;min-widt
 /* Planning (Cyril, 3/11 23h22) : plus de tuiles, un menu compact, la semaine entière sur l'écran.
    Téléphone : « Planning » + petit bouton Ajouter, puis Jour / Semaine / Mois / Carte.
    iPad et ordinateur : tout sur une ligne, nom à gauche, menu au milieu, Ajouter à droite. */
-#v-planning.ord-a{display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:12px;align-items:center;max-width:none}
+#v-planning.ord-a:not([hidden]){display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:12px;align-items:center;max-width:none}
 #v-planning.ord-a>.oi-a,#v-planning.ord-a>.fl-a>.oi-a{grid-column:1/-1}
 #v-planning.ord-a [data-r="10"]{grid-column:1!important;order:10!important;margin:0!important}
 #v-planning.ord-a [data-r="30"]{grid-column:2!important;order:11!important;width:auto!important;justify-self:end}
@@ -86,3 +86,6 @@ html body #v-planning .pl-go::before{right:14px}
   #v-planning.ord-a [data-r="50"]{grid-column:2!important;order:11!important;justify-self:center;width:auto;min-width:min(440px,100%)}
   #v-planning.ord-a [data-r="30"]{grid-column:3!important;order:12!important}
 }
+
+/* un onglet caché reste caché, même avec la mise en page « même ordre » (Cyril 4/11 : le Planning s'ajoutait sous chaque écran) */
+section.view[hidden],#v-planning[hidden]{display:none!important}
