@@ -232,6 +232,9 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 .fade{animation:fade .3s ease}
 @keyframes fade{from{opacity:.25;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
+:root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 <link rel="stylesheet" href="relief.css?v=3">
 

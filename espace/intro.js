@@ -55,6 +55,7 @@ function rend(){
   '<div class="pi-bas"><button class="pi-ret" id="pi-ret" aria-label="Retour"'+(i?'':' hidden')+'><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>'+
   '<button class="btn go" id="pi-suiv">'+(i===0?'Découvrir':der?'C\'est parti':'Suivant')+'</button></div></div>';
  box.classList.remove('go','pi-av','pi-arr');void box.offsetWidth;
+ if(window.PCGoutte)window.PCGoutte(box.querySelector('.pi-galet svg'),.35);
  if(sens)box.classList.add(sens);
  if(!d.getElementById('pc-ouv')&&!d.getElementById('pc-ouk'))box.classList.add('go');
  box.querySelector('#pi-suiv').onclick=suiv;

@@ -249,6 +249,9 @@ html.client body{padding-block:0!important}
 .client .wrap{padding-bottom:8px}
 html.client body{padding-bottom:12px}
 .embed .wrap{padding-top:12px}
+
+/* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
+:root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 <link rel="stylesheet" href="plan-relief.css?v=7">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>

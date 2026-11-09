@@ -268,6 +268,9 @@ html.client body{padding-bottom:12px}
 .gorecap i{font-style:normal;font-size:20px;line-height:1;color:var(--mint);animation:gorecap 1.4s ease-in-out infinite}
 @keyframes gorecap{50%{transform:translateY(4px)}}
 @media (prefers-reduced-motion:reduce){.gorecap i{animation:none}}
+
+/* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
+:root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 <link rel="stylesheet" href="../devis/plan-relief.css?v=7">
 <style>

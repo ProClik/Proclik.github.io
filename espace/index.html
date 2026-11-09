@@ -561,9 +561,12 @@ button.pill{cursor:pointer}
 .istep:last-of-type{border-bottom:none}
 .istep .in{flex:none;width:28px;height:28px;border-radius:50%;background:var(--nuit);color:#fff;font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
 :root[data-theme="dark"] .istep .in{background:var(--turq);color:#0B1226}
+
+/* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
+:root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 
-<script src="ouverture.js?v=24"></script>
+<script src="ouverture.js?v=27"></script>
 
 <div class="app">
 <header class="head">
@@ -1679,7 +1682,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="options.js?v=2"></script>
 <script src="vrai.js?v=23"></script>
 <link rel="stylesheet" href="relief.css?v=17">
-<link rel="stylesheet" href="intro.css?v=17"><script src="intro.js?v=12"></script>
+<link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=13"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
 <script src="accueil.js?v=11"></script>
