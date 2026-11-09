@@ -112,6 +112,9 @@ footer{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap
 .pc .g{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--up-s)}
 .pc svg{width:18px;height:18px}
 @media (prefers-reduced-motion:reduce){.pas{animation:none}.rond svg{animation:none;stroke-dashoffset:0}}
+
+/* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
+:root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style></head><body>
 <div class="page">
   <header>

@@ -20,9 +20,9 @@ var css=
 '#pc-ouv *,#pc-ouv *::before,#pc-ouv *::after{animation-play-state:paused}#pc-ouv.go *,#pc-ouv.go *::before,#pc-ouv.go *::after{animation-play-state:running}'+
 '#pc-ouv .lock{position:relative;z-index:1;display:flex;align-items:center;gap:14px;color:var(--mt)}'+
 '#pc-ouv .pbox{position:relative;display:grid;place-items:center;transform-origin:0 0}'+
-'#pc-ouv .ouvp{width:48px;height:56px;overflow:visible;flex:none}'+
+'#pc-ouv .ouvp{width:60px;height:70px;overflow:visible;flex:none}'+
 '#pc-ouv .ouvp path{fill:none;stroke-linecap:round;stroke-linejoin:round}'+
-'#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(3);animation:pcReduit .8s cubic-bezier(.65,0,.35,1) 6.85s forwards}'+
+'#pc-ouv .big{transform-box:view-box;transform-origin:50px 50px;transform:translateX(var(--dxu,0px)) scale(2.4);animation:pcReduit .8s cubic-bezier(.65,0,.35,1) 6.85s forwards}'+
 '#pc-ouv .l{stroke-dasharray:100 110;stroke-dashoffset:101}'+
 '#pc-ouv .sh{stroke:var(--mlc);stroke-width:3.5;stroke-dasharray:8 200;stroke-dashoffset:8;animation:pcEteint .35s ease 6.55s forwards}'+
 '#pc-ouv .pen{stroke:var(--ml);stroke-width:7.5;opacity:0;animation:pcPoint .45s var(--d) .45s forwards,pcEteint .35s ease 6.5s forwards}'+
@@ -41,7 +41,7 @@ var css=
 '#pc-ouv .ond i::after{background:radial-gradient(closest-side,transparent 74%,var(--mh) 84%,transparent 94%);transform:translate(-1%,-1.2%);opacity:.45}'+
 /* sur la crête, un liseré laiton fin, comme le socle du téléphone de l'accueil */
 '#pc-ouv .ond b{position:absolute;inset:7.5%;border-radius:50%;border:2px solid var(--ml);z-index:1;opacity:.4}'+
-'#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s linear 1.15s forwards,pcGrand .8s var(--d) 2.35s forwards,pcFond .5s var(--d) 6.6s forwards}'+
+'#pc-ouv .g{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;opacity:0;animation:pcLeve .8s var(--d) .1s forwards,pcAppui 1.3s linear 1.15s forwards,pcFond .6s var(--d) 2.4s forwards}'+
 '#pc-ouv .g::before,#pc-ouv .g::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--m)}'+
 '#pc-ouv .g::before{box-shadow:-7px -7px 16px var(--mh),9px 9px 20px var(--mo),inset 1.5px 1.5px 1px var(--mh),inset -1.5px -1.5px 2px var(--mo);animation:pcOmbre 1.3s linear 1.15s forwards}'+
 '#pc-ouv .g::after{box-shadow:inset 4px 4px 9px var(--mo),inset -4px -4px 9px var(--mh);opacity:0;animation:pcCreux 1.3s linear 1.15s forwards}'+
@@ -63,7 +63,7 @@ var css=
 '@keyframes pcOmbre{0%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{opacity:0;animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{opacity:1}}'+
 '@keyframes pcCreux{0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}30%{opacity:1;animation-timing-function:cubic-bezier(.3,0,.3,1)}100%{opacity:0}}'+
 '@keyframes pcOnde{0%{transform:scale('+OD+');opacity:0}12%{opacity:1}55%{opacity:.55}100%{transform:scale(1);opacity:0}}'+
-'@keyframes pcFond{to{opacity:0}}@keyframes pcGrand{from{transform:scale(.97)}to{transform:scale(2.05)}}'+
+'@keyframes pcFond{to{opacity:0}}'+
 /* version courte : le P se trace dans son bouton en haut de l'Espace */
 '.pc-court .brand>svg,.pc-court .brand>span:first-child,.pc-court .brand>img{animation:pcLeve 1.05s cubic-bezier(.4,0,.2,1) both}'+
 '.pc-court .brand>svg .pcl{stroke-dasharray:100 110;stroke-dashoffset:101;animation:pcTrace .7s cubic-bezier(.5,0,.3,1) .15s forwards}'+
@@ -78,7 +78,7 @@ window.PC_OUV_MS=0;
 function goutte(svg,del){
  if(!svg||reduit)return;var pa=svg.querySelector('path.pcr'),dot=svg.querySelector('.pcg');if(!pa||!dot||svg.querySelector('.pcgo'))return;
  var m=/M\s*([\d.]+)[ ,]([\d.]+)\s*A\s*([\d.]+)/.exec(pa.getAttribute('d')||'');if(!m)return;
- var r=+m[3],cx=+m[1]+r,cy=+m[2],k=r/45.5,fill=pa.style.fill||'var(--fg)',NS='http://www.w3.org/2000/svg',id='pcgo'+Math.random().toString(36).slice(2,8);
+ var r=+m[3],cx=+m[1]+r,cy=+m[2],k=r/45.5,fill=getComputedStyle(pa).fill||pa.style.fill,NS='http://www.w3.org/2000/svg',id='pcgo'+Math.random().toString(36).slice(2,8);
  var f=function(n){return n.toFixed(2)};
  var g=d.createElementNS(NS,'g');g.setAttribute('class','pcgo');g.setAttribute('aria-hidden','true');
  g.innerHTML='<defs><filter id="'+id+'" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="'+f(2.6*k)+'"/><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 16 -6"/></filter></defs>'+
@@ -191,7 +191,7 @@ function prepare(){
  function centre(){var m=svg.getScreenCTM(),r=gal.getBoundingClientRect(),X=r.left+r.width/2,Y=r.top+r.height/2;
   var dxu=((X-m.e)/m.a)-50;svg.querySelector('.big').style.setProperty('--dxu',dxu+'px');
   /* la pointe part du centre du bouton */
-  return [((X-m.e)/m.a-dxu-50)/3+50,((Y-m.f)/m.d-50)/3+50]}
+  return [((X-m.e)/m.a-dxu-50)/2.4+50,((Y-m.f)/m.d-50)/2.4+50]}
  plume(svg,centre);
  o.classList.add('go');
 }
