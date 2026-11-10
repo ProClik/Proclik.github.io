@@ -597,7 +597,7 @@ function render(){
 }
 function introH(){const has=S.travaux.length>0;
  return`<section class="hero fade"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Répondez à quelques questions simples sur votre projet. ${CONFIG.artisan} reçoit tout, prépare votre devis et vous répond sous ${CONFIG.delai}.</p>
- <ul class="perks"><li><i>3</i><div><b>Environ 3 minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
+ <ul class="perks"><li><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><div><b>Quelques minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
  <li><i>?</i><div><b>« Je ne sais pas » est une bonne réponse</b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
  <li><i>✓</i><div><b>Gratuit et sans engagement</b><br><span class="hint">Vous recevez un devis clair, ligne par ligne.</span></div></li></ul>
  <div class="q" style="margin:4px 0 14px"><label class="lab" for="in-pre">Pour commencer, votre prénom</label><p class="hint">Les conseils vous seront adressés, et il sera déjà rempli dans vos coordonnées à la fin.</p><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}" style="width:100%;max-width:340px"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
