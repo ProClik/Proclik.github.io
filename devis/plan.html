@@ -206,8 +206,15 @@ html.client body{padding-block:0!important}
 #clb-t b{display:block;color:var(--mint);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
 #clbanner.tool #clb-t b{color:#fff}
 #clbanner.done{background:#0B5E52}
-.cltool.next{box-shadow:0 0 0 3px var(--mint);animation:gpulse 1.5s ease-in-out infinite}
-@keyframes gpulse{50%{box-shadow:0 0 0 7px rgba(168,130,63,.25)}}
+.cltool.next{box-shadow:0 0 0 3px var(--mint);animation:gpulse2 1.6s ease-out infinite}
+#ctr-b.next,#v-toit.next{animation:gpulse 1.6s ease-out infinite}
+/* Fiches côté client (Cyril 10/11 15h23) : « Valider » n'apparaît qu'en bas de la fiche ; le OK du haut est mis en évidence, avec l'onde. */
+.client .sh-foot{position:static;background:none}
+/* L'onde sur chaque bouton qui fait avancer le client (Cyril 10/11 15h26). Jamais sur un bouton de suppression. */
+.client #edok,.client .sh-foot .btn,.client #opp [data-oppo="ok"],.client #clb-b[data-next],.client .bc-ok,.client [data-ftnew],.client [data-addtrav],.client #gd-ok{animation:gpulse 1.8s ease-out infinite}
+.client #sheet .sh-h [data-close]{background:#A8823F!important;color:#fff!important;border-color:transparent!important;font-weight:800;min-width:64px;animation:gpulse 1.8s ease-out infinite}
+@keyframes gpulse{0%{box-shadow:0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 0 rgba(168,130,63,0)}}
+@keyframes gpulse2{0%{box-shadow:0 0 0 3px var(--mint),0 0 0 3px rgba(168,130,63,.6)}70%{box-shadow:0 0 0 3px var(--mint),0 0 0 15px rgba(168,130,63,0)}100%{box-shadow:0 0 0 3px var(--mint),0 0 0 3px rgba(168,130,63,0)}}
 #clbanner.tool{background:#0B1226;border-color:var(--mint)}
 #clbanner.tool button{background:#fff;color:#0B1226}
 #cltools{position:absolute;z-index:4;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:6px;box-shadow:var(--shadow)}
@@ -297,10 +304,25 @@ html:not(.client) #clb-v{display:none}
 .gd header,.gd h1,.gd .lead,.gd #cltl,.gd #toast,.gd #tut,.gd #floors,.gd #rooms,.gd #clbanner,.gd #gd-cap{display:none!important}
 .gdw .gd-c{margin:0;padding:0 16px 10px;font:700 15px/1.35 var(--f);min-height:2.7em;color:inherit}
 .gd body{overflow:hidden}
-#gd-fg{position:fixed;z-index:90;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(232,89,12,.25);border:3px solid #E8590C;pointer-events:none;transition:transform .75s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#gd-fg{position:fixed;z-index:90;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(232,89,12,.25);border:3px solid #E8590C;pointer-events:none;transition:transform 1.25s cubic-bezier(.45,0,.2,1),opacity .5s ease;box-shadow:0 4px 14px rgba(0,0,0,.25);will-change:transform}
 #gd-fg::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#E8590C}
-#gd-fg.tap{animation:gdtap .45s ease-out}
-@keyframes gdtap{50%{scale:.7}}
+#gd-fg.tap{animation:gdtap .7s ease-in-out}
+@keyframes gdtap{40%{scale:.72;background:rgba(232,89,12,.5)}100%{scale:1}}
+.gd #sheet:not([hidden]){animation:gdsh .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes gdsh{from{transform:translateY(40px);opacity:0}}
+.gd #ed:not([hidden]),.gd #opp:not([hidden]){animation:gdfd .45s ease-out}
+@keyframes gdfd{from{opacity:0;transform:scale(.96)}}
+.gdw .gd-c{transition:opacity .3s ease}.gdw .gd-c.out{opacity:0}
+/* Exemple épuré (Cyril 10/11 15h20) : seuls le plan et le bouton que le doigt touche restent visibles, à leur vraie place. */
+.gd .fl.tl button:not(.gdk),.gd .fl.tr,.gd .fl.mr,.gd .rotb,.gd #todo-bar,.gd #bar2d,.gd #legend,.gd .cltool:not(.gdk),.gd #cltrace:not(.gdk),.gd .lockt,.gd [class*="plus-tard"]{visibility:hidden!important}
+.gd .fl.tl .pill:not(:has(.gdk)){visibility:hidden}.gd .fl.tl .pill:has(.gdk){background:transparent;box-shadow:none}
+.gd .cltool.gdk{animation:gdglow 1.6s ease-in-out infinite}
+@keyframes gdglow{50%{box-shadow:0 0 0 4px rgba(168,130,63,.35)}}
+.gd4 #sheet .sec:not(:has([data-sol="etat"])):not(:has([data-solall])),.gd4 #sheet .sec .g:not(.etat):not(.solall),.gd4 #sheet .sec>p,.gd4 #sheet .g.etat>p{display:none!important}
+.gd6 #sheet .sec:not(:has([data-pf])),.gd6 #sheet .sec .g,.gd6 #sheet .sec>p{display:none!important}
+.gd4 #sheet .sh-foot,.gd6 #sheet .sh-foot{display:none!important}
+.gdw .gd-in{width:min(480px,100%)}
+.gdw .gd-c{font-size:16.5px;min-height:3em}
 #gd-cap{position:fixed;z-index:91;left:10px;right:10px;bottom:10px;background:#0B1226;color:#fff;border-radius:14px;padding:10px 14px;font:700 15px/1.35 var(--f);text-align:center;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 @media (prefers-reduced-motion:reduce){#gd-fg{transition:none}}
 </style>
@@ -1081,7 +1103,7 @@ function clTl(n){const bn=$("clbanner");if(!CL||!bn||!bn.parentNode)return;let e
  const h=`<ol>${L}${trMiss().length?`<li class="addt"><button type="button" data-opentrav="1"><i>+</i><span class="lg">Ajouter des travaux</span><span class="sh">Ajouter</span></button></li>`:""}<li class="fin${fin?" ok":""}"><button type="button" disabled><i>${fin?"✓":"🏁"}</i><span class="lg">${fin?"Plan terminé":"Terminé"}</span><span class="sh">Fini</span></button></li></ol>`;if(e.dataset.h!==h){e.innerHTML=h;e.dataset.h=h;const c=e.querySelector(".cur")||e.querySelector(".fin");if(c)e.scrollLeft=c.offsetLeft-e.clientWidth/2+c.offsetWidth/2}}
 function clGuide(){const b=$("clbanner");if(!b)return;const tool=["win","door","clo","todo","trace"].includes(ST.mode),n=gStep();clTl(n);{const tt=document.querySelector('.cltool[data-cl="todo"]');if(tt)tt.classList.toggle("locked",n<5&&!TD.size)}
  document.querySelectorAll(".cltool").forEach(x=>x.classList.toggle("next",!tool&&!GMSG&&x.dataset.cl===GTOOL[n]));{const t=document.getElementById("ctr-b");if(t)t.classList.toggle("next",!tool&&!GMSG&&GTOOL[n]==="clo")}
- if(tool||GMSG)return;b.classList.remove("tool");b.classList.toggle("done",n>GN());$("clb-t").innerHTML=`<span class="gdots">${Array.from({length:GN()},(_,j)=>j+1).map(i=>`<i class="${i<n||n>GN()?"ok":i===n?"cur":""}"></i>`).join("")}</span><b>${esc(gTitle(n))}</b>${esc(GTx(n)[1]+gPlus(n))}`;const x=$("clb-b");x.hidden=n>GN();delete x.dataset.skip;delete x.dataset.next;if(G.view){x.textContent="Suivant ›";x.dataset.next=n}else{x.textContent="Passer ›";x.dataset.skip=n}const pv=$("clb-p");if(pv)pv.hidden=n<=gList()[0];gHint();if(!GD)gdMaybe()}
+ if(tool||GMSG)return;b.classList.remove("tool");b.classList.toggle("done",n>GN());$("clb-t").innerHTML=`<span class="gdots">${Array.from({length:GN()},(_,j)=>j+1).map(i=>`<i class="${i<n||n>GN()?"ok":i===n?"cur":""}"></i>`).join("")}</span><b>${esc(gTitle(n))}</b>${esc(GTx(n)[1]+gPlus(n))}`;const x=$("clb-b");x.hidden=n>GN();delete x.dataset.skip;delete x.dataset.next;if(G.view){x.textContent="Suivant ›";x.dataset.next=n}else{x.textContent="Passer ›";x.dataset.skip=n}const pv=$("clb-p");if(pv)pv.hidden=n<=gList()[0];gHint();if(!GD){gdMaybe();if(CL&&gStep.last!==n){gStep.last=n;try{parent.postMessage({type:"proclik-plan-step",n,fin:n>GN()},"*")}catch(e){}}}}
 // Ce qu'il faut toucher à l'étape en cours clignote : les cotes (1), les pièces sans sol (4), les pièces (6).
 function gHint(){if(!CL)return;svg.querySelectorAll(".hint,.hintr").forEach(x=>{x.classList.remove("hint","hintr")});if(ST.view!=="2d"||ST.mode!=="plan")return;const n=gStep();if(n===1)svg.querySelectorAll("g[data-lab]").forEach(g=>g.classList.add("hint"));
  if(n===4||n===6)svg.querySelectorAll("polygon[data-room]").forEach(pg=>{const rm=F().rooms[+pg.dataset.room],Z=rm&&zinfo(rm),ok=n===4?(Z?Z.every(x=>x.z&&x.z.sol._ok):rm&&rm.sol._ok):(Z?Z.some(x=>x.z&&x.z.sol._pfok):rm&&rm.sol._pfok);if(!ok)pg.classList.add("hintr")})}
@@ -1355,23 +1377,23 @@ const GDT=["","Les mesures du logement","Séparer les pièces","Fenêtres et por
 function gdSeen(n,set){const k="pk-gd-"+n;try{if(set)localStorage.setItem(k,"1");return!!localStorage.getItem(k)}catch(e){gdSeen.m=gdSeen.m||{};if(set)gdSeen.m[k]=1;return!!gdSeen.m[k]}}
 function gdOpen(n){if(!CL||GD||!n||n>7)return;let w=$("gdw");if(!w){w=document.createElement("div");w.id="gdw";w.className="gdw";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.setAttribute("aria-label","Exemple");
   w.innerHTML='<div class="gd-in"><div class="gd-h"><b><small>Exemple · sur un plan modèle</small><span id="gd-t"></span></b><button type="button" id="gd-x" aria-label="Fermer l\'exemple">✕</button></div><p class="gd-c" id="gd-c" aria-live="polite"></p><iframe id="gd-if" title="Exemple animé" tabindex="-1"></iframe><div class="gd-f"><button type="button" class="re" id="gd-re">↻ Revoir</button><button type="button" class="ok" id="gd-ok">J\'ai compris, à moi !</button></div></div>';document.body.appendChild(w);
-  const close=()=>{w.hidden=true;$("gd-if").src="about:blank"};addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-gd-cap"&&$("gd-c"))$("gd-c").textContent=d.t||""});$("gd-x").onclick=close;$("gd-ok").onclick=close;w.addEventListener("click",e=>{if(e.target===w)close()});$("gd-re").onclick=()=>gdOpen(+w.dataset.n)}
+  const close=()=>{w.hidden=true;$("gd-if").src="about:blank"};addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-gd-cap"&&$("gd-c")){const c=$("gd-c");c.classList.add("out");clearTimeout(c._t);c._t=setTimeout(()=>{c.textContent=d.t||"";c.classList.remove("out")},300)}});$("gd-x").onclick=close;$("gd-ok").onclick=close;w.addEventListener("click",e=>{if(e.target===w)close()});$("gd-re").onclick=()=>gdOpen(+w.dataset.n)}
  w.dataset.n=n;gdSeen(n,1);$("gd-t").textContent=GDT[n]||"";$("gd-c").textContent="";const re=$("gd-re");re.disabled=true;setTimeout(()=>{re.disabled=false},2500);$("gd-if").src=location.pathname+"?client&embed&gd="+n+"&t="+Date.now();w.hidden=false;$("gd-ok").focus({preventScroll:true})}
 // La 1re fois qu'une étape devient l'étape en cours (rien d'autre d'ouvert), l'exemple s'ouvre tout seul.
 let GDQ=null;function gdMaybe(){if(!CL||GD||!READY)return;clearTimeout(GDQ);GDQ=setTimeout(()=>{const n=gStep();if(n>GN()||G.view||gdSeen(n))return;if(!$("sheet").hidden||!$("intro").hidden||!$("bigconf").hidden||($("gdw")&&!$("gdw").hidden)||PD||["win","door","clo","todo","trace"].includes(ST.mode))return;gdOpen(n)},900)}
 if(CL&&!GD){$("clb-v").addEventListener("click",e=>{e.stopPropagation();const n=gStep();gdOpen(n>GN()?gList()[0]||1:n)});$("in-ok").addEventListener("click",()=>setTimeout(gdMaybe,300))}
 // --- dans la petite fenêtre : le plan modèle et le doigt ---
-async function gdRun(n){const wait=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";document.body.append(fg,cap);
- const B=()=>$("board").getBoundingClientRect();let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);
+async function gdRun(n){const SP=1.8,wait=ms=>new Promise(r=>setTimeout(r,ms*SP)),raw=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";document.body.append(fg,cap);
+ const B=()=>$("board").getBoundingClientRect();let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);fg.style.opacity="0";await raw(60);fg.style.opacity="1";await raw(500);
  const say2=t=>{cap.textContent=t;try{parent.postMessage({type:"proclik-gd-cap",t},"*")}catch(e){}};
  const P=q=>{const m=svg.getScreenCTM(),p=svg.createSVGPoint();p.x=q[0];p.y=q[1];const r=p.matrixTransform(m);return[r.x,r.y]};
  const ev=(el,type,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerId:7,pointerType:"touch",isPrimary:true}));
- const go=async(x,y)=>{put(x,y);await wait(800)};
- const tapXY=async(x,y,after)=>{await go(x,y);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");fg.style.visibility="hidden";const el=document.elementFromPoint(x,y);fg.style.visibility="";if(el){ev(el,"pointerdown",x,y);await wait(90);ev(el,"pointerup",x,y)}await wait(after||700)};
+ const go=async(x,y)=>{put(x,y);await raw(1350)};
+ const tapXY=async(x,y,after)=>{await go(x,y);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");await raw(260);fg.style.visibility="hidden";const el=document.elementFromPoint(x,y);fg.style.visibility="";if(el){ev(el,"pointerdown",x,y);await raw(120);ev(el,"pointerup",x,y)}await wait(after||700)};
  const tapPlan=(q,after)=>{const s=P(q);return tapXY(s[0],s[1],after)};
- const tapEl=async(sel,after)=>{const el=typeof sel==="string"?document.querySelector(sel):sel;if(!el)return;el.scrollIntoView({block:"center",behavior:"instant"});await wait(450);const r=el.getBoundingClientRect();await go(r.left+r.width/2,r.top+r.height/2);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");el.click();await wait(after||700)};
- const drag=async(a,b)=>{const A=P(a),Bq=P(b);await go(A[0],A[1]);fg.style.visibility="hidden";const el=document.elementFromPoint(A[0],A[1]);fg.style.visibility="";if(!el)return;ev(el,"pointerdown",A[0],A[1]);fg.style.transition="none";for(let k=1;k<=24;k++){const x=A[0]+(Bq[0]-A[0])*k/24,y=A[1]+(Bq[1]-A[1])*k/24;put(x,y);ev(svg,"pointermove",x,y);await wait(40)}fg.style.transition="";ev(svg,"pointerup",Bq[0],Bq[1]);await wait(700)};
- const typeIn=async(t)=>{const v=$("edv");if(!v)return;v.value="";for(const c of t){v.value+=c;await wait(170)}await wait(250)};
+ const tapEl=async(sel,after)=>{const el=typeof sel==="string"?document.querySelector(sel):sel;if(!el)return;el.scrollIntoView({block:"center",behavior:"instant"});await raw(500);const r=el.getBoundingClientRect();await go(r.left+r.width/2,r.top+r.height/2);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");await raw(260);el.click();await wait(after||700)};
+ const drag=async(a,b)=>{const A=P(a),Bq=P(b);await go(A[0],A[1]);fg.style.visibility="hidden";const el=document.elementFromPoint(A[0],A[1]);fg.style.visibility="";if(!el)return;fg.classList.add("tap");await raw(300);ev(el,"pointerdown",A[0],A[1]);await raw(250);fg.style.transition="none";await new Promise(done=>{const t0=performance.now(),D=1800,f=t=>{const k=Math.min(1,(t-t0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,x=A[0]+(Bq[0]-A[0])*e,y=A[1]+(Bq[1]-A[1])*e;put(x,y);ev(svg,"pointermove",x,y);if(k<1)requestAnimationFrame(f);else done()};requestAnimationFrame(f)});await raw(300);fg.style.transition="";ev(svg,"pointerup",Bq[0],Bq[1]);await wait(700)};
+ const typeIn=async(t)=>{const v=$("edv");if(!v)return;v.value="";for(const c of t){v.value+=c;await raw(330)}await wait(400)};
  const rm=i=>F().rooms[i],mid=(a,b,t)=>[a[0]+(b[0]-a[0])*(t??.5),a[1]+(b[1]-a[1])*(t??.5)],cen=r=>{const b=bbox(r.pts);return[(b.x0+b.x1)/2,(b.y0+b.y1)/2]};
  const segOf=(ri,i)=>segs().find(s=>s.rm===rm(ri)&&s.i===i);
  try{
@@ -1379,9 +1401,9 @@ async function gdRun(n){const wait=ms=>new Promise(r=>setTimeout(r,ms)),fg=docum
    say2("…puis la 2e mesure : la largeur. Le plan se met à la bonne taille.");const g1=[...svg.querySelectorAll("g[data-lab]")][1];if(g1){const r=g1.getBoundingClientRect();await tapXY(r.left+r.width/2,r.top+r.height/2,500)}await typeIn("5,00");await tapEl("#edok",1400)}
   if(n===2){say2("Touchez « Tracer », puis « Cloison ».");await tapEl("#ctr-b",500);await tapEl('[data-tr="clo"]',700);const b=bbox(rm(0).pts),x=r2(b.x0+(b.x1-b.x0)*.55);say2("Touchez le mur où la cloison commence, puis le mur d'en face.");await tapPlan([x,b.y0],600);await tapPlan([x,b.y1],1000);say2("Deux pièces ! Touchez une pièce pour lui donner son nom.");await wait(1800)}
   if(n===3){say2("Touchez « Fenêtre », puis le mur de la fenêtre.");await tapEl('.cltool[data-cl="win"]',600);const s=segOf(0,0);await tapPlan(mid(s.a,s.b,.5),1100);hideOpp();say2("Elle se pose au milieu avec ses cotes. Faites-la glisser à sa place : elle se cale au milieu et aux quarts.");await wait(600);setMode("plan");draw();await wait(200);const s2=segOf(0,0),o=svg.querySelector("[data-opx]");if(o){const r=o.getBoundingClientRect(),m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=r.left+r.width/2;p.y=r.top+r.height/2;const q=p.matrixTransform(m);await drag([q.x,q.y],[q.x-(s2.b[0]-s2.a[0])*.23,q.y-(s2.b[1]-s2.a[1])*.23])}await wait(1400)}
-  if(n===4){say2("Touchez une pièce…");await tapPlan(cen(rm(0)),900);say2("…et dites si son sol est à garder, à changer ou à créer.");await tapEl('[data-sol="etat"][data-v="À changer"]',1100);const all=document.querySelector("[data-solall]");if(all){say2("Le même sol partout ? Un seul geste.");await tapEl(all,1100)}await tapEl("[data-close]",1200)}
+  if(n===4){say2("Touchez une pièce…");await tapPlan(cen(rm(0)),900);say2("…et dites si son sol est à garder, à changer ou à créer.");await tapEl('[data-sol="etat"][data-v="À changer"]',1100);const all=document.querySelector("[data-solall]");if(all){say2("Le même sol partout ? Un seul geste.");await tapEl(all,1100)}await tapEl("#sheet .sh-h [data-close]",1200)}
   if(n===5){say2("Touchez « Travaux », puis chaque mur à refaire.");await tapEl('.cltool[data-cl="todo"]',700);const S=segs().filter(x=>x.kind==="mur"&&!x.sh);for(const s of S.slice(0,3))await tapPlan(mid(s.a,s.b,.5),550);say2("Les murs touchés passent en couleur. Tous ? « Tout cocher ».");await wait(1800)}
-  if(n===6){say2("Touchez la pièce où le plafond est à refaire…");await tapPlan(cen(rm(0)),900);const pf=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(pf){pf.scrollIntoView({block:"center",behavior:"instant"});await wait(300)}say2("…puis « À refaire ».");await tapEl('[data-pf="pf"][data-v="À refaire"]',300);{const q=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(q)q.scrollIntoView({block:"center",behavior:"instant"})}await wait(1200);await tapEl("[data-close]",1200)}
+  if(n===6){say2("Touchez la pièce où le plafond est à refaire…");await tapPlan(cen(rm(0)),900);const pf=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(pf){pf.scrollIntoView({block:"center",behavior:"instant"});await wait(300)}say2("…puis « À refaire ».");await tapEl('[data-pf="pf"][data-v="À refaire"]',300);{const q=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(q)q.scrollIntoView({block:"center",behavior:"instant"})}await wait(1200);await tapEl("#sheet .sh-h [data-close]",1200)}
   if(n===7){say2("Touchez « Toit » : votre toit vu d'en haut.");await tapEl("#v-toit",1000);const pa=svg.querySelector("[data-pan]");if(pa){const r=pa.getBoundingClientRect();say2("Touchez le pan où se trouve la fenêtre de toit…");await tapXY(r.left+r.width/2,r.top+r.height*.6,900)}say2("…puis « + Fenêtre de toit » : elle se pose au milieu du pan.");await tapEl("[data-ftnew]",1800)}
   say2("À vous ! Fermez cette fenêtre et faites pareil sur votre plan.")}catch(e){say2("À vous ! Fermez cette fenêtre et faites pareil sur votre plan.")}
  fg.remove()}
@@ -1393,6 +1415,7 @@ if(GD){document.documentElement.classList.add("gd");
  else if(n===2)ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Mon logement",0,0,6.5,5)]}];
  else if(n===7){ST.floors=[{nom:"Combles",comb:true,H:2.5,rooms:[M("Combles",0,0,8,6)]}];ST.comb={...COMBDEF,type:"Aménageables",isol:"En rampant",ep:"240 mm"}}
  else{const ok={etat:"À changer",_ok:1};ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Séjour",0,0,4.5,4,n>4?ok:{}),M("Cuisine",4.5,0,3,4,n>4?ok:{})]}]}
+ document.documentElement.classList.add("gd"+n);const K={2:["#ctr-b","#cltrace"],3:['.cltool[data-cl="win"]'],5:['.cltool[data-cl="todo"]'],7:["#v-toit"]}[n]||[];K.forEach(s=>{const e=document.querySelector(s);if(e)e.classList.add("gdk")});
  ST.fi=0;ST.ri=0;G.m1=n>1;for(let k=1;k<n;k++)G.skip[k]=1;READY=true;HIST.length=0;all();say(null,"");setTimeout(()=>gdRun(n),700)}
 
 })();
