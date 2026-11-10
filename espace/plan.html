@@ -1556,6 +1556,7 @@ if(GD){document.documentElement.classList.add("gd");
  ST.fi=0;ST.ri=0;G.m1=n>1;for(let k=1;k<n;k++)G.skip[k]=1;READY=true;HIST.length=0;all();say(null,"");setTimeout(()=>gdRun(n),700)}
 
 
+
 // ---------- Plan guidé pièce par pièce  : ?client&guide#pg=… ----------
 // Le petit formulaire a déjà donné les pièces, leur niveau et leurs ouvertures. Ici : choisir la pièce → la tracer coin par coin
 // (plan fixe) → toucher le mur de chaque ouverture et de la porte → recul, pièce suivante. Rien n'est oublié.
@@ -1566,17 +1567,17 @@ if(CL&&/[?&]guide/.test(location.search)){
  PG={D,list:D.rooms.map(r=>({...r,rm:null})),cur:null,phase:"pick",q:[],last:null};
  document.documentElement.classList.add("pg");
  const st=document.createElement("style");st.textContent=`
-html.pg #gdw,html.pg #tutor,html.pg #clb-p{display:none!important}
+html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar{display:none!important}
 #pgtop{position:fixed;z-index:30;left:0;right:0;top:0;padding:10px 14px 8px;display:grid;gap:6px;background:linear-gradient(var(--bg) 75%,transparent)}
 #pgtop .pr{display:flex;align-items:center;gap:10px}#pgtop .pr b{font:800 13.5px Manrope,sans-serif;white-space:nowrap}
 #pgtop .bar{flex:1;height:7px;border-radius:9px;background:var(--line,#D6DAE2);overflow:hidden}#pgtop .bar i{display:block;height:100%;background:#A8823F;border-radius:9px;transition:width .5s}
 #pgtop h2{margin:0;font:800 20px/1.2 Manrope,sans-serif;color:var(--fg)}#pgtop p{margin:0;font:600 14px/1.35 Manrope,sans-serif;color:var(--muted,#5E6577)}
 #pgtop .lv{font:800 12px Manrope,sans-serif;color:#A8823F;letter-spacing:.05em;text-transform:uppercase}
-#pgp{position:fixed;z-index:30;left:8px;right:8px;bottom:96px;padding:12px;background:var(--surface,#F6F7F9);border-radius:20px;box-shadow:0 10px 30px rgba(20,26,43,.22);display:grid;gap:10px;max-height:46vh;overflow:auto;font-family:Manrope,sans-serif;color:var(--fg)}#pgp:empty{display:none}#pgp .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}#pgp .hd b{font:800 15px Manrope,sans-serif}#pgp .bk{font:700 13px Manrope,sans-serif;color:var(--muted,#5E6577);background:none;border:0;padding:4px;cursor:pointer}
-#pgp .pk{display:grid;grid-auto-flow:column;grid-template-rows:auto;grid-auto-columns:minmax(158px,47%);gap:8px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x mandatory}#pgp .pk .pkc{scroll-snap-align:start;padding:9px 10px}#pgp .pk.one{grid-template-rows:auto}
-#pgp .pkc{border:0;border-radius:18px;padding:12px;display:flex;gap:10px;align-items:center;text-align:left;background:var(--bg);box-shadow:-3px -3px 7px rgba(255,255,255,.7),3px 3px 8px rgba(0,0,0,.12);cursor:pointer;position:relative;color:inherit;font:inherit}
-#pgp .pkc .sw2{width:30px;height:30px;border-radius:9px;flex:none;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.08)}
-#pgp .pkc b{display:block;font-size:16px}#pgp .pkc small{display:block;color:var(--muted,#5E6577);font-size:12.5px;font-weight:600}
+#pgp{position:fixed;z-index:30;left:50%;transform:translateX(-50%);width:min(520px,calc(100% - 16px));bottom:96px;padding:10px 12px;background:var(--surface,#F6F7F9);border-radius:20px;box-shadow:0 10px 30px rgba(20,26,43,.22);display:grid;gap:10px;max-height:46vh;overflow:auto;font-family:Manrope,sans-serif;color:var(--fg)}#pgp:empty{display:none}#pgp .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}#pgp .hd b{font:800 15px Manrope,sans-serif}#pgp .bk{font:700 13px Manrope,sans-serif;color:var(--muted,#5E6577);background:none;border:0;padding:4px;cursor:pointer}
+#pgp .pk{display:grid;grid-auto-flow:column;grid-template-rows:auto;grid-auto-columns:minmax(132px,38%);gap:8px;overflow-x:auto;padding:12px 2px 6px;scroll-snap-type:x mandatory}#pgp .pk .pkc{scroll-snap-align:start}#pgp .pk.one{grid-template-rows:auto}
+#pgp .pkc{border:0;border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;text-align:left;background:var(--bg);box-shadow:-3px -3px 7px rgba(255,255,255,.7),3px 3px 8px rgba(0,0,0,.12);cursor:pointer;position:relative;color:inherit;font:inherit}
+#pgp .pkc .sw2{width:22px;height:22px;border-radius:9px;flex:none;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.08)}
+#pgp .pkc b{display:block;font-size:14.5px}#pgp .pkc small{display:block;color:var(--muted,#5E6577);font-size:12.5px;font-weight:600}
 #pgp .pkc.reco{box-shadow:0 0 0 2px #A8823F;animation:gpulse 1.8s ease-out infinite}#pgp .pkc em{position:absolute;top:-8px;right:10px;font:800 11px Manrope,sans-serif;font-style:normal;background:#A8823F;color:#fff;border-radius:999px;padding:2px 8px}
 #pgp .sec{margin:4px 2px 0;font:800 12px Manrope,sans-serif;color:#A8823F;letter-spacing:.05em;text-transform:uppercase}
 #pgp .dn{display:flex;flex-wrap:wrap;gap:6px}#pgp .dn span{font:800 12.5px Manrope,sans-serif;color:var(--muted,#5E6577);border-radius:999px;padding:4px 10px;box-shadow:inset 0 0 0 1.5px var(--line,#D6DAE2)}
@@ -1609,12 +1610,12 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p{display:none!important}
   const stp=t=>{if(ST.trace&&ST.trace.length)return;const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);ST.cam={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e,w:from.w+(to.w-from.w)*e};draw();if(k<1)AN=requestAnimationFrame(stp);else{ST.cam=null;draw()}};AN=requestAnimationFrame(stp)};
  const _fit=fit;fit=function(){if(PG&&!ST.cam){const v=PG.fit();VB={x:v.x,y:v.y,w:v.w,h:v.h};return}_fit()};
  // murs à toucher, dessinés par-dessus le plan
- const _draw=draw;draw=function(){_draw();if(!PG||PG.phase!=="wall"||!PG.cur||!PG.cur.rm)return;const a=PG.q[0],u=VB.w/34;
+ const _draw=draw;draw=function(){_draw();if(PG&&PG.phase==="size")svg.querySelectorAll("g[data-lab]").forEach(g=>g.classList.add("hint"));if(!PG||PG.phase!=="wall"||!PG.cur||!PG.cur.rm)return;const a=PG.q[0],u=VB.w/34;
   segs().forEach((sg,x)=>{if(sg.rm!==PG.cur.rm||sg.kind!=="mur")return;if(a.k==="pi"?!sg.sh:sg.sh)return;
    svg.insertAdjacentHTML("beforeend",`<line class="pghw" x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke-width="${u*.5}" stroke-dasharray="${u} ${u*.6}"/><line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="transparent" stroke-width="${u*2.2}" data-pgw="${x}" style="cursor:pointer"/>`)})};
  gdMaybe=()=>{};tutor=()=>{};
  // pendant le choix / les murs : un toucher sur le plan ne fait que choisir un mur
- svg.addEventListener("pointerdown",e=>{if(!PG)return;if(e.pointerType!=="mouse"&&PTR.size>0&&PG.phase==="trace")return;if(PG.phase==="trace")return;e.stopImmediatePropagation();e.preventDefault();
+ svg.addEventListener("pointerdown",e=>{if(!PG)return;if(e.pointerType!=="mouse"&&PTR.size>0&&PG.phase==="trace")return;if(PG.phase==="trace"||PG.phase==="size")return;e.stopImmediatePropagation();e.preventDefault();
   const w=e.target.closest("[data-pgw]");if(w&&PG.phase==="wall")PG.place(+w.dataset.pgw)},{capture:true});
  PG.place=x=>{const sg=segs()[x],a=PG.q[0];if(!sg)return;hist();const kind=a.k==="fen"||a.k==="baie"?"fenetre":a.k==="pf"?"pf":"porte",o=newOp(kind,sg);
   if(a.k==="baie"){o.t="Baie coulissante";o.ouv="Coulissant";o.w=2.4;o.h=2.15;o.al=0}if(a.k==="ps")o.t="Porte de service";if(a.k==="pg"){o.t="Porte de garage";o.w=2.4;o.h=2}
@@ -1628,6 +1629,7 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p{display:none!important}
   if(PG.phase==="pick"){const left=PG.list.filter(z=>!z.rm),first=!nd;h=first?"Quelle pièce tracez-vous en premier ?":"Bravo ! Quelle pièce tracez-vous maintenant ?";p=first?"Commencez par l'entrée, côté rue, c'est le plus simple.":"De préférence une pièce qui touche celles déjà tracées.";
    b=`<div class="hd"><b>${first?"Par quelle pièce commencer ?":"Pièce suivante ?"}</b>${nd?`<button type="button" class="bk" data-pgundo="1">↶ Effacer la dernière</button>`:`<button type="button" class="bk" data-pgback="1">← Mes réponses</button>`}</div>`+D.niv.map((nm,l)=>{const rs=left.filter(z=>z.lv===l);return rs.length?`${D.niv.length>1?`<p class="sec">${nm}</p>`:""}${rs.length>2?`<p class="lab" style="margin:0">Glissez les cartes pour voir les ${rs.length} pièces →</p>`:""}<div class="pk${rs.length<=2?" one":""}">${rs.map(z=>`<button type="button" class="pkc${first&&z.t==="entree"?" reco":""}" data-pk="${PG.list.indexOf(z)}"><span class="sw2" style="background:${COL[z.t]||"#E5E5E5"}"></span><span><b>${esc(z.n)}</b><small>${opsTxt(z)}</small></span>${first&&z.t==="entree"?"<em>Conseillé</em>":""}</button>`).join("")}</div>`:""}).join("")
     }
+  else if(PG.phase==="size"){h=`${art(x).replace(/^./,c=>c.toUpperCase())} est déjà tracée en rectangle`;p="Touchez chaque cote pour mettre votre mesure, puis « C'est bon ».";b=`<button type="button" class="go" data-pgsized="1">C'est bon</button>`}
   else if(PG.phase==="trace"){const n=(ST.trace||[]).length;h=`Tracez ${art(x)}`;p=!n?"Touchez un premier coin de la pièce.":n<3?"Touchez le coin suivant : la ligne se cale à l'angle droit.":"Continuez, ou touchez le premier coin pour fermer la pièce.";
    cb.hidden=false;cb.textContent="Changer";cb.dataset.pgchg=1;b=n?`<div class="row"><button type="button" class="b" data-pgpop="1">↶ Retirer le dernier coin</button>${n>=3?`<button type="button" class="b on" data-pgclose="1">Fermer la pièce</button>`:""}</div>`:""}
   else if(PG.phase==="wall"){h=a.k==="pi"?`Où est la porte ${x.t==="wc"?"des WC":"de "+art(x)} ?`:a.n>1?`Touchez le mur de la ${RN[a.k][0]} n° ${a.u+1} sur ${a.n}`:`Touchez le mur où se trouve ${RN[a.k][1]}`;p=a.k==="pi"?"Touchez le mur, entre deux pièces, où se trouve la porte.":"Les murs possibles clignotent en laiton : touchez le bon.";
@@ -1653,6 +1655,8 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p{display:none!important}
  {const tb=$("ctr-b");if(tb)tb.addEventListener("click",e=>{if(!PG)return;e.stopImmediatePropagation();e.preventDefault();const bn=$("clbanner");bn.classList.remove("nudge");void bn.offsetWidth;bn.classList.add("nudge")},true)}
  const click=e=>{const t=e.target.closest("button");if(!t||!PG)return;const d=t.dataset;
   if(d.pgback){try{parent.postMessage({type:"pg-back"},"*")}catch(_){}return}
+  if(d.pk!=null&&!ST.floors.some(f=>f.rooms.length)){const x=PG.list[+d.pk];PG.cur=x;ST.fi=x.lv;hist();const rm=mkRoom(x.n,0,0,4,3.5);F().rooms.push(rm);ST.ri=F().rooms.length-1;x.rm0=rm;PG.phase="size";setMode("plan");all();ui();PG.anim();return}
+  if(d.pgsized){const x=PG.cur,rm=x.rm0;delete x.rm0;PG.closed(rm);return}
   if(d.pk!=null){const x=PG.list[+d.pk];PG.cur=x;const ch=ST.fi!==x.lv;ST.fi=x.lv;PG.phase="trace";setMode("trace");ST.trace=null;ui();if(ch)all();PG.anim();return}
   if(d.pgpop){if(ST.trace)ST.trace.pop();if(ST.trace&&!ST.trace.length)ST.trace=null;draw();ui();return}
   if(d.pgclose){finishTrace();return}
