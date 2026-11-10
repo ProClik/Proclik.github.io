@@ -1662,7 +1662,7 @@ window.pcPlanCard=function(c){return '<div class="card pcplan" id="ch-plan"><div
  '<div class="pcstats"><div><b>2</b><span>pièces</span></div><div><b>32 m²</b><span>au sol</span></div><div><b>6</b><span>photos</span></div></div>'+
  '<button class="btn go" style="width:100%" type="button" data-openplan="Chantier '+(c&&c.n?c.n:'')+'">Ouvrir le plan</button><p class="hint" style="margin-top:6px">Cotes, compositions, sols, combles et photos mur par mur. Modifiable sur place, puis « Envoyer à Cliky ».</p></div>'};
 var ov=document.getElementById('pcov'),fr=document.getElementById('pcov-f'),bd=document.getElementById('pcov-b'),msg=document.getElementById('pcmsg'),tm;
-function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=9':'plan.html?embed=1&v=9';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
+function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=10':'plan.html?embed=1&v=10';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
 function openClient(){document.getElementById('pcov-t').firstChild.nodeValue='📐 Plan dessiné par Mme Durand';fr.hidden=true;bd.hidden=false;
  bd.innerHTML='<p style="margin:0;color:var(--muted)">Envoyé avec sa demande Clik\'Devis. Les tailles en pointillés sont estimées par le client.</p>'+document.querySelector('.pcclient svg').outerHTML+
  '<div class="card" style="display:grid;gap:6px"><b>Pièces</b><span>Séjour · 5,00 × 4,00 m · isoler les murs</span><span>Cuisine · 3,20 × 3,00 m · isoler les murs</span><span>Chambre 1 · 3,80 × 2,90 m · isoler les murs, créer une cloison</span><span>Chambre 2 · ≈ 3,50 × 3,00 m (estimé) · isoler les murs</span><span>Salle de bain · 2,40 × 2,00 m · isoler les murs</span><span style="color:var(--muted)">Hauteur sous plafond 2,50 m · objectif : avoir droit aux aides</span></div>'+
@@ -1680,7 +1680,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 
 <script src="config.js?v=2"></script>
 <script src="options.js?v=2"></script>
-<script src="vrai.js?v=25"></script>
+<script src="vrai.js?v=26"></script>
 <link rel="stylesheet" href="relief.css?v=17">
 <link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=13"></script>
 <link rel="stylesheet" href="planning.css?v=3">
