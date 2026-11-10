@@ -241,8 +241,8 @@ html.client body{padding-block:0!important}
 #svg .hintr{animation:hro 1.3s ease-in-out infinite}@keyframes hro{50%{opacity:.45}}
 .intro .bc-in{border-color:var(--mint);text-align:left}.intro h2{text-align:center}.intro ol{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:7px}.intro li{display:flex;gap:10px;align-items:center;font-size:15px;font-weight:700}.intro li b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--mint);color:#0B1226;display:grid;place-items:center;font-size:13px}.intro .dem{margin-left:auto;flex:none;font-size:11px;font-weight:800;color:#0B1226;background:#FFB020;border-radius:999px;padding:2px 8px}.vf-l{display:grid;gap:6px;max-height:46vh;overflow:auto}.vf-l button{appearance:none;display:flex;gap:10px;align-items:center;text-align:left;width:100%;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);border-radius:14px;padding:10px 12px;font:700 14px var(--f);cursor:pointer}.vf-l button span{flex:1}.vf-l button b{flex:none;color:var(--mint);font-size:13px}.intro .tip{font-size:14px;color:var(--muted);margin:4px 0 0}.intro .bc-ok{background:var(--mint);color:#0B1226}
 .cltool.locked .lk{display:block}
-.cltool.add::before{content:"+";position:absolute;z-index:1;top:-3px;right:calc(50% - 30px);width:18px;height:18px;border-radius:50%;background:#A8823F;color:#fff;font:800 15px/18px var(--f);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.cltool.add[aria-pressed="true"]::before{background:#D4B483;color:#0B1226}
+.cltool.add::before{content:"+";position:absolute;z-index:1;top:0;right:calc(50% - 25px);width:13px;height:13px;border-radius:50%;background:transparent;color:#A8823F;box-shadow:inset 0 0 0 1.2px currentColor;font:700 11px/13px var(--f);text-align:center;opacity:.8}
+:root[data-theme="dark"] .cltool.add::before{color:#D4B483}
 .cltool:active{transform:scale(.96)}
 .client .fl.tr{top:8px}.client .fl.tl{top:8px}
 .client #clbanner{margin:0}
