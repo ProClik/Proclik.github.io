@@ -194,7 +194,7 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 #planfull[hidden]{display:none}
 .pf-bar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
 .pf-t{flex:1;min-width:0}.pf-t b{display:block;font-size:17px}.pf-t small{color:var(--muted);font-size:13px}
-@media (max-width:480px){#pf-sub{display:none}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}@keyframes pcOnde{0%{box-shadow:0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 0 rgba(168,130,63,0)}}
+@media (max-width:480px){#pf-sub{display:none}.pf-t{display:none}#pf-form{margin-left:0}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-form{appearance:none;border:1.5px solid #A8823F;border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto;white-space:nowrap}#pf-form+#pf-later{margin-left:0}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}@keyframes pcOnde{0%{box-shadow:0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 0 rgba(168,130,63,0)}}
 /* L'onde guide le client : bouton principal de chaque écran, et « J'ai terminé » quand le plan est fini. */
 .btn.go:not([disabled]),.bigbtn,.bc-ok,#pf-done.fin{animation:pcOnde 1.8s ease-out infinite}
 #pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
@@ -258,7 +258,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
   <div id="offline" hidden role="status">📶 <b>Pas de connexion internet.</b> Pas d'inquiétude : tout est gardé sur cet appareil. Continuez, vous pourrez envoyer dès le retour du réseau.</div>
   <div class="bigconf" id="bigconf" hidden role="alertdialog" aria-modal="true" aria-labelledby="bc-t"><div class="bc-in"><div class="bc-ic">⚠️</div><h2 id="bc-t"></h2><p id="bc-p"></p><div class="bc-b"><button type="button" class="bc-no" id="bc-no">Non, garder</button><button type="button" class="bc-ok" id="bc-ok">Oui</button></div></div></div>
   <div id="planhost" hidden><div id="pextra"></div></div>
-  <div id="planfull" hidden role="dialog" aria-label="Votre plan"><div class="pf-bar"><div class="pf-t"><b>Votre plan</b><small id="pf-sub">Le contour du logement est prêt</small></div><button type="button" id="pf-later" data-later="1" aria-label="Finir plus tard">📩<span> Plus tard</span></button><button type="button" id="pf-done">✓ J'ai terminé</button></div><iframe id="pframe" title="Votre plan" allow="camera; microphone"></iframe></div>
+  <div id="planfull" hidden role="dialog" aria-label="Votre plan"><div class="pf-bar"><div class="pf-t"><b>Votre plan</b><small id="pf-sub">Le contour du logement est prêt</small></div><button type="button" id="pf-form" data-toform="1">Formulaire</button><button type="button" id="pf-later" data-later="1" aria-label="Finir plus tard">📩<span> Plus tard</span></button><button type="button" id="pf-done">✓ J'ai terminé</button></div><iframe id="pframe" title="Votre plan" allow="camera; microphone"></iframe></div>
   <div class="foot"><p style="margin:0">Vos réponses restent entre vous et l'artisan · Clik'Devis, propulsé par Cliky</p><div class="sig"><svg viewBox="18 6.5 76 76" aria-hidden="true"><path class="pcf" d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" style="fill:var(--fg);stroke:none"/><circle class="pcf pcg" cx="56.0" cy="42.82" r="4.71" style="fill:var(--pl);stroke:none"/></svg><i></i><span>PROCLIK</span></div></div>
 </div>
 <nav class="nav" id="nav" hidden>
@@ -386,10 +386,21 @@ const D={
  photos:{t:"Quelques photos",s:"Ce sont elles qui rendent le pré-devis vraiment juste.",cheer:"Les photos, ça change tout",f:[
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
    {k:"plan",t:"file",l:"Plan (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan",small:"Photo ou PDF, avec les cotes si possible"}]},
+ simple:{t:"Vos travaux en quelques mots",s:"Cochez ce qui correspond, puis expliquez avec vos mots. Une estimation suffit, tout sera vérifié sur place.",cheer:"Simple et rapide",f:[
+   {k:"pieces",t:"multi",l:"Quelles pièces sont concernées ?",h:"Plusieurs choix possibles.",o:["Séjour","Cuisine","Chambre(s)","Salle de bain / WC","Entrée / couloir","Bureau","Garage","Combles","Tout le logement"]},
+   {k:"surface",t:"chips",l:"Surface concernée, environ",o:["Moins de 20 m²","20 à 50 m²","50 à 100 m²","Plus de 100 m²",DK]},
+   {k:"nfen",t:"chips",l:"Combien de fenêtres ?",o:["1","2 ou 3","4 à 6","Plus de 6",DK],sh:()=>S.travaux.includes("fenetres")},
+   {k:"nportes",t:"chips",l:"Combien de portes intérieures ?",o:["1","2 ou 3","4 à 6","Plus de 6",DK],sh:()=>S.travaux.includes("portes")},
+   {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK],sh:()=>S.travaux.some(k=>["doublage","combles","rampants"].includes(k))},
+   {k:"fin",t:"chips",l:"Finition des plaques de plâtre",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris.",sh:()=>S.travaux.some(k=>PLAQUE.includes(k))},
+   {k:"desc",t:"area",l:"Décrivez vos travaux",ph:"Ex. isoler les murs du séjour et de la chambre, créer une cloison pour faire un bureau…"},
+   {k:"pj",t:"note",l:"Pièces jointes : une photo de chaque pièce concernée, et votre plan si vous en avez un. Ce sont elles qui rendent le devis juste."},
+   {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
+   {k:"plan",t:"file",l:"Plan ou document (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan ou un document",small:"Plan, ancien devis, diagnostic… en photo ou en PDF"}]},
  projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Dernière ligne droite",f:[
    {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé"]},
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
-   {k:"msg",t:"area",l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
+   {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
  contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
    {k:"prenom",t:"text",l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
    {k:"nom",t:"text",l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
@@ -423,7 +434,7 @@ const ICP='<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor
 const ICF='<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.2"/><path d="M9 4V3h6v1"/><path d="M8.5 10h1M12 10h3.5M8.5 14h1M12 14h3.5M8.5 18h1M12 18h2"/></svg>';
 function modeH(){return`<div class="modes">
  <button type="button" class="mcard reco" data-mode="plan" aria-pressed="${S.mode==="plan"}"><span class="rb">Recommandé · guidé pas à pas</span>${MINI}<b>${ICP}Je dessine mon plan</b><span>Le contour est déjà prêt : vous mettez ses mesures, séparez les pièces et posez fenêtres et portes. Vous le voyez en 3D.</span><ul><li>Le pré-devis le plus juste</li><li>Une étape à la fois, en haut de l'écran</li><li>Une estimation suffit, tout est vérifié sur place</li></ul></button>
- <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>${ICF}Je préfère décrire mes travaux</b><span>Quelques questions simples, mur par mur, sans dessin.</span></button></div>`}
+ <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>${ICF}Je préfère décrire mes travaux</b><span>Quelques cases à cocher, quelques mots et vos photos. Sans dessin.</span></button></div>`}
 function rectSVG(r){const W=320,Hh=190,[L,l]=dimsOf(r),ok=L>0&&l>0;
  if(!ok)return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="70" y="35" width="180" height="110" rx="6" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-dasharray="8 6"/><text x="160" y="96" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="14" fill="currentColor" opacity=".6">Entrez les 2 mesures ↓</text></svg>`;
  const sc=Math.min(34,250/L,125/l),w=L*sc,h=l*sc,x=(W-w)/2,y=(Hh-h)/2-6;
@@ -513,12 +524,12 @@ function planPayloadOld(){const P=S.plan,H=P.H_dk?null:pn(P.H);const pieces=P.ro
  return{hauteur_sous_plafond_m:H,pieces,murs_exterieurs_m:+extL.toFixed(2),murs_entre_pieces_m:+cloL.toFixed(2),surface_totale_m2:+pieces.reduce((s,p)=>s+p.surface_m2,0).toFixed(2),objectif_isolation:P.obj||null,plafond_actuel:P.support||null,note:"Plan placé par le client (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine ; à confirmer à la visite (mitoyenneté, garage non chauffé), comme les tailles estimées."}}
 function planInput(el){const P=S.plan,k=el.dataset.pk,i=el.dataset.pi===""?null:+el.dataset.pi,v=el.value.replace(",",".");
  if(i==null){P[k]=v;P[k+"_dk"]=false}else{const r=P.rooms[i];if(r.dk){const[a,b]=dimsOf(r);r.L=a;r.l=b;r.dk=false;r[k]=v;save();render();const e=document.getElementById(`pn-${{L:"lo",l:"la",H:"h"}[k]}-${i}`);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}return}r[k]=v;const pr=document.getElementById("prect");if(pr)pr.innerHTML=rectSVG(r)}save()}
-let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;
+let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;if(!S.simple)S.simple={};
 let cur="intro";
 const files={photos:[],plan:[]};
 const t0=Date.now();
 
-function fresh(){return {mode:null,plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
+function fresh(){return {mode:null,simple:{},plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
  cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]}}}
 function load(){try{const x=JSON.parse(localStorage.getItem("clikdevis-brouillon")||"null");return x&&x.travaux?x:null}catch(e){return null}}
 const PRE=()=>(S.contact.prenom||"").trim().split(/\s+/)[0]||"";
@@ -527,7 +538,9 @@ function save(){try{localStorage.setItem("clikdevis-brouillon",JSON.stringify(S)
 // Pièces (ou sous-pièces séparées par une cloison) du plan, avec des dimensions équivalentes pour le plafond.
 function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;const dim=(pts,s)=>{if(!pts||pts.length<3)return null;const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),a=Math.max(...xs)-Math.min(...xs),b=Math.max(...ys)-Math.min(...ys),L=Math.max(a,b);if(!L)return null;const S2=s||a*b;return[Math.round(L*100)/100,Math.round(S2/L*100)/100,S2]};
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
-function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&["doublage","plafond","cloison","fenetres","portes"].includes(k)))a.push(k)});
+// Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
+function SIMPLE(){return S.mode==="texte"&&S.travaux.some(k=>PLANABLE.includes(k))}
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}if(SIMPLE()){a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&["doublage","plafond","cloison","fenetres","portes"].includes(k)))a.push(k)});
  if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");a.push("photos","projet","contact","recap");return a}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
@@ -593,7 +606,7 @@ function render(){
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
   document.getElementById("pextra").innerHTML=planCard()+(S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+
-  (S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:"")}
+  (S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+`<button type="button" class="btn ghost" data-toform="1" style="width:100%;margin-top:14px">Je préfère remplir un formulaire</button>`}
 }
 function introH(){const has=S.travaux.length>0;
  return`<section class="hero fade"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Répondez à quelques questions simples sur votre projet. ${CONFIG.artisan} reçoit tout, prépare votre devis et vous répond sous ${CONFIG.delai}.</p>
@@ -613,7 +626,7 @@ function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win
  (p.cloisons_a_creer||[]).forEach(c=>{o.cloN++;o.clo+=(c.longueur_m||0)*H;if(c.portes)o.intD.push({piece:p.nom,simple:`Porte de cloison · ${c.porte_largeur_cm||83} cm${c.galandage?" (galandage)":""} · ${p.nom}, cloison`,txt:`porte de cloison ${c.porte_largeur_cm||83} cm${c.galandage?" (galandage)":""}${c.pose_porte&&!/je ne sais/i.test(c.pose_porte)?", pose "+c.pose_porte.toLowerCase():""}`})});
  (p.murs||[]).forEach((m,mi)=>{const ouv=(m.ouvertures||[]);if(m.type==="mur extérieur"&&/isoler|refaire/i.test(m.travaux||""))o.dbl+=Math.max(0,(m.longueur_m||0)*H-ouv.reduce((a,x)=>a+(x.largeur_cm||0)*(x.hauteur_cm||0)/1e4,0));
   ouv.forEach(x=>{const nsp=v=>v&&!/je ne sais/i.test(v);const d=[x.materiau,x.couleur,x.ouverture&&x.k!=="porte"?x.ouverture.toLowerCase():null,x.pose&&nsp(x.pose)?(x.k==="porte"?"pose "+x.pose.toLowerCase():x.pose.toLowerCase()):null,x.volet&&x.volet!=="Aucun"?(/je ne sais/i.test(x.volet)?"volet à définir":x.volet.toLowerCase())+(x.volet_commande&&nsp(x.volet_commande)?" "+x.volet_commande.toLowerCase():""):null].filter(nsp);const e={piece:p.nom,txt:`${x.repere} ${String(x.designation||"").toLowerCase()} ${x.largeur_cm}×${x.hauteur_cm}${d.length?" · "+d.join(", "):""}`,simple:`${x.repere} · ${x.designation||""} · ${x.largeur_cm} × ${x.hauteur_cm} cm · ${p.nom}, mur ${mi+1}${f.nom&&t.floors.length>1?" ("+f.nom+")":""}${/^oui|^à changer/i.test(x.a_changer||"")?" · à changer":/^à créer/i.test(x.a_changer||"")?" · à créer":/^non,|^déjà/i.test(x.a_changer||"")?" · déjà en place":" · état non précisé"}`,vol:x.volet&&x.volet!=="Aucun"?`↳ ${/je ne sais/i.test(x.volet)?"Volet (type à définir)":/^volet/i.test(x.volet)?x.volet:"Volet "+x.volet.toLowerCase()}${[x.volet_commande,x.volet_pose&&"pose "+x.volet_pose.toLowerCase(),x.volet_enroulement&&"enroulement "+x.volet_enroulement.toLowerCase(),x.volet_couleur].filter(nsp).map(v=>" · "+v).join("")}`:null};(x.menuiserie_exterieure?(x.k==="porte"?o.extD:o.win):o.intD).push(e)})})})});return o}
-function totals(){const r=[];const tp=tPieces();if(S.mode==="plan"&&tp.length){const ps=planStats();r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`);if(ps.clo)r.push(`≈ ${fr(ps.clo)} m² de cloison`);if(ps.dbl)r.push(`≈ ${fr(ps.dbl)} m² de murs à isoler`);if(ps.win.length)r.push(`${ps.win.length} fenêtre${ps.win.length>1?"s":""}`);if(ps.extD.length)r.push(`${ps.extD.length} porte${ps.extD.length>1?"s":""} extérieure${ps.extD.length>1?"s":""}`);if(ps.intD.length)r.push(`${ps.intD.length} porte${ps.intD.length>1?"s":""} intérieure${ps.intD.length>1?"s":""}`);
+function totals(){const r=[];if(SIMPLE())return r;const tp=tPieces();if(S.mode==="plan"&&tp.length){const ps=planStats();r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`);if(ps.clo)r.push(`≈ ${fr(ps.clo)} m² de cloison`);if(ps.dbl)r.push(`≈ ${fr(ps.dbl)} m² de murs à isoler`);if(ps.win.length)r.push(`${ps.win.length} fenêtre${ps.win.length>1?"s":""}`);if(ps.extD.length)r.push(`${ps.extD.length} porte${ps.extD.length>1?"s":""} extérieure${ps.extD.length>1?"s":""}`);if(ps.intD.length)r.push(`${ps.intD.length} porte${ps.intD.length>1?"s":""} intérieure${ps.intD.length>1?"s":""}`);
   ["combles","rampants"].forEach(k=>{if(S.travaux.includes(k)&&pn(S[k].surface)&&!(k==="combles"&&/aménag/i.test(S.combles.type||"")))r.push(`≈ ${fr(pn(S[k].surface))} m² de ${k==="combles"?"combles":"rampants"}`)});return r}if(S.mode==="plan"&&tp.length){r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`)}const sum=(sec,a,b)=>S[sec].items.reduce((s,it)=>{const x=pn(it[a]),y=pn(it[b]);return s+(x&&y&&!it[a+"_dk"]&&!it[b+"_dk"]?x*y:0)},0);
  if(S.travaux.includes("cloison")){const v=sum("cloison","L","H");if(v)r.push(`≈ ${fr(v)} m² de cloison`)}
  if(S.travaux.includes("doublage")){const v=sum("doublage","L","H");if(v)r.push(`≈ ${fr(v)} m² de murs à isoler`)}
@@ -623,17 +636,18 @@ function totals(){const r=[];const tp=tPieces();if(S.mode==="plan"&&tp.length){c
 function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
  let h=`<div class="recap">`;if(tot.length)h+=`<div class="rblock" style="border-color:var(--mint)"><h3>Ce que nous avons compris</h3><div class="tot">${tot.join(" · ")}</div></div>`;
  st.forEach(s=>{let items;if(s==="travaux")items=[S.travaux.map(k=>TRAVAUX.find(t=>t[0]===k)[1]).join(", ")];
-  else if(s==="mode")items=[S.mode==="plan"?"Plan dessiné":"Description mur par mur"];
+  else if(s==="mode")items=[S.mode==="plan"?"Plan dessiné":"Formulaire simple, sans dessin"];
   else if(s==="plan")items=[(()=>{const M=tPieces().flatMap(p=>p.murs||[]),n=M.filter(m=>m.travaux).length,c=tPieces().reduce((a,p)=>a+(p.cloisons_a_creer||[]).length,0);return n||c?`Travaux indiqués : ${n} mur${n>1?"s":""}${c?` + ${c} cloison${c>1?"s":""} à créer`:""}`:"Travaux : pas de mur coché (l'artisan précisera)"})()].concat(tPieces().map(p=>`${p.nom}${p.etage&&S.plan.trace.floors.length>1?" ("+p.etage+")":""} : ≈ ${fr(p.surface_m2)} m²${p.estimee?" (estimé)":""} · ${(p.murs||[]).filter(m=>m.type==="mur extérieur").length} mur(s) extérieur(s)${p.sol&&p.sol.resume&&!(p.zones&&p.zones.length)?" · sol : "+p.sol.resume:""}${p.zones&&p.zones.length?" · "+p.zones.map(z=>`${z.nom} ${fr(z.surface_m2)} m²${z.sol&&z.sol.resume?" (sol : "+z.sol.resume+")":""}`).join(", "):""}`)).concat((()=>{const ps=planStats(),L=[];if(ps.cloN)L.push(`<b>Cloisons</b> : ${ps.cloN} à créer, ≈ ${fr(ps.clo)} m²`);[["Fenêtres",ps.win],["Portes",ps.extD.concat(ps.intD)],["Plafonds",ps.plaf]].forEach(([n,a])=>{if(a.length){L.push(`<b>${n} (${a.length})</b>`);a.forEach(x=>L.push("<b></b>"+esc(x.simple)+(x.vol?`<br><span class="volet">${esc(x.vol)}</span>`:"")))}});return L})());
   else if(s==="planOld")items=(()=>{const lay=layout(),W=walls(lay),e=W.filter(w=>w.type==="ext").reduce((a,w)=>a+w.b-w.a,0),c=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((a,w)=>a+w.b-w.a,0);return[`Murs extérieurs ≈ ${fr(e)} m · murs entre pièces ≈ ${fr(c)} m`]})().concat(S.plan.rooms.map(r=>{const[L,l]=dimsOf(r);return`${r.nom} : ${fr(L)} × ${fr(l)} m${r.dk?" (estimé)":""}${r.trav.length?" · "+r.trav.map(k=>PTRAV[k]).join(", "):""}`}));
+  else if(s==="simple")items=list(s).concat([`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s ou documents":" ou document"}`]);
   else if(s==="photos")items=[`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s":""}`];
   else items=list(s);if(!items.length)items=["—"];
   h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
  return h+`</div>`}
-function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
   contact:{prenom:S.contact.prenom,nom:S.contact.nom,telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
-  logement:S.logement,mode:S.mode||"texte",travaux:S.travaux,details:det,projet:S.projet,
+  logement:S.logement,mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.projet,
   fichiers:{photos:files.photos.map(f=>f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
 let lastPayload=null;
 // Finir plus tard : la demande (sans photos) est compressée dans un lien, que le client s'envoie à lui-même (partage ou e-mail).
@@ -668,6 +682,7 @@ function validate(){const e=m=>{document.getElementById("err").textContent=m;ret
  if(cur==="mode"&&!S.mode)return e("Choisissez une des deux façons.");
  if(cur==="plan"&&!tPieces().length)return e("Ajoutez au moins une pièce avec « + Pièce ».");
  if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
+ if(cur==="simple"&&(S.simple.desc||"").trim().length<3)return e("Décrivez vos travaux en quelques mots, même très court.");
  if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.");
  if(cur==="contact"){const c=S.contact;if(!(c.prenom||"").trim()||!(c.nom||"").trim())return e("Indiquez votre prénom et votre nom.");
   if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.");
@@ -701,11 +716,15 @@ addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pfr
  if(d.type==="proclik-plan-trav"&&Array.isArray(d.travaux)){d.travaux.forEach(k=>{if(TRAVAUX.some(t=>t[0]===k)&&!S.travaux.includes(k))S.travaux.push(k)});save();return}
  if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}
  if(d.type==="proclik-plan-finish"){clearTimeout(PFT);closePlan();return}
- if(d.type==="proclik-plan-help"){closePlan();confirmBig(PRE()?`Pas de souci, ${PRE()}, on vous aide`:"Pas de souci, on vous aide","Votre plan est gardé tel quel. L'artisan vous appellera pour le terminer avec vous. Il reste juste quelques questions et vos coordonnées.","Continuer",()=>{S.plan.aide=true;S.plan.noWallOk=true;save();if(cur==="plan")go(1)},"Revenir au plan","🤝");return}
+ if(d.type==="proclik-plan-help"){toForm(PRE()?`Pas de souci, ${PRE()}, on vous aide`:"Pas de souci, on vous aide","Remplissez plutôt le formulaire : quelques cases à cocher, quelques mots et vos photos. Votre plan reste gardé sur cet appareil si vous voulez y revenir.");return}
  if(d.type==="proclik-plan-step"){const b=document.getElementById("pf-done");if(b)b.classList.toggle("fin",!!d.fin);return}
  if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=cheerN(planCheer());const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
-let BC=null;function confirmBig(t,p,ok,cb,no,soft){const bg=document.getElementById("bigconf");bg.classList.toggle("soft",!!soft);bg.querySelector(".bc-ic").textContent=soft||"⚠️";document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;document.getElementById("bc-no").textContent=no||"Non, garder";BC=cb;document.getElementById("bigconf").hidden=false}
-document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;const f=BC;BC=null;if(f)f()});
+// Passer au formulaire simple à tout moment depuis le plan (Cyril 10/11) : le plan reste gardé sur l'appareil.
+const ICF_BIG=ICF.replace('class="mic"','class="mic" width="44" height="44" style="color:#A8823F"');
+function toForm(t,p){closePlan(true);confirmBig(t||"Remplir le formulaire à la place ?",p||"Pas de souci : quelques cases à cocher, quelques mots et vos photos. Votre plan reste gardé sur cet appareil si vous voulez y revenir.","Oui, le formulaire",()=>{S.mode="texte";cur="simple";save();render();scrollTo(0,0)},"Rester sur le plan",ICF_BIG);BCNO=()=>{if(cur==="plan")openPlan()}}
+let BCNO=null;
+let BC=null;function confirmBig(t,p,ok,cb,no,soft){const bg=document.getElementById("bigconf");bg.classList.toggle("soft",!!soft);{const ic=bg.querySelector(".bc-ic");if(soft&&soft[0]==="<")ic.innerHTML=soft;else ic.textContent=soft||"⚠️"}document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;document.getElementById("bc-no").textContent=no||"Non, garder";BC=cb;BCNO=null;document.getElementById("bigconf").hidden=false}
+document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null;const f=BCNO;BCNO=null;if(f)f()});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BCNO=null;const f=BC;BC=null;if(f)f()});
 function netUI(){document.getElementById("offline").hidden=navigator.onLine!==false}addEventListener("online",netUI);addEventListener("offline",netUI);netUI();
 let PDR=null;
 function pPt(svg,e){const m=svg.getScreenCTM().inverse(),q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const r=q.matrixTransform(m);return[r.x,r.y]}
@@ -722,6 +741,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.example){example();return}
  if(ds.mode){S.mode=ds.mode;save();render();return}
  if(ds.openplan){openPlan();return}
+ if(ds.toform){toForm();return}
  if(ds.later){later();return}
  if(b.id==="pf-done"){const f=document.getElementById("pframe");clearTimeout(PFT);PFT=setTimeout(()=>closePlan(),1500);try{f.contentWindow.postMessage({type:"proclik-plan-check"},"*")}catch(x){closePlan()}return}
  if(ds.pcnt){const[t,d]=ds.pcnt.split("|"),R=S.plan.rooms;if(+d>0){R.push({type:t,nom:ptName(t),L:null,l:null,dk:false,size:1,trav:trsOk().filter(k=>k!=="cloison")})}else{for(let j=R.length-1;j>=0;j--)if(R[j].type===t){R.splice(j,1);break}}renum(t);save();render();return}
