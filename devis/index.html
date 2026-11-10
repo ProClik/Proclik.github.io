@@ -237,7 +237,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
-<link rel="stylesheet" href="relief.css?v=3">
+<link rel="stylesheet" href="relief.css?v=4">
 
 <div class="wrap">
   <header class="top">
@@ -355,7 +355,8 @@ const D={
    {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1},
    {k:"ouv",t:"chips",l:"Ouverture",o:["1 vantail","2 vantaux","Oscillo-battant","Coulissante","Fixe",DK]},
    {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
-   {k:"coul",t:"chips",l:"Couleur",o:["Blanc","Gris anthracite","Autre"]},
+   {k:"coul",t:"chips",l:"Couleur",o:["Blanc","Gris anthracite","Autre",DK],sh:i=>i.mat!=="Bois"},
+   {k:"coul",t:"chips",l:"Essence du bois",o:["Chêne clair","Chêne doré","Chêne foncé","Noyer","Pin","Bois exotique","Bois peint",DK],h:"Bois peint : la teinte se précise avec l'artisan.",sh:i=>i.mat==="Bois"},
    {k:"volet",t:"chips",l:"Volet roulant",o:["Aucun","Manuel","Motorisé"]},
    {k:"pose",t:"chips",l:"Pose",o:["Sur l'ancien cadre","Dépose complète",DK],h:"Sur l'ancien cadre : plus rapide. Dépose complète : plus de lumière, plus de travaux."}]}},
  portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Encore un petit effort",
@@ -480,7 +481,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=2");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=3");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -722,7 +723,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);save();render();return}
  const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
  if(ds.multi){const a=Array.isArray(o[k])?o[k]:[];o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
- if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];save();render();return}
+ if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();return}
  if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();return}
  if(ds.op){const st=+ds.st;const v=pn(o[k])??0;let nv=ds.op==="+"?v+st:v-st;if(nv<0)nv=0;o[k]=Math.round(nv*100)/100;o[k+"_dk"]=false;save();render();document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus();return}
  if(ds.step){const v=(o[k]??+ds.min)+(+ds.step);o[k]=Math.max(+ds.min,Math.min(+ds.max,v));save();render();return}

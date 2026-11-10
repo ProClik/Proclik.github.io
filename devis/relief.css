@@ -42,7 +42,8 @@ html body .chip{border:0;background:var(--bg);box-shadow:var(--up-s);color:var(-
 html body .chip:hover{border-color:transparent}
 html body .chip[aria-pressed="true"],:root[data-theme="dark"] body .chip[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in);color:var(--mint-ink)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .chip[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in);color:var(--mint-ink)}}
-html body .chip.dk{border:0;color:var(--muted)}
+html body .chip.dk{border:0;color:var(--fg);font-weight:700;flex-basis:100%;display:inline-flex;align-items:center;justify-content:center}
+html body .chip.dk::before{content:"?";display:inline-grid;place-items:center;width:1.35em;height:1.35em;margin-right:.45em;border-radius:50%;border:1.5px solid var(--mint-ink);color:var(--mint-ink);font-weight:800;font-size:.85em;line-height:1}
 html body .chip.dk[aria-pressed="true"]{color:var(--mint-ink)}
 html body .card:hover,html body .drop:hover{border-color:transparent}
 html body .card[aria-pressed="true"],html body .ptile.on,html body .mcard[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in)}
