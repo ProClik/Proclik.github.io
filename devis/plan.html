@@ -253,7 +253,7 @@ html.client body{padding-bottom:12px}
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
-<link rel="stylesheet" href="plan-relief.css?v=7">
+<link rel="stylesheet" href="plan-relief.css?v=8">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
 
 <div class="wrap">
@@ -275,7 +275,7 @@ html.client body{padding-bottom:12px}
     <div class="fl tl2 cl-only" id="todo-bar" hidden><div class="pill"><button id="t-all" class="hotb">☐ Tout cocher</button></div></div>
     <div class="fl bc" id="bar2d"><div class="pill" role="group" aria-label="Outil"><button data-mode="plan" aria-pressed="true">Pièces</button><button data-mode="clo" aria-pressed="false">Cloison</button><button data-mode="trace" aria-pressed="false">Tracer</button><button data-mode="todo" aria-pressed="false" class="cl-only">✓ À faire</button><button data-mode="win" aria-pressed="false">＋ Fenêtre</button><button data-mode="door" aria-pressed="false">＋ Porte</button><button id="t-libre" aria-pressed="false">Angle libre</button><button id="t-end">Terminer</button></div></div>
     <div class="fl bc" id="bar3d" hidden><div class="pill" role="group" aria-label="Vue 3D"><button id="v3-etage" aria-pressed="false">Cet étage</button><button id="v3-maison" aria-pressed="true">Maison</button><button id="v3-roof" aria-pressed="true">Toit</button><button id="v3-cut" aria-pressed="false">Combles</button></div></div>
-    <div class="opp" id="opp" hidden></div><div class="ed" id="ed" hidden><input id="edv" type="text" inputmode="decimal" aria-label="Nouvelle cote"><span class="muted">m</span><button class="mic" id="edmic" aria-label="Dicter la cote">🎙</button><button class="ok" id="edok" aria-label="Valider">✓</button><button class="x" id="edx" aria-label="Fermer">✕</button></div>
+    <div class="opp" id="opp" hidden></div><div class="ed" id="ed" hidden><input id="edv" type="text" inputmode="decimal" aria-label="Nouvelle cote"><span class="muted">m</span><button class="mic" id="edmic" aria-label="Dicter la mesure"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="ok" id="edok" aria-label="Valider">✓</button><button class="x" id="edx" aria-label="Fermer">✕</button></div>
     <svg id="svg" viewBox="0 0 10 7.5" aria-label="Plan à l'échelle, points tous les 50 cm"></svg>
     <svg id="s3" viewBox="0 0 10 7.5" hidden aria-label="Vue 3D du logement"></svg>
     <div class="legend" id="legend"><span><i style="background:var(--ba13)"></i>BA13</span><span><i style="background:var(--laine)"></i>Laine</span><span><i style="background:var(--hydro)"></i>Hydro</span><span><i style="background:var(--phon)"></i>Phonique</span><span><i style="background:var(--tile)"></i>Carrelage</span><span><i style="background:var(--parq)"></i>Parquet</span><span><i style="background:var(--win);border-color:var(--win)"></i>Fenêtre</span><span><i style="background:var(--oss);border-color:var(--oss)"></i>Appui · fourrures F47 · pointes Pulsa</span><span><i style="background:#F7FAFC"></i>Polystyrène</span></div>
@@ -618,15 +618,20 @@ function openCd(w){if(!ST.cur||!ST.cwall)return;CD={w};edSeg=null;const ed=$("ed
 function applyCd(){const v=readVal($("edv").value),A=ST.cwall.a,B=ST.cwall.b,L=dist(A,B);if(v!=null&&v>=0&&v<=L){hist();const t=CD.w===1?v:L-v,ux=(B[0]-A[0])/L,uy=(B[1]-A[1])/L,N=[A[0]+ux*t,A[1]+uy*t],dx=N[0]-ST.cur[0][0],dy=N[1]-ST.cur[0][1];ST.cur.forEach(q=>{q[0]=r2(q[0]+dx);q[1]=r2(q[1]+dy)});say(null,`Cloison placée à ${fr(t)} m du début du mur (${fr(L-t)} m de la fin). Touchez le point suivant.`)}else say(null,`Entrez une distance entre 0 et ${fr(L)} m.`);CD=null;$("ed").hidden=true;draw();rows()}
 function applyEd(){if(EX)return applyEx();if(CD)return applyCd();const v=readVal($("edv").value);if(edSeg!=null&&v>0){const sg=segs()[edSeg];setLen(edSeg,v);say(null,`${sg.rm.nom} · ${segName(sg)} : ${fr(v)} m ✓`)}closeEd()}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,heard="";
-function startVoice(x){openEd(x);const ed=$("ed"),v=$("edv");v.value="";v.placeholder="Dites la mesure…";
- if(!SR){v.focus();say(null,"Dictée : touchez le micro 🎤 du clavier et dites la mesure, par exemple « deux soixante-quinze ».");return}
- try{rec=new SR();rec.lang="fr-FR";rec.interimResults=true;heard="";ed.classList.add("listen");say(null,"J'écoute… dites la mesure, le mètre à la main.");
+function voiceMsg(t){say(null,t||"Micro indisponible ici : touchez le micro 🎤 du clavier pour dicter, ou tapez la mesure.")}
+function startVoice(x){if(x!=null&&(edSeg!==x||$("ed").hidden))openEd(x);const ed=$("ed"),v=$("edv");if(ed.hidden)return;
+ if(!SR){v.focus();voiceMsg("Dictée : touchez le micro 🎤 du clavier et dites la mesure, par exemple « deux soixante-quinze ».");return}
+ v.value="";v.placeholder="Dites la mesure…";
+ try{rec=new SR();rec.lang="fr-FR";rec.interimResults=true;rec.continuous=false;heard="";let bad=false;ed.classList.add("listen");say(null,"J'écoute… dites la mesure, le mètre à la main.");
   rec.onresult=e=>{heard=[...e.results].map(r=>r[0].transcript).join(" ");v.value=heard};
-  rec.onerror=()=>{ed.classList.remove("listen");rec=null;v.focus();say(null,"Micro indisponible ici : touchez le micro 🎤 du clavier pour dicter, ou tapez la mesure.")};
-  rec.onend=()=>{ed.classList.remove("listen");rec=null;const val=readVal(heard);if(val&&edSeg!=null){const sg=segs()[edSeg];setLen(edSeg,val);closeEd();say(null,`${sg.rm.nom} · ${segName(sg)} : ${fr(val)} m ✓ (entendu « ${heard} »)`)}else if(heard)say(null,`Pas compris « ${heard} ». Corrigez dans la bulle puis ✓.`)};
-  rec.start()}catch(err){ed.classList.remove("listen");v.focus();say(null,"Micro indisponible ici : touchez le micro 🎤 du clavier pour dicter.")}}
+  rec.onerror=e=>{bad=true;ed.classList.remove("listen");rec=null;v.focus();const er=e&&e.error;
+   voiceMsg(er==="not-allowed"||er==="service-not-allowed"?"Le micro n'est pas autorisé ici. Touchez le micro 🎤 du clavier pour dicter, ou tapez la mesure.":er==="no-speech"?"Je n'ai rien entendu. Touchez le micro et parlez juste après.":"")};
+  rec.onend=()=>{ed.classList.remove("listen");rec=null;if(bad)return;const val=readVal(heard);
+   if(val&&val>0){const sg=edSeg!=null?segs()[edSeg]:null;v.value=heard;applyEd();if(sg)say(null,`${sg.rm.nom} · ${segName(sg)} : ${fr(val)} m ✓ (entendu « ${heard} »)`)}
+   else if(heard)say(null,`Pas compris « ${heard} ». Corrigez dans la bulle puis ✓.`);else{v.focus();say(null,"Je n'ai rien entendu. Touchez le micro et parlez juste après.")}};
+  rec.start()}catch(err){ed.classList.remove("listen");rec=null;v.focus();voiceMsg()}}
 function stopVoice(){if(rec){try{rec.stop()}catch(e){}}}
-$("edok").addEventListener("click",applyEd);$("edx").addEventListener("click",closeEd);$("edmic").addEventListener("click",()=>{if(rec)return stopVoice();if(edSeg!=null)startVoice(edSeg)});
+$("edok").addEventListener("click",applyEd);$("edx").addEventListener("click",closeEd);$("edmic").addEventListener("click",()=>{if(rec)return stopVoice();startVoice(null)});
 $("edv").addEventListener("keydown",e=>{if(e.key==="Enter")applyEd();if(e.key==="Escape")closeEd()});
 // ---------- Fiches ----------
 const GROUPS={clo:[["oss","Ossature",["M48","M70","M90"]],["mont","Montants",["Simples","Doublés"]],["laine","Laine",["Sans","45 mm","70 mm","85 mm"]],["peau","BA13 par face",["1 peau","2 peaux"]],["plaque","Plaque",["Standard","Hydro","Phonique","Feu"]],["porte","Porte",["Aucune","63","73","83","93","Galandage 83"]],["poseporte","Pose de la porte",["À la création de la cloison","En fin de chantier","Je ne sais pas"]]],

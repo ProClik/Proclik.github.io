@@ -88,8 +88,10 @@ html body .ed.listen{box-shadow:var(--up),0 0 0 2px var(--acc),0 0 0 6px var(--s
 html body .ed button{background:var(--bg);box-shadow:var(--up-xs)}
 html body .ed .ok{color:var(--mint-ink);background:var(--bg)}
 html body .ed .x{color:var(--muted)}
-html body .ed .mic{color:var(--mint-ink);background:var(--bg)}
-html body .ed.listen .mic{background:var(--acc);color:var(--ink)}
+html body .ed .mic{color:var(--mint-ink);background:var(--bg);display:inline-grid;place-items:center;border-radius:50%}
+html body .ed .mic svg{display:block}
+html body .ed.listen .mic{background:var(--bg);color:var(--mint-ink);box-shadow:var(--in);animation:micPulse 1.4s ease-in-out infinite}
+@keyframes micPulse{50%{box-shadow:var(--in),0 0 0 5px rgba(168,130,63,.28)}}
 
 /* fiche du bas et fenêtres de confirmation */
 html body .sheet{border-top:0;background:var(--bg);box-shadow:0 -14px 34px -10px var(--lo)}
