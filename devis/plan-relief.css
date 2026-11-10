@@ -153,7 +153,7 @@ html body .cltool .lk{top:-12px}
 html.client body .fl.mr,html.client body #todo-bar,html.client body .rotb,html.client body #bar3d{bottom:104px!important}
 
 /* bouton « Tracer » en haut à gauche + petite barre Mur / Cloison (Cyril, 29/10) ; le menu du bas passe à 5 outils */
-html body #cltools{grid-template-columns:repeat(5,minmax(0,1fr))}
+html body #cltools{grid-template-columns:repeat(6,minmax(0,1fr))}
 html body #cltrace{position:absolute;z-index:4;top:60px;left:10px;display:flex;align-items:flex-start;gap:8px}
 html:not(.client) body #cltrace,html body .board.v3 #cltrace{display:none}
 html body #ctr-b{appearance:none;border:0;background:transparent;padding:0;display:grid;justify-items:center;gap:5px;font:600 11px/1.1 var(--f);color:var(--muted);cursor:pointer}
