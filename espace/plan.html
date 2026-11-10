@@ -206,8 +206,15 @@ html.client body{padding-block:0!important}
 #clb-t b{display:block;color:var(--mint);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
 #clbanner.tool #clb-t b{color:#fff}
 #clbanner.done{background:#0B5E52}
-.cltool.next{box-shadow:0 0 0 3px var(--mint);animation:gpulse 1.5s ease-in-out infinite}
-@keyframes gpulse{50%{box-shadow:0 0 0 7px rgba(168,130,63,.25)}}
+.cltool.next{box-shadow:0 0 0 3px var(--mint);animation:gpulse2 1.6s ease-out infinite}
+#ctr-b.next,#v-toit.next{animation:gpulse 1.6s ease-out infinite}
+/* Fiches côté client (Cyril 10/11 15h23) : « Valider » n'apparaît qu'en bas de la fiche ; le OK du haut est mis en évidence, avec l'onde. */
+.client .sh-foot{position:static;background:none}
+/* L'onde sur chaque bouton qui fait avancer le client (Cyril 10/11 15h26). Jamais sur un bouton de suppression. */
+.client #edok,.client .sh-foot .btn,.client #opp [data-oppo="ok"],.client #clb-b[data-next],.client .bc-ok,.client [data-ftnew],.client [data-addtrav],.client #gd-ok{animation:gpulse 1.8s ease-out infinite}
+.client #sheet .sh-h [data-close]{background:#A8823F!important;color:#fff!important;border-color:transparent!important;font-weight:800;min-width:64px;animation:gpulse 1.8s ease-out infinite}
+@keyframes gpulse{0%{box-shadow:0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 0 rgba(168,130,63,0)}}
+@keyframes gpulse2{0%{box-shadow:0 0 0 3px var(--mint),0 0 0 3px rgba(168,130,63,.6)}70%{box-shadow:0 0 0 3px var(--mint),0 0 0 15px rgba(168,130,63,0)}100%{box-shadow:0 0 0 3px var(--mint),0 0 0 3px rgba(168,130,63,0)}}
 #clbanner.tool{background:#0B1226;border-color:var(--mint)}
 #clbanner.tool button{background:#fff;color:#0B1226}
 #cltools{position:absolute;z-index:4;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:6px;box-shadow:var(--shadow)}
@@ -316,10 +323,25 @@ html:not(.client) #clb-v{display:none}
 .gd header,.gd h1,.gd .lead,.gd #cltl,.gd #toast,.gd #tut,.gd #floors,.gd #rooms,.gd #clbanner,.gd #gd-cap{display:none!important}
 .gdw .gd-c{margin:0;padding:0 16px 10px;font:700 15px/1.35 var(--f);min-height:2.7em;color:inherit}
 .gd body{overflow:hidden}
-#gd-fg{position:fixed;z-index:90;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(232,89,12,.25);border:3px solid #E8590C;pointer-events:none;transition:transform .75s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#gd-fg{position:fixed;z-index:90;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(232,89,12,.25);border:3px solid #E8590C;pointer-events:none;transition:transform 1.25s cubic-bezier(.45,0,.2,1),opacity .5s ease;box-shadow:0 4px 14px rgba(0,0,0,.25);will-change:transform}
 #gd-fg::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#E8590C}
-#gd-fg.tap{animation:gdtap .45s ease-out}
-@keyframes gdtap{50%{scale:.7}}
+#gd-fg.tap{animation:gdtap .7s ease-in-out}
+@keyframes gdtap{40%{scale:.72;background:rgba(232,89,12,.5)}100%{scale:1}}
+.gd #sheet:not([hidden]){animation:gdsh .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes gdsh{from{transform:translateY(40px);opacity:0}}
+.gd #ed:not([hidden]),.gd #opp:not([hidden]){animation:gdfd .45s ease-out}
+@keyframes gdfd{from{opacity:0;transform:scale(.96)}}
+.gdw .gd-c{transition:opacity .3s ease}.gdw .gd-c.out{opacity:0}
+/* Exemple épuré (Cyril 10/11 15h20) : seuls le plan et le bouton que le doigt touche restent visibles, à leur vraie place. */
+.gd .fl.tl button:not(.gdk),.gd .fl.tr,.gd .fl.mr,.gd .rotb,.gd #todo-bar,.gd #bar2d,.gd #legend,.gd .cltool:not(.gdk),.gd #cltrace:not(.gdk),.gd .lockt,.gd [class*="plus-tard"]{visibility:hidden!important}
+.gd .fl.tl .pill:not(:has(.gdk)){visibility:hidden}.gd .fl.tl .pill:has(.gdk){background:transparent;box-shadow:none}
+.gd .cltool.gdk{animation:gdglow 1.6s ease-in-out infinite}
+@keyframes gdglow{50%{box-shadow:0 0 0 4px rgba(168,130,63,.35)}}
+.gd4 #sheet .sec:not(:has([data-sol="etat"])):not(:has([data-solall])),.gd4 #sheet .sec .g:not(.etat):not(.solall),.gd4 #sheet .sec>p,.gd4 #sheet .g.etat>p{display:none!important}
+.gd6 #sheet .sec:not(:has([data-pf])),.gd6 #sheet .sec .g,.gd6 #sheet .sec>p{display:none!important}
+.gd4 #sheet .sh-foot,.gd6 #sheet .sh-foot{display:none!important}
+.gdw .gd-in{width:min(480px,100%)}
+.gdw .gd-c{font-size:16.5px;min-height:3em}
 #gd-cap{position:fixed;z-index:91;left:10px;right:10px;bottom:10px;background:#0B1226;color:#fff;border-radius:14px;padding:10px 14px;font:700 15px/1.35 var(--f);text-align:center;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 @media (prefers-reduced-motion:reduce){#gd-fg{transition:none}}
 </style>
@@ -569,6 +591,8 @@ function roofSvg(k,u){const g=roofGeo();if(!g)return"";const c=ST.comb,FT=c.ft||
   for(let cc=g.u0;cc<=g.u1+1e-6;cc+=e)s+=`<line x1="${P(cc,R.v0).split(",")[0]}" y1="${P(cc,R.v0).split(",")[1]}" x2="${P(cc,R.v1).split(",")[0]}" y2="${P(cc,R.v1).split(",")[1]}" stroke="#A9B0C2" stroke-width="${u*.05}" stroke-dasharray="${u*.25} ${u*.2}" pointer-events="none"/>`;
   const lo=g.one?(g.hi?R.v0:R.v1):(i?R.v1:R.v0),hiE=g.one?(g.hi?R.v1:R.v0):g.vm,cu=(R.u0+R.u1)/2,mv=(lo*.25+hiE*.75),q=g.M(cu,mv,0);s+=chip(q[0],q[1],g.one?"Le toit":"Pan côté "+sd[i],"#2C3242",u,true);const qb=g.M(cu,lo+(hiE-lo)*.08,0);s+=chip(qb[0],qb[1],"bas du toit","#8A90A0",u*.8,true)});
  if(!g.one)s+=`<line x1="${P(g.u0-g.ov,g.vm).split(",")[0]}" y1="${P(g.u0-g.ov,g.vm).split(",")[1]}" x2="${P(g.u1+g.ov,g.vm).split(",")[0]}" y2="${P(g.u1+g.ov,g.vm).split(",")[1]}" stroke="#B8924F" stroke-width="${u*.22}" stroke-linecap="round" pointer-events="none"/>`;
+ // Hauteur du sol au faîtage (Cyril 10/11 15h30) : sur des combles, depuis leur plancher ; sinon hauteur des murs + toit.
+ {const hS=(g.f.comb?0:(+g.f.H||0))+g.H,vv=g.one?(g.hi?g.v1:g.v0)+(g.hi?-1:1)*(g.v1-g.v0)*.06:g.vm,q=g.M(g.u0+(g.u1-g.u0)*.22,vv,0);if(hS>.2){const t=`↕ ${g.one?"sol → haut du toit":"sol → faîtage"} : ${fr(hS)} m ✏️`,w=u*.95*(t.length*.5+1.4),h=u*1.6;s+=`<rect data-hfto="1" x="${q[0]-w/2}" y="${q[1]-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="transparent" style="cursor:pointer"/>`+chip(q[0],q[1],t,"#A8823F",u*.95,true)}}
  g.f.rooms.forEach(rm=>{s+=`<polygon points="${rm.pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#F2EEE4" stroke-width="${u*.08}" stroke-dasharray="${u*.4} ${u*.3}" opacity=".7" pointer-events="none"/>`});
  const fsi=ftSelI();if(fsi!=null&&FT[fsi]){const I=ftInfo(g,fsi),R=panRect(g,I.pi),w2=I.d[1]/2,A=g.M(I.u,I.v,0),Bv=g.M(I.u,I.v+1,0),nl=Math.hypot(Bv[0]-A[0],Bv[1]-A[1])||1,nx=(Bv[0]-A[0])/nl,ny=(Bv[1]-A[1])/nl,vt=I.v+I.hp,off=u*1.1,Q=(a,b)=>{const q=g.M(a,b,0);return[q[0],q[1]]},kc=k["--hot"],tL=fr(I.u-w2-g.u0),tR=fr(g.u1-I.u-w2);
   [.25,.5,.75].forEach(f=>{const cu=g.u0+(g.u1-g.u0)*f,on=FSN&&FSN.u===f,a=Q(cu,R.v0),b=Q(cu,R.v1);s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#B8924F" stroke-width="${u*(on?.22:.1)}" stroke-dasharray="${on?"none":u*.5+" "+u*.35}" opacity="${on?1:.55}" pointer-events="none"/>`});
@@ -578,6 +602,9 @@ function roofSvg(k,u){const g=roofGeo();if(!g)return"";const c=ST.comb,FT=c.ft||
  FT.forEach((x,i)=>{const I=ftInfo(g,i),sel=fsi===i,w2=I.d[1]/2;s+=`<g data-ftw="${i}" style="cursor:grab"><polygon points="${R4(I.u-w2,I.u+w2,I.v-I.hp,I.v+I.hp)}" fill="#3A3F48" stroke="${sel?"#B8924F":"#F2EEE4"}" stroke-width="${u*(sel?.3:.12)}"/><polygon points="${R4(I.u-w2+.06,I.u+w2-.06,I.v-I.hp+.05,I.v+I.hp-.05)}" fill="#8FB4D8"/></g>`;const q=g.M(I.u,I.v,0);s+=chip(q[0],q[1]-I.hp-u*1.1,"FT"+(i+1),sel?"#B8924F":"#D4B483",u,true)});
  return s}
 function openFt(i){SH={type:"ft",i,key:ST.comb};renderSheet();draw()}
+// Hauteur du sol au faîtage, à taper (Cyril 10/11 15h31) : toucher l'étiquette sur la vue Toit. La pente se recalcule.
+function hftSheet(){const g=roofGeo();if(!g)return"";const base=g.f.comb?0:(+g.f.H||0),hS=base+g.H;return`<div class="sh-h"><div><h2>${g.one?"Du sol au haut du toit":"Du sol au faîtage"}</h2><small>Mesurée ${g.f.comb?"depuis le plancher des combles":"depuis le sol de l'étage du haut"}, au point le plus haut.</small></div><button class="btn solid" data-close="1">OK</button></div><div class="sec"><span>Tapez la hauteur</span><div class="inl"><label class="muted"><input type="text" inputmode="decimal" data-hft="1" value="${Math.round(hS*100)}" placeholder="ex. 250" aria-label="Hauteur en centimètres"> cm</label></div><p class="muted">En centimètres (ex. 250) ou en mètres (ex. 2,50). La pente du toit se recalcule toute seule.</p></div>`}
+function openHft(){closeEd();shSeg=null;SH={type:"hft",key:ST.comb};renderSheet();setTimeout(()=>{const i=document.querySelector("[data-hft]");if(i){i.focus();i.select()}},60)}
 function openPan(i){SH={type:"pan",i,key:ST.comb};renderSheet();draw()}
 function panSheet(){const g=roofGeo(),c=ST.comb;if(!g)return"";const i=SH.i,sd=g.sides,FT=c.ft||[],mine=FT.map((x,j)=>[x,j]).filter(([x])=>panOf(g,x)===i),cm=v=>Math.round(v*100);
  return`<div class="sh-h"><div><h2>${g.one?"Le toit (1 pente)":"Pan du toit côté "+sd[i]}</h2><small>${fr(g.u1-g.u0)} m de long · pente ${Math.round(g.p*180/Math.PI)}°</small></div><button class="btn solid" data-close="1">OK</button></div>
@@ -722,7 +749,7 @@ svg.addEventListener("pointerdown",e=>{if(demo)return;PTR.set(e.pointerId,{x:e.c
  if(PTR.size>2)return;const p=pt(e),sx=e.clientX,sy=e.clientY,lab=e.target.closest("[data-lab]");
  const opd=e.target.closest("[data-opd]");if(opd){PD={type:"opd",w:opd.dataset.opd,sx,sy};return}const ccd=e.target.closest("[data-ccd]");if(ccd){PD={type:"ccd",w:ccd.dataset.ccd,sx,sy};return}
  const cdl=e.target.closest("[data-cdist]");if(cdl){PD={type:"cdist",w:+cdl.dataset.cdist,sx,sy};return}
- if(ST.rv){const fw=e.target.closest("[data-ftw]"),g=roofGeo();if(fw&&g){const i=+fw.dataset.ftw,I=ftInfo(g,i);PD={type:"ft",i,sx,sy,p0:p,c0:[I.u,I.v]};return}const pa=e.target.closest("[data-pan]");PD=pa?{type:"panT",i:+pa.dataset.pan,sx,sy}:{type:"pan0",sx,sy};return}
+ if(ST.rv){const fw=e.target.closest("[data-ftw]"),g=roofGeo();if(fw&&g){const i=+fw.dataset.ftw,I=ftInfo(g,i);PD={type:"ft",i,sx,sy,p0:p,c0:[I.u,I.v]};return}if(e.target.closest("[data-hfto]")){PD={type:"hfT",sx,sy};return}const pa=e.target.closest("[data-pan]");PD=pa?{type:"panT",i:+pa.dataset.pan,sx,sy}:{type:"pan0",sx,sy};return}
  if((ST.mode==="trace"||ST.mode==="clo")&&!ST.lock){PD={type:"draw",sx,sy};preview=resolve(p);draw();return}
  {const ee=e.target.closest("[data-esc]");if(ee){const i=+ee.dataset.esc,E=(F().esc||[])[i];if(E){PD={type:"esc",i,sx,sy,p0:p,c0:E.c.slice()};return}}if(ST.mode==="esc"){PD={type:"escadd",sx,sy};return}}
  if(lab){const idx=+lab.dataset.lab;if(ST.mode==="todo"||ST.mode==="win"||ST.mode==="door"){PD={type:"seg",idx,sx,sy,p:p};return}PD={type:"lab",idx,lp:false,sx,sy};PD.t=setTimeout(()=>{if(PD&&PD.type==="lab"){PD.lp=true;startVoice(idx)}},450);return}
@@ -763,7 +790,7 @@ function ptrEnd(e,cancel){PTR.delete(e.pointerId);const D=PD;if(!D)return;
  if(D.type==="segdrag"){ST.frozen=false;all();say(null,`${D.name} déplacé ✓`);return}
  if(D.type==="escdrag"){ST.frozen=false;all();say(null,"Escalier posé ✓ Touchez-le pour régler sa forme.");return}
  if(D.type==="ftdrag"){ST.frozen=false;FSN=null;all();say(null,`Fenêtre de toit FT${D.i+1} posée ✓ Touchez-la pour régler sa taille.`);return}
- if(D.type==="ft"){openFt(D.i);return}if(D.type==="panT"){FTSEL=null;openPan(D.i);return}
+ if(D.type==="hfT"){openHft();return}if(D.type==="ft"){openFt(D.i);return}if(D.type==="panT"){FTSEL=null;openPan(D.i);return}
  if(D.type==="pan"||D.type==="pan0")return;const p=pt(e);
  if(D.type==="escadd"){addEsc(p);return}if(D.type==="esc"){openEsc(D.i);return}
  if(D.type==="lab"){if(D.lp){stopVoice();return}openEd(D.idx);return}
@@ -1003,7 +1030,7 @@ function renderSheet(){const b=$("sh-body");if(!SH){$("sheet").hidden=true;retur
    <div class="g"><span>Cette fenêtre est…</span><div class="qk">${FTE.map(v=>`<button type="button" data-fte="${i}|${esc(v)}" data-v="${v==="Je ne sais pas"?"Je ne sais pas":""}" aria-pressed="${x.etat===v}">${esc(v)}</button>`).join("")}</div></div></div>`).join("")}
    <div class="inl"><button type="button" class="btn" data-ftadd="1">+ Fenêtre de toit</button></div><p class="muted">Tailles courantes des fenêtres de toit. Une autre taille se précise en remarque. Leur surface est retirée de l'isolation des rampants.</p></div>`})()}
   ${notePhotos(c,QUICK.comb)}`}
- if(SH.type==="addtrav")h=addTravSheet();if(SH.type==="esc"){h=escSheet();if(!h){closeSheet();return}}if(SH.type==="pan"){h=panSheet();if(!h){closeSheet();return}}if(SH.type==="ft"){h=ftSheet();if(!h){closeSheet();return}}
+ if(SH.type==="addtrav")h=addTravSheet();if(SH.type==="hft"){h=hftSheet();if(!h){closeSheet();return}}if(SH.type==="esc"){h=escSheet();if(!h){closeSheet();return}}if(SH.type==="pan"){h=panSheet();if(!h){closeSheet();return}}if(SH.type==="ft"){h=ftSheet();if(!h){closeSheet();return}}
  if(SH.type!=="new"&&SH.type!=="quiz")h+=`<div class="sh-foot"><button type="button" class="btn solid" data-close="1">✓ Valider</button></div>`;b.innerHTML=h;{const hideG=sel=>b.querySelectorAll(sel).forEach(x=>{const g=x.closest(".g");if(g)g.style.display="none"});const tidy=()=>b.querySelectorAll(".sec").forEach(sec=>{const G=sec.querySelectorAll(":scope>.g");if(G.length&&[...G].every(g=>g.style.display==="none")&&!sec.querySelector(":scope>.qk,:scope>.inl"))sec.style.display="none"});
   if(SH.type==="op"){const sg=segs()[SH.x],o=sg&&(OP.get(sg.a)||[])[SH.i];if(o&&o.chg==="Déjà en place"){hideG(["ouv","ob","mat","coul","pose","posepos","vol","volcmd","volpose","volenr","volcoul","poseporte"].map(k=>`[data-opt="${k}"]`).join(","));tidy();b.querySelectorAll("[data-openc2]").forEach(x=>{const sec=x.closest(".sec");if(sec)sec.style.display="none"})}}
   if(SH.type==="seg"){const sg=segs()[SH.x];if(sg&&sg.kind==="clo"&&CL&&(COMP.get(sg.a)||{}).etat==="Déjà en place"){hideG("[data-cg]");b.querySelectorAll("[data-allroom],[data-fav]").forEach(x=>{const sec=x.closest(".sec");if(sec)sec.style.display="none"})}}}
@@ -1073,6 +1100,7 @@ $("sheet").addEventListener("change",e=>{const el=e.target;if(!SH)return;
  if(el.dataset.ftent){const v=pn(el.value);if(v>0){hist();ST.comb.ent=Math.max(.3,Math.min(1.5,v/100));renderSheet();draw()}return}
  if(el.dataset.ftwh&&SH.type==="ft"){const v=pn(el.value),g=roofGeo(),FT=ST.comb.ft||[],x=FT[SH.i];if(v>0&&g&&x){hist();const d=ftDim(x),w=el.dataset.ftwh==="w"?v/100:d[1],h=el.dataset.ftwh==="h"?v/100:d[2];ST.comb.ft=FT.map((y,j)=>j===SH.i?{...y,w:Math.min(3,w),h:Math.min(3,h)}:y);renderSheet();draw()}return}
  if(el.dataset.wrh){const v=pn(el.value);hist();ST.comb[el.dataset.wrh]=v!=null&&v>=0?Math.min(20,v/100):null;ST.comb.mode="Les hauteurs";renderSheet();draw();rows();return}
+ if(el.dataset.hft&&SH.type==="hft"){const v=pn(el.value),g=roofGeo();if(v>0&&g){const m=v<10?v:v/100,base=g.f.comb?0:(+g.f.H||0),hf=Math.min(20,m)-base;if(hf>.3){hist();const c=ST.comb;if(c.mode!=="Les hauteurs"){c.mode="Les hauteurs";c.m1=g.hm1;c.m2=g.hm2}c.hf=Math.round(hf*100)/100;say(null,`Hauteur du sol ${g.one?"au haut du toit":"au faîtage"} : ${fr(base+c.hf)} m ✓ La pente est recalculée.`)}else say(null,"Cette hauteur est plus basse que les murs : vérifiez la mesure.")}renderSheet();draw();return}
  if(el.dataset.combh&&SH.type==="comb"){const v=pn(el.value);hist();ST.comb[el.dataset.combh]=v!=null&&v>=0?Math.min(20,v/100):null;renderSheet();draw();if(typeof tot==="function")try{tot()}catch(_){}return}
  if(el.dataset.escf&&SH.type==="esc"){const E=(F().esc||[])[SH.i],v=pn(el.value);if(E&&v>0){hist();E[el.dataset.escf]=Math.max(.3,Math.min(8,v/100));escFit(E);renderSheet();draw()}return}
  if(el.classList.contains("shcam")){hist();const key=SH.key;addPhotos(key,el.files,()=>{if(SH)renderSheet();draw();rows();say(null,"📷 Photo ajoutée. Touchez-la pour lui ajouter une note.")});return}
@@ -1168,7 +1196,7 @@ function clTl(n){const bn=$("clbanner");if(!CL||!bn||!bn.parentNode)return;let e
  const h=`<ol>${L}${trMiss().length?`<li class="addt"><button type="button" data-opentrav="1"><i>+</i><span class="lg">Ajouter des travaux</span><span class="sh">Ajouter</span></button></li>`:""}<li class="fin${fin?" ok":""}"><button type="button" disabled><i>${fin?"✓":"🏁"}</i><span class="lg">${fin?"Plan terminé":"Terminé"}</span><span class="sh">Fini</span></button></li></ol>`;if(e.dataset.h!==h){e.innerHTML=h;e.dataset.h=h;const c=e.querySelector(".cur")||e.querySelector(".fin");if(c)e.scrollLeft=c.offsetLeft-e.clientWidth/2+c.offsetWidth/2}}
 function clGuide(){const b=$("clbanner");if(!b)return;const tool=["win","door","clo","todo","trace"].includes(ST.mode),n=gStep();clTl(n);{const tt=document.querySelector('.cltool[data-cl="todo"]');if(tt)tt.classList.toggle("locked",n<5&&!TD.size)}
  document.querySelectorAll(".cltool").forEach(x=>x.classList.toggle("next",!tool&&!GMSG&&x.dataset.cl===GTOOL[n]));{const t=document.getElementById("ctr-b");if(t)t.classList.toggle("next",!tool&&!GMSG&&GTOOL[n]==="clo")}
- if(tool||GMSG)return;b.classList.remove("tool");b.classList.toggle("done",n>GN());$("clb-t").innerHTML=`<span class="gdots">${Array.from({length:GN()},(_,j)=>j+1).map(i=>`<i class="${i<n||n>GN()?"ok":i===n?"cur":""}"></i>`).join("")}</span><b>${esc(gTitle(n))}</b>${esc(GTx(n)[1]+gPlus(n))}`;const x=$("clb-b");x.hidden=n>GN();delete x.dataset.skip;delete x.dataset.next;if(G.view){x.textContent="Suivant ›";x.dataset.next=n}else{x.textContent="Passer ›";x.dataset.skip=n}const pv=$("clb-p");if(pv)pv.hidden=n<=gList()[0];gHint();if(!GD)gdMaybe()}
+ if(tool||GMSG)return;b.classList.remove("tool");b.classList.toggle("done",n>GN());$("clb-t").innerHTML=`<span class="gdots">${Array.from({length:GN()},(_,j)=>j+1).map(i=>`<i class="${i<n||n>GN()?"ok":i===n?"cur":""}"></i>`).join("")}</span><b>${esc(gTitle(n))}</b>${esc(GTx(n)[1]+gPlus(n))}`;const x=$("clb-b");x.hidden=n>GN();delete x.dataset.skip;delete x.dataset.next;if(G.view){x.textContent="Suivant ›";x.dataset.next=n}else{x.textContent="Passer ›";x.dataset.skip=n}const pv=$("clb-p");if(pv)pv.hidden=n<=gList()[0];gHint();if(!GD){gdMaybe();if(CL&&gStep.last!==n){gStep.last=n;try{parent.postMessage({type:"proclik-plan-step",n,fin:n>GN()},"*")}catch(e){}}}}
 // Ce qu'il faut toucher à l'étape en cours clignote : les cotes (1), les pièces sans sol (4), les pièces (6).
 function gHint(){if(!CL)return;svg.querySelectorAll(".hint,.hintr").forEach(x=>{x.classList.remove("hint","hintr")});if(ST.view!=="2d"||ST.mode!=="plan")return;const n=gStep();if(n===1)svg.querySelectorAll("g[data-lab]").forEach(g=>g.classList.add("hint"));
  if(n===4||n===6)svg.querySelectorAll("polygon[data-room]").forEach(pg=>{const rm=F().rooms[+pg.dataset.room],Z=rm&&zinfo(rm),ok=n===4?(Z?Z.every(x=>x.z&&x.z.sol._ok):rm&&rm.sol._ok):(Z?Z.some(x=>x.z&&x.z.sol._pfok):rm&&rm.sol._pfok);if(!ok)pg.classList.add("hintr")})}
@@ -1486,23 +1514,23 @@ const GDT=["","Les mesures du logement","Séparer les pièces","Fenêtres et por
 function gdSeen(n,set){const k="pk-gd-"+n;try{if(set)localStorage.setItem(k,"1");return!!localStorage.getItem(k)}catch(e){gdSeen.m=gdSeen.m||{};if(set)gdSeen.m[k]=1;return!!gdSeen.m[k]}}
 function gdOpen(n){if(!CL||GD||!n||n>7)return;let w=$("gdw");if(!w){w=document.createElement("div");w.id="gdw";w.className="gdw";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.setAttribute("aria-label","Exemple");
   w.innerHTML='<div class="gd-in"><div class="gd-h"><b><small>Exemple · sur un plan modèle</small><span id="gd-t"></span></b><button type="button" id="gd-x" aria-label="Fermer l\'exemple">✕</button></div><p class="gd-c" id="gd-c" aria-live="polite"></p><iframe id="gd-if" title="Exemple animé" tabindex="-1"></iframe><div class="gd-f"><button type="button" class="re" id="gd-re">↻ Revoir</button><button type="button" class="ok" id="gd-ok">J\'ai compris, à moi !</button></div></div>';document.body.appendChild(w);
-  const close=()=>{w.hidden=true;$("gd-if").src="about:blank"};addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-gd-cap"&&$("gd-c"))$("gd-c").textContent=d.t||""});$("gd-x").onclick=close;$("gd-ok").onclick=close;w.addEventListener("click",e=>{if(e.target===w)close()});$("gd-re").onclick=()=>gdOpen(+w.dataset.n)}
+  const close=()=>{w.hidden=true;$("gd-if").src="about:blank"};addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-gd-cap"&&$("gd-c")){const c=$("gd-c");c.classList.add("out");clearTimeout(c._t);c._t=setTimeout(()=>{c.textContent=d.t||"";c.classList.remove("out")},300)}});$("gd-x").onclick=close;$("gd-ok").onclick=close;w.addEventListener("click",e=>{if(e.target===w)close()});$("gd-re").onclick=()=>gdOpen(+w.dataset.n)}
  w.dataset.n=n;gdSeen(n,1);$("gd-t").textContent=GDT[n]||"";$("gd-c").textContent="";const re=$("gd-re");re.disabled=true;setTimeout(()=>{re.disabled=false},2500);$("gd-if").src=location.pathname+"?client&embed&gd="+n+"&t="+Date.now();w.hidden=false;$("gd-ok").focus({preventScroll:true})}
 // La 1re fois qu'une étape devient l'étape en cours (rien d'autre d'ouvert), l'exemple s'ouvre tout seul.
 let GDQ=null;function gdMaybe(){if(!CL||GD||!READY)return;clearTimeout(GDQ);GDQ=setTimeout(()=>{const n=gStep();if(n>GN()||G.view||gdSeen(n))return;if(!$("sheet").hidden||!$("intro").hidden||!$("bigconf").hidden||($("gdw")&&!$("gdw").hidden)||PD||["win","door","clo","todo","trace"].includes(ST.mode))return;gdOpen(n)},900)}
 if(CL&&!GD){$("clb-v").addEventListener("click",e=>{e.stopPropagation();const n=gStep();gdOpen(n>GN()?gList()[0]||1:n)});$("in-ok").addEventListener("click",()=>setTimeout(gdMaybe,300))}
 // --- dans la petite fenêtre : le plan modèle et le doigt ---
-async function gdRun(n){const wait=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";document.body.append(fg,cap);
- const B=()=>$("board").getBoundingClientRect();let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);
+async function gdRun(n){const SP=1.8,wait=ms=>new Promise(r=>setTimeout(r,ms*SP)),raw=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";document.body.append(fg,cap);
+ const B=()=>$("board").getBoundingClientRect();let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);fg.style.opacity="0";await raw(60);fg.style.opacity="1";await raw(500);
  const say2=t=>{cap.textContent=t;try{parent.postMessage({type:"proclik-gd-cap",t},"*")}catch(e){}};
  const P=q=>{const m=svg.getScreenCTM(),p=svg.createSVGPoint();p.x=q[0];p.y=q[1];const r=p.matrixTransform(m);return[r.x,r.y]};
  const ev=(el,type,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerId:7,pointerType:"touch",isPrimary:true}));
- const go=async(x,y)=>{put(x,y);await wait(800)};
- const tapXY=async(x,y,after)=>{await go(x,y);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");fg.style.visibility="hidden";const el=document.elementFromPoint(x,y);fg.style.visibility="";if(el){ev(el,"pointerdown",x,y);await wait(90);ev(el,"pointerup",x,y)}await wait(after||700)};
+ const go=async(x,y)=>{put(x,y);await raw(1350)};
+ const tapXY=async(x,y,after)=>{await go(x,y);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");await raw(260);fg.style.visibility="hidden";const el=document.elementFromPoint(x,y);fg.style.visibility="";if(el){ev(el,"pointerdown",x,y);await raw(120);ev(el,"pointerup",x,y)}await wait(after||700)};
  const tapPlan=(q,after)=>{const s=P(q);return tapXY(s[0],s[1],after)};
- const tapEl=async(sel,after)=>{const el=typeof sel==="string"?document.querySelector(sel):sel;if(!el)return;el.scrollIntoView({block:"center",behavior:"instant"});await wait(450);const r=el.getBoundingClientRect();await go(r.left+r.width/2,r.top+r.height/2);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");el.click();await wait(after||700)};
- const drag=async(a,b)=>{const A=P(a),Bq=P(b);await go(A[0],A[1]);fg.style.visibility="hidden";const el=document.elementFromPoint(A[0],A[1]);fg.style.visibility="";if(!el)return;ev(el,"pointerdown",A[0],A[1]);fg.style.transition="none";for(let k=1;k<=24;k++){const x=A[0]+(Bq[0]-A[0])*k/24,y=A[1]+(Bq[1]-A[1])*k/24;put(x,y);ev(svg,"pointermove",x,y);await wait(40)}fg.style.transition="";ev(svg,"pointerup",Bq[0],Bq[1]);await wait(700)};
- const typeIn=async(t)=>{const v=$("edv");if(!v)return;v.value="";for(const c of t){v.value+=c;await wait(170)}await wait(250)};
+ const tapEl=async(sel,after)=>{const el=typeof sel==="string"?document.querySelector(sel):sel;if(!el)return;el.scrollIntoView({block:"center",behavior:"instant"});await raw(500);const r=el.getBoundingClientRect();await go(r.left+r.width/2,r.top+r.height/2);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");await raw(260);el.click();await wait(after||700)};
+ const drag=async(a,b)=>{const A=P(a),Bq=P(b);await go(A[0],A[1]);fg.style.visibility="hidden";const el=document.elementFromPoint(A[0],A[1]);fg.style.visibility="";if(!el)return;fg.classList.add("tap");await raw(300);ev(el,"pointerdown",A[0],A[1]);await raw(250);fg.style.transition="none";await new Promise(done=>{const t0=performance.now(),D=1800,f=t=>{const k=Math.min(1,(t-t0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,x=A[0]+(Bq[0]-A[0])*e,y=A[1]+(Bq[1]-A[1])*e;put(x,y);ev(svg,"pointermove",x,y);if(k<1)requestAnimationFrame(f);else done()};requestAnimationFrame(f)});await raw(300);fg.style.transition="";ev(svg,"pointerup",Bq[0],Bq[1]);await wait(700)};
+ const typeIn=async(t)=>{const v=$("edv");if(!v)return;v.value="";for(const c of t){v.value+=c;await raw(330)}await wait(400)};
  const rm=i=>F().rooms[i],mid=(a,b,t)=>[a[0]+(b[0]-a[0])*(t??.5),a[1]+(b[1]-a[1])*(t??.5)],cen=r=>{const b=bbox(r.pts);return[(b.x0+b.x1)/2,(b.y0+b.y1)/2]};
  const segOf=(ri,i)=>segs().find(s=>s.rm===rm(ri)&&s.i===i);
  try{
@@ -1510,9 +1538,9 @@ async function gdRun(n){const wait=ms=>new Promise(r=>setTimeout(r,ms)),fg=docum
    say2("…puis la 2e mesure : la largeur. Le plan se met à la bonne taille.");const g1=[...svg.querySelectorAll("g[data-lab]")][1];if(g1){const r=g1.getBoundingClientRect();await tapXY(r.left+r.width/2,r.top+r.height/2,500)}await typeIn("5,00");await tapEl("#edok",1400)}
   if(n===2){say2("Touchez « Tracer », puis « Cloison ».");await tapEl("#ctr-b",500);await tapEl('[data-tr="clo"]',700);const b=bbox(rm(0).pts),x=r2(b.x0+(b.x1-b.x0)*.55);say2("Touchez le mur où la cloison commence, puis le mur d'en face.");await tapPlan([x,b.y0],600);await tapPlan([x,b.y1],1000);say2("Deux pièces ! Touchez une pièce pour lui donner son nom.");await wait(1800)}
   if(n===3){say2("Touchez « Fenêtre », puis le mur de la fenêtre.");await tapEl('.cltool[data-cl="win"]',600);const s=segOf(0,0);await tapPlan(mid(s.a,s.b,.5),1100);hideOpp();say2("Elle se pose au milieu avec ses cotes. Faites-la glisser à sa place : elle se cale au milieu et aux quarts.");await wait(600);setMode("plan");draw();await wait(200);const s2=segOf(0,0),o=svg.querySelector("[data-opx]");if(o){const r=o.getBoundingClientRect(),m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=r.left+r.width/2;p.y=r.top+r.height/2;const q=p.matrixTransform(m);await drag([q.x,q.y],[q.x-(s2.b[0]-s2.a[0])*.23,q.y-(s2.b[1]-s2.a[1])*.23])}await wait(1400)}
-  if(n===4){say2("Touchez une pièce…");await tapPlan(cen(rm(0)),900);say2("…et dites si son sol est à garder, à changer ou à créer.");await tapEl('[data-sol="etat"][data-v="À changer"]',1100);const all=document.querySelector("[data-solall]");if(all){say2("Le même sol partout ? Un seul geste.");await tapEl(all,1100)}await tapEl("[data-close]",1200)}
+  if(n===4){say2("Touchez une pièce…");await tapPlan(cen(rm(0)),900);say2("…et dites si son sol est à garder, à changer ou à créer.");await tapEl('[data-sol="etat"][data-v="À changer"]',1100);const all=document.querySelector("[data-solall]");if(all){say2("Le même sol partout ? Un seul geste.");await tapEl(all,1100)}await tapEl("#sheet .sh-h [data-close]",1200)}
   if(n===5){say2("Touchez « Travaux », puis chaque mur à refaire.");await tapEl('.cltool[data-cl="todo"]',700);const S=segs().filter(x=>x.kind==="mur"&&!x.sh);for(const s of S.slice(0,3))await tapPlan(mid(s.a,s.b,.5),550);say2("Les murs touchés passent en couleur. Tous ? « Tout cocher ».");await wait(1800)}
-  if(n===6){say2("Touchez la pièce où le plafond est à refaire…");await tapPlan(cen(rm(0)),900);const pf=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(pf){pf.scrollIntoView({block:"center",behavior:"instant"});await wait(300)}say2("…puis « À refaire ».");await tapEl('[data-pf="pf"][data-v="À refaire"]',300);{const q=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(q)q.scrollIntoView({block:"center",behavior:"instant"})}await wait(1200);await tapEl("[data-close]",1200)}
+  if(n===6){say2("Touchez la pièce où le plafond est à refaire…");await tapPlan(cen(rm(0)),900);const pf=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(pf){pf.scrollIntoView({block:"center",behavior:"instant"});await wait(300)}say2("…puis « À refaire ».");await tapEl('[data-pf="pf"][data-v="À refaire"]',300);{const q=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(q)q.scrollIntoView({block:"center",behavior:"instant"})}await wait(1200);await tapEl("#sheet .sh-h [data-close]",1200)}
   if(n===7){say2("Touchez « Toit » : votre toit vu d'en haut.");await tapEl("#v-toit",1000);const pa=svg.querySelector("[data-pan]");if(pa){const r=pa.getBoundingClientRect();say2("Touchez le pan où se trouve la fenêtre de toit…");await tapXY(r.left+r.width/2,r.top+r.height*.6,900)}say2("…puis « + Fenêtre de toit » : elle se pose au milieu du pan.");await tapEl("[data-ftnew]",1800)}
   say2("À vous ! Fermez cette fenêtre et faites pareil sur votre plan.")}catch(e){say2("À vous ! Fermez cette fenêtre et faites pareil sur votre plan.")}
  fg.remove()}
@@ -1524,6 +1552,7 @@ if(GD){document.documentElement.classList.add("gd");
  else if(n===2)ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Mon logement",0,0,6.5,5)]}];
  else if(n===7){ST.floors=[{nom:"Combles",comb:true,H:2.5,rooms:[M("Combles",0,0,8,6)]}];ST.comb={...COMBDEF,type:"Aménageables",isol:"En rampant",ep:"240 mm"}}
  else{const ok={etat:"À changer",_ok:1};ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Séjour",0,0,4.5,4,n>4?ok:{}),M("Cuisine",4.5,0,3,4,n>4?ok:{})]}]}
+ document.documentElement.classList.add("gd"+n);const K={2:["#ctr-b","#cltrace"],3:['.cltool[data-cl="win"]'],5:['.cltool[data-cl="todo"]'],7:["#v-toit"]}[n]||[];K.forEach(s=>{const e=document.querySelector(s);if(e)e.classList.add("gdk")});
  ST.fi=0;ST.ri=0;G.m1=n>1;for(let k=1;k<n;k++)G.skip[k]=1;READY=true;HIST.length=0;all();say(null,"");setTimeout(()=>gdRun(n),700)}
 
 })();

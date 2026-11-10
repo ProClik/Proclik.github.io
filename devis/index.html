@@ -192,7 +192,10 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 #planfull[hidden]{display:none}
 .pf-bar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
 .pf-t{flex:1;min-width:0}.pf-t b{display:block;font-size:17px}.pf-t small{color:var(--muted);font-size:13px}
-@media (max-width:480px){#pf-sub{display:none}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}#pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
+@media (max-width:480px){#pf-sub{display:none}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}@keyframes pcOnde{0%{box-shadow:0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 0 rgba(168,130,63,0)}}
+/* L'onde guide le client : bouton principal de chaque écran, et « J'ai terminé » quand le plan est fini. */
+.btn.go:not([disabled]),.bigbtn,.bc-ok,#pf-done.fin{animation:pcOnde 1.8s ease-out infinite}
+#pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
 :root[data-theme="dark"] #pf-done{background:var(--mint);color:var(--ink)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pf-done{background:var(--mint);color:var(--ink)}}
 #planfull iframe{flex:1 1 0;width:100%;border:0;display:block;min-height:0}
@@ -490,7 +493,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=12");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=13");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -693,6 +696,7 @@ addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pfr
  if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}
  if(d.type==="proclik-plan-finish"){clearTimeout(PFT);closePlan();return}
  if(d.type==="proclik-plan-help"){closePlan();confirmBig(PRE()?`Pas de souci, ${PRE()}, on vous aide`:"Pas de souci, on vous aide","Votre plan est gardé tel quel. L'artisan vous appellera pour le terminer avec vous. Il reste juste quelques questions et vos coordonnées.","Continuer",()=>{S.plan.aide=true;S.plan.noWallOk=true;save();if(cur==="plan")go(1)},"Revenir au plan","🤝");return}
+ if(d.type==="proclik-plan-step"){const b=document.getElementById("pf-done");if(b)b.classList.toggle("fin",!!d.fin);return}
  if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=cheerN(planCheer());const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
 let BC=null;function confirmBig(t,p,ok,cb,no,soft){const bg=document.getElementById("bigconf");bg.classList.toggle("soft",!!soft);bg.querySelector(".bc-ic").textContent=soft||"⚠️";document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;document.getElementById("bc-no").textContent=no||"Non, garder";BC=cb;document.getElementById("bigconf").hidden=false}
 document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;const f=BC;BC=null;if(f)f()});
