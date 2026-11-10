@@ -275,6 +275,34 @@ html.client body{padding-bottom:12px}
 
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
+
+/* Exemple animé de l'étape (Cyril 10/11) : il se joue dans une petite fenêtre, sur un plan modèle, pour ne pas mélanger avec le plan du client. */
+#clbanner #clb-v{background:transparent;color:var(--mint,#A8823F);border:1.5px solid rgba(168,130,63,.55);height:34px;padding:0 12px;border-radius:999px;font:800 13.5px/1 var(--f);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex:none;cursor:pointer}
+#clbanner #clb-v.pulse{animation:gpulse 1.5s ease-in-out 3}
+html:not(.client) #clb-v{display:none}
+@media (max-width:640px){.client #clbanner #clb-v{order:1}}
+.gdw{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(8,12,24,.55);padding:14px max(14px,env(safe-area-inset-left,0px))}
+.gdw[hidden]{display:none}
+.gdw .gd-in{width:min(560px,100%);background:var(--bg,#ECEEF2);color:var(--ink,#0E1322);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100dvh - 28px)}
+.gdw .gd-h{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
+.gdw .gd-h b{flex:1;min-width:0;font:800 16px/1.25 var(--f)}
+.gdw .gd-h small{display:block;font:800 11px var(--f);letter-spacing:.08em;text-transform:uppercase;color:#A8823F}
+.gdw .gd-h button{appearance:none;border:0;background:transparent;font:800 22px/1 var(--f);color:inherit;width:38px;height:38px;border-radius:50%;cursor:pointer}
+.gdw iframe{display:block;width:100%;height:min(62dvh,470px);border:0;background:var(--bg,#ECEEF2);pointer-events:none}
+.gdw .gd-f{display:flex;gap:10px;padding:10px 14px 14px;justify-content:flex-end;flex-wrap:wrap}
+.gdw .gd-f button{appearance:none;border:0;border-radius:999px;padding:11px 18px;font:800 15px var(--f);cursor:pointer;background:var(--bg,#ECEEF2);color:inherit;box-shadow:3px 3px 8px rgba(24,34,64,.14),-3px -3px 8px rgba(255,255,255,.8)}
+.gdw .gd-f .ok{background:#A8823F;color:#fff;box-shadow:none}
+.gdw .gd-f .re[disabled]{opacity:.45}
+/* Dans la petite fenêtre : le plan modèle, sans la liste d'étapes ni l'en-tête. */
+.gd header,.gd h1,.gd .lead,.gd #cltl,.gd #toast,.gd #tut,.gd #floors,.gd #rooms,.gd #clbanner,.gd #gd-cap{display:none!important}
+.gdw .gd-c{margin:0;padding:0 16px 10px;font:700 15px/1.35 var(--f);min-height:2.7em;color:inherit}
+.gd body{overflow:hidden}
+#gd-fg{position:fixed;z-index:90;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(232,89,12,.25);border:3px solid #E8590C;pointer-events:none;transition:transform .75s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#gd-fg::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#E8590C}
+#gd-fg.tap{animation:gdtap .45s ease-out}
+@keyframes gdtap{50%{scale:.7}}
+#gd-cap{position:fixed;z-index:91;left:10px;right:10px;bottom:10px;background:#0B1226;color:#fff;border-radius:14px;padding:10px 14px;font:700 15px/1.35 var(--f);text-align:center;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+@media (prefers-reduced-motion:reduce){#gd-fg{transition:none}}
 </style>
 <link rel="stylesheet" href="plan-relief.css?v=11">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
@@ -292,7 +320,7 @@ html.client body{padding-bottom:12px}
     <div class="fl tr"><div class="pill"><button id="t-undo" class="ud" aria-label="Annuler">↶ Annuler</button><button id="t-redo" class="ud" aria-label="Rétablir" disabled>↷ Rétablir</button></div></div>
     <div class="fl mr"><div class="pill v"><button id="z-in" aria-label="Zoomer">＋</button><button id="z-out" aria-label="Dézoomer">−</button><button id="z-fit" aria-label="Recentrer">⤢</button><button id="z-lock" class="lk" aria-pressed="false" aria-label="Verrouiller le plan">🔓</button></div></div>
     <button class="rotb l" id="r-l" hidden aria-label="Quart de tour à gauche">↺</button><button class="rotb r" id="r-r" hidden aria-label="Quart de tour à droite">↻</button>
-    <div class="cl-only" id="clbanner"><button type="button" id="clb-p" hidden aria-label="Étape précédente">‹</button><span class="pcl" aria-hidden="true"><i></i></span><p id="clb-t"></p><button type="button" id="clb-h" aria-label="Comment ça marche ?">?</button><button type="button" id="clb-b" hidden>Terminé</button></div>
+    <div class="cl-only" id="clbanner"><button type="button" id="clb-p" hidden aria-label="Étape précédente">‹</button><span class="pcl" aria-hidden="true"><i></i></span><p id="clb-t"></p><button type="button" id="clb-v" aria-label="Voir un exemple de cette étape"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span>Exemple</span></button><button type="button" id="clb-h" aria-label="Comment ça marche ?">?</button><button type="button" id="clb-b" hidden>Terminé</button></div>
     <div class="cl-only" id="cltools"><button type="button" class="cltool" data-cl="plan" aria-pressed="true"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16s5-9 13-9 13 9 13 9-5 9-13 9S3 16 3 16Z" stroke="currentColor" stroke-width="2.2"/><circle cx="16" cy="16" r="4.5" fill="#B8924F"/></svg><span>Regarder</span></button><button type="button" class="cltool" data-cl="room" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="19" height="19" rx="4" stroke="currentColor" stroke-width="2.2"/><circle cx="24" cy="8" r="6" fill="#B8924F"/><path d="M24 5v6M21 8h6" stroke="#0B1226" stroke-width="2"/></svg><span>Pièce</span></button><button type="button" class="cltool" data-cl="win" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="22" height="22" rx="4" stroke="currentColor" stroke-width="2.2"/><rect x="8.5" y="8.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".85"/><rect x="17.5" y="8.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".55"/><rect x="8.5" y="17.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".55"/><rect x="17.5" y="17.5" width="6" height="6" rx="1.5" fill="#B8924F" opacity=".85"/></svg><span>Fenêtre</span></button><button type="button" class="cltool" data-cl="door" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 27V8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v19" stroke="currentColor" stroke-width="2.2"/><path d="M4 27h24" stroke="currentColor" stroke-width="2.2"/><rect x="10" y="8" width="12" height="16" rx="2" fill="#B8924F" opacity=".3"/><circle cx="19" cy="17" r="1.9" fill="#B8924F"/></svg><span>Porte</span></button><button type="button" class="cltool" data-cl="esc" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 27h6v-5h6v-5h6v-5h6" stroke="currentColor" stroke-width="2.2"/><path d="M6 15l9-9m0 0h-5m5 0v5" stroke="#B8924F" stroke-width="2.2"/></svg><span>Escalier</span></button><button type="button" class="cltool" data-cl="todo" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="20" height="20" rx="4" stroke="currentColor" stroke-width="2.2"/><circle cx="23" cy="9" r="7" fill="#B8924F"/><path d="M19.8 9.2l2.2 2.2 4-4.2" stroke="#0B1226" stroke-width="2.2"/></svg><span>Travaux</span><em class="lk">🔒 Plus tard</em></button></div>
     <div class="cl-only" id="cltrace"><button type="button" id="ctr-b" aria-pressed="false" aria-expanded="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 25.5l1.4-5.6L20.2 8.1a2.2 2.2 0 0 1 3.1 0l1.6 1.6a2.2 2.2 0 0 1 0 3.1L13.1 24.6 7 25.5Z" stroke="currentColor" stroke-width="2.2"/><path d="M18.4 10l4.6 4.6" stroke="currentColor" stroke-width="2.2"/><circle cx="8" cy="24.5" r="2.4" fill="#B8924F"/></svg><span>Tracer</span></button><div id="ctr-bar" hidden><button type="button" data-tr="trace" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h22v12H16v9H5Z" stroke="currentColor" stroke-width="2.6"/><circle cx="5" cy="6" r="2.6" fill="#B8924F"/><circle cx="27" cy="18" r="2.6" fill="#B8924F"/><circle cx="16" cy="27" r="2.6" fill="#B8924F"/></svg><span>Mur</span></button><button type="button" data-tr="clo" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="24" height="22" rx="4" stroke="currentColor" stroke-width="2.2"/><rect x="14" y="5" width="4" height="22" fill="#B8924F"/><path d="M14.5 10l3 2M14.5 15l3 2M14.5 20l3 2" stroke="#0B1226" stroke-width="1.2" opacity=".6"/></svg><span>Cloison</span></button></div></div>
     <div class="fl tl2 cl-only" id="todo-bar" hidden><div class="pill"><button id="t-all" class="hotb">☐ Tout cocher</button></div></div>
@@ -317,6 +345,7 @@ html.client body{padding-bottom:12px}
 <script>
 (function(){
 const CL=/[?&]client/.test(location.search);let READY=!CL,NTF=null;
+const GD=CL?+(new URLSearchParams(location.search).get("gd"))||0:0;
 // ---------- Outils ----------
 const $=id=>document.getElementById(id),svg=$("svg"),s3=$("s3");
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -585,7 +614,7 @@ function snapState(){const cp=x=>x?x.map(y=>({...y})):null,sp=p=>({p:p.slice(),t
 function loadState(S){COMP.clear();NT.clear();PH.clear();OP.clear();TD.clear();const cp=x=>x.map(y=>({...y})),lp=q=>{const p=q.p.slice();if(q.t)TD.set(p,q.t);if(q.c)COMP.set(p,{...q.c});if(q.o)OP.set(p,cp(q.o));if(q.n)NT.set(p,q.n);if(q.ph)PH.set(p,cp(q.ph));return p};
  ST.floors=S.floors.map(f=>({nom:f.nom,H:f.H,...(f.hdk?{hdk:true}:{}),...(f.hok?{hok:true}:{}),dal:{...f.dal},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(r=>{const rm={nom:r.nom,sol:{...r.sol},...(r.zn&&r.zn.length?{zn:r.zn.map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...SOLDEF,...z.sol}}))}:{}),pts:r.pts.map(lp),clos:r.clos.map(c=>c.map(lp))};if(r.n)NT.set(rm,r.n);if(r.ph)PH.set(rm,cp(r.ph));return rm})}));
  ST.comb={...S.comb};if(S.cn)NT.set(ST.comb,S.cn);if(S.cph)PH.set(ST.comb,cp(S.cph));ST.fi=Math.min(S.fi,ST.floors.length-1);ST.ri=Math.max(0,Math.min(S.ri,F().rooms.length-1))}
-function hist(){NOSAVE=false;HIST.push(snapState());if(HIST.length>60)HIST.shift();REDO.length=0;udBtns();if(CL)setTimeout(()=>{if(!SH&&!PD&&!TST.warn)toast("C'est fait.","↶ Annuler",()=>undo(),3500)},0)}
+function hist(){NOSAVE=false;HIST.push(snapState());if(HIST.length>60)HIST.shift();REDO.length=0;udBtns();if(CL&&!GD)setTimeout(()=>{if(!SH&&!PD&&!TST.warn)toast("C'est fait.","↶ Annuler",()=>undo(),3500)},0)}
 function udBtns(){const u=$("t-undo"),r=$("t-redo");if(u)u.disabled=!HIST.length&&!(ST.trace&&ST.trace.length)&&!ST.cur;if(r)r.disabled=!REDO.length}
 function undo(){if(ST.mode==="trace"&&ST.trace&&ST.trace.length){ST.trace.pop();if(!ST.trace.length)ST.trace=null;draw();return}
  if(ST.mode==="clo"&&ST.cur){ST.cur.pop();if(!ST.cur.length){R().clos.pop();ST.cur=null}draw();rows();return}
@@ -1052,7 +1081,7 @@ function clTl(n){const bn=$("clbanner");if(!CL||!bn||!bn.parentNode)return;let e
  const h=`<ol>${L}${trMiss().length?`<li class="addt"><button type="button" data-opentrav="1"><i>+</i><span class="lg">Ajouter des travaux</span><span class="sh">Ajouter</span></button></li>`:""}<li class="fin${fin?" ok":""}"><button type="button" disabled><i>${fin?"✓":"🏁"}</i><span class="lg">${fin?"Plan terminé":"Terminé"}</span><span class="sh">Fini</span></button></li></ol>`;if(e.dataset.h!==h){e.innerHTML=h;e.dataset.h=h;const c=e.querySelector(".cur")||e.querySelector(".fin");if(c)e.scrollLeft=c.offsetLeft-e.clientWidth/2+c.offsetWidth/2}}
 function clGuide(){const b=$("clbanner");if(!b)return;const tool=["win","door","clo","todo","trace"].includes(ST.mode),n=gStep();clTl(n);{const tt=document.querySelector('.cltool[data-cl="todo"]');if(tt)tt.classList.toggle("locked",n<5&&!TD.size)}
  document.querySelectorAll(".cltool").forEach(x=>x.classList.toggle("next",!tool&&!GMSG&&x.dataset.cl===GTOOL[n]));{const t=document.getElementById("ctr-b");if(t)t.classList.toggle("next",!tool&&!GMSG&&GTOOL[n]==="clo")}
- if(tool||GMSG)return;b.classList.remove("tool");b.classList.toggle("done",n>GN());$("clb-t").innerHTML=`<span class="gdots">${Array.from({length:GN()},(_,j)=>j+1).map(i=>`<i class="${i<n||n>GN()?"ok":i===n?"cur":""}"></i>`).join("")}</span><b>${esc(gTitle(n))}</b>${esc(GTx(n)[1]+gPlus(n))}`;const x=$("clb-b");x.hidden=n>GN();delete x.dataset.skip;delete x.dataset.next;if(G.view){x.textContent="Suivant ›";x.dataset.next=n}else{x.textContent="Passer ›";x.dataset.skip=n}const pv=$("clb-p");if(pv)pv.hidden=n<=gList()[0];gHint()}
+ if(tool||GMSG)return;b.classList.remove("tool");b.classList.toggle("done",n>GN());$("clb-t").innerHTML=`<span class="gdots">${Array.from({length:GN()},(_,j)=>j+1).map(i=>`<i class="${i<n||n>GN()?"ok":i===n?"cur":""}"></i>`).join("")}</span><b>${esc(gTitle(n))}</b>${esc(GTx(n)[1]+gPlus(n))}`;const x=$("clb-b");x.hidden=n>GN();delete x.dataset.skip;delete x.dataset.next;if(G.view){x.textContent="Suivant ›";x.dataset.next=n}else{x.textContent="Passer ›";x.dataset.skip=n}const pv=$("clb-p");if(pv)pv.hidden=n<=gList()[0];gHint();if(!GD)gdMaybe()}
 // Ce qu'il faut toucher à l'étape en cours clignote : les cotes (1), les pièces sans sol (4), les pièces (6).
 function gHint(){if(!CL)return;svg.querySelectorAll(".hint,.hintr").forEach(x=>{x.classList.remove("hint","hintr")});if(ST.view!=="2d"||ST.mode!=="plan")return;const n=gStep();if(n===1)svg.querySelectorAll("g[data-lab]").forEach(g=>g.classList.add("hint"));
  if(n===4||n===6)svg.querySelectorAll("polygon[data-room]").forEach(pg=>{const rm=F().rooms[+pg.dataset.room],Z=rm&&zinfo(rm),ok=n===4?(Z?Z.every(x=>x.z&&x.z.sol._ok):rm&&rm.sol._ok):(Z?Z.some(x=>x.z&&x.z.sol._pfok):rm&&rm.sol._pfok);if(!ok)pg.classList.add("hintr")})}
@@ -1082,7 +1111,7 @@ if(CL){$("vf-l").addEventListener("click",e=>{const b=e.target.closest("[data-vf
 // Mini-démo au premier usage d'un outil : un doigt montre le geste sur le vrai plan (une seule fois par outil).
 var TUTA=null;function tutSeen(m){try{if(localStorage.getItem("pk-tut-"+m))return true;localStorage.setItem("pk-tut-"+m,"1")}catch(e){if((tutSeen.m=tutSeen.m||{})[m])return true;tutSeen.m[m]=1}return false}
 function tutStop(){if(TUTA){TUTA.cancel();TUTA=null}const t=$("tut");if(t)t.hidden=true}
-function tutor(m){if(!CL||ST.view!=="2d"||!F()||!F().rooms.length||tutSeen(m))return;const S=segs(),ext=S.find(x=>x.kind==="mur"&&!x.sh&&dist(x.a,x.b)>1)||S.find(x=>x.kind==="mur");if(!ext)return;
+function tutor(m){if(!CL||GD||ST.view!=="2d"||!F()||!F().rooms.length||tutSeen(m))return;const S=segs(),ext=S.find(x=>x.kind==="mur"&&!x.sh&&dist(x.a,x.b)>1)||S.find(x=>x.kind==="mur");if(!ext)return;
  const ctm=svg.getScreenCTM(),br=$("board").getBoundingClientRect();if(!ctm)return;const P=q=>{const pt=svg.createSVGPoint();pt.x=q[0];pt.y=q[1];const r=pt.matrixTransform(ctm);return[r.x-br.left,r.y-br.top]},mid=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
  const rm=ext.rm,b=bbox(rm.pts),A=P(mid(ext.a,ext.b,.5));let K,txt;
  if(m==="clo"){const p1=P([(b.x0+b.x1)/2,b.y0]),p2=P([(b.x0+b.x1)/2,b.y1]);K=[[p1,1,0],[p1,1,.12],[p1,.7,.2],[p1,1,.28],[p2,1,.62],[p2,.7,.72],[p2,1,.8],[p2,0,1]];txt="Touchez le mur de départ, puis l'endroit où la cloison s'arrête"}
@@ -1319,5 +1348,52 @@ B.addEventListener("click",()=>{const o=R.hidden;if(!o&&(ST.mode==="trace"||ST.m
 R.addEventListener("click",e=>{const b=e.target.closest("[data-tr]");if(!b)return;const m=b.dataset.tr;if(ST.mode==="clo"&&ST.cur)endClo();
  if(ST.mode===m)setMode("plan");else{setMode(m);if(m==="trace")say(null,"✏️ Mur : touchez les coins un par un. Pour fermer la forme, touchez de nouveau le premier coin.")}sync()});
 ["click","pointerup"].forEach(t=>document.addEventListener(t,()=>setTimeout(sync,0)));})();
+// ---------- Exemple animé de chaque étape (client) ----------
+// Le client voit l'étape se faire sur un plan modèle, dans une petite fenêtre : c'est ce même plan (?gd=N), avec ses vraies fonctions,
+// piloté par un doigt animé. Son propre plan n'est jamais touché. Joué tout seul la 1re fois à chaque étape, puis via « ▶ Exemple ».
+const GDT=["","Les mesures du logement","Séparer les pièces","Fenêtres et portes","Les sols","Les murs à refaire","Les plafonds","Le toit"];
+function gdSeen(n,set){const k="pk-gd-"+n;try{if(set)localStorage.setItem(k,"1");return!!localStorage.getItem(k)}catch(e){gdSeen.m=gdSeen.m||{};if(set)gdSeen.m[k]=1;return!!gdSeen.m[k]}}
+function gdOpen(n){if(!CL||GD||!n||n>7)return;let w=$("gdw");if(!w){w=document.createElement("div");w.id="gdw";w.className="gdw";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.setAttribute("aria-label","Exemple");
+  w.innerHTML='<div class="gd-in"><div class="gd-h"><b><small>Exemple · sur un plan modèle</small><span id="gd-t"></span></b><button type="button" id="gd-x" aria-label="Fermer l\'exemple">✕</button></div><p class="gd-c" id="gd-c" aria-live="polite"></p><iframe id="gd-if" title="Exemple animé" tabindex="-1"></iframe><div class="gd-f"><button type="button" class="re" id="gd-re">↻ Revoir</button><button type="button" class="ok" id="gd-ok">J\'ai compris, à moi !</button></div></div>';document.body.appendChild(w);
+  const close=()=>{w.hidden=true;$("gd-if").src="about:blank"};addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-gd-cap"&&$("gd-c"))$("gd-c").textContent=d.t||""});$("gd-x").onclick=close;$("gd-ok").onclick=close;w.addEventListener("click",e=>{if(e.target===w)close()});$("gd-re").onclick=()=>gdOpen(+w.dataset.n)}
+ w.dataset.n=n;gdSeen(n,1);$("gd-t").textContent=GDT[n]||"";$("gd-c").textContent="";const re=$("gd-re");re.disabled=true;setTimeout(()=>{re.disabled=false},2500);$("gd-if").src=location.pathname+"?client&embed&gd="+n+"&t="+Date.now();w.hidden=false;$("gd-ok").focus({preventScroll:true})}
+// La 1re fois qu'une étape devient l'étape en cours (rien d'autre d'ouvert), l'exemple s'ouvre tout seul.
+let GDQ=null;function gdMaybe(){if(!CL||GD||!READY)return;clearTimeout(GDQ);GDQ=setTimeout(()=>{const n=gStep();if(n>GN()||G.view||gdSeen(n))return;if(!$("sheet").hidden||!$("intro").hidden||!$("bigconf").hidden||($("gdw")&&!$("gdw").hidden)||PD||["win","door","clo","todo","trace"].includes(ST.mode))return;gdOpen(n)},900)}
+if(CL&&!GD){$("clb-v").addEventListener("click",e=>{e.stopPropagation();const n=gStep();gdOpen(n>GN()?gList()[0]||1:n)});$("in-ok").addEventListener("click",()=>setTimeout(gdMaybe,300))}
+// --- dans la petite fenêtre : le plan modèle et le doigt ---
+async function gdRun(n){const wait=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";document.body.append(fg,cap);
+ const B=()=>$("board").getBoundingClientRect();let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);
+ const say2=t=>{cap.textContent=t;try{parent.postMessage({type:"proclik-gd-cap",t},"*")}catch(e){}};
+ const P=q=>{const m=svg.getScreenCTM(),p=svg.createSVGPoint();p.x=q[0];p.y=q[1];const r=p.matrixTransform(m);return[r.x,r.y]};
+ const ev=(el,type,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerId:7,pointerType:"touch",isPrimary:true}));
+ const go=async(x,y)=>{put(x,y);await wait(800)};
+ const tapXY=async(x,y,after)=>{await go(x,y);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");fg.style.visibility="hidden";const el=document.elementFromPoint(x,y);fg.style.visibility="";if(el){ev(el,"pointerdown",x,y);await wait(90);ev(el,"pointerup",x,y)}await wait(after||700)};
+ const tapPlan=(q,after)=>{const s=P(q);return tapXY(s[0],s[1],after)};
+ const tapEl=async(sel,after)=>{const el=typeof sel==="string"?document.querySelector(sel):sel;if(!el)return;el.scrollIntoView({block:"center",behavior:"instant"});await wait(450);const r=el.getBoundingClientRect();await go(r.left+r.width/2,r.top+r.height/2);fg.classList.remove("tap");void fg.offsetWidth;fg.classList.add("tap");el.click();await wait(after||700)};
+ const drag=async(a,b)=>{const A=P(a),Bq=P(b);await go(A[0],A[1]);fg.style.visibility="hidden";const el=document.elementFromPoint(A[0],A[1]);fg.style.visibility="";if(!el)return;ev(el,"pointerdown",A[0],A[1]);fg.style.transition="none";for(let k=1;k<=24;k++){const x=A[0]+(Bq[0]-A[0])*k/24,y=A[1]+(Bq[1]-A[1])*k/24;put(x,y);ev(svg,"pointermove",x,y);await wait(40)}fg.style.transition="";ev(svg,"pointerup",Bq[0],Bq[1]);await wait(700)};
+ const typeIn=async(t)=>{const v=$("edv");if(!v)return;v.value="";for(const c of t){v.value+=c;await wait(170)}await wait(250)};
+ const rm=i=>F().rooms[i],mid=(a,b,t)=>[a[0]+(b[0]-a[0])*(t??.5),a[1]+(b[1]-a[1])*(t??.5)],cen=r=>{const b=bbox(r.pts);return[(b.x0+b.x1)/2,(b.y0+b.y1)/2]};
+ const segOf=(ri,i)=>segs().find(s=>s.rm===rm(ri)&&s.i===i);
+ try{
+  if(n===1){say2("Touchez la 1re mesure, tapez la longueur de votre logement…");const L=[...svg.querySelectorAll("g[data-lab]")];const g0=L[0];if(g0){const r=g0.getBoundingClientRect();await tapXY(r.left+r.width/2,r.top+r.height/2,500)}await typeIn("6,50");await tapEl("#edok",900);
+   say2("…puis la 2e mesure : la largeur. Le plan se met à la bonne taille.");const g1=[...svg.querySelectorAll("g[data-lab]")][1];if(g1){const r=g1.getBoundingClientRect();await tapXY(r.left+r.width/2,r.top+r.height/2,500)}await typeIn("5,00");await tapEl("#edok",1400)}
+  if(n===2){say2("Touchez « Tracer », puis « Cloison ».");await tapEl("#ctr-b",500);await tapEl('[data-tr="clo"]',700);const b=bbox(rm(0).pts),x=r2(b.x0+(b.x1-b.x0)*.55);say2("Touchez le mur où la cloison commence, puis le mur d'en face.");await tapPlan([x,b.y0],600);await tapPlan([x,b.y1],1000);say2("Deux pièces ! Touchez une pièce pour lui donner son nom.");await wait(1800)}
+  if(n===3){say2("Touchez « Fenêtre », puis le mur de la fenêtre.");await tapEl('.cltool[data-cl="win"]',600);const s=segOf(0,0);await tapPlan(mid(s.a,s.b,.5),1100);hideOpp();say2("Elle se pose au milieu avec ses cotes. Faites-la glisser à sa place : elle se cale au milieu et aux quarts.");await wait(600);setMode("plan");draw();await wait(200);const s2=segOf(0,0),o=svg.querySelector("[data-opx]");if(o){const r=o.getBoundingClientRect(),m=svg.getScreenCTM().inverse(),p=svg.createSVGPoint();p.x=r.left+r.width/2;p.y=r.top+r.height/2;const q=p.matrixTransform(m);await drag([q.x,q.y],[q.x-(s2.b[0]-s2.a[0])*.23,q.y-(s2.b[1]-s2.a[1])*.23])}await wait(1400)}
+  if(n===4){say2("Touchez une pièce…");await tapPlan(cen(rm(0)),900);say2("…et dites si son sol est à garder, à changer ou à créer.");await tapEl('[data-sol="etat"][data-v="À changer"]',1100);const all=document.querySelector("[data-solall]");if(all){say2("Le même sol partout ? Un seul geste.");await tapEl(all,1100)}await tapEl("[data-close]",1200)}
+  if(n===5){say2("Touchez « Travaux », puis chaque mur à refaire.");await tapEl('.cltool[data-cl="todo"]',700);const S=segs().filter(x=>x.kind==="mur"&&!x.sh);for(const s of S.slice(0,3))await tapPlan(mid(s.a,s.b,.5),550);say2("Les murs touchés passent en couleur. Tous ? « Tout cocher ».");await wait(1800)}
+  if(n===6){say2("Touchez la pièce où le plafond est à refaire…");await tapPlan(cen(rm(0)),900);const pf=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(pf){pf.scrollIntoView({block:"center",behavior:"instant"});await wait(300)}say2("…puis « À refaire ».");await tapEl('[data-pf="pf"][data-v="À refaire"]',300);{const q=document.querySelector('[data-pf="pf"][data-v="À refaire"]');if(q)q.scrollIntoView({block:"center",behavior:"instant"})}await wait(1200);await tapEl("[data-close]",1200)}
+  if(n===7){say2("Touchez « Toit » : votre toit vu d'en haut.");await tapEl("#v-toit",1000);const pa=svg.querySelector("[data-pan]");if(pa){const r=pa.getBoundingClientRect();say2("Touchez le pan où se trouve la fenêtre de toit…");await tapXY(r.left+r.width/2,r.top+r.height*.6,900)}say2("…puis « + Fenêtre de toit » : elle se pose au milieu du pan.");await tapEl("[data-ftnew]",1800)}
+  say2("À vous ! Fermez cette fenêtre et faites pareil sur votre plan.")}catch(e){say2("À vous ! Fermez cette fenêtre et faites pareil sur votre plan.")}
+ fg.remove()}
+if(GD){document.documentElement.classList.add("gd");
+ // rien ne sort de la petite fenêtre, et seuls les gestes du doigt animé comptent
+ ["pointerdown","pointerup","click","keydown","wheel"].forEach(t=>addEventListener(t,e=>{if(e.isTrusted){e.stopPropagation();e.preventDefault()}},{capture:true,passive:false}));
+ const n=GD,M=(nom,x,y,L,l,sol)=>mkRoom(nom,x,y,L,l,sol);ST.pre="";ST.trav=["fenetres","doublage","plafond","cloison",...(n===7?["rampants"]:[])];
+ if(n===1)ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Mon logement",0,0,4,3.5)]}];
+ else if(n===2)ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Mon logement",0,0,6.5,5)]}];
+ else if(n===7){ST.floors=[{nom:"Combles",comb:true,H:2.5,rooms:[M("Combles",0,0,8,6)]}];ST.comb={...COMBDEF,type:"Aménageables",isol:"En rampant",ep:"240 mm"}}
+ else{const ok={etat:"À changer",_ok:1};ST.floors=[{nom:"Rez-de-chaussée",H:2.5,rooms:[M("Séjour",0,0,4.5,4,n>4?ok:{}),M("Cuisine",4.5,0,3,4,n>4?ok:{})]}]}
+ ST.fi=0;ST.ri=0;G.m1=n>1;for(let k=1;k<n;k++)G.skip[k]=1;READY=true;HIST.length=0;all();say(null,"");setTimeout(()=>gdRun(n),700)}
+
 })();
 </script>
