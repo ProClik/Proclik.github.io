@@ -1433,6 +1433,7 @@ if(GD){document.documentElement.classList.add("gd");
 
 
 
+
 // ---------- Plan guidé pièce par pièce  : ?client&guide#pg=… ----------
 // Le petit formulaire a déjà donné les pièces, leur niveau et leurs ouvertures. Ici : choisir la pièce → la tracer coin par coin
 // (plan fixe) → toucher le mur de chaque ouverture et de la porte → recul, pièce suivante. Rien n'est oublié.
@@ -1499,8 +1500,18 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar,html.pg #toast{displ
    svg.insertAdjacentHTML("beforeend",`<line class="pghw" x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke-width="${u*.5}" stroke-dasharray="${u} ${u*.6}"/><line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="transparent" stroke-width="${u*2.2}" data-pgw="${x}" style="cursor:pointer"/>`)})};
  gdMaybe=()=>{};tutor=()=>{};
  // pendant le choix / les murs : un toucher sur le plan ne fait que choisir un mur
+ // hors tracé : un doigt fait glisser le plan, deux doigts zooment ; un simple toucher sur un mur laiton le choisit
+ const GP=new Map();let g0=null;
+ const gcam=()=>{if(!ST.cam)ST.cam={x:VB.x,y:VB.y,w:VB.w};return ST.cam};
  svg.addEventListener("pointerdown",e=>{if(!PG)return;if(e.pointerType!=="mouse"&&PTR.size>0&&PG.phase==="trace")return;if(PG.phase==="trace"||PG.phase==="size")return;e.stopImmediatePropagation();e.preventDefault();
-  const w=e.target.closest("[data-pgw]");if(w&&PG.phase==="wall")PG.place(+w.dataset.pgw)},{capture:true});
+  try{svg.setPointerCapture(e.pointerId)}catch(_){}GP.set(e.pointerId,{x:e.clientX,y:e.clientY});const c=gcam();
+  if(GP.size===1)g0={x:e.clientX,y:e.clientY,cx:c.x,cy:c.y,moved:false,w:e.target.closest("[data-pgw]")};
+  else{const[p,q]=[...GP.values()];g0={pinch:true,d:Math.hypot(p.x-q.x,p.y-q.y)||1,mx:(p.x+q.x)/2,my:(p.y+q.y)/2,c:{...c},moved:true}}},{capture:true});
+ svg.addEventListener("pointermove",e=>{if(!PG||!GP.has(e.pointerId)||!g0)return;e.stopImmediatePropagation();GP.set(e.pointerId,{x:e.clientX,y:e.clientY});const r=svg.getBoundingClientRect(),c=gcam();
+  if(g0.pinch&&GP.size>=2){const[p,q]=[...GP.values()],d=Math.hypot(p.x-q.x,p.y-q.y)||1,k=g0.d/d,w=Math.max(2.5,Math.min(60,g0.c.w*k)),s0=g0.c.w/r.width,s1=w/r.width,wx=g0.c.x+(g0.mx-r.left)*s0,wy=g0.c.y+(g0.my-r.top)*s0,mx=(p.x+q.x)/2,my=(p.y+q.y)/2;ST.cam={x:wx-(mx-r.left)*s1,y:wy-(my-r.top)*s1,w};draw();return}
+  if(g0.pinch)return;const dx=e.clientX-g0.x,dy=e.clientY-g0.y;if(!g0.moved&&Math.hypot(dx,dy)<8)return;g0.moved=true;const s=c.w/r.width;ST.cam={x:g0.cx-dx*s,y:g0.cy-dy*s,w:c.w};draw()},{capture:true});
+ const gup=e=>{if(!PG||!GP.has(e.pointerId))return;e.stopImmediatePropagation();GP.delete(e.pointerId);const g=g0;if(!GP.size){g0=null;if(g&&!g.moved&&g.w&&PG.phase==="wall")PG.place(+g.w.dataset.pgw)}else if(g&&g.pinch){const[p]=[...GP.values()],c=gcam();g0={x:p.x,y:p.y,cx:c.x,cy:c.y,moved:true}}};
+ svg.addEventListener("pointerup",gup,{capture:true});svg.addEventListener("pointercancel",gup,{capture:true});
  PG.place=x=>{const sg=segs()[x],a=PG.q[0];if(!sg)return;hist();const kind=a.k==="fen"||a.k==="baie"?"fenetre":a.k==="pf"?"pf":"porte",o=newOp(kind,sg);
   if(a.k==="baie"){o.t="Baie coulissante";o.ouv="Coulissant";o.w=2.4;o.h=2.15;o.al=0}if(a.k==="ps")o.t="Porte de service";if(a.k==="pg"){o.t="Porte de garage";o.w=2.4;o.h=2}
   const arr=OP.get(sg.a)||[];arr.push(o);OP.set(sg.a,arr);const L=dist(sg.a,sg.b);arr.forEach((q,j)=>{q.p=r2(Math.max(0,L*(j+1)/(arr.length+1)-q.w/2))});
