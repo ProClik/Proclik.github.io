@@ -5,6 +5,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <script src="../espace/theme.js?v=1"></script>
+<script src="boutons-icones.js?v=1" defer></script>
 <style>
 /* Layout : une colonne centrée (une étape = un écran), barre de progression en haut, boutons collés en bas sur téléphone. */
 :root{
@@ -360,7 +361,8 @@ const D={
    {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
    {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1},
    {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1},
-   {k:"ouv",t:"chips",l:"Ouverture",o:["1 vantail","2 vantaux","Oscillo-battant","Coulissante","Fixe",DK]},
+   {k:"ouv",t:"chips",l:"Ouverture",o:["Battant","Coulissante","Fixe",DK]},
+   {k:"ob",t:"chips",l:"Oscillo-battant ?",o:["Oui","Non"],def:"Oui",h:"Elle s'ouvre aussi en haut, en soufflet, pour aérer.",sh:i=>i.ouv==="Battant"},
    {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
    {k:"coul",t:"chips",l:"Couleur",o:["Blanc","Gris anthracite","Autre",DK],sh:i=>i.mat!=="Bois"},
    {k:"coul",t:"chips",l:"Essence du bois",o:["Chêne clair","Chêne doré","Chêne foncé","Noyer","Pin","Bois exotique","Bois peint",DK],h:"Bois peint : la teinte se précise avec l'artisan.",sh:i=>i.mat==="Bois"},
@@ -411,7 +413,7 @@ function renum(t){const L=S.plan.rooms.filter(r=>r.type===t);L.forEach((r,i)=>{r
 function numBox(k,v,st,u,off,i){const ix=i==null?"":i;return`<div class="num${off?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-pop="${k}|${ix}|-" data-pst="${st}">−</button><input type="text" inputmode="decimal" autocomplete="off" value="${v==null||off?"":String(v).replace(".",",")}" placeholder="${off&&v!=null?String(v).replace(".",","):"0,00"}" data-pnum="1" data-pk="${k}" data-pi="${ix}" id="pn-${{L:"lo",l:"la",H:"h"}[k]}-${ix}" aria-label="${k==="L"?"Longueur":k==="l"?"Largeur":"Hauteur"}"><span class="u">${u}</span><button type="button" aria-label="Plus" data-pop="${k}|${ix}|+" data-pst="${st}">+</button></div></div>`}
 const MINI='<svg viewBox="0 0 220 110" fill="none"><g stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M20 70 80 40l60 30-60 30z" fill="#EAD6B5"/><path d="M80 40l60-30 60 30-60 30z" fill="#D3E5EF"/><path d="M140 70l60-30v14l-60 30z" fill="#C9C1B4"/><path d="M80 100l60-30v14l-60 30z" fill="#C9C1B4" opacity=".0"/><path d="M20 70v12l60 30v-12" fill="#C9C1B4"/><path d="M80 112l60-30v-12l-60 30z" fill="#D9D1C4"/></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="11" fill="#0B1226" text-anchor="middle"><text x="80" y="74">Séjour</text><text x="140" y="44">Cuisine</text></g><g fill="#2EE6C8"><circle cx="196" cy="18" r="9"/></g><path d="M192 18l3 3 6-6" stroke="#0B1226" stroke-width="2.2" fill="none"/></svg>';
 function modeH(){return`<div class="modes">
- <button type="button" class="mcard reco" data-mode="plan" aria-pressed="${S.mode==="plan"}"><span class="rb">Recommandé · 2 minutes</span>${MINI}<b>✏️ Je dessine mon plan</b><span>Choisissez vos pièces, entrez 2 mesures par pièce. On assemble le plan pour vous, et vous le voyez en 3D.</span><ul><li>Le pré-devis le plus juste</li><li>Guidé pas à pas, rien de compliqué</li><li>Pas de mètre ? « Petite, moyenne, grande » suffit</li></ul></button>
+ <button type="button" class="mcard reco" data-mode="plan" aria-pressed="${S.mode==="plan"}"><span class="rb">Recommandé · guidé pas à pas</span>${MINI}<b>✏️ Je dessine mon plan</b><span>Le contour est déjà prêt : vous mettez ses mesures, séparez les pièces et posez fenêtres et portes. Vous le voyez en 3D.</span><ul><li>Le pré-devis le plus juste</li><li>Une étape à la fois, en haut de l'écran</li><li>Une estimation suffit, tout est vérifié sur place</li></ul></button>
  <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>📝 Je préfère décrire mes travaux</b><span>Quelques questions simples, mur par mur, sans dessin.</span></button></div>`}
 function rectSVG(r){const W=320,Hh=190,[L,l]=dimsOf(r),ok=L>0&&l>0;
  if(!ok)return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="70" y="35" width="180" height="110" rx="6" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-dasharray="8 6"/><text x="160" y="96" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="14" fill="currentColor" opacity=".6">Entrez les 2 mesures ↓</text></svg>`;
@@ -488,7 +490,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=8");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=9");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -529,7 +531,7 @@ function fieldH(f,sec,i){
  const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
  const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
  if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
- if(f.t==="chips")return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${f.o.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${o[f.k]===x}" ${da} data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
+ if(f.t==="chips")return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${f.o.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${(o[f.k]??f.def)===x}" ${da} data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
  if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
   return`<div class="q"><label for="${id}">${esc(f.l)}</label>${hint}<div class="num${dk?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${dk?"":esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1" ${dk?"disabled":""}><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div></div>`}
  if(f.t==="step"){const v=o[f.k]??f.min;return`<div class="q"><span class="lab">${esc(f.l)}</span>${hint}<div class="numbox" style="width:max-content"><button type="button" aria-label="Moins" data-step="-1" ${da} data-min="${f.min}" data-max="${f.max}">−</button><input type="text" readonly value="${v}" aria-label="${esc(f.l)}" style="width:64px"><button type="button" aria-label="Plus" data-step="1" ${da} data-min="${f.min}" data-max="${f.max}">+</button></div></div>`}
@@ -591,7 +593,7 @@ function introH(){const has=S.travaux.length>0;
  <button class="btn ghost" type="button" data-example="1">Voir avec un exemple</button>${has?`<button class="btn back" type="button" data-reset="1">Recommencer</button>`:""}</div></section>`}
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
-  if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k];return v?`${f.l} : ${v}`:null};
+  if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
  if(d.g)o.items.forEach((it,i)=>{const parts=d.g.f.map(f=>fmt(f,it)).filter(Boolean);const b=badge(sec,it);out.push(`<b>${d.g.n} ${i+1}</b>${b?` (${b})`:""} : ${parts.map(esc).join(" · ")}`)});
  if(d.f)d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
 // Ce que le plan décrit (quand le client est passé par le plan, il remplace les étapes cloisons, fenêtres, portes, doublage, plafond).
@@ -616,7 +618,7 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
   else items=list(s);if(!items.length)items=["—"];
   h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
  return h+`</div>`}
-function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}});if(st.includes("plan"))det.plan=planPayload();
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant"})});if(st.includes("plan"))det.plan=planPayload();
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
   contact:{prenom:S.contact.prenom,nom:S.contact.nom,telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
   logement:S.logement,mode:S.mode||"texte",travaux:S.travaux,details:det,projet:S.projet,
@@ -676,7 +678,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
  S.logement={cp:"38920",commune:"Crolles",type:"Maison",age:"Oui",occupe:"Oui",ou:["Rez-de-chaussée","Étage(s)"]};
  S.cloison={items:[{L:3.8,H:2.5,piece:"Chambre",portes:1,largeur:"83 cm",galandage:"Non"}],phonique:"Standard"};
  S.doublage={items:[{L:4.2,H:2.5,ext:"Oui",etat:"Abîmé ou irrégulier",fen:1},{L:3.1,H:2.5,ext:"Oui",etat:"Bon, bien droit",fen:0}],objectif:"Avoir droit aux aides",epaisseur_dk:true};
- S.fenetres={items:[{piece:"Chambre",Lc:120,Hc:135,ouv:"2 vantaux",mat:"PVC",coul:"Blanc",volet:"Motorisé",pose:"Dépose complète"}]};
+ S.fenetres={items:[{piece:"Chambre",Lc:120,Hc:135,ouv:"Battant",ob:"Oui",mat:"PVC",coul:"Blanc",volet:"Motorisé",pose:"Dépose complète"}]};
  S.finition={fin:"Prêt à peindre"};S.projet={delai:"Dans les 3 mois",budget:"5 000 à 10 000 €",msg:"Exemple de démonstration."};
  S.contact={prenom:"Exemple",nom:"Démo",tel:"06 00 00 00 00",email:"exemple@exemple.fr",rgpd:true};cur="travaux";render()}
 
