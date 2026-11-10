@@ -1561,6 +1561,8 @@ if(GD){document.documentElement.classList.add("gd");
 
 
 
+
+
 // ---------- Plan guidé pièce par pièce  : ?client&guide#pg=… ----------
 // Le petit formulaire a déjà donné les pièces, leur niveau et leurs ouvertures. Ici : choisir la pièce → la tracer coin par coin
 // (plan fixe) → toucher le mur de chaque ouverture et de la porte → recul, pièce suivante. Rien n'est oublié.
@@ -1571,7 +1573,7 @@ if(CL&&/[?&]guide/.test(location.search)){
  PG={D,list:D.rooms.map(r=>({...r,rm:null})),cur:null,phase:"pick",q:[],last:null};
  document.documentElement.classList.add("pg");
  const st=document.createElement("style");st.textContent=`
-html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar{display:none!important}
+html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar,html.pg #toast{display:none!important}
 #pgtop{position:fixed;z-index:30;left:0;right:0;top:0;padding:10px 14px 8px;display:grid;gap:6px;background:linear-gradient(var(--bg) 75%,transparent)}
 #pgtop .pr{display:flex;align-items:center;gap:10px}#pgtop .pr b{font:800 13.5px Manrope,sans-serif;white-space:nowrap}
 #pgtop .bar{flex:1;height:7px;border-radius:9px;background:var(--line,#D6DAE2);overflow:hidden}#pgtop .bar i{display:block;height:100%;background:#A8823F;border-radius:9px;transition:width .5s}
@@ -1612,7 +1614,7 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar{display:none!importa
  const opsTxt=x=>{const a=ORD.filter(k=>x.op[k]).map(k=>`${x.op[k]} ${x.op[k]>1?PL[k]:RN[k][0]}`);return a.length?a.join(" · "):"Sans fenêtre"};
  function queue(x){const q=[];ORD.forEach(k=>{for(let u=0;u<(x.op[k]||0);u++)q.push({k,u,n:x.op[k]})});const fl=ST.floors[x.lv];if(fl.rooms.length>1&&x.t!=="garage")q.push({k:"pi",u:0,n:1});return q}
  function floors(){ST.floors=D.niv.map(nm=>({nom:nm,H:D.H||2.5,rooms:[],...(nm==="Combles"?{comb:true}:{})}));ST.fi=0;ST.ri=0}
- const ovT=()=>48,ovB=()=>{if(!pan.firstChild)return 8;const r=svg.getBoundingClientRect(),q=pan.getBoundingClientRect();return Math.max(8,r.bottom-q.top+8)};
+ const ovT=()=>48,ovB=()=>{if(!pan.firstChild||PG.phase==="detail"||PG.phase==="size")return 8;const r=svg.getBoundingClientRect(),q=pan.getBoundingClientRect();return Math.max(8,r.bottom-q.top+8)};
  // vue fixe : cadrage automatique entre le bandeau du haut et le panneau du bas, recul après chaque pièce
  PG.fit=()=>{const r=svg.getBoundingClientRect(),W=r.width||360,H=r.height||640,P=[];F().rooms.forEach(q=>P.push(...q.pts));if(ST.fi>0)ST.floors[ST.fi-1].rooms.forEach(q=>P.push(...q.pts));if(ST.trace)P.push(...ST.trace);
   const tp=ovT(),bt=ovB(),A=W/H;let b=P.length?bbox(P):{x0:0,y0:0,x1:6,y1:6};const pad=PG.phase==="pick"||PG.phase==="end"?.6:PG.phase==="trace"?6:2.2;
@@ -1632,7 +1634,7 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar{display:none!importa
  PG.place=x=>{const sg=segs()[x],a=PG.q[0];if(!sg)return;hist();const kind=a.k==="fen"||a.k==="baie"?"fenetre":a.k==="pf"?"pf":"porte",o=newOp(kind,sg);
   if(a.k==="baie"){o.t="Baie coulissante";o.ouv="Coulissant";o.w=2.4;o.h=2.15;o.al=0}if(a.k==="ps")o.t="Porte de service";if(a.k==="pg"){o.t="Porte de garage";o.w=2.4;o.h=2}
   const arr=OP.get(sg.a)||[];arr.push(o);OP.set(sg.a,arr);const L=dist(sg.a,sg.b);arr.forEach((q,j)=>{q.p=r2(Math.max(0,L*(j+1)/(arr.length+1)-q.w/2))});
-  PG.last={o,sg:sg.a,a};PG.edit={o,k:a.k,sz:"std",W:Math.round(o.w*100),H:Math.round(o.h*100)};PG.phase="detail";all();notify();ui();PG.anim()};
+  PG.last={o,sg:sg.a,a};PG.edit={o,k:a.k,sz:"std",W:Math.round(o.w*100),H:Math.round(o.h*100)};PG.phase="detail";all();notify();ui()};
  PG.closed=rm=>{const x=PG.cur;rm.nom=x.n;x.rm=rm;PG.q=queue(x);PG.phase=PG.q.length?"wall":"pick";if(!PG.q.length)done();else{ST.cam=null;all();ui();PG.anim()}};
  function done(){PG.cur=null;PG.q=[];PG.phase=PG.list.every(x=>x.rm)?"end":"pick";all();ui();setTimeout(()=>PG.anim(),30)}
  function next(){PG.q.shift();PG.edit=null;if(PG.q.length){PG.phase="wall";all();ui();PG.anim()}else done()}
