@@ -344,9 +344,10 @@ const D={
    {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")}]},
  rampants:{t:"L'isolation sous la toiture",s:"Pour des combles aménagés (chambre sous les toits).",cheer:"Vous y êtes presque",f:[
    {k:"surface",t:"num",l:"Surface de toiture à isoler",u:"m²",st:1,dk:1,h:"Côté intérieur, pans de toit seulement."},
-   {k:"hfait",t:"num",l:"Hauteur sous le faîtage, au milieu",u:"cm",st:1,dk:1,h:"Du plancher des combles jusqu'au point le plus haut du toit."},
-   {k:"hmur1",t:"num",l:"Hauteur du petit mur, sous le 1er pan",u:"cm",st:1,dk:1,h:"Du plancher jusqu'au début de la pente. 0 s'il n'y a pas de petit mur."},
-   {k:"hmur2",t:"num",l:"Hauteur du petit mur, sous le 2e pan",u:"cm",st:1,dk:1},
+   {k:"forme",t:"chips",l:"Forme du toit",o:["2 pentes","1 pente",DK],h:"2 pentes : le toit monte des deux côtés jusqu'au faîtage, au milieu. 1 pente : il monte d'un seul côté, jusqu'à un mur plus haut."},
+   {k:"hfait",t:"num",l:"Hauteur sous le toit, au point le plus haut",lf:i=>i.forme==="1 pente"?"Hauteur sous le toit, côté haut":"Hauteur sous le faîtage, au milieu",u:"cm",st:1,dk:1,hf:i=>i.forme==="1 pente"?"Du plancher des combles jusqu'au toit, contre le mur le plus haut.":"Du plancher des combles jusqu'au point le plus haut du toit."},
+   {k:"hmur1",t:"num",l:"Hauteur du petit mur, sous le 1er pan",lf:i=>i.forme==="1 pente"?"Hauteur du petit mur, côté bas":"Hauteur du petit mur, sous le 1er pan",u:"cm",st:1,dk:1,h:"Du plancher jusqu'au début de la pente. 0 s'il n'y a pas de petit mur."},
+   {k:"hmur2",t:"num",l:"Hauteur du petit mur, sous le 2e pan",u:"cm",st:1,dk:1,sh:i=>i.forme!=="1 pente"},
    {k:"chevrons",t:"num",l:"Hauteur des chevrons (si vous la connaissez)",u:"cm",st:1,dk:1,dkdef:1},
    {k:"ecran",t:"chips",l:"Voit-on une bâche ou un film sous les tuiles ?",o:["Oui","Non",DK]},
    {k:"ft",t:"chips",l:"Fenêtres de toit",o:["Aucune","1","2","3","4 ou plus",DK]},
@@ -487,7 +488,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=4");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=5");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -523,7 +524,7 @@ const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null
 function obj(sec,i){return i==null?S[sec]:S[sec].items[i]}
 
 function fieldH(f,sec,i){
- const o=obj(sec,i);if(f.sh&&!f.sh(o))return"";
+ const o=obj(sec,i);if(f.sh&&!f.sh(o))return"";if(f.lf||f.hf)f={...f,l:f.lf?f.lf(o):f.l,h:f.hf?f.hf(o):f.h};
  const id=`${sec}-${i??"x"}-${f.k}`,da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
  const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
  const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
@@ -680,7 +681,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
  S.contact={prenom:"Exemple",nom:"Démo",tel:"06 00 00 00 00",email:"exemple@exemple.fr",rgpd:true};cur="travaux";render()}
 
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
- if(d.type==="proclik-plan-ready"){f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE()},"*");return}
+ if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),toit:S.travaux.includes("rampants")?{forme:R.forme||null,hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2")}:null},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
  if(d.type==="proclik-plan-sheet")return;
  if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}

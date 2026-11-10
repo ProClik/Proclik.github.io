@@ -168,3 +168,4 @@ html body #ctr-bar svg{width:22px;height:22px;color:var(--muted)}
 html body #ctr-bar button[aria-pressed="true"]{box-shadow:var(--in-s);color:var(--mint-ink)}
 html body #ctr-bar button[aria-pressed="true"] svg{color:var(--mint-ink)}
 html.client body #toast{top:120px}
+html body .chip.add.combles-on{font-weight:800;outline:1.5px solid currentColor;outline-offset:-4px}
