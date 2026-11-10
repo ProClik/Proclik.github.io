@@ -1557,6 +1557,7 @@ if(GD){document.documentElement.classList.add("gd");
 
 
 
+
 // ---------- Plan guidé pièce par pièce  : ?client&guide#pg=… ----------
 // Le petit formulaire a déjà donné les pièces, leur niveau et leurs ouvertures. Ici : choisir la pièce → la tracer coin par coin
 // (plan fixe) → toucher le mur de chaque ouverture et de la porte → recul, pièce suivante. Rien n'est oublié.
@@ -1597,7 +1598,11 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar{display:none!importa
  // Tailles « Standard » = celles que le plan pose d'office (newOp) ; baie et porte de garage : valeurs provisoires de la maquette
  const STD={fen:[120,135],pf:[140,215],pe:[90,215],ps:[90,215],pg:[240,200],baie:[240,215],pi:[83,204]};
  const art=x=>{const n=x.n,v=/^[AEÉIOUY]/.test(n),fem=["cuisine","chambre","sdb","entree","buanderie"].includes(x.t);return x.t==="wc"?"les WC":(v?"l'":fem?"la ":"le ")+n.charAt(0).toLowerCase()+n.slice(1)};
- const opsTxt=x=>{const a=ORD.filter(k=>x.op[k]).map(k=>`${x.op[k]} ${RN[k][0]}${x.op[k]>1&&!/ d/.test(RN[k][0])?"s":""}`);return a.length?a.join(" · "):"Sans fenêtre"};
+ // pluriels et accords en français : 2 baies vitrées, 2 portes-fenêtres ; du séjour, de la cuisine, de l'entrée, des WC ; le séjour est tracé, la cuisine est tracée
+ const PL={fen:"fenêtres",pf:"portes-fenêtres",baie:"baies vitrées",pe:"portes d'entrée",ps:"portes de service",pg:"portes de garage",pi:"portes"};
+ const fem=x=>["cuisine","chambre","sdb","entree","buanderie"].includes(x.t);
+ const deArt=x=>{const a=art(x);return a.startsWith("le ")?"du "+a.slice(3):a.startsWith("les ")?"des "+a.slice(4):"de "+a};
+ const opsTxt=x=>{const a=ORD.filter(k=>x.op[k]).map(k=>`${x.op[k]} ${x.op[k]>1?PL[k]:RN[k][0]}`);return a.length?a.join(" · "):"Sans fenêtre"};
  function queue(x){const q=[];ORD.forEach(k=>{for(let u=0;u<(x.op[k]||0);u++)q.push({k,u,n:x.op[k]})});const fl=ST.floors[x.lv];if(fl.rooms.length>1&&x.t!=="garage")q.push({k:"pi",u:0,n:1});return q}
  function floors(){ST.floors=D.niv.map(nm=>({nom:nm,H:D.H||2.5,rooms:[],...(nm==="Combles"?{comb:true}:{})}));ST.fi=0;ST.ri=0}
  const ovT=()=>48,ovB=()=>{if(!pan.firstChild)return 8;const r=svg.getBoundingClientRect(),q=pan.getBoundingClientRect();return Math.max(8,r.bottom-q.top+8)};
@@ -1629,10 +1634,10 @@ html.pg #gdw,html.pg #tutor,html.pg #clb-p,html.pg #ctr-bar{display:none!importa
   if(PG.phase==="pick"){const left=PG.list.filter(z=>!z.rm),first=!nd;h=first?"Quelle pièce tracez-vous en premier ?":"Bravo ! Quelle pièce tracez-vous maintenant ?";p=first?"Commencez par l'entrée, côté rue, c'est le plus simple.":"De préférence une pièce qui touche celles déjà tracées.";
    b=`<div class="hd"><b>${first?"Par quelle pièce commencer ?":"Pièce suivante ?"}</b>${nd?`<button type="button" class="bk" data-pgundo="1">↶ Effacer la dernière</button>`:`<button type="button" class="bk" data-pgback="1">← Mes réponses</button>`}</div>`+D.niv.map((nm,l)=>{const rs=left.filter(z=>z.lv===l);return rs.length?`${D.niv.length>1?`<p class="sec">${nm}</p>`:""}${rs.length>2?`<p class="lab" style="margin:0">Glissez les cartes pour voir les ${rs.length} pièces →</p>`:""}<div class="pk${rs.length<=2?" one":""}">${rs.map(z=>`<button type="button" class="pkc${first&&z.t==="entree"?" reco":""}" data-pk="${PG.list.indexOf(z)}"><span class="sw2" style="background:${COL[z.t]||"#E5E5E5"}"></span><span><b>${esc(z.n)}</b><small>${opsTxt(z)}</small></span>${first&&z.t==="entree"?"<em>Conseillé</em>":""}</button>`).join("")}</div>`:""}).join("")
     }
-  else if(PG.phase==="size"){h=`${art(x).replace(/^./,c=>c.toUpperCase())} est déjà tracée en rectangle`;p="Touchez chaque cote pour mettre votre mesure, puis « C'est bon ».";b=`<button type="button" class="go" data-pgsized="1">C'est bon</button>`}
+  else if(PG.phase==="size"){h=`${art(x).replace(/^./,c=>c.toUpperCase())} ${x.t==="wc"?"sont déjà tracés":fem(x)?"est déjà tracée":"est déjà tracé"} en rectangle`;p="Touchez chaque cote pour mettre votre mesure, puis « C'est bon ».";b=`<button type="button" class="go" data-pgsized="1">C'est bon</button>`}
   else if(PG.phase==="trace"){const n=(ST.trace||[]).length;h=`Tracez ${art(x)}`;p=!n?"Touchez un premier coin de la pièce.":n<3?"Touchez le coin suivant : la ligne se cale à l'angle droit.":"Continuez, ou touchez le premier coin pour fermer la pièce.";
    cb.hidden=false;cb.textContent="Changer";cb.dataset.pgchg=1;b=n?`<div class="row"><button type="button" class="b" data-pgpop="1">↶ Retirer le dernier coin</button>${n>=3?`<button type="button" class="b on" data-pgclose="1">Fermer la pièce</button>`:""}</div>`:""}
-  else if(PG.phase==="wall"){h=a.k==="pi"?`Où est la porte ${x.t==="wc"?"des WC":"de "+art(x)} ?`:a.n>1?`Touchez le mur de la ${RN[a.k][0]} n° ${a.u+1} sur ${a.n}`:`Touchez le mur où se trouve ${RN[a.k][1]}`;p=a.k==="pi"?"Touchez le mur, entre deux pièces, où se trouve la porte.":"Les murs possibles clignotent en laiton : touchez le bon.";
+  else if(PG.phase==="wall"){h=a.k==="pi"?`Où est la porte ${deArt(x)} ?`:a.n>1?`Touchez le mur de ${RN[a.k][1]} n° ${a.u+1} sur ${a.n}`:`Touchez le mur où se trouve ${RN[a.k][1]}`;p=a.k==="pi"?"Touchez le mur, entre deux pièces, où se trouve la porte.":"Les murs possibles clignotent en laiton : touchez le bon.";
    cb.hidden=false;cb.textContent=a.k==="pi"?"Pas de porte":"Je ne sais pas";cb.dataset.pgskip=1;b=""}
   else if(PG.phase==="detail"){const E=PG.edit,k=E.k,o=E.o;h=`${k==="pi"?"Porte":RN[k][0].replace(/^./,c=>c.toUpperCase())} posée ✓`;p="Deux petites questions, ou touchez OK.";
    b=`<div class="row"><span class="lab">Taille :</span><button type="button" class="chip" data-pgsz="std" aria-pressed="${E.sz==="std"}">Standard (${STD[k][0]} × ${STD[k][1]})</button><button type="button" class="chip" data-pgsz="mes" aria-pressed="${E.sz==="mes"}">📏 Je connais</button></div>${E.sz==="mes"?`<div class="row"><span class="lab">Largeur</span><span class="st"><button type="button" data-pgm="W|-1">−</button><span>${E.W} cm</span><button type="button" data-pgm="W|1">+</button></span><span class="lab">Hauteur</span><span class="st"><button type="button" data-pgm="H|-1">−</button><span>${E.H} cm</span><button type="button" data-pgm="H|1">+</button></span></div>`:""}${k==="pi"?"":`<div class="row"><span class="lab">Elle est :</span>${[["Déjà en place","À garder"],["À changer","À changer"],["À créer","À créer"]].map(([v,t])=>`<button type="button" class="chip" data-pgchg2="${v}" aria-pressed="${o.chg===v}">${t}</button>`).join("")}</div>`}<div class="row"><button type="button" class="b" data-pgdel="1">↶ Annuler</button></div><button type="button" class="go" data-pgok="1">OK</button>`}
