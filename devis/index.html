@@ -50,6 +50,7 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,34px);l
 .q>label,.q>.lab{font-weight:700}
 .hint{font-size:13px;color:var(--muted);margin:-2px 0 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
+.q:has(> .geo){position:relative}.geo{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--bg);border-radius:16px;box-shadow:var(--up-s),0 14px 30px rgba(14,19,34,.18);padding:6px;max-height:300px;overflow:auto;animation:geoIn .25s ease}.geo:empty{display:none}@keyframes geoIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.geo .gh{font-size:12px;color:var(--muted);margin:4px 10px 6px}html body .geo button.gi{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:10px 12px;border:0;border-radius:12px;background:transparent;box-shadow:none;color:var(--fg);font:inherit;font-weight:600;font-size:16px;text-align:left;cursor:pointer}html body .geo button.gi+button.gi{border-top:1px solid var(--line);border-radius:0 0 12px 12px}html body .geo button.gi:hover,html body .geo button.gi:focus-visible{background:var(--line)}html body .geo button.gi:active{box-shadow:var(--in)}.geo .gi small{color:var(--muted);font-weight:500;font-size:14px}
 .chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:600 15px/1.2 var(--f-body);padding:11px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
 .chip:hover{border-color:var(--mint)}
 .chip:active{transform:scale(.97)}
@@ -566,6 +567,7 @@ function render(){
   if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
  }
  if(cur!=="plan")h+=`<p class="err" id="err" role="alert"></p>`;h+=`</section>`;app.innerHTML=h;
+ if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
   document.getElementById("pextra").innerHTML=planCard()+(S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+
@@ -726,9 +728,40 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.step){const v=(o[k]??+ds.min)+(+ds.step);o[k]=Math.max(+ds.min,Math.min(+ds.max,v));save();render();return}
 });
 function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
+// Code postal <-> commune : propositions de la base officielle des communes (geo.api.gouv.fr, gratuite, sans clé).
+// Sans réseau, rien ne s'affiche et le client tape comme avant.
+const GEO="https://geo.api.gouv.fr/communes?fields=nom,codesPostaux&",geoC={};let geoT=null,geoN=0;
+async function geoGet(q){if(geoC[q])return geoC[q];const a=new AbortController(),t=setTimeout(()=>a.abort(),6000);try{const r=await fetch(GEO+q,{signal:a.signal});clearTimeout(t);if(!r.ok)return null;const j=await r.json();geoC[q]=j;return j}catch(e){clearTimeout(t);return null}}
+const geoNorm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+function geoBox(k){const el=document.getElementById("logement-x-"+k);if(!el)return null;let b=document.getElementById("geo-"+k);if(!b){b=document.createElement("div");b.className="geo";b.id="geo-"+k;b.setAttribute("aria-live","polite");el.closest(".q").appendChild(b)}return b}
+function geoClear(){["cp","commune"].forEach(k=>{const b=document.getElementById("geo-"+k);if(b)b.innerHTML=""})}
+function geoSet(cp,nom){const L=S.logement;L.cp=cp;L.commune=nom;save();const a=document.getElementById("logement-x-cp"),b=document.getElementById("logement-x-commune");if(a)a.value=cp;if(b)b.value=nom;const e=document.getElementById("err");if(e)e.textContent="";geoClear()}
+function geoChips(k,txt,list){const b=geoBox(k);if(!b)return;if(!list.length){b.innerHTML="";return}
+ b.innerHTML=`<p class="gh">${esc(txt)}</p>${list.map(x=>`<button type="button" class="gi" role="option" data-geocp="${esc(x.cp)}" data-geonom="${esc(x.nom)}"><span>${esc(x.nom)}</span><small>${esc(x.cp)}</small></button>`).join("")}`;b.setAttribute("role","listbox")}
+async function geoFromCp(){const L=S.logement,cp=(L.cp||"").trim(),n=++geoN;if(!/^\d{5}$/.test(cp)){const b=document.getElementById("geo-cp");if(b)b.innerHTML="";return}
+ const j=await geoGet("codePostal="+cp);if(n!==geoN||cur!=="logement"||!j)return;
+ const list=j.map(c=>({cp,nom:c.nom})).sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
+ if(!list.length){geoChips("cp","",[]);return}
+ if(list.some(x=>geoNorm(x.nom)===geoNorm(L.commune))){geoChips("cp","",[]);return}
+ if(list.length===1&&!(L.commune||"").trim()){geoSet(cp,list[0].nom);return}
+ geoChips("cp","Choisissez votre commune",list)}
+async function geoFromNom(){const L=S.logement,nom=(L.commune||"").trim(),n=++geoN;const b0=document.getElementById("geo-commune");
+ if(geoNorm(nom).length<2){if(b0)b0.innerHTML="";return}
+ const cp=(L.cp||"").trim(),withCp=/^\d{5}$/.test(cp);
+ let j=await geoGet("nom="+encodeURIComponent(nom)+(withCp?"&codePostal="+cp:"")+"&boost=population&limit=8");
+ if(withCp&&j&&!j.length)j=await geoGet("nom="+encodeURIComponent(nom)+"&boost=population&limit=8");
+ if(n!==geoN||cur!=="logement"||!j)return;
+ const list=[];j.forEach(c=>(c.codesPostaux||[]).forEach(p=>{if(!withCp||j.every(d=>!(d.codesPostaux||[]).includes(cp))||p===cp)list.push({cp:p,nom:c.nom})}));
+ const top=list.slice(0,6);
+ if(top.length===1&&geoNorm(top[0].nom)===geoNorm(nom)&&top[0].cp===cp){if(b0)b0.innerHTML="";return}
+ const cb=document.getElementById("geo-cp");if(cb)cb.innerHTML="";
+ geoChips("commune","Choisissez votre commune",top)}
+function geoAsk(k){clearTimeout(geoT);if(k==="cp"){geoFromCp();return}geoT=setTimeout(geoFromNom,300)}
+function geoInit(){geoBox("cp");geoBox("commune");if(/^\d{5}$/.test((S.logement.cp||"").trim())&&!(S.logement.commune||"").trim())geoFromCp()}
+document.addEventListener("click",ev=>{const b=ev.target.closest("[data-geocp]");if(!b){if(!ev.target.closest(".geo,#logement-x-cp,#logement-x-commune"))geoClear();return}ev.stopPropagation();geoSet(b.dataset.geocp,b.dataset.geonom)},true);
 document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pnum){planInput(el);return}if(!ds.s)return;const o=obj(ds.s,ds.i===""?null:+ds.i);
  if(ds.num){o[ds.k]=el.value.replace(",",".");o[ds.k+"_dk"]=false;save();const it=el.closest(".item");if(it){const b=badge(ds.s,o);let bd=it.querySelector(".badge");if(b&&!bd){bd=document.createElement("span");bd.className="badge";it.querySelector(".item-h div").prepend(bd)}if(bd)bd.textContent=b}return}
- if(ds.txt){o[ds.k]=el.value;save();return}
+ if(ds.txt){o[ds.k]=el.value;save();if(ds.s==="logement"&&(ds.k==="cp"||ds.k==="commune"))geoAsk(ds.k);return}
  if(ds.chk){o[ds.k]=el.checked;save();return}});
 document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)return;const k=el.dataset.file;
  [...el.files].forEach(f=>{if(!/^image\/|application\/pdf/.test(f.type))return;if(f.size>15*1024*1024)return;
