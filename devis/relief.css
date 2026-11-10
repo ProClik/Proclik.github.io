@@ -49,7 +49,11 @@ html body .card:hover,html body .drop:hover{border-color:transparent}
 html body .card[aria-pressed="true"],html body .ptile.on,html body .mcard[aria-pressed="true"]{background:var(--bg);box-shadow:var(--in)}
 html body .card[aria-pressed="true"]::after{background:var(--acc);color:var(--ink)}
 html body .card svg{color:var(--mint-ink)}
-html body .mcard.reco{border:0;box-shadow:var(--up),0 0 0 2px var(--acc)}
+/* « Recommandé » = seulement l'étiquette : la carte n'a l'air choisie qu'une fois touchée (Cyril 10/11 19h21). */
+html body .mcard.reco{border:0;box-shadow:var(--up)}
+html body .mcard[aria-pressed="true"]{box-shadow:var(--in),0 0 0 2px var(--acc)}
+html body .mcard[aria-pressed="true"]>b{padding-right:32px}
+html body .mcard[aria-pressed="true"]::after{content:"✓";position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font:800 15px/1 var(--f-body,sans-serif)}
 html body .mcard .rb{background:var(--acc);color:var(--ink)}
 
 /* champs à remplir : en creux, avec un fin contour pour bien les repérer */
