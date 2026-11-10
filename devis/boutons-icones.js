@@ -22,11 +22,13 @@
     plan:'<path d="M3.5 4h17v16h-17z"/><path d="M11 4v6H3.5M11 14v6M15 10h5.5"/>',
     turn:'<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/>',
     help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/>',
+    ceil:'<path d="M3 5h18"/><path d="M4.5 5v3.5h15V5"/><path d="M9 8.5V12M15 8.5V12"/><path d="M6 12h12"/><path d="M12 16v4M10 18h4" opacity=".6"/>',
+    floor:'<path d="M3 15 9 9h12l-6 6z"/><path d="M6 12h12M12 9l-6 6M17 9l-6 6"/><path d="M3 15v3h12v-3M15 18l6-6v-3"/>',
     send:'<path d="M3 11.5 21 3l-6.5 18-3-7.5z"/><path d="M11.5 13.5 21 3"/>'
   };
   // Le premier texte qui correspond gagne : du plus précis au plus général.
-  var R=[[/fen[êe]tres? de toit/i,'ft'],[/porte-fen[êe]tre/i,'pf'],[/fen[êe]tre/i,'win'],[/\bportes?\b/i,'door'],[/escalier/i,'esc'],[/cloison/i,'clo'],[/\bmurs?\b/i,'wall'],
-    [/[ée]tage/i,'lvl'],[/combles|\btoit\b/i,'roof'],[/pi[èe]ce/i,'room'],[/supprimer|retirer/i,'del'],[/copier|dupliquer/i,'copy'],[/chevron/i,'chev'],[/\b3d\b/i,'cube'],
+  var R=[[/supprimer|retirer/i,'del'],[/copier|dupliquer/i,'copy'],[/m[êe]me sol|\bsols?\b/i,'floor'],[/fen[êe]tres? de toit/i,'ft'],[/porte-fen[êe]tre/i,'pf'],[/fen[êe]tre/i,'win'],[/\bportes?\b/i,'door'],[/escalier/i,'esc'],[/cloison/i,'clo'],[/\bmurs?\b/i,'wall'],[/plafond/i,'ceil'],
+    [/[ée]tage/i,'lvl'],[/combles|\btoit\b/i,'roof'],[/pi[èe]ce/i,'room'],[/chevron/i,'chev'],[/\b3d\b/i,'cube'],
     [/^options$/i,'opt'],[/photo/i,'photo'],[/plan\b/i,'plan'],[/tourner/i,'turn'],[/je n'y arrive pas|besoin d'aide/i,'help'],[/envoyer/i,'send']];
   var SEL='button.btn,button.add,button.chip.add,#opp button,.sh-h button,button.bigbtn,label.drop b';
   // Boutons qui ont déjà leur icône, ou qu'il ne faut pas toucher (barre d'outils, étapes, choix Plan/3D, retour/continuer…).

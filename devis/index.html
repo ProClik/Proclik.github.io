@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <script src="../espace/theme.js?v=1"></script>
-<script src="boutons-icones.js?v=1" defer></script>
+<script src="boutons-icones.js?v=2" defer></script>
 <style>
 /* Layout : une colonne centrée (une étape = un écran), barre de progression en haut, boutons collés en bas sur téléphone. */
 :root{
@@ -490,7 +490,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=9");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=10");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -542,10 +542,13 @@ function fieldH(f,sec,i){
  if(f.t==="file"){const L=files[f.k];return`<div class="q"><span class="lab">${esc(f.l)}</span><label class="drop" for="${id}"><b>${esc(f.big)}</b><span>${esc(f.small)}</span><input id="${id}" type="file" accept="${f.acc}" ${f.multi?"multiple":""} data-file="${f.k}"></label><div class="thumbs">${L.map(x=>`<figure>${x.img?`<img src="${x.img}" alt="">`:`<div class="pdf">PDF</div>`}<figcaption>${esc(x.name)}</figcaption></figure>`).join("")}</div></div>`}
  return"";
 }
+// Vantaux d'après la largeur (comme le plan) : jusqu'à 85 cm = 1 vantail, moins de 180 cm = 2, au-delà = 3 ; coulissant : 2 au moins.
+function vtxN_F(it){const w=pn(it.Lc);if(!w||it.Lc_dk||!["Battant","Coulissante"].includes(it.ouv))return null;const n=w<=85?1:w<180?2:3;return it.ouv==="Coulissante"?Math.max(2,n):n}
+function vtxF(it){const n=vtxN_F(it);return n?n+(n>1?" vantaux":" vantail"):""}
 function badge(sec,it){
  if(sec==="cloison"||sec==="doublage"){const L=pn(it.L),H=pn(it.H);if(L&&H&&!it.L_dk&&!it.H_dk)return`≈ ${fr(L*H)} m²`;return""}
  if(sec==="plafond"){const L=pn(it.L),l=pn(it.l);if(L&&l&&!it.L_dk&&!it.l_dk)return`≈ ${fr(L*l)} m²`;return""}
- if(sec==="fenetres"){const a=pn(it.Lc),b=pn(it.Hc);if(a&&b&&!it.Lc_dk&&!it.Hc_dk)return`${fr(a)} × ${fr(b)} cm`;return""}
+ if(sec==="fenetres"){const a=pn(it.Lc),b=pn(it.Hc),v=vtxF(it);if(a&&b&&!it.Lc_dk&&!it.Hc_dk)return`${fr(a)} × ${fr(b)} cm${v?" · "+v:""}`;return v}
  if(sec==="portes")return it.largeur&&it.largeur!==DK?`${it.largeur} × 204 cm`:"";
  return"";
 }
@@ -618,7 +621,7 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
   else items=list(s);if(!items.length)items=["—"];
   h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
  return h+`</div>`}
-function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant"})});if(st.includes("plan"))det.plan=planPayload();
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
   contact:{prenom:S.contact.prenom,nom:S.contact.nom,telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
   logement:S.logement,mode:S.mode||"texte",travaux:S.travaux,details:det,projet:S.projet,
@@ -686,6 +689,7 @@ addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pfr
  if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),toit:S.travaux.includes("rampants")?{forme:R.forme||null,hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2")}:null},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
  if(d.type==="proclik-plan-sheet")return;
+ if(d.type==="proclik-plan-trav"&&Array.isArray(d.travaux)){d.travaux.forEach(k=>{if(TRAVAUX.some(t=>t[0]===k)&&!S.travaux.includes(k))S.travaux.push(k)});save();return}
  if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}
  if(d.type==="proclik-plan-finish"){clearTimeout(PFT);closePlan();return}
  if(d.type==="proclik-plan-help"){closePlan();confirmBig(PRE()?`Pas de souci, ${PRE()}, on vous aide`:"Pas de souci, on vous aide","Votre plan est gardé tel quel. L'artisan vous appellera pour le terminer avec vous. Il reste juste quelques questions et vos coordonnées.","Continuer",()=>{S.plan.aide=true;S.plan.noWallOk=true;save();if(cur==="plan")go(1)},"Revenir au plan","🤝");return}
