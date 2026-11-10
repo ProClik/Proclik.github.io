@@ -169,3 +169,4 @@ html body #ctr-bar button[aria-pressed="true"]{box-shadow:var(--in-s);color:var(
 html body #ctr-bar button[aria-pressed="true"] svg{color:var(--mint-ink)}
 html.client body #toast{top:120px}
 html body .chip.add.combles-on{font-weight:800;outline:1.5px solid currentColor;outline-offset:-4px}
+html body #v-toit.next{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
