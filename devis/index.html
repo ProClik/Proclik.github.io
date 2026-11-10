@@ -344,8 +344,14 @@ const D={
    {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")}]},
  rampants:{t:"L'isolation sous la toiture",s:"Pour des combles aménagés (chambre sous les toits).",cheer:"Vous y êtes presque",f:[
    {k:"surface",t:"num",l:"Surface de toiture à isoler",u:"m²",st:1,dk:1,h:"Côté intérieur, pans de toit seulement."},
+   {k:"hfait",t:"num",l:"Hauteur sous le faîtage, au milieu",u:"cm",st:1,dk:1,h:"Du plancher des combles jusqu'au point le plus haut du toit."},
+   {k:"hmur1",t:"num",l:"Hauteur du petit mur, sous le 1er pan",u:"cm",st:1,dk:1,h:"Du plancher jusqu'au début de la pente. 0 s'il n'y a pas de petit mur."},
+   {k:"hmur2",t:"num",l:"Hauteur du petit mur, sous le 2e pan",u:"cm",st:1,dk:1},
    {k:"chevrons",t:"num",l:"Hauteur des chevrons (si vous la connaissez)",u:"cm",st:1,dk:1,dkdef:1},
    {k:"ecran",t:"chips",l:"Voit-on une bâche ou un film sous les tuiles ?",o:["Oui","Non",DK]},
+   {k:"ft",t:"chips",l:"Fenêtres de toit",o:["Aucune","1","2","3","4 ou plus",DK]},
+   {k:"ftsz",t:"chips",l:"Taille des fenêtres de toit (cm)",o:["55 × 78","78 × 98","78 × 118","114 × 118",DK],h:"Tailles courantes. Une autre taille se précise en remarque.",sh:i=>!!i.ft&&i.ft!=="Aucune"&&i.ft!==DK},
+   {k:"ftetat",t:"chips",l:"Ces fenêtres de toit sont…",o:["Déjà en place","À créer","À changer",DK],sh:i=>!!i.ft&&i.ft!=="Aucune"&&i.ft!==DK},
    {k:"fin",t:"chips",l:"Finition souhaitée",o:["Isolation + plaques de plâtre","Isolation seule"]},
    {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK]}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
@@ -481,7 +487,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=3");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=4");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
