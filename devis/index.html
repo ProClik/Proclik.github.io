@@ -132,6 +132,15 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .perks li{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .perks i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--mint-ink);display:grid;place-items:center;font-style:normal;font-weight:800}
 .recap{display:grid;gap:12px}
+.ritem{margin:8px 0;border-radius:16px;box-shadow:var(--up-s);background:var(--surface)}
+.ritem .ri-s{appearance:none;border:0;background:none;width:100%;text-align:left;font:inherit;color:inherit;list-style:none;display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ritem:not(.open) ul{display:none}
+.ri-ic{width:34px;height:34px;flex:none;color:var(--mint-ink);display:grid;place-items:center}.ri-ic svg{width:30px;height:30px}
+.ri-t{flex:1;min-width:0;display:grid;gap:1px}.ri-t b{font-size:15px;color:var(--fg)}.ri-b{font-weight:800;color:var(--mint-ink);font-size:14.5px;font-variant-numeric:tabular-nums}
+.ri-m{display:flex;align-items:center;gap:4px;font:700 12.5px var(--f-body);color:var(--muted);white-space:nowrap}.ri-m svg{width:18px;height:18px;transition:transform .35s ease}
+.ritem.open .ri-m svg{transform:rotate(180deg)}.ritem.open .ri-m{font-size:0;gap:0}
+.ritem ul{list-style:none;margin:0;padding:2px 14px 12px 58px!important;display:grid;gap:6px!important}
+.ritem li{display:grid;gap:0;font-size:13.5px}.ritem li span{color:var(--muted);font-size:12.5px}.ritem li b{font-weight:700}
 .rblock{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
 .rblock h3{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;gap:10px}
 .rblock h3 button{appearance:none;border:0;background:none;color:var(--mint-ink);font:700 13px var(--f-body);cursor:pointer}
@@ -736,7 +745,7 @@ function introH(){const has=S.travaux.length>0;
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
   if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
- if(d.g)o.items.forEach((it,i)=>{const b=badge(sec,it),skip=b?({fenetres:["taille","Lc","Hc"],portes:["largeur"]}[sec]||[]):[];const parts=d.g.f.filter(f=>!skip.includes(f.k)).map(f=>fmt(f,it)).filter(Boolean);if(sec==="fenetres"&&b&&/^Porte-fenêtre/.test(it.taille||""))parts.unshift("Porte-fenêtre");out.push(`<b>${d.g.n} n°${i+1}</b>${b?` (${b})`:""} : ${parts.map(esc).join(" · ")}`)});
+ if(d.g)o.items.forEach((it,i)=>{const b=badge(sec,it),skip=b?({fenetres:["taille","Lc","Hc"],portes:["largeur"]}[sec]||[]):[];const parts=d.g.f.filter(f=>!skip.includes(f.k)).map(f=>fmt(f,it)).filter(Boolean);if(sec==="fenetres"&&b&&/^Porte-fenêtre/.test(it.taille||""))parts.unshift("Porte-fenêtre");const pc=(it.piece||"").trim();out.push({sec,t:`${d.g.n} n°${i+1}`,pc,b:b||(parts.find(p=>!/^Pièce :/.test(p))||"").replace(/^[^:]*: /,""),parts:parts.filter(p=>!(pc&&/^(Pièce|Quelle pièce \?) :/.test(p)))})});
 if(d.f&&!(d.g&&d.g.cnt&&o.n===0))d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
 // Ce que le plan décrit (quand le client est passé par le plan, il remplace les étapes cloisons, fenêtres, portes, doublage, plafond).
 function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win:[],extD:[],intD:[],plaf:[]};(t.floors||[]).forEach(f=>{const H=f.hauteur_m||2.5;(f.pieces||[]).forEach(p=>{{const Z=(p.zones||[]).filter(z=>z.plafond&&z.plafond.a_refaire),pz=Z.length?Z.map(z=>[z.nom,z.plafond]):p.plafond&&p.plafond.a_refaire?[[p.nom,p.plafond]]:[];pz.forEach(([n,q])=>{const ex=[q.baisser&&/^oui/i.test(q.baisser)?"à baisser":null,q.support&&!/je ne sais/i.test(q.support)?"support "+q.support.toLowerCase():null].filter(Boolean);o.plaf.push({piece:n,simple:`Plafond · ${n} · ≈ ${fr(q.surface_m2||0)} m² · plaques standard${ex.length?" · "+ex.join(", "):""}`,txt:`plafond ${n} ${fr(q.surface_m2||0)} m²`})})}
@@ -752,6 +761,7 @@ function totals(){const r=[];if(SIMPLE())return r;const tp=tPieces();if(S.mode==
  if(S.travaux.includes("portes")&&S.portes.items.length)r.push(`${S.portes.items.length} porte${S.portes.items.length>1?"s":""}`);
  if(S.travaux.includes("sol")&&S.sol.items.length){const v=S.sol.items.reduce((a,it)=>a+(!it.surface_dk&&pn(it.surface)||0),0);r.push(v?`≈ ${fr(v)} m² de sol`:`sol : ${S.sol.items.length} pièce${S.sol.items.length>1?"s":""}`)}
  if(S.travaux.includes("escalier")&&S.escalier.items.length)r.push(`${S.escalier.items.length} escalier${S.escalier.items.length>1?"s":""}`);return r}
+const ROPEN=new Set();
 function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
  let h=`<div class="recap">`;if(tot.length)h+=`<div class="rblock" style="border-color:var(--mint)"><h3>Ce que nous avons compris</h3><div class="tot">${tot.join(" · ")}</div></div>`;
  st.forEach(s=>{let items;if(s==="travaux")items=[S.travaux.map(k=>TRAVAUX.find(t=>t[0]===k)[1]).join(", ")];
@@ -761,7 +771,8 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
   else if(s==="simple")items=list(s).concat([`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s ou documents":" ou document"}`]);
   else if(s==="photos")items=[`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s":""}`];
   else items=list(s);if(!items.length)items=[D[s]&&D[s].g&&D[s].g.cnt?"Rien à prévoir":"—"];
-  h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
+  const its=items.filter(x=>typeof x==="object"),txt=items.filter(x=>typeof x!=="object");
+  h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3>${its.map(x=>`<div class="ritem${ROPEN.has(x.sec+x.t)?" open":""}"><button type="button" class="ri-s" data-rtog="${esc(x.sec+x.t)}" aria-expanded="${ROPEN.has(x.sec+x.t)}"><span class="ri-ic">${IC[x.sec]||""}</span><span class="ri-t"><b>${esc(x.t)}${x.pc?" · "+esc(x.pc):""}</b>${x.b?`<span class="ri-b">${esc(x.b)}</span>`:""}</span><span class="ri-m">Voir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><ul>${x.parts.map(p=>{const k=p.indexOf(" : ");return`<li>${k>0?`<span>${esc(p.slice(0,k))}</span><b>${esc(p.slice(k+3))}</b>`:esc(p)}</li>`}).join("")}</ul></div>`).join("")}${txt.length?`<ul>${txt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`});
  return h+`<button type="button" class="add" data-goto="travaux" style="margin-top:4px">+ Ajouter des travaux</button></div>`}
 function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="open"?undefined:v))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
@@ -887,6 +898,7 @@ document.addEventListener("pointermove",e=>{if(!PDR||PDR.bg)return;const r=S.pla
  r.x=Math.round((bx!=null?nx+bx:Math.round(nx/.05)*.05)*100)/100;r.y=Math.round((by!=null?ny+by:Math.round(ny/.05)*.05)*100)/100;S.plan.sel=PDR.i;PDR.svg.innerHTML=plan2dInner(layout())});
 document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PVB=null;if(D.bg){if(S.plan.sel!=null&&e.target.closest("#pplan")){S.plan.sel=null;save();render()}return}
  if(!D.moved){S.plan.sel=S.plan.sel===D.i?null:D.i}save();render()});
+document.addEventListener("click",ev=>{const t=ev.target.closest("[data-rtog]");if(!t)return;ev.stopPropagation();const r=t.parentNode,o=r.classList.toggle("open");t.setAttribute("aria-expanded",o);ROPEN[o?"add":"delete"](t.dataset.rtog);if(innerWidth<=600)render()},true);
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
  if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur="travaux";render();return}
  if(ds.example){example();return}
