@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <script src="../espace/theme.js?v=1"></script>
-<script src="boutons-icones.js?v=2" defer></script>
+<script src="boutons-icones.js?v=3" defer></script>
 <script src="icones.js?v=1" defer></script>
 <style>
 /* Layout : une colonne centrée (une étape = un écran), barre de progression en haut, boutons collés en bas sur téléphone. */
@@ -270,7 +270,8 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 <style>@media (max-width:600px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
-.pg-off{display:none!important}.pgn{font-weight:800;color:var(--mint-ink)}
+.pg-off{display:none!important}
+html body.tight .chip{padding:5px 10px;font-size:13.5px}html body.tight .chips{gap:4px}html body.tight .chip .ci{margin-right:.35em;width:1.15em;height:1.15em}html body.tight .q{margin-top:10px}html body.tight .qph{margin-top:8px}html body.tight .phb small,html body.tight .phb span>small,html body.tight .phb em{display:none}html body.tight .phb{padding-top:7px;padding-bottom:7px}html body.tight .item-h h3{font-size:14px}html body.tight #app .iok{font-size:14px;white-space:nowrap;letter-spacing:-.01em}html body.tight #app .iok .bi{margin-right:6px}html body.tight .q>label,html body.tight .q>.ql{margin-bottom:5px}.pgn{font-weight:800;color:var(--mint-ink)}
 @media (max-width:600px){
  html body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}html body .err:empty{min-height:0;margin:0}html body.nonav{padding-bottom:12px}
  html body .top{padding-block:8px 6px}html body .logo{width:34px;height:34px}html body .brand{font-size:15px;min-width:0}html body .brand>div:last-child{min-width:0}
@@ -716,7 +717,7 @@ function render(){
  const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
  if(!same)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
  if(same&&scrollY!==sy)scrollTo(0,sy);
- if(window.icoDeco)icoDeco(app);fitPage();fitRoom();
+ if(window.icoDeco)icoDeco(app);if(window.btnDeco)btnDeco();fitPage();fitRoom();
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
@@ -822,14 +823,20 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
  return true}
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp,.qph,.iok"))}
-function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont,#app .iok.pg-off").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+// Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
+function fitPage(){const b=document.body,over=()=>{if(innerWidth>600||["intro","done","plan"].includes(cur))return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
+ cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
+function fitPage0(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont,#app .iok.pg-off,#app .qph.pg-off").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
  if(!B.length||innerWidth>600||["intro","done","plan","logement"].includes(cur))return;
  const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
- const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-28-((document.querySelector("#app .qph")||{}).offsetHeight||0);
+ const Y=e=>e.getBoundingClientRect();let top0=Y(B[0]).top+scrollY;const avail0=H-parseFloat(getComputedStyle(document.body).paddingBottom)-28-((document.querySelector("#app .qph")||{}).offsetHeight||0);
+ // Petit écran : le schéma seul sur une page ne sert à rien, on le cache s'il ne tient pas avec la question suivante.
+ if(B.length>1&&B[0].classList.contains("schema")&&Y(B[1]).bottom+scrollY-top0>avail0-top0){B[0].classList.add("pg-off");B.shift();top0=Y(B[0]).top+scrollY}
+ const avail=avail0-top0;
  if(Y(B[B.length-1]).bottom+scrollY-top0<=avail)return;
  const pages=[];let pg=[],start=top0;const okB=document.querySelector("#app .iok"),okH=okB?okB.offsetHeight+14:0;B.forEach(e=>{const r=Y(e),t=r.top+scrollY,inI=e.parentElement.classList.contains("item"),b=r.bottom+scrollY+(inI?34:0)+(okB&&e.nextElementSibling===okB?okH:0);if(pg.length&&b-start>avail){const o=pg.length>1&&pg[pg.length-1].classList.contains("item-h")?pg.pop():null;pages.push(pg);pg=o?[o]:[];start=o?Y(o).top+scrollY:t}pg.push(e)});pages.push(pg);
  if(pages.length<2){fitPage.toItem=false;return}fitPage.pages=pages;if(fitPage.toItem){fitPage.toItem=false;const h0=document.querySelector("#app .item:not(.mini)>.item-h");const j=h0?pages.findIndex(p=>p.includes(h0)):-1;if(j>=0)fitPage.p[cur]=j}const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;
- const apply=()=>{pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));{const ok=document.querySelector("#app .iok"),pv=ok&&ok.previousElementSibling;if(ok)ok.classList.toggle("pg-off",!!pv&&pv.classList.contains("pg-off"))}document.querySelectorAll("#app .item:not(.mini)").forEach(it=>{const kids=[...it.children],on=kids.filter(e=>!e.classList.contains("pg-off"));it.classList.toggle("pg-off",!on.length);it.classList.toggle("cont",!!on.length&&kids[0].classList.contains("pg-off"))})};apply();
+ const apply=()=>{pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));{const q=document.querySelector("#app .qph");if(q)q.classList.toggle("pg-off",document.body.classList.contains("tight")&&i!==pages.length-1)}{const ok=document.querySelector("#app .iok"),pv=ok&&ok.previousElementSibling;if(ok)ok.classList.toggle("pg-off",!!pv&&pv.classList.contains("pg-off"))}document.querySelectorAll("#app .item:not(.mini)").forEach(it=>{const kids=[...it.children],on=kids.filter(e=>!e.classList.contains("pg-off"));it.classList.toggle("pg-off",!on.length);it.classList.toggle("cont",!!on.length&&kids[0].classList.contains("pg-off"))})};apply();
  // Contrôle final : si la partie dépasse encore, son dernier bloc passe à la partie suivante.
  for(let g=0;g<6&&document.documentElement.scrollHeight>H+1&&pages[i].length>1;g++){const e=pages[i].pop();if(!pages[i+1])pages.push([]);pages[i+1].unshift(e);apply()}
  const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
