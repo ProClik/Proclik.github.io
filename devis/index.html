@@ -240,6 +240,10 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 .psum b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
 .psum span{font-size:12.5px;color:var(--muted)}
 .fade{animation:fade .3s ease}
+.lq{will-change:transform,opacity}.lq-in{animation:lqIn .32s cubic-bezier(.22,1,.36,1)}.lq-back{animation:lqBack .32s cubic-bezier(.22,1,.36,1)}
+.lq-out{animation:lqOut .17s ease-in forwards}.lq-outb{animation:lqOutB .17s ease-in forwards}
+@keyframes lqIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}@keyframes lqBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes lqOut{to{opacity:0;transform:translateX(-22px)}}@keyframes lqOutB{to{opacity:0;transform:translateX(22px)}}
 @keyframes fade{from{opacity:.25;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
@@ -586,7 +590,7 @@ function badge(sec,it){
 }
 function render(){
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
- if(cur==="intro"){prog.hidden=true;nav.hidden=true;app.innerHTML=introH();{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
+ if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
  if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
  const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
  document.getElementById("bar").style.width=Math.round(((n+1)/st.length)*100)+"%";
@@ -607,21 +611,35 @@ function render(){
    h+=`<div class="item"><div class="item-h"><h3>${d.g.n} ${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.f.map(f=>fieldH(f,cur,i)).join("")}</div>`});
    h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
    if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}
-  if(d.f&&cur==="logement"){const[i,v]=lqPos(),g=LQ[S.lq];h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub">Question ${i+1} sur ${v.length}${S.lq===0?" · "+esc(d.s):""}</p>`);h+=`<div class="lq fade">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
+  if(d.f&&cur==="logement"){const[i,v]=lqPos(),g=LQ[S.lq];h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub">Question ${i+1} sur ${v.length}${S.lq===0?" · "+esc(d.s):""}</p>`);h+=`<div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="lq${S.lq}">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
   else if(d.f)h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
   if(cur==="photos")h+=`<ul class="tips"><li>Prenez la pièce entière depuis un angle.</li><li>Ajoutez les détails : fissures, humidité, fenêtres.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul>`;
   if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
  }
  if(cur!=="plan")h+=`<p class="err" id="err" role="alert"></p>`;h+=`</section>`;
  // Même écran redessiné après un toucher : pas d'animation d'entrée ni de saut de l'écran (Cyril 11/11)
- const rk=cur+"|"+(cur==="logement"?S.lq:""),same=render.k===rk,sy=scrollY;render.k=rk;if(same)h=h.replace('<section class="fade">','<section>').replace('<div class="lq fade">','<div class="lq">');
- app.innerHTML=h;if(same&&scrollY!==sy)scrollTo(0,sy);
+ // Fluidité (Cyril 11/11) : sur le même écran, on met à jour la page en place (les boutons gardent leur animation),
+ // et entre deux questions du logement seule la question glisse.
+ const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
+ if(!same)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
+ if(same&&scrollY!==sy)scrollTo(0,sy);
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
   document.getElementById("pextra").innerHTML=planCard()+(S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+
   (S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+`<button type="button" class="btn ghost" data-toform="1" style="width:100%;margin-top:14px">Je préfère remplir un formulaire</button>`}
 }
+function morph(a,b){const keep=n=>n.nodeType===1&&n.classList.contains("geo"),an=[...a.childNodes].filter(n=>!keep(n)),bn=[...b.childNodes];
+ bn.forEach((y,i)=>{const x=an[i];if(!x){a.appendChild(y);return}
+  if(x.nodeType!==y.nodeType||x.nodeName!==y.nodeName||(x.nodeType===1&&(x.id!==y.id||x.getAttribute("data-key")!==y.getAttribute("data-key")||x.type==="file"))){a.replaceChild(y,x);return}
+  if(x.nodeType!==1){if(x.nodeValue!==y.nodeValue)x.nodeValue=y.nodeValue;return}
+  for(const at of [...x.attributes])if(!y.hasAttribute(at.name))x.removeAttribute(at.name);
+  for(const at of [...y.attributes])if(x.getAttribute(at.name)!==at.value)x.setAttribute(at.name,at.value);
+  const foc=x===document.activeElement;
+  if(x.nodeName==="INPUT"){if(x.type==="checkbox"||x.type==="radio")x.checked=y.hasAttribute("checked");else if(!foc&&x.value!==(y.getAttribute("value")||""))x.value=y.getAttribute("value")||"";return}
+  if(x.nodeName==="TEXTAREA"){if(!foc&&x.value!==y.value)x.value=y.value;return}
+  morph(x,y)});
+ an.slice(bn.length).forEach(n=>n.remove())}
 function introH(){const has=S.travaux.length>0;
  return`<section class="hero fade"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Répondez à quelques questions simples sur votre projet. ${CONFIG.artisan} reçoit tout, prépare votre devis et vous répond sous ${CONFIG.delai}.</p>
  <ul class="perks"><li><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><div><b>Quelques minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
@@ -703,8 +721,11 @@ function validate(){const e=m=>{document.getElementById("err").textContent=m;ret
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||""))return e("Indiquez une adresse e-mail valide.");
   if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.")}
  return true}
+function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;S.lq=q;save();
+ const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
+ if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
 function go(dir){const st=steps();let n=st.indexOf(cur);
- if(cur==="logement"){const[i,v]=lqPos();if(dir>0&&i<v.length-1){if(S.lq===0&&!validate())return;S.lq=v[i+1];save();render();scrollTo(0,0);return}if(dir<0&&i>0){S.lq=v[i-1];save();render();scrollTo(0,0);return}}
+ if(cur==="logement"){const[i,v]=lqPos();if(dir>0&&i<v.length-1){if(S.lq===0&&!validate())return;lqMove(v[i+1],1);return}if(dir<0&&i>0){lqMove(v[i-1],-1);return}}
  if(false){const P=S.plan,e=m=>{document.getElementById("err").textContent=m};
   if(dir>0){if(P.sub==="pieces"){if(!P.rooms.length)return e("Ajoutez au moins une pièce avec le bouton +.");P.sub=0}
    else{const r=P.rooms[P.sub];if(!dimsOk(r))return e("Entrez la longueur et la largeur, ou choisissez une taille de pièce.");P.sub=P.sub+1<P.rooms.length?P.sub+1:"apercu"}}
