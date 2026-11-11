@@ -251,6 +251,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 <link rel="stylesheet" href="relief.css?v=5">
+<style>@media (max-width:600px){html body.grow #app section .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
 .pg-off{display:none!important}.pgn{font-weight:800;color:var(--mint-ink)}
@@ -769,7 +770,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
  return true}
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp"))}
-function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
  if(!B.length||innerWidth>600||["intro","done","plan","logement"].includes(cur))return;
  const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
  const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-34;
@@ -779,16 +780,17 @@ function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.q
  pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));
  const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
 // Téléphone : s'il reste de la place, on la prend (Cyril 11/11) : détails réaffichés, boutons plus grands, cartes qui remplissent l'écran
-function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
+function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
  if(innerWidth>600||cur==="plan"||cur==="done"||(fitPage.pages||[]).length>1||!sec)return;
- const H=fitPage.H||innerHeight,pb=()=>parseFloat(getComputedStyle(b).paddingBottom),abs=e=>{let y=0;for(let n=e;n;n=n.offsetParent)y+=n.offsetTop;return y},fits=()=>document.documentElement.scrollHeight<=H+1;const an=sec.style.animation;sec.style.animation="none";try{if(!fits())return;
+ const ty=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName),H=ty&&fitPage.H?fitPage.H:(fitPage.H=innerHeight),pb=()=>parseFloat(getComputedStyle(b).paddingBottom),abs=e=>{let y=0;for(let n=e;n;n=n.offsetParent)y+=n.offsetTop;return y},fits=()=>document.documentElement.scrollHeight<=H+1;const an=sec.style.animation;sec.style.animation="none";try{if(!fits())return;
  for(const r of R){b.classList.add(r);if(!fits()){b.classList.remove(r);break}}
- if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}}finally{sec.style.animation=an}}
+ if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}
+ else{const ch=[...sec.querySelectorAll(".chips .chip:not(.dk)")].filter(e=>e.offsetParent&&!e.closest(".pg-off"));if(ch.length){const rows=new Set(ch.map(e=>Math.round(e.getBoundingClientRect().top))).size,h0=Math.max(...ch.map(e=>e.offsetHeight)),used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0);let add=Math.min(Math.floor((H-used-6)/rows),78-h0);if(add>3){const set=()=>b.style.setProperty("--ch",(h0+add)+"px");set();b.classList.add("grow");while(!fits()&&add>0){add-=3;set()}if(add<=0)b.classList.remove("grow")}}}}finally{sec.style.animation=an}}
 function fitGo(dir){const P=fitPage.pages||[];if(P.length<2)return false;const i=fitPage.p[cur]||0,j=i+dir;if(j<0||j>=P.length)return false;
  const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;render();fitPage.pages[j]?.forEach(e=>{e.classList.remove("lq-out","lq-outb");e.classList.add(dir>0?"lq-in":"lq-back");setTimeout(()=>e.classList.remove("lq-in","lq-back"),400)});scrollTo(0,0)};
  if(RM){fin();return true}P[i].forEach(e=>e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
 function fitJump(k){const P=fitPage.pages||[];if(P.length<2||!k)return;const j=P.findIndex(p=>p.some(e=>e.querySelector(`[data-k="${k}"]`)));if(j>=0&&j!==fitPage.p[cur]){fitPage.p[cur]=j;const m=document.getElementById("err").textContent;render();document.getElementById("err").textContent=m;scrollTo(0,0)}}
-addEventListener("resize",()=>{clearTimeout(fitPage.rt);fitPage.rt=setTimeout(()=>{const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName))return;if(cur!=="intro"&&cur!=="done"&&cur!=="plan")render()},250)});
+const fitRz=()=>{clearTimeout(fitPage.rt);fitPage.rt=setTimeout(()=>{const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName))return;if(cur!=="intro"&&cur!=="done"&&cur!=="plan")render()},250)};addEventListener("resize",fitRz);if(window.visualViewport)visualViewport.addEventListener("resize",fitRz);addEventListener("focusout",()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)))fitRz()},350));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(innerWidth<=600)fitRoom()});
 function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;S.lq=q;save();
  const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
  if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
