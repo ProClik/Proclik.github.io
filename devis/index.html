@@ -255,7 +255,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
 .pg-off{display:none!important}.pgn{font-weight:800;color:var(--mint-ink)}
 @media (max-width:600px){
- html body{padding-bottom:calc(84px + var(--vb,0px))}html body.nonav{padding-bottom:12px}
+ html body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}html body .err:empty{min-height:0;margin:0}html body.nonav{padding-bottom:12px}
  html body .top{padding-block:8px 6px}html body .logo{width:34px;height:34px}html body .brand{font-size:15px;min-width:0}html body .brand>div:last-child{min-width:0}
  html body .brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}html body .theme-b{width:38px;height:38px}html body .demo-badge{font-size:10.5px;padding:3px 8px}
  html body #prog .step-meta{margin-top:4px;font-size:12.5px}
@@ -285,7 +285,15 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
  html body .hero{gap:8px}html body .hero h1{font-size:22px;margin-top:4px}html body .hero .sub{font-size:14px;margin-bottom:2px}html body #in-pre{padding-block:10px}
  html body h1{font-size:21px}html body .sub{font-size:14px}
 }
-.perks .ps{display:none}@media (max-width:600px) and (max-height:600px){html body .mcard>span:not(.rb){display:none}}
+.perks .ps{display:none}
+@media (max-width:600px){
+ html body.r1 .mcard>span:not(.rb){display:block}html body.r1 .perks li{display:flex;background:var(--bg);box-shadow:var(--up-s);padding:9px 12px;border-radius:16px}html body.r1 .perks{display:grid;gap:8px}html body.r1 .perks .pl{display:inline}html body.r1 .perks .ps{display:none}
+ html body.r1 .chip{padding:13px 18px;font-size:16px}html body.r1 .chips{gap:10px}html body.r1 .q{margin-top:16px}
+ html body.r2 .lq .chips .chip:not(.dk),html body.r2 .chips .chip:not(.dk){flex:1 1 100%;text-align:left;padding:15px 18px}html body.r2 .perks .hint{display:block}html body.r2 .perks br{display:none}html body.r2 .perks i{width:28px;height:28px}html body.r2 .hero .q>.hint{display:block}html body.r2 .lq .q>.lab{font-size:20px}html body.r2 textarea{min-height:130px}html body.r2 .drop{padding:18px}
+ html body.r3 .mcard ul{display:grid}html body.r3 .mcard svg.mini{max-height:120px}html body.r3 .hero{gap:14px}
+ html body .fill{display:flex;flex-direction:column}html body .fill>.cards{flex:1;grid-auto-rows:1fr}html body .fill>.modes{flex:1;grid-template-rows:1fr auto}html body .hero.fill{display:grid;align-content:space-evenly}html body .fill .mcard{align-content:center}html body .fill .card{grid-template-columns:36px 1fr;align-content:center;gap:0 12px;padding:10px 12px}html body .fill .card svg{width:34px;height:34px}html body .fill .card b{font-size:15.5px}
+}
+@media (max-width:600px) and (max-height:600px){html body .mcard>span:not(.rb){display:none}}
 </style>
 
 <div class="wrap">
@@ -627,7 +635,7 @@ function badge(sec,it){
 function render(){
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
  document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.classList.toggle("nonav",cur==="intro"||cur==="done");
- if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
+ if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();fitPage.H=innerHeight;setTimeout(fitRoom);{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
  if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
  const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
  document.getElementById("bar").style.width=Math.round(((n+1)/st.length)*100)+"%";
@@ -660,7 +668,7 @@ function render(){
  const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
  if(!same)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
  if(same&&scrollY!==sy)scrollTo(0,sy);
- fitPage();
+ fitPage();fitRoom();
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
@@ -761,7 +769,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
  return true}
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp"))}
-function fitPage(){fitPage.p=fitPage.p||{};const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
  if(!B.length||innerWidth>600||["intro","done","plan","logement"].includes(cur))return;
  const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
  const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-34;
@@ -770,6 +778,12 @@ function fitPage(){fitPage.p=fitPage.p||{};const B=fitBlocks();B.forEach(e=>e.cl
  if(pages.length<2)return;fitPage.pages=pages;const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;
  pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));
  const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
+// Téléphone : s'il reste de la place, on la prend (Cyril 11/11) : détails réaffichés, boutons plus grands, cartes qui remplissent l'écran
+function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
+ if(innerWidth>600||cur==="plan"||cur==="done"||(fitPage.pages||[]).length>1||!sec)return;
+ const H=fitPage.H||innerHeight,pb=()=>parseFloat(getComputedStyle(b).paddingBottom),abs=e=>{let y=0;for(let n=e;n;n=n.offsetParent)y+=n.offsetTop;return y},fits=()=>document.documentElement.scrollHeight<=H+1;const an=sec.style.animation;sec.style.animation="none";try{if(!fits())return;
+ for(const r of R){b.classList.add(r);if(!fits()){b.classList.remove(r);break}}
+ if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}}finally{sec.style.animation=an}}
 function fitGo(dir){const P=fitPage.pages||[];if(P.length<2)return false;const i=fitPage.p[cur]||0,j=i+dir;if(j<0||j>=P.length)return false;
  const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;render();fitPage.pages[j]?.forEach(e=>{e.classList.remove("lq-out","lq-outb");e.classList.add(dir>0?"lq-in":"lq-back");setTimeout(()=>e.classList.remove("lq-in","lq-back"),400)});scrollTo(0,0)};
  if(RM){fin();return true}P[i].forEach(e=>e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
