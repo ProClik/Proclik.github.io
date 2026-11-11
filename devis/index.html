@@ -251,6 +251,50 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 <link rel="stylesheet" href="relief.css?v=5">
+<style>
+/* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
+.pg-off{display:none!important}.pgn{font-weight:800;color:var(--mint-ink)}
+@media (max-width:600px){
+ html body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}html body .err:empty{min-height:0;margin:0}html body.nonav{padding-bottom:12px}
+ html body .top{padding-block:8px 6px}html body .logo{width:34px;height:34px}html body .brand{font-size:15px;min-width:0}html body .brand>div:last-child{min-width:0}
+ html body .brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}html body .theme-b{width:38px;height:38px}html body .demo-badge{font-size:10.5px;padding:3px 8px}
+ html body #prog .step-meta{margin-top:4px;font-size:12.5px}
+ html body h1{font-size:23px;margin:8px 0 4px;line-height:1.18}html body .sub{font-size:15px;line-height:1.4;margin:0 0 10px}
+ html body .q{margin-block:12px 0;gap:6px}html body .lab{margin-bottom:4px}
+ html body .nav .btn{white-space:nowrap;font-size:15px}html body .nav{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}html body .nav .btn{padding-block:12px}
+ html body.instep .foot{display:none}html body .foot{margin-top:14px}html body .foot .sig{margin-top:8px}
+ html body .hero{gap:10px;padding-block:2px}html body .hero h1{font-size:25px}
+ html body .perks{gap:7px;margin:2px 0}html body .perks li{padding:9px 12px;gap:10px}html body .perks .hint,html body .perks br{display:none}html body .perks b{font-size:14.5px}html body .perks i{width:26px;height:26px}
+ html body .hero .q>.hint{display:none}html body .hero .q{margin:0!important}html body .hero [data-example]{padding-block:10px;font-size:15px}html body .hero>div[style*="grid"]{gap:10px!important}
+ html body .cards{gap:8px}html body .card{grid-template-columns:30px 1fr;align-items:center;gap:0 10px;padding:12px 10px;min-height:0}html body .card svg{width:30px;height:30px}html body .card span{display:none}html body .card b{font-size:14px}
+ html body .modes{gap:12px}html body .mcard{padding:14px 14px 12px;gap:6px}html body .mcard ul{display:none}html body .mcard svg.mini{max-height:84px}html body .mcard>span{font-size:13.5px;line-height:1.35}html body .mcard b{font-size:16px}
+ html body .rblock{padding:10px 14px}html body .rblock ul{font-size:13.5px}html body .recap{gap:10px}
+ html body textarea{min-height:90px}html body .drop{padding:12px}
+ html body .card{padding:9px 10px}html body .card b{padding-right:16px}html body .hero .sub{font-size:14.5px}
+ html body .hero [data-example]{background:transparent;box-shadow:none;padding-block:6px;text-decoration:underline;text-underline-offset:3px;font-weight:700}
+ html body.nonav .foot p{display:none}html body.nonav .foot{margin-top:6px}
+ .ph-x{display:none}
+}
+/* téléphones bas (iPhone SE, Android avec barres) */
+@media (max-width:600px) and (max-height:720px){
+ html body .perks{display:flex;flex-wrap:wrap;gap:6px 12px}html body .perks li{background:transparent;box-shadow:none;border:0;padding:0;gap:6px}html body .perks i{width:22px;height:22px;font-size:12px}html body .perks i svg{width:13px;height:13px}html body .perks b{font-size:13.5px;font-weight:700}
+ html body .perks .pl{display:none}html body .perks .ps{display:inline}
+ html body .mcard svg.mini{max-height:64px}html body .mcard .rb{top:-10px;font-size:11px}
+ html body .card{padding:7px 10px}html body .cards{gap:6px}html body .card svg{width:26px;height:26px}
+ html body .chips{gap:6px}html body .chip{padding:8px 12px;font-size:14px}html body .q{margin-top:9px}
+ html body .hero{gap:8px}html body .hero h1{font-size:22px;margin-top:4px}html body .hero .sub{font-size:14px;margin-bottom:2px}html body #in-pre{padding-block:10px}
+ html body h1{font-size:21px}html body .sub{font-size:14px}
+}
+.perks .ps{display:none}
+@media (max-width:600px){
+ html body.r1 .mcard>span:not(.rb){display:block}html body.r1 .perks li{display:flex;background:var(--bg);box-shadow:var(--up-s);padding:9px 12px;border-radius:16px}html body.r1 .perks{display:grid;gap:8px}html body.r1 .perks .pl{display:inline}html body.r1 .perks .ps{display:none}
+ html body.r1 .chip{padding:13px 18px;font-size:16px}html body.r1 .chips{gap:10px}html body.r1 .q{margin-top:16px}
+ html body.r2 .lq .chips .chip:not(.dk),html body.r2 .chips .chip:not(.dk){flex:1 1 100%;text-align:left;padding:15px 18px}html body.r2 .perks .hint{display:block}html body.r2 .perks br{display:none}html body.r2 .perks i{width:28px;height:28px}html body.r2 .hero .q>.hint{display:block}html body.r2 .lq .q>.lab{font-size:20px}html body.r2 textarea{min-height:130px}html body.r2 .drop{padding:18px}
+ html body.r3 .mcard ul{display:grid}html body.r3 .mcard svg.mini{max-height:120px}html body.r3 .hero{gap:14px}
+ html body .fill{display:flex;flex-direction:column}html body .fill>.cards{flex:1;grid-auto-rows:1fr}html body .fill>.modes{flex:1;grid-template-rows:1fr auto}html body .hero.fill{display:grid;align-content:space-evenly}html body .fill .mcard{align-content:center}html body .fill .card{grid-template-columns:36px 1fr;align-content:center;gap:0 12px;padding:10px 12px}html body .fill .card svg{width:34px;height:34px}html body .fill .card b{font-size:15.5px}
+}
+@media (max-width:600px) and (max-height:600px){html body .mcard>span:not(.rb){display:none}}
+</style>
 
 <div class="wrap">
   <header class="top">
@@ -310,7 +354,7 @@ const PLAQUE=["cloison","doublage","plafond","rampants"];
 
 // Définition des étapes
 const D={
- travaux:{t:"Quels travaux souhaitez-vous ?",s:"Plusieurs choix possibles. On vous pose ensuite les bonnes questions, rien de plus.",cheer:"C'est parti !"},
+ travaux:{t:"Quels travaux souhaitez-vous ?",s:"Plusieurs choix possibles, on vous pose ensuite les bonnes questions.",cheer:"C'est parti !"},
  logement:{t:"Parlez-nous du logement",s:"Ces réponses servent à calculer le déplacement et le bon taux de TVA.",cheer:"Bien démarré",f:[
   {k:"cp",t:"text",l:"Code postal",ph:"Ex. 38190",im:"numeric",req:1},
   {k:"commune",t:"text",cap:1,l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
@@ -590,7 +634,8 @@ function badge(sec,it){
 }
 function render(){
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
- if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
+ document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.classList.toggle("nonav",cur==="intro"||cur==="done");
+ if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();fitPage.H=innerHeight;setTimeout(fitRoom);{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
  if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
  const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
  document.getElementById("bar").style.width=Math.round(((n+1)/st.length)*100)+"%";
@@ -623,6 +668,7 @@ function render(){
  const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
  if(!same)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
  if(same&&scrollY!==sy)scrollTo(0,sy);
+ fitPage();fitRoom();
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
@@ -643,7 +689,7 @@ function morph(a,b){const keep=n=>n.nodeType===1&&n.classList.contains("geo"),an
 function introH(){const has=S.travaux.length>0;
  return`<section class="hero fade"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Répondez à quelques questions simples sur votre projet. ${CONFIG.artisan} reçoit tout, prépare votre devis et vous répond sous ${CONFIG.delai}.</p>
  <ul class="perks"><li><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><div><b>Quelques minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
- <li><i>?</i><div><b>« Je ne sais pas » est une bonne réponse</b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
+ <li><i>?</i><div><b><span class="pl">« Je ne sais pas » est une bonne réponse</span><span class="ps">« Je ne sais pas » accepté</span></b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
  <li><i>✓</i><div><b>Gratuit et sans engagement</b><br><span class="hint">Vous recevez un devis clair, ligne par ligne.</span></div></li></ul>
  <div class="q" style="margin:4px 0 14px"><label class="lab" for="in-pre">Pour commencer, votre prénom</label><p class="hint">Les conseils vous seront adressés, et il sera déjà rempli dans vos coordonnées à la fin.</p><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}" style="width:100%;max-width:340px"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
  <div style="display:grid;gap:14px"><button class="btn go" type="button" data-start="1" style="max-width:none;flex:none;width:100%">${has?"Reprendre ma demande":"C'est parti"}</button>
@@ -709,22 +755,45 @@ function doneH(){const p=lastPayload;return`<section class="done fade"><div clas
  <div><b>3</b><span>Vous recevez votre devis par e-mail, à signer en ligne si tout vous convient.</span></div></div>
  ${CONFIG.demo?`<p class="note">Mode démonstration : rien n'a été envoyé.</p><details><summary>Voir les données qui seront transmises à Cliky</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`:""}
  <button class="btn ghost" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
-function validate(){const e=m=>{document.getElementById("err").textContent=m;return false};
+function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m;fitJump(k);return false};
  if(cur==="travaux"&&!S.travaux.length)return e("Choisissez au moins un type de travaux.");
  if(cur==="mode"&&!S.mode)return e("Choisissez une des deux façons.");
  if(cur==="plan"&&!tPieces().length)return e("Ajoutez au moins une pièce avec « + Pièce ».");
  if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
- if(cur==="simple"&&(S.simple.desc||"").trim().length<3)return e("Décrivez vos travaux en quelques mots, même très court.");
- if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.");
- if(cur==="contact"){const c=S.contact;if(!(c.prenom||"").trim()||!(c.nom||"").trim())return e("Indiquez votre prénom et votre nom.");
-  if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.");
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||""))return e("Indiquez une adresse e-mail valide.");
-  if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.")}
+ if(cur==="simple"&&(S.simple.desc||"").trim().length<3)return e("Décrivez vos travaux en quelques mots, même très court.","desc");
+ if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.","desc");
+ if(cur==="contact"){const c=S.contact;if(!(c.prenom||"").trim()||!(c.nom||"").trim())return e("Indiquez votre prénom et votre nom.","prenom");
+  if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.","tel");
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||""))return e("Indiquez une adresse e-mail valide.","email");
+  if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.","rgpd")}
  return true}
+// Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
+function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp"))}
+function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+ if(!B.length||innerWidth>600||["intro","done","plan","logement"].includes(cur))return;
+ const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
+ const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-34;
+ if(Y(B[B.length-1]).bottom+scrollY-top0<=avail)return;
+ const pages=[];let pg=[],start=top0;B.forEach(e=>{const r=Y(e),t=r.top+scrollY,b=r.bottom+scrollY;if(pg.length&&b-start>avail){pages.push(pg);pg=[];start=t}pg.push(e)});pages.push(pg);
+ if(pages.length<2)return;fitPage.pages=pages;const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;
+ pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));
+ const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
+// Téléphone : s'il reste de la place, on la prend (Cyril 11/11) : détails réaffichés, boutons plus grands, cartes qui remplissent l'écran
+function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
+ if(innerWidth>600||cur==="plan"||cur==="done"||(fitPage.pages||[]).length>1||!sec)return;
+ const H=fitPage.H||innerHeight,pb=()=>parseFloat(getComputedStyle(b).paddingBottom),abs=e=>{let y=0;for(let n=e;n;n=n.offsetParent)y+=n.offsetTop;return y},fits=()=>document.documentElement.scrollHeight<=H+1;const an=sec.style.animation;sec.style.animation="none";try{if(!fits())return;
+ for(const r of R){b.classList.add(r);if(!fits()){b.classList.remove(r);break}}
+ if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}}finally{sec.style.animation=an}}
+function fitGo(dir){const P=fitPage.pages||[];if(P.length<2)return false;const i=fitPage.p[cur]||0,j=i+dir;if(j<0||j>=P.length)return false;
+ const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;render();fitPage.pages[j]?.forEach(e=>{e.classList.remove("lq-out","lq-outb");e.classList.add(dir>0?"lq-in":"lq-back");setTimeout(()=>e.classList.remove("lq-in","lq-back"),400)});scrollTo(0,0)};
+ if(RM){fin();return true}P[i].forEach(e=>e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
+function fitJump(k){const P=fitPage.pages||[];if(P.length<2||!k)return;const j=P.findIndex(p=>p.some(e=>e.querySelector(`[data-k="${k}"]`)));if(j>=0&&j!==fitPage.p[cur]){fitPage.p[cur]=j;const m=document.getElementById("err").textContent;render();document.getElementById("err").textContent=m;scrollTo(0,0)}}
+addEventListener("resize",()=>{clearTimeout(fitPage.rt);fitPage.rt=setTimeout(()=>{const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName))return;if(cur!=="intro"&&cur!=="done"&&cur!=="plan")render()},250)});
 function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;S.lq=q;save();
  const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
  if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
 function go(dir){const st=steps();let n=st.indexOf(cur);
+ if(cur!=="logement"&&fitGo(dir))return;
  if(cur==="logement"){const[i,v]=lqPos();if(dir>0&&i<v.length-1){if(S.lq===0&&!validate())return;lqMove(v[i+1],1);return}if(dir<0&&i>0){lqMove(v[i-1],-1);return}}
  if(false){const P=S.plan,e=m=>{document.getElementById("err").textContent=m};
   if(dir>0){if(P.sub==="pieces"){if(!P.rooms.length)return e("Ajoutez au moins une pièce avec le bouton +.");P.sub=0}
@@ -735,7 +804,7 @@ function go(dir){const st=steps();let n=st.indexOf(cur);
   if(S.travaux.includes("doublage")&&!M.some(m=>m.travaux&&m.type==="mur extérieur"))miss.push("isoler des murs");if(S.travaux.includes("cloison")&&!c&&!M.some(m=>m.travaux&&m.type!=="mur extérieur"))miss.push("créer des cloisons");if(S.travaux.includes("plafond")&&!planStats().plaf.length)miss.push("refaire des plafonds");
   if(miss.length){confirmBig("Il manque des travaux sur le plan",`Vous souhaitez ${miss.join(", ").replace(/, ([^,]*)$/," et $1")}, mais rien n'est indiqué sur votre plan. Ouvrez le plan : « Travaux » puis les murs concernés, et touchez chaque pièce dont le plafond est à refaire. Sinon, l'artisan le précisera avec vous.`,"Continuer quand même",()=>{S.plan.noWallOk=true;save();go(1)},"Retour au plan");return}}
  if(dir>0){if(!validate())return;if(cur==="recap"&&!navigator.onLine){document.getElementById("err").textContent="Pas de connexion internet : votre demande est bien gardée sur cet appareil. Réessayez dès que le réseau revient.";return}if(cur==="recap"){if(SENDING)return;lastPayload=payload();if(CONFIG.demo){finish();return}sendReq(lastPayload);return}
-  cur=st[n+1];if(cur==="logement")S.lq=0;if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1];if(cur==="logement")S.lq=99}
+  cur=st[n+1];fitPage.p=fitPage.p||{};fitPage.p[cur]=0;if(cur==="logement")S.lq=0;if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1];fitPage.p=fitPage.p||{};fitPage.p[cur]=99;if(cur==="logement")S.lq=99}
  save();render();scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
 function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode="plan";S.plan={H:2.5,sub:"apercu",obj:"Avoir droit aux aides",trace:{"floors":[{"nom":"Rez-de-chaussée","hauteur_m":2.5,"hauteur_choisie":true,"pieces":[{"nom":"Séjour","surface_m2":20,"estimee":false,"points":[[0,0],[5,0],[5,4],[0,4]],"murs":[{"type":"mur extérieur","longueur_m":5,"travaux":"Isoler","ouvertures":[{"repere":"F1","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":140,"hauteur_cm":135,"k":"fenetre","w":1.4,"h":1.35,"p":1.8,"al":0.9,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Aucun"}]},{"type":"mur entre pièces","longueur_m":4,"travaux":null,"ouvertures":[]},{"type":"mur extérieur","longueur_m":5,"travaux":null,"ouvertures":[{"repere":"P1","designation":"Porte d'entrée","menuiserie_exterieure":true,"ouverture":null,"t":"Porte d'entrée","a_changer":"À changer","type":"porte","largeur_cm":90,"hauteur_cm":215,"k":"porte","w":0.9,"h":2.15,"p":3.2,"al":0,"pose":null}]},{"type":"mur extérieur","longueur_m":4,"travaux":"Isoler","ouvertures":[]}],"cloisons_a_creer":[],"sol":{"actuel_a_deposer":"Aucune","revetement":"Aucun","resume":null}},{"nom":"Cuisine","surface_m2":9.6,"estimee":false,"points":[[5,0],[8.2,0],[8.2,3],[5,3]],"murs":[{"type":"mur extérieur","longueur_m":3.2,"travaux":"Isoler","ouvertures":[{"repere":"F2","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":100,"hauteur_cm":115,"k":"fenetre","w":1,"h":1.15,"p":1,"al":1.05,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Aucun"}]},{"type":"mur extérieur","longueur_m":3,"travaux":"Isoler","ouvertures":[]},{"type":"mur entre pièces","longueur_m":3.2,"travaux":null,"ouvertures":[]},{"type":"mur entre pièces","longueur_m":3,"travaux":null,"ouvertures":[]}],"cloisons_a_creer":[],"sol":{"actuel_a_deposer":"Aucune","revetement":"Aucun","resume":null}},{"nom":"Chambre","surface_m2":10.5,"estimee":true,"points":[[5,3],[8.5,3],[8.5,6],[5,6]],"murs":[{"type":"mur entre pièces","longueur_m":3.5,"travaux":null,"ouvertures":[{"repere":"P2","designation":"Bloc-porte","menuiserie_exterieure":false,"ouverture":null,"t":"Bloc-porte","a_changer":"Déjà en place","type":"porte","largeur_cm":83,"hauteur_cm":204,"k":"porte","w":0.83,"h":2.04,"p":1.2,"al":0,"pose":null}]},{"type":"mur extérieur","longueur_m":3,"travaux":"Isoler","ouvertures":[{"repere":"F3","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":120,"hauteur_cm":135,"k":"fenetre","w":1.2,"h":1.35,"p":0.9,"al":0.9,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Roulant coffre extérieur","volet_commande":"Radio (télécommande)","volet_pose":"Sur façade","volet_enroulement":"Extérieur","volet_couleur":"Blanc RAL 9016"}]},{"type":"mur extérieur","longueur_m":3.5,"travaux":"Isoler","ouvertures":[]},{"type":"mur entre pièces","longueur_m":3,"travaux":null,"ouvertures":[]}],"cloisons_a_creer":[{"travaux":"Créer","composition":{"oss":"M48","mont":"Simples","laine":"45 mm","peau":"1 peau","plaque":"Standard","porte":"83"},"portes":1,"porte_largeur_cm":83,"galandage":false,"pose_porte":"À la création de la cloison","longueur_m":3,"points":[[7,3],[7,6]]}],"sol":{"actuel_a_deposer":"Aucune","revetement":"Parquet","resume":"parquet stratifié flottante + plinthes"}}]}]},rooms:[{type:"sejour",nom:"Séjour",L:5,l:4,dk:false,size:1,trav:["doublage"]},{type:"cuisine",nom:"Cuisine",L:3.2,l:3,dk:false,size:1,trav:["doublage"]},{type:"chambre",nom:"Chambre 1",L:3.8,l:2.9,dk:false,size:1,trav:["doublage","cloison"]},{type:"chambre",nom:"Chambre 2",L:null,l:null,dk:true,size:1,trav:["doublage"]},{type:"sdb",nom:"Salle de bain",L:2.4,l:2,dk:false,size:1,trav:["doublage"]}]};
  S.logement={cp:"38920",commune:"Crolles",type:"Maison",age:"Oui",occupe:"Oui",ou:["Rez-de-chaussée","Étage(s)"]};
@@ -795,7 +864,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.reset&&!ds.ok){confirmBig("Tout recommencer ?","Toutes vos réponses, vos photos et votre plan seront effacés. Cette action est définitive.","Oui, tout effacer",()=>{b.dataset.ok="1";b.click();delete b.dataset.ok});return}
  if(ds.reset){S=fresh();files.photos=[];files.plan=[];try{localStorage.removeItem("clikdevis-brouillon")}catch(e){};cur="intro";render();return}
  if(b.id==="go"){go(1);return}if(b.id==="back"){go(-1);return}
- if(ds.goto){cur=ds.goto;if(cur==="logement")S.lq=0;render();scrollTo(0,0);return}
+ if(ds.goto){cur=ds.goto;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;if(cur==="logement")S.lq=0;render();scrollTo(0,0);return}
  if(ds.trav){const k=ds.trav,a=S.travaux;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);save();render();return}
  if(ds.add){const it=S[cur].items,last=it[it.length-1]||{};const d=D[cur];const n=d.g.copy?Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k))):(cur==="doublage"||cur==="cloison"?{H:last.H??2.5,portes:0,fen:0}:{H:last.H??2.5});
   it.push(n);save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
