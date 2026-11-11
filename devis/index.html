@@ -199,7 +199,7 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 /* L'onde guide le client : bouton principal de chaque écran, et « J'ai terminé » quand le plan est fini. */
 .btn.go:not([disabled]),.bigbtn,.bc-ok,#pf-done.fin{animation:pcOnde 1.8s ease-out infinite}
 /* l'onde garde le relief du bouton (Cyril 11/11 : « Continuer » perdait son bouton) */
-.btn.go,.bigbtn,#pf-done{--rs:var(--up)}
+.btn.go,.bigbtn,#pf-done{--rs:var(--up)}.bc-ok{--rs:var(--up-s)}
 #pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
 :root[data-theme="dark"] #pf-done{background:var(--mint);color:var(--ink)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pf-done{background:var(--mint);color:var(--ink)}}
@@ -309,7 +309,7 @@ const D={
  travaux:{t:"Quels travaux souhaitez-vous ?",s:"Plusieurs choix possibles. On vous pose ensuite les bonnes questions, rien de plus.",cheer:"C'est parti !"},
  logement:{t:"Parlez-nous du logement",s:"Ces réponses servent à calculer le déplacement et le bon taux de TVA.",cheer:"Bien démarré",f:[
   {k:"cp",t:"text",l:"Code postal",ph:"Ex. 38190",im:"numeric",req:1},
-  {k:"commune",t:"text",l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
+  {k:"commune",t:"text",cap:1,l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
   {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel"]},
   {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK]},
   {k:"iso",t:"chips",l:"Type d'isolation des murs",h:"Ce qu'il y a aujourd'hui, côté intérieur.",o:["Laine + BA13","Doublage polystyrène collé","Brique + plâtre","Pas d'isolation",DK]},
@@ -408,8 +408,8 @@ const D={
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
    {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
  contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
-   {k:"prenom",t:"text",l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
-   {k:"nom",t:"text",l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
+   {k:"prenom",t:"text",cap:1,l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
+   {k:"nom",t:"text",cap:1,l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
    {k:"tel",t:"tel",l:"Téléphone",ac:"tel",im:"tel",ph:"Ex. 06 12 34 56 78",req:1},
    {k:"email",t:"email",l:"E-mail",ac:"email",ph:"Ex. vous@exemple.fr",req:1},
    {k:"rgpd",t:"check",l:"J'accepte que mes réponses et mes photos servent uniquement à préparer mon devis.",req:1},
@@ -516,7 +516,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=17");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=18");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -567,7 +567,7 @@ function fieldH(f,sec,i){
  if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
   return`<div class="q"><label for="${id}">${esc(f.l)}</label>${hint}<div class="num${dk?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${dk?"":esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1" ${dk?"disabled":""}><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div></div>`}
  if(f.t==="step"){const v=o[f.k]??f.min;return`<div class="q"><span class="lab">${esc(f.l)}</span>${hint}<div class="numbox" style="width:max-content"><button type="button" aria-label="Moins" data-step="-1" ${da} data-min="${f.min}" data-max="${f.max}">−</button><input type="text" readonly value="${v}" aria-label="${esc(f.l)}" style="width:64px"><button type="button" aria-label="Plus" data-step="1" ${da} data-min="${f.min}" data-max="${f.max}">+</button></div></div>`}
- if(f.t==="text"||f.t==="tel"||f.t==="email")return`<div class="q">${lab}${hint}<input id="${id}" type="${f.t}" ${f.im?`inputmode="${f.im}"`:""} ${f.ac?`autocomplete="${f.ac}"`:""} placeholder="${esc(f.ph||"")}" value="${esc(o[f.k]||"")}" ${da} data-txt="1"></div>`;
+ if(f.t==="text"||f.t==="tel"||f.t==="email")return`<div class="q">${lab}${hint}<input id="${id}" type="${f.t}" ${f.im?`inputmode="${f.im}"`:""} ${f.ac?`autocomplete="${f.ac}"`:""} ${f.cap?`autocapitalize="words" data-cap="1"`:""} placeholder="${esc(f.ph||"")}" value="${esc(o[f.k]||"")}" ${da} data-txt="1"></div>`;
  if(f.t==="area")return`<div class="q">${lab}${hint}<textarea id="${id}" placeholder="${esc(f.ph||"")}" ${da} data-txt="1">${esc(o[f.k]||"")}</textarea></div>`;
  if(f.t==="check")return`<div class="q"><label class="check"><input id="${id}" type="checkbox" ${o[f.k]?"checked":""} ${da} data-chk="1"><span>${esc(f.l)}</span></label></div>`;
  if(f.t==="note")return`<p class="note">${esc(f.l)}</p>`;
@@ -660,8 +660,8 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
  return h+`</div>`}
 function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
-  contact:{prenom:S.contact.prenom,nom:S.contact.nom,telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
-  logement:S.logement,mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.projet,
+  contact:{prenom:cap(S.contact.prenom).trim(),nom:cap(S.contact.nom).trim(),telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
+  logement:{...S.logement,commune:cap(S.logement.commune).trim()},mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.projet,
   fichiers:{photos:files.photos.map(f=>f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
 let lastPayload=null;
 // Finir plus tard : la demande (sans photos) est compressée dans un lien, que le client s'envoie à lui-même (partage ou e-mail).
@@ -818,6 +818,10 @@ async function geoFromNom(){const L=S.logement,nom=(L.commune||"").trim(),n=++ge
 function geoAsk(k){clearTimeout(geoT);if(k==="cp"){geoFromCp();return}geoT=setTimeout(geoFromNom,300)}
 function geoInit(){geoBox("cp");geoBox("commune");if(/^\d{5}$/.test((S.logement.cp||"").trim())&&!(S.logement.commune||"").trim())geoFromCp()}
 document.addEventListener("click",ev=>{const b=ev.target.closest("[data-geocp]");if(!b){if(!ev.target.closest(".geo,#logement-x-cp,#logement-x-commune"))geoClear();return}ev.stopPropagation();geoSet(b.dataset.geocp,b.dataset.geonom)},true);
+// Majuscule au début du prénom, du nom et de la commune (Cyril 11/11) : à la sortie du champ, sans gêner la frappe
+const CAPW=/^(de|du|des|la|le|les|sur|sous|en|et|lès|lez|aux|au|à)$/i;
+function cap(v){let w=0;return String(v||"").replace(/\s+/g," ").replace(/^ /,"").replace(/[^\s-]+/g,m=>{const i=w++;if(i&&CAPW.test(m))return m.toLowerCase();const a=m.match(/^([dl])['’](.+)$/i);if(a&&i)return a[1].toLowerCase()+"'"+a[2].charAt(0).toUpperCase()+a[2].slice(1);return m.charAt(0).toUpperCase()+m.slice(1)})}
+document.addEventListener("focusout",ev=>{const el=ev.target;if(!el||!el.dataset)return;if(el.id==="in-pre"){const v=cap(el.value).trim();if(v!==el.value){el.value=v;S.contact.prenom=v;save()}return}if(!el.dataset.cap||!el.dataset.s)return;const v=cap(el.value).trim();if(v===el.value)return;el.value=v;obj(el.dataset.s,el.dataset.i===""?null:+el.dataset.i)[el.dataset.k]=v;save()});
 document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pnum){planInput(el);return}if(!ds.s)return;const o=obj(ds.s,ds.i===""?null:+ds.i);
  if(ds.num){o[ds.k]=el.value.replace(",",".");o[ds.k+"_dk"]=false;save();const it=el.closest(".item");if(it){const b=badge(ds.s,o);let bd=it.querySelector(".badge");if(b&&!bd){bd=document.createElement("span");bd.className="badge";it.querySelector(".item-h div").prepend(bd)}if(bd)bd.textContent=b}return}
  if(ds.txt){o[ds.k]=el.value;save();if(ds.s==="logement"&&(ds.k==="cp"||ds.k==="commune"))geoAsk(ds.k);return}

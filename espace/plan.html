@@ -309,7 +309,7 @@ html.client body{padding-bottom:12px}
 /* La bulle « C'est fait · Annuler » se posait sur le plan et prenait les touchers : « Annuler » reste en haut à droite. */
 .client #toast{display:none!important}
 /* l'onde laiton garde le relief des boutons */
-.client #edok,.client .sh-foot .btn,.client #clb-b[data-next],.client .bc-ok,.client [data-ftnew],.client [data-addtrav]{--rs:var(--up)}
+#edok,#gd-ok,#opp [data-oppo="ok"],#clb-h,[data-ftnew],[data-addtrav]{--rs:var(--up-xs)}.sh-foot .btn,.bc-ok{--rs:var(--up)}#bc-ok,#clb-b,#clb-v{--rs:var(--up-s)}
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 
