@@ -213,7 +213,7 @@ html.client body{padding-block:0!important}
 /* L'onde sur chaque bouton qui fait avancer le client (Cyril 10/11 15h26). Jamais sur un bouton de suppression. */
 .client #edok,.client .sh-foot .btn,.client #opp [data-oppo="ok"],.client #clb-b[data-next],.client .bc-ok,.client [data-ftnew],.client [data-addtrav],.client #gd-ok{animation:gpulse 1.8s ease-out infinite}
 .client #sheet .sh-h [data-close]{background:#A8823F!important;color:#fff!important;border-color:transparent!important;font-weight:800;min-width:64px;animation:gpulse 1.8s ease-out infinite}
-@keyframes gpulse{0%{box-shadow:0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 0 rgba(168,130,63,0)}}
+@keyframes gpulse{0%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:var(--rs,0 0 #0000),0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,0)}}
 @keyframes gpulse2{0%{box-shadow:0 0 0 3px var(--mint),0 0 0 3px rgba(168,130,63,.6)}70%{box-shadow:0 0 0 3px var(--mint),0 0 0 15px rgba(168,130,63,0)}100%{box-shadow:0 0 0 3px var(--mint),0 0 0 3px rgba(168,130,63,0)}}
 #clbanner.tool{background:#0B1226;border-color:var(--mint)}
 #clbanner.tool button{background:#fff;color:#0B1226}
@@ -289,6 +289,8 @@ html.client body{padding-bottom:12px}
  .client #clbanner{flex-wrap:wrap;row-gap:10px}.client #clbanner #clb-t{flex:1 1 100%}}
 /* La bulle « C'est fait · Annuler » se posait sur le plan et prenait les touchers : « Annuler » reste en haut à droite. */
 .client #toast{display:none!important}
+/* l'onde laiton garde le relief des boutons */
+.client #edok,.client .sh-foot .btn,.client #clb-b[data-next],.client .bc-ok,.client [data-ftnew],.client [data-addtrav]{--rs:var(--up)}
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 
