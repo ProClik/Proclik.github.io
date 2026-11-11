@@ -612,7 +612,10 @@ function render(){
   if(cur==="photos")h+=`<ul class="tips"><li>Prenez la pièce entière depuis un angle.</li><li>Ajoutez les détails : fissures, humidité, fenêtres.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul>`;
   if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
  }
- if(cur!=="plan")h+=`<p class="err" id="err" role="alert"></p>`;h+=`</section>`;app.innerHTML=h;
+ if(cur!=="plan")h+=`<p class="err" id="err" role="alert"></p>`;h+=`</section>`;
+ // Même écran redessiné après un toucher : pas d'animation d'entrée ni de saut de l'écran (Cyril 11/11)
+ const rk=cur+"|"+(cur==="logement"?S.lq:""),same=render.k===rk,sy=scrollY;render.k=rk;if(same)h=h.replace('<section class="fade">','<section>').replace('<div class="lq fade">','<div class="lq">');
+ app.innerHTML=h;if(same&&scrollY!==sy)scrollTo(0,sy);
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
