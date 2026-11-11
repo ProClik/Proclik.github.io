@@ -61,7 +61,7 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,34px);l
 .chip.dk{border-style:dashed;color:var(--muted)}
 .chip.dk[aria-pressed="true"]{color:#fff}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media (min-width:560px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:560px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (min-width:760px){.cards{grid-template-columns:repeat(5,minmax(0,1fr))}}
 .card{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:var(--r);padding:14px 12px;cursor:pointer;display:grid;gap:6px;align-content:start;font:inherit;transition:border-color .15s,transform .1s;position:relative}
 .card:hover{border-color:var(--mint)}
 .card:active{transform:scale(.98)}
@@ -102,6 +102,9 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .drop span{font-size:13px;color:var(--muted)}
 .drop input{position:absolute;opacity:0;width:1px;height:1px}
 .thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.cnt .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}html body #app .cnt .chips .chip{flex:none;text-align:center;justify-content:center;padding:12px 0;font-size:17px;min-height:0}
+.item.cont::before{content:attr(data-n) " (suite)";display:block;font-weight:800;font-size:15px;color:var(--muted);margin-bottom:4px}
+.qph{margin-top:16px;display:grid;gap:8px}.phb{position:relative;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:9px 16px 9px 12px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.12));color:var(--fg);font-weight:700;font-size:14px;cursor:pointer}.phb svg{color:var(--mint-ink);flex:none}.phb span{display:grid;line-height:1.2}.phb small{font-weight:500;font-size:12px;color:var(--muted)}.phb input{position:absolute;opacity:0;width:1px;height:1px}.qph .thumbs img{width:56px;height:56px}.qph .thumbs figure{width:56px}
 .thumbs figure{margin:0;width:76px;display:grid;gap:4px}
 .thumbs img,.thumbs .pdf{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--muted);background:var(--surface)}
 .thumbs figcaption{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -251,7 +254,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 <link rel="stylesheet" href="relief.css?v=5">
-<style>@media (max-width:600px){html body.grow #app section .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
+<style>@media (max-width:600px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
 .pg-off{display:none!important}.pgn{font-weight:800;color:var(--mint-ink)}
@@ -333,6 +336,8 @@ const IC={
  rampants:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 33 22 8l13 0"/><path d="M10 33 25 12"/><path d="M14 33 28 14" stroke-dasharray="2 3"/><path d="M5 33h30"/></svg>',
  fenetres:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="6" width="22" height="28" rx="1.5"/><path d="M20 6v28M9 20h22"/></svg>',
  portes:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="11" y="5" width="18" height="30" rx="1.5"/><circle cx="25" cy="21" r="1.6" fill="currentColor"/></svg>',
+ sol:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 30 12 12h24l-8 18z"/><path d="M8 21h24M10 16.5h24M6 25.5h24M17 12l-2 4.5M24 16.5l-2 4.5M15 21l-2 4.5M22 25.5l-2 4.5"/></svg>',
+ escalier:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 34h7v-7h7v-7h7v-7h7V6"/><path d="M5 34V27"/></svg>',
  autre:'<svg viewBox="0 0 40 40" fill="currentColor"><circle cx="11" cy="20" r="3"/><circle cx="20" cy="20" r="3"/><circle cx="29" cy="20" r="3"/></svg>'
 };
 const ILL={combles:['<svg viewBox="0 0 320 180" role="img" aria-label="Coupe d\'une maison : laine soufflée posée au sol des combles"><defs><pattern id="ilaine" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#E9B872"/><path d="M0 6c2.5-4 5-4 7.5 0S10 6 10 6" stroke="#B9813B" stroke-width="1" fill="none"/></pattern></defs><rect x="0" y="0" width="320" height="180" rx="14" fill="var(--soft)"/><path d="M40 82L160 22L280 82Z" fill="var(--surface)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M30 87L160 18L290 87" fill="none" stroke="#B5523A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M52 82L76 69H244L268 82Z" fill="url(#ilaine)"/><path d="M50 82H270" stroke="var(--fg)" stroke-width="3"/><rect x="56" y="82" width="208" height="76" fill="var(--surface)" stroke="var(--fg)" stroke-width="3"/><rect x="84" y="104" width="34" height="30" rx="2" fill="#8FC3EE" stroke="var(--fg)" stroke-width="2"/><path d="M101 104v30" stroke="var(--fg)" stroke-width="2"/><rect x="196" y="112" width="26" height="46" rx="2" fill="none" stroke="var(--fg)" stroke-width="2"/><path d="M150 82h24" stroke="var(--mint-ink)" stroke-width="5" stroke-linecap="round"/><path d="M160 120c-6-8 6-12 0-20M170 120c-6-8 6-12 0-20" stroke="#E8622C" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".8"/><path d="M150 136v-14" stroke="#E8622C" stroke-width="0"/><g font-family="Manrope,sans-serif" font-weight="700" font-size="10.5" fill="var(--fg)"><text x="160" y="56" text-anchor="middle">Combles perdus</text><text x="160" y="67" text-anchor="middle" font-size="8.5" font-weight="600" fill="var(--muted)">(non habités)</text><text x="140" y="152" text-anchor="middle" font-weight="600" fill="var(--muted)">Pièce chauffée</text></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="10" fill="var(--mint-ink)"><path d="M258 78L284 100" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="314" y="112" text-anchor="end">laine</text><text x="314" y="124" text-anchor="end">soufflée</text><path d="M168 86l10 10" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="180" y="104" font-size="9">trappe</text></g></svg>',"Exemple : la laine est soufflée au sol des combles, au-dessus du plafond de vos pièces. On y accède par une trappe ou un escalier."],rampants:['<svg viewBox="0 0 320 180" role="img" aria-label="Coupe d\'une maison : isolant posé sous les pentes du toit d\'une chambre mansardée"><defs><pattern id="ilaine" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#E9B872"/><path d="M0 6c2.5-4 5-4 7.5 0S10 6 10 6" stroke="#B9813B" stroke-width="1" fill="none"/></pattern></defs><rect x="0" y="0" width="320" height="180" rx="14" fill="var(--soft)"/><path d="M56 158V96L160 34L264 96V158Z" fill="var(--surface)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M64 98L160 41L256 98L256 108L160 52L64 108Z" fill="url(#ilaine)"/><path d="M64 112L160 56L256 112" fill="none" stroke="var(--mint-ink)" stroke-width="3.5" stroke-linejoin="round"/><path d="M38 104L160 30L282 104" fill="none" stroke="#B5523A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M64 112V158M256 112V158" stroke="var(--mint-ink)" stroke-width="3.5"/><path d="M56 158H264" stroke="var(--fg)" stroke-width="3"/><path d="M196 82l20 12l-8 13l-20 -12z" fill="#8FC3EE" stroke="var(--fg)" stroke-width="2" stroke-linejoin="round"/><rect x="88" y="136" width="54" height="16" rx="3" fill="none" stroke="var(--fg)" stroke-width="2"/><rect x="90" y="130" width="14" height="8" rx="2" fill="none" stroke="var(--fg)" stroke-width="1.6"/><g font-family="Manrope,sans-serif" font-weight="600" font-size="10.5" fill="var(--muted)"><text x="196" y="124" text-anchor="middle">Chambre sous les toits</text></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="10" fill="var(--mint-ink)"><path d="M110 74L86 52" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="14" y="38">isolant sous</text><text x="14" y="50">les chevrons</text><path d="M256 128L270 136" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="268" y="148">plaques</text><text x="268" y="160">de plâtre</text></g></svg>',"Exemple : l'isolant suit les pentes du toit, entre et sous les chevrons, puis des plaques de plâtre ferment le tout."]};
@@ -350,6 +355,8 @@ const TRAVAUX=[
  ["rampants","Sous la toiture","Combles aménagés, rampants"],
  ["fenetres","Fenêtres","Remplacement ou création"],
  ["portes","Portes intérieures","Blocs-portes standard"],
+ ["sol","Sol","Carrelage, parquet, stratifié…"],
+ ["escalier","Escalier","Créer, changer ou rénover"],
  ["autre","Autre projet","Décrivez-le avec vos mots"]];
 const PLAQUE=["cloison","doublage","plafond","rampants"];
 
@@ -369,28 +376,28 @@ const D={
   {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"},
   {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non"],sh:i=>!!i.type&&i.type!=="Maison"&&(i.niveau||0)>=1}]},
  cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
-  g:{n:"Cloison",add:"+ Ajouter une autre cloison",f:[
-   {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1},
-   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1},
+  g:{n:"Cloison",cnt:"Combien de cloisons à créer ?",add:"+ Ajouter une autre cloison",f:[
+   {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
+   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre"]},
    {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
    {k:"largeur",t:"chips",l:"Largeur de la porte",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
    {k:"galandage",t:"chips",l:"Porte coulissante qui rentre dans le mur (galandage) ?",o:["Oui","Non"],sh:i=>i.portes>0}]},
   f:[{k:"phonique",t:"chips",l:"Isolation contre le bruit",o:["Standard","Renforcée",DK],h:"Renforcée = deux plaques par face, idéal pour une chambre ou une salle de bain."}]},
  doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
-  g:{n:"Mur",add:"+ Ajouter un autre mur",f:[
-   {k:"L",t:"num",l:"Longueur du mur",u:"m",st:.1,dk:1},
-   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1},
+  g:{n:"Mur",cnt:"Combien de murs à isoler ?",add:"+ Ajouter un autre mur",f:[
+   {k:"L",t:"num",l:"Longueur du mur",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
+   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"ext",t:"chips",l:"Ce mur donne-t-il sur l'extérieur ?",o:["Oui","Non",DK]},
    {k:"etat",t:"chips",l:"État du mur",o:["Bon, bien droit","Abîmé ou irrégulier","Humide",DK]},
    {k:"fen",t:"step",l:"Fenêtres ou portes dans ce mur",min:0,max:6}]},
   f:[{k:"objectif",t:"chips",l:"Votre objectif",o:["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK]},
      {k:"epaisseur",t:"num",l:"Épaisseur d'isolant souhaitée (si vous la connaissez)",u:"mm",st:10,dk:1,dkdef:1}]},
  plafond:{t:"Vos faux plafonds",s:"Pièce par pièce. Mesurez au sol, c'est plus simple.",cheer:"Plus que quelques questions",sch:"piece",
-  g:{n:"Pièce",add:"+ Ajouter une autre pièce",f:[
-   {k:"L",t:"num",l:"Longueur de la pièce",u:"m",st:.1,dk:1},
-   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1},
-   {k:"H",t:"num",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1},
+  g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",f:[
+   {k:"L",t:"num",l:"Longueur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
+   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5]},
+   {k:"H",t:"num",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"baisser",t:"chips",l:"Voulez-vous baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DK]},
    {k:"support",t:"chips",l:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DK]},
    {k:"iso",t:"chips",l:"Isolant au-dessus du plafond ?",o:["Oui","Non",DK]},
@@ -417,10 +424,11 @@ const D={
    {k:"fin",t:"chips",l:"Finition souhaitée",o:["Isolation + plaques de plâtre","Isolation seule"]},
    {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK]}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
-  g:{n:"Fenêtre",add:"+ Ajouter une autre fenêtre",copy:1,f:[
+  g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
    {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
-   {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1},
-   {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1},
+   {k:"taille",t:"chips",l:"Taille (largeur × hauteur)",h:"Tailles courantes. Les cotes exactes seront reprises avant la commande.",o:["60 × 75 cm","80 × 95 cm","100 × 115 cm","100 × 125 cm","120 × 135 cm","Porte-fenêtre 80 × 215 cm","Porte-fenêtre 120 × 215 cm","Autre taille",DK]},
+   {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
+   {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"ouv",t:"chips",l:"Ouverture",o:["Battant","Coulissante","Fixe",DK]},
    {k:"ob",t:"chips",l:"Oscillo-battant ?",o:["Oui","Non"],def:"Oui",h:"Elle s'ouvre aussi en haut, en soufflet, pour aérer.",sh:i=>i.ouv==="Battant"},
    {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
@@ -429,11 +437,27 @@ const D={
    {k:"volet",t:"chips",l:"Volet roulant",o:["Aucun","Manuel","Motorisé"]},
    {k:"pose",t:"chips",l:"Pose",o:["Sur l'ancien cadre","Dépose complète",DK],h:"Sur l'ancien cadre : plus rapide. Dépose complète : plus de lumière, plus de travaux."}]}},
  portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Encore un petit effort",
-  g:{n:"Porte",add:"+ Ajouter une autre porte",copy:1,f:[
-   {k:"largeur",t:"chips",l:"Largeur",o:["63 cm","73 cm","83 cm","93 cm",DK]},
+  g:{n:"Porte",cnt:"Combien de portes ?",add:"+ Ajouter une autre porte",copy:1,f:[
+   {k:"largeur",t:"chips",l:"Largeur (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK]},
    {k:"sens",t:"chips",l:"Sens d'ouverture",o:["Poussant à gauche","Poussant à droite",DK],h:"Debout face à la porte, vous la poussez : de quel côté sont les charnières ?"},
    {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit"]},
    {k:"bati",t:"chips",l:"Faut-il aussi changer le cadre (bâti) ?",o:["Oui","Non",DK]}]}},
+ sol:{t:"Vos sols",s:"Pièce par pièce. Une estimation suffit, tout sera vérifié sur place.",cheer:"Ça prend forme",
+  g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",copy:1,f:[
+   {k:"piece",t:"chips",l:"Quelle pièce ?",o:["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre"]},
+   {k:"surface",t:"num",l:"Surface au sol",u:"m²",st:1,dk:1,pre:[5,10,15,20,30]},
+   {k:"actuel",t:"chips",l:"Sol actuel",o:["Carrelage","Parquet","Stratifié","Lino / vinyle","Moquette","Béton brut",DK]},
+   {k:"depose",t:"chips",l:"Faut-il enlever l'ancien sol ?",o:["Oui","Non",DK],sh:i=>i.actuel!=="Béton brut"},
+   {k:"neuf",t:"chips",l:"Sol souhaité",o:["Carrelage","Parquet","Stratifié","Vinyle (lames ou dalles)",DK]},
+   {k:"plinthes",t:"chips",l:"Plinthes neuves ?",o:["Oui","Non",DK]}]}},
+ escalier:{t:"Vos escaliers",s:"Une estimation suffit, tout sera vérifié sur place.",cheer:"Une marche après l'autre",
+  g:{n:"Escalier",cnt:"Combien d'escaliers ?",cmax:3,add:"+ Ajouter un autre escalier",f:[
+   {k:"travail",t:"chips",l:"Que faut-il faire ?",o:["Créer un escalier","Remplacer l'escalier","Rénover ou habiller l'existant",DK]},
+   {k:"forme",t:"chips",l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
+   {k:"mat",t:"chips",l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
+   {k:"largeur",t:"chips",l:"Largeur",o:["70 cm","80 cm","90 cm",DK]},
+   {k:"haut",t:"num",l:"Hauteur à monter (d'un sol à l'autre)",u:"cm",st:1,dk:1,pre:[250,270,290]},
+   {k:"rampe",t:"chips",l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
  autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
    {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
  finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Presque fini",f:[
@@ -579,13 +603,13 @@ function planPayloadOld(){const P=S.plan,H=P.H_dk?null:pn(P.H);const pieces=P.ro
  return{hauteur_sous_plafond_m:H,pieces,murs_exterieurs_m:+extL.toFixed(2),murs_entre_pieces_m:+cloL.toFixed(2),surface_totale_m2:+pieces.reduce((s,p)=>s+p.surface_m2,0).toFixed(2),objectif_isolation:P.obj||null,plafond_actuel:P.support||null,note:"Plan placé par le client (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine ; à confirmer à la visite (mitoyenneté, garage non chauffé), comme les tailles estimées."}}
 function planInput(el){const P=S.plan,k=el.dataset.pk,i=el.dataset.pi===""?null:+el.dataset.pi,v=el.value.replace(",",".");
  if(i==null){P[k]=v;P[k+"_dk"]=false}else{const r=P.rooms[i];if(r.dk){const[a,b]=dimsOf(r);r.L=a;r.l=b;r.dk=false;r[k]=v;save();render();const e=document.getElementById(`pn-${{L:"lo",l:"la",H:"h"}[k]}-${i}`);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}return}r[k]=v;const pr=document.getElementById("prect");if(pr)pr.innerHTML=rectSVG(r)}save()}
-let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;if(!S.simple)S.simple={};
+let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;if(!S.simple)S.simple={};["sol","escalier"].forEach(k=>{if(!S[k])S[k]={items:[{}]}});["cloison","doublage","plafond","fenetres","portes","sol","escalier"].forEach(k=>{const o=S[k];if(o&&o.n==null&&o.items&&o.items.some(it=>Object.keys(it).some(x=>!["H","portes","fen"].includes(x))))o.n=o.items.length});
 let cur="intro";
 const files={photos:[],plan:[]};
 const t0=Date.now();
 
 function fresh(){return {mode:null,simple:{},plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
- cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]}}}
+ cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]},sol:{items:[{}]},escalier:{items:[{}]}}}
 function load(){try{const x=JSON.parse(localStorage.getItem("clikdevis-brouillon")||"null");return x&&x.travaux?x:null}catch(e){return null}}
 const PRE=()=>(S.contact.prenom||"").trim().split(/\s+/)[0]||"";
 const cheerN=c=>{const p=PRE();if(!p||!c)return c;return/\s*!$/.test(c)?c.replace(/\s*!$/,`, ${p} !`):`${c}, ${p}`};
@@ -598,8 +622,9 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
 const LQ=[["cp","commune"],["type"],["mur"],["iso"],["cloison"],["age"],["occupe"],["ou","niveau","ascenseur"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
-function SIMPLE(){return S.mode==="texte"&&S.travaux.some(k=>PLANABLE.includes(k))}
-function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}if(SIMPLE()){a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&["doublage","plafond","cloison","fenetres","portes"].includes(k)))a.push(k)});
+// 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
+function SIMPLE(){return false}
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}if(SIMPLE()){a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});
  if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");a.push("photos","projet","contact","recap");return a}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
@@ -614,6 +639,8 @@ function fieldH(f,sec,i){
  if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
  if(f.t==="chips")return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${f.o.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${(o[f.k]??f.def)===x}" ${da} data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
  if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
+  if(f.pre){const pv=pn(v),onP=!dk&&pv!=null&&f.pre.includes(pv),oth=!dk&&(o[f.k+"_o"]||(pv!=null&&!onP));const lb=x=>(f.u==="m"&&x%1?x.toLocaleString("fr-FR",{minimumFractionDigits:2}):fr(x))+" "+f.u;
+   return`<div class="q"><span class="lab" id="${id}-l">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}-l">${f.pre.map(x=>`<button type="button" class="chip" aria-pressed="${onP&&!o[f.k+"_o"]&&pv===x}" ${da} data-pre="${x}">${lb(x)}</button>`).join("")}<button type="button" class="chip" aria-pressed="${!!oth}" ${da} data-preo="1">Autre</button>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div>${oth?`<div class="num"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1"><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div></div>`:""}</div>`}
   return`<div class="q"><label for="${id}">${esc(f.l)}</label>${hint}<div class="num${dk?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${dk?"":esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1" ${dk?"disabled":""}><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div></div>`}
  if(f.t==="step"){const v=o[f.k]??f.min;return`<div class="q"><span class="lab">${esc(f.l)}</span>${hint}<div class="numbox" style="width:max-content"><button type="button" aria-label="Moins" data-step="-1" ${da} data-min="${f.min}" data-max="${f.max}">−</button><input type="text" readonly value="${v}" aria-label="${esc(f.l)}" style="width:64px"><button type="button" aria-label="Plus" data-step="1" ${da} data-min="${f.min}" data-max="${f.max}">+</button></div></div>`}
  if(f.t==="text"||f.t==="tel"||f.t==="email")return`<div class="q">${lab}${hint}<input id="${id}" type="${f.t}" ${f.im?`inputmode="${f.im}"`:""} ${f.ac?`autocomplete="${f.ac}"`:""} ${f.cap?`autocapitalize="words" data-cap="1"`:""} placeholder="${esc(f.ph||"")}" value="${esc(o[f.k]||"")}" ${da} data-txt="1"></div>`;
@@ -630,6 +657,7 @@ function badge(sec,it){
  if(sec==="cloison"||sec==="doublage"){const L=pn(it.L),H=pn(it.H);if(L&&H&&!it.L_dk&&!it.H_dk)return`≈ ${fr(L*H)} m²`;return""}
  if(sec==="plafond"){const L=pn(it.L),l=pn(it.l);if(L&&l&&!it.L_dk&&!it.l_dk)return`≈ ${fr(L*l)} m²`;return""}
  if(sec==="fenetres"){const a=pn(it.Lc),b=pn(it.Hc),v=vtxF(it);if(a&&b&&!it.Lc_dk&&!it.Hc_dk)return`${fr(a)} × ${fr(b)} cm${v?" · "+v:""}`;return v}
+ if(sec==="sol"){const v=pn(it.surface);return v&&!it.surface_dk?`≈ ${fr(v)} m²`:""}
  if(sec==="portes")return it.largeur&&it.largeur!==DK?`${it.largeur} × 204 cm`:"";
  return"";
 }
@@ -653,12 +681,15 @@ function render(){
   if(ILL[cur])h+=`<figure class="ill">${ILL[cur][0]}<figcaption>${esc(ILL[cur][1])}</figcaption></figure>`;
   if(d.sch)h+=`<div class="schema">${SCH[d.sch]}<p>${d.sch==="fenetre"?"Mesurez la largeur et la hauteur de l'ouverture, côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol : longueur et largeur.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p></div>`;
   if(cur==="plafond"&&S.mode==="plan"&&planRooms().length)h+=`<div class="prooms"><p class="lab">Pièces de votre plan : touchez celles où faire le plafond</p><div class="chips">${planRooms().map(r=>`<button type="button" class="chip" data-proom="${esc(r.nom)}" aria-pressed="${S.plafond.items.some(it=>it.piece===r.nom)}">${esc(r.nom)} · ${fr(r.s)} m²</button>`).join("")}</div><p class="hint">Les mesures sont reprises du plan, modifiables ci-dessous.</p></div>`;
-  if(d.g){S[cur].items.forEach((it,i)=>{const b=badge(cur,it);
-   h+=`<div class="item"><div class="item-h"><h3>${d.g.n} ${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.f.map(f=>fieldH(f,cur,i)).join("")}</div>`});
+  if(d.g&&d.g.cnt){const n=S[cur].n,M=d.g.cmax||8;h+=`<div class="q cnt"><span class="lab" id="cnt-${cur}">${esc(d.g.cnt)}</span><div class="chips" role="group" aria-labelledby="cnt-${cur}">${Array.from({length:M+1},(_,j)=>`<button type="button" class="chip" data-cnt="${j}" aria-pressed="${n===j}">${j}</button>`).join("")}</div>${n===0?`<p class="hint">Rien à prévoir ici : touchez « Continuer ».</p>`:""}</div>`}
+  if(d.g&&(!d.g.cnt||S[cur].n>0)){S[cur].items.forEach((it,i)=>{const b=badge(cur,it);
+   h+=`<div class="item" data-n="${esc(d.g.n)} n°${i+1}"><div class="item-h"><h3>${d.g.n} n°${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.f.map(f=>fieldH(f,cur,i)).join("")}</div>`});
    h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
    if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}
   if(d.f&&cur==="logement"){const[i,v]=lqPos(),g=LQ[S.lq];h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub">Question ${i+1} sur ${v.length}${S.lq===0?" · "+esc(d.s):""}</p>`);h+=`<div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="lq${S.lq}">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
-  else if(d.f)h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
+  else if(d.f&&!(d.g&&d.g.cnt&&!(S[cur].n>0)))h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
+  // Petit « Ajouter une photo » en bas de chaque travail (Cyril 11/11) : appareil photo ou galerie, rangée avec ce travail.
+  if(TRAVAUX.some(t=>t[0]===cur)&&!(d.g&&d.g.cnt&&S[cur].n===0)){const L=files.photos.filter(x=>x.tag===cur);h+=`<div class="qph"><label class="phb" for="ph-${cur}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>${L.length?"Ajouter une autre photo":"Ajouter une photo"}<small>Prendre ou choisir, facultatif</small></span><input id="ph-${cur}" type="file" accept="image/*" multiple data-file="photos" data-tag="${cur}"></label>${L.length?`<div class="thumbs" data-key="th-${cur}-${L.length}">${L.map(x=>`<figure><img src="${x.img}" alt=""></figure>`).join("")}</div>`:""}</div>`}
   if(cur==="photos")h+=`<ul class="tips"><li>Prenez la pièce entière depuis un angle.</li><li>Ajoutez les détails : fissures, humidité, fenêtres.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul>`;
   if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
  }
@@ -698,8 +729,8 @@ function introH(){const has=S.travaux.length>0;
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
   if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
- if(d.g)o.items.forEach((it,i)=>{const parts=d.g.f.map(f=>fmt(f,it)).filter(Boolean);const b=badge(sec,it);out.push(`<b>${d.g.n} ${i+1}</b>${b?` (${b})`:""} : ${parts.map(esc).join(" · ")}`)});
- if(d.f)d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
+ if(d.g)o.items.forEach((it,i)=>{const parts=d.g.f.map(f=>fmt(f,it)).filter(Boolean);const b=badge(sec,it);out.push(`<b>${d.g.n} n°${i+1}</b>${b?` (${b})`:""} : ${parts.map(esc).join(" · ")}`)});
+if(d.f&&!(d.g&&d.g.cnt&&o.n===0))d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
 // Ce que le plan décrit (quand le client est passé par le plan, il remplace les étapes cloisons, fenêtres, portes, doublage, plafond).
 function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win:[],extD:[],intD:[],plaf:[]};(t.floors||[]).forEach(f=>{const H=f.hauteur_m||2.5;(f.pieces||[]).forEach(p=>{{const Z=(p.zones||[]).filter(z=>z.plafond&&z.plafond.a_refaire),pz=Z.length?Z.map(z=>[z.nom,z.plafond]):p.plafond&&p.plafond.a_refaire?[[p.nom,p.plafond]]:[];pz.forEach(([n,q])=>{const ex=[q.baisser&&/^oui/i.test(q.baisser)?"à baisser":null,q.support&&!/je ne sais/i.test(q.support)?"support "+q.support.toLowerCase():null].filter(Boolean);o.plaf.push({piece:n,simple:`Plafond · ${n} · ≈ ${fr(q.surface_m2||0)} m² · plaques standard${ex.length?" · "+ex.join(", "):""}`,txt:`plafond ${n} ${fr(q.surface_m2||0)} m²`})})}
  (p.cloisons_a_creer||[]).forEach(c=>{o.cloN++;o.clo+=(c.longueur_m||0)*H;if(c.portes)o.intD.push({piece:p.nom,simple:`Porte de cloison · ${c.porte_largeur_cm||83} cm${c.galandage?" (galandage)":""} · ${p.nom}, cloison`,txt:`porte de cloison ${c.porte_largeur_cm||83} cm${c.galandage?" (galandage)":""}${c.pose_porte&&!/je ne sais/i.test(c.pose_porte)?", pose "+c.pose_porte.toLowerCase():""}`})});
@@ -710,24 +741,26 @@ function totals(){const r=[];if(SIMPLE())return r;const tp=tPieces();if(S.mode==
  if(S.travaux.includes("cloison")){const v=sum("cloison","L","H");if(v)r.push(`≈ ${fr(v)} m² de cloison`)}
  if(S.travaux.includes("doublage")){const v=sum("doublage","L","H");if(v)r.push(`≈ ${fr(v)} m² de murs à isoler`)}
  if(S.travaux.includes("plafond")){const v=sum("plafond","L","l");if(v)r.push(`≈ ${fr(v)} m² de plafond`)}
- if(S.travaux.includes("fenetres"))r.push(`${S.fenetres.items.length} fenêtre${S.fenetres.items.length>1?"s":""}`);
- if(S.travaux.includes("portes"))r.push(`${S.portes.items.length} porte${S.portes.items.length>1?"s":""}`);return r}
+ if(S.travaux.includes("fenetres")&&S.fenetres.items.length)r.push(`${S.fenetres.items.length} fenêtre${S.fenetres.items.length>1?"s":""}`);
+ if(S.travaux.includes("portes")&&S.portes.items.length)r.push(`${S.portes.items.length} porte${S.portes.items.length>1?"s":""}`);
+ if(S.travaux.includes("sol")&&S.sol.items.length){const v=S.sol.items.reduce((a,it)=>a+(!it.surface_dk&&pn(it.surface)||0),0);r.push(v?`≈ ${fr(v)} m² de sol`:`sol : ${S.sol.items.length} pièce${S.sol.items.length>1?"s":""}`)}
+ if(S.travaux.includes("escalier")&&S.escalier.items.length)r.push(`${S.escalier.items.length} escalier${S.escalier.items.length>1?"s":""}`);return r}
 function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
  let h=`<div class="recap">`;if(tot.length)h+=`<div class="rblock" style="border-color:var(--mint)"><h3>Ce que nous avons compris</h3><div class="tot">${tot.join(" · ")}</div></div>`;
  st.forEach(s=>{let items;if(s==="travaux")items=[S.travaux.map(k=>TRAVAUX.find(t=>t[0]===k)[1]).join(", ")];
-  else if(s==="mode")items=[S.mode==="plan"?"Plan dessiné":"Formulaire simple, sans dessin"];
+  else if(s==="mode")items=[S.mode==="plan"?"Plan dessiné":"Questions travaux par travaux, sans dessin"];
   else if(s==="plan")items=[(()=>{const M=tPieces().flatMap(p=>p.murs||[]),n=M.filter(m=>m.travaux).length,c=tPieces().reduce((a,p)=>a+(p.cloisons_a_creer||[]).length,0);return n||c?`Travaux indiqués : ${n} mur${n>1?"s":""}${c?` + ${c} cloison${c>1?"s":""} à créer`:""}`:"Travaux : pas de mur coché (l'artisan précisera)"})()].concat(tPieces().map(p=>`${p.nom}${p.etage&&S.plan.trace.floors.length>1?" ("+p.etage+")":""} : ≈ ${fr(p.surface_m2)} m²${p.estimee?" (estimé)":""} · ${(p.murs||[]).filter(m=>m.type==="mur extérieur").length} mur(s) extérieur(s)${p.sol&&p.sol.resume&&!(p.zones&&p.zones.length)?" · sol : "+p.sol.resume:""}${p.zones&&p.zones.length?" · "+p.zones.map(z=>`${z.nom} ${fr(z.surface_m2)} m²${z.sol&&z.sol.resume?" (sol : "+z.sol.resume+")":""}`).join(", "):""}`)).concat((()=>{const ps=planStats(),L=[];if(ps.cloN)L.push(`<b>Cloisons</b> : ${ps.cloN} à créer, ≈ ${fr(ps.clo)} m²`);[["Fenêtres",ps.win],["Portes",ps.extD.concat(ps.intD)],["Plafonds",ps.plaf]].forEach(([n,a])=>{if(a.length){L.push(`<b>${n} (${a.length})</b>`);a.forEach(x=>L.push("<b></b>"+esc(x.simple)+(x.vol?`<br><span class="volet">${esc(x.vol)}</span>`:"")))}});return L})());
   else if(s==="planOld")items=(()=>{const lay=layout(),W=walls(lay),e=W.filter(w=>w.type==="ext").reduce((a,w)=>a+w.b-w.a,0),c=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((a,w)=>a+w.b-w.a,0);return[`Murs extérieurs ≈ ${fr(e)} m · murs entre pièces ≈ ${fr(c)} m`]})().concat(S.plan.rooms.map(r=>{const[L,l]=dimsOf(r);return`${r.nom} : ${fr(L)} × ${fr(l)} m${r.dk?" (estimé)":""}${r.trav.length?" · "+r.trav.map(k=>PTRAV[k]).join(", "):""}`}));
   else if(s==="simple")items=list(s).concat([`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s ou documents":" ou document"}`]);
   else if(s==="photos")items=[`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s":""}`];
-  else items=list(s);if(!items.length)items=["—"];
+  else items=list(s);if(!items.length)items=[D[s]&&D[s].g&&D[s].g.cnt?"Rien à prévoir":"—"];
   h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
- return h+`</div>`}
-function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
+ return h+`<button type="button" class="add" data-goto="travaux" style="margin-top:4px">+ Ajouter des travaux</button></div>`}
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s]))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
   contact:{prenom:cap(S.contact.prenom).trim(),nom:cap(S.contact.nom).trim(),telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
   logement:{...S.logement,commune:cap(S.logement.commune).trim()},mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.projet,
-  fichiers:{photos:files.photos.map(f=>f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
+  fichiers:{photos:files.photos.map(f=>(f.tag&&D[f.tag]?D[f.tag].t+" · ":"")+f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
 let lastPayload=null;
 // Finir plus tard : la demande (sans photos) est compressée dans un lien, que le client s'envoie à lui-même (partage ou e-mail).
 async function packS(){const j=JSON.stringify({v:1,cur,S},(k,v)=>typeof v==="string"&&v.startsWith("data:")?undefined:v);let u=new TextEncoder().encode(j),z="r";try{if(window.CompressionStream){u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer());z="z"}}catch(e){}let bin="";for(let i=0;i<u.length;i+=8192)bin+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return z+btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
@@ -762,6 +795,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
  if(cur==="plan"&&!tPieces().length)return e("Ajoutez au moins une pièce avec « + Pièce ».");
  if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
  if(cur==="simple"&&(S.simple.desc||"").trim().length<3)return e("Décrivez vos travaux en quelques mots, même très court.","desc");
+ if(D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n==null)return e("Indiquez combien, même 0 si finalement rien n'est à prévoir.");
  if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.","desc");
  if(cur==="contact"){const c=S.contact;if(!(c.prenom||"").trim()||!(c.nom||"").trim())return e("Indiquez votre prénom et votre nom.","prenom");
   if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.","tel");
@@ -769,15 +803,15 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
   if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.","rgpd")}
  return true}
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
-function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp"))}
-function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||e.classList.contains("item")?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp,.qph"))}
+function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
  if(!B.length||innerWidth>600||["intro","done","plan","logement"].includes(cur))return;
  const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
- const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-34;
+ const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-34-(B.some(e=>e.parentElement.classList.contains("item"))?40:0)-((document.querySelector("#app .qph")||{}).offsetHeight||0);
  if(Y(B[B.length-1]).bottom+scrollY-top0<=avail)return;
- const pages=[];let pg=[],start=top0;B.forEach(e=>{const r=Y(e),t=r.top+scrollY,b=r.bottom+scrollY;if(pg.length&&b-start>avail){pages.push(pg);pg=[];start=t}pg.push(e)});pages.push(pg);
+ const pages=[];let pg=[],start=top0;B.forEach(e=>{const r=Y(e),t=r.top+scrollY,b=r.bottom+scrollY;if(pg.length&&b-start>avail){const o=pg.length>1&&pg[pg.length-1].classList.contains("item-h")?pg.pop():null;pages.push(pg);pg=o?[o]:[];start=o?Y(o).top+scrollY:t}pg.push(e)});pages.push(pg);
  if(pages.length<2)return;fitPage.pages=pages;const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;
- pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));
+ pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));document.querySelectorAll("#app .item").forEach(it=>{const kids=[...it.children],on=kids.filter(e=>!e.classList.contains("pg-off"));it.classList.toggle("pg-off",!on.length);it.classList.toggle("cont",!!on.length&&kids[0].classList.contains("pg-off"))});
  const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
 // Téléphone : s'il reste de la place, on la prend (Cyril 11/11) : détails réaffichés, boutons plus grands, cartes qui remplissent l'écran
 function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
@@ -785,7 +819,7 @@ function fitRoom(){const b=document.body,sec=document.querySelector("#app>sectio
  const ty=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName),H=ty&&fitPage.H?fitPage.H:(fitPage.H=innerHeight),pb=()=>parseFloat(getComputedStyle(b).paddingBottom),abs=e=>{let y=0;for(let n=e;n;n=n.offsetParent)y+=n.offsetTop;return y},fits=()=>document.documentElement.scrollHeight<=H+1;const an=sec.style.animation;sec.style.animation="none";try{if(!fits())return;
  for(const r of R){b.classList.add(r);if(!fits()){b.classList.remove(r);break}}
  if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}
- else{const ch=[...sec.querySelectorAll(".chips .chip:not(.dk)")].filter(e=>e.offsetParent&&!e.closest(".pg-off"));if(ch.length){const rows=new Set(ch.map(e=>Math.round(e.getBoundingClientRect().top))).size,h0=Math.max(...ch.map(e=>e.offsetHeight)),used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0);let add=Math.min(Math.floor((H-used-6)/rows),78-h0);if(add>3){const set=()=>b.style.setProperty("--ch",(h0+add)+"px");set();b.classList.add("grow");while(!fits()&&add>0){add-=3;set()}if(add<=0)b.classList.remove("grow")}}}}finally{sec.style.animation=an}}
+ else{const ch=[...sec.querySelectorAll(".q:not(.cnt) .chips .chip:not(.dk)")].filter(e=>e.offsetParent&&!e.closest(".pg-off"));if(ch.length){const rows=new Set(ch.map(e=>Math.round(e.getBoundingClientRect().top))).size,h0=Math.max(...ch.map(e=>e.offsetHeight)),used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0);let add=Math.min(Math.floor((H-used-6)/rows),78-h0);if(add>3){const set=()=>b.style.setProperty("--ch",(h0+add)+"px");set();b.classList.add("grow");while(!fits()&&add>0){add-=3;set()}if(add<=0)b.classList.remove("grow")}}}}finally{sec.style.animation=an}}
 function fitGo(dir){const P=fitPage.pages||[];if(P.length<2)return false;const i=fitPage.p[cur]||0,j=i+dir;if(j<0||j>=P.length)return false;
  const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;render();fitPage.pages[j]?.forEach(e=>{e.classList.remove("lq-out","lq-outb");e.classList.add(dir>0?"lq-in":"lq-back");setTimeout(()=>e.classList.remove("lq-in","lq-back"),400)});scrollTo(0,0)};
  if(RM){fin();return true}P[i].forEach(e=>e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
@@ -868,16 +902,19 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(b.id==="go"){go(1);return}if(b.id==="back"){go(-1);return}
  if(ds.goto){cur=ds.goto;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;if(cur==="logement")S.lq=0;render();scrollTo(0,0);return}
  if(ds.trav){const k=ds.trav,a=S.travaux;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);save();render();return}
- if(ds.add){const it=S[cur].items,last=it[it.length-1]||{};const d=D[cur];const n=d.g.copy?Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k))):(cur==="doublage"||cur==="cloison"?{H:last.H??2.5,portes:0,fen:0}:{H:last.H??2.5});
-  it.push(n);save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
- if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);save();render();return}
+ if(ds.cnt!=null){const o=S[cur],n=+ds.cnt,it=o.items;o.n=n;while(it.length<n)it.push(newItem(cur));if(it.length>n)it.length=n;save();render();if(n===0){clearTimeout(go.t);go.t=setTimeout(()=>{if(S[cur]&&S[cur].n===0)go(1)},380)}return}
+ if(ds.add){const it=S[cur].items;it.push(newItem(cur));if(D[cur].g.cnt)S[cur].n=it.length;save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);if(D[cur].g&&D[cur].g.cnt)S[cur].n=S[cur].items.length;save();render();return}
  const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
  if(ds.multi){const a=Array.isArray(o[k])?o[k]:[];o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
- if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="logement"&&cur==="logement"&&o[k]!=null&&!ds.multi&&LQ[S.lq||0].length===1){save();render();clearTimeout(go.t);go.t=setTimeout(()=>{if(cur==="logement")go(1)},380);return}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();return}
+ if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="logement"&&cur==="logement"&&o[k]!=null&&!ds.multi&&LQ[S.lq||0].length===1){save();render();clearTimeout(go.t);go.t=setTimeout(()=>{if(cur==="logement")go(1)},380);return}if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();return}
+ if(ds.pre!=null){o[k]=+ds.pre;o[k+"_dk"]=false;o[k+"_o"]=false;save();render();return}
+ if(ds.preo){o[k+"_o"]=true;o[k+"_dk"]=false;save();render();setTimeout(()=>document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus(),30);return}
  if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();return}
  if(ds.op){const st=+ds.st;const v=pn(o[k])??0;let nv=ds.op==="+"?v+st:v-st;if(nv<0)nv=0;o[k]=Math.round(nv*100)/100;o[k+"_dk"]=false;save();render();document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus();return}
  if(ds.step){const v=(o[k]??+ds.min)+(+ds.step);o[k]=Math.max(+ds.min,Math.min(+ds.max,v));save();render();return}
 });
+function newItem(sec){const it=S[sec].items,last=it[it.length-1]||{},d=D[sec];if(d.g.copy&&it.length)return Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k)));if(sec==="doublage"||sec==="cloison")return{H:last.H??2.5,portes:0,fen:0};if(sec==="plafond")return{H:last.H??2.5};return{}}
 function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
 // Code postal <-> commune : propositions de la base officielle des communes (geo.api.gouv.fr, gratuite, sans clé).
 // Sans réseau, rien ne s'affiche et le client tape comme avant.
@@ -920,7 +957,7 @@ document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pn
  if(ds.chk){o[ds.k]=el.checked;save();return}});
 document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)return;const k=el.dataset.file;
  [...el.files].forEach(f=>{if(!/^image\/|application\/pdf/.test(f.type))return;if(f.size>15*1024*1024)return;
-  if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>{files[k].push({name:f.name,img:r.result,file:f});render()};r.readAsDataURL(f)}else{files[k].push({name:f.name,img:null,file:f});render()}});});
+  if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>{files[k].push({name:f.name,img:r.result,file:f,tag:el.dataset.tag||null});render()};r.readAsDataURL(f)}else{files[k].push({name:f.name,img:null,file:f});render()}});});
 render();
 {const hp=new URLSearchParams(location.hash.slice(1)),rp=hp.get("reprise");if(rp)unpackS(rp).then(o=>{if(!o||!o.S||!o.S.travaux)return;S=o.S;cur=o.cur||"travaux";save();hp.delete("reprise");try{history.replaceState(null,"",location.pathname+location.search+(hp.toString()?"#"+hp.toString():""))}catch(e){}render()}).catch(()=>{})};
 })();
