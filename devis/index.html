@@ -310,7 +310,8 @@ const D={
   {k:"commune",t:"text",l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
   {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel"]},
   {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK]},
-  {k:"iso",t:"chips",l:"Type d'isolation des murs",h:"Ce qu'il y a aujourd'hui, côté intérieur.",o:["Laine + BA13","Doublage polystyrène collé","Brique + plâtre",DK]},
+  {k:"iso",t:"chips",l:"Type d'isolation des murs",h:"Ce qu'il y a aujourd'hui, côté intérieur.",o:["Laine + BA13","Doublage polystyrène collé","Brique + plâtre","Pas d'isolation",DK]},
+  {k:"cloison",t:"chips",l:"Type de cloison entre les pièces",h:"Les murs intérieurs qui séparent les pièces.",o:["BA13 + montants","Brique + plâtre",DK]},
   {k:"age",t:"chips",l:"Le logement a-t-il plus de 2 ans ?",o:["Oui","Non",DK],h:"Au-delà de 2 ans, la TVA peut être réduite."},
   {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non"]},
   {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles"],sh:i=>i.type==="Maison"},
@@ -543,7 +544,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
-const LQ=[["cp","commune"],["type"],["mur"],["iso"],["age"],["occupe"],["ou","niveau","ascenseur"]];
+const LQ=[["cp","commune"],["type"],["mur"],["iso"],["cloison"],["age"],["occupe"],["ou","niveau","ascenseur"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 function SIMPLE(){return S.mode==="texte"&&S.travaux.some(k=>PLANABLE.includes(k))}
