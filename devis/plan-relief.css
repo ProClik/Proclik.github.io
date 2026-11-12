@@ -153,7 +153,7 @@ html body .cltool .lk{top:-12px}
 html.client body .fl.mr,html.client body #todo-bar,html.client body .rotb,html.client body #bar3d{bottom:104px!important}
 
 /* bouton « Tracer » en haut à gauche + petite barre Mur / Cloison (Cyril, 29/10) ; le menu du bas passe à 5 outils */
-html body #cltools{grid-template-columns:repeat(6,minmax(0,1fr))}
+html body #cltools{grid-template-columns:repeat(7,minmax(0,1fr))}
 html body #cltrace{position:absolute;z-index:4;top:60px;left:10px;display:flex;align-items:flex-start;gap:8px}
 html:not(.client) body #cltrace,html body .board.v3 #cltrace{display:none}
 html body #ctr-b{appearance:none;border:0;background:transparent;padding:0;display:grid;justify-items:center;gap:5px;font:600 11px/1.1 var(--f);color:var(--muted);cursor:pointer}
@@ -170,3 +170,94 @@ html body #ctr-bar button[aria-pressed="true"] svg{color:var(--mint-ink)}
 html.client body #toast{top:120px}
 html body .chip.add.combles-on{font-weight:800;outline:1.5px solid currentColor;outline-offset:-4px}
 html body #v-toit.next{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
+
+/* Téléphone couché (Cyril 12/11 : « le plan n'est pas assez grand en vue couchée ») — disposition 2 « rail d'icônes + consigne en carte » :
+   l'écran couché est bas, donc rien au-dessus ni au-dessous du plan. Outils en colonne d'icônes à gauche ; étages + consigne en petite carte
+   en haut à gauche du plan ; étapes en bas à gauche ; Plan/3D, Annuler et zoom en petite colonne à droite. */
+@media (orientation:landscape) and (max-height:520px){
+ html.client body .wrap{display:grid!important;grid-template-columns:62px minmax(0,1fr);column-gap:6px;row-gap:0;align-items:start;align-content:start;padding:6px max(8px,env(safe-area-inset-right,0px)) 6px max(6px,env(safe-area-inset-left,0px))!important;max-width:none}
+ html.client body .wrap>*{grid-column:1;min-width:0}
+ html.client body .wrap>#board{grid-column:2;grid-row:1 / span 20}
+ html.client body .board>svg{height:calc(100dvh - 12px)!important}
+ /* outils : colonne d'icônes avec petit nom dessous */
+ html.client body #cltools{position:fixed;left:max(6px,env(safe-area-inset-left,0px));right:auto;top:6px;bottom:6px;width:58px;grid-template-columns:1fr;grid-auto-rows:1fr;gap:2px;padding:3px}
+ html.client body .cltool{display:grid;justify-items:center;align-content:center;font-size:9.5px;padding:0;gap:0}
+ html.client body .cltool svg{width:32px!important;height:32px!important;padding:6px!important}
+ html.client body .cltool .lk{display:none!important}
+ html.client body .cltool.add::before{left:auto;right:4px;top:2px}
+ /* étages + consigne : petite carte en haut à gauche du plan */
+ /* étages : un petit bloc bien visible, sur 2 lignes s'il le faut ; l'étage affiché est plein en bleu nuit (Cyril 12/11 : « les étages ne sont pas bien visibles ») */
+ html.client body #floors{position:fixed;z-index:6;top:8px;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;box-sizing:border-box;flex-wrap:wrap;gap:4px;margin:0;padding:4px;border-radius:14px;background:var(--bg);box-shadow:var(--up-s)}
+ html.client body #floors .chip{padding:5px 9px;font-size:11.5px;white-space:nowrap;box-shadow:none!important;background:transparent!important;border:0}
+ html.client body #floors .chip[aria-pressed="true"]{background:var(--mint)!important;color:var(--paper)!important}
+ html.client body #floors .chip.add{color:var(--muted);font-size:11px}
+ html.client body #clbanner{position:fixed;z-index:6;top:var(--ls-bt,48px);left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;flex-wrap:wrap;row-gap:4px;gap:4px;padding:6px 9px;max-height:calc(100dvh - var(--ls-bt,48px) - 96px);overflow-y:auto;overscroll-behavior:contain}
+ html.client body #clbanner #clb-t{flex:1 1 100%;font-size:12px;line-height:1.3}
+ html.client body #clbanner .pcl{display:none}
+ html.client body #clbanner #clb-v,html.client body #clbanner #clb-h,html.client body #clbanner #clb-p,html.client body #clbanner #clb-b{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.client body #clbanner #clb-b{margin-left:auto}
+ /* étapes : petite ligne en bas à gauche du plan */
+ html.client body #cltl{position:fixed;z-index:6;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);bottom:8px;width:200px;margin:0}
+ html.client body #cltl ol{flex-direction:row;max-width:none;padding:0}
+ html.client body #cltl li{flex:1;justify-content:center}
+ html.client body #cltl .sh,html.client body #cltl .lg{display:none!important}
+ html.client body #cltl i{width:20px;height:20px;font-size:10px}
+ html.client body #cltl li+li::before{display:block;top:10px;margin:0 10px}
+ html.client body #cltl button{padding:2px}
+ html.client body #cltrace{top:auto;bottom:40px;left:8px}
+ /* Plan/3D, Annuler/Rétablir, zoom : petite colonne à droite */
+ html.client body #board .fl.tl{left:auto!important;right:8px!important;top:8px!important}
+ html.client body #board .fl.tl .pill,html.client body #board .fl.tr .pill{flex-direction:column}
+ html.client body #board .fl.tr{top:78px!important;right:8px!important;left:auto!important}
+ html.client body #board .fl.tl button,html.client body #board .fl.tr button{font-size:11px!important;padding:5px 8px!important;min-width:50px;white-space:nowrap}
+ html.client body #board .fl.mr{top:auto!important;bottom:8px!important;right:8px!important;transform:none!important}
+ html.client body #board .fl.mr button{padding:4px 8px!important;min-height:0}
+ /* le petit mode d'emploi animé garde son doigt, sans bulle de texte (la consigne est déjà dans la carte) */
+ html.client body #tut b{display:none!important}
+}
+
+/* Style N1 « Bleu nuit, laiton en touche » (Cyril 12/11, comme le formulaire) : bleu nuit pour les actions, les choix et les icônes ;
+   le laiton ne reste que sur l'étape en cours et le point du logo. */
+:root{--mint:#1B2440;--mint-ink:#1B2440;--acc:#1B2440;--soft:rgba(27,36,64,.10);--laiton:#A8823F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mint:#E8EAF2;--mint-ink:#E8EAF2;--acc:#E8EAF2;--soft:rgba(232,234,242,.12);--laiton:#D4B483}}
+:root[data-theme="dark"]{--mint:#E8EAF2;--mint-ink:#E8EAF2;--acc:#E8EAF2;--soft:rgba(232,234,242,.12);--laiton:#D4B483}
+html body .cltool svg [fill="#B8924F"]{fill:currentColor}
+html body .cltool svg [stroke="#B8924F"],html body #ctr-b svg [stroke="#B8924F"]{stroke:currentColor}
+html body #ctr-b svg [fill="#B8924F"],html body #ctr-bar svg [fill="#B8924F"]{fill:currentColor}
+html body #ctr-bar svg [stroke="#B8924F"]{stroke:currentColor}
+html body .cltool.add::before{color:var(--mint);opacity:.55}
+html body #cltl .cur i{border-color:var(--laiton)!important;color:var(--laiton)!important;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--laiton)!important}
+@keyframes pr-pulse2{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px var(--soft)}}
+@keyframes pr-pulse3{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px var(--soft)}}
+html body #cltl .ok i{color:var(--bg)}
+html body .gdw .gd-f .ok{background:var(--mint);color:var(--bg)}
+html body .gdw .gd-h small{color:var(--muted)}
+html body .gdw .gd-in{color:var(--fg)}
+/* Téléphone couché : l'exemple s'affiche en grand à gauche, la légende et les boutons à droite */
+@media (orientation:landscape) and (max-height:520px){
+ html body .gdw{padding:6px max(10px,env(safe-area-inset-left,0px))}
+ html body .gdw .gd-in{width:min(820px,100%);display:grid;grid-template-columns:minmax(0,1fr) 210px;grid-template-rows:auto 1fr auto;max-height:calc(100dvh - 12px)}
+ html body .gdw iframe{grid-column:1;grid-row:1 / span 3;height:calc(100dvh - 12px);order:-1}
+ html body .gdw .gd-h,html body .gdw .gd-c,html body .gdw .gd-f{grid-column:2}
+ html body .gdw .gd-h{grid-row:1;padding:10px 8px 4px 12px}html body .gdw .gd-c{grid-row:2;font-size:14.5px;padding:0 12px 8px}
+ html body .gdw .gd-f{grid-row:3;flex-direction:column;align-items:stretch;padding:8px 12px 12px}
+ html body .gdw .gd-f button{padding:9px 12px;font-size:14px}
+}
+@media (orientation:landscape) and (max-height:520px){
+ html.client.gd body .wrap{grid-template-columns:0 minmax(0,1fr);column-gap:0}
+ html.client.gd body #floors,html.client.gd body #cltl,html.client.gd body #clbanner{display:none!important}
+ html.client.gd body #cltools{width:auto;right:8px;left:8px;background:transparent;border:0;box-shadow:none;grid-template-columns:repeat(7,minmax(0,1fr))}
+}
+/* Masquer / ramener la consigne (Cyril 12/11) */
+html body #clb-x{order:3;flex:none;display:inline-flex;align-items:center;gap:4px;margin-left:auto;min-height:32px;padding:4px 12px 4px 9px;border:0;border-radius:999px;cursor:pointer;background:var(--bg);color:var(--mint-ink);font:800 12.5px var(--f);box-shadow:var(--up-xs)}
+html body #clbanner{flex-wrap:wrap}
+html body #clb-open{display:none;appearance:none;border:0;cursor:pointer;align-items:center;gap:6px;justify-self:start;align-self:start;width:max-content;padding:7px 14px 7px 11px;border-radius:999px;background:var(--bg);color:var(--mint-ink);font:800 13px var(--f);box-shadow:var(--up-s)}
+html.client.clhide body #clbanner{display:none!important}
+html.client.clhide body #clb-open{display:inline-flex}
+html body #clb-open.nouv{animation:pr-pulse3 1.6s ease-in-out infinite}
+html body #clb-open.nouv::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--laiton);margin-left:2px}
+@media (orientation:landscape) and (max-height:520px){
+ html.client body #clb-open{position:fixed;z-index:6;top:var(--ls-bt,48px);left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);padding:6px 12px 6px 9px;font-size:12px}
+}
+/* N1 : le OK des fiches en bleu nuit (plus en laiton) */
+html.client body #sheet .sh-h [data-close]{background:var(--mint)!important;color:var(--paper)!important}
