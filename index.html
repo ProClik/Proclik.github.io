@@ -24,11 +24,11 @@
   --bg:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.08);
   --acc:var(--n1-nuit);--accx:var(--n1-nuit);--acc-bg:color-mix(in srgb,var(--n1-nuit) 9%,transparent);--laiton:var(--n1-laiton);
   --hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
-  --up:-6px -6px 14px var(--hi),7px 7px 16px var(--lo);
-  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
-  --ch:inset 1.5px 1.5px 1px rgba(255,255,255,.95),inset -1.5px -1.5px 2px rgba(26,34,64,.13);
-  --gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(26,34,64,.27),var(--ch);
-  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
+  --r-up:-6px -6px 14px var(--hi),7px 7px 16px var(--lo);
+  --r-up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --r-ch:inset 1.5px 1.5px 1px rgba(255,255,255,.95),inset -1.5px -1.5px 2px rgba(26,34,64,.13);
+  --r-gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(26,34,64,.27),var(--r-ch);
+  --r-in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
   --lis:0 0 0 1px color-mix(in srgb,var(--n1-nuit) 24%,transparent);
   --lis-in:inset 0 0 0 1px color-mix(in srgb,var(--n1-nuit) 14%,transparent);
   --barre:-3px -3px 9px var(--hi),4px 4px 12px rgba(26,34,64,.11);
@@ -37,10 +37,10 @@
   --bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
   --acc:var(--n1-nuit);--accx:var(--n1-nuit);--acc-bg:color-mix(in srgb,var(--n1-nuit) 10%,transparent);--laiton:var(--n1-laiton);
   --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
-  --up:-6px -6px 14px var(--hi),7px 7px 16px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
-  --ch:inset 1.5px 1.5px 1px rgba(255,255,255,.07),inset -1.5px -1.5px 2px rgba(0,0,0,.4);
-  --gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(0,0,0,.62),var(--ch);
-  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --r-up:-6px -6px 14px var(--hi),7px 7px 16px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --r-ch:inset 1.5px 1.5px 1px rgba(255,255,255,.07),inset -1.5px -1.5px 2px rgba(0,0,0,.4);
+  --r-gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(0,0,0,.62),var(--r-ch);
+  --r-up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
   --lis:0 0 0 1px color-mix(in srgb,var(--n1-nuit) 22%,transparent);
   --lis-in:inset 0 0 0 1px color-mix(in srgb,var(--n1-nuit) 12%,transparent);
   --barre:-3px -3px 9px var(--hi),4px 4px 12px rgba(0,0,0,.32)}
@@ -1396,6 +1396,13 @@ h2 .or>svg path,.souligne path{stroke:var(--laiton)}
 .card.lis{box-shadow:var(--n1-calme-sh),var(--lis)}
 /* icônes à plat (elles ne se touchent pas) */
 .em-g,.ico,.etape .pastille{box-shadow:none;background:color-mix(in srgb,var(--n1-nuit) 7%,var(--bg));color:var(--n1-nuit)}
+/* « seul ce qui se touche est en relief » (Cyril 12/11) : par défaut, les reliefs et les creux deviennent lisses
+   (blocs : à peine décollés ; petites pastilles, galets et creux : simple teinte à plat). Tout ce qui se touche retrouve son relief. */
+:root{--n1-ov:rgba(255,255,255,.6);--n1-ti:color-mix(in srgb,var(--n1-nuit) 5%,transparent);--n1-ti2:color-mix(in srgb,var(--n1-nuit) 6%,transparent);
+ --up:inset 0 0 0 999px var(--n1-ov),var(--n1-calme-sh);--up-s:inset 0 0 0 999px var(--n1-ti);--gal:inset 0 0 0 999px var(--n1-ti);--ch:0 0 0 transparent;--in:inset 0 0 0 999px var(--n1-ti2);--barre:var(--n1-calme-sh)}
+:root[data-theme="dark"]{--n1-ov:rgba(255,255,255,.035)}
+:is(a,button,label,summary,details,input,select,textarea,[role=button],[role=tab],[aria-expanded],[data-s],[data-va],[data-g],[data-d]){--up:var(--r-up);--up-s:var(--r-up-s);--gal:var(--r-gal);--ch:var(--r-ch);--in:var(--r-in)}
+.bravo,:root[data-theme="dark"] .bravo{box-shadow:inset 0 0 0 999px var(--n1-ov),var(--n1-calme-sh)}.bravo::after{box-shadow:none;background:var(--n1-calme)}
 /* bouton principal plein bleu nuit, galet clair à droite */
 .btn.go,.top .btn{background:var(--n1-nuit);color:var(--n1-nuit-fg);font-weight:800;box-shadow:var(--up-s)}
 .btn.go::after{background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);box-shadow:none}
