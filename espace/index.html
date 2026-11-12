@@ -1162,7 +1162,7 @@ function renderCalWeek(){
  h+='<div class="wkc-s"><div class="wkc-b" style="grid-template-columns:'+cols+';height:'+((H1-H0)*PX+8)+'px"><div class="wkc-hr">';
  for(var t=Math.floor(H0)+1;t<H1;t++)h+='<span style="top:'+((t-H0)*PX)+'px">'+t+' h</span>';
  h+='</div>';
- days.forEach(function(d){var L=evOf(d);h+='<div class="wkc-col">';
+ days.forEach(function(d){var L=evOf(d);h+='<div class="wkc-col'+(same(d,TODAY)?' tdy':'')+'">';
   for(var t=Math.floor(H0)+1;t<H1;t++)h+='<div class="wkc-line" style="top:'+((t-H0)*PX)+'px"></div>';
   L.forEach(function(e){var a=hm(e.s),b=hm(e.e),top=(a-H0)*PX,ht=Math.max(18,(b-a)*PX-2),c=CK[e.k][0],i=EV.indexOf(e);
    h+='<button class="ev'+(ht<30?' court':'')+(e.k==='free'?' free':'')+(e.x.tent?' tent':'')+(evSel===i?' sel':'')+'" data-ev="'+i+'" style="--c:'+c+';top:'+top+'px;height:'+ht+'px"><b>'+(wide?e.t:shortT(e.t))+'</b>'+(ht>34?'<small>'+e.s.replace(':','h')+'</small>':'')+'</button>';});
@@ -1713,4 +1713,4 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="poussoir.js?v=2"></script>
 <script src="titres.js?v=2"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=5"></script>
-<link rel="stylesheet" href="../n1.css?v=1"><link rel="stylesheet" href="style-n1.css?v=2">
+<link rel="stylesheet" href="../n1.css?v=1"><link rel="stylesheet" href="style-n1.css?v=3">

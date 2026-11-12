@@ -54,3 +54,10 @@ html body .voice-b,html body .mic-h{color:var(--n1-nuit)}
 html body .nav button[aria-selected="true"] .ico{color:var(--n1-nuit);box-shadow:var(--in),0 0 0 2px var(--n1-laiton)}
 html[data-tu="menu"] body .seg.tm button[aria-selected="true"]{background:color-mix(in srgb,var(--n1-nuit) 9%,var(--bg))!important;box-shadow:inset 0 0 0 1.5px var(--n1-nuit)!important}
 html[data-tu="menu"] .seg.tm button[aria-selected="true"]>:is(span,svg){color:var(--n1-nuit)}
+
+/* 7. Aujourd'hui (Cyril 12/11 : « le jour actuel ne ressort pas ») : rond bleu nuit cerclé de laiton, colonne du jour teintée, ligne de l'heure laiton */
+html body .wkc-h .tdy b,html body .mo-g .tdy .n,html body .mo-g .tdy.sel .n{background:var(--n1-nuit);color:var(--n1-nuit-fg);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--n1-laiton)}
+html body .wkc-h .tdy{color:var(--n1-nuit);font-weight:800;background:color-mix(in srgb,var(--n1-nuit) 7%,transparent);border-radius:14px 14px 0 0}
+html body .wkc-col.tdy{background:color-mix(in srgb,var(--n1-nuit) 7%,transparent)}
+html body .nowl{border-top:2px solid var(--n1-laiton)}html body .nowl::before{background:var(--n1-laiton);width:10px;height:10px}
+html body .tdb .ag-d.auj{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--n1-laiton)!important}html body .tdb .ag-d.auj :is(small,b){color:var(--n1-nuit-fg)}html body .tdb .ag-d.auj i{background:var(--n1-nuit-fg)}
