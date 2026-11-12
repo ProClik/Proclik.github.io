@@ -170,3 +170,64 @@ html body #ctr-bar button[aria-pressed="true"] svg{color:var(--mint-ink)}
 html.client body #toast{top:120px}
 html body .chip.add.combles-on{font-weight:800;outline:1.5px solid currentColor;outline-offset:-4px}
 html body #v-toit.next{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
+
+/* Téléphone couché (Cyril 12/11 : « sur téléphone c'est impossible à utiliser ») : le plan prend toute la hauteur à droite,
+   les étapes, la consigne et les outils se rangent dans une colonne à gauche. */
+@media (orientation:landscape) and (max-height:520px){
+ html.client body .wrap{display:grid!important;grid-template-columns:268px minmax(0,1fr);column-gap:10px;row-gap:6px;align-items:start;align-content:start;padding:6px max(8px,env(safe-area-inset-right,0px)) 6px max(8px,env(safe-area-inset-left,0px))!important;max-width:none}
+ html.client body .wrap>*{grid-column:1;min-width:0}
+ html.client body .wrap>#board{grid-column:2;grid-row:1 / span 20}
+ html.client body #floors{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:5px;margin:0}
+ html.client body #floors .chip{padding:5px 9px;font-size:11.5px;white-space:nowrap}
+ html.client body #cltl ol{flex-direction:row;max-width:none;padding:0}
+ html.client body #cltl li{flex:1;justify-content:center}
+ html.client body #cltl .sh,html.client body #cltl .lg{display:none!important}
+ html.client body #cltl i{width:22px;height:22px;font-size:11px}
+ html.client body #cltl li+li::before{display:block;top:11px;margin:0 12px}
+ html.client body #cltl button{padding:2px}
+ html.client body #clbanner{flex-wrap:wrap;row-gap:6px;padding:8px 10px;gap:6px;max-height:calc(100dvh - 172px);overflow-y:auto;overscroll-behavior:contain}
+ html.client body #clbanner #clb-t{flex:1 1 calc(100% - 40px);font-size:13px;line-height:1.3}
+ html.client body #clbanner .pcl{display:none}
+ html.client body #clbanner #clb-v,html.client body #clbanner #clb-h,html.client body #clbanner #clb-p,html.client body #clbanner #clb-b{order:1;min-height:34px;padding:5px 11px;font-size:12.5px}
+ html.client body #clbanner #clb-b{margin-left:auto}
+ html.client body #cltools{position:fixed;left:max(8px,env(safe-area-inset-left,0px));right:auto;bottom:6px;width:268px;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px}
+ html.client body .cltool{display:flex;align-items:center;justify-content:flex-start;font-size:11.5px;padding:2px 2px 2px 3px;gap:4px;text-align:left}
+ html.client body .cltool svg{width:32px!important;height:32px!important;padding:6px!important;flex:none}
+ html.client body .cltool .lk{display:none!important}
+ html.client body .cltool.add::before{right:auto;left:24px;top:-3px}
+ html.client body #cltrace{top:auto;bottom:8px;left:8px}
+ html.client body .board>svg{height:calc(100dvh - 12px)!important}
+}
+
+/* Style N1 « Bleu nuit, laiton en touche » (Cyril 12/11, comme le formulaire) : bleu nuit pour les actions, les choix et les icônes ;
+   le laiton ne reste que sur l'étape en cours et le point du logo. */
+:root{--mint:#1B2440;--mint-ink:#1B2440;--acc:#1B2440;--soft:rgba(27,36,64,.10);--laiton:#A8823F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mint:#E8EAF2;--mint-ink:#E8EAF2;--acc:#E8EAF2;--soft:rgba(232,234,242,.12);--laiton:#D4B483}}
+:root[data-theme="dark"]{--mint:#E8EAF2;--mint-ink:#E8EAF2;--acc:#E8EAF2;--soft:rgba(232,234,242,.12);--laiton:#D4B483}
+html body .cltool svg [fill="#B8924F"]{fill:currentColor}
+html body .cltool svg [stroke="#B8924F"],html body #ctr-b svg [stroke="#B8924F"]{stroke:currentColor}
+html body #ctr-b svg [fill="#B8924F"],html body #ctr-bar svg [fill="#B8924F"]{fill:currentColor}
+html body #ctr-bar svg [stroke="#B8924F"]{stroke:currentColor}
+html body .cltool.add::before{color:var(--mint);opacity:.55}
+html body #cltl .cur i{border-color:var(--laiton)!important;color:var(--laiton)!important;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--laiton)!important}
+@keyframes pr-pulse2{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px var(--soft)}}
+@keyframes pr-pulse3{50%{box-shadow:var(--up-s),0 0 0 2px var(--acc),0 0 0 6px var(--soft)}}
+html body #cltl .ok i{color:var(--bg)}
+html body .gdw .gd-f .ok{background:var(--mint);color:var(--bg)}
+html body .gdw .gd-h small{color:var(--muted)}
+html body .gdw .gd-in{color:var(--fg)}
+/* Téléphone couché : l'exemple s'affiche en grand à gauche, la légende et les boutons à droite */
+@media (orientation:landscape) and (max-height:520px){
+ html body .gdw{padding:6px max(10px,env(safe-area-inset-left,0px))}
+ html body .gdw .gd-in{width:min(820px,100%);display:grid;grid-template-columns:minmax(0,1fr) 210px;grid-template-rows:auto 1fr auto;max-height:calc(100dvh - 12px)}
+ html body .gdw iframe{grid-column:1;grid-row:1 / span 3;height:calc(100dvh - 12px);order:-1}
+ html body .gdw .gd-h,html body .gdw .gd-c,html body .gdw .gd-f{grid-column:2}
+ html body .gdw .gd-h{grid-row:1;padding:10px 8px 4px 12px}html body .gdw .gd-c{grid-row:2;font-size:14.5px;padding:0 12px 8px}
+ html body .gdw .gd-f{grid-row:3;flex-direction:column;align-items:stretch;padding:8px 12px 12px}
+ html body .gdw .gd-f button{padding:9px 12px;font-size:14px}
+}
+@media (orientation:landscape) and (max-height:520px){
+ html.client.gd body .wrap{grid-template-columns:0 minmax(0,1fr);column-gap:0}
+ html.client.gd body #floors,html.client.gd body #cltl,html.client.gd body #clbanner{display:none!important}
+ html.client.gd body #cltools{width:auto;right:8px;left:8px;background:transparent;border:0;box-shadow:none;grid-template-columns:repeat(6,minmax(0,1fr))}
+}
