@@ -1,0 +1,54 @@
+/* Style N1 « Bleu nuit, laiton en touche » dans l'Espace (Cyril 12/11), comme le formulaire Clik'Devis.
+   Couleurs communes dans /n1.css (chargé juste avant). Chargé en dernier : il ne change que l'apparence, rien ne bouge de place.
+   Règles : bleu nuit pour les actions, icônes, coches et sélections (blanc cassé la nuit) ; laiton seulement en touche
+   (onglet où l'on est, point du logo) ; blocs calmes à peine décollés ; seul ce qui se touche est en relief (anneau poussoir) ;
+   icônes qui ne se touchent pas : à plat, sur une teinte légère. La dictée garde sa place et reste toujours visible. */
+
+/* 1. Jetons : l'accent laiton devient bleu nuit, les blocs deviennent calmes.
+   :root[data-theme] a la même force que les réglages jour/nuit de relief.css et passe après eux. */
+:root,:root[data-theme]{
+  --acc:var(--n1-nuit);--accx:var(--n1-nuit);--turq:var(--n1-nuit);--turq-ink:var(--n1-nuit);
+  --turq-bg:color-mix(in srgb,var(--n1-nuit) 9%,transparent);--acc-g:color-mix(in srgb,var(--n1-nuit) 22%,transparent);
+  --laiton:var(--n1-laiton);--teinte:color-mix(in srgb,var(--n1-nuit) 7%,var(--n1-calme));
+  --rs:var(--n1-calme);
+  --up:var(--n1-calme-sh);--shadow:var(--n1-calme-sh)}
+/* ce qui se touche garde la matière du fond et son anneau (poussoir.css) */
+html body .pk,html body .pk-v{--rs:var(--bg)}
+
+/* 2. Blocs calmes : cadres lisses, sans ombre claire en haut à gauche */
+html body .sheet .sheet-foot{background:var(--n1-calme)}
+
+/* 3. Icônes qui ne se touchent pas : à plat, teinte légère, trait bleu nuit */
+html body :is(.ti-ic,.parc-ic,.pr-fi,.av,.w-ic,.wicon,.tip .q,.prod-i):not(.pk):not(.pk-v){background:var(--teinte);box-shadow:none;color:var(--n1-nuit)}
+html body .toast .ti{background:var(--teinte);box-shadow:none}
+html body .tdb .parc-e.ici .parc-ic{background:var(--bg);box-shadow:0 0 0 2px var(--n1-laiton);color:var(--n1-nuit)}
+html body .tip{background:var(--teinte);box-shadow:none}
+
+/* 4. Bouton principal : bleu nuit plein, texte blanc, flèche blanche dans un galet translucide */
+html body .btn.go,html body .vbtn.go{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg)!important;font-weight:700}
+html body .btn.go.pk,html body .vbtn.go.pk{box-shadow:0 1px 2px rgba(14,19,34,.18),0 8px 18px -6px rgba(14,19,34,.35)}
+html body .btn.go::after,html body .vbtn.go::after{background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);box-shadow:none}
+html body .btn.go::before,html body .vbtn.go::before{background:var(--n1-nuit-fg)}
+html body .btn.go .ic,html body .btn.go svg{color:var(--n1-nuit-fg)}
+html body .btn.go.pk:not([disabled]):active,html body .btn.go.pk.appui,html body .vbtn.go.pk:not([disabled]):active,html body .vbtn.go.pk.appui{box-shadow:inset 0 2px 6px rgba(0,0,0,.35);filter:brightness(.92)}
+html body .btn.go[disabled]{opacity:.45}
+:root[data-theme="dark"] body :is(.btn.go.pk,.vbtn.go.pk){box-shadow:0 8px 18px -6px rgba(0,0,0,.5)}
+
+/* 5. Choix sélectionnés : teinte bleu nuit + contour fin (comme le formulaire) */
+html body .chips button[aria-pressed="true"],html body .chips button[data-f="all"][aria-pressed="true"],
+html body .seg button[aria-selected="true"],html body .tabs-top button[aria-selected="true"],html body .week button[aria-pressed="true"]{
+  background:color-mix(in srgb,var(--n1-nuit) 9%,var(--bg));box-shadow:inset 0 0 0 1.5px var(--n1-nuit);color:var(--fg)}
+html body .week button[aria-pressed="true"] b{color:var(--n1-nuit)}
+html body .slot .b.on{box-shadow:var(--in),inset 3px 0 0 var(--n1-nuit)}
+html body .sw.on{background:var(--n1-nuit)}
+
+/* 6. Barre du bas : onglet où l'on est = icône bleu nuit + anneau laiton (la seule touche laiton) */
+html body .pb-i.on .pb-g,html body .pb-e.on .pb-g{color:var(--n1-nuit);box-shadow:var(--in),0 0 0 2px var(--n1-laiton)}
+html body .pb-c.on::after{background:var(--n1-laiton)}
+/* dictée : toujours là, même place, bleu nuit */
+html body .pb-mic .pb-g{color:var(--n1-nuit);box-shadow:var(--up),0 0 0 5px color-mix(in srgb,var(--n1-nuit) 12%,transparent)}
+html body .voice-b,html body .mic-h{color:var(--n1-nuit)}
+/* tablette (menu à gauche) : même repère laiton ; tuiles-menu en haut des écrans : choix sélectionné bleu nuit */
+html body .nav button[aria-selected="true"] .ico{color:var(--n1-nuit);box-shadow:var(--in),0 0 0 2px var(--n1-laiton)}
+html[data-tu="menu"] body .seg.tm button[aria-selected="true"]{background:color-mix(in srgb,var(--n1-nuit) 9%,var(--bg))!important;box-shadow:inset 0 0 0 1.5px var(--n1-nuit)!important}
+html[data-tu="menu"] .seg.tm button[aria-selected="true"]>:is(span,svg){color:var(--n1-nuit)}
