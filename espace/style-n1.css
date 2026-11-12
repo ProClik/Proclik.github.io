@@ -11,7 +11,9 @@
   --turq-bg:color-mix(in srgb,var(--n1-nuit) 9%,transparent);--acc-g:color-mix(in srgb,var(--n1-nuit) 22%,transparent);
   --laiton:var(--n1-laiton);--teinte:color-mix(in srgb,var(--n1-nuit) 7%,var(--n1-calme));
   --rs:var(--n1-calme);
-  --up:var(--n1-calme-sh);--shadow:var(--n1-calme-sh)}
+  --up:var(--n1-calme-sh);--shadow:var(--n1-calme-sh);
+  /* petites pastilles qui ne se touchent pas : à plat, sur une teinte (poussoir.css redonne le relief à ce qui se touche) */
+  --up-s:inset 0 0 0 999px var(--teinte)}
 /* ce qui se touche garde la matière du fond et son anneau (poussoir.css) */
 html body .pk,html body .pk-v{--rs:var(--bg)}
 
