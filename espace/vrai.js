@@ -181,7 +181,7 @@ var COUR=null;
 /* Plan dessiné par le client : le module Plan s'ouvre en mode artisan et reçoit le plan de la demande.
    Les retouches de l'artisan restent sur cet appareil (une sauvegarde par client). */
 function voirPlan(){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan;if(!P)return;var k=COUR.contact||{},nom=k.nom||'le client';
- ouvrir('📐 Plan de '+esc(nom)+'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>','<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=40&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
+ ouvrir('📐 Plan de '+esc(nom)+'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>','<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=41&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
  if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||''},'*')}});
@@ -227,7 +227,7 @@ var VGR=[['cli','À demander au client','<path d="M4 5h16v11H9l-5 4z"/>'],['vis'
 function verifHTML(p){var L=(p.a_verifier||[]);if(!L.length)return '';var tag=window.PCTAG?PCTAG('cliky','a relevé ces points'):'';
  if(window.PCOPT&&!PCOPT.cliky)return '<div class="card vsec">'+tag+'<p class="vst" style="padding:0">Avec l\'option Cliky, les points à vérifier de chaque demande sont rangés ici : à demander au client, à voir à la visite, à chiffrer.</p></div>';
  var ok=lsG(vokCle(p))||[],Q=L.map(vcourt),k=COUR&&COUR.contact||{};
- return '<div class="card vsec vverif">'+tag+'<h3 style="margin:0 0 2px">À vérifier</h3>'+
+ return '<div class="card vsec vverif">'+tag+'<h3 style="margin:0 0 2px">À vérifier</h3>'+(function(){var r=L.map(function(_,i){return i}).filter(function(i){return ok.indexOf(i)<0}).length;return r?'<button type="button" class="vbtn vwz-go" data-vwzgo="1">▶ Vérifier un par un ('+r+')</button>':''})()+
   VGR.map(function(G){var I=[];Q.forEach(function(x,i){if(x.g===G[0])I.push(i)});if(!I.length)return '';var reste=I.filter(function(i){return ok.indexOf(i)<0}).length;
    return '<details class="vgrp" data-vgrp="'+G[0]+'"'+(reste?' open':'')+'><summary><span class="vgi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+G[2]+'</svg></span>'+G[1]+'<span class="vgn'+(reste?'':' ok')+'">'+(reste||'✓')+'</span></summary>'+
     I.map(function(i){var x=Q[i],li=vligne(x),fait=ok.indexOf(i)>=0;
@@ -242,7 +242,8 @@ function vmsgTexte(p){var ok=lsG(vokCle(p))||[],k=COUR&&COUR.contact||{},art=lsG
 function vverifMaj(){var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];if(!p)return;var ok=lsG(vokCle(p))||[];
  $$('#vov-b .vgrp').forEach(function(g){var I=$$('.vtick',g),r=I.filter(function(c){return !c.checked}).length,n=$('.vgn',g);n.textContent=r||'✓';n.classList.toggle('ok',!r)});
  $$('#vov-b .vtick').forEach(function(c){c.parentNode.classList.toggle('fait',c.checked)});
- var t=$('#vmsg-t');if(t&&!t._touche)t.value=vmsgTexte(p)}
+ var t=$('#vmsg-t');if(t&&!t._touche)t.value=vmsgTexte(p);
+ var r=$$('#vov-b .vtick').filter(function(c){return !c.checked}).length;$$('#vov-b [data-vwzgo]').forEach(function(b){b.hidden=!r;b.textContent='▶ Vérifier un par un ('+r+')'})}
 document.addEventListener('change',function(e){var c=e.target;if(!c||!c.hasAttribute||!c.hasAttribute('data-vok'))return;var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];if(!p)return;
  var ok=lsG(vokCle(p))||[],i=+c.getAttribute('data-vok');ok=ok.filter(function(x){return x!==i});if(c.checked)ok.push(i);lsS(vokCle(p),ok.length?ok:null);vverifMaj()});
 document.addEventListener('input',function(e){if(e.target&&e.target.id==='vmsg-t')e.target._touche=true});
@@ -501,4 +502,35 @@ window.addEventListener('hashchange',function(){var c=lienDirect();if(c)ouvrirDe
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="devis"]');if(t&&lsG(KJ)&&Date.now()-charge>30000)charger()});
 document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('vcomm'))lsS('pc-calc-ferme',d.open?null:1)},true);
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&lsG(KJ)&&Date.now()-charge>60000)charger()});
+/* « Vérifier un par un » (Cyril 12/11) : les points à vérifier du pré-devis en un seul parcours, une question à la fois,
+   dans la même petite fenêtre que le plan ; à la fin, on rappelle les points du plan (bouton « À vérifier » du plan). */
+var PLANCHK=0,VWZ=null;window.addEventListener('message',function(e){var d=e.data;if(d&&d.type==='proclik-plan-chk')PLANCHK=+d.n||0});
+function vwzPts(){var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];if(!p)return null;var ok=lsG(vokCle(p))||[],Q=(p.a_verifier||[]).map(vcourt);return {p:p,ok:ok,Q:Q,R:Q.map(function(x,i){return i}).filter(function(i){return ok.indexOf(i)<0})}}
+function vwzShow(){var o=$('#vwz');if(!o){o=document.createElement('div');o.id='vwz';o.setAttribute('role','dialog');(document.querySelector('.vov')||document.body).appendChild(o)}var P=vwzPts();if(!VWZ||!P){o.hidden=true;return}o.hidden=false;
+ var I=VWZ.I,n=I.length,k=VWZ.k,x='<button type="button" class="vwz-x" data-vwz="x" aria-label="Fermer">✕</button>',h;
+ if(k>=n){var reste=P.R.length,cli=P.R.some(function(i){return P.Q[i].g==='cli'}),c=COUR&&COUR.contact||{};
+  h='<div class="vwz-h"><div><b>À vérifier</b><small>Pré-devis</small></div>'+x+'</div><div class="vwz-q vwz-in"><h3>'+(reste?'C\'est passé en revue':'Tout est vérifié ✓')+'</h3>'+(reste?'<p>'+reste+' point'+(reste>1?'s':'')+' laissé'+(reste>1?'s':'')+' pour plus tard : ils restent dans la liste « À vérifier ».</p>':'<p>Plus rien à regarder dans le pré-devis.</p>')+(PLANCHK?'<p><b>Le plan a encore '+PLANCHK+' point'+(PLANCHK>1?'s':'')+'</b> : ouvrez le plan et touchez « À vérifier » en haut.</p>':'')+'</div><div class="vwz-f">'+(cli&&(c.telephone||c.email)?'<button type="button" class="vwz-l" data-vwz="cli">Envoyer les questions au client</button>':'<span></span>')+'<button type="button" class="vwz-s" data-vwz="x">Fermer</button></div>'}
+ else{var i=I[k],q=P.Q[i],G=VGR.filter(function(g){return g[0]===q.g})[0]||VGR[1],li=vligne(q),fait=P.ok.indexOf(i)>=0;
+  h='<div class="vwz-h"><div><b>À vérifier · '+(k+1)+' sur '+n+'</b><small>'+esc(G[1])+'</small></div>'+x+'</div><div class="vwz-p">'+I.map(function(_,j){return '<i class="'+(j<k?'ok':j===k?'cur':'')+'"></i>'}).join('')+'</div>'+
+   '<div class="vwz-q '+(VWZ.d<0?'vwz-bk':'vwz-in')+'"><h3>'+esc(q.q)+'</h3>'+(q.r?'<span class="vchip'+(q.g==='prix'?' z':'')+'">'+esc(q.r)+'</span>':'')+(fait?'<p>✓ Déjà marqué « C\'est bon ».</p>':'')+
+   '<div class="vwz-b"><button type="button" class="vwz-s" data-vwz="ok">✓ C\'est bon</button>'+(li?'<button type="button" class="vwz-m" data-vwz="mod">Modifier la ligne</button>':'')+'</div></div>'+
+   '<div class="vwz-f">'+(k>0?'<button type="button" class="vwz-l" data-vwz="prev">← Retour</button>':'<span></span>')+'<button type="button" class="vwz-l" data-vwz="next">Plus tard →</button></div>'}
+ o.innerHTML=h;VWZ.d=0}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-vwzgo],[data-vwz]');if(!t)return;var P=vwzPts();if(!P)return;
+ if(t.hasAttribute('data-vwzgo')){e.preventDefault();if(!P.R.length)return;VWZ={I:P.R.slice(),k:0,d:1};vwzShow();return}
+ var a=t.getAttribute('data-vwz');if(!VWZ)return;
+ if(a==='x'){VWZ=null;vwzShow();return}
+ if(a==='prev'){VWZ.k=Math.max(0,VWZ.k-1);VWZ.d=-1;vwzShow();return}
+ if(a==='next'){VWZ.k++;VWZ.d=1;vwzShow();return}
+ if(a==='ok'){var i=VWZ.I[VWZ.k],ok=P.ok.filter(function(z){return z!==i});ok.push(i);lsS(vokCle(P.p),ok);var c=$('#vov-b [data-vok="'+i+'"]');if(c)c.checked=true;vverifMaj();VWZ.k++;VWZ.d=1;setTimeout(vwzShow,160);return}
+ if(a==='mod'){var j=VWZ.I[VWZ.k],r=$('#vov-b [data-vok="'+j+'"]'),m=r&&r.parentNode.querySelector('.vmod2');VWZ=null;vwzShow();if(m)m.click();return}
+ if(a==='cli'){VWZ=null;vwzShow();var g=$('#vov-b details.vgrp[data-vgrp="cli"]'),d=$('#vov-b details.vmsg');if(g)g.open=true;if(d){d.open=true;d.scrollIntoView({block:'center',behavior:'smooth'})}return}});
+(function(){var s=document.createElement('style');s.textContent='#vwz{position:fixed;z-index:9000;left:50%;bottom:12px;transform:translateX(-50%);width:min(420px,calc(100% - 24px));max-height:min(80vh,620px);overflow:auto;display:grid;gap:10px;padding:14px 16px;border-radius:22px;background:var(--bg,#ECEEF2);color:var(--fg);border:1px solid var(--line);box-shadow:0 18px 44px -12px rgba(11,18,38,.4)}#vwz[hidden]{display:none}@media (min-width:900px){#vwz{left:auto;right:20px;transform:none;bottom:20px}}'+
+ '.vwz-h{display:flex;align-items:center;gap:10px}.vwz-h>div{flex:1;min-width:0}.vwz-h b{display:block;font:800 15px var(--f)}.vwz-h small{display:block;font:600 12px var(--f);color:var(--muted)}.vwz-x{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--muted);font:700 16px var(--f);cursor:pointer}'+
+ '.vwz-p{display:flex;gap:4px}.vwz-p i{flex:1;height:4px;border-radius:2px;background:var(--line)}.vwz-p i.ok{background:var(--acc,#1B2440)}.vwz-p i.cur{background:var(--laiton,#A8823F)}'+
+ '.vwz-q{display:grid;gap:10px}.vwz-q h3{margin:2px 0 0;font:800 19px/1.25 var(--f)}.vwz-q p{margin:0;color:var(--muted);font:600 14px/1.4 var(--f)}.vwz-q .vchip{justify-self:start}'+
+ '.vwz-b{display:grid;gap:8px}.vwz-s,.vwz-m{appearance:none;cursor:pointer;min-height:48px;border-radius:14px;font:800 15px var(--f);padding:0 18px}.vwz-s{border:0;background:var(--acc,#1B2440);color:var(--bg,#fff)}.vwz-m{border:1px solid var(--line);background:var(--card);color:var(--fg)}'+
+ '.vwz-f{display:flex;justify-content:space-between;align-items:center;gap:10px}.vwz-l{appearance:none;border:0;background:none;color:var(--fg);font:700 14px var(--f);text-decoration:underline;cursor:pointer;padding:8px 2px}.vwz-f .vwz-s{min-height:44px}'+
+ '.vwz-in>*{animation:vwzi .4s cubic-bezier(.22,1,.36,1) both}.vwz-bk>*{animation:vwzb .4s cubic-bezier(.22,1,.36,1) both}@keyframes vwzi{from{opacity:0;transform:translateX(24px)}}@keyframes vwzb{from{opacity:0;transform:translateX(-24px)}}@media (prefers-reduced-motion:reduce){.vwz-in>*,.vwz-bk>*{animation:none}}'+
+ '.vwz-go{width:100%;margin:6px 0 4px;min-height:48px;background:var(--acc,#1B2440)!important;color:var(--bg,#fff)!important}';document.head.appendChild(s)})();
 })();
