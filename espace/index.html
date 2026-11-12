@@ -1162,9 +1162,9 @@ function renderCalWeek(){
  h+='<div class="wkc-s"><div class="wkc-b" style="grid-template-columns:'+cols+';height:'+((H1-H0)*PX+8)+'px"><div class="wkc-hr">';
  for(var t=Math.floor(H0)+1;t<H1;t++)h+='<span style="top:'+((t-H0)*PX)+'px">'+t+' h</span>';
  h+='</div>';
- days.forEach(function(d){var L=evOf(d);h+='<div class="wkc-col">';
+ days.forEach(function(d){var L=evOf(d);h+='<div class="wkc-col'+(same(d,TODAY)?' tdy':'')+'">';
   for(var t=Math.floor(H0)+1;t<H1;t++)h+='<div class="wkc-line" style="top:'+((t-H0)*PX)+'px"></div>';
-  L.forEach(function(e){var a=hm(e.s),b=hm(e.e),top=(a-H0)*PX,ht=Math.max(18,(b-a)*PX-2),c=CK[e.k][0],i=EV.indexOf(e);
+  L.forEach(function(e){var a=hm(e.s),b=hm(e.e),top=(a-H0)*PX,ht=Math.max(18,(b-a)*PX-2),c=evC(e),i=EV.indexOf(e);
    h+='<button class="ev'+(ht<30?' court':'')+(e.k==='free'?' free':'')+(e.x.tent?' tent':'')+(evSel===i?' sel':'')+'" data-ev="'+i+'" style="--c:'+c+';top:'+top+'px;height:'+ht+'px"><b>'+(wide?e.t:shortT(e.t))+'</b>'+(ht>34?'<small>'+e.s.replace(':','h')+'</small>':'')+'</button>';});
   if(same(d,TODAY)){var n=nowH();if(n>H0&&n<H1)h+='<div class="nowl" style="top:'+((n-H0)*PX)+'px"></div>';}
   h+='</div>';});
@@ -1189,17 +1189,19 @@ function renderCalMonth(){
  var start=monday(calMo),h='<div class="mo-h">'+JS.map(function(j){return '<div>'+j.charAt(0)+'<span class="sr">'+j+'</span></div>';}).join('')+'</div><div class="mo-g">';
  for(var i=0;i<42;i++){var d=addD(start,i);if(i===35&&d.getMonth()!==calMo.getMonth())break;var L=evOf(d).filter(function(e){return e.k!=='free';});
   var cls=(d.getMonth()!==calMo.getMonth()?' out':'')+(same(d,TODAY)?' tdy':'')+(same(d,calSel)?' sel':'');
-  var dots=[],seen={};L.forEach(function(e){if(!seen[e.k]){seen[e.k]=1;dots.push(CK[e.k][0]);}});
+  var dots=[],seen={};L.forEach(function(e){var c=evC(e);if(!seen[c]){seen[c]=1;dots.push(c);}});
   h+='<button class="'+cls+'" data-day="'+iso(d)+'" aria-label="'+d.getDate()+' '+MOIS[d.getMonth()]+', '+L.length+' évènement(s)"><span class="n">'+d.getDate()+'</span><span class="mo-d">'+dots.slice(0,3).map(function(c){return '<i style="--c:'+c+'"></i>';}).join('')+'</span>'+
-   '<span class="mo-c">'+L.slice(0,3).map(function(e){var ad=hm(e.e)-hm(e.s)>=5;return '<span class="'+(ad?'allday':'')+'" style="--c:'+CK[e.k][0]+'"><i></i>'+(ad?'':e.s.replace(':00','h').replace(':','h')+' ')+e.t+'</span>';}).join('')+(L.length>3?'<em>+'+(L.length-3)+' autre'+(L.length>4?'s':'')+'</em>':'')+'</span></button>';}
+   '<span class="mo-c">'+L.slice(0,3).map(function(e){var ad=hm(e.e)-hm(e.s)>=5;return '<span class="'+(ad?'allday':'')+'" style="--c:'+evC(e)+'"><i></i>'+(ad?'':e.s.replace(':00','h').replace(':','h')+' ')+e.t+'</span>';}).join('')+(L.length>3?'<em>+'+(L.length-3)+' autre'+(L.length>4?'s':'')+'</em>':'')+'</span></button>';}
  $('#moc').innerHTML=h+'</div>';
  $$('#moc [data-day]').forEach(function(b){b.addEventListener('click',function(){calSel=new Date(b.dataset.day+'T12:00:00');renderCalMonth();});});
  var L=evOf(calSel);
  $('#mo-dt').textContent=JL[(calSel.getDay()+6)%7]+' '+calSel.getDate()+' '+MOIS[calSel.getMonth()];
- $('#mo-dl').innerHTML=L.length?L.map(function(e){return '<button class="it" data-ev="'+EV.indexOf(e)+'" style="--c:'+CK[e.k][0]+'"><span class="bar"></span><span class="tm">'+e.s.replace(':','h')+'<br>'+e.e.replace(':','h')+'</span><span class="tx"><b>'+e.t+'</b><small>'+(e.w||CK[e.k][1])+'</small></span></button>';}).join(''):'<p class="hint">Rien de prévu ce jour-là. Profitez-en, ou proposez ce créneau à un client.</p>';
+ $('#mo-dl').innerHTML=L.length?L.map(function(e){return '<button class="it" data-ev="'+EV.indexOf(e)+'" style="--c:'+evC(e)+'"><span class="bar"></span><span class="tm">'+e.s.replace(':','h')+'<br>'+e.e.replace(':','h')+'</span><span class="tx"><b>'+e.t+'</b><small>'+(e.w||CK[e.k][1])+'</small></span></button>';}).join(''):'<p class="hint">Rien de prévu ce jour-là. Profitez-en, ou proposez ce créneau à un client.</p>';
  $$('#mo-dl [data-ev]').forEach(function(b){b.addEventListener('click',function(){evDetail('#mo-d',EV[+b.dataset.ev]);});});
  $('#mo-d').innerHTML='';
 }
+/* couleur d'un évènement : celle du client (couleurs.js) ou celle de son type */
+function evC(e){return (window.PCCOUL&&PCCOUL.ev(e))||CK[e.k][0];}
 function calKey(){return Object.keys(CK).map(function(k){return '<span><i style="--c:'+CK[k][0]+'"></i>'+CK[k][1]+'</span>';}).join('')+'<span><i class="tent" style="--c:var(--k-plan)"></i>À confirmer</span>';}
 $('#wk-prev').addEventListener('click',function(){calWk=addD(calWk,-7);evSel=null;$('#wk-d').innerHTML='';renderCalWeek();});
 $('#wk-next').addEventListener('click',function(){calWk=addD(calWk,7);evSel=null;$('#wk-d').innerHTML='';renderCalWeek();});
@@ -1713,3 +1715,4 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="poussoir.js?v=2"></script>
 <script src="titres.js?v=2"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=5"></script>
+<link rel="stylesheet" href="../n1.css?v=1"><link rel="stylesheet" href="style-n1.css?v=5"><script src="couleurs.js?v=3"></script>
