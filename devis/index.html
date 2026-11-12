@@ -394,6 +394,26 @@ section.fade>.tete9{margin:14px 0 6px}
 /* iPad / ordinateur : colonne centrée, tout tient à l'écran */
 @media (min-width:601px){html body .wrap{max-width:720px}html body.instep .foot{display:none}html body:not(.nonav){padding-bottom:calc(88px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}}
 @media (min-width:1000px) and (orientation:landscape){html body .wrap{max-width:980px}html body .item:not(.mini){display:grid;grid-template-columns:1fr 1fr;column-gap:26px;align-items:start}html body .item:not(.mini)>:is(.item-h,.iok,.note,.schema){grid-column:1/-1}html body .item:not(.mini)>.q.miss{margin-inline:0}}
+/* Finitions (Cyril 12/11) : question en cours, transitions, écran final */
+html body .q.now9{background:color-mix(in srgb,var(--mint) 5%,var(--bg));box-shadow:0 0 0 10px color-mix(in srgb,var(--mint) 5%,var(--bg)),-13px 0 0 0 var(--laiton);border-radius:6px;transition:background .35s,box-shadow .35s}
+html body .item:not(.mini) .q.now9{background:color-mix(in srgb,var(--mint) 5%,var(--calme));box-shadow:0 0 0 10px color-mix(in srgb,var(--mint) 5%,var(--calme)),-13px 0 0 0 var(--laiton)}
+html body .q{transition:background .35s,box-shadow .35s}
+.s9i>*{animation:s9i .45s cubic-bezier(.22,1,.36,1) both}.s9b>*{animation:s9b .45s cubic-bezier(.22,1,.36,1) both}
+:is(.s9i,.s9b)>:nth-child(2){animation-delay:.04s}:is(.s9i,.s9b)>:nth-child(3){animation-delay:.08s}:is(.s9i,.s9b)>:nth-child(4){animation-delay:.12s}:is(.s9i,.s9b)>:nth-child(n+5){animation-delay:.16s}
+@keyframes s9i{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}@keyframes s9b{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.s9o{animation:s9o .15s ease-in both}.s9ob{animation:s9ob .15s ease-in both}@keyframes s9o{to{opacity:0;transform:translateX(-18px)}}@keyframes s9ob{to{opacity:0;transform:translateX(18px)}}
+.done9{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(12px,2.6vh,24px);padding-block:clamp(12px,4vh,40px)}
+.done9 h1{font-size:clamp(30px,4.4vw,48px);margin:0;animation:fil7m .6s .5s both}.done9>.sub{margin:-6px 0 0;max-width:44ch;animation:fil7m .6s .6s both}
+.ok9{width:92px;height:92px;animation:ok9 .5s cubic-bezier(.2,.9,.3,1.3) both}.ok9 svg{width:100%;height:100%;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ok9 circle{fill:var(--mint);stroke:var(--laiton);stroke-width:2;stroke-dasharray:183;stroke-dashoffset:183;animation:ok9c .7s .15s ease-out forwards}
+.ok9 path{stroke:var(--go-fg);stroke-width:4.5;stroke-dasharray:44;stroke-dashoffset:44;animation:ok9p .45s .55s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes ok9{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}@keyframes ok9c{to{stroke-dashoffset:0}}@keyframes ok9p{to{stroke-dashoffset:0}}
+.fin9{margin-top:4px}.fin9 li{animation-delay:.8s}.fin9 li:nth-child(2){animation-delay:1s}.fin9 li:nth-child(3){animation-delay:1.2s}.fin9::after{width:auto;right:50%;animation-delay:1.1s}
+.fin9 .fait .g7{background:var(--mint)!important;color:var(--go-fg)}.fin9 .fait .g7 svg{width:34px;height:34px}.fin9 .fait .n7{color:var(--fg)}
+.carte9{width:100%;max-width:520px;display:grid;gap:10px;padding:18px 20px;border-radius:22px;background:var(--calme);box-shadow:var(--calme-sh);text-align:left;font-size:15.5px;line-height:1.45;animation:fil7m .6s 1.3s both}.carte9 p{margin:0}.carte9 .mini7{justify-content:flex-start}.carte9 .mini7 svg{width:15px;height:15px;flex:none}
+.done9>.lien7{animation:fil7m .6s 1.4s both}.done9 details{width:100%;max-width:640px;text-align:left}
+@media (max-width:600px){.ok9{width:72px;height:72px}.done9 h1{font-size:28px}.fin9 .fait .g7 svg{width:26px;height:26px}.carte9{font-size:14.5px;padding:14px 16px}}
+@media (prefers-reduced-motion:reduce){.s9i>*,.s9b>*,.s9o,.s9ob,.ok9,.ok9 circle,.ok9 path,.done9 *{animation:none!important}.ok9 circle,.ok9 path{stroke-dashoffset:0}}
 </style>
 
 <div class="wrap">
@@ -811,9 +831,9 @@ function render(){
  // Fluidité (Cyril 11/11) : sur le même écran, on met à jour la page en place (les boutons gardent leur animation),
  // et entre deux questions du logement seule la question glisse.
  const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
- if(!same)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
+ if(!same){h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(NAV9)h=h.replace('<section class="fade">',`<section class="fade ${NAV9>0?"s9i":"s9b"}">`)}if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
  if(same&&scrollY!==sy)scrollTo(0,sy);
- if(window.icoDeco)icoDeco(app);if(window.btnDeco)btnDeco();fitPage();fitRoom();
+ if(window.icoDeco)icoDeco(app);if(window.btnDeco)btnDeco();fitPage();fitRoom();focus9();
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
@@ -903,13 +923,21 @@ async function sendReq(p){const go=document.getElementById("go"),err=document.ge
   const fd=new FormData();fd.append("donnees",JSON.stringify(p));if(!rangees)pj.forEach(x=>fd.append(x[0],x[1],x[2]));
   const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),60000);await fetch(CONFIG.webhook,{method:"POST",body:fd,mode:"no-cors",signal:ac.signal});clearTimeout(tm);SENDING=false;finish()}
  catch(e){SENDING=false;if(go){go.disabled=false;go.textContent=old}const er=document.getElementById("err");if(er)er.textContent="L'envoi n'est pas passé (réseau trop faible ?). Votre demande est bien gardée sur cet appareil : réessayez dans un instant."}}
-function doneH(){const p=lastPayload;return`<section class="done fade"><div class="ok">✓</div><h1>Merci ${esc(S.contact.prenom||"")} !</h1>
- <p class="sub" style="margin:0 auto">Votre demande est bien arrivée. ${CONFIG.artisan} la relit et vous répond sous ${CONFIG.delai}.</p>
- <div class="next"><div><b>1</b><span>Cliky prépare un pré-devis à partir de vos réponses et de vos photos.</span></div>
- <div><b>2</b><span>${CONFIG.artisan} le vérifie, ligne par ligne, avec son œil de pro.</span></div>
- <div><b>3</b><span>Vous recevez votre devis par e-mail, à signer en ligne si tout vous convient.</span></div></div>
+function doneH(){const p=lastPayload,pre=S.contact.prenom||"",ok='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+ return`<section class="done9"><div class="ok9" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29"/><path d="M19 33.5l9 9L46 23"/></svg></div>
+ <h1>Merci${pre?" "+esc(pre):""} !</h1><p class="sub">Votre demande est bien arrivée chez ${esc(CONFIG.entreprise)}. Vous n'avez plus rien à faire.</p>
+ <ol class="fil7 fin9"><li class="fait"><div class="g7">${ok}</div><span class="n7">Étape 1 · fait</span><b>Vous avez décrit<br>vos travaux</b><span class="pt7">Bravo</span></li>
+ <li class="on"><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2 · en cours</span><b>${esc(CONFIG.artisan)} prépare<br>votre devis</b><span class="pt7">Il vérifie tout</span></li>
+ <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Vous recevez<br>votre devis</b><span class="pt7">Sous ${esc(CONFIG.delai)}</span></li></ol>
+ <div class="carte9"><p><b>Et maintenant ?</b> ${esc(CONFIG.artisan)} relit votre demande et vos photos, ligne par ligne. Votre devis arrive par e-mail${S.contact.email?` à <b>${esc(S.contact.email)}</b>`:""}, à signer en ligne si tout vous convient.</p>
+ <p class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span></p></div>
  ${CONFIG.demo?`<p class="note">Mode démonstration : rien n'a été envoyé.</p><details><summary>Voir les données qui seront transmises à Cliky</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`:""}
- <button class="btn ghost" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
+ <button class="lien7" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
+// Question en cours (Cyril 12/11) : la première question sans réponse de l'écran est doucement mise en avant.
+function focus9(){const qs=[...document.querySelectorAll("#app .q")].filter(q=>!q.closest(".pg-off,.mini,[hidden]")&&!q.classList.contains("cmini")&&q.offsetParent);qs.forEach(q=>q.classList.remove("now9"));
+ if(cur==="logement"||qs.length<2||document.querySelector("#app .q.miss"))return;
+ const nx=qs.find(q=>{const e=q.querySelector("[data-k][data-s]");if(!e){return q.classList.contains("cnt")&&!q.querySelector('[aria-pressed="true"]')}const s=e.dataset.s,i=e.dataset.i===""?null:+e.dataset.i,d=D[s];if(!d)return false;const f=[...(d.g?d.g.f:[]),...(d.f||[])].find(x=>x.k===e.dataset.k);return f&&missF(s,i,[f])});
+ if(nx)nx.classList.add("now9")}
 // Aucune question oubliée (Cyril 12/11) : chaque question visible demande une réponse, au moins « Je ne sais pas ».
 let MISS=null,MISSMSG="";document.addEventListener("input",e=>{const t=e.target;if(MISS&&t.dataset&&t.dataset.s&&`${t.dataset.s}-${t.dataset.i||"x"}-${t.dataset.k}`===MISS){MISS=null;t.closest(".q")?.classList.remove("miss");t.closest(".q")?.querySelector(".bulle9")?.remove();const er=document.getElementById("err");if(er)er.textContent=""}});
 function missF(sec,i,fs){const o=obj(sec,i)||{};for(const f of fs){if(f.sh&&!f.sh(o))continue;if(i==null&&f.v&&!f.v(o))continue;if(/facultatif/i.test(f.l||""))continue;
@@ -974,7 +1002,8 @@ const fitRz=()=>{clearTimeout(fitPage.rt);fitPage.rt=setTimeout(()=>{const a=doc
 function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;S.lq=q;save();
  const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
  if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
-function go(dir){const st=steps();let n=st.indexOf(cur);
+let NAV9=0;
+function go(dir){if(go.busy)return;const st=steps();let n=st.indexOf(cur);
  let iLeft=false;if(dir>0&&D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n>0){const k=iOpen(cur),ok=document.querySelector("#app .iok");if(k>=0&&ok&&!ok.classList.contains("pg-off")){if(iDone(cur,k,true))return;iLeft=true}}
  if(dir>0&&!iLeft&&cur!=="logement"&&(fitPage.pages||[]).length>1&&missHere(cur))return;
  if(!iLeft&&cur!=="logement"&&fitGo(dir))return;
@@ -989,7 +1018,9 @@ function go(dir){const st=steps();let n=st.indexOf(cur);
   if(miss.length){confirmBig("Il manque des travaux sur le plan",`Vous souhaitez ${miss.join(", ").replace(/, ([^,]*)$/," et $1")}, mais rien n'est indiqué sur votre plan. Ouvrez le plan : « Travaux » puis les murs concernés, et touchez chaque pièce dont le plafond est à refaire. Sinon, l'artisan le précisera avec vous.`,"Continuer quand même",()=>{S.plan.noWallOk=true;save();go(1)},"Retour au plan");return}}
  if(dir>0){if(!validate())return;if(cur==="recap"&&!navigator.onLine){document.getElementById("err").textContent="Pas de connexion internet : votre demande est bien gardée sur cet appareil. Réessayez dès que le réseau revient.";return}if(cur==="recap"){if(SENDING)return;lastPayload=payload();if(CONFIG.demo){finish();return}sendReq(lastPayload);return}
   cur=st[n+1];fitPage.p=fitPage.p||{};fitPage.p[cur]=0;if(cur==="logement")S.lq=0;if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1];fitPage.p=fitPage.p||{};fitPage.p[cur]=99;if(cur==="logement")S.lq=99}
- save();render();scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
+ save();NAV9=dir;const RM9=matchMedia("(prefers-reduced-motion:reduce)").matches,sec9=document.querySelector("#app>section");
+ const fin9=()=>{go.busy=0;render();NAV9=0;scrollTo({top:0,behavior:RM9?"auto":"smooth"})};
+ if(RM9||!sec9||cur==="done"){fin9();return}go.busy=1;sec9.classList.add(dir>0?"s9o":"s9ob");setTimeout(fin9,150)}
 function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode="plan";S.plan={H:2.5,sub:"apercu",obj:"Avoir droit aux aides",trace:{"floors":[{"nom":"Rez-de-chaussée","hauteur_m":2.5,"hauteur_choisie":true,"pieces":[{"nom":"Séjour","surface_m2":20,"estimee":false,"points":[[0,0],[5,0],[5,4],[0,4]],"murs":[{"type":"mur extérieur","longueur_m":5,"travaux":"Isoler","ouvertures":[{"repere":"F1","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":140,"hauteur_cm":135,"k":"fenetre","w":1.4,"h":1.35,"p":1.8,"al":0.9,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Aucun"}]},{"type":"mur entre pièces","longueur_m":4,"travaux":null,"ouvertures":[]},{"type":"mur extérieur","longueur_m":5,"travaux":null,"ouvertures":[{"repere":"P1","designation":"Porte d'entrée","menuiserie_exterieure":true,"ouverture":null,"t":"Porte d'entrée","a_changer":"À changer","type":"porte","largeur_cm":90,"hauteur_cm":215,"k":"porte","w":0.9,"h":2.15,"p":3.2,"al":0,"pose":null}]},{"type":"mur extérieur","longueur_m":4,"travaux":"Isoler","ouvertures":[]}],"cloisons_a_creer":[],"sol":{"actuel_a_deposer":"Aucune","revetement":"Aucun","resume":null}},{"nom":"Cuisine","surface_m2":9.6,"estimee":false,"points":[[5,0],[8.2,0],[8.2,3],[5,3]],"murs":[{"type":"mur extérieur","longueur_m":3.2,"travaux":"Isoler","ouvertures":[{"repere":"F2","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":100,"hauteur_cm":115,"k":"fenetre","w":1,"h":1.15,"p":1,"al":1.05,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Aucun"}]},{"type":"mur extérieur","longueur_m":3,"travaux":"Isoler","ouvertures":[]},{"type":"mur entre pièces","longueur_m":3.2,"travaux":null,"ouvertures":[]},{"type":"mur entre pièces","longueur_m":3,"travaux":null,"ouvertures":[]}],"cloisons_a_creer":[],"sol":{"actuel_a_deposer":"Aucune","revetement":"Aucun","resume":null}},{"nom":"Chambre","surface_m2":10.5,"estimee":true,"points":[[5,3],[8.5,3],[8.5,6],[5,6]],"murs":[{"type":"mur entre pièces","longueur_m":3.5,"travaux":null,"ouvertures":[{"repere":"P2","designation":"Bloc-porte","menuiserie_exterieure":false,"ouverture":null,"t":"Bloc-porte","a_changer":"Déjà en place","type":"porte","largeur_cm":83,"hauteur_cm":204,"k":"porte","w":0.83,"h":2.04,"p":1.2,"al":0,"pose":null}]},{"type":"mur extérieur","longueur_m":3,"travaux":"Isoler","ouvertures":[{"repere":"F3","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":120,"hauteur_cm":135,"k":"fenetre","w":1.2,"h":1.35,"p":0.9,"al":0.9,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Roulant coffre extérieur","volet_commande":"Radio (télécommande)","volet_pose":"Sur façade","volet_enroulement":"Extérieur","volet_couleur":"Blanc RAL 9016"}]},{"type":"mur extérieur","longueur_m":3.5,"travaux":"Isoler","ouvertures":[]},{"type":"mur entre pièces","longueur_m":3,"travaux":null,"ouvertures":[]}],"cloisons_a_creer":[{"travaux":"Créer","composition":{"oss":"M48","mont":"Simples","laine":"45 mm","peau":"1 peau","plaque":"Standard","porte":"83"},"portes":1,"porte_largeur_cm":83,"galandage":false,"pose_porte":"À la création de la cloison","longueur_m":3,"points":[[7,3],[7,6]]}],"sol":{"actuel_a_deposer":"Aucune","revetement":"Parquet","resume":"parquet stratifié flottante + plinthes"}}]}]},rooms:[{type:"sejour",nom:"Séjour",L:5,l:4,dk:false,size:1,trav:["doublage"]},{type:"cuisine",nom:"Cuisine",L:3.2,l:3,dk:false,size:1,trav:["doublage"]},{type:"chambre",nom:"Chambre 1",L:3.8,l:2.9,dk:false,size:1,trav:["doublage","cloison"]},{type:"chambre",nom:"Chambre 2",L:null,l:null,dk:true,size:1,trav:["doublage"]},{type:"sdb",nom:"Salle de bain",L:2.4,l:2,dk:false,size:1,trav:["doublage"]}]};
  S.logement={cp:"38920",commune:"Crolles",type:"Maison",age:"Oui",occupe:"Oui",ou:["Rez-de-chaussée","Étage(s)"]};
  S.cloison={items:[{L:3.8,H:2.5,piece:"Chambre",portes:1,largeur:"83 cm",galandage:"Non"}],phonique:"Standard"};
