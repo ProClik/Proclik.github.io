@@ -153,7 +153,7 @@ html body .cltool .lk{top:-12px}
 html.client body .fl.mr,html.client body #todo-bar,html.client body .rotb,html.client body #bar3d{bottom:104px!important}
 
 /* bouton « Tracer » en haut à gauche + petite barre Mur / Cloison (Cyril, 29/10) ; le menu du bas passe à 5 outils */
-html body #cltools{grid-template-columns:repeat(6,minmax(0,1fr))}
+html body #cltools{grid-template-columns:repeat(7,minmax(0,1fr))}
 html body #cltrace{position:absolute;z-index:4;top:60px;left:10px;display:flex;align-items:flex-start;gap:8px}
 html:not(.client) body #cltrace,html body .board.v3 #cltrace{display:none}
 html body #ctr-b{appearance:none;border:0;background:transparent;padding:0;display:grid;justify-items:center;gap:5px;font:600 11px/1.1 var(--f);color:var(--muted);cursor:pointer}
@@ -246,7 +246,7 @@ html body .gdw .gd-in{color:var(--fg)}
 @media (orientation:landscape) and (max-height:520px){
  html.client.gd body .wrap{grid-template-columns:0 minmax(0,1fr);column-gap:0}
  html.client.gd body #floors,html.client.gd body #cltl,html.client.gd body #clbanner{display:none!important}
- html.client.gd body #cltools{width:auto;right:8px;left:8px;background:transparent;border:0;box-shadow:none;grid-template-columns:repeat(6,minmax(0,1fr))}
+ html.client.gd body #cltools{width:auto;right:8px;left:8px;background:transparent;border:0;box-shadow:none;grid-template-columns:repeat(7,minmax(0,1fr))}
 }
 /* Masquer / ramener la consigne (Cyril 12/11) */
 html body #clb-x{order:3;flex:none;display:inline-flex;align-items:center;gap:4px;margin-left:auto;min-height:32px;padding:4px 12px 4px 9px;border:0;border-radius:999px;cursor:pointer;background:var(--bg);color:var(--mint-ink);font:800 12.5px var(--f);box-shadow:var(--up-xs)}
@@ -259,3 +259,5 @@ html body #clb-open.nouv::after{content:"";width:8px;height:8px;border-radius:50
 @media (orientation:landscape) and (max-height:520px){
  html.client body #clb-open{position:fixed;z-index:6;top:var(--ls-bt,48px);left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);padding:6px 12px 6px 9px;font-size:12px}
 }
+/* N1 : le OK des fiches en bleu nuit (plus en laiton) */
+html.client body #sheet .sh-h [data-close]{background:var(--mint)!important;color:var(--paper)!important}
