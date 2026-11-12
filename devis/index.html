@@ -107,6 +107,10 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .item.cont::before{content:attr(data-n) " (suite)";display:block;font-weight:800;font-size:15px;color:var(--muted);margin-bottom:4px}
 .lq .chip .ci{width:1.6em;height:1.6em;vertical-align:-.45em;margin-right:.7em}.lq .chip .ci.sw{width:1.3em;height:1.3em}
 .item.mini{appearance:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;font:inherit;color:var(--fg);padding:12px 16px;margin-block:8px;cursor:pointer}.item.mini .mi-t{font-weight:800;font-size:15px}.item.mini.ok .mi-t{color:var(--mint-ink)}.item.mini .mi-s{grid-column:1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item.mini .mi-m{grid-column:2;grid-row:1/3;align-self:center;font-size:13px;font-weight:700;color:var(--mint-ink)}
+.q.miss{position:relative;border-radius:18px;box-shadow:0 0 0 2px var(--mint),0 0 0 6px color-mix(in srgb,var(--mint) 18%,transparent);padding:10px 12px;margin-inline:-12px}
+.q.miss>.lab::after,.q.miss>label::after{content:"À répondre";margin-left:8px;font-size:12px;font-weight:800;color:var(--mint-ink);background:color-mix(in srgb,var(--mint) 16%,transparent);padding:2px 8px;border-radius:999px;vertical-align:2px;white-space:nowrap;display:inline-block}
+.q.miss-a{animation:missA .5s ease}@keyframes missA{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@media (prefers-reduced-motion:reduce){.q.miss-a{animation:none}}
 .iok{width:100%;margin-top:14px}.cnt.cmini{display:flex;align-items:center;justify-content:space-between;gap:10px}.cnt.cmini b{font-size:17px;color:var(--mint-ink);margin-left:4px}
 .qph{margin-top:16px;display:grid;gap:8px}.phb{position:relative;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:9px 16px 9px 12px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.12));color:var(--fg);font-weight:700;font-size:14px;cursor:pointer}.phb svg{color:var(--mint-ink);flex:none}.phb span{display:grid;line-height:1.2}.phb small{font-weight:500;font-size:12px;color:var(--muted)}.phb input{position:absolute;opacity:0;width:1px;height:1px}.qph .thumbs img{width:56px;height:56px}.qph .thumbs figure{width:56px}
 .thumbs figure{margin:0;width:76px;display:grid;gap:4px}
@@ -649,6 +653,8 @@ function obj(sec,i){return i==null?S[sec]:S[sec].items[i]}
 function fieldH(f,sec,i){
  const o=obj(sec,i);if(f.sh&&!f.sh(o))return"";if(f.lf||f.hf)f={...f,l:f.lf?f.lf(o):f.l,h:f.hf?f.hf(o):f.h};
  const id=`${sec}-${i??"x"}-${f.k}`,da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
+ if(MISS===id)return fieldH0(f,sec,i,id).replace('<div class="q"','<div class="q miss"');return fieldH0(f,sec,i,id)}
+function fieldH0(f,sec,i,id){const o=obj(sec,i),da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
  const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
  const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
  if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
@@ -808,6 +814,22 @@ function doneH(){const p=lastPayload;return`<section class="done fade"><div clas
  <div><b>3</b><span>Vous recevez votre devis par e-mail, à signer en ligne si tout vous convient.</span></div></div>
  ${CONFIG.demo?`<p class="note">Mode démonstration : rien n'a été envoyé.</p><details><summary>Voir les données qui seront transmises à Cliky</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`:""}
  <button class="btn ghost" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
+// Aucune question oubliée (Cyril 12/11) : chaque question visible demande une réponse, au moins « Je ne sais pas ».
+let MISS=null;document.addEventListener("input",e=>{const t=e.target;if(MISS&&t.dataset&&t.dataset.s&&`${t.dataset.s}-${t.dataset.i||"x"}-${t.dataset.k}`===MISS){MISS=null;t.closest(".q")?.classList.remove("miss");const er=document.getElementById("err");if(er)er.textContent=""}});
+function missF(sec,i,fs){const o=obj(sec,i)||{};for(const f of fs){if(f.sh&&!f.sh(o))continue;if(i==null&&f.v&&!f.v(o))continue;if(/facultatif/i.test(f.l||""))continue;
+  if(f.t==="chips"){if((o[f.k]??f.def)==null)return f}
+  else if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);if(!dk&&pn(o[f.k])==null&&f.def==null)return f}
+  else if(f.t==="multi"){if(!(Array.isArray(o[f.k])&&o[f.k].length))return f}}return null}
+function missMsg(f){const dk=f.dk||(Array.isArray(f.o)&&f.o.includes(DK));const l=(f.l||"").replace(/\s*\([^)]*\)/g,"");return`Il manque une réponse à « ${l} ». ${dk?"Si vous ne savez pas, touchez « Je ne sais pas ».":"Touchez la réponse qui convient."}`}
+// Montre la question oubliée : message, contour laiton, et l'écran défile jusqu'à elle.
+function missShow(sec,i,f){MISS=`${sec}-${i??"x"}-${f.k}`;const m=missMsg(f);if(i!=null&&D[sec].g&&D[sec].g.cnt&&iOpen(sec)!==i){S[sec].open=i;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitPage.toItem=true;save()}render();const er=document.getElementById("err");if(er)er.textContent=m;fitJump(f.k);if(er)er.textContent=m;
+ const q=document.querySelector("#app .q.miss");if(q){q.classList.remove("miss-a");void q.offsetWidth;q.classList.add("miss-a");q.scrollIntoView({behavior:"smooth",block:"center"})}return false}
+function missFirst(sec){const d=D[sec];if(!d||sec==="logement")return null;
+ if(d.g&&(!d.g.cnt||S[sec].n>0)){const it=S[sec].items||[];for(let i=0;i<it.length;i++){const f=missF(sec,i,d.g.f);if(f)return[i,f]}}
+ if(d.f&&!(d.g&&d.g.cnt&&!(S[sec].n>0))){const f=missF(sec,null,d.f);if(f)return[null,f]}return null}
+function missSec(sec){const m=missFirst(sec);return m?missShow(sec,m[0],m[1]):true}
+// Téléphone, écran en plusieurs parties : on ne passe pas à la partie suivante si une question de celle-ci est restée sans réponse.
+function missHere(sec){const m=missFirst(sec);if(!m)return false;const el=document.querySelector(`#app [data-s="${sec}"][data-i="${m[0]??""}"][data-k="${m[1].k}"]`);if(!el||el.closest(".pg-off"))return false;missShow(sec,m[0],m[1]);return true}
 function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m;fitJump(k);return false};
  if(cur==="travaux"&&!S.travaux.length)return e("Choisissez au moins un type de travaux.");
  if(cur==="mode"&&!S.mode)return e("Choisissez une des deux façons.");
@@ -820,7 +842,8 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
   if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.","tel");
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||""))return e("Indiquez une adresse e-mail valide.","email");
   if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.","rgpd")}
- return true}
+ if(cur==="logement"){const f=missF("logement",null,D.logement.f.filter(f=>LQ[S.lq||0].includes(f.k)));if(f)return missShow("logement",null,f)}
+ return missSec(cur)}
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp,.qph,.iok"))}
 // Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
@@ -857,8 +880,9 @@ function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(pr
  if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
 function go(dir){const st=steps();let n=st.indexOf(cur);
  let iLeft=false;if(dir>0&&D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n>0){const k=iOpen(cur),ok=document.querySelector("#app .iok");if(k>=0&&ok&&!ok.classList.contains("pg-off")){if(iDone(cur,k,true))return;iLeft=true}}
+ if(dir>0&&!iLeft&&cur!=="logement"&&(fitPage.pages||[]).length>1&&missHere(cur))return;
  if(!iLeft&&cur!=="logement"&&fitGo(dir))return;
- if(cur==="logement"){const[i,v]=lqPos();if(dir>0&&i<v.length-1){if(S.lq===0&&!validate())return;lqMove(v[i+1],1);return}if(dir<0&&i>0){lqMove(v[i-1],-1);return}}
+ if(cur==="logement"){const[i,v]=lqPos();if(dir>0&&i<v.length-1){if(!validate())return;lqMove(v[i+1],1);return}if(dir<0&&i>0){lqMove(v[i-1],-1);return}}
  if(false){const P=S.plan,e=m=>{document.getElementById("err").textContent=m};
   if(dir>0){if(P.sub==="pieces"){if(!P.rooms.length)return e("Ajoutez au moins une pièce avec le bouton +.");P.sub=0}
    else{const r=P.rooms[P.sub];if(!dimsOk(r))return e("Entrez la longueur et la largeur, ou choisissez une taille de pièce.");P.sub=P.sub+1<P.rooms.length?P.sub+1:"apercu"}}
@@ -907,6 +931,7 @@ document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PV
  if(!D.moved){S.plan.sel=S.plan.sel===D.i?null:D.i}save();render()});
 document.addEventListener("click",ev=>{const t=ev.target.closest("[data-rtog]");if(!t)return;ev.stopPropagation();const r=t.parentNode,o=r.classList.toggle("open");t.setAttribute("aria-expanded",o);ROPEN[o?"add":"delete"](t.dataset.rtog);if(innerWidth<=600)render()},true);
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
+ if(MISS&&ds.s&&`${ds.s}-${ds.i||"x"}-${ds.k}`===MISS)MISS=null;
  if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur="travaux";render();return}
  if(ds.example){example();return}
  if(ds.mode){S.mode=ds.mode;save();render();return}
@@ -949,7 +974,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
 // Fiches en accordéon (Cyril 11/11) : une seule fiche ouverte ; « C'est bon » la replie en une ligne et ouvre la suivante.
 function iOpen(sec){const o=S[sec],it=o.items||[];if(o.open===-1)return -1;if(o.open!=null&&o.open<it.length)return o.open;const k=it.findIndex(x=>!x._ok);return k}
 function iSum(sec,it){const b=badge(sec,it),v=D[sec].g.f.filter(f=>(!f.sh||f.sh(it))&&f.t==="chips"&&f.k!=="piece").map(f=>it[f.k]??f.def).filter(x=>x&&x!==DK&&!/^\d+ cm$/.test(x)&&!/ × /.test(x));return[b,...v].filter(Boolean).slice(0,4).join(" · ")}
-function iDone(sec,i,leave){const o=S[sec],it=o.items;it[i]._ok=true;let k=it.findIndex((x,j)=>j>i&&!x._ok);if(k<0)k=it.findIndex(x=>!x._ok);o.open=k<0?-1:k;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitPage.toItem=true;save();if(k<0&&leave&&!(D[sec].f||[]).some(f=>!f.v||f.v(o))){fitPage.toItem=false;return false}render();const el=document.querySelector("#app .item:not(.mini)")||document.querySelector("#app .cnt");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return true}
+function iDone(sec,i,leave){const o=S[sec],it=o.items;{const f=missF(sec,i,D[sec].g.f);if(f){missShow(sec,i,f);return true}}MISS=null;it[i]._ok=true;let k=it.findIndex((x,j)=>j>i&&!x._ok);if(k<0)k=it.findIndex(x=>!x._ok);o.open=k<0?-1:k;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitPage.toItem=true;save();if(k<0&&leave&&!(D[sec].f||[]).some(f=>!f.v||f.v(o))){fitPage.toItem=false;return false}render();const el=document.querySelector("#app .item:not(.mini)")||document.querySelector("#app .cnt");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return true}
 function newItem(sec){const it=S[sec].items,last=it[it.length-1]||{},d=D[sec];if(d.g.copy&&it.length)return Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k)));if(sec==="doublage"||sec==="cloison")return{H:last.H??2.5,portes:0,fen:0};if(sec==="plafond")return{H:last.H??2.5};return{}}
 function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
 // Code postal <-> commune : propositions de la base officielle des communes (geo.api.gouv.fr, gratuite, sans clé).
