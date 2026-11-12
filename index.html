@@ -1405,11 +1405,15 @@ h2 .or>svg path,.souligne path{stroke:var(--laiton)}
 .bravo,:root[data-theme="dark"] .bravo{box-shadow:inset 0 0 0 999px var(--n1-ov),var(--n1-calme-sh)}.bravo::after{box-shadow:none;background:var(--n1-calme)}
 /* bouton principal plein bleu nuit, galet clair à droite */
 .btn.go,.top .btn{background:var(--n1-nuit);color:var(--n1-nuit-fg);font-weight:800;box-shadow:var(--up-s)}
-/* effet galet (Cyril 12/11) : même rond et même couleur qu'avant, avec un relief de galet à l'intérieur */
-.btn.go::after{background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);box-shadow:inset 1.5px 1.5px 1.5px rgba(255,255,255,.22),inset -2px -2px 3px rgba(0,0,0,.35),2px 3px 6px rgba(0,0,0,.3)}
-:root[data-theme="dark"] .btn.go::after{box-shadow:inset 1.5px 1.5px 1.5px rgba(255,255,255,.75),inset -2px -2px 3px rgba(14,19,34,.18),2px 3px 6px rgba(14,19,34,.18)}
+.btn.go::after{background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);box-shadow:none}
 .btn.go::before{background:var(--n1-nuit-fg)}
+/* effet galet aussi sur le bouton lui-même (Cyril 12/11) : reflet en haut à gauche, ombre en bas à droite, couleurs inchangées */
+.btn.go,.top .btn{box-shadow:var(--up-s),inset 2px 2px 2px rgba(255,255,255,.16),inset -3px -3px 5px rgba(0,0,0,.4)}
+:root[data-theme="dark"] :is(.btn.go,.top .btn){box-shadow:var(--up-s),inset 2px 2px 2px rgba(255,255,255,.85),inset -3px -3px 5px rgba(14,19,34,.2)}
+.btn:not(.go){box-shadow:var(--up-s),var(--r-ch)}.top .btn:not(.go){box-shadow:var(--up-s),inset 2px 2px 2px rgba(255,255,255,.16),inset -3px -3px 5px rgba(0,0,0,.4)}
+:root[data-theme="dark"] .top .btn:not(.go){box-shadow:var(--up-s),inset 2px 2px 2px rgba(255,255,255,.85),inset -3px -3px 5px rgba(14,19,34,.2)}
 .btn.go:active,.top .btn:active{box-shadow:var(--in);filter:brightness(.92)}
+.btn:not(.go):not(.top .btn):active{box-shadow:var(--in)}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
