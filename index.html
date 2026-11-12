@@ -1405,20 +1405,10 @@ h2 .or>svg path,.souligne path{stroke:var(--laiton)}
 .bravo,:root[data-theme="dark"] .bravo{box-shadow:inset 0 0 0 999px var(--n1-ov),var(--n1-calme-sh)}.bravo::after{box-shadow:none;background:var(--n1-calme)}
 /* bouton principal plein bleu nuit, galet clair à droite */
 .btn.go,.top .btn{background:var(--n1-nuit);color:var(--n1-nuit-fg);font-weight:800;box-shadow:var(--up-s)}
-/* effet galet (Cyril 12/11) : à droite de chaque bouton, un vrai galet en relief avec la flèche bleu nuit */
-.btn.go::after{background:var(--bg);box-shadow:-2px -2px 5px rgba(255,255,255,.16),3px 4px 8px rgba(0,0,0,.4),inset 1.5px 1.5px 1px rgba(255,255,255,.9),inset -1.5px -1.5px 2px rgba(26,34,64,.16)}
-:root[data-theme="dark"] .btn.go::after{box-shadow:-2px -2px 5px rgba(255,255,255,.5),3px 4px 8px rgba(14,19,34,.28),inset 1.5px 1.5px 1px rgba(255,255,255,.07),inset -1.5px -1.5px 2px rgba(0,0,0,.4)}
-.btn.go::before{background:var(--n1-nuit)}
-.btn.light{padding-right:64px}
-.btn.light::after{content:"";position:absolute;right:7px;top:50%;width:40px;height:40px;margin-top:-20px;border-radius:50%;background:var(--bg);box-shadow:var(--gal)}
-.btn.light::before{content:"";position:absolute;z-index:1;right:17px;top:50%;width:20px;height:20px;margin-top:-10px;background:var(--n1-nuit);
- -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
- mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .6s var(--doux)}
-.btn.light:active::before{transform:translateX(8px)}
-@media (hover:hover){.btn.light:hover::before{transform:translateX(4px)}}
-.t-suite .btn{padding-right:64px}
-.t-suite .btn>i{position:absolute;right:7px;top:50%;width:40px;height:40px;margin-top:-20px;border-radius:50%;display:grid;place-items:center;background:var(--bg);box-shadow:var(--gal);color:var(--n1-nuit)}
-.t-suite .btn>i svg{width:20px;height:20px;transition:transform .6s var(--doux)}.t-suite .btn:active>i svg{transform:translateX(8px)}
+/* effet galet (Cyril 12/11) : même rond et même couleur qu'avant, avec un relief de galet à l'intérieur */
+.btn.go::after{background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);box-shadow:inset 1.5px 1.5px 1.5px rgba(255,255,255,.22),inset -2px -2px 3px rgba(0,0,0,.35),2px 3px 6px rgba(0,0,0,.3)}
+:root[data-theme="dark"] .btn.go::after{box-shadow:inset 1.5px 1.5px 1.5px rgba(255,255,255,.75),inset -2px -2px 3px rgba(14,19,34,.18),2px 3px 6px rgba(14,19,34,.18)}
+.btn.go::before{background:var(--n1-nuit-fg)}
 .btn.go:active,.top .btn:active{box-shadow:var(--in);filter:brightness(.92)}
 </style>
 <script>document.documentElement.classList.add("js")</script>
