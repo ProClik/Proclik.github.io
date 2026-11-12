@@ -356,7 +356,7 @@ html:not(.client) #clb-v{display:none}
 #intro .bc-b{margin-top:2px}#intro .in-form{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;padding:12px}#intro .in-form svg{color:var(--mint-ink)}
 @media (max-height:600px){#intro .in-ic{display:none}#intro .bc-in{gap:9px;padding:16px}#intro li{padding:3px 0}}
 </style>
-<link rel="stylesheet" href="plan-relief.css?v=15">
+<link rel="stylesheet" href="plan-relief.css?v=16">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
 
 <div class="wrap">
@@ -721,12 +721,12 @@ function pt(e){const m=svg.getScreenCTM().inverse(),P=svg.createSVGPoint();P.x=e
 let PD=null,edSeg=null,shSeg=null,PZ=null;const PTR=new Map();
 /* téléphone couché : la consigne se place juste sous le bloc des étages, quelle que soit sa hauteur */
 function lsPos(){try{const f=$("floors");document.documentElement.style.setProperty("--ls-bt",(f&&matchMedia("(orientation:landscape) and (max-height:520px)").matches?Math.round(f.getBoundingClientRect().bottom+6):48)+"px")}catch(e){}}
-/* Masquer la consigne (Cyril 12/11) : petit bouton dans la carte ; « Consigne » la ramène, et clignote doucement quand une nouvelle consigne arrive */
-if(CL)try{const bn=$("clbanner"),x=document.createElement("button"),o=document.createElement("button");x.type=o.type="button";x.id="clb-x";x.setAttribute("aria-label","Masquer la consigne");x.title="Masquer la consigne";x.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>';
+/* Masquer la consigne (Cyril 12/11) : bouton « Masquer » dans la carte ; « Consigne » la ramène ; chaque nouvelle consigne la réaffiche toute seule */
+if(CL)try{const bn=$("clbanner"),x=document.createElement("button"),o=document.createElement("button");x.type=o.type="button";x.id="clb-x";x.setAttribute("aria-label","Masquer la consigne");x.title="Masquer la consigne";x.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg><span>Masquer</span>';
  o.id="clb-open";o.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>Consigne</span>';bn.appendChild(x);const pl=()=>{if(bn.nextSibling!==o)bn.after(o)};pl();setTimeout(pl,0);setTimeout(pl,800);addEventListener("resize",pl);
  const set=h=>{pl();document.documentElement.classList.toggle("clhide",h);o.classList.remove("nouv");o._t=$("clb-t").textContent;try{sessionStorage.setItem("pk-clhide",h?"1":"")}catch(e){}try{clLayout()}catch(e){}dispatchEvent(new Event("resize"))};
  x.onclick=()=>set(true);o.onclick=()=>set(false);try{if(sessionStorage.getItem("pk-clhide"))document.documentElement.classList.add("clhide")}catch(e){}
- o._t=$("clb-t").textContent;new MutationObserver(()=>{const c=$("clb-t").textContent;if(document.documentElement.classList.contains("clhide")&&c!==o._t){o.classList.add("nouv");o._t=c}}).observe($("clb-t"),{childList:true,characterData:true,subtree:true})}catch(e){}
+ o._t=$("clb-t").textContent;new MutationObserver(()=>{const c=$("clb-t").textContent;if(c!==o._t){o._t=c;if(document.documentElement.classList.contains("clhide"))set(false)}}).observe($("clb-t"),{childList:true,characterData:true,subtree:true})}catch(e){}
 if(CL){addEventListener("resize",lsPos);try{new MutationObserver(lsPos).observe($("floors"),{childList:true,subtree:true})}catch(e){}setTimeout(lsPos,0)}
 function camFrom(W,mx,my,s){tutStop();const r=svg.getBoundingClientRect(),w=Math.max(2.5,Math.min(60,r.width*s));s=w/r.width;ST.cam={x:W[0]-mx*s,y:W[1]-my*s,w};draw()}
 function pzStart(){const r=svg.getBoundingClientRect(),P=[...PTR.values()];if(!P.length)return;const s=VB.w/r.width;let mx,my,d=0;if(P.length>1){mx=(P[0].x+P[1].x)/2-r.left;my=(P[0].y+P[1].y)/2-r.top;d=Math.hypot(P[0].x-P[1].x,P[0].y-P[1].y)||1}else{mx=P[0].x-r.left;my=P[0].y-r.top}PZ={s0:s,d0:d,W:[VB.x+mx*s,VB.y+my*s]}}

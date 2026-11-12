@@ -249,8 +249,8 @@ html body .gdw .gd-in{color:var(--fg)}
  html.client.gd body #cltools{width:auto;right:8px;left:8px;background:transparent;border:0;box-shadow:none;grid-template-columns:repeat(6,minmax(0,1fr))}
 }
 /* Masquer / ramener la consigne (Cyril 12/11) */
-html.client body #clbanner{padding-right:38px!important}
-html body #clb-x{position:absolute;top:5px;right:5px;width:28px;height:28px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--bg);color:var(--muted);box-shadow:var(--up-xs);z-index:2}
+html body #clb-x{order:3;flex:none;display:inline-flex;align-items:center;gap:4px;margin-left:auto;min-height:32px;padding:4px 12px 4px 9px;border:0;border-radius:999px;cursor:pointer;background:var(--bg);color:var(--mint-ink);font:800 12.5px var(--f);box-shadow:var(--up-xs)}
+html body #clbanner{flex-wrap:wrap}
 html body #clb-open{display:none;appearance:none;border:0;cursor:pointer;align-items:center;gap:6px;justify-self:start;align-self:start;width:max-content;padding:7px 14px 7px 11px;border-radius:999px;background:var(--bg);color:var(--mint-ink);font:800 13px var(--f);box-shadow:var(--up-s)}
 html.client.clhide body #clbanner{display:none!important}
 html.client.clhide body #clb-open{display:inline-flex}
