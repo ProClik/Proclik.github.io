@@ -241,7 +241,7 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 @media (prefers-reduced-motion:reduce){#pf-rot .rot-g{animation:none;transform:rotate(-90deg)}#pf-rot .rot-ar{animation:none}}
 /* téléphone couché (Cyril 12/11) : la barre passe en colonne à gauche, le plan garde toute la hauteur */
 @media (orientation:landscape) and (max-height:520px){#planfull{flex-direction:row}#planfull iframe{height:100%!important;align-self:stretch}
-#planfull .pf-bar{flex-direction:column;align-items:stretch;width:74px;flex:none;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));border-bottom:0;border-right:1px solid var(--line);gap:8px}
+#planfull .pf-bar{flex-direction:column;align-items:stretch;width:66px;flex:none;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));border-bottom:0;border-right:1px solid var(--line);gap:8px}
 #planfull .pf-t{display:none}
 #planfull #pf-form{flex-direction:column;gap:2px;padding:7px 2px!important;min-height:0!important;border-radius:14px;font-size:10.5px!important;margin:0;text-align:center;justify-content:center;white-space:normal}
 #planfull #pf-form .pff small{display:none}
@@ -744,7 +744,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=26");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=27");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}

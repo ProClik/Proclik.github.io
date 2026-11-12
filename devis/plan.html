@@ -356,7 +356,7 @@ html:not(.client) #clb-v{display:none}
 #intro .bc-b{margin-top:2px}#intro .in-form{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;padding:12px}#intro .in-form svg{color:var(--mint-ink)}
 @media (max-height:600px){#intro .in-ic{display:none}#intro .bc-in{gap:9px;padding:16px}#intro li{padding:3px 0}}
 </style>
-<link rel="stylesheet" href="plan-relief.css?v=13">
+<link rel="stylesheet" href="plan-relief.css?v=14">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
 
 <div class="wrap">
@@ -458,7 +458,7 @@ let VB={x:-1,y:-1,w:10,h:7.5};
 function aspect(){const r=svg.getBoundingClientRect();return r.width>10&&r.height>10?r.width/r.height:4/3}
 function fit(){const A=aspect();if(ST.cam){VB={x:ST.cam.x,y:ST.cam.y,w:ST.cam.w,h:ST.cam.w/A};return}if(ST.frozen)return;
  if(CL){const r=svg.getBoundingClientRect(),W=r.width||360,H=r.height||480,P=[];F().rooms.forEach(q=>P.push(...q.pts));if(ST.trace)P.push(...ST.trace);if(!P.length){VB={x:-1,y:-1,w:9,h:9/A};return}
-  const LS=matchMedia("(orientation:landscape) and (max-height:520px)").matches,b=bbox(P),pad=.75,cw=Math.max(b.x1-b.x0+2*pad,3),ch=Math.max(b.y1-b.y0+2*pad,3),top=GD?28:LS?14:62,bot=GD?84:LS?14:108,side=GD?34:LS?66:14,xs=GD?0:LS?140:56,s=Math.min((W-2*side-xs)/cw,(H-top-bot)/ch),w=W/s,h=H/s;
+  const LS=matchMedia("(orientation:landscape) and (max-height:520px)").matches,b=bbox(P),pad=.75,cw=Math.max(b.x1-b.x0+2*pad,3),ch=Math.max(b.y1-b.y0+2*pad,3),top=GD?28:LS?14:62,bot=GD?84:LS?14:108,side=GD?34:LS?66:14,xs=GD?0:LS?126:56,s=Math.min((W-2*side-xs)/cw,(H-top-bot)/ch),w=W/s,h=H/s;
   VB={x:(b.x0+b.x1)/2-w/2-xs/2/s,y:b.y0-pad-(top+((H-top-bot)-ch*s)/2)/s,w,h};return}const P=[];F().rooms.forEach(r=>P.push(...r.pts));if(ST.fi>0)ST.floors[ST.fi-1].rooms.forEach(r=>P.push(...r.pts));if(ST.trace)P.push(...ST.trace);
  if(!P.length){VB={x:-1,y:-1,w:9,h:9/A};return}const b=bbox(P),pad=CL?1.15:1.75;let w=Math.max(b.x1-b.x0+2*pad+(CL?.4:1.2),CL?4.2:5.4),h=Math.max(b.y1-b.y0+2*pad+.9,4.05);if(w/h<A)w=h*A;else h=w/A;
  VB={x:(b.x0+b.x1)/2-w/2+.6,y:(b.y0+b.y1)/2-h/2+.3,w,h}}
@@ -719,6 +719,9 @@ function snapDelta(rm,orig,dx,dy){const others=F().rooms.filter(o=>o!==rm).conca
 // ---------- Interactions 2D ----------
 function pt(e){const m=svg.getScreenCTM().inverse(),P=svg.createSVGPoint();P.x=e.clientX;P.y=e.clientY;const q=P.matrixTransform(m);return[q.x,q.y]}
 let PD=null,edSeg=null,shSeg=null,PZ=null;const PTR=new Map();
+/* téléphone couché : la consigne se place juste sous le bloc des étages, quelle que soit sa hauteur */
+function lsPos(){try{const f=$("floors");document.documentElement.style.setProperty("--ls-bt",(f&&matchMedia("(orientation:landscape) and (max-height:520px)").matches?Math.round(f.getBoundingClientRect().bottom+6):48)+"px")}catch(e){}}
+if(CL){addEventListener("resize",lsPos);try{new MutationObserver(lsPos).observe($("floors"),{childList:true,subtree:true})}catch(e){}setTimeout(lsPos,0)}
 function camFrom(W,mx,my,s){tutStop();const r=svg.getBoundingClientRect(),w=Math.max(2.5,Math.min(60,r.width*s));s=w/r.width;ST.cam={x:W[0]-mx*s,y:W[1]-my*s,w};draw()}
 function pzStart(){const r=svg.getBoundingClientRect(),P=[...PTR.values()];if(!P.length)return;const s=VB.w/r.width;let mx,my,d=0;if(P.length>1){mx=(P[0].x+P[1].x)/2-r.left;my=(P[0].y+P[1].y)/2-r.top;d=Math.hypot(P[0].x-P[1].x,P[0].y-P[1].y)||1}else{mx=P[0].x-r.left;my=P[0].y-r.top}PZ={s0:s,d0:d,W:[VB.x+mx*s,VB.y+my*s]}}
 function pzMove(){const r=svg.getBoundingClientRect(),P=[...PTR.values()];if(!PZ||!P.length)return;let s=PZ.s0,mx,my;if(P.length>1&&PZ.d0){s=PZ.s0*PZ.d0/(Math.hypot(P[0].x-P[1].x,P[0].y-P[1].y)||1);mx=(P[0].x+P[1].x)/2-r.left;my=(P[0].y+P[1].y)/2-r.top}else{mx=P[0].x-r.left;my=P[0].y-r.top}camFrom(PZ.W,mx,my,s)}
