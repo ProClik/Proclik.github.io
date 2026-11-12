@@ -14,6 +14,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Je ne suis pas à l'aise avec l'informatique.","acceptedAnswer":{"@type":"Answer","text":"C'est justement pour vous. On installe tout, on vous montre en quelques minutes, et l'appli ne vous demande qu'une chose à la fois : un gros bouton qui dit quoi faire."}},{"@type":"Question","name":"Et si j'ai un problème, je fais comment ?","acceptedAnswer":{"@type":"Answer","text":"Vous appelez ou vous écrivez à votre interlocuteur ProClik. Un humain, pas un robot, qui règle le souci pour vous. Cliky est très doué, mais il reste aux devis."}},{"@type":"Question","name":"J'ai déjà un site, je dois le refaire ?","acceptedAnswer":{"@type":"Answer","text":"Pas forcément. On peut relier votre site actuel à l'appli ProClik, et le refaire plus tard si besoin."}},{"@type":"Question","name":"Ça marche pour mon activité ?","acceptedAnswer":{"@type":"Answer","text":"Si vous avez des clients, des demandes, des rendez-vous ou des devis, oui. On le vérifie ensemble pendant le rendez-vous."}}]}</script>
 <link rel="apple-touch-icon" href="espace/icone-1024.png?v=4"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap">
+<link rel="stylesheet" href="n1.css?v=1">
 <script src="espace/theme.js?v=1"></script>
 <script src="espace/ouverture.js?v=35" data-mode="vitrine" data-cible=".logo .g>svg"></script>
 <style>
@@ -21,27 +22,27 @@
    Même dessin le jour et la nuit, seules les couleurs changent. Laiton = seule couleur d'action. */
 :root{
   --bg:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.08);
-  --acc:#A8823F;--accx:#8A6A2F;--acc-bg:rgba(168,130,63,.1);
+  --acc:var(--n1-nuit);--accx:var(--n1-nuit);--acc-bg:color-mix(in srgb,var(--n1-nuit) 9%,transparent);--laiton:var(--n1-laiton);
   --hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
   --up:-6px -6px 14px var(--hi),7px 7px 16px var(--lo);
   --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
   --ch:inset 1.5px 1.5px 1px rgba(255,255,255,.95),inset -1.5px -1.5px 2px rgba(26,34,64,.13);
   --gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(26,34,64,.27),var(--ch);
   --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
-  --lis:0 0 0 1px rgba(168,130,63,.4),0 0 30px -8px rgba(168,130,63,.4);
-  --lis-in:inset 0 0 14px -2px rgba(168,130,63,.22),inset 2px 2px 5px -3px rgba(168,130,63,.3);
+  --lis:0 0 0 1px color-mix(in srgb,var(--n1-nuit) 24%,transparent);
+  --lis-in:inset 0 0 0 1px color-mix(in srgb,var(--n1-nuit) 14%,transparent);
   --barre:-3px -3px 9px var(--hi),4px 4px 12px rgba(26,34,64,.11);
   --doux:cubic-bezier(.22,1,.36,1)}
 :root[data-theme="dark"]{
   --bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
-  --acc:#D4B483;--accx:#D4B483;--acc-bg:rgba(212,180,131,.1);
+  --acc:var(--n1-nuit);--accx:var(--n1-nuit);--acc-bg:color-mix(in srgb,var(--n1-nuit) 10%,transparent);--laiton:var(--n1-laiton);
   --hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
   --up:-6px -6px 14px var(--hi),7px 7px 16px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
   --ch:inset 1.5px 1.5px 1px rgba(255,255,255,.07),inset -1.5px -1.5px 2px rgba(0,0,0,.4);
   --gal:-7px -7px 16px var(--hi),9px 9px 20px rgba(0,0,0,.62),var(--ch);
   --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
-  --lis:0 0 0 1px rgba(212,180,131,.32),0 0 30px -8px rgba(212,180,131,.3);
-  --lis-in:inset 0 0 14px -2px rgba(212,180,131,.16),inset 2px 2px 5px -3px rgba(212,180,131,.24);
+  --lis:0 0 0 1px color-mix(in srgb,var(--n1-nuit) 22%,transparent);
+  --lis-in:inset 0 0 0 1px color-mix(in srgb,var(--n1-nuit) 12%,transparent);
   --barre:-3px -3px 9px var(--hi),4px 4px 12px rgba(0,0,0,.32)}
 *{box-sizing:border-box}
 html{background:var(--bg);color:var(--fg);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -205,7 +206,7 @@ html:not(.js) .sc:nth-of-type(2){visibility:visible}html:not(.js) .sc .e{opacity
 .go-s>span{position:absolute;right:5px;top:50%;width:34px;height:34px;margin-top:-17px;border-radius:50%}
 .go-s>span::after{content:"";position:absolute;inset:9px;background:var(--acc);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
 .sc.on .presse>span::after{animation:file 2s var(--doux) calc(var(--p) + .5s)}
-@keyframes file{0%{transform:none;filter:none}25%{transform:translateX(10px);filter:drop-shadow(0 0 4px var(--acc-g,rgba(168,130,63,.45)))}100%{transform:none;filter:none}}
+@keyframes file{0%{transform:none;filter:none}25%{transform:translateX(10px);filter:drop-shadow(0 0 4px var(--acc-g,color-mix(in srgb,var(--acc) 45%,transparent)))}100%{transform:none;filter:none}}
 /* discussion */
 .msg{margin:0;max-width:84%;padding:10px 13px;border-radius:16px;font-size:12.5px}
 .msg.lui{border-bottom-left-radius:5px}
@@ -343,7 +344,7 @@ p.cliky svg{width:16px;height:16px}
 .sc.on .pl-a .f1{animation-delay:calc(var(--d) + 1.9s)}.sc.on .pl-a .f2{animation-delay:calc(var(--d) + 2.1s)}.sc.on .pl-a .f3{animation-delay:calc(var(--d) + 2.3s)}
 .sc.on .pl-a .cote{animation:fen-p .8s ease calc(var(--d) + 2.8s) forwards}
 @keyframes fen-p{to{opacity:1}}
-.crayon{position:absolute;left:13%;top:28%;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,rgba(168,130,63,.5) 0 30%,transparent 32%);box-shadow:0 0 0 2px rgba(168,130,63,.35);opacity:0;pointer-events:none}
+.crayon{position:absolute;left:13%;top:28%;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--acc) 50%,transparent) 0 30%,transparent 32%);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 35%,transparent);opacity:0;pointer-events:none}
 .sc.on .crayon{animation:crayon 1.6s cubic-bezier(.45,0,.25,1) calc(var(--d) + .3s) forwards}
 @keyframes crayon{0%{opacity:0;left:9%;top:24%}8%{opacity:1}30%{left:86%;top:24%}52%{left:86%;top:80%}76%{left:9%;top:80%}96%{opacity:1;left:9%;top:24%}100%{opacity:0;left:9%;top:24%}}
 .photos{align-items:center}
@@ -574,8 +575,8 @@ p.cliky svg{width:16px;height:16px}
 .offre li.li-i .ci{flex:none;width:18px;height:18px;color:var(--accx);margin-top:3px}
 .offre li::before{content:"";flex:none;width:7px;height:7px;margin-top:9px;border-radius:50%;background:var(--acc)}
 .offre.mis,.lis{box-shadow:var(--lis),var(--up)}
-.sol.creux{box-shadow:var(--in),0 0 0 1px rgba(168,130,63,.14)}
-:root[data-theme="dark"] .sol.creux{box-shadow:var(--in),0 0 0 1px rgba(212,180,131,.12)}
+.sol.creux{box-shadow:var(--in),0 0 0 1px color-mix(in srgb,var(--acc) 14%,transparent)}
+:root[data-theme="dark"] .sol.creux{box-shadow:var(--in),0 0 0 1px color-mix(in srgb,var(--acc) 12%,transparent)}
 .offre .reco{box-shadow:var(--lis),var(--up-s)}
 .options{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 @media (max-width:1100px) and (min-width:601px){.options{grid-template-columns:1fr 1fr}}
@@ -601,7 +602,7 @@ p.cliky svg{width:16px;height:16px}
 .gal b{font-size:14.5px;font-weight:700;line-height:1.2}
 .gal small{font-size:12px;color:var(--muted);font-weight:600}
 .gal svg{width:22px;height:22px;color:var(--muted);margin-bottom:2px;transition:color .5s}
-.gal input:checked+span{box-shadow:var(--in),0 0 0 1px rgba(168,130,63,.22);color:var(--accx)}
+.gal input:checked+span{box-shadow:var(--in),0 0 0 1px color-mix(in srgb,var(--acc) 22%,transparent);color:var(--accx)}
 .gal input:checked+span small,.gal input:checked+span svg{color:var(--accx)}
 .gal input:focus-visible+span{outline:2px solid var(--acc);outline-offset:3px}
 .rang{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -624,7 +625,7 @@ p.cliky svg{width:16px;height:16px}
 .it-t{flex:1;min-width:0}.it-t b{display:block;font-size:14.5px}.it-t small{font-size:12px;color:var(--muted);font-weight:600}
 .it-s{flex:none;width:50px;height:30px;border-radius:999px;box-shadow:var(--in);position:relative;transition:background .5s}
 .it-s i{position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:var(--bg);box-shadow:var(--up-s);transition:transform .6s var(--doux)}
-.inter input:checked~.it-s{background:rgba(168,130,63,.55);box-shadow:var(--in)}
+.inter input:checked~.it-s{background:color-mix(in srgb,var(--acc) 55%,transparent);box-shadow:var(--in)}
 .inter input:checked~.it-s i{background:var(--bg);box-shadow:var(--up-s)}
 .inter input:checked~.it-s i::after{content:"";position:absolute;left:7px;top:4px;width:5px;height:9px;border:solid var(--accx);border-width:0 2px 2px 0;transform:rotate(45deg)}
 .inter:has(input:checked){box-shadow:var(--in),0 0 0 1.5px var(--acc)}
@@ -688,7 +689,7 @@ p.cliky svg{width:16px;height:16px}
 /* rendez-vous guidé */
 .rdv{position:relative;max-width:620px;margin:26px auto 0;text-align:left}
 .barre-r{height:10px;border-radius:999px;padding:2px;margin-bottom:22px}
-.barre-r i{display:block;height:100%;width:20%;border-radius:999px;background:var(--acc);box-shadow:0 0 10px rgba(168,130,63,.35);transition:width 1s var(--doux)}
+.barre-r i{display:block;height:100%;width:20%;border-radius:999px;background:var(--acc);box-shadow:0 0 10px color-mix(in srgb,var(--acc) 35%,transparent);transition:width 1s var(--doux)}
 .pas{display:none}
 .pas.on{display:block;animation:pas-in .9s var(--doux)}
 @keyframes pas-in{from{opacity:0;transform:translateY(6px)}}
@@ -700,7 +701,7 @@ p.cliky svg{width:16px;height:16px}
 .champ-r span{display:block;font-size:14px;font-weight:700;margin:0 0 6px 6px}
 .champ-r small{font-weight:500;color:var(--muted)}
 .champ-r input{width:100%;font:500 17px Manrope,system-ui,sans-serif;color:var(--fg);background:var(--bg);border:0;border-radius:16px;padding:15px 16px;box-shadow:var(--in);outline:none;transition:box-shadow .5s}
-.champ-r input:focus{box-shadow:var(--in),0 0 0 1.5px rgba(168,130,63,.45)}
+.champ-r input:focus{box-shadow:var(--in),0 0 0 1.5px color-mix(in srgb,var(--acc) 45%,transparent)}
 .champ-r.err input{box-shadow:var(--in),0 0 0 1.5px rgba(181,96,58,.6)}
 .rdv .envoi{width:100%;margin-top:8px}
 .retour{appearance:none;border:0;background:none;color:var(--muted);font:600 14.5px Manrope,system-ui,sans-serif;cursor:pointer;margin:16px auto 0;display:block;padding:8px 14px;border-radius:999px}
@@ -732,7 +733,7 @@ p.cliky svg{width:16px;height:16px}
 .cal-g .gal b{font-size:15.5px}
 .cal-g .gal i{position:absolute;bottom:17%;width:5px;height:5px;border-radius:50%;background:var(--acc)}
 .cal-g .cj{display:grid;place-items:center;font-size:15px;font-weight:600;color:var(--muted);opacity:.4}
-.cal-g .cj.auj{opacity:.75;box-shadow:inset 0 0 0 1px rgba(168,130,63,.45)}
+.cal-g .cj.auj{opacity:.75;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--acc) 45%,transparent)}
 .cal-l{display:flex;align-items:center;justify-content:center;gap:7px;margin:12px 0 0;font-size:12.5px;color:var(--muted)}
 .cal-l i{width:6px;height:6px;border-radius:50%;background:var(--acc)}
 @media (max-width:420px){.cal-r{padding:14px 8px 10px}.cal-s,.cal-g{gap:4px}.cal-g .gal b{font-size:14.5px}}
@@ -749,7 +750,7 @@ p.cliky svg{width:16px;height:16px}
 /* ===== titres vivants : sur-titre en galet, mots qui arrivent un à un, partie laiton soulignée d'un trait de lumière ===== */
 .eyebrow{display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 11px;border-radius:999px;box-shadow:var(--up-s)}
 .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px var(--acc-bg);animation:pouls 3.2s ease-in-out infinite}
-@keyframes pouls{50%{box-shadow:0 0 0 7px rgba(168,130,63,0)}}
+@keyframes pouls{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--acc) 0%,transparent)}}
 h2 .or{position:relative;display:inline-block}
 h2 .or>svg{position:absolute;left:0;right:0;bottom:-.14em;width:100%;height:.28em;overflow:visible;pointer-events:none}
 h2 .or>svg path{fill:none;stroke:var(--acc);stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke}
@@ -843,7 +844,7 @@ svg[stroke="currentColor"],svg[stroke="currentColor"] [stroke-width]{stroke-widt
 .v-goo .r{display:flex;align-items:center;gap:6px;height:18px;padding:0 8px;border-radius:8px;font-size:11px;font-weight:700;box-shadow:var(--up-s);transition:transform 1.2s var(--doux)}
 .v-goo .autre{color:var(--muted);font-weight:600}
 .v-goo .vous{color:var(--accx)}
-.v-goo em{font-style:normal;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:#fff;font-size:9px}
+.v-goo em{font-style:normal;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--n1-nuit-fg);font-size:9px}
 .vu .v-goo .autre{animation:descend 5s var(--doux) infinite}
 .vu .v-goo .vous{animation:monte 5s var(--doux) infinite}
 @keyframes descend{0%,20%{transform:none}40%,90%{transform:translateY(22px)}100%{transform:none}}
@@ -851,10 +852,10 @@ svg[stroke="currentColor"],svg[stroke="currentColor"] [stroke-width]{stroke-widt
 .v-tel{justify-content:center;gap:14px}
 .v-tel .mini{position:relative;width:30px;height:50px;border-radius:8px;box-shadow:var(--up-s);display:grid;place-items:center}
 .v-tel .mini>i{position:absolute;top:4px;width:10px;height:2px;border-radius:2px;background:var(--line)}
-.v-tel .ap{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:#fff}
+.v-tel .ap{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--n1-nuit-fg)}
 .v-tel .ap svg{width:11px;height:11px}
 .vu .v-tel .ap{animation:sonne 2.4s ease-in-out infinite}
-@keyframes sonne{0%,100%{box-shadow:0 0 0 0 rgba(168,130,63,.45)}50%{box-shadow:0 0 0 8px rgba(168,130,63,0)}}
+@keyframes sonne{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--acc) 45%,transparent)}50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--acc) 0%,transparent)}}
 .v-tel small{font-weight:700;color:var(--accx)}
 .v-nuit .lune{width:20px;height:20px;color:var(--accx)}
 .v-nuit b{font-size:13px}
@@ -947,7 +948,7 @@ a.fr-p:active{box-shadow:var(--in)}
 .ag-s em{position:absolute;top:-4px;right:-6px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--bg);box-shadow:var(--gal);color:var(--acc)}
 .ag-s em svg{width:13px;height:13px}
 .ag-s em path{stroke-dasharray:1;stroke-dashoffset:1}
-.ag-g::after{content:"";position:absolute;inset:-1px;border-radius:50%;box-shadow:0 0 0 1px rgba(168,130,63,.35);opacity:0;pointer-events:none}
+.ag-g::after{content:"";position:absolute;inset:-1px;border-radius:50%;box-shadow:0 0 0 1px color-mix(in srgb,var(--acc) 35%,transparent);opacity:0;pointer-events:none}
 .js .sync .ag-s{opacity:0;transform:translateY(10px) scale(.94)}
 .sync.vu .ag-s{animation:agEntre .7s cubic-bezier(.3,.7,.3,1) calc(.25s + var(--k)*.18s) forwards}
 .sync.vu .ag-s em path{animation:agCoche .5s ease calc(.9s + var(--k)*.25s) forwards}
@@ -971,12 +972,12 @@ a.fr-p:active{box-shadow:var(--in)}
 .rd-m .cal-g .cj{color:var(--muted);opacity:.4;font-weight:600}
 .rd-m .cal-g .jl{box-shadow:var(--up-s);color:var(--fg)}
 .rd-m .cal-g .jl i{position:absolute;bottom:14%;width:4px;height:4px;border-radius:50%;background:var(--acc)}
-.rd-m .cal-g .choisi{box-shadow:var(--in),0 0 0 1px rgba(168,130,63,.3);color:var(--accx)}
+.rd-m .cal-g .choisi{box-shadow:var(--in),0 0 0 1px color-mix(in srgb,var(--acc) 30%,transparent);color:var(--accx)}
 .rd-j,.rd-h{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .rd-h{grid-template-columns:repeat(3,1fr)}
 .rd-j span,.rd-h span{padding:10px 4px;border-radius:14px;text-align:center;font-size:12.5px;font-weight:700;color:var(--muted);box-shadow:var(--up-s)}
 .rd-j b{display:block;font-size:19px;color:var(--fg)}
-.rd-j .choisi,.rd-h .choisi{box-shadow:var(--in),0 0 0 1px rgba(168,130,63,.22);color:var(--accx)}
+.rd-j .choisi,.rd-h .choisi{box-shadow:var(--in),0 0 0 1px color-mix(in srgb,var(--acc) 22%,transparent);color:var(--accx)}
 .rd-j .choisi b{color:var(--accx)}
 .rd-a{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;box-shadow:var(--in);font-weight:700}
 .rd-a b{margin-left:auto}
@@ -992,9 +993,9 @@ a.fr-p:active{box-shadow:var(--in)}
 /* autour du téléphone de l'accueil : un socle de matière et une orbite laiton, très lente */
 .hero{overflow-x:clip}
 .scene::before{content:"";position:absolute;z-index:0;left:50%;top:46%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;box-shadow:var(--in);opacity:.7;pointer-events:none}
-.scene::after{content:"";position:absolute;z-index:0;left:50%;top:46%;width:128%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(168,130,63,.28);pointer-events:none}
+.scene::after{content:"";position:absolute;z-index:0;left:50%;top:46%;width:128%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid color-mix(in srgb,var(--acc) 28%,transparent);pointer-events:none}
 .orbite{position:absolute;z-index:1;left:50%;top:46%;width:128%;aspect-ratio:1;transform:translate(-50%,-50%) rotate(0deg);pointer-events:none;animation:orbite 36s linear infinite}
-.orbite i{position:absolute;left:50%;top:-6px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 5px rgba(168,130,63,.15),0 0 18px rgba(168,130,63,.55)}
+.orbite i{position:absolute;left:50%;top:-6px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 5px color-mix(in srgb,var(--acc) 15%,transparent),0 0 18px color-mix(in srgb,var(--acc) 55%,transparent)}
 .orbite i+i{top:auto;bottom:-4px;width:8px;height:8px;margin-left:-4px;opacity:.6}
 @keyframes orbite{to{transform:translate(-50%,-50%) rotate(360deg)}}
 .scene .tel{position:relative;z-index:2}
@@ -1066,7 +1067,7 @@ a.fr-p:active{box-shadow:var(--in)}
 .unef-tot{display:flex;justify-content:space-between;margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
 .unef-tot b{color:var(--fg);font-size:16px}
 .inclus li::before{content:none!important}
-.aide{margin-top:18px;padding:14px;border-radius:18px;box-shadow:var(--in),0 0 0 1px rgba(168,130,63,.14)}
+.aide{margin-top:18px;padding:14px;border-radius:18px;box-shadow:var(--in),0 0 0 1px color-mix(in srgb,var(--acc) 14%,transparent)}
 .aide-t{display:flex;align-items:center;gap:8px;color:var(--accx)}
 .aide-t .ci{width:18px;height:18px}
 .aide li{color:var(--muted);font-size:13.5px;line-height:1.4}
@@ -1381,6 +1382,25 @@ main>section:not(.hero):not(.bonjour){content-visibility:auto;contain-intrinsic-
 
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
+
+/* ===== Style N1 « Bleu nuit, laiton en touche » (Cyril 12/11), le même que le formulaire Clik'Devis ; couleurs communes dans /n1.css.
+   Bleu nuit (crème la nuit) pour les actions, les icônes et les choix ; laiton seulement en touche : point du logo, filets, soulignés des titres, point du sur-titre.
+   Règle : seul ce qui se touche est en relief ; les blocs sont calmes (à peine décollés), les icônes qui ne se touchent pas sont à plat. */
+circle.pcg{fill:var(--laiton)!important}
+#pc-charge,.ch-w{--acc:var(--laiton)}
+.logo .filet,.em-f{background:var(--laiton)}
+.eyebrow::before{background:var(--laiton);box-shadow:0 0 0 4px color-mix(in srgb,var(--laiton) 14%,transparent)}
+h2 .or>svg path,.souligne path{stroke:var(--laiton)}
+/* blocs calmes */
+.card,.r-card{background:var(--n1-calme);box-shadow:var(--n1-calme-sh)}
+.card.lis{box-shadow:var(--n1-calme-sh),var(--lis)}
+/* icônes à plat (elles ne se touchent pas) */
+.em-g,.ico,.etape .pastille{box-shadow:none;background:color-mix(in srgb,var(--n1-nuit) 7%,var(--bg));color:var(--n1-nuit)}
+/* bouton principal plein bleu nuit, galet clair à droite */
+.btn.go,.top .btn{background:var(--n1-nuit);color:var(--n1-nuit-fg);font-weight:800;box-shadow:var(--up-s)}
+.btn.go::after{background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);box-shadow:none}
+.btn.go::before{background:var(--n1-nuit-fg)}
+.btn.go:active,.top .btn:active{box-shadow:var(--in);filter:brightness(.92)}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>

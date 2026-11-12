@@ -1,0 +1,5 @@
+/* Couleurs communes du style N1 « Bleu nuit, laiton en touche » (Cyril 12/11), reprises du formulaire devis/index.html.
+   Variables seulement (aucune règle) : chaque page (site, Espace, formulaire, plan, réservation) fait pointer ses propres noms dessus. */
+:root{--n1-nuit:#1B2440;--n1-nuit-fg:#fff;--n1-laiton:#A8823F;--n1-calme:color-mix(in srgb,#fff 60%,var(--bg));--n1-calme-sh:0 1px 2px rgba(14,19,34,.06),0 10px 28px rgba(14,19,34,.07)}
+:root[data-theme="dark"]{--n1-nuit:#E8EAF2;--n1-nuit-fg:#0E1322;--n1-laiton:#D4B483;--n1-calme:#262D40;--n1-calme-sh:0 10px 28px rgba(0,0,0,.35)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--n1-nuit:#E8EAF2;--n1-nuit-fg:#0E1322;--n1-laiton:#D4B483;--n1-calme:#262D40;--n1-calme-sh:0 10px 28px rgba(0,0,0,.35)}}
