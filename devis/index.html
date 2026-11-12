@@ -316,6 +316,32 @@ html body.tight .chip{padding:5px 10px;font-size:13.5px}html body.tight .chips{g
  html body .fill{display:flex;flex-direction:column}html body .fill>.cards{flex:1;grid-auto-rows:1fr}html body .fill>.modes{flex:1;grid-template-rows:1fr auto}html body .hero.fill{display:grid;align-content:space-evenly}html body .fill .mcard{align-content:center}html body .fill .card{grid-template-columns:36px 1fr;align-content:center;gap:0 12px;padding:10px 12px}html body .fill .card svg{width:34px;height:34px}html body .fill .card b{font-size:15.5px}
 }
 @media (max-width:600px) and (max-height:600px){html body .mcard>span:not(.rb){display:none}}
+
+/* Accueil « Le fil » (B7, Cyril 12/11) : tient en un écran sur téléphone, iPad et ordinateur */
+html body.intro{min-height:100dvh;display:flex;flex-direction:column;padding-bottom:0;margin:0}body.intro>.wrap{flex:1;display:flex;flex-direction:column;width:100%;max-width:1000px}body.intro #app{flex:1;display:flex;flex-direction:column;justify-content:center}body.intro .foot{margin-top:8px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}body.intro .foot p{display:none}
+.hero7{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(14px,3vh,28px);padding-block:8px}
+.hero7 h1{font-size:clamp(28px,4.4vw,52px);margin:0}.hero7 .sub{margin:-6px 0 0;font-size:clamp(15px,1.5vw,18px);max-width:46ch}
+.fil7{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:900px;position:relative}
+.fil7::before,.fil7::after{content:"";position:absolute;top:39px;left:calc(16.66% + 46px);right:calc(16.66% + 46px);height:2px;border-radius:2px}
+.fil7::before{background:var(--line)}.fil7::after{background:linear-gradient(90deg,var(--mint),color-mix(in srgb,var(--mint) 35%,transparent));transform-origin:left;animation:fil7t 1.6s .3s cubic-bezier(.6,0,.2,1) both}
+@keyframes fil7t{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.fil7 li{display:grid;justify-items:center;gap:8px;position:relative;z-index:1;animation:fil7m .6s cubic-bezier(.2,.8,.2,1) both}.fil7 li:nth-child(2){animation-delay:.25s}.fil7 li:nth-child(3){animation-delay:.5s}
+@keyframes fil7m{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.g7{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;color:var(--mint);background:var(--bg);position:relative;box-shadow:var(--in)}.g7 svg{width:52px;height:52px}
+.fil7 .on .g7{box-shadow:var(--up),0 0 0 2px var(--mint)}
+.fil7 .on .g7::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1.5px solid var(--mint);opacity:0;animation:fil7o 2.6s 1.4s ease-out infinite}
+@keyframes fil7o{0%{opacity:.6;transform:scale(.92)}100%{opacity:0;transform:scale(1.25)}}
+.n7{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.fil7 .on .n7{color:var(--mint-ink)}
+.fil7 b{font-size:16.5px;line-height:1.25}
+.pt7{font-size:12.5px;font-weight:800;color:var(--mint-ink);padding:3px 10px;border-radius:999px;box-shadow:inset 2px 2px 4px var(--ilo,rgba(0,0,0,.1)),inset -2px -2px 4px var(--ihi,#fff)}
+.carte7{width:100%;max-width:500px;display:grid;gap:12px;padding:clamp(16px,2.4vh,24px);border-radius:26px;background:var(--bg);box-shadow:var(--up);text-align:left;animation:fil7m .6s .7s both}
+.carte7 input{width:100%}.carte7 .btn.go{width:100%;max-width:none;margin:0}
+.mini7{display:flex;justify-content:center;align-items:center;gap:6px 16px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}.mini7 span{display:flex;gap:5px;align-items:center}.mini7 svg{color:var(--mint)}
+html body .lien7{appearance:none;background:none;border:0;box-shadow:none;padding:4px 2px;font:inherit;font-weight:700;color:var(--fg);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--mint);cursor:pointer}
+@media (prefers-reduced-motion:reduce){.fil7::after,.fil7 li,.carte7,.fil7 .on .g7::after{animation:none}}
+@media (min-width:601px) and (max-height:820px){.hero7 h1{font-size:40px}.g7{width:72px;height:72px}.g7 svg{width:48px;height:48px}.fil7::before,.fil7::after{top:36px}.hero7{gap:16px}}
+@media (max-width:600px){.hero7 h1{font-size:27px}.hero7 .sub{font-size:14.5px}.fil7{gap:4px}.fil7::before,.fil7::after{top:30px;left:calc(16.66% + 34px);right:calc(16.66% + 34px)}.g7{width:60px;height:60px}.g7 svg{width:40px;height:40px}.fil7 b{font-size:13px}.n7{display:none}.pt7{font-size:11.5px;padding:2px 8px}.carte7{padding:14px 16px;gap:10px}.mini7{font-size:12px;gap:4px 12px}}
+@media (max-width:600px) and (max-height:600px){.hero7{gap:10px}.hero7 .sub{display:none}.g7{width:52px;height:52px}.g7 svg{width:34px;height:34px}.fil7::before,.fil7::after{top:26px}}
 </style>
 
 <div class="wrap">
@@ -684,7 +710,7 @@ function badge(sec,it){
 }
 function render(){
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
- document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.classList.toggle("nonav",cur==="intro"||cur==="done");
+ document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.classList.toggle("nonav",cur==="intro"||cur==="done");document.body.classList.toggle("intro",cur==="intro");
  if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();fitPage.H=innerHeight;setTimeout(fitRoom);{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
  if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
  const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
@@ -741,14 +767,20 @@ function morph(a,b){const keep=n=>n.nodeType===1&&n.classList.contains("geo"),an
   if(x.nodeName==="TEXTAREA"){if(!foc&&x.value!==y.value)x.value=y.value;return}
   morph(x,y)});
  an.slice(bn.length).forEach(n=>n.remove())}
-function introH(){const has=S.travaux.length>0;
- return`<section class="hero fade"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Répondez à quelques questions simples sur votre projet. ${CONFIG.artisan} reçoit tout, prépare votre devis et vous répond sous ${CONFIG.delai}.</p>
- <ul class="perks"><li><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><div><b>Quelques minutes</b><br><span class="hint">Des boutons à toucher, presque rien à écrire.</span></div></li>
- <li><i>?</i><div><b><span class="pl">« Je ne sais pas » est une bonne réponse</span><span class="ps">« Je ne sais pas » accepté</span></b><br><span class="hint">Une estimation suffit, tout sera vérifié sur place.</span></div></li>
- <li><i>✓</i><div><b>Gratuit et sans engagement</b><br><span class="hint">Vous recevez un devis clair, ligne par ligne.</span></div></li></ul>
- <div class="q" style="margin:4px 0 14px"><label class="lab" for="in-pre">Pour commencer, votre prénom</label><p class="hint">Les conseils vous seront adressés, et il sera déjà rempli dans vos coordonnées à la fin.</p><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}" style="width:100%;max-width:340px"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
- <div style="display:grid;gap:14px"><button class="btn go" type="button" data-start="1" style="max-width:none;flex:none;width:100%">${has?"Reprendre ma demande":"C'est parti"}</button>
- <button class="btn ghost" type="button" data-example="1">Voir avec un exemple</button>${has?`<button class="btn back" type="button" data-reset="1">Recommencer</button>`:""}</div></section>`}
+// Accueil « Le fil » (B7, choisi par Cyril 12/11) : 3 étapes reliées par un fil laiton, l'étape 1 éclairée, prénom et bouton dans une carte.
+const IC7={
+ tel:'<rect x="9" y="3.5" width="14" height="25" rx="3"/><path d="M14 6.5h4"/><rect x="12" y="10" width="3.2" height="3.2" rx=".8"/><path d="M17.5 11.6h3"/><rect x="12" y="15.5" width="3.2" height="3.2" rx=".8" fill="currentColor" fill-opacity=".25"/><path d="m12.7 17.1.9.9 1.5-1.7"/><path d="M17.5 17.1h3"/><path d="M12 22h8.5"/><circle cx="16" cy="25.6" r=".6" fill="currentColor"/>',
+ artisan:'<path d="M7.5 15.5a8.5 8.5 0 0 1 17 0"/><path d="M14 7.4V12M18 7.4V12"/><path d="M5.5 15.5h21v2.2h-21z"/><path d="M10 20.5c.8 3.4 3.2 5.5 6 5.5s5.2-2.1 6-5.5"/><path d="M4 29c1.6-1.8 3.7-2.8 6-3.2M28 29c-1.6-1.8-3.7-2.8-6-3.2"/>',
+ devis:'<path d="M8 3.5h11l5 5v15"/><path d="M19 3.5v5h5"/><path d="M8 3.5v25h9"/><path d="M11.5 12h7M11.5 15.5h9M11.5 19h5"/><circle cx="22.5" cy="24.5" r="5"/><path d="m20.4 24.6 1.5 1.5 2.8-3"/>'};
+const ic7=k=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC7[k]}</svg>`;
+function introH(){const has=S.travaux.length>0,ok='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+ return`<section class="hero7"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Trois étapes simples. « Je ne sais pas » est toujours une bonne réponse.</p>
+ <ol class="fil7"><li class="on"><div class="g7">${ic7("tel")}</div><span class="n7">Étape 1 · vous êtes ici</span><b>Vous décrivez<br>vos travaux</b><span class="pt7">≈ 5 min</span></li>
+ <li><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2</span><b>${esc(CONFIG.artisan)} prépare<br>votre devis</b><span class="pt7">Il vérifie tout</span></li>
+ <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Vous recevez<br>votre devis</b><span class="pt7">Sous ${esc(CONFIG.delai)}</span></li></ol>
+ <div class="carte7"><div class="q" style="margin:0"><label class="lab" for="in-pre">${has?"Votre prénom":"Pour commencer, votre prénom"}</label><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
+ <button class="btn go" type="button" data-start="1">${has?"Reprendre ma demande":"C'est parti"}</button>
+ <div class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span><button class="lien7" type="button" data-example="1">Voir un exemple</button>${has?`<button class="lien7" type="button" data-reset="1">Recommencer</button>`:""}</div></div></section>`}
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
   if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
