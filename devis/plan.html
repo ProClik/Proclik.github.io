@@ -355,6 +355,30 @@ html:not(.client) #clb-v{display:none}
 #intro .tip{text-align:center;font-size:13.5px;margin:0}#intro .tip b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--bg);box-shadow:var(--up-xs);color:var(--mint-ink);font-size:12.5px;margin:0 2px}
 #intro .bc-b{margin-top:2px}#intro .in-form{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;padding:12px}#intro .in-form svg{color:var(--mint-ink)}
 @media (max-height:600px){#intro .in-ic{display:none}#intro .bc-in{gap:9px;padding:16px}#intro li{padding:3px 0}}
+/* Fiche en étapes (Cyril 12/11) : petite fenêtre compacte, une question à la fois */
+html.client #sheet.wzon{left:50%;right:auto;bottom:12px;transform:translateX(-50%);width:min(420px,calc(100% - 24px));border-radius:22px;max-height:min(76vh,620px);padding:14px 16px 14px;border:1px solid var(--line)}
+html.client #sheet.wzon::before{display:none}
+#sheet.wzon .sh-in{gap:10px}
+.wz-h{display:flex;align-items:center;gap:10px}.wz-h>div{flex:1;min-width:0}.wz-h b{display:block;font:800 15px var(--f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wz-h small{display:block;font:600 12px var(--f);color:var(--muted)}
+.wz-x{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--muted);font:700 16px var(--f);cursor:pointer}
+.wz-p{display:flex;gap:4px}.wz-p i{flex:1;height:4px;border-radius:2px;background:var(--line)}.wz-p i.ok{background:var(--mint)}.wz-p i.cur{background:#A8823F}
+.wz-n{font:700 12px var(--f);color:var(--muted);margin-top:-4px}
+.wz-q{display:grid;gap:10px}.wz-q h3{margin:2px 0 0;font:800 20px/1.2 var(--f)}
+.wz-q .qk{display:grid;grid-template-columns:1fr 1fr;gap:8px}.wz-q .qk button{min-height:50px;justify-content:center;text-align:center;font-size:15px;margin:0}
+.wz-q .g{display:grid;gap:6px}.wz-q .g>span{font:700 13px var(--f);color:var(--muted)}
+.wz-q .inl{display:flex;flex-wrap:wrap;gap:8px}
+.wz-q p{margin:0}.wz-q .etat p.muted{display:none}
+.wz-q .qk button[data-v="Je ne sais pas"]{grid-column:1/-1}.wz-q .qk:has([data-opw]),.wz-q .qk:has([data-oph]){grid-template-columns:repeat(4,1fr)}.wz-q .qk:has([data-opw]) button,.wz-q .qk:has([data-oph]) button{min-height:44px}
+.qk button[data-v="Je ne sais pas"]:has(.ci)::before{display:none}.qk button:has(.ci.sw) .sw{display:none}
+.wz-aide summary{cursor:pointer;font:700 13.5px var(--f);color:var(--mint);list-style:none;padding:4px 0}.wz-aide summary::-webkit-details-marker{display:none}.wz-aide summary::before{content:"ⓘ ";}.wz-aide p{margin-top:6px}
+.wz-f{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:4px}.wz-f .btn.solid{min-height:48px;padding:0 22px;font-weight:800}html.client body #sheet .wz-f .btn.solid{background:var(--mint)!important;color:var(--paper)!important;border-color:transparent!important}
+.wz-rc{display:grid;gap:6px}.wz-rc button{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;text-align:left;min-height:46px;padding:8px 12px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--fg);font:600 13.5px var(--f);cursor:pointer}
+.wz-rc span{color:var(--muted)}.wz-rc b{font-weight:800;text-align:right}.wz-rc b.ask{color:#A8823F}.wz-rc i{font-style:normal;color:var(--muted)}
+.lnk.danger{color:#c0392b}
+.s9i>*{animation:s9i .4s cubic-bezier(.22,1,.36,1) both}.s9b>*{animation:s9b .4s cubic-bezier(.22,1,.36,1) both}
+@keyframes s9i{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}@keyframes s9b{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.s9i>*,.s9b>*{animation:none!important}}
+@media (orientation:landscape) and (max-height:560px){html.client #sheet.wzon{left:12px;transform:none;top:10px;bottom:10px;width:min(380px,46vw);max-height:none}.wz-q h3{font-size:17px}.wz-q .qk button{min-height:42px}}
 </style>
 <link rel="stylesheet" href="plan-relief.css?v=17">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
@@ -974,7 +998,7 @@ function openWall(x){const sg=segs()[x];if(!sg)return;closeEd();shSeg=x;SH={type
 function openRoom(ri){shSeg=null;SH={type:"room",ri,key:F().rooms[ri]};autoMsg="";renderSheet()}
 function openNew(){shSeg=null;SH={type:"new",nom:"Chambre",L:"3,80",l:"2,90",pos:"À droite"};renderSheet()}
 function openComb(){closeEd();shSeg=null;SH={type:"comb",key:ST.comb};autoMsg="";renderSheet()}
-function renderSheet(){const b=$("sh-body");if(!SH){$("sheet").hidden=true;return}$("sheet").hidden=false;if(CL)try{parent.postMessage({type:"proclik-plan-sheet"},"*")}catch(e){}let h="";
+function renderSheet(){const b=$("sh-body");$("sheet").classList.remove("wzon");if(!SH){$("sheet").hidden=true;return}$("sheet").hidden=false;if(CL)try{parent.postMessage({type:"proclik-plan-sheet"},"*")}catch(e){}let h="";
  if(SH.type==="seg"){const sg=segs()[SH.x];if(!sg){closeSheet();return}const k=kind(sg),c=getComp(sg),L=OP.get(sg.a)||[];
   h=`<div class="sh-h"><div><h2>${esc(sg.rm.nom)} · ${segName(sg)}</h2><small>${fr(dist(sg.a,sg.b))} m${F().comb?" · sous le toit":` × ${fr(F().H)} m de haut`}</small></div>${sg.kind==="clo"?`<button type="button" class="btn danger" data-delclo="1" title="Supprimer toute la cloison" aria-label="Supprimer toute la cloison">🗑</button>`:""}<button class="btn solid" data-close="1">OK</button></div>
   ${photoBlock(sg.a,k==="mur"?"Photos de ce mur":"Photos de cette cloison")}
@@ -1039,7 +1063,28 @@ function renderSheet(){const b=$("sh-body");if(!SH){$("sheet").hidden=true;retur
  {const hideG=sel=>b.querySelectorAll(sel).forEach(x=>{const g=x.closest(".g");if(g)g.style.display="none"});const tidy=()=>b.querySelectorAll(".sec").forEach(sec=>{const G=sec.querySelectorAll(":scope>.g");if(G.length&&[...G].every(g=>g.style.display==="none")&&!sec.querySelector(":scope>.qk,:scope>.inl"))sec.style.display="none"});
   if(SH.type==="op"){const sg=segs()[SH.x],o=sg&&(OP.get(sg.a)||[])[SH.i];if(o&&o.chg==="Déjà en place"){hideG(["ouv","ob","mat","coul","pose","posepos","vol","volcmd","volpose","volenr","volcoul","poseporte"].map(k=>`[data-opt="${k}"]`).join(","));tidy();b.querySelectorAll("[data-openc2]").forEach(x=>{const sec=x.closest(".sec");if(sec)sec.style.display="none"})}}
   if(SH.type==="seg"){const sg=segs()[SH.x];if(sg&&sg.kind==="clo"&&CL&&(COMP.get(sg.a)||{}).etat==="Déjà en place"){hideG("[data-cg]");b.querySelectorAll("[data-allroom],[data-fav]").forEach(x=>{const sec=x.closest(".sec");if(sec)sec.style.display="none"})}}}
- if(CL){b.querySelectorAll(".sec").forEach(sec=>{const t=(sec.querySelector(":scope>span")||{}).textContent||"";if(/Favoris|Dalle|Toit et combles|Remarques rapides|Photos/.test(t))sec.remove()});b.querySelectorAll(".op .g").forEach(g=>g.remove());b.querySelectorAll("[data-see]").forEach(x=>x.remove())}}
+ if(CL){b.querySelectorAll(".sec").forEach(sec=>{const t=(sec.querySelector(":scope>span")||{}).textContent||"";if(/Favoris|Dalle|Toit et combles|Remarques rapides|Photos/.test(t))sec.remove()});b.querySelectorAll(".op .g").forEach(g=>g.remove());b.querySelectorAll("[data-see]").forEach(x=>x.remove())}if(CL&&SH&&SH.type==="op")wzBuild(b)}
+/* Fiche en étapes, comme le formulaire (Cyril 12/11) : petite fenêtre, une question à la fois, récap à la fin.
+   On réutilise la fiche complète : chaque bloc « titre + choix » devient une étape, dans l'ordre. */
+const WZT=[[/^Cette (fenêtre|porte) est/,null],[/^Type$/,"Quel type ?"],[/^Ouverture$/,"Comment s'ouvre-t-elle ?"],[/^Oscillo/,"Oscillo-battante ?"],[/^Largeur/,"Quelle taille ?"],[/^Matériau$/,"En quelle matière ?"],[/^Essence/,"Quel bois ?"],[/^Couleur de la menuiserie$/,"Quelle couleur ?"],[/^Type de pose$/,"Comment la poser ?"],[/^Position dans le mur$/,"Où dans l'épaisseur du mur ?"],[/^Volet$/,"Un volet ?"],[/^Commande$/,"Volet manuel ou motorisé ?"],[/^Pose du coffre$/,"Où poser le coffre du volet ?"],[/^Enroulement$/,"Sens d'enroulement du volet ?"],[/^Couleur du volet$/,"Couleur du volet ?"],[/^Pose du bloc-porte$/,"Quand poser la porte ?"]],WZK={"Largeur":"Taille","Cette fenêtre est…":"État","Cette porte est…":"État"};
+function wzBuild(b){const sh=$("sheet");sh.classList.add("wzon");const tt=e=>((e.querySelector(":scope>span")||{}).textContent||"").trim(),vis=e=>{for(let x=e;x&&x!==b;x=x.parentElement)if(x.style.display==="none")return false;return true};
+ const U=[...b.querySelectorAll(".sec,.g")].filter(e=>vis(e)&&e.querySelector(":scope>.qk")&&tt(e)&&tt(e)!=="Hauteur"),L=U.map(tt);if(!L.length){sh.classList.remove("wzon");return}
+ const sg=segs()[SH.x],o=sg&&(OP.get(sg.a)||[])[SH.i];if(!o)return;const isD=o.k==="porte",num=opNums().get(o),nm=opName(o,opExt(sg));
+ if(SH.wz==null)SH.wz=o.chg?"__r":L[0];if(SH.wz!=="__r"&&!L.includes(SH.wz))SH.wz=SH.wzR?"__r":L[0];
+ const lbl=t=>{const m=WZT.find(([r])=>r.test(t));return m&&m[1]||t},val=e=>{const w=e.querySelector('[data-opf="w"]'),h=e.querySelector('[data-opf="h"]');if(w)return w.value+(h?" × "+h.value:"")+" cm";const P=[...e.querySelectorAll(':scope>.qk [aria-pressed="true"]')].map(x=>x.textContent.trim());return P.join(", ")};
+ const dir=SH.wzDir||0;SH.wzDir=0;let h;const top=`<div class="wz-h"><div><b>${num} · ${esc(nm)}</b><small>${esc(sg.rm.nom)} · ${segName(sg)}</small></div><button type="button" class="wz-x" data-close="1" aria-label="Fermer">✕</button></div>`;
+ if(SH.wz==="__r"){h=top+`<div class="wz-q ${dir>0?"s9i":dir<0?"s9b":""}"><h3>Récapitulatif</h3><p class="muted">Touchez une ligne pour la changer.</p><div class="wz-rc">${U.map((e,i)=>{const v=val(e);return`<button type="button" data-wzgo="${i}"><span>${esc(WZK[L[i]]||L[i])}</span><b class="${v?"":"ask"}">${v?esc(v):"À choisir"}</b><i>›</i></button>`}).join("")}</div></div><div class="wz-f"><button type="button" class="lnk danger" data-opdel="1">Retirer ${num}</button><button type="button" class="btn solid" data-close="1">✓ C'est bon</button></div>`;b.innerHTML=h;SH.wzL=L;return}
+ const i=L.indexOf(SH.wz),e=U[i],q=document.createElement("div");q.className="wz-q "+(dir>0?"s9i":dir<0?"s9b":"");q.innerHTML=`<h3>${esc(lbl(L[i]))}</h3>`;
+ [...e.children].forEach(c=>{if(c.tagName==="SPAN"&&tt(e)===c.textContent.trim())return;if(U.includes(c)||c.style.display==="none")return;if(c.matches("p")&&c.textContent.length>150&&!c.classList.contains("auto")){const d=document.createElement("details");d.className="wz-aide";d.innerHTML="<summary>Qu'est-ce que c'est ?</summary>";d.appendChild(c);q.appendChild(d);return}q.appendChild(c)});
+ const one=q.querySelectorAll(".qk").length===1&&!q.querySelector("input");q.dataset.one=one?"1":"";
+ const bar=`<div class="wz-p" aria-label="Question ${i+1} sur ${L.length}">${L.map((_,j)=>`<i class="${j<i?"ok":j===i?"cur":""}"></i>`).join("")}</div><small class="wz-n">Question ${i+1} sur ${L.length}</small>`;
+ b.innerHTML=top+bar;b.appendChild(q);b.insertAdjacentHTML("beforeend",`<div class="wz-f">${i>0||SH.wzR?`<button type="button" class="lnk" data-wzb="1">← Retour</button>`:"<span></span>"}<button type="button" class="btn solid" data-wzn="1">${SH.wzR||i===L.length-1?"Voir le récap":"Suivant →"}</button></div>`);SH.wzL=L;
+ if(SH.wzAdv){SH.wzAdv=0;const cur=SH.wz;clearTimeout(wzBuild.t);wzBuild.t=setTimeout(()=>{if(SH&&SH.type==="op"&&SH.wz===cur)wzMove(1)},320)}}
+function wzMove(d){if(!SH||!SH.wzL)return;const L=SH.wzL,i=L.indexOf(SH.wz);SH.wzDir=d;if(d>0)SH.wz=SH.wzR||i<0||i>=L.length-1?"__r":L[i+1];else SH.wz=SH.wz==="__r"?L[L.length-1]:SH.wzR?"__r":L[Math.max(0,i-1)];if(SH.wz==="__r")SH.wzR=0;renderSheet()}
+$("sheet").addEventListener("click",e=>{const t=e.target.closest("button");if(!t||!SH||SH.type!=="op"||!$("sheet").classList.contains("wzon"))return;const d=t.dataset;
+ if(d.wzn){e.stopImmediatePropagation();wzMove(1);return}if(d.wzb){e.stopImmediatePropagation();wzMove(-1);return}
+ if(d.wzgo!=null){e.stopImmediatePropagation();SH.wz=SH.wzL[+d.wzgo];SH.wzR=1;SH.wzDir=1;renderSheet();return}
+ const q=t.closest(".wz-q");if(q&&q.dataset.one&&t.closest(".qk")&&t.getAttribute("aria-pressed")!=null)SH.wzAdv=1},true);
 function closeSheet(silent){SH=null;shSeg=null;$("sheet").hidden=true;if(!silent){draw();rows();if(CL&&VFL.length){VFL=verifList();say(null,VFL.length?`👍 Noté. Encore ${VFL.length} point${VFL.length>1?"s":""} à compléter : touchez « ✓ J'ai terminé » pour revoir la liste.`:(ST.pre?`🎉 Bravo ${ST.pre}, tout est complet !`:"🎉 Tout est complet !")+" Touchez « ✓ J'ai terminé » en haut de l'écran.")}}}
 $("sheet").addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;const d=t.dataset;
  if(SH&&SH.type==="quiz"){if(d.qnf){SH.nf=+d.qnf;renderSheet();return}if(d.qsz){SH.sz=+d.qsz;renderSheet();return}if(d.qc){const[fi,n,k]=d.qc.split("|"),c=SH.cnt[fi]=SH.cnt[fi]||{};c[n]=Math.max(0,Math.min(9,(c[n]||0)+ +k));renderSheet();return}if(d.qgo){quizBuild();return}}
