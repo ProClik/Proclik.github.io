@@ -356,7 +356,7 @@ html:not(.client) #clb-v{display:none}
 #intro .bc-b{margin-top:2px}#intro .in-form{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;padding:12px}#intro .in-form svg{color:var(--mint-ink)}
 @media (max-height:600px){#intro .in-ic{display:none}#intro .bc-in{gap:9px;padding:16px}#intro li{padding:3px 0}}
 </style>
-<link rel="stylesheet" href="plan-relief.css?v=12">
+<link rel="stylesheet" href="plan-relief.css?v=13">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client")}catch(e){}</script>
 
 <div class="wrap">
@@ -458,7 +458,7 @@ let VB={x:-1,y:-1,w:10,h:7.5};
 function aspect(){const r=svg.getBoundingClientRect();return r.width>10&&r.height>10?r.width/r.height:4/3}
 function fit(){const A=aspect();if(ST.cam){VB={x:ST.cam.x,y:ST.cam.y,w:ST.cam.w,h:ST.cam.w/A};return}if(ST.frozen)return;
  if(CL){const r=svg.getBoundingClientRect(),W=r.width||360,H=r.height||480,P=[];F().rooms.forEach(q=>P.push(...q.pts));if(ST.trace)P.push(...ST.trace);if(!P.length){VB={x:-1,y:-1,w:9,h:9/A};return}
-  const LS=matchMedia("(orientation:landscape) and (max-height:520px)").matches,b=bbox(P),pad=.75,cw=Math.max(b.x1-b.x0+2*pad,3),ch=Math.max(b.y1-b.y0+2*pad,3),top=GD?28:LS?84:62,bot=GD?84:LS?16:108,side=GD?34:LS?62:14,xs=GD?0:LS?0:56,s=Math.min((W-2*side-xs)/cw,(H-top-bot)/ch),w=W/s,h=H/s;
+  const LS=matchMedia("(orientation:landscape) and (max-height:520px)").matches,b=bbox(P),pad=.75,cw=Math.max(b.x1-b.x0+2*pad,3),ch=Math.max(b.y1-b.y0+2*pad,3),top=GD?28:LS?14:62,bot=GD?84:LS?14:108,side=GD?34:LS?66:14,xs=GD?0:LS?140:56,s=Math.min((W-2*side-xs)/cw,(H-top-bot)/ch),w=W/s,h=H/s;
   VB={x:(b.x0+b.x1)/2-w/2-xs/2/s,y:b.y0-pad-(top+((H-top-bot)-ch*s)/2)/s,w,h};return}const P=[];F().rooms.forEach(r=>P.push(...r.pts));if(ST.fi>0)ST.floors[ST.fi-1].rooms.forEach(r=>P.push(...r.pts));if(ST.trace)P.push(...ST.trace);
  if(!P.length){VB={x:-1,y:-1,w:9,h:9/A};return}const b=bbox(P),pad=CL?1.15:1.75;let w=Math.max(b.x1-b.x0+2*pad+(CL?.4:1.2),CL?4.2:5.4),h=Math.max(b.y1-b.y0+2*pad+.9,4.05);if(w/h<A)w=h*A;else h=w/A;
  VB={x:(b.x0+b.x1)/2-w/2+.6,y:(b.y0+b.y1)/2-h/2+.3,w,h}}
