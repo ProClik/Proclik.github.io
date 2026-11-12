@@ -384,23 +384,23 @@ const D={
  logement:{t:"Parlez-nous du logement",s:"Ces réponses servent à calculer le déplacement et le bon taux de TVA.",cheer:"Bien démarré",f:[
   {k:"cp",t:"text",l:"Code postal",ph:"Ex. 38190",im:"numeric",req:1},
   {k:"commune",t:"text",cap:1,l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
-  {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel"]},
+  {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel",DK]},
   {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK]},
   {k:"iso",t:"chips",l:"Type d'isolation des murs",h:"Ce qu'il y a aujourd'hui, côté intérieur.",o:["Laine + BA13","Doublage polystyrène collé","Brique + plâtre","Pas d'isolation",DK]},
   {k:"cloison",t:"chips",l:"Type de cloison entre les pièces",h:"Les murs intérieurs qui séparent les pièces.",o:["BA13 + montants","Brique + plâtre","Pas de cloison",DK]},
   {k:"age",t:"chips",l:"Le logement a-t-il plus de 2 ans ?",o:["Oui","Non",DK],h:"Au-delà de 2 ans, la TVA peut être réduite."},
-  {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non"]},
-  {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles"],sh:i=>i.type==="Maison"||!i.type},
-  {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"},
-  {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non"],sh:i=>!!i.type&&i.type!=="Maison"&&(i.niveau||0)>=1}]},
+  {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non",DK]},
+  {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles",DK],sh:i=>i.type==="Maison"||!i.type||i.type===DK},
+  {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK},
+  {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1}]},
  cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
   g:{n:"Cloison",cnt:"Combien de cloisons à créer ?",add:"+ Ajouter une autre cloison",f:[
    {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
    {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
-   {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre"]},
+   {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre",DK]},
    {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
    {k:"largeur",t:"chips",l:"Largeur de la porte",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
-   {k:"galandage",t:"chips",l:"Porte coulissante qui rentre dans le mur (galandage) ?",o:["Oui","Non"],sh:i=>i.portes>0}]},
+   {k:"galandage",t:"chips",l:"Porte coulissante qui rentre dans le mur (galandage) ?",o:["Oui","Non",DK],sh:i=>i.portes>0}]},
   f:[{k:"phonique",t:"chips",l:"Isolation contre le bruit",o:["Standard","Renforcée",DK],h:"Renforcée = deux plaques par face, idéal pour une chambre ou une salle de bain."}]},
  doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
   g:{n:"Mur",cnt:"Combien de murs à isoler ?",add:"+ Ajouter un autre mur",f:[
@@ -419,9 +419,9 @@ const D={
    {k:"baisser",t:"chips",l:"Voulez-vous baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DK]},
    {k:"support",t:"chips",l:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DK]},
    {k:"iso",t:"chips",l:"Isolant au-dessus du plafond ?",o:["Oui","Non",DK]},
-   {k:"humide",t:"chips",l:"Pièce humide (salle de bain, buanderie) ?",o:["Oui","Non"]}]}},
+   {k:"humide",t:"chips",l:"Pièce humide (salle de bain, buanderie) ?",o:["Oui","Non",DK]}]}},
  combles:{t:"Vos combles perdus",s:"Le grenier non habitable, au-dessus du dernier plafond.",cheer:"Le plus gros de la chaleur part par là",sch:"piece",f:[
-   {k:"type",t:"chips",l:"Vos combles sont…",o:["Perdus (grenier non habité)","Aménagés ou aménageables"],h:"Aménagés ou aménageables (une pièce sous le toit) : rien à remplir ici, l'isolation se fait sous la toiture."},
+   {k:"type",t:"chips",l:"Vos combles sont…",o:["Perdus (grenier non habité)","Aménagés ou aménageables",DK],h:"Aménagés ou aménageables (une pièce sous le toit) : rien à remplir ici, l'isolation se fait sous la toiture."},
    {k:"surface",t:"num",l:"Surface au sol des combles",u:"m²",st:1,dk:1,h:"Souvent proche de la surface de l'étage en dessous.",v:o=>!/aménag/i.test(o.type||"")},
    {k:"acces",t:"chips",l:"Comment y accède-t-on ?",o:["Trappe","Escalier","Pas d'accès",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"existant",t:"chips",l:"Y a-t-il déjà de l'isolant ?",o:["Non","Oui, ancien ou tassé",DK],v:o=>!/aménag/i.test(o.type||"")},
@@ -439,7 +439,7 @@ const D={
    {k:"ft",t:"chips",l:"Fenêtres de toit",o:["Aucune","1","2","3","4 ou plus",DK]},
    {k:"ftsz",t:"chips",l:"Taille des fenêtres de toit (cm)",o:["55 × 78","78 × 98","78 × 118","114 × 118",DK],h:"Tailles courantes. Une autre taille se précise en remarque.",sh:i=>!!i.ft&&i.ft!=="Aucune"&&i.ft!==DK},
    {k:"ftetat",t:"chips",l:"Ces fenêtres de toit sont…",o:["Déjà en place","À créer","À changer",DK],sh:i=>!!i.ft&&i.ft!=="Aucune"&&i.ft!==DK},
-   {k:"fin",t:"chips",l:"Finition souhaitée",o:["Isolation + plaques de plâtre","Isolation seule"]},
+   {k:"fin",t:"chips",l:"Finition souhaitée",o:["Isolation + plaques de plâtre","Isolation seule",DK]},
    {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK]}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
   g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
@@ -448,22 +448,22 @@ const D={
    {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"ouv",t:"chips",l:"Ouverture",o:["Battant","Coulissante","Fixe",DK]},
-   {k:"ob",t:"chips",l:"Oscillo-battant ?",o:["Oui","Non"],def:"Oui",h:"Elle s'ouvre aussi en haut, en soufflet, pour aérer.",sh:i=>i.ouv==="Battant"},
+   {k:"ob",t:"chips",l:"Oscillo-battant ?",o:["Oui","Non",DK],def:"Oui",h:"Elle s'ouvre aussi en haut, en soufflet, pour aérer.",sh:i=>i.ouv==="Battant"},
    {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
    {k:"coul",t:"chips",l:"Couleur",o:["Blanc","Gris anthracite","Autre",DK],sh:i=>i.mat!=="Bois"},
    {k:"coul",t:"chips",l:"Essence du bois",o:["Chêne clair","Chêne doré","Chêne foncé","Noyer","Pin","Bois exotique","Bois peint",DK],h:"Bois peint : la teinte se précise avec l'artisan.",sh:i=>i.mat==="Bois"},
-   {k:"volet",t:"chips",l:"Volet roulant",o:["Aucun","Manuel","Motorisé"]},
+   {k:"volet",t:"chips",l:"Volet roulant",o:["Aucun","Manuel","Motorisé",DK]},
    {k:"pose",t:"chips",l:"Pose",o:["Sur l'ancien cadre","Dépose complète",DK],h:"Sur l'ancien cadre : plus rapide. Dépose complète : plus de lumière, plus de travaux."}]}},
  portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Encore un petit effort",
   g:{n:"Porte",cnt:"Combien de portes ?",add:"+ Ajouter une autre porte",copy:1,f:[
    {k:"largeur",t:"chips",l:"Largeur (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK]},
    {k:"sens",t:"chips",l:"Sens d'ouverture",o:["Poussant à gauche","Poussant à droite",DK],h:"Debout face à la porte, vous la poussez : de quel côté sont les charnières ?"},
-   {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit"]},
+   {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit",DK]},
    {k:"bati",t:"chips",l:"Pose",o:["Dans une cloison neuve","Dépose de l'ancienne + porte neuve",DK]},
    {k:"fin",t:"chips",l:"Finition de la porte",h:"Fin de chantier : finition sur demande, plus chère.",o:["Prête à peindre","Fin de chantier (finition sur demande)",DK]}]}},
  sol:{t:"Vos sols",s:"Pièce par pièce. Une estimation suffit, tout sera vérifié sur place.",cheer:"Ça prend forme",
   g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",copy:1,f:[
-   {k:"piece",t:"chips",l:"Quelle pièce ?",o:["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre"]},
+   {k:"piece",t:"chips",l:"Quelle pièce ?",o:["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre",DK]},
    {k:"surface",t:"num",l:"Surface au sol",u:"m²",st:1,dk:1,pre:[5,10,15,20,30]},
    {k:"actuel",t:"chips",l:"Sol actuel",o:["Carrelage","Parquet","Stratifié","Lino / vinyle","Moquette","Béton brut",DK]},
    {k:"depose",t:"chips",l:"Faut-il enlever l'ancien sol ?",o:["Oui","Non",DK],sh:i=>i.actuel!=="Béton brut"},
@@ -485,7 +485,7 @@ const D={
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
    {k:"plan",t:"file",l:"Plan (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan",small:"Photo ou PDF, avec les cotes si possible"}]},
  simple:{t:"Vos travaux en quelques mots",s:"Cochez ce qui correspond, puis expliquez avec vos mots. Une estimation suffit, tout sera vérifié sur place.",cheer:"Simple et rapide",f:[
-   {k:"pieces",t:"multi",l:"Quelles pièces sont concernées ?",h:"Plusieurs choix possibles.",o:["Séjour","Cuisine","Chambre(s)","Salle de bain / WC","Entrée / couloir","Bureau","Garage","Combles","Tout le logement"]},
+   {k:"pieces",t:"multi",l:"Quelles pièces sont concernées ?",h:"Plusieurs choix possibles.",o:["Séjour","Cuisine","Chambre(s)","Salle de bain / WC","Entrée / couloir","Bureau","Garage","Combles","Tout le logement",DK]},
    {k:"surface",t:"chips",l:"Surface concernée, environ",o:["Moins de 20 m²","20 à 50 m²","50 à 100 m²","Plus de 100 m²",DK]},
    {k:"nfen",t:"chips",l:"Combien de fenêtres ?",o:["1","2 ou 3","4 à 6","Plus de 6",DK],sh:()=>S.travaux.includes("fenetres")},
    {k:"nportes",t:"chips",l:"Combien de portes intérieures ?",o:["1","2 ou 3","4 à 6","Plus de 6",DK],sh:()=>S.travaux.includes("portes")},
@@ -496,7 +496,7 @@ const D={
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
    {k:"plan",t:"file",l:"Plan ou document (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan ou un document",small:"Plan, ancien devis, diagnostic… en photo ou en PDF"}]},
  projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Dernière ligne droite",f:[
-   {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé"]},
+   {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
    {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
  contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
@@ -639,7 +639,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
 const LQ=[["cp","commune"],["type"],["mur"],["iso"],["cloison"],["age"],["occupe"],["ou","niveau","ascenseur"]];
-function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"))).map(x=>x[1])}
+function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
 function SIMPLE(){return false}
@@ -657,7 +657,7 @@ function fieldH(f,sec,i){
 function fieldH0(f,sec,i,id){const o=obj(sec,i),da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
  const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
  const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
- if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
+ if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
  if(f.t==="chips")return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${f.o.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${(o[f.k]??f.def)===x}" ${da} data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
  if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
   if(f.pre){const pv=pn(v),onP=!dk&&pv!=null&&f.pre.includes(pv),oth=!dk&&(o[f.k+"_o"]||(pv!=null&&!onP));const lb=x=>(f.u==="m"&&x%1?x.toLocaleString("fr-FR",{minimumFractionDigits:2}):fr(x))+" "+f.u;
@@ -834,7 +834,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
  if(cur==="travaux"&&!S.travaux.length)return e("Choisissez au moins un type de travaux.");
  if(cur==="mode"&&!S.mode)return e("Choisissez une des deux façons.");
  if(cur==="plan"&&!tPieces().length)return e("Ajoutez au moins une pièce avec « + Pièce ».");
- if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
+ if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"&&L.type!==DK){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
  if(cur==="simple"&&(S.simple.desc||"").trim().length<3)return e("Décrivez vos travaux en quelques mots, même très court.","desc");
  if(D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n==null)return e("Indiquez combien, même 0 si finalement rien n'est à prévoir.");
  if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.","desc");
@@ -963,7 +963,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.add){const it=S[cur].items;it.push(newItem(cur));if(D[cur].g.cnt){S[cur].n=it.length;S[cur].open=it.length-1}save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
  if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);if(D[cur].g&&D[cur].g.cnt){S[cur].n=S[cur].items.length;S[cur].open=undefined}save();render();return}
  const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
- if(ds.multi){const a=Array.isArray(o[k])?o[k]:[];o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
+ if(ds.multi){const a=(Array.isArray(o[k])?o[k]:[]).filter(x=>ds.v===DK?x===DK:x!==DK);o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
  if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="logement"&&cur==="logement"&&o[k]!=null&&!ds.multi&&LQ[S.lq||0].length===1){save();render();clearTimeout(go.t);go.t=setTimeout(()=>{if(cur==="logement")go(1)},380);return}if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();return}
  if(ds.pre!=null){o[k]=+ds.pre;o[k+"_dk"]=false;o[k+"_o"]=false;save();render();return}
  if(ds.preo){o[k+"_o"]=true;o[k+"_dk"]=false;save();render();setTimeout(()=>document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus(),30);return}
