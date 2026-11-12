@@ -5,7 +5,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <script src="../espace/theme.js?v=1"></script>
-<script src="boutons-icones.js?v=2" defer></script>
+<script src="boutons-icones.js?v=3" defer></script>
+<script src="icones.js?v=1" defer></script>
 <style>
 /* Layout : une colonne centrée (une étape = un écran), barre de progression en haut, boutons collés en bas sur téléphone. */
 :root{
@@ -104,6 +105,7 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .thumbs{display:flex;flex-wrap:wrap;gap:8px}
 .cnt .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}html body #app .cnt .chips .chip{flex:none;text-align:center;justify-content:center;padding:12px 0;font-size:17px;min-height:0}
 .item.cont::before{content:attr(data-n) " (suite)";display:block;font-weight:800;font-size:15px;color:var(--muted);margin-bottom:4px}
+.lq .chip .ci{width:1.6em;height:1.6em;vertical-align:-.45em;margin-right:.7em}.lq .chip .ci.sw{width:1.3em;height:1.3em}
 .item.mini{appearance:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;font:inherit;color:var(--fg);padding:12px 16px;margin-block:8px;cursor:pointer}.item.mini .mi-t{font-weight:800;font-size:15px}.item.mini.ok .mi-t{color:var(--mint-ink)}.item.mini .mi-s{grid-column:1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item.mini .mi-m{grid-column:2;grid-row:1/3;align-self:center;font-size:13px;font-weight:700;color:var(--mint-ink)}
 .iok{width:100%;margin-top:14px}.cnt.cmini{display:flex;align-items:center;justify-content:space-between;gap:10px}.cnt.cmini b{font-size:17px;color:var(--mint-ink);margin-left:4px}
 .qph{margin-top:16px;display:grid;gap:8px}.phb{position:relative;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:9px 16px 9px 12px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.12));color:var(--fg);font-weight:700;font-size:14px;cursor:pointer}.phb svg{color:var(--mint-ink);flex:none}.phb span{display:grid;line-height:1.2}.phb small{font-weight:500;font-size:12px;color:var(--muted)}.phb input{position:absolute;opacity:0;width:1px;height:1px}.qph .thumbs img{width:56px;height:56px}.qph .thumbs figure{width:56px}
@@ -130,6 +132,15 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .perks li{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .perks i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--mint-ink);display:grid;place-items:center;font-style:normal;font-weight:800}
 .recap{display:grid;gap:12px}
+.ritem{margin:8px 0;border-radius:16px;box-shadow:var(--up-s);background:var(--surface)}
+.ritem .ri-s{appearance:none;border:0;background:none;width:100%;text-align:left;font:inherit;color:inherit;list-style:none;display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ritem:not(.open) ul{display:none}
+.ri-ic{width:34px;height:34px;flex:none;color:var(--mint-ink);display:grid;place-items:center}.ri-ic svg{width:30px;height:30px}
+.ri-t{flex:1;min-width:0;display:grid;gap:1px}.ri-t b{font-size:15px;color:var(--fg)}.ri-b{font-weight:800;color:var(--mint-ink);font-size:14.5px;font-variant-numeric:tabular-nums}
+.ri-m{display:flex;align-items:center;gap:4px;font:700 12.5px var(--f-body);color:var(--muted);white-space:nowrap}.ri-m svg{width:18px;height:18px;transition:transform .35s ease}
+.ritem.open .ri-m svg{transform:rotate(180deg)}.ritem.open .ri-m{font-size:0;gap:0}
+.ritem ul{list-style:none;margin:0;padding:2px 14px 12px 58px!important;display:grid;gap:6px!important}
+.ritem li{display:grid;gap:0;font-size:13.5px}.ritem li span{color:var(--muted);font-size:12.5px}.ritem li b{font-weight:700}
 .rblock{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
 .rblock h3{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;gap:10px}
 .rblock h3 button{appearance:none;border:0;background:none;color:var(--mint-ink);font:700 13px var(--f-body);cursor:pointer}
@@ -259,7 +270,8 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 <style>@media (max-width:600px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
-.pg-off{display:none!important}.pgn{font-weight:800;color:var(--mint-ink)}
+.pg-off{display:none!important}
+html body.tight .chip{padding:5px 10px;font-size:13.5px}html body.tight .chips{gap:4px}html body.tight .chip .ci{margin-right:.35em;width:1.15em;height:1.15em}html body.tight .q{margin-top:10px}html body.tight .qph{margin-top:8px}html body.tight .phb small,html body.tight .phb span>small,html body.tight .phb em{display:none}html body.tight .phb{padding-top:7px;padding-bottom:7px}html body.tight .item-h h3{font-size:14px}html body.tight #app .iok{font-size:14px;white-space:nowrap;letter-spacing:-.01em}html body.tight #app .iok .bi{margin-right:6px}html body.tight .q>label,html body.tight .q>.ql{margin-bottom:5px}.pgn{font-weight:800;color:var(--mint-ink)}
 @media (max-width:600px){
  html body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}html body .err:empty{min-height:0;margin:0}html body.nonav{padding-bottom:12px}
  html body .top{padding-block:8px 6px}html body .logo{width:34px;height:34px}html body .brand{font-size:15px;min-width:0}html body .brand>div:last-child{min-width:0}
@@ -428,7 +440,7 @@ const D={
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
   g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
    {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
-   {k:"taille",t:"chips",l:"Taille (largeur × hauteur)",h:"Tailles courantes. Les cotes exactes seront reprises avant la commande.",o:["60 × 75 cm","80 × 95 cm","100 × 115 cm","100 × 125 cm","120 × 135 cm","Porte-fenêtre 80 × 215 cm","Porte-fenêtre 120 × 215 cm","Autre taille",DK]},
+   {k:"taille",t:"chips",l:"Taille en cm (largeur × hauteur)",o:["60 × 75","80 × 95","100 × 115","100 × 125","120 × 135","Porte-fenêtre 80 × 215","Porte-fenêtre 120 × 215","Autre taille",DK]},
    {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"ouv",t:"chips",l:"Ouverture",o:["Battant","Coulissante","Fixe",DK]},
@@ -592,7 +604,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=20");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=21");pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -705,7 +717,7 @@ function render(){
  const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
  if(!same)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
  if(same&&scrollY!==sy)scrollTo(0,sy);
- fitPage();fitRoom();
+ if(window.icoDeco)icoDeco(app);if(window.btnDeco)btnDeco();fitPage();fitRoom();
  if(cur==="logement")geoInit();
  const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
  if(cur==="plan"){const P=S.plan;
@@ -734,7 +746,7 @@ function introH(){const has=S.travaux.length>0;
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
   if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
- if(d.g)o.items.forEach((it,i)=>{const parts=d.g.f.map(f=>fmt(f,it)).filter(Boolean);const b=badge(sec,it);out.push(`<b>${d.g.n} n°${i+1}</b>${b?` (${b})`:""} : ${parts.map(esc).join(" · ")}`)});
+ if(d.g)o.items.forEach((it,i)=>{const b=badge(sec,it),skip=b?({fenetres:["taille","Lc","Hc"],portes:["largeur"]}[sec]||[]):[];const parts=d.g.f.filter(f=>!skip.includes(f.k)).map(f=>fmt(f,it)).filter(Boolean);if(sec==="fenetres"&&b&&/^Porte-fenêtre/.test(it.taille||""))parts.unshift("Porte-fenêtre");const pc=(it.piece||"").trim();out.push({sec,t:`${d.g.n} n°${i+1}`,pc,b:b||(parts.find(p=>!/^Pièce :/.test(p))||"").replace(/^[^:]*: /,""),parts:parts.filter(p=>!(pc&&/^(Pièce|Quelle pièce \?) :/.test(p)))})});
 if(d.f&&!(d.g&&d.g.cnt&&o.n===0))d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
 // Ce que le plan décrit (quand le client est passé par le plan, il remplace les étapes cloisons, fenêtres, portes, doublage, plafond).
 function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win:[],extD:[],intD:[],plaf:[]};(t.floors||[]).forEach(f=>{const H=f.hauteur_m||2.5;(f.pieces||[]).forEach(p=>{{const Z=(p.zones||[]).filter(z=>z.plafond&&z.plafond.a_refaire),pz=Z.length?Z.map(z=>[z.nom,z.plafond]):p.plafond&&p.plafond.a_refaire?[[p.nom,p.plafond]]:[];pz.forEach(([n,q])=>{const ex=[q.baisser&&/^oui/i.test(q.baisser)?"à baisser":null,q.support&&!/je ne sais/i.test(q.support)?"support "+q.support.toLowerCase():null].filter(Boolean);o.plaf.push({piece:n,simple:`Plafond · ${n} · ≈ ${fr(q.surface_m2||0)} m² · plaques standard${ex.length?" · "+ex.join(", "):""}`,txt:`plafond ${n} ${fr(q.surface_m2||0)} m²`})})}
@@ -750,6 +762,7 @@ function totals(){const r=[];if(SIMPLE())return r;const tp=tPieces();if(S.mode==
  if(S.travaux.includes("portes")&&S.portes.items.length)r.push(`${S.portes.items.length} porte${S.portes.items.length>1?"s":""}`);
  if(S.travaux.includes("sol")&&S.sol.items.length){const v=S.sol.items.reduce((a,it)=>a+(!it.surface_dk&&pn(it.surface)||0),0);r.push(v?`≈ ${fr(v)} m² de sol`:`sol : ${S.sol.items.length} pièce${S.sol.items.length>1?"s":""}`)}
  if(S.travaux.includes("escalier")&&S.escalier.items.length)r.push(`${S.escalier.items.length} escalier${S.escalier.items.length>1?"s":""}`);return r}
+const ROPEN=new Set();
 function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
  let h=`<div class="recap">`;if(tot.length)h+=`<div class="rblock" style="border-color:var(--mint)"><h3>Ce que nous avons compris</h3><div class="tot">${tot.join(" · ")}</div></div>`;
  st.forEach(s=>{let items;if(s==="travaux")items=[S.travaux.map(k=>TRAVAUX.find(t=>t[0]===k)[1]).join(", ")];
@@ -759,7 +772,8 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
   else if(s==="simple")items=list(s).concat([`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s ou documents":" ou document"}`]);
   else if(s==="photos")items=[`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s":""}`];
   else items=list(s);if(!items.length)items=[D[s]&&D[s].g&&D[s].g.cnt?"Rien à prévoir":"—"];
-  h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3><ul>${items.map(x=>`<li>${x.startsWith("<b>")?x:esc(x)}</li>`).join("")}</ul></div>`});
+  const its=items.filter(x=>typeof x==="object"),txt=items.filter(x=>typeof x!=="object");
+  h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3>${its.map(x=>`<div class="ritem${ROPEN.has(x.sec+x.t)?" open":""}"><button type="button" class="ri-s" data-rtog="${esc(x.sec+x.t)}" aria-expanded="${ROPEN.has(x.sec+x.t)}"><span class="ri-ic">${IC[x.sec]||""}</span><span class="ri-t"><b>${esc(x.t)}${x.pc?" · "+esc(x.pc):""}</b>${x.b?`<span class="ri-b">${esc(x.b)}</span>`:""}</span><span class="ri-m">Voir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><ul>${x.parts.map(p=>{const k=p.indexOf(" : ");return`<li>${k>0?`<span>${esc(p.slice(0,k))}</span><b>${esc(p.slice(k+3))}</b>`:esc(p)}</li>`}).join("")}</ul></div>`).join("")}${txt.length?`<ul>${txt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`});
  return h+`<button type="button" class="add" data-goto="travaux" style="margin-top:4px">+ Ajouter des travaux</button></div>`}
 function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="open"?undefined:v))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
@@ -809,14 +823,20 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
  return true}
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.sub,.err,.hp,.qph,.iok"))}
-function fitPage(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont,#app .iok.pg-off").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+// Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
+function fitPage(){const b=document.body,over=()=>{if(innerWidth>600||["intro","done","plan"].includes(cur))return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
+ cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
+function fitPage0(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont,#app .iok.pg-off,#app .qph.pg-off").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
  if(!B.length||innerWidth>600||["intro","done","plan","logement"].includes(cur))return;
  const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
- const Y=e=>e.getBoundingClientRect(),top0=Y(B[0]).top+scrollY,avail=H-parseFloat(getComputedStyle(document.body).paddingBottom)-top0-28-((document.querySelector("#app .qph")||{}).offsetHeight||0);
+ const Y=e=>e.getBoundingClientRect();let top0=Y(B[0]).top+scrollY;const avail0=H-parseFloat(getComputedStyle(document.body).paddingBottom)-28-((document.querySelector("#app .qph")||{}).offsetHeight||0);
+ // Petit écran : le schéma seul sur une page ne sert à rien, on le cache s'il ne tient pas avec la question suivante.
+ if(B.length>1&&B[0].classList.contains("schema")&&Y(B[1]).bottom+scrollY-top0>avail0-top0){B[0].classList.add("pg-off");B.shift();top0=Y(B[0]).top+scrollY}
+ const avail=avail0-top0;
  if(Y(B[B.length-1]).bottom+scrollY-top0<=avail)return;
  const pages=[];let pg=[],start=top0;const okB=document.querySelector("#app .iok"),okH=okB?okB.offsetHeight+14:0;B.forEach(e=>{const r=Y(e),t=r.top+scrollY,inI=e.parentElement.classList.contains("item"),b=r.bottom+scrollY+(inI?34:0)+(okB&&e.nextElementSibling===okB?okH:0);if(pg.length&&b-start>avail){const o=pg.length>1&&pg[pg.length-1].classList.contains("item-h")?pg.pop():null;pages.push(pg);pg=o?[o]:[];start=o?Y(o).top+scrollY:t}pg.push(e)});pages.push(pg);
  if(pages.length<2){fitPage.toItem=false;return}fitPage.pages=pages;if(fitPage.toItem){fitPage.toItem=false;const h0=document.querySelector("#app .item:not(.mini)>.item-h");const j=h0?pages.findIndex(p=>p.includes(h0)):-1;if(j>=0)fitPage.p[cur]=j}const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;
- const apply=()=>{pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));{const ok=document.querySelector("#app .iok"),pv=ok&&ok.previousElementSibling;if(ok)ok.classList.toggle("pg-off",!!pv&&pv.classList.contains("pg-off"))}document.querySelectorAll("#app .item:not(.mini)").forEach(it=>{const kids=[...it.children],on=kids.filter(e=>!e.classList.contains("pg-off"));it.classList.toggle("pg-off",!on.length);it.classList.toggle("cont",!!on.length&&kids[0].classList.contains("pg-off"))})};apply();
+ const apply=()=>{pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));{const q=document.querySelector("#app .qph");if(q)q.classList.toggle("pg-off",document.body.classList.contains("tight")&&i!==pages.length-1)}{const ok=document.querySelector("#app .iok"),pv=ok&&ok.previousElementSibling;if(ok)ok.classList.toggle("pg-off",!!pv&&pv.classList.contains("pg-off"))}document.querySelectorAll("#app .item:not(.mini)").forEach(it=>{const kids=[...it.children],on=kids.filter(e=>!e.classList.contains("pg-off"));it.classList.toggle("pg-off",!on.length);it.classList.toggle("cont",!!on.length&&kids[0].classList.contains("pg-off"))})};apply();
  // Contrôle final : si la partie dépasse encore, son dernier bloc passe à la partie suivante.
  for(let g=0;g<6&&document.documentElement.scrollHeight>H+1&&pages[i].length>1;g++){const e=pages[i].pop();if(!pages[i+1])pages.push([]);pages[i+1].unshift(e);apply()}
  const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
@@ -885,6 +905,7 @@ document.addEventListener("pointermove",e=>{if(!PDR||PDR.bg)return;const r=S.pla
  r.x=Math.round((bx!=null?nx+bx:Math.round(nx/.05)*.05)*100)/100;r.y=Math.round((by!=null?ny+by:Math.round(ny/.05)*.05)*100)/100;S.plan.sel=PDR.i;PDR.svg.innerHTML=plan2dInner(layout())});
 document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PVB=null;if(D.bg){if(S.plan.sel!=null&&e.target.closest("#pplan")){S.plan.sel=null;save();render()}return}
  if(!D.moved){S.plan.sel=S.plan.sel===D.i?null:D.i}save();render()});
+document.addEventListener("click",ev=>{const t=ev.target.closest("[data-rtog]");if(!t)return;ev.stopPropagation();const r=t.parentNode,o=r.classList.toggle("open");t.setAttribute("aria-expanded",o);ROPEN[o?"add":"delete"](t.dataset.rtog);if(innerWidth<=600)render()},true);
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
  if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur="travaux";render();return}
  if(ds.example){example();return}

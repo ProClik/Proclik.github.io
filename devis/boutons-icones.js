@@ -45,6 +45,7 @@
     b.insertAdjacentHTML('afterbegin','<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+P[k]+'</svg>');
   }
   function run(){document.querySelectorAll(SEL).forEach(deco)}
+  window.btnDeco=run;
   var st=document.createElement('style');
   st.textContent='svg.bi{width:1.4em;height:1.4em;vertical-align:-.34em;margin-right:.45em;color:var(--mint,#A8823F);flex:none;display:inline-block}';
   document.head.appendChild(st);
