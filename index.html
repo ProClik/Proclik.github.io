@@ -440,7 +440,7 @@ main>section{scroll-snap-align:start}
 .v-ph iframe.lv{left:3px;top:3px;border-radius:12px}.v-card iframe.lv.ok,.v-ph iframe.lv.ok{opacity:1}
 </style>
 
-<body data-v="pc">
+<style>.calc{margin-top:22px;padding:20px 22px;border-radius:20px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}.calc .c-l{flex:1 1 220px;display:flex;flex-direction:column;gap:2px}.calc .c-l small{color:var(--muted);font-size:13px}.c-ch{display:flex;gap:6px;padding:4px;border-radius:999px;background:var(--bg);flex-wrap:wrap}.c-ch button{all:unset;cursor:pointer;padding:9px 16px;border-radius:999px;font:700 14px var(--f);color:var(--muted)}.c-ch button.on{background:var(--nuit);color:var(--nuit-fg)}.c-ch[hidden]{display:none}.c-opt{flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.c-opt label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--bg);cursor:pointer;font:700 14px var(--f)}.c-opt input{margin-top:3px;accent-color:var(--nuit);width:18px;height:18px}.c-opt small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}.c-res{display:flex;gap:22px;flex:1 1 100%;flex-wrap:wrap}.c-res>div{display:flex;flex-direction:column}.c-res>div[hidden]{display:none}.c-res small{color:var(--muted);font-size:12.5px;font-weight:600}.c-res b{font-size:24px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}</style><body data-v="pc">
 
 <header class="wrap top">
   <div class="logo pc"><svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg>ProClik</div>
@@ -583,7 +583,21 @@ main>section{scroll-snap-align:start}
       <div class="fort"><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18M7 13h6M7 16h10"/></svg></span>Site + Espace</h3><div class="m">69 € <small>HT / mois</small></div><p>+ création du site dès 490 €, ou 3 × 163 € sans frais. Votre site à votre image, l'Espace derrière.</p><div class="sp"></div><a class="btn" href="#contact">Prendre rendez-vous</a></div>
       <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 12h3M12 12h7M5 17h11M20 17h-1"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg></span>Options</h3><div class="m">À la carte</div><p>Cliky, Réservation, SMS, Assistant du site, Avis Google, Réseaux sociaux, Votre image.</p><div class="sp"></div><a class="btn sec" href="#contact">Voir le détail</a></div>
     </div>
-    <p class="note">Les prix détaillés et la calculette restent sur une page à part.</p>
+    <div class="calc" id="calc" aria-label="Calculer mon prix">
+      <div class="c-l"><b>Calculez votre prix</b><small>Prix HT. Options : prix provisoires.</small></div>
+      <div class="c-ch" role="group" aria-label="Forfait"><button type="button" class="on" data-f="e" aria-pressed="true">Espace · 49 €</button><button type="button" data-f="s" aria-pressed="false">Site + Espace · 69 €</button></div>
+      <div class="c-ch c-pay" role="group" aria-label="Paiement de la création du site" hidden><button type="button" class="on" data-p="c" aria-pressed="true">Création du site 490 € comptant</button><button type="button" data-p="t" aria-pressed="false">3 × 163 €</button></div>
+      <div class="c-opt" role="group" aria-label="Options">
+        <label><input type="checkbox" data-o="cliky" data-m="99" data-u="490"><span>Cliky <small>99 €/mois + 490 € mise en service</small></span></label>
+        <label><input type="checkbox" data-o="resa" data-m="19"><span>Réservation <small>19 €/mois</small></span></label>
+        <label><input type="checkbox" data-o="sms" data-m="9"><span>SMS <small>9 €/mois</small></span></label>
+        <label><input type="checkbox" data-o="ass" data-m="39"><span>Assistant du site <small>39 €/mois</small></span></label>
+        <label><input type="checkbox" data-o="res" data-m="39"><span>Réseaux sociaux <small>39 €/mois</small></span></label>
+        <label><input type="checkbox" data-o="img" data-u="590"><span>Votre image <small>590 € une fois (490 € avec un site)</small></span></label>
+      </div>
+      <div class="c-res"><div><small>Chaque mois</small><b id="c-m">49 €</b></div><div id="c-cr" hidden><small>Une fois (création, mises en service)</small><b id="c-c"></b></div><div><small>Première année</small><b id="c-a">588 €</b></div></div>
+      <a class="btn" href="#contact">Prendre rendez-vous</a>
+    </div>
   </div>
   <div class="cl">
     <h2>Ce que <span class="or">nous posons.</span></h2>
@@ -824,3 +838,10 @@ v.querySelector(".v-ph").addEventListener("click",function(){if(sw){sw=0;return}
 var vb=[].slice.call(v.querySelectorAll(".v-var button"));function sv(x){v.dataset.v=x;vb.forEach(function(b){b.setAttribute("aria-pressed",b.dataset.v==x)})}
 vb.forEach(function(b){b.addEventListener("click",function(){sv(b.dataset.v)})});sv("c");
 go(0);if("IntersectionObserver"in window){new IntersectionObserver(function(e){if(e[0].isIntersecting){play()}else stop()}).observe(v)}else{play()}})();</script>
+<script>(function(){var c=document.getElementById("calc");if(!c)return;var f="e",p="c",fm=function(n){return n.toLocaleString("fr-FR")+" €"};
+function r(){var s=f==="s",mo=s?69:49,once=s?(p==="c"?490:489):0;
+[].forEach.call(c.querySelectorAll("[data-o]"),function(i){if(!i.checked)return;mo+=+i.dataset.m||0;var u=+i.dataset.u||0;if(i.dataset.o==="img"&&s)u=490;once+=u});
+c.querySelector(".c-pay").hidden=!s;document.getElementById("c-cr").hidden=!(once>0);document.getElementById("c-m").textContent=fm(mo);document.getElementById("c-c").textContent=fm(once);document.getElementById("c-a").textContent=fm(mo*12+once)}
+function bind(sel,key){[].forEach.call(c.querySelectorAll(sel),function(b){b.addEventListener("click",function(){if(key==="f")f=b.dataset.f;else p=b.dataset.p;[].forEach.call(c.querySelectorAll(sel),function(x){var o=x===b;x.classList.toggle("on",o);x.setAttribute("aria-pressed",o)});r()})})}
+bind("[data-f]","f");bind("[data-p]","p");[].forEach.call(c.querySelectorAll("[data-o]"),function(i){i.addEventListener("change",r)});r()})();</script>
+</body></html>
