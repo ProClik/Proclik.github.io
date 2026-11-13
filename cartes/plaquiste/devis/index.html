@@ -1,0 +1,1194 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>Clik'Devis BRS</title><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<script src="../espace/theme.js?v=1"></script>
+<script src="boutons-icones.js?v=3" defer></script>
+<script src="icones.js?v=1" defer></script>
+<style>
+/* Layout : une colonne centrée (une étape = un écran), barre de progression en haut, boutons collés en bas sur téléphone. */
+:root{
+  --ink:#0B1226;      /* bleu nuit ProClik */
+  --mint:#2EE6C8;     /* turquoise ProClik */
+  --mint-ink:#0B5E52; /* turquoise lisible sur fond clair */
+  --bg:#F3F6F9;
+  --surface:#FFFFFF;
+  --fg:#0B1226;
+  --muted:#5B6579;
+  --line:#DCE3EB;
+  --soft:#E9F9F5;
+  --warn:#9A5B00;
+  --warn-bg:#FFF4E0;
+  --err:#B42318;
+  --shadow:0 1px 2px rgba(11,18,38,.06),0 8px 24px rgba(11,18,38,.06);
+  --f-display:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1226;--surface:#131C33;--fg:#EEF2F8;--muted:#9DA8BD;--line:#26324F;--soft:#12302E;--mint-ink:#2EE6C8;--warn:#FFC266;--warn-bg:#3A2A10;--err:#FF8A7A;--shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1226;--surface:#131C33;--fg:#EEF2F8;--muted:#9DA8BD;--line:#26324F;--soft:#12302E;--mint-ink:#2EE6C8;--warn:#FFC266;--warn-bg:#3A2A10;--err:#FF8A7A;--shadow:none;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(120px + var(--vb,0px))}
+.wrap{max-width:640px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
+.logo{--pl:#A8823F;--lh:rgba(255,255,255,.95);--lo:rgba(26,34,64,.17);width:40px;height:40px;border-radius:50%;background:var(--bg);box-shadow:-3px -3px 7px var(--lh),3px 3px 8px var(--lo);display:grid;place-items:center;flex:none}.logo svg{width:24px;height:24px;display:block}:root[data-theme="dark"] .logo{--pl:#D4B483;--lh:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5)}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo{--pl:#D4B483;--lh:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5)}}
+
+.brand small{display:block;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.02em}
+.demo-badge[hidden]{display:none}
+.demo-badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);padding:4px 8px;border-radius:999px}
+.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+.progress b{display:block;height:100%;background:var(--mint);border-radius:999px;transition:width .35s ease}
+.step-meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);padding-block:8px 4px;font-variant-numeric:tabular-nums}
+.cheer{color:var(--mint-ink);font-weight:700}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,34px);line-height:1.15;letter-spacing:-.02em;margin:14px 0 6px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 18px;max-width:60ch}
+.q{display:grid;gap:8px;margin-block:18px}
+.q>label,.q>.lab{font-weight:700}
+.hint{font-size:13px;color:var(--muted);margin:-2px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.q:has(> .geo){position:relative}.geo{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--bg);border-radius:16px;box-shadow:var(--up-s),0 14px 30px rgba(14,19,34,.18);padding:6px;max-height:300px;overflow:auto;animation:geoIn .25s ease}.geo:empty{display:none}@keyframes geoIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.geo .gh{font-size:12px;color:var(--muted);margin:4px 10px 6px}html body .geo button.gi{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:10px 12px;border:0;border-radius:12px;background:transparent;box-shadow:none;color:var(--fg);font:inherit;font-weight:600;font-size:16px;text-align:left;cursor:pointer}html body .geo button.gi+button.gi{border-top:1px solid var(--line);border-radius:0 0 12px 12px}html body .geo button.gi:hover,html body .geo button.gi:focus-visible{background:var(--line)}html body .geo button.gi:active{box-shadow:var(--in)}.geo .gi small{color:var(--muted);font-weight:500;font-size:14px}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:600 15px/1.2 var(--f-body);padding:11px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.chip:hover{border-color:var(--mint)}
+.chip:active{transform:scale(.97)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{background:var(--mint);border-color:var(--mint);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:var(--mint);border-color:var(--mint);color:var(--ink)}}
+.chip.dk{border-style:dashed;color:var(--muted)}
+.chip.dk[aria-pressed="true"]{color:#fff}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:560px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (min-width:760px){.cards{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.card{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:var(--r);padding:14px 12px;cursor:pointer;display:grid;gap:6px;align-content:start;font:inherit;transition:border-color .15s,transform .1s;position:relative}
+.card:hover{border-color:var(--mint)}
+.card:active{transform:scale(.98)}
+.card svg{width:40px;height:40px;color:var(--mint-ink)}
+.card b{font-size:15px;line-height:1.25}
+.card span{font-size:12.5px;color:var(--muted);line-height:1.35}
+.card[aria-pressed="true"]{border-color:var(--mint);background:var(--soft);box-shadow:0 0 0 3px rgba(46,230,200,.25)}
+.card[aria-pressed="true"]::after{content:"✓";position:absolute;top:8px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--mint);color:var(--ink);font-weight:800;font-size:13px;display:grid;place-items:center}
+input[type=text],input[type=tel],input[type=email],textarea{width:100%;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:12px 14px;font:500 16px/1.4 var(--f-body)}
+textarea{min-height:110px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.5;font-weight:500;font-style:italic}
+.numbox input::placeholder{font-style:normal;opacity:.4}
+input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-visible{outline:3px solid rgba(46,230,200,.55);outline-offset:2px;border-color:var(--mint)}
+.num{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.numbox{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.numbox button{appearance:none;border:0;background:transparent;color:var(--fg);width:44px;height:48px;font:700 20px var(--f-body);cursor:pointer}
+.numbox button:hover{background:var(--soft)}
+.numbox input{width:88px;border:0;border-inline:1.5px solid var(--line);border-radius:0;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;padding:12px 6px}
+.numbox .u{padding:0 12px 0 8px;color:var(--muted);font-weight:600;font-size:14px}
+.num.off .numbox{opacity:.4}
+.item{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:16px;margin-block:12px;box-shadow:var(--shadow)}
+.item-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.item-h h3{margin:0;font-size:17px;font-weight:800}
+.badge{font-size:13px;font-weight:700;color:var(--mint-ink);background:var(--soft);padding:4px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.del{appearance:none;border:0;background:transparent;color:var(--muted);font:600 13px var(--f-body);cursor:pointer;text-decoration:underline}
+.add{appearance:none;width:100%;border:1.5px dashed var(--mint-ink);background:transparent;color:var(--mint-ink);font:700 15px var(--f-body);border-radius:var(--r);padding:14px;cursor:pointer}
+.add:hover{background:var(--soft)}
+.ill{margin:0 0 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;box-shadow:var(--shadow)}.ill svg{display:block;width:100%;max-width:420px;height:auto;margin:0 auto}.ill figcaption{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.45}
+.prooms{margin:0 0 16px}.prooms .lab{font-weight:700;margin:0 0 8px}
+.volet{display:inline-block;margin:2px 0 0 14px;font-size:.92em;color:var(--muted)}
+.schema{display:flex;gap:14px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--fg)}
+.schema svg{flex:none;width:110px;height:72px;color:var(--mint-ink)}
+.schema p{margin:0;min-width:0}
+.files{display:grid;gap:10px}
+.drop{display:grid;gap:4px;place-items:center;text-align:center;border:1.5px dashed var(--line);border-radius:var(--r);padding:18px;background:var(--surface);cursor:pointer}
+.drop:hover{border-color:var(--mint)}
+.drop b{font-size:15px}
+.drop span{font-size:13px;color:var(--muted)}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.cnt .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}html body #app .cnt .chips .chip{flex:none;text-align:center;justify-content:center;padding:12px 0;font-size:17px;min-height:0}
+.item.cont::before{content:attr(data-n) " (suite)";display:block;font-weight:800;font-size:15px;color:var(--muted);margin-bottom:4px}
+.lq .chip .ci{width:1.6em;height:1.6em;vertical-align:-.45em;margin-right:.7em}.lq .chip .ci.sw{width:1.3em;height:1.3em}
+.item.mini{appearance:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;font:inherit;color:var(--fg);padding:12px 16px;margin-block:8px;cursor:pointer}.item.mini .mi-t{font-weight:800;font-size:15px}.item.mini.ok .mi-t{color:var(--mint-ink)}.item.mini .mi-s{grid-column:1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item.mini .mi-m{grid-column:2;grid-row:1/3;align-self:center;font-size:13px;font-weight:700;color:var(--mint-ink)}
+.q.miss{position:relative;border-radius:18px;box-shadow:0 0 0 2px var(--mint),0 0 0 6px color-mix(in srgb,var(--mint) 18%,transparent);padding:10px 12px;margin-inline:-12px}
+.q.miss>.lab::after,.q.miss>label::after{content:"À répondre";margin-left:8px;font-size:12px;font-weight:800;color:var(--mint-ink);background:color-mix(in srgb,var(--mint) 16%,transparent);padding:2px 8px;border-radius:999px;vertical-align:2px;white-space:nowrap;display:inline-block}
+.q.miss-a{animation:missA .5s ease}@keyframes missA{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@media (prefers-reduced-motion:reduce){.q.miss-a{animation:none}}
+.iok{width:100%;margin-top:14px}.cnt.cmini{display:flex;align-items:center;justify-content:space-between;gap:10px}.cnt.cmini b{font-size:17px;color:var(--mint-ink);margin-left:4px}
+.qph{margin-top:16px;display:grid;gap:8px}.phb{position:relative;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:9px 16px 9px 12px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.12));color:var(--fg);font-weight:700;font-size:14px;cursor:pointer}.phb svg{color:var(--mint-ink);flex:none}.phb span{display:grid;line-height:1.2}.phb small{font-weight:500;font-size:12px;color:var(--muted)}.phb input{position:absolute;opacity:0;width:1px;height:1px}.qph .thumbs img{width:56px;height:56px}.qph .thumbs figure{width:56px}
+.thumbs figure{margin:0;width:76px;display:grid;gap:4px}
+.thumbs img,.thumbs .pdf{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--muted);background:var(--surface)}
+.thumbs figcaption{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tips{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:grid;gap:2px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--ink);flex:none}
+.note{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.err{color:var(--err);font-weight:700;font-size:14px;min-height:1.2em;margin:6px 0 0}
+.nav{position:fixed;left:0;right:0;bottom:var(--vb,0px);transition:bottom .15s;background:var(--surface);border-top:1px solid var(--line);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
+.nav .wrap{display:flex;gap:10px;justify-content:space-between;align-items:center}
+.btn{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px 22px;cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn.go{background:var(--ink);color:#fff;flex:1;max-width:340px;margin-left:auto}
+:root[data-theme="dark"] .btn.go{background:var(--mint);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.go{background:var(--mint);color:var(--ink)}}
+.btn.back{background:transparent;color:var(--muted);padding-inline:6px}
+.btn.ghost{background:transparent;color:var(--mint-ink);border:1.5px solid var(--mint-ink)}
+.hero{display:grid;gap:14px;padding-block:8px}
+.perks{display:grid;gap:10px;margin:6px 0 4px;padding:0;list-style:none}
+.perks li{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.perks i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--mint-ink);display:grid;place-items:center;font-style:normal;font-weight:800}
+.recap{display:grid;gap:12px}
+.ritem{margin:8px 0;border-radius:16px;box-shadow:var(--up-s);background:var(--surface)}
+.ritem .ri-s{appearance:none;border:0;background:none;width:100%;text-align:left;font:inherit;color:inherit;list-style:none;display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ritem:not(.open) ul{display:none}
+.ri-ic{width:34px;height:34px;flex:none;color:var(--mint-ink);display:grid;place-items:center}.ri-ic svg{width:30px;height:30px}
+.ri-t{flex:1;min-width:0;display:grid;gap:1px}.ri-t b{font-size:15px;color:var(--fg)}.ri-b{font-weight:800;color:var(--mint-ink);font-size:14.5px;font-variant-numeric:tabular-nums}
+.ri-m{display:flex;align-items:center;gap:4px;font:700 12.5px var(--f-body);color:var(--muted);white-space:nowrap}.ri-m svg{width:18px;height:18px;transition:transform .35s ease}
+.ritem.open .ri-m svg{transform:rotate(180deg)}.ritem.open .ri-m{font-size:0;gap:0}
+.ritem ul{list-style:none;margin:0;padding:2px 14px 12px 58px!important;display:grid;gap:6px!important}
+.ritem li{display:grid;gap:0;font-size:13.5px}.ritem li span{color:var(--muted);font-size:12.5px}.ritem li b{font-weight:700}
+.rblock{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.rblock h3{margin:0 0 6px;font-size:15px;display:flex;justify-content:space-between;gap:10px}
+.rblock h3 button{appearance:none;border:0;background:none;color:var(--mint-ink);font:700 13px var(--f-body);cursor:pointer}
+.rblock ul{margin:0;padding-left:18px;font-size:14.5px;display:grid;gap:2px}
+.rblock .tot{margin-top:6px;font-weight:800;color:var(--mint-ink);font-variant-numeric:tabular-nums}
+.done{text-align:center;display:grid;gap:12px;justify-items:center;padding-block:24px}
+.done .ok{width:72px;height:72px;border-radius:50%;background:var(--mint);color:var(--ink);display:grid;place-items:center;font-size:36px;font-weight:800;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.next{display:grid;gap:8px;text-align:left;width:100%}
+.next div{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.next b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:13px}
+details{width:100%;text-align:left}
+summary{cursor:pointer;color:var(--mint-ink);font-weight:700;font-size:14px}
+pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;max-height:340px}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:28px}.foot{--pl:#A8823F}:root[data-theme="dark"] .foot{--pl:#D4B483}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .foot{--pl:#D4B483}}.foot svg{width:14px;height:14px;vertical-align:-2px;margin-right:3px}.foot .sig{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:14px;color:var(--fg)}.foot .sig svg{width:18px;height:18px;margin:0;vertical-align:0}.foot .sig i{width:1px;height:16px;background:var(--pl);opacity:.7}.foot .sig span{font-weight:300;font-size:11px;letter-spacing:.32em;margin-right:-.32em}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.modes{display:grid;gap:14px;margin-top:6px}
+@media (min-width:560px){.modes{grid-template-columns:1.25fr 1fr}}
+.mcard{appearance:none;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:18px;padding:18px 16px 16px;cursor:pointer;display:grid;gap:8px;align-content:start;font:inherit;position:relative;transition:transform .1s,border-color .15s}
+.mcard:active{transform:scale(.98)}
+.mcard.reco{border:2px solid var(--mint);box-shadow:0 0 0 4px rgba(46,230,200,.18)}
+.mcard[aria-pressed="true"]{background:var(--soft);border-color:var(--mint-ink)}
+.mcard b{font-size:17px;line-height:1.25}
+.mcard>span{font-size:14px;color:var(--muted)}
+.mcard ul{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:2px}
+.mcard .rb{position:absolute;top:-12px;left:14px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px}
+.mcard svg.mini{width:100%;height:auto;max-height:130px}
+.mcard b{display:flex;align-items:center;gap:8px}.mcard svg.mic{width:26px;height:26px;flex:none;color:#A8823F}
+:root[data-theme="dark"] .mcard svg.mic{color:#D4B483}
+.ptiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:560px){.ptiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ptile{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;display:grid;gap:8px;justify-items:start;transition:border-color .15s,background .15s}
+.ptile.on{border-color:var(--mint);background:var(--soft)}
+.ptile b{font-size:15px}
+.pic{width:28px;height:20px;border-radius:5px;border:1.5px solid rgba(11,18,38,.35);display:inline-block;flex:none}
+.pcnt{display:flex;align-items:center;gap:6px}
+.pcnt button{appearance:none;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 20px var(--f-body);cursor:pointer}
+.pcnt button.plus{background:var(--ink);color:#fff;border-color:var(--ink)}
+:root[data-theme="dark"] .pcnt button.plus{background:var(--mint);color:var(--ink);border-color:var(--mint)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pcnt button.plus{background:var(--mint);color:var(--ink);border-color:var(--mint)}}
+.pcnt output{min-width:22px;text-align:center;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
+.rhead{display:flex;gap:12px;align-items:center;margin-top:14px}
+.rhead small{color:var(--muted);font-weight:700;font-size:13px}
+.rhead .pic{width:44px;height:32px;border-radius:8px}
+.mhelp{display:flex;gap:12px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:14px;margin-top:12px}
+.mhelp svg{flex:none;width:44px;height:44px;color:var(--mint-ink)}
+.mhelp p{margin:0}
+.prect{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;margin-top:12px;padding:6px}
+.prect svg{display:block;width:100%;height:auto;color:var(--fg)}
+.dims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dims .q{margin-block:12px 0}
+.dims .numbox input{width:72px}
+.dims .numbox button{width:40px}
+@media (max-width:430px){.dims{grid-template-columns:1fr}}
+.pdots{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.pdots button{width:12px;height:12px;border-radius:50%;border:0;background:var(--line);padding:0;cursor:pointer}
+.pdots .ok{background:var(--mint-ink)}.pdots .cur{background:var(--ink);transform:scale(1.35)}
+:root[data-theme="dark"] .pdots .cur{background:var(--mint)}
+.pview{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:10px;display:grid;gap:8px}
+.pview svg{display:block;width:100%;height:auto;color:var(--fg)}
+.pview g[data-pjmp]{cursor:pointer}
+.ptabs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;justify-self:start}
+.ptabs button{appearance:none;border:0;background:transparent;font:800 13px var(--f-body);padding:7px 14px;border-radius:999px;cursor:pointer;color:var(--fg)}
+.ptabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+:root[data-theme="dark"] .ptabs button[aria-pressed="true"]{background:var(--mint);color:var(--ink)}
+.lq .q>.lab,.lq .q>label{font-size:19px;font-weight:800;margin-bottom:4px}.lq .q{margin-top:6px}
+#planfull{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column}
+#planfull[hidden]{display:none}
+.pf-bar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.pf-t{flex:1;min-width:0}.pf-t b{display:block;font-size:17px}.pf-t small{color:var(--muted);font-size:13px}
+@media (max-width:480px){#pf-sub{display:none}.pf-t{display:none}#pf-form{margin-left:0}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-form{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1.5px solid #A8823F;border-radius:999px;background:transparent;color:var(--fg);font:700 14px/1.1 var(--f-body);padding:6px 14px 6px 10px;min-height:44px;cursor:pointer;margin-left:auto;white-space:nowrap;text-align:left}#pf-form svg{color:#A8823F;flex:none}#pf-form .pff{display:flex;flex-direction:column}#pf-form small{font-size:11px;font-weight:600;color:var(--muted);line-height:1.15}@media (max-width:480px){html body #pf-done{white-space:nowrap;font-size:15px;padding-left:14px;padding-right:50px}html body #pf-done::after{width:32px;height:32px;margin-top:-16px}}@media (max-width:370px){.pf-bar{gap:6px}html body #pf-later{padding:10px 9px}html body #pf-done{font-size:14px;padding-left:12px;padding-right:44px}#pf-form{gap:5px;padding:5px 10px 5px 8px}#pf-form svg{width:17px;height:17px}}#pf-form+#pf-later{margin-left:0}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}@keyframes pcOnde{0%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:var(--rs,0 0 #0000),0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,0)}}
+/* L'onde guide le client : bouton principal de chaque écran, et « J'ai terminé » quand le plan est fini. */
+.btn.go:not([disabled]),.bigbtn,.bc-ok,#pf-done.fin{animation:pcOnde 1.8s ease-out infinite}
+/* l'onde garde le relief du bouton (Cyril 11/11 : « Continuer » perdait son bouton) */
+.btn.go,.bigbtn,#pf-done{--rs:var(--up)}.bc-ok{--rs:var(--up-s)}
+#pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
+:root[data-theme="dark"] #pf-done{background:var(--mint);color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pf-done{background:var(--mint);color:var(--ink)}}
+#planfull iframe{flex:1 1 0;width:100%;border:0;display:block;min-height:0}
+/* Invitation à tourner le téléphone (Cyril 12/11) : le plan se dessine téléphone couché. */
+#pf-rot{display:none;position:absolute;inset:0;z-index:5;background:var(--bg);align-items:center;justify-content:center;padding:24px}
+@media (orientation:portrait) and (max-width:600px){#planfull:not(.rotok) #pf-rot{display:flex}}
+#pf-rot .rot-in{display:grid;justify-items:center;gap:12px;text-align:center;max-width:320px}
+#pf-rot svg{width:150px;height:150px}
+#pf-rot .rot-c{fill:var(--surface);stroke:var(--fg);stroke-width:3}
+#pf-rot .rot-s{fill:var(--bg)}#pf-rot .rot-p{stroke:var(--fg)}#pf-rot .rot-b{fill:var(--fg)}
+#pf-rot .rot-ar{stroke:var(--laiton,#A8823F);animation:rotAr 3s ease-in-out infinite}
+#pf-rot .rot-g{transform-origin:60px 66px;animation:rotPh 3s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes rotPh{0%,18%{transform:rotate(0)}45%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@keyframes rotAr{0%,10%{opacity:0}25%,45%{opacity:1}60%,100%{opacity:0}}
+#pf-rot b{font-size:23px;line-height:1.2}#pf-rot p{margin:0;font-size:16px;line-height:1.45;color:var(--fg)}
+#pf-rot small{font-size:13.5px;line-height:1.4;color:var(--muted)}
+#pf-rot-x{appearance:none;border:0;background:transparent;color:var(--muted);font:700 14px var(--f-body);text-decoration:underline;text-underline-offset:3px;padding:12px 16px;margin-top:6px;cursor:pointer;min-height:44px}
+@media (prefers-reduced-motion:reduce){#pf-rot .rot-g{animation:none;transform:rotate(-90deg)}#pf-rot .rot-ar{animation:none}}
+/* téléphone couché (Cyril 12/11) : la barre passe en colonne à gauche, le plan garde toute la hauteur */
+@media (orientation:landscape) and (max-height:520px){#planfull{flex-direction:row}#planfull iframe{height:100%!important;align-self:stretch}
+#planfull .pf-bar{flex-direction:column;align-items:stretch;width:66px;flex:none;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));border-bottom:0;border-right:1px solid var(--line);gap:8px}
+#planfull .pf-t{display:none}
+#planfull #pf-form{flex-direction:column;gap:2px;padding:7px 2px!important;min-height:0!important;border-radius:14px;font-size:10.5px!important;margin:0;text-align:center;justify-content:center;white-space:normal}
+#planfull #pf-form .pff small{display:none}
+#planfull #pf-later{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px!important;min-height:0!important;border-radius:14px;font-size:10.5px!important}
+#planfull #pf-later span{display:block!important}
+html body #planfull #pf-done{margin-top:auto;padding:10px 4px!important;font-size:11.5px!important;border-radius:16px;white-space:normal;line-height:1.2;text-align:center}
+html body #planfull #pf-done::after,html body #planfull #pf-done::before{display:none!important;content:none!important}}
+.pcardp{display:grid;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px}
+.pcardp svg{width:100%;height:auto;max-height:220px;color:var(--fg)}
+.pempty{display:grid;place-items:center;text-align:center;gap:6px;padding:18px 8px;color:var(--muted);font-size:14px}
+.bigbtn{appearance:none;border:0;border-radius:16px;background:var(--hot,#E8590C);color:#fff;font:800 19px var(--f-body);padding:18px;cursor:pointer;width:100%}
+.howto{display:grid;gap:8px;margin:2px 0 0;padding:0;list-style:none}
+.howto li{display:flex;gap:12px;align-items:center;font-size:15px}
+.howto i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--mint-ink);display:grid;place-items:center;font-style:normal;font-weight:800}
+#offline{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:80;background:#3A2414;color:#FFD8B8;border:1.5px solid #E8590C;border-radius:14px;padding:12px 14px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#offline[hidden]{display:none}
+.bigconf{position:fixed;inset:0;z-index:90;background:rgba(6,10,22,.72);display:grid;place-items:center;padding:20px}
+.bigconf[hidden]{display:none}
+.bc-in{background:var(--surface);color:var(--fg);border:2px solid #E5484D;border-radius:22px;padding:22px 20px;max-width:420px;width:100%;display:grid;gap:10px;text-align:center}
+.bc-ic{font-size:40px;line-height:1}.bc-in h2{margin:0;font-size:21px;font-weight:800}.bc-in p{margin:0;color:var(--muted);font-size:15px}
+.bc-b{display:grid;gap:8px;margin-top:6px}.bc-b button{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px;cursor:pointer}
+.bc-ok{background:#E5484D;color:#fff}.bigconf.soft .bc-in{border-color:var(--mint)}.bigconf.soft .bc-ok{background:var(--mint);color:var(--ink)}.bc-no{background:var(--bg);color:var(--fg);border:1.5px solid var(--line)!important}
+#planhost{margin-top:4px}
+#planhost[hidden]{display:none}
+body.planmode{padding-bottom:16px}
+body.planmode .nav{position:static;border-top:0;background:transparent;padding-inline:0;margin-top:14px}
+#pframe{display:block;width:100%;height:620px;border:1.5px solid var(--line);border-radius:18px;background:var(--bg)}
+.pguide{display:grid;gap:6px;margin:0 0 10px}
+.pguide div{display:flex;gap:10px;align-items:center;font-size:14px}
+.pguide b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--mint);color:var(--ink);display:grid;place-items:center;font-size:12.5px}
+.plg{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.plg span{display:inline-flex;align-items:center;gap:6px}
+.plg i{display:inline-block;width:22px;border-radius:2px}
+.plg i.ext{height:6px;background:var(--fg)}
+.plg i.clo{height:3px;background:#C9955B}
+.psel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--soft);border-radius:12px;padding:8px 10px}
+.psel b{margin-right:auto}
+.psel .chip{padding:8px 12px;font-size:14px}
+.psum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.psum div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.psum b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.psum span{font-size:12.5px;color:var(--muted)}
+.fade{animation:fade .3s ease}
+.lq{will-change:transform,opacity}.lq-in{animation:lqIn .32s cubic-bezier(.22,1,.36,1)}.lq-back{animation:lqBack .32s cubic-bezier(.22,1,.36,1)}
+.lq-out{animation:lqOut .17s ease-in forwards}.lq-outb{animation:lqOutB .17s ease-in forwards}
+@keyframes lqIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}@keyframes lqBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes lqOut{to{opacity:0;transform:translateX(-22px)}}@keyframes lqOutB{to{opacity:0;transform:translateX(22px)}}
+@keyframes fade{from{opacity:.25;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
+:root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
+</style>
+<link rel="stylesheet" href="relief.css?v=5">
+<style>@media (max-width:600px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
+<style>
+/* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
+.pg-off{display:none!important}
+html body.tight .chip{padding:5px 10px;font-size:13.5px}html body.tight .chips{gap:4px}html body.tight .chip .ci{margin-right:.35em;width:1.15em;height:1.15em}html body.tight .q{margin-top:10px}html body.tight .qph{margin-top:8px}html body.tight .phb small,html body.tight .phb span>small,html body.tight .phb em{display:none}html body.tight .phb{padding-top:7px;padding-bottom:7px}html body.tight .item-h h3{font-size:14px}html body.tight #app .iok{font-size:14px;white-space:nowrap;letter-spacing:-.01em}html body.tight #app .iok .bi{margin-right:6px}html body.tight .q>label,html body.tight .q>.ql{margin-bottom:5px}.pgn{font-weight:800;color:var(--mint-ink)}
+@media (max-width:600px){
+ html body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}html body .err:empty{min-height:0;margin:0}html body.nonav{padding-bottom:12px}
+ html body .top{padding-block:8px 6px}html body .logo{width:34px;height:34px}html body .brand{font-size:15px;min-width:0}html body .brand>div:last-child{min-width:0}
+ html body .brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}html body .theme-b{width:38px;height:38px}html body .demo-badge{font-size:10.5px;padding:3px 8px}
+ html body #prog .step-meta{margin-top:4px;font-size:12.5px}
+ html body h1{font-size:23px;margin:8px 0 4px;line-height:1.18}html body .sub{font-size:15px;line-height:1.4;margin:0 0 10px}
+ html body .q{margin-block:12px 0;gap:6px}html body .lab{margin-bottom:4px}
+ html body .nav .btn{white-space:nowrap;font-size:15px}html body .nav{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}html body .nav .btn{padding-block:12px}
+ html body.instep .foot{display:none}html body .foot{margin-top:14px}html body .foot .sig{margin-top:8px}
+ html body .hero{gap:10px;padding-block:2px}html body .hero h1{font-size:25px}
+ html body .perks{gap:7px;margin:2px 0}html body .perks li{padding:9px 12px;gap:10px}html body .perks .hint,html body .perks br{display:none}html body .perks b{font-size:14.5px}html body .perks i{width:26px;height:26px}
+ html body .hero .q>.hint{display:none}html body .hero .q{margin:0!important}html body .hero [data-example]{padding-block:10px;font-size:15px}html body .hero>div[style*="grid"]{gap:10px!important}
+ html body .cards{gap:8px}html body .card{grid-template-columns:30px 1fr;align-items:center;gap:0 10px;padding:12px 10px;min-height:0}html body .card svg{width:30px;height:30px}html body .card span{display:none}html body .card b{font-size:14px}
+ html body .modes{gap:12px}html body .mcard{padding:14px 14px 12px;gap:6px}html body .mcard ul{display:none}html body .mcard svg.mini{max-height:84px}html body .mcard>span{font-size:13.5px;line-height:1.35}html body .mcard b{font-size:16px}
+ html body .rblock{padding:10px 14px}html body .rblock ul{font-size:13.5px}html body .recap{gap:10px}
+ html body textarea{min-height:90px}html body .drop{padding:12px}
+ html body .card{padding:9px 10px}html body .card b{padding-right:16px}html body .hero .sub{font-size:14.5px}
+ html body .hero [data-example]{background:transparent;box-shadow:none;padding-block:6px;text-decoration:underline;text-underline-offset:3px;font-weight:700}
+ html body.nonav .foot p{display:none}html body.nonav .foot{margin-top:6px}
+ .ph-x{display:none}
+}
+/* téléphones bas (iPhone SE, Android avec barres) */
+@media (max-width:600px) and (max-height:720px){
+ html body .perks{display:flex;flex-wrap:wrap;gap:6px 12px}html body .perks li{background:transparent;box-shadow:none;border:0;padding:0;gap:6px}html body .perks i{width:22px;height:22px;font-size:12px}html body .perks i svg{width:13px;height:13px}html body .perks b{font-size:13.5px;font-weight:700}
+ html body .perks .pl{display:none}html body .perks .ps{display:inline}
+ html body .mcard svg.mini{max-height:64px}html body .mcard .rb{top:-10px;font-size:11px}
+ html body .card{padding:7px 10px}html body .cards{gap:6px}html body .card svg{width:26px;height:26px}
+ html body .chips{gap:6px}html body .chip{padding:8px 12px;font-size:14px}html body .q{margin-top:9px}
+ html body .hero{gap:8px}html body .hero h1{font-size:22px;margin-top:4px}html body .hero .sub{font-size:14px;margin-bottom:2px}html body #in-pre{padding-block:10px}
+ html body h1{font-size:21px}html body .sub{font-size:14px}
+}
+.perks .ps{display:none}
+@media (max-width:600px){
+ html body.r1 .mcard>span:not(.rb){display:block}html body.r1 .perks li{display:flex;background:var(--bg);box-shadow:var(--up-s);padding:9px 12px;border-radius:16px}html body.r1 .perks{display:grid;gap:8px}html body.r1 .perks .pl{display:inline}html body.r1 .perks .ps{display:none}
+ html body.r1 .chip{padding:13px 18px;font-size:16px}html body.r1 .chips{gap:10px}html body.r1 .q{margin-top:16px}
+ html body.r2 .lq .chips .chip:not(.dk),html body.r2 .chips .chip:not(.dk){flex:1 1 100%;text-align:left;padding:15px 18px}html body.r2 .perks .hint{display:block}html body.r2 .perks br{display:none}html body.r2 .perks i{width:28px;height:28px}html body.r2 .hero .q>.hint{display:block}html body.r2 .lq .q>.lab{font-size:20px}html body.r2 textarea{min-height:130px}html body.r2 .drop{padding:18px}
+ html body.r3 .mcard ul{display:grid}html body.r3 .mcard svg.mini{max-height:120px}html body.r3 .hero{gap:14px}
+ html body .fill{display:flex;flex-direction:column}html body .fill>.cards{flex:1;grid-auto-rows:1fr}html body .fill>.modes{flex:1;grid-template-rows:1fr auto}html body .hero.fill{display:grid;align-content:space-evenly}html body .fill .mcard{align-content:center}html body .fill .card{grid-template-columns:36px 1fr;align-content:center;gap:0 12px;padding:10px 12px}html body .fill .card svg{width:34px;height:34px}html body .fill .card b{font-size:15.5px}
+}
+@media (max-width:600px) and (max-height:600px){html body .mcard>span:not(.rb){display:none}}
+
+/* Accueil « Le fil » (B7, Cyril 12/11) : tient en un écran sur téléphone, iPad et ordinateur */
+html body.intro{min-height:100dvh;display:flex;flex-direction:column;padding-bottom:0;margin:0}body.intro>.wrap{flex:1;display:flex;flex-direction:column;width:100%;max-width:1000px}body.intro #app{flex:1;display:flex;flex-direction:column;justify-content:center}body.intro .foot{margin-top:8px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}body.intro .foot p{display:none}
+.hero7{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(14px,3vh,28px);padding-block:8px}
+.hero7 h1{font-size:clamp(28px,4.4vw,52px);margin:0}.hero7 .sub{margin:-6px 0 0;font-size:clamp(15px,1.5vw,18px);max-width:46ch}
+.fil7{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:900px;position:relative}
+.fil7::before,.fil7::after{content:"";position:absolute;top:39px;left:calc(16.66% + 46px);right:calc(16.66% + 46px);height:2px;border-radius:2px}
+.fil7::before{background:var(--line)}.fil7::after{background:linear-gradient(90deg,var(--mint),color-mix(in srgb,var(--mint) 35%,transparent));transform-origin:left;animation:fil7t 1.6s .3s cubic-bezier(.6,0,.2,1) both}
+@keyframes fil7t{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.fil7 li{display:grid;justify-items:center;gap:8px;position:relative;z-index:1;animation:fil7m .6s cubic-bezier(.2,.8,.2,1) both}.fil7 li:nth-child(2){animation-delay:.25s}.fil7 li:nth-child(3){animation-delay:.5s}
+@keyframes fil7m{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.g7{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;color:var(--mint);background:var(--bg);position:relative;box-shadow:var(--in)}.g7 svg{width:52px;height:52px}
+.fil7 .on .g7{box-shadow:var(--up),0 0 0 2px var(--mint)}
+.fil7 .on .g7::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1.5px solid var(--mint);opacity:0;animation:fil7o 2.6s 1.4s ease-out infinite}
+@keyframes fil7o{0%{opacity:.6;transform:scale(.92)}100%{opacity:0;transform:scale(1.25)}}
+.n7{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.fil7 .on .n7{color:var(--mint-ink)}
+.fil7 b{font-size:16.5px;line-height:1.25}
+.pt7{font-size:12.5px;font-weight:800;color:var(--mint-ink);padding:3px 10px;border-radius:999px;box-shadow:inset 2px 2px 4px var(--ilo,rgba(0,0,0,.1)),inset -2px -2px 4px var(--ihi,#fff)}
+.carte7{width:100%;max-width:500px;display:grid;gap:12px;padding:clamp(16px,2.4vh,24px);border-radius:26px;background:var(--bg);box-shadow:var(--up);text-align:left;animation:fil7m .6s .7s both}
+.carte7 input{width:100%}.carte7 .btn.go{width:100%;max-width:none;margin:0}
+.mini7{display:flex;justify-content:center;align-items:center;gap:6px 16px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}.mini7 span{display:flex;gap:5px;align-items:center}.mini7 svg{color:var(--mint)}
+html body .lien7{appearance:none;background:none;border:0;box-shadow:none;padding:4px 2px;font:inherit;font-weight:700;color:var(--fg);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--mint);cursor:pointer}
+@media (prefers-reduced-motion:reduce){.fil7::after,.fil7 li,.carte7,.fil7 .on .g7::after{animation:none}}
+@media (min-width:601px) and (max-height:820px){.hero7 h1{font-size:40px}.g7{width:72px;height:72px}.g7 svg{width:48px;height:48px}.fil7::before,.fil7::after{top:36px}.hero7{gap:16px}}
+@media (max-width:600px){.hero7 h1{font-size:27px}.hero7 .sub{font-size:14.5px}.fil7{gap:4px}.fil7::before,.fil7::after{top:30px;left:calc(16.66% + 34px);right:calc(16.66% + 34px)}.g7{width:60px;height:60px}.g7 svg{width:40px;height:40px}.fil7 b{font-size:13px}.n7{display:none}.pt7{font-size:11.5px;padding:2px 8px}.carte7{padding:14px 16px;gap:10px}.mini7{font-size:12px;gap:4px 12px}}
+@media (max-width:600px) and (max-height:600px){.hero7{gap:10px}.hero7 .sub{display:none}.g7{width:52px;height:52px}.g7 svg{width:34px;height:34px}.fil7::before,.fil7::after{top:26px}}
+
+/* Style N1 « Bleu nuit, laiton en touche » (Cyril 12/11) : bleu nuit pour les actions et les icônes, laiton seulement sur l'étape en cours.
+   Règle : seul ce qui se touche est en relief ; icônes de titre et fil de progression à plat. */
+:root{--mint:#1B2440;--mint-ink:#1B2440;--acc:#1B2440;--laiton:#A8823F;--calme:color-mix(in srgb,#fff 60%,var(--bg));--calme-sh:0 1px 2px rgba(14,19,34,.06),0 10px 28px rgba(14,19,34,.07);--go-bg:#1B2440;--go-fg:#fff}
+:root[data-theme="dark"]{--mint:#E8EAF2;--mint-ink:#E8EAF2;--acc:#E8EAF2;--laiton:#D4B483;--calme:#262D40;--calme-sh:0 10px 28px rgba(0,0,0,.35);--go-bg:#E8EAF2;--go-fg:#0E1322}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mint:#E8EAF2;--mint-ink:#E8EAF2;--acc:#E8EAF2;--laiton:#D4B483;--calme:#262D40;--calme-sh:0 10px 28px rgba(0,0,0,.35);--go-bg:#E8EAF2;--go-fg:#0E1322}}
+/* blocs calmes : cadres lisses, à peine décollés (ils ne se touchent pas) */
+html body .item:not(.mini),html body .rblock,html body .note,html body .recap>div,html body .carte7{background:var(--calme);box-shadow:var(--calme-sh)}
+/* bouton principal plein */
+html body .btn.go,html body #pf-done{background:var(--go-bg)!important;color:var(--go-fg)!important;font-weight:800}
+html body .btn.go::after,html body #pf-done::after{background:color-mix(in srgb,var(--go-fg) 14%,transparent);box-shadow:none}
+html body .btn.go::before,html body #pf-done::before{background:var(--go-fg)}
+html body .btn.go:not([disabled]):active{box-shadow:var(--in);filter:brightness(.92)}
+/* choix sélectionné : teinte, contour, coche */
+html body .chip[aria-pressed="true"],:root[data-theme="dark"] body .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--mint) 9%,var(--bg));box-shadow:inset 0 0 0 1.5px var(--mint);color:var(--fg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--mint) 9%,var(--bg));box-shadow:inset 0 0 0 1.5px var(--mint);color:var(--fg)}}
+html body .chip[aria-pressed="true"]:not(.dk)::before{content:"";display:inline-block;width:1.15em;height:1.15em;margin-right:.45em;border-radius:50%;flex:none;vertical-align:-.2em;
+ background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8'/%3E%3C/svg%3E") center/68% no-repeat}
+:root[data-theme="dark"] body .chip[aria-pressed="true"]:not(.dk)::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E1322' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8'/%3E%3C/svg%3E")}
+html body .chip[aria-pressed="true"] .ci{display:none}
+html body .chip.dk[aria-pressed="true"]::before{background:var(--mint);color:var(--go-fg);border-color:var(--mint)}
+html body .card[aria-pressed="true"]{box-shadow:var(--in),0 0 0 2px var(--mint)}html body .card[aria-pressed="true"]::after{background:var(--mint);color:var(--go-fg)}
+/* question oubliée : contour bleu nuit + bulle juste dessous */
+.q.miss{box-shadow:0 0 0 2px var(--mint),0 0 0 6px color-mix(in srgb,var(--mint) 12%,transparent)}
+.q.miss>.lab::after,.q.miss>label::after{color:var(--mint);background:color-mix(in srgb,var(--mint) 10%,transparent)}
+.bulle9{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--mint) 7%,var(--bg));color:var(--fg);font-size:14px;font-weight:600;line-height:1.35}
+.bulle9 svg{width:20px;height:20px;flex:none;color:var(--mint);margin-top:1px}.bulle9 b{font-weight:800}
+/* fil de progression (repris de l'accueil), à plat ; anneau laiton sur l'étape en cours */
+#prog .progress{display:none}
+.fil9{position:relative;display:flex;justify-content:space-between;align-items:center;margin:8px 0 2px;padding:0 2px}
+.fil9::before{content:"";position:absolute;left:12px;right:12px;top:50%;height:2px;background:var(--line);translate:0 -50%}
+.fil9::after{content:"";position:absolute;left:12px;width:calc((100% - 24px) * var(--av,0));top:50%;height:2px;background:var(--mint);translate:0 -50%;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.fil9>span{position:relative;z-index:1;display:grid;place-items:center}
+.fil9 i{width:18px;height:18px;border-radius:50%;background:var(--bg);border:1.5px solid color-mix(in srgb,var(--fg) 22%,transparent);display:grid;place-items:center;color:var(--go-fg)}
+.fil9 i.ok{background:var(--mint);border-color:var(--mint)}.fil9 i.ok svg{width:11px;height:11px}
+.fil9 i.on{width:34px;height:34px;border:2px solid var(--laiton);color:var(--mint);background:var(--bg)}.fil9 i.on svg{width:22px;height:22px}
+.fil9 b{display:none}
+html body .step-meta .cheer{color:var(--muted)}
+@media (min-width:700px){.fil9{margin-bottom:22px}.fil9 i{width:22px;height:22px}.fil9 i.on{width:40px;height:40px}.fil9 i.on svg{width:26px;height:26px}
+ .fil9 b{display:block;position:absolute;top:calc(100% + 4px);left:50%;translate:-50% 0;font-size:11px;font-weight:700;white-space:nowrap;color:var(--muted)}.fil9 .on~b{color:var(--fg)}}
+/* icône de titre : à plat (elle ne se touche pas) */
+.tete9{display:flex;gap:14px;align-items:center}.tete9 h1{margin:0}
+.gi9{width:56px;height:56px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--mint);background:color-mix(in srgb,var(--mint) 7%,var(--bg))}.gi9 svg{width:34px;height:34px}
+section.fade>.tete9{margin:14px 0 6px}
+@media (max-width:600px){.gi9{width:46px;height:46px}.gi9 svg{width:28px;height:28px}section.fade>.tete9{margin:8px 0 4px}}
+/* accueil : étapes à plat, anneau laiton sur l'étape 1 */
+.g7{box-shadow:none!important;background:color-mix(in srgb,var(--mint) 7%,var(--bg))}.fil7 .on .g7{box-shadow:0 0 0 2px var(--laiton)!important;background:var(--bg);color:var(--mint)}
+.fil7 .on .g7::after{border-color:var(--laiton)}.fil7 .on .n7{color:var(--fg)}.pt7{box-shadow:none;background:color-mix(in srgb,var(--mint) 7%,var(--bg));color:var(--fg)}
+.fil7::after{background:var(--mint)}
+/* iPad / ordinateur : colonne centrée, tout tient à l'écran */
+@media (min-width:601px){html body .wrap{max-width:720px}html body.instep .foot{display:none}html body:not(.nonav){padding-bottom:calc(88px + env(safe-area-inset-bottom,0px) + var(--vb,0px))}}
+@media (min-width:1000px) and (orientation:landscape){html body .wrap{max-width:980px}html body .item:not(.mini){display:grid;grid-template-columns:1fr 1fr;column-gap:26px;align-items:start}html body .item:not(.mini)>:is(.item-h,.iok,.note,.schema){grid-column:1/-1}html body .item:not(.mini)>.q.miss{margin-inline:0}}
+/* Finitions (Cyril 12/11) : question en cours, transitions, écran final */
+html body .q.now9{background:color-mix(in srgb,var(--mint) 5%,var(--bg));box-shadow:0 0 0 10px color-mix(in srgb,var(--mint) 5%,var(--bg)),-13px 0 0 0 var(--laiton);border-radius:6px;transition:background .35s,box-shadow .35s}
+html body .item:not(.mini) .q.now9{background:color-mix(in srgb,var(--mint) 5%,var(--calme));box-shadow:0 0 0 10px color-mix(in srgb,var(--mint) 5%,var(--calme)),-13px 0 0 0 var(--laiton)}
+html body .q{transition:background .35s,box-shadow .35s}
+.s9i>*{animation:s9i .45s cubic-bezier(.22,1,.36,1) both}.s9b>*{animation:s9b .45s cubic-bezier(.22,1,.36,1) both}
+:is(.s9i,.s9b)>:nth-child(2){animation-delay:.04s}:is(.s9i,.s9b)>:nth-child(3){animation-delay:.08s}:is(.s9i,.s9b)>:nth-child(4){animation-delay:.12s}:is(.s9i,.s9b)>:nth-child(n+5){animation-delay:.16s}
+@keyframes s9i{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}@keyframes s9b{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.s9o{animation:s9o .15s ease-in both}.s9ob{animation:s9ob .15s ease-in both}@keyframes s9o{to{opacity:0;transform:translateX(-18px)}}@keyframes s9ob{to{opacity:0;transform:translateX(18px)}}
+.done9{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(12px,2.6vh,24px);padding-block:clamp(12px,4vh,40px)}
+.done9 h1{font-size:clamp(30px,4.4vw,48px);margin:0;animation:fil7m .6s .5s both}.done9>.sub{margin:-6px 0 0;max-width:44ch;animation:fil7m .6s .6s both}
+.ok9{width:92px;height:92px;animation:ok9 .5s cubic-bezier(.2,.9,.3,1.3) both}.ok9 svg{width:100%;height:100%;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ok9 circle{fill:var(--mint);stroke:var(--laiton);stroke-width:2;stroke-dasharray:183;stroke-dashoffset:183;animation:ok9c .7s .15s ease-out forwards}
+.ok9 path{stroke:var(--go-fg);stroke-width:4.5;stroke-dasharray:44;stroke-dashoffset:44;animation:ok9p .45s .55s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes ok9{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}@keyframes ok9c{to{stroke-dashoffset:0}}@keyframes ok9p{to{stroke-dashoffset:0}}
+.fin9{margin-top:4px}.fin9 li{animation-delay:.8s}.fin9 li:nth-child(2){animation-delay:1s}.fin9 li:nth-child(3){animation-delay:1.2s}.fin9::after{width:auto;right:50%;animation-delay:1.1s}
+.fin9 .fait .g7{background:var(--mint)!important;color:var(--go-fg)}.fin9 .fait .g7 svg{width:34px;height:34px}.fin9 .fait .n7{color:var(--fg)}
+.carte9{width:100%;max-width:520px;display:grid;gap:10px;padding:18px 20px;border-radius:22px;background:var(--calme);box-shadow:var(--calme-sh);text-align:left;font-size:15.5px;line-height:1.45;animation:fil7m .6s 1.3s both}.carte9 p{margin:0}.carte9 .mini7{justify-content:flex-start}.carte9 .mini7 svg{width:15px;height:15px;flex:none}
+.done9>.lien7{animation:fil7m .6s 1.4s both}.done9 details{width:100%;max-width:640px;text-align:left}
+@media (max-width:600px){.ok9{width:72px;height:72px}.done9 h1{font-size:28px}.fin9 .fait .g7 svg{width:26px;height:26px}.carte9{font-size:14.5px;padding:14px 16px}}
+@media (prefers-reduced-motion:reduce){.s9i>*,.s9b>*,.s9o,.s9ob,.ok9,.ok9 circle,.ok9 path,.done9 *{animation:none!important}.ok9 circle,.ok9 path{stroke-dashoffset:0}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--pl)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="var(--pl)" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="var(--pl)" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="var(--pl)" stroke="none"/></svg></div><div>Clik'Devis<small>Morel Plâtrerie · Moirans</small></div></div>
+    <div class="top-r"><span class="demo-badge">Mode démo</span><button class="theme-b" id="theme" type="button" onclick="pcTheme()" aria-label="Passer en mode jour ou nuit" title="Mode jour ou nuit"><svg class="lune" width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="sol" width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button></div>
+  </header>
+  <div id="prog" hidden>
+    <div class="progress"><b id="bar" style="width:0"></b></div>
+    <div class="step-meta"><span id="stepn"></span><span id="cheer" class="cheer"></span></div>
+  </div>
+  <main id="app" aria-live="polite"></main>
+  <div id="offline" hidden role="status">📶 <b>Pas de connexion internet.</b> Pas d'inquiétude : tout est gardé sur cet appareil. Continuez, vous pourrez envoyer dès le retour du réseau.</div>
+  <div class="bigconf" id="bigconf" hidden role="alertdialog" aria-modal="true" aria-labelledby="bc-t"><div class="bc-in"><div class="bc-ic">⚠️</div><h2 id="bc-t"></h2><p id="bc-p"></p><div class="bc-b"><button type="button" class="bc-no" id="bc-no">Non, garder</button><button type="button" class="bc-ok" id="bc-ok">Oui</button></div></div></div>
+  <div id="planhost" hidden><div id="pextra"></div></div>
+  <div id="planfull" hidden role="dialog" aria-label="Votre plan"><div class="pf-bar"><div class="pf-t"><b>Votre plan</b><small id="pf-sub">Le contour du logement est prêt</small></div><button type="button" id="pf-form" data-toform="1" aria-label="Bloqué ? Remplir le formulaire"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.2"/><path d="M9 4V3h6v1"/><path d="M8.5 10h1M12 10h3.5M8.5 14h1M12 14h3.5M8.5 18h1M12 18h2"/></svg><span class="pff"><small>Bloqué ?</small>Formulaire</span></button><button type="button" id="pf-later" data-later="1" aria-label="Finir plus tard">📩<span> Plus tard</span></button><button type="button" id="pf-done">✓ J'ai terminé</button></div><iframe id="pframe" title="Votre plan" allow="camera; microphone"></iframe><div id="pf-rot" role="note"><div class="rot-in"><svg class="rot-ph" viewBox="0 0 120 120" aria-hidden="true"><path class="rot-ar" d="M28 30A44 44 0 0 1 92 30" fill="none" stroke-width="3" stroke-linecap="round"/><path class="rot-ar" d="M84 22l8 8-10 4" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g class="rot-g"><rect x="40" y="30" width="40" height="72" rx="8" class="rot-c"/><rect x="45" y="40" width="30" height="52" rx="2" class="rot-s"/><path d="M50 52h20v30H50zM60 52v13h10" fill="none" class="rot-p" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="96.5" r="2" class="rot-b"/></g></svg><b>Tournez votre téléphone</b><p>Couché sur le côté, le plan est deux fois plus grand : bien plus facile à dessiner du bout du doigt.</p><small>L'écran ne tourne pas ? Ouvrez le centre de contrôle et touchez le petit cadenas.</small><button type="button" id="pf-rot-x">Continuer sans tourner</button></div></div></div>
+  <div class="foot"><p style="margin:0">Vos réponses restent entre vous et l'artisan · Clik'Devis, propulsé par Cliky</p><div class="sig"><svg viewBox="18 6.5 76 76" aria-hidden="true"><path class="pcf" d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" style="fill:var(--fg);stroke:none"/><circle class="pcf pcg" cx="56.0" cy="42.82" r="4.71" style="fill:var(--pl);stroke:none"/></svg><i></i><span>PROCLIK</span></div></div>
+</div>
+<nav class="nav" id="nav" hidden>
+  <div class="wrap">
+    <button class="btn back" id="back" type="button">← Retour</button>
+    <button class="btn go" id="go" type="button">Continuer</button>
+  </div>
+</nav>
+
+<script src="config.js"></script>
+<script>
+(function(){
+const CONFIG=Object.assign({artisan:"Aurélien",entreprise:"BRS",delai:"48 h",code:"brs",service:"https://proclik-calcul.proclik-test.workers.dev"},window.CLIKDEVIS_CONFIG||{});let HWBAD=false;try{let hw=(new URLSearchParams(location.hash.slice(1)).get("w")||"").trim();for(let k=0;k<3&&/%[0-9A-Fa-f]{2}/.test(hw);k++)try{hw=decodeURIComponent(hw)}catch(e){break}hw=hw.replace(/^[\s"'“”«»]+|[\s"'“”«»]+$/g,"");HWBAD=hw;if(hw){const mm=hw.match(/https:\/\/hook\.[a-z0-9-]+\.make\.com\/[A-Za-z0-9_-]{8,}/i);if(mm){CONFIG.webhook=mm[0].replace(/^https:\/\/[^/]+/,h=>h.toLowerCase());HWBAD=false}}else HWBAD=false}catch(e){}CONFIG.demo=!/^https:\/\/hook\.[a-z0-9-]+\.make\.com\//.test(CONFIG.webhook||"");
+document.querySelectorAll(".demo-badge").forEach(x=>{if(!CONFIG.demo)x.hidden=true;else if(HWBAD)x.textContent=/COLLEZ/i.test(HWBAD)?"Remplacez COLLEZ_ICI":`Adresse Make non reconnue (${((HWBAD.match(/^https?:\/\/([^/?#]*)/)||[,"début : "+HWBAD.slice(0,13)])[1])}${HWBAD.indexOf("/",9)>0?` · ${HWBAD.length-HWBAD.indexOf("/",9)-1} car. après le /`:" · pas de /"}${(HWBAD.slice(HWBAD.indexOf("/",9)+1).match(/[^A-Za-z0-9_-]/g)||[]).length?` · caractères en trop : ${[...new Set(HWBAD.slice(HWBAD.indexOf("/",9)+1).match(/[^A-Za-z0-9_-]/g))].join(" ")}`:""})`});
+const IC={
+ cloison:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="7" width="28" height="26" rx="1.5"/><path d="M13 7v26M20 7v26M27 7v26"/></svg>',
+ doublage:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="6" width="8" height="28" fill="currentColor" fill-opacity=".18"/><path d="M18 6c2 3-2 5 0 8s-2 5 0 8-2 5 0 8 0 4 0 4"/><path d="M24 6v28M28 6v28"/></svg>',
+ plafond:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h32M11 8v7M29 8v7M20 8v7"/><rect x="7" y="15" width="26" height="3" fill="currentColor" fill-opacity=".18"/><path d="M4 33h32"/></svg>',
+ combles:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24 20 8l16 16"/><path d="M8 24h24"/><path d="M11 22q2-4 4 0t4 0 4 0 4 0"/><path d="M8 24v9h24v-9"/></svg>',
+ rampants:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 33 22 8l13 0"/><path d="M10 33 25 12"/><path d="M14 33 28 14" stroke-dasharray="2 3"/><path d="M5 33h30"/></svg>',
+ fenetres:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="6" width="22" height="28" rx="1.5"/><path d="M20 6v28M9 20h22"/></svg>',
+ portes:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="11" y="5" width="18" height="30" rx="1.5"/><circle cx="25" cy="21" r="1.6" fill="currentColor"/></svg>',
+ sol:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 30 12 12h24l-8 18z"/><path d="M8 21h24M10 16.5h24M6 25.5h24M17 12l-2 4.5M24 16.5l-2 4.5M15 21l-2 4.5M22 25.5l-2 4.5"/></svg>',
+ escalier:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 34h7v-7h7v-7h7v-7h7V6"/><path d="M5 34V27"/></svg>',
+ autre:'<svg viewBox="0 0 40 40" fill="currentColor"><circle cx="11" cy="20" r="3"/><circle cx="20" cy="20" r="3"/><circle cx="29" cy="20" r="3"/></svg>'
+};
+const ILL={combles:['<svg viewBox="0 0 320 180" role="img" aria-label="Coupe d\'une maison : laine soufflée posée au sol des combles"><defs><pattern id="ilaine" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#E9B872"/><path d="M0 6c2.5-4 5-4 7.5 0S10 6 10 6" stroke="#B9813B" stroke-width="1" fill="none"/></pattern></defs><rect x="0" y="0" width="320" height="180" rx="14" fill="var(--soft)"/><path d="M40 82L160 22L280 82Z" fill="var(--surface)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M30 87L160 18L290 87" fill="none" stroke="#B5523A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M52 82L76 69H244L268 82Z" fill="url(#ilaine)"/><path d="M50 82H270" stroke="var(--fg)" stroke-width="3"/><rect x="56" y="82" width="208" height="76" fill="var(--surface)" stroke="var(--fg)" stroke-width="3"/><rect x="84" y="104" width="34" height="30" rx="2" fill="#8FC3EE" stroke="var(--fg)" stroke-width="2"/><path d="M101 104v30" stroke="var(--fg)" stroke-width="2"/><rect x="196" y="112" width="26" height="46" rx="2" fill="none" stroke="var(--fg)" stroke-width="2"/><path d="M150 82h24" stroke="var(--mint-ink)" stroke-width="5" stroke-linecap="round"/><path d="M160 120c-6-8 6-12 0-20M170 120c-6-8 6-12 0-20" stroke="#E8622C" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".8"/><path d="M150 136v-14" stroke="#E8622C" stroke-width="0"/><g font-family="Manrope,sans-serif" font-weight="700" font-size="10.5" fill="var(--fg)"><text x="160" y="56" text-anchor="middle">Combles perdus</text><text x="160" y="67" text-anchor="middle" font-size="8.5" font-weight="600" fill="var(--muted)">(non habités)</text><text x="140" y="152" text-anchor="middle" font-weight="600" fill="var(--muted)">Pièce chauffée</text></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="10" fill="var(--mint-ink)"><path d="M258 78L284 100" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="314" y="112" text-anchor="end">laine</text><text x="314" y="124" text-anchor="end">soufflée</text><path d="M168 86l10 10" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="180" y="104" font-size="9">trappe</text></g></svg>',"Exemple : la laine est soufflée au sol des combles, au-dessus du plafond de vos pièces. On y accède par une trappe ou un escalier."],rampants:['<svg viewBox="0 0 320 180" role="img" aria-label="Coupe d\'une maison : isolant posé sous les pentes du toit d\'une chambre mansardée"><defs><pattern id="ilaine" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#E9B872"/><path d="M0 6c2.5-4 5-4 7.5 0S10 6 10 6" stroke="#B9813B" stroke-width="1" fill="none"/></pattern></defs><rect x="0" y="0" width="320" height="180" rx="14" fill="var(--soft)"/><path d="M56 158V96L160 34L264 96V158Z" fill="var(--surface)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M64 98L160 41L256 98L256 108L160 52L64 108Z" fill="url(#ilaine)"/><path d="M64 112L160 56L256 112" fill="none" stroke="var(--mint-ink)" stroke-width="3.5" stroke-linejoin="round"/><path d="M38 104L160 30L282 104" fill="none" stroke="#B5523A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M64 112V158M256 112V158" stroke="var(--mint-ink)" stroke-width="3.5"/><path d="M56 158H264" stroke="var(--fg)" stroke-width="3"/><path d="M196 82l20 12l-8 13l-20 -12z" fill="#8FC3EE" stroke="var(--fg)" stroke-width="2" stroke-linejoin="round"/><rect x="88" y="136" width="54" height="16" rx="3" fill="none" stroke="var(--fg)" stroke-width="2"/><rect x="90" y="130" width="14" height="8" rx="2" fill="none" stroke="var(--fg)" stroke-width="1.6"/><g font-family="Manrope,sans-serif" font-weight="600" font-size="10.5" fill="var(--muted)"><text x="196" y="124" text-anchor="middle">Chambre sous les toits</text></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="10" fill="var(--mint-ink)"><path d="M110 74L86 52" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="14" y="38">isolant sous</text><text x="14" y="50">les chevrons</text><path d="M256 128L270 136" stroke="var(--mint-ink)" stroke-width="1.6"/><text x="268" y="148">plaques</text><text x="268" y="160">de plâtre</text></g></svg>',"Exemple : l'isolant suit les pentes du toit, entre et sous les chevrons, puis des plaques de plâtre ferment le tout."]};
+const SCH={
+ mur:'<svg viewBox="0 0 110 72" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="14" y="6" width="80" height="50" fill="currentColor" fill-opacity=".08"/><rect x="62" y="24" width="14" height="32"/><path d="M14 64h80M14 61v6M94 61v6" /><path d="M6 6v50M3 6h6M3 56h6"/><text x="54" y="71" font-size="8" fill="currentColor" stroke="none" text-anchor="middle">longueur</text><text x="5" y="33" font-size="8" fill="currentColor" stroke="none" transform="rotate(-90 5 33)" text-anchor="middle">hauteur</text></svg>',
+ piece:'<svg viewBox="0 0 110 72" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="20" y="8" width="72" height="46" fill="currentColor" fill-opacity=".08"/><path d="M20 63h72M20 60v6M92 60v6M10 8v46M7 8h6M7 54h6"/><text x="56" y="71" font-size="8" fill="currentColor" stroke="none" text-anchor="middle">longueur</text><text x="8" y="31" font-size="8" fill="currentColor" stroke="none" transform="rotate(-90 8 31)" text-anchor="middle">largeur</text></svg>',
+ fenetre:'<svg viewBox="0 0 110 72" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="30" y="4" width="54" height="54" fill="currentColor" fill-opacity=".08"/><rect x="36" y="10" width="42" height="42"/><path d="M57 10v42"/><path d="M30 66h54M30 63v6M84 63v6M20 4v54M17 4h6M17 58h6"/><text x="57" y="72" font-size="8" fill="currentColor" stroke="none" text-anchor="middle">largeur</text><text x="14" y="31" font-size="8" fill="currentColor" stroke="none" transform="rotate(-90 14 31)" text-anchor="middle">hauteur</text></svg>'
+};
+const DK="Je ne sais pas";
+const TRAVAUX=[
+ ["cloison","Cloison","Créer ou modifier un mur intérieur"],
+ ["doublage","Isolation des murs","Doublage isolant d'un mur"],
+ ["plafond","Faux plafond","Plafond neuf ou abaissé"],
+ ["combles","Combles perdus","Isolation du grenier non habitable"],
+ ["rampants","Sous la toiture","Combles aménagés, rampants"],
+ ["fenetres","Fenêtres","Remplacement ou création"],
+ ["portes","Portes intérieures","Blocs-portes standard"],
+ ["sol","Sol","Carrelage, parquet, stratifié…"],
+ ["escalier","Escalier","Créer, changer ou rénover"],
+ ["autre","Autre projet","Décrivez-le avec vos mots"]];
+// Fil de progression et icône de titre (Cyril 12/11, style N1) : une icône par étape, à plat.
+const SV=d=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const SIC={travaux:SV('<path d="M6 26 18 14"/><path d="M17 9.5 22.5 4l5.5 5.5-5.5 5.5z"/><path d="M5 22.5 9.5 27"/>'),logement:SV('<path d="M5 15 16 6l11 9"/><path d="M8 13v13h16V13"/><path d="M13.5 26v-7h5v7"/>'),
+ mode:SV('<path d="M5 27h22"/><path d="M8 23 21 10l4 4-13 13H8z"/><path d="m18 13 4 4"/>'),plan:SV('<rect x="5" y="6" width="22" height="20" rx="1.5"/><path d="M5 16h9v10M19 6v7h8"/>'),simple:SV('<path d="M8 4h11l5 5v19H8z"/><path d="M19 4v5h5M12 14h8M12 18h8M12 22h5"/>'),
+ finition:SV('<rect x="6" y="5" width="18" height="8" rx="2"/><path d="M24 9h3v6H16v4"/><rect x="14" y="19" width="4" height="9" rx="1"/>'),photos:SV('<path d="M5 10h5l2.5-3.5h7L22 10h5v16H5z"/><circle cx="16" cy="17.5" r="4.5"/>'),
+ projet:SV('<rect x="5" y="7" width="22" height="20" rx="3"/><path d="M5 13h22M11 4.5v5M21 4.5v5"/><path d="m12 20 3 3 5-5.5"/>'),contact:SV('<circle cx="16" cy="11.5" r="5"/><path d="M6.5 27c1.5-5 5-7.5 9.5-7.5s8 2.5 9.5 7.5"/>'),
+ recap:SV('<path d="M28 4 4 14.5l9 3.5 3.5 9z"/><path d="M28 4 13 18"/>'),autre:SV('<circle cx="9" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="23" cy="16" r="2"/>')};
+const SNM={travaux:"Travaux",logement:"Logement",mode:"Plan ou texte",plan:"Plan",simple:"Description",finition:"Finition",photos:"Photos",projet:"Calendrier",contact:"Coordonnées",recap:"Envoi"};
+const sic=k=>SIC[k]||(IC[k]?IC[k].replace("<svg ",'<svg aria-hidden="true" '):SIC.autre);
+const snm=k=>SNM[k]||((TRAVAUX.find(t=>t[0]===k)||[])[1])||"";
+function filH(st,n){const ok='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4L18 8"/></svg>';
+ return`<div class="fil9" style="--av:${st.length>1?n/(st.length-1):0}" aria-hidden="true">${st.map((k,j)=>`<span><i class="${j<n?"ok":j===n?"on":""}">${j<n?ok:j===n?sic(k):""}</i><b>${esc(snm(k))}</b></span>`).join("")}</div>`}
+const PLAQUE=["cloison","doublage","plafond","rampants"];
+
+// Définition des étapes
+const D={
+ travaux:{t:"Quels travaux souhaitez-vous ?",s:"Plusieurs choix possibles, on vous pose ensuite les bonnes questions.",cheer:"C'est parti !"},
+ logement:{t:"Parlez-nous du logement",s:"Ces réponses servent à calculer le déplacement et le bon taux de TVA.",cheer:"Bien démarré",f:[
+  {k:"cp",t:"text",l:"Code postal",ph:"Ex. 38190",im:"numeric",req:1},
+  {k:"commune",t:"text",cap:1,l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
+  {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel",DK]},
+  {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK]},
+  {k:"iso",t:"chips",l:"Type d'isolation des murs",h:"Ce qu'il y a aujourd'hui, côté intérieur.",o:["Laine + BA13","Doublage polystyrène collé","Brique + plâtre","Pas d'isolation",DK]},
+  {k:"cloison",t:"chips",l:"Type de cloison entre les pièces",h:"Les murs intérieurs qui séparent les pièces.",o:["BA13 + montants","Brique + plâtre","Pas de cloison",DK]},
+  {k:"age",t:"chips",l:"Le logement a-t-il plus de 2 ans ?",o:["Oui","Non",DK],h:"Au-delà de 2 ans, la TVA peut être réduite."},
+  {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non",DK]},
+  {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles",DK],sh:i=>i.type==="Maison"||!i.type||i.type===DK},
+  {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK},
+  {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1}]},
+ cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
+  g:{n:"Cloison",cnt:"Combien de cloisons à créer ?",add:"+ Ajouter une autre cloison",f:[
+   {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
+   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre",DK]},
+   {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
+   {k:"largeur",t:"chips",l:"Largeur de la porte",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
+   {k:"galandage",t:"chips",l:"Porte coulissante qui rentre dans le mur (galandage) ?",o:["Oui","Non",DK],sh:i=>i.portes>0}]},
+  f:[{k:"phonique",t:"chips",l:"Isolation contre le bruit",o:["Standard","Renforcée",DK],h:"Renforcée = deux plaques par face, idéal pour une chambre ou une salle de bain."}]},
+ doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
+  g:{n:"Mur",cnt:"Combien de murs à isoler ?",add:"+ Ajouter un autre mur",f:[
+   {k:"L",t:"num",l:"Longueur du mur",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
+   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"ext",t:"chips",l:"Ce mur donne-t-il sur l'extérieur ?",o:["Oui","Non",DK]},
+   {k:"etat",t:"chips",l:"État du mur",o:["Bon, bien droit","Abîmé ou irrégulier","Humide",DK]},
+   {k:"fen",t:"step",l:"Fenêtres ou portes dans ce mur",min:0,max:6}]},
+  f:[{k:"objectif",t:"chips",l:"Votre objectif",o:["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK]},
+     {k:"epaisseur",t:"num",l:"Épaisseur d'isolant souhaitée (si vous la connaissez)",u:"mm",st:10,dk:1,dkdef:1}]},
+ plafond:{t:"Vos faux plafonds",s:"Pièce par pièce. Mesurez au sol, c'est plus simple.",cheer:"Plus que quelques questions",sch:"piece",
+  g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",f:[
+   {k:"L",t:"num",l:"Longueur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
+   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5]},
+   {k:"H",t:"num",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"baisser",t:"chips",l:"Voulez-vous baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DK]},
+   {k:"support",t:"chips",l:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DK]},
+   {k:"iso",t:"chips",l:"Isolant au-dessus du plafond ?",o:["Oui","Non",DK]},
+   {k:"humide",t:"chips",l:"Pièce humide (salle de bain, buanderie) ?",o:["Oui","Non",DK]}]}},
+ combles:{t:"Vos combles perdus",s:"Le grenier non habitable, au-dessus du dernier plafond.",cheer:"Le plus gros de la chaleur part par là",sch:"piece",f:[
+   {k:"type",t:"chips",l:"Vos combles sont…",o:["Perdus (grenier non habité)","Aménagés ou aménageables",DK],h:"Aménagés ou aménageables (une pièce sous le toit) : rien à remplir ici, l'isolation se fait sous la toiture."},
+   {k:"surface",t:"num",l:"Surface au sol des combles",u:"m²",st:1,dk:1,h:"Souvent proche de la surface de l'étage en dessous.",v:o=>!/aménag/i.test(o.type||"")},
+   {k:"acces",t:"chips",l:"Comment y accède-t-on ?",o:["Trappe","Escalier","Pas d'accès",DK],v:o=>!/aménag/i.test(o.type||"")},
+   {k:"existant",t:"chips",l:"Y a-t-il déjà de l'isolant ?",o:["Non","Oui, ancien ou tassé",DK],v:o=>!/aménag/i.test(o.type||"")},
+   {k:"spots",t:"chips",l:"Des spots encastrés dans le plafond en dessous ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")},
+   {k:"conduit",t:"chips",l:"Un conduit de cheminée traverse les combles ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")},
+   {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")}]},
+ rampants:{t:"L'isolation sous la toiture",s:"Pour des combles aménagés (chambre sous les toits).",cheer:"Vous y êtes presque",f:[
+   {k:"surface",t:"num",l:"Surface de toiture à isoler",u:"m²",st:1,dk:1,h:"Côté intérieur, pans de toit seulement."},
+   {k:"forme",t:"chips",l:"Forme du toit",o:["2 pentes","1 pente",DK],h:"2 pentes : le toit monte des deux côtés jusqu'au faîtage, au milieu. 1 pente : il monte d'un seul côté, jusqu'à un mur plus haut."},
+   {k:"hfait",t:"num",l:"Hauteur sous le toit, au point le plus haut",lf:i=>i.forme==="1 pente"?"Hauteur sous le toit, côté haut":"Hauteur sous le faîtage, au milieu",u:"cm",st:1,dk:1,hf:i=>i.forme==="1 pente"?"Du plancher des combles jusqu'au toit, contre le mur le plus haut.":"Du plancher des combles jusqu'au point le plus haut du toit."},
+   {k:"hmur1",t:"num",l:"Hauteur du petit mur, sous le 1er pan",lf:i=>i.forme==="1 pente"?"Hauteur du petit mur, côté bas":"Hauteur du petit mur, sous le 1er pan",u:"cm",st:1,dk:1,h:"Du plancher jusqu'au début de la pente. 0 s'il n'y a pas de petit mur."},
+   {k:"hmur2",t:"num",l:"Hauteur du petit mur, sous le 2e pan",u:"cm",st:1,dk:1,sh:i=>i.forme!=="1 pente"},
+   {k:"chevrons",t:"num",l:"Hauteur des chevrons (si vous la connaissez)",u:"cm",st:1,dk:1,dkdef:1},
+   {k:"ecran",t:"chips",l:"Voit-on une bâche ou un film sous les tuiles ?",o:["Oui","Non",DK]},
+   {k:"ft",t:"chips",l:"Fenêtres de toit",o:["Aucune","1","2","3","4 ou plus",DK]},
+   {k:"ftsz",t:"chips",l:"Taille des fenêtres de toit (cm)",o:["55 × 78","78 × 98","78 × 118","114 × 118",DK],h:"Tailles courantes. Une autre taille se précise en remarque.",sh:i=>!!i.ft&&i.ft!=="Aucune"&&i.ft!==DK},
+   {k:"ftetat",t:"chips",l:"Ces fenêtres de toit sont…",o:["Déjà en place","À créer","À changer",DK],sh:i=>!!i.ft&&i.ft!=="Aucune"&&i.ft!==DK},
+   {k:"fin",t:"chips",l:"Finition souhaitée",o:["Isolation + plaques de plâtre","Isolation seule",DK]},
+   {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK]}]},
+ fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
+  g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
+   {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
+   {k:"taille",t:"chips",l:"Taille en cm (largeur × hauteur)",o:["60 × 75","80 × 95","100 × 115","100 × 125","120 × 135","Porte-fenêtre 80 × 215","Porte-fenêtre 120 × 215","Autre taille",DK]},
+   {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
+   {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
+   {k:"ouv",t:"chips",l:"Ouverture",o:["Battant","Coulissante","Fixe",DK]},
+   {k:"ob",t:"chips",l:"Oscillo-battant ?",o:["Oui","Non",DK],def:"Oui",h:"Elle s'ouvre aussi en haut, en soufflet, pour aérer.",sh:i=>i.ouv==="Battant"},
+   {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
+   {k:"coul",t:"chips",l:"Couleur",o:["Blanc","Gris anthracite","Autre",DK],sh:i=>i.mat!=="Bois"},
+   {k:"coul",t:"chips",l:"Essence du bois",o:["Chêne clair","Chêne doré","Chêne foncé","Noyer","Pin","Bois exotique","Bois peint",DK],h:"Bois peint : la teinte se précise avec l'artisan.",sh:i=>i.mat==="Bois"},
+   {k:"volet",t:"chips",l:"Volet roulant",o:["Aucun","Manuel","Motorisé",DK]},
+   {k:"pose",t:"chips",l:"Pose",o:["Sur l'ancien cadre","Dépose complète",DK],h:"Sur l'ancien cadre : plus rapide. Dépose complète : plus de lumière, plus de travaux."}]}},
+ portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Encore un petit effort",
+  g:{n:"Porte",cnt:"Combien de portes ?",add:"+ Ajouter une autre porte",copy:1,f:[
+   {k:"largeur",t:"chips",l:"Largeur (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK]},
+   {k:"sens",t:"chips",l:"Sens d'ouverture",o:["Poussant à gauche","Poussant à droite",DK],h:"Debout face à la porte, vous la poussez : de quel côté sont les charnières ?"},
+   {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit",DK]},
+   {k:"bati",t:"chips",l:"Pose",o:["Dans une cloison neuve","Dépose de l'ancienne + porte neuve",DK]},
+   {k:"fin",t:"chips",l:"Finition de la porte",h:"Fin de chantier : finition sur demande, plus chère.",o:["Prête à peindre","Fin de chantier (finition sur demande)",DK]}]}},
+ sol:{t:"Vos sols",s:"Pièce par pièce. Une estimation suffit, tout sera vérifié sur place.",cheer:"Ça prend forme",
+  g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",copy:1,f:[
+   {k:"piece",t:"chips",l:"Quelle pièce ?",o:["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre",DK]},
+   {k:"surface",t:"num",l:"Surface au sol",u:"m²",st:1,dk:1,pre:[5,10,15,20,30]},
+   {k:"actuel",t:"chips",l:"Sol actuel",o:["Carrelage","Parquet","Stratifié","Lino / vinyle","Moquette","Béton brut",DK]},
+   {k:"depose",t:"chips",l:"Faut-il enlever l'ancien sol ?",o:["Oui","Non",DK],sh:i=>i.actuel!=="Béton brut"},
+   {k:"neuf",t:"chips",l:"Sol souhaité",o:["Carrelage","Parquet","Stratifié","Vinyle (lames ou dalles)",DK]},
+   {k:"plinthes",t:"chips",l:"Plinthes neuves ?",o:["Oui","Non",DK]}]}},
+ escalier:{t:"Vos escaliers",s:"Une estimation suffit, tout sera vérifié sur place.",cheer:"Une marche après l'autre",
+  g:{n:"Escalier",cnt:"Combien d'escaliers ?",cmax:3,add:"+ Ajouter un autre escalier",f:[
+   {k:"travail",t:"chips",l:"Que faut-il faire ?",o:["Créer un escalier","Remplacer l'escalier","Rénover ou habiller l'existant",DK]},
+   {k:"forme",t:"chips",l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
+   {k:"mat",t:"chips",l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
+   {k:"largeur",t:"chips",l:"Largeur",o:["70 cm","80 cm","90 cm",DK]},
+   {k:"haut",t:"num",l:"Hauteur à monter (d'un sol à l'autre)",u:"cm",st:1,dk:1,pre:[250,270,290]},
+   {k:"rampe",t:"chips",l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
+ autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
+   {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
+ finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Presque fini",f:[
+   {k:"fin",t:"chips",l:"Finition des plaques",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris."}]},
+ photos:{t:"Quelques photos",s:"Ce sont elles qui rendent le pré-devis vraiment juste.",cheer:"Les photos, ça change tout",f:[
+   {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
+   {k:"plan",t:"file",l:"Plan (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan",small:"Photo ou PDF, avec les cotes si possible"}]},
+ simple:{t:"Vos travaux en quelques mots",s:"Cochez ce qui correspond, puis expliquez avec vos mots. Une estimation suffit, tout sera vérifié sur place.",cheer:"Simple et rapide",f:[
+   {k:"pieces",t:"multi",l:"Quelles pièces sont concernées ?",h:"Plusieurs choix possibles.",o:["Séjour","Cuisine","Chambre(s)","Salle de bain / WC","Entrée / couloir","Bureau","Garage","Combles","Tout le logement",DK]},
+   {k:"surface",t:"chips",l:"Surface concernée, environ",o:["Moins de 20 m²","20 à 50 m²","50 à 100 m²","Plus de 100 m²",DK]},
+   {k:"nfen",t:"chips",l:"Combien de fenêtres ?",o:["1","2 ou 3","4 à 6","Plus de 6",DK],sh:()=>S.travaux.includes("fenetres")},
+   {k:"nportes",t:"chips",l:"Combien de portes intérieures ?",o:["1","2 ou 3","4 à 6","Plus de 6",DK],sh:()=>S.travaux.includes("portes")},
+   {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK],sh:()=>S.travaux.some(k=>["doublage","combles","rampants"].includes(k))},
+   {k:"fin",t:"chips",l:"Finition des plaques de plâtre",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris.",sh:()=>S.travaux.some(k=>PLAQUE.includes(k))},
+   {k:"desc",t:"area",l:"Décrivez vos travaux",ph:"Ex. isoler les murs du séjour et de la chambre, créer une cloison pour faire un bureau…"},
+   {k:"pj",t:"note",l:"Pièces jointes : une photo de chaque pièce concernée, et votre plan si vous en avez un. Ce sont elles qui rendent le devis juste."},
+   {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
+   {k:"plan",t:"file",l:"Plan ou document (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan ou un document",small:"Plan, ancien devis, diagnostic… en photo ou en PDF"}]},
+ projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Dernière ligne droite",f:[
+   {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
+   {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
+   {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
+ contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
+   {k:"prenom",t:"text",cap:1,l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
+   {k:"nom",t:"text",cap:1,l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
+   {k:"tel",t:"tel",l:"Téléphone",ac:"tel",im:"tel",ph:"Ex. 06 12 34 56 78",req:1},
+   {k:"email",t:"email",l:"E-mail",ac:"email",ph:"Ex. vous@exemple.fr",req:1},
+   {k:"rgpd",t:"check",l:"J'accepte que mes réponses et mes photos servent uniquement à préparer mon devis.",req:1},
+   {k:"info",t:"note",l:"Votre demande est préparée avec l'aide de Cliky, un outil d'intelligence artificielle, puis vérifiée par "+CONFIG.artisan+". Le pré-devis est indicatif et sera confirmé après visite."}]},
+ mode:{t:"Comment voulez-vous nous montrer votre logement ?",s:"Deux façons, au choix. Le plan donne le pré-devis le plus juste.",cheer:"À vous de choisir"},
+ plan:{t:"Dessinez votre logement",s:"Comme sur une feuille, mais en plus simple. Une estimation suffit, tout sera vérifié sur place.",cheer:""},
+ recap:{t:"On vérifie ensemble ?",s:"Touchez « Modifier » pour corriger une réponse.",cheer:"Tout est prêt"}
+};
+
+
+// ---------- Plan dessiné par le client ----------
+const PLANABLE=["doublage","plafond","cloison"];
+const PT=[["sejour","Séjour",[[4,3.5],[5,4],[6.5,5]]],["cuisine","Cuisine",[[2.5,2.4],[3.2,3],[4,3.5]]],["chambre","Chambre",[[3,2.7],[3.5,3],[4.2,3.6]]],["sdb","Salle de bain",[[2,1.7],[2.5,2],[3.2,2.6]]],["wc","WC",[[1.2,.9],[1.5,1],[1.9,1.3]]],["entree","Entrée",[[1.8,1.4],[2.5,1.8],[3.5,2.2]]],["couloir","Couloir",[[2.5,1],[4,1.1],[6,1.2]]],["bureau","Bureau",[[2.6,2.4],[3,2.8],[3.8,3.2]]],["buanderie","Buanderie",[[1.8,1.5],[2.2,1.8],[3,2.2]]],["garage","Garage",[[5,3],[6,3.5],[7,6]]]];
+const SIZES=["Petite","Moyenne","Grande"];
+const PCOL={sejour:"#EAD6B5",cuisine:"#D3E5EF",chambre:"#E6DAF2",sdb:"#C9EDE4",wc:"#D9EFE8",entree:"#F2E4D0",couloir:"#ECE5DA",bureau:"#DDE5F4",buanderie:"#D4ECEF",garage:"#E0E0E0"};
+const PTRAV={doublage:"Isoler les murs",plafond:"Faux plafond",cloison:"Créer une cloison"};
+const fr1=n=>(Math.round(n*10)/10).toLocaleString("fr-FR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const ptName=t=>PT.find(x=>x[0]===t)[1];
+function trsOk(){return PLANABLE.filter(k=>S.travaux.includes(k))}
+function dimsOf(r){if(r.dk){return PT.find(x=>x[0]===r.type)[2][r.size]}return[pn(r.L)||0,pn(r.l)||0]}
+function dimsOk(r){return r.dk||(pn(r.L)>0&&pn(r.l)>0)}
+function renum(t){const L=S.plan.rooms.filter(r=>r.type===t);L.forEach((r,i)=>{r.nom=L.length>1?`${ptName(t)} ${i+1}`:ptName(t)})}
+function numBox(k,v,st,u,off,i){const ix=i==null?"":i;return`<div class="num${off?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-pop="${k}|${ix}|-" data-pst="${st}">−</button><input type="text" inputmode="decimal" autocomplete="off" value="${v==null||off?"":String(v).replace(".",",")}" placeholder="${off&&v!=null?String(v).replace(".",","):"0,00"}" data-pnum="1" data-pk="${k}" data-pi="${ix}" id="pn-${{L:"lo",l:"la",H:"h"}[k]}-${ix}" aria-label="${k==="L"?"Longueur":k==="l"?"Largeur":"Hauteur"}"><span class="u">${u}</span><button type="button" aria-label="Plus" data-pop="${k}|${ix}|+" data-pst="${st}">+</button></div></div>`}
+// Image de la carte « Je dessine mon plan », au style ProClik (Cyril 10/11 19h21) : le plan vu d'en haut comme dans l'outil (murs bleu nuit arrondis, cotes en pilules, cloison en pointillés laiton).
+const MINI='<svg class="mini" viewBox="0 0 240 120" fill="none" aria-hidden="true"><rect x="38" y="16" width="164" height="88" rx="9" fill="#EFE6D6" stroke="#353C4E" stroke-width="5"/><path d="M128 18v84" stroke="#A8823F" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 6"/><rect x="130" y="18.5" width="69.5" height="83" rx="6" fill="#DCE6EE"/><path d="M64 16h26M150 104h26" stroke="#7FA6D6" stroke-width="7" stroke-linecap="round"/><g font-family="Manrope,sans-serif" font-weight="800" text-anchor="middle"><text x="83" y="64" font-size="12" fill="#0E1322">Séjour</text><text x="165" y="64" font-size="12" fill="#0E1322">Cuisine</text></g><g font-family="Manrope,sans-serif" font-weight="800" font-size="9.5" text-anchor="middle"><rect x="100" y="2" width="40" height="15" rx="7.5" fill="#ECEEF2" stroke="#D3D9E2"/><text x="120" y="12.8" fill="#0E1322">6,50</text><rect x="4" y="52" width="30" height="15" rx="7.5" fill="#ECEEF2" stroke="#D3D9E2"/><text x="19" y="62.8" fill="#0E1322">4,00</text></g></svg>';
+// Icônes des deux choix, trait laiton (crayon pour le plan, formulaire à remplir pour les questions).
+const ICP='<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.6L15.6 5a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14 6.6l3.4 3.4"/><path d="M4 20l4.6-1.2"/></svg>';
+const ICF='<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.2"/><path d="M9 4V3h6v1"/><path d="M8.5 10h1M12 10h3.5M8.5 14h1M12 14h3.5M8.5 18h1M12 18h2"/></svg>';
+function modeH(){return`<div class="modes">
+ <button type="button" class="mcard reco" data-mode="plan" aria-pressed="${S.mode==="plan"}"><span class="rb">Recommandé · guidé pas à pas</span>${MINI}<b>${ICP}Je dessine mon plan</b><span>Le contour est déjà prêt : vous mettez ses mesures, séparez les pièces et posez fenêtres et portes. Vous le voyez en 3D.</span><ul><li>Le pré-devis le plus juste</li><li>Une étape à la fois, en haut de l'écran</li><li>Une estimation suffit, tout est vérifié sur place</li></ul></button>
+ <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>${ICF}Je préfère décrire mes travaux</b><span>Quelques cases à cocher, quelques mots et vos photos. Sans dessin.</span></button></div>`}
+function rectSVG(r){const W=320,Hh=190,[L,l]=dimsOf(r),ok=L>0&&l>0;
+ if(!ok)return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="70" y="35" width="180" height="110" rx="6" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-dasharray="8 6"/><text x="160" y="96" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="14" fill="currentColor" opacity=".6">Entrez les 2 mesures ↓</text></svg>`;
+ const sc=Math.min(34,250/L,125/l),w=L*sc,h=l*sc,x=(W-w)/2,y=(Hh-h)/2-6;
+ return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${PCOL[r.type]}" stroke="currentColor" stroke-width="5" ${r.dk?'stroke-dasharray="10 6"':""} style="transition:all .25s"/>
+ <g font-family="Manrope,sans-serif" font-weight="800" fill="currentColor" text-anchor="middle"><text x="${W/2}" y="${y+h+22}" font-size="14">${fr(L)} m${r.dk?" (estimé)":""}</text><text x="${x-12}" y="${y+h/2}" font-size="14" transform="rotate(-90 ${x-12} ${y+h/2})">${fr(l)} m</text>
+ <text x="${W/2}" y="${y+h/2+5}" font-size="13" fill="#0B1226">≈ ${fr1(L*l)} m²</text></g></svg>`}
+function fp(r){const[L,l]=dimsOf(r);return r.rot?[l,L]:[L,l]}
+function ensurePos(){const P=S.plan,R=P.rooms;if(!R.length)return;const need=R.filter(r=>r.x==null);if(!need.length)return;
+ if(need.length===R.length){R.forEach(r=>{const[L,l]=dimsOf(r);r.rot=L<l});const A=R.map(r=>{const[w,h]=fp(r);return{r,w:w||1,h:h||1}}),tot=A.reduce((s,o)=>s+o.w*o.h,0),W=Math.max(Math.max(...A.map(o=>o.w)),Math.sqrt(tot)*1.45);let x=0,y=0,rh=0;
+  A.slice().sort((a,b)=>b.h-a.h||b.w-a.w).forEach(o=>{if(x>0&&x+o.w>W+1e-6){x=0;y+=rh;rh=0}o.r.x=x;o.r.y=y;x+=o.w;rh=Math.max(rh,o.h)});return}
+ const P0=R.filter(r=>r.x!=null);let X=Math.max(...P0.map(r=>r.x+fp(r)[0]));need.forEach(r=>{const[L,l]=dimsOf(r);r.rot=L<l;r.x=X;r.y=0;X+=fp(r)[0]})}
+function layout(){ensurePos();return S.plan.rooms.map((r,i)=>{const[w,h]=fp(r);return{i,r,x:r.x,y:r.y,w:w||1,h:h||1}})}
+function walls(lay){const out=[],E=.06;
+ lay.forEach(o=>{const sides=[["haut",o.y,o.x,o.x+o.w,"h",-1],["bas",o.y+o.h,o.x,o.x+o.w,"h",1],["gauche",o.x,o.y,o.y+o.h,"v",-1],["droite",o.x+o.w,o.y,o.y+o.h,"v",1]];
+  sides.forEach(([side,c,a,b,ax,dir])=>{const sh=[];lay.forEach(q=>{if(q===o)return;const qc=ax==="h"?(dir<0?q.y+q.h:q.y):(dir<0?q.x+q.w:q.x),qa=ax==="h"?q.x:q.y,qb=ax==="h"?q.x+q.w:q.y+q.h;
+    if(Math.abs(qc-c)<E){const s0=Math.max(a,qa),s1=Math.min(b,qb);if(s1-s0>.05)sh.push([s0,s1,q.i])}});sh.sort((m,n)=>m[0]-n[0]);
+   let t=a;sh.forEach(([s0,s1,qi])=>{if(s0-t>.05)out.push({i:o.i,side,ax,c,a:t,b:s0,type:"ext"});out.push({i:o.i,side,ax,c,a:s0,b:s1,type:"clo",other:qi});t=Math.max(t,s1)});if(b-t>.05)out.push({i:o.i,side,ax,c,a:t,b,type:"ext"})})});return out}
+function overlaps(lay){let n=0;lay.forEach((a,k)=>lay.forEach((b,m)=>{if(m<=k)return;const ox=Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x),oy=Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y);if(ox>.05&&oy>.05)n++}));return n}
+let PVB=null;
+function vbOf(lay){const X0=Math.min(...lay.map(o=>o.x)),Y0=Math.min(...lay.map(o=>o.y)),X1=Math.max(...lay.map(o=>o.x+o.w)),Y1=Math.max(...lay.map(o=>o.y+o.h)),p=1.2;let w=X1-X0+2*p,h=Y1-Y0+2*p;if(w/h<1.2)w=h*1.2;const cx=(X0+X1)/2,cy=(Y0+Y1)/2;return{x:cx-w/2,y:cy-h/2,w,h}}
+function plan2dInner(lay){const vb=PVB||vbOf(lay),u=vb.w/34,sel=S.plan.sel,W=walls(lay);
+ let s=`<rect x="${vb.x}" y="${vb.y}" width="${vb.w}" height="${vb.h}" fill="transparent" data-pbg="1"/>`;
+ lay.forEach(o=>{s+=`<g data-pjmp="${o.i}"><rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="${PCOL[o.r.type]}" ${o.r.dk?'stroke="currentColor" stroke-opacity=".35" stroke-width=".04" stroke-dasharray=".25 .15"':""}/></g>`});
+ W.forEach(w=>{const[x1,y1,x2,y2]=w.ax==="h"?[w.a,w.c,w.b,w.c]:[w.c,w.a,w.c,w.b];s+=w.type==="ext"?`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="currentColor" stroke-width=".22" stroke-linecap="square" pointer-events="none"/>`:`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#C9955B" stroke-width=".1" pointer-events="none"/>`});
+ lay.forEach(o=>{const fs=Math.min(.42,o.w/6.5,o.h/2.6);s+=`<g pointer-events="none" font-family="Manrope,sans-serif" text-anchor="middle"><text x="${o.x+o.w/2}" y="${o.y+o.h/2-fs*.15}" font-weight="800" font-size="${fs}" fill="#0B1226">${esc(o.r.nom)}</text><text x="${o.x+o.w/2}" y="${o.y+o.h/2+fs*.95}" font-weight="600" font-size="${fs*.75}" fill="#3A4357">${fr(o.w)} × ${fr(o.h)} m</text></g>`;
+  if(o.i===sel)s+=`<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="none" stroke="#0BB59B" stroke-width="${u*.35}" pointer-events="none"/>`});
+ return s}
+function plan2d(lay){if(!lay.length)return"";const vb=vbOf(lay);return`<svg id="pplan" viewBox="${vb.x} ${vb.y} ${vb.w} ${vb.h}" style="touch-action:none">${plan2dInner(lay)}</svg>`}
+function iso(lay){if(!lay.length)return"";const H=1.15,c=.866,P=(x,y,z)=>[(x-y)*c,(x+y)*.5-z],pts=a=>a.map(p=>P(...p).map(v=>v.toFixed(3)).join(",")).join(" ");
+ const all=[];lay.forEach(o=>{[[o.x,o.y],[o.x+o.w,o.y],[o.x+o.w,o.y+o.h],[o.x,o.y+o.h]].forEach(([x,y])=>{all.push(P(x,y,0),P(x,y,H))})});
+ const xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),x0=Math.min(...xs)-.6,y0=Math.min(...ys)-.6,w=Math.max(...xs)-x0+.6,h=Math.max(...ys)-y0+.6;
+ let s=`<svg viewBox="${x0} ${y0} ${w} ${h}">`;const sh=(hex,f)=>{const n=parseInt(hex.slice(1),16);return`rgb(${Math.round((n>>16&255)*f)},${Math.round((n>>8&255)*f)},${Math.round((n&255)*f)})`},lo=.4,sw=.035;
+ lay.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y)).forEach(o=>{const{x,y,w:W,h:Hh}=o,x1=x+W,y1=y+Hh,col=PCOL[o.r.type];
+  s+=`<g data-pjmp="${o.i}"><polygon points="${pts([[x,y,0],[x1,y,0],[x1,y1,0],[x,y1,0]])}" fill="${col}" stroke="#7d7466" stroke-width="${sw}"/>`;
+  s+=`<polygon points="${pts([[x,y,0],[x1,y,0],[x1,y,H],[x,y,H]])}" fill="#F4F1EA" stroke="#9a917f" stroke-width="${sw}"/><polygon points="${pts([[x,y,0],[x,y1,0],[x,y1,H],[x,y,H]])}" fill="#E6E0D4" stroke="#9a917f" stroke-width="${sw}"/>`;
+  s+=`<polygon points="${pts([[x,y1,0],[x1,y1,0],[x1,y1,lo],[x,y1,lo]])}" fill="#D8D0C2" stroke="#9a917f" stroke-width="${sw}"/><polygon points="${pts([[x1,y,0],[x1,y1,0],[x1,y1,lo],[x1,y,lo]])}" fill="#CFC6B6" stroke="#9a917f" stroke-width="${sw}"/>`;
+  const m=P(x+W/2,y+Hh/2,0);s+=`<text x="${m[0]}" y="${m[1]+.1}" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="${Math.min(.4,W/7)}" fill="#0B1226">${esc(o.r.nom)}</text></g>`});
+ return s+`</svg>`}
+function planH(){const P=S.plan,sub=P.sub,tr=trsOk();
+ if(sub==="pieces"){const cnt=t=>P.rooms.filter(r=>r.type===t).length;
+  return`<h1>Quelles pièces sont concernées ?</h1><p class="sub">Touchez + pour chaque pièce où il y a des travaux. Rien d'autre à faire ici.</p>
+  <div class="ptiles">${PT.map(([t,n])=>`<div class="ptile${cnt(t)?" on":""}"><span class="pic" style="background:${PCOL[t]}"></span><b>${n}</b><div class="pcnt"><button type="button" data-pcnt="${t}|-1" aria-label="Retirer : ${n}">−</button><output>${cnt(t)}</output><button type="button" class="plus" data-pcnt="${t}|1" aria-label="Ajouter : ${n}">+</button></div></div>`).join("")}</div>
+  <div class="q"><span class="lab">Hauteur sous plafond</span><p class="hint">La même partout, le plus souvent. 2,50 m est la plus courante.</p><div class="num">${numBox("H",P.H,.05,"m",P.H_dk)}<button type="button" class="chip dk" data-pdk="H" aria-pressed="${!!P.H_dk}">${DK}</button></div></div>`}
+ if(sub==="apercu"){const lay=layout(),surf=lay.reduce((s,o)=>s+o.w*o.h,0),est=P.rooms.filter(r=>r.dk).length,H=pn(P.H)||2.5,W=walls(lay),ext=W.filter(w=>w.type==="ext").reduce((s,w)=>s+w.b-w.a,0),ov=overlaps(lay),sel=P.sel!=null&&P.rooms[P.sel]?P.sel:null;
+  return`<h1>Placez vos pièces comme chez vous</h1><p class="sub">Faites glisser chaque pièce à sa place : elle se colle toute seule à sa voisine. Touchez une pièce pour la tourner ou corriger ses mesures.</p>
+  <div class="pview"><div class="ptabs"><button type="button" data-pv3="0" aria-pressed="${P.v3!==true}">Plan</button><button type="button" data-pv3="1" aria-pressed="${P.v3===true}">3D</button></div>${P.v3===true?iso(lay):plan2d(lay)}
+  ${P.v3===true?"":`<div class="plg"><span><i class="ext"></i>Mur extérieur</span><span><i class="clo"></i>Mur entre deux pièces</span></div>`}
+  ${sel!=null&&P.v3!==true?`<div class="psel"><b>${esc(P.rooms[sel].nom)}</b><button type="button" class="chip" data-prot="${sel}">↻ Tourner</button><button type="button" class="chip" data-pjump="${sel}">✏️ Mesures</button><button type="button" class="chip dk" data-pdesel="1">OK</button></div>`:""}</div>
+  ${ov?`<p class="err" style="min-height:0">Deux pièces se chevauchent : faites glisser l'une à côté de l'autre.</p>`:""}
+  <div class="psum"><div><b>${P.rooms.length}</b><span>pièce${P.rooms.length>1?"s":""}</span></div><div><b>${fr1(surf)}</b><span>m² au sol</span></div><div><b>≈ ${Math.round(ext*H)}</b><span>m² de murs extérieurs</span></div></div>
+  ${est?`<p class="note">${est} pièce${est>1?"s":""} en taille estimée : ${CONFIG.artisan} vérifiera sur place. Aucun souci.</p>`:""}
+  <button type="button" class="add" data-pback="1" style="margin-top:12px">+ Ajouter ou retirer une pièce</button>
+  ${S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:""}
+  ${S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:""}`}
+ const i=sub,r=P.rooms[i];if(!r){P.sub="pieces";return planH()}const off=r.dk,[eL,el]=dimsOf(r);
+ return`<div class="rhead"><span class="pic" style="background:${PCOL[r.type]}"></span><div><small>Pièce ${i+1} sur ${P.rooms.length}</small><h1 style="margin:0">${esc(r.nom)}</h1></div></div>
+ <div class="mhelp"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="16" width="36" height="12" rx="2"/><path d="M10 16v5M16 16v7M22 16v5M28 16v7M34 16v5"/></svg><p>Mesurez <b>au sol, d'un mur à l'autre</b>. Pas de mètre ? Un grand pas ≈ 70 cm, ça suffit.</p></div>
+ <div class="prect" id="prect">${rectSVG(r)}</div>
+ <div class="dims"><div class="q"><span class="lab">Longueur</span>${numBox("L",off?eL:r.L,.1,"m",off,i)}</div><div class="q"><span class="lab">Largeur</span>${numBox("l",off?el:r.l,.1,"m",off,i)}</div></div>
+ <div class="q"><span class="lab">Pas de mesures sous la main ?</span><div class="chips">${SIZES.map((z,k)=>`<button type="button" class="chip dk" data-psize="${i}|${k}" aria-pressed="${!!(r.dk&&r.size===k)}">${z} pièce</button>`).join("")}</div><p class="hint">On met une taille courante pour ce type de pièce, ${CONFIG.artisan} la vérifiera sur place.</p></div>
+ ${tr.length?`<div class="q"><span class="lab">Travaux dans cette pièce</span><div class="chips">${tr.map(k=>`<button type="button" class="chip" data-ptrav="${i}|${k}" aria-pressed="${r.trav.includes(k)}">${PTRAV[k]}</button>`).join("")}</div></div>`:""}
+ <div class="pdots" aria-label="Pièces">${P.rooms.map((x,j)=>`<button type="button" data-pjump="${j}" class="${j===i?"cur":dimsOk(x)?"ok":""}" aria-label="${esc(x.nom)}"></button>`).join("")}</div>`}
+function planSVG(){const t=S.plan.trace;if(!t||!t.floors||!t.floors.length)return"";const FL=t.floors.filter(f=>(f.pieces||[]).some(p=>(p.points||[]).length));
+ return FL.map(f=>{const P=f.pieces.flatMap(p=>p.points||[]);const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),x0=Math.min(...xs)-.4,y0=Math.min(...ys)-.4,w=Math.max(...xs)-x0+.4,h=Math.max(...ys)-y0+.4,fs=Math.min(.45,w/14);let s="";
+  f.pieces.forEach(p=>{if(!(p.points||[]).length)return;s+=`<polygon points="${p.points.map(q=>q.join(",")).join(" ")}" fill="var(--soft)" stroke="currentColor" stroke-width=".12"/>`});
+  f.pieces.forEach(p=>{const n=(p.points||[]).length;(p.murs||[]).forEach((m,i)=>{const a=p.points[i],b=p.points[(i+1)%n];if(!a||!b)return;const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;
+    if(m.travaux&&m.travaux!=="Rien à faire")s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#E8622C" stroke-opacity=".55" stroke-width=".3" stroke-linecap="round"/>`;
+    (m.ouvertures||[]).forEach(o=>{const P0=[a[0]+ux*(o.p||0),a[1]+uy*(o.p||0)],P1=[a[0]+ux*((o.p||0)+(o.w||0)),a[1]+uy*((o.p||0)+(o.w||0))];s+=`<line x1="${P0[0]}" y1="${P0[1]}" x2="${P1[0]}" y2="${P1[1]}" stroke="${o.k==="porte"?"#8A5A3A":"#2F80ED"}" stroke-width=".22"/>`})});
+   (p.cloisons_a_creer||[]).forEach(c=>{const q=c.points||[];if(q.length<2)return;s+=`<polyline points="${q.map(z=>z.join(",")).join(" ")}" fill="none" stroke="currentColor" stroke-width=".08"/>`;if(c.portes){const a=q[0],b=q[1],L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,dw=Math.min(L,(c.porte_largeur_cm||83)/100),t0=(L-dw)/2;s+=`<line x1="${a[0]+(b[0]-a[0])*t0/L}" y1="${a[1]+(b[1]-a[1])*t0/L}" x2="${a[0]+(b[0]-a[0])*(t0+dw)/L}" y2="${a[1]+(b[1]-a[1])*(t0+dw)/L}" stroke="#8A5A3A" stroke-width=".2"/>`}})});
+  f.pieces.forEach(p=>{if(!(p.points||[]).length)return;if(p.zones&&p.zones.length){p.zones.forEach(z=>{const c=z.label||z.points[0],zx=z.points.map(q=>q[0]),zw=Math.max(...zx)-Math.min(...zx);s+=`<text x="${c[0]}" y="${c[1]}" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="800" font-size="${Math.min(fs,zw*.9/(String(z.nom).length*.62))}" fill="currentColor">${esc(z.nom)}</text>`});return}const c=p.points.reduce((a,q)=>[a[0]+q[0]/p.points.length,a[1]+q[1]/p.points.length],[0,0]),px=p.points.map(q=>q[0]),rw=Math.max(...px)-Math.min(...px);s+=`<text x="${c[0]}" y="${c[1]}" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="800" font-size="${Math.min(fs,rw*.9/(String(p.nom).length*.62))}" fill="currentColor">${esc(p.nom)}</text>`});
+  return`${FL.length>1?`<p style="margin:0;font-weight:700">${esc(f.nom||"")}</p>`:""}<svg viewBox="${x0} ${y0} ${w} ${h}">${s}</svg>`}).join("")}
+function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>a+(p.surface_m2||0),0);
+ return`<div class="pcardp">${n?sv+`<p style="margin:0;font-weight:700">${n} pièce${n>1?"s":""} · ≈ ${fr(surf)} m² au sol</p>`:`<div class="pempty"><b style="color:var(--fg);font-size:16px">Votre plan est vide pour l'instant</b>Il s'ouvre en grand, avec le contour du logement déjà prêt.</div>`}
+ <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
+ <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=37");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
+function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
+function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
+function tPieces(){const t=S.plan.trace;return t&&t.floors?t.floors.flatMap(f=>f.pieces.map(p=>({...p,etage:f.nom}))):[]}
+function planCheer(){const n=nPieces();return n?`${n} pièce${n>1?"s":""} 👍`:"Facile, promis"}
+function planCheerOld(){const P=S.plan;if(P.sub==="pieces")return P.rooms.length?`${P.rooms.length} pièce${P.rooms.length>1?"s":""} 👍`:"Facile, promis";if(P.sub==="apercu")return"Joli plan !";const left=P.rooms.length-P.sub-1;return left?`Plus que ${left} pièce${left>1?"s":""} 👍`:"Dernière pièce !"}
+function planPayload(){const t=S.plan.trace||{floors:[]},ps=tPieces(),M=ps.flatMap(p=>p.murs||[]);return{...JSON.parse(JSON.stringify(t)),...(S.plan.aide?{aide_demandee:"Le client n'a pas réussi à finir son plan : l'appeler pour le compléter"}:{}),surface_totale_m2:+ps.reduce((a,p)=>a+(+p.surface_m2||0),0).toFixed(2),murs_exterieurs_m:+M.reduce((a,m)=>a+(m.exterieur_m??(m.type==="mur extérieur"?m.longueur_m:0)),0).toFixed(2),murs_entre_pieces_m:+(M.reduce((a,m)=>a+(m.entre_pieces_m??0),0)/2).toFixed(2),menuiseries:ps.flatMap(p=>(p.murs||[]).flatMap(m=>(m.ouvertures||[]).map(o=>({repere:o.repere,piece:p.nom,designation:o.designation,a_changer:o.a_changer??null,ouverture:o.ouverture,volet:o.volet??null,materiau:o.materiau??null,couleur:o.couleur??null,pose:o.pose??null,pose_position:o.pose_position??null,volet_commande:o.volet_commande??null,volet_pose:o.volet_pose??null,volet_enroulement:o.volet_enroulement??null,volet_couleur:o.volet_couleur??null,largeur_cm:o.largeur_cm,hauteur_cm:o.hauteur_cm,menuiserie_exterieure:o.menuiserie_exterieure})))).sort((a,b)=>String(a.repere).localeCompare(String(b.repere),"fr",{numeric:true})),murs_a_faire:M.filter(m=>m.travaux).map(m=>({type:m.type,longueur_m:m.longueur_m,travaux:m.travaux})),objectif_isolation:S.plan.obj||null,plafond_actuel:S.plan.support||null,note:"Plan dessiné par le client avec le module Plan (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine, à confirmer à la visite (mitoyenneté, garage non chauffé) ; tailles estimées à vérifier."}}
+function planPayloadOld(){const P=S.plan,H=P.H_dk?null:pn(P.H);const pieces=P.rooms.map(r=>{const[L,l]=dimsOf(r);return{nom:r.nom,type:ptName(r.type),longueur_m:L,largeur_m:l,surface_m2:+(L*l).toFixed(2),perimetre_m:+(2*(L+l)).toFixed(2),estimee:!!r.dk,taille_estimee:r.dk?SIZES[r.size]:null,travaux:r.trav.map(k=>PTRAV[k])}});
+ const lay=layout(),W=walls(lay);lay.forEach(o=>{const p=pieces[o.i];p.position_m={x:+o.x.toFixed(2),y:+o.y.toFixed(2)};p.murs=W.filter(w=>w.i===o.i).map(w=>({cote:w.side,longueur_m:+(w.b-w.a).toFixed(2),type:w.type==="ext"?"mur extérieur":"mur entre pièces (avec "+P.rooms[w.other].nom+")"}))});
+ const extL=W.filter(w=>w.type==="ext").reduce((s,w)=>s+w.b-w.a,0),cloL=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((s,w)=>s+w.b-w.a,0);
+ return{hauteur_sous_plafond_m:H,pieces,murs_exterieurs_m:+extL.toFixed(2),murs_entre_pieces_m:+cloL.toFixed(2),surface_totale_m2:+pieces.reduce((s,p)=>s+p.surface_m2,0).toFixed(2),objectif_isolation:P.obj||null,plafond_actuel:P.support||null,note:"Plan placé par le client (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine ; à confirmer à la visite (mitoyenneté, garage non chauffé), comme les tailles estimées."}}
+function planInput(el){const P=S.plan,k=el.dataset.pk,i=el.dataset.pi===""?null:+el.dataset.pi,v=el.value.replace(",",".");
+ if(i==null){P[k]=v;P[k+"_dk"]=false}else{const r=P.rooms[i];if(r.dk){const[a,b]=dimsOf(r);r.L=a;r.l=b;r.dk=false;r[k]=v;save();render();const e=document.getElementById(`pn-${{L:"lo",l:"la",H:"h"}[k]}-${i}`);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}return}r[k]=v;const pr=document.getElementById("prect");if(pr)pr.innerHTML=rectSVG(r)}save()}
+let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;if(!S.simple)S.simple={};["sol","escalier"].forEach(k=>{if(!S[k])S[k]={items:[{}]}});["cloison","doublage","plafond","fenetres","portes","sol","escalier"].forEach(k=>{const o=S[k];if(o&&o.n==null&&o.items&&o.items.some(it=>Object.keys(it).some(x=>!["H","portes","fen"].includes(x))))o.n=o.items.length});
+let cur="intro";
+const files={photos:[],plan:[]};
+const t0=Date.now();
+
+function fresh(){return {mode:null,simple:{},plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
+ cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]},sol:{items:[{}]},escalier:{items:[{}]}}}
+function load(){try{const x=JSON.parse(localStorage.getItem("clikdevis-brouillon")||"null");return x&&x.travaux?x:null}catch(e){return null}}
+const PRE=()=>(S.contact.prenom||"").trim().split(/\s+/)[0]||"";
+const cheerN=c=>{const p=PRE();if(!p||!c)return c;return/\s*!$/.test(c)?c.replace(/\s*!$/,`, ${p} !`):`${c}, ${p}`};
+function save(){try{localStorage.setItem("clikdevis-brouillon",JSON.stringify(S))}catch(e){}}
+// Pièces (ou sous-pièces séparées par une cloison) du plan, avec des dimensions équivalentes pour le plafond.
+function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;const dim=(pts,s)=>{if(!pts||pts.length<3)return null;const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),a=Math.max(...xs)-Math.min(...xs),b=Math.max(...ys)-Math.min(...ys),L=Math.max(a,b);if(!L)return null;const S2=s||a*b;return[Math.round(L*100)/100,Math.round(S2/L*100)/100,S2]};
+ t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
+// Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
+// « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
+const LQ=[["cp","commune"],["type"],["mur"],["iso"],["cloison"],["age"],["occupe"],["ou","niveau","ascenseur"]];
+function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
+function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
+// 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
+function SIMPLE(){return false}
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}if(SIMPLE()){a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});
+ if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");a.push("photos","projet","contact","recap");return a}
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
+const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
+function obj(sec,i){return i==null?S[sec]:S[sec].items[i]}
+
+function fieldH(f,sec,i){
+ const o=obj(sec,i);if(f.sh&&!f.sh(o))return"";if(f.lf||f.hf)f={...f,l:f.lf?f.lf(o):f.l,h:f.hf?f.hf(o):f.h};
+ const id=`${sec}-${i??"x"}-${f.k}`,da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
+ if(MISS===id){const b=`<div class="bulle9" role="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.8-1.1 1.6v.4"/><circle cx="12" cy="17" r=".7" fill="currentColor"/></svg><span>${MISSMSG}</span></div>`;return fieldH0(f,sec,i,id).replace('<div class="q"','<div class="q miss"').replace(/<\/div>$/,b+'</div>')}return fieldH0(f,sec,i,id)}
+function fieldH0(f,sec,i,id){const o=obj(sec,i),da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
+ const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
+ const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
+ if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
+ if(f.t==="chips")return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${f.o.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${(o[f.k]??f.def)===x}" ${da} data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
+ if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
+  if(f.pre){const pv=pn(v),onP=!dk&&pv!=null&&f.pre.includes(pv),oth=!dk&&(o[f.k+"_o"]||(pv!=null&&!onP));const lb=x=>(f.u==="m"&&x%1?x.toLocaleString("fr-FR",{minimumFractionDigits:2}):fr(x))+" "+f.u;
+   return`<div class="q"><span class="lab" id="${id}-l">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}-l">${f.pre.map(x=>`<button type="button" class="chip" aria-pressed="${onP&&!o[f.k+"_o"]&&pv===x}" ${da} data-pre="${x}">${lb(x)}</button>`).join("")}<button type="button" class="chip" aria-pressed="${!!oth}" ${da} data-preo="1">Autre</button>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div>${oth?`<div class="num"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1"><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div></div>`:""}</div>`}
+  return`<div class="q"><label for="${id}">${esc(f.l)}</label>${hint}<div class="num${dk?" off":""}"><div class="numbox"><button type="button" aria-label="Moins" data-op="-" ${da} data-st="${f.st}">−</button><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${dk?"":esc(v==null?"":String(v).replace(".",","))}" placeholder="0" ${da} data-num="1" ${dk?"disabled":""}><span class="u">${f.u}</span><button type="button" aria-label="Plus" data-op="+" ${da} data-st="${f.st}">+</button></div>${f.dk?`<button type="button" class="chip dk" aria-pressed="${dk}" ${da} data-dk="1">${DK}</button>`:""}</div></div>`}
+ if(f.t==="step"){const v=o[f.k]??f.min;return`<div class="q"><span class="lab">${esc(f.l)}</span>${hint}<div class="numbox" style="width:max-content"><button type="button" aria-label="Moins" data-step="-1" ${da} data-min="${f.min}" data-max="${f.max}">−</button><input type="text" readonly value="${v}" aria-label="${esc(f.l)}" style="width:64px"><button type="button" aria-label="Plus" data-step="1" ${da} data-min="${f.min}" data-max="${f.max}">+</button></div></div>`}
+ if(f.t==="text"||f.t==="tel"||f.t==="email")return`<div class="q">${lab}${hint}<input id="${id}" type="${f.t}" ${f.im?`inputmode="${f.im}"`:""} ${f.ac?`autocomplete="${f.ac}"`:""} ${f.cap?`autocapitalize="words" data-cap="1"`:""} placeholder="${esc(f.ph||"")}" value="${esc(o[f.k]||"")}" ${da} data-txt="1"></div>`;
+ if(f.t==="area")return`<div class="q">${lab}${hint}<textarea id="${id}" placeholder="${esc(f.ph||"")}" ${da} data-txt="1">${esc(o[f.k]||"")}</textarea></div>`;
+ if(f.t==="check")return`<div class="q"><label class="check"><input id="${id}" type="checkbox" ${o[f.k]?"checked":""} ${da} data-chk="1"><span>${esc(f.l)}</span></label></div>`;
+ if(f.t==="note")return`<p class="note">${esc(f.l)}</p>`;
+ if(f.t==="file"){const L=files[f.k];return`<div class="q"><span class="lab">${esc(f.l)}</span><label class="drop" for="${id}"><b>${esc(f.big)}</b><span>${esc(f.small)}</span><input id="${id}" type="file" accept="${f.acc}" ${f.multi?"multiple":""} data-file="${f.k}"></label><div class="thumbs">${L.map(x=>`<figure>${x.img?`<img src="${x.img}" alt="">`:`<div class="pdf">PDF</div>`}<figcaption>${esc(x.name)}</figcaption></figure>`).join("")}</div></div>`}
+ return"";
+}
+// Vantaux d'après la largeur (comme le plan, règle de Cyril) : jusqu'à 90 cm = 1 vantail, au-delà = 2, à partir de 180 cm = 3 ; coulissant : 2 au moins.
+function vtxN_F(it){const w=pn(it.Lc);if(!w||it.Lc_dk||!["Battant","Coulissante"].includes(it.ouv))return null;const n=w<=90?1:w<180?2:3;return it.ouv==="Coulissante"?Math.max(2,n):n}
+function vtxF(it){const n=vtxN_F(it);return n?n+(n>1?" vantaux":" vantail"):""}
+function badge(sec,it){
+ if(sec==="cloison"||sec==="doublage"){const L=pn(it.L),H=pn(it.H);if(L&&H&&!it.L_dk&&!it.H_dk)return`≈ ${fr(L*H)} m²`;return""}
+ if(sec==="plafond"){const L=pn(it.L),l=pn(it.l);if(L&&l&&!it.L_dk&&!it.l_dk)return`≈ ${fr(L*l)} m²`;return""}
+ if(sec==="fenetres"){const a=pn(it.Lc),b=pn(it.Hc),v=vtxF(it);if(a&&b&&!it.Lc_dk&&!it.Hc_dk)return`${fr(a)} × ${fr(b)} cm${v?" · "+v:""}`;return v}
+ if(sec==="sol"){const v=pn(it.surface);return v&&!it.surface_dk?`≈ ${fr(v)} m²`:""}
+ if(sec==="portes")return it.largeur&&it.largeur!==DK?`${it.largeur} × 204 cm`:"";
+ return"";
+}
+function render(){
+ const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
+ document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.classList.toggle("nonav",cur==="intro"||cur==="done");document.body.classList.toggle("intro",cur==="intro");
+ if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();fitPage.H=innerHeight;setTimeout(fitRoom);{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
+ if(cur==="done"){prog.hidden=true;nav.hidden=true;app.innerHTML=doneH();return}
+ const st=steps(),n=st.indexOf(cur),d=D[cur];prog.hidden=false;nav.hidden=false;
+ document.getElementById("bar").style.width=Math.round(((n+1)/st.length)*100)+"%";{const pg=document.querySelector("#prog .progress");let f=document.getElementById("fil9");if(!f){f=document.createElement("div");f.id="fil9";pg.after(f)}f.innerHTML=filH(st,n)}
+ document.getElementById("stepn").textContent=`Étape ${n+1} sur ${st.length}${innerWidth<700&&snm(cur)?" · "+snm(cur):""}`;
+ document.getElementById("cheer").textContent=cheerN(d.cheer||"");
+ document.getElementById("back").style.visibility="visible";
+ document.getElementById("go").textContent=cur==="recap"?"Envoyer ma demande":(cur==="contact"?"Vérifier ma demande":cur==="plan"&&S.plan.sub==="pieces"?"Mesurer mes pièces":cur==="plan"&&S.plan.sub==="apercu"?"C'est mon logement ✓":cur==="plan"?"Pièce suivante":"Continuer");
+ if(cur==="plan")document.getElementById("cheer").textContent=cheerN(planCheer());
+ let h=false?``:`<section class="fade">${cur==="plan"?`<h1>${esc(d.t)}</h1>`:`<div class="tete9"><span class="gi9">${sic(cur)}</span><h1>${esc(d.t)}</h1></div>`}<p class="sub">${cur==="travaux"&&PRE()?`Enchanté, ${esc(PRE())} ! `:""}${esc(d.s)}</p>`;
+ if(cur==="plan"){h+=`<p class="err" id="err" role="alert"></p>`}else if(cur==="mode")h+=modeH();
+ else if(cur==="travaux")h+=`<div class="cards">${TRAVAUX.map(([k,t,s])=>`<button type="button" class="card" aria-pressed="${S.travaux.includes(k)}" data-trav="${k}">${IC[k]}<b>${t}</b><span>${s}</span></button>`).join("")}</div>`;
+ else if(cur==="recap")h+=recapH();
+ else{
+  if(ILL[cur])h+=`<figure class="ill">${ILL[cur][0]}<figcaption>${esc(ILL[cur][1])}</figcaption></figure>`;
+  if(d.sch)h+=`<div class="schema">${SCH[d.sch]}<p>${d.sch==="fenetre"?"Mesurez la largeur et la hauteur de l'ouverture, côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol : longueur et largeur.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p></div>`;
+  if(cur==="plafond"&&S.mode==="plan"&&planRooms().length)h+=`<div class="prooms"><p class="lab">Pièces de votre plan : touchez celles où faire le plafond</p><div class="chips">${planRooms().map(r=>`<button type="button" class="chip" data-proom="${esc(r.nom)}" aria-pressed="${S.plafond.items.some(it=>it.piece===r.nom)}">${esc(r.nom)} · ${fr(r.s)} m²</button>`).join("")}</div><p class="hint">Les mesures sont reprises du plan, modifiables ci-dessous.</p></div>`;
+  if(d.g&&d.g.cnt&&S[cur].n>0&&!S[cur].cedit)h+=`<div class="q cnt cmini"><span><span class="lab">${esc(d.g.cnt)}</span> <b>${S[cur].n}</b></span><button type="button" class="del" data-cedit="1">Changer</button></div>`;
+  else if(d.g&&d.g.cnt){const n=S[cur].n,M=d.g.cmax||8;h+=`<div class="q cnt"><span class="lab" id="cnt-${cur}">${esc(d.g.cnt)}</span><div class="chips" role="group" aria-labelledby="cnt-${cur}">${Array.from({length:M+1},(_,j)=>`<button type="button" class="chip" data-cnt="${j}" aria-pressed="${n===j}">${j}</button>`).join("")}</div>${n===0?`<p class="hint">Rien à prévoir ici : touchez « Continuer ».</p>`:""}</div>`}
+  if(d.g&&(!d.g.cnt||S[cur].n>0)){const op=iOpen(cur);S[cur].items.forEach((it,i)=>{const b=badge(cur,it);
+   if(d.g.cnt&&i!==op){const sm=iSum(cur,it);h+=`<button type="button" class="item mini${it._ok?" ok":""}" data-iopen="${i}"><span class="mi-t">${it._ok?"✓ ":""}${esc(d.g.n)} n°${i+1}${it.piece?" · "+esc(it.piece):""}</span><span class="mi-s">${it._ok?esc(sm||"Rempli"):"À remplir"}</span><span class="mi-m">${it._ok?"Modifier":"Remplir"}</span></button>`;return}
+   h+=`<div class="item" data-n="${esc(d.g.n)} n°${i+1}"><div class="item-h"><h3>${d.g.n} n°${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.f.map(f=>fieldH(f,cur,i)).join("")}${d.g.cnt?`<button type="button" class="btn go iok" data-iok="${i}">C'est bon pour ${/^(Pièce|Cloison|Fenêtre|Porte)$/.test(d.g.n)?"la":"le"} ${d.g.n.toLowerCase()} n°${i+1}</button>`:""}</div>`});
+   h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
+   if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}
+  if(d.f&&cur==="logement"){const[i,v]=lqPos(),g=LQ[S.lq];h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub">Question ${i+1} sur ${v.length}${S.lq===0?" · "+esc(d.s):""}</p>`);h+=`<div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="lq${S.lq}">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
+  else if(d.f&&!(d.g&&d.g.cnt&&!(S[cur].n>0)))h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
+  // Petit « Ajouter une photo » en bas de chaque travail (Cyril 11/11) : appareil photo ou galerie, rangée avec ce travail.
+  if(TRAVAUX.some(t=>t[0]===cur)&&!(d.g&&d.g.cnt&&S[cur].n===0)){const L=files.photos.filter(x=>x.tag===cur);h+=`<div class="qph"><label class="phb" for="ph-${cur}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>${L.length?"Ajouter une autre photo":"Ajouter une photo"}<small>Prendre ou choisir, facultatif</small></span><input id="ph-${cur}" type="file" accept="image/*" multiple data-file="photos" data-tag="${cur}"></label>${L.length?`<div class="thumbs" data-key="th-${cur}-${L.length}">${L.map(x=>`<figure><img src="${x.img}" alt=""></figure>`).join("")}</div>`:""}</div>`}
+  if(cur==="photos")h+=`<ul class="tips"><li>Prenez la pièce entière depuis un angle.</li><li>Ajoutez les détails : fissures, humidité, fenêtres.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul>`;
+  if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
+ }
+ if(cur!=="plan")h+=`<p class="err" id="err" role="alert"></p>`;h+=`</section>`;
+ // Même écran redessiné après un toucher : pas d'animation d'entrée ni de saut de l'écran (Cyril 11/11)
+ // Fluidité (Cyril 11/11) : sur le même écran, on met à jour la page en place (les boutons gardent leur animation),
+ // et entre deux questions du logement seule la question glisse.
+ const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
+ if(!same){h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(NAV9)h=h.replace('<section class="fade">',`<section class="fade ${NAV9>0?"s9i":"s9b"}">`)}if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
+ if(same&&scrollY!==sy)scrollTo(0,sy);
+ if(window.icoDeco)icoDeco(app);if(window.btnDeco)btnDeco();fitPage();fitRoom();focus9();
+ if(cur==="logement")geoInit();
+ const host=document.getElementById("planhost");host.hidden=cur!=="plan";if(cur!=="plan")closePlan(true);
+ if(cur==="plan"){const P=S.plan;
+  document.getElementById("pextra").innerHTML=planCard()+(S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée","Avoir droit aux aides",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+
+  (S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:"")+`<button type="button" class="btn ghost" data-toform="1" style="width:100%;margin-top:14px">Je préfère remplir un formulaire</button>`}
+}
+function morph(a,b){const keep=n=>n.nodeType===1&&n.classList.contains("geo"),an=[...a.childNodes].filter(n=>!keep(n)),bn=[...b.childNodes];
+ bn.forEach((y,i)=>{const x=an[i];if(!x){a.appendChild(y);return}
+  if(x.nodeType!==y.nodeType||x.nodeName!==y.nodeName||(x.nodeType===1&&(x.id!==y.id||x.getAttribute("data-key")!==y.getAttribute("data-key")||x.type==="file"))){a.replaceChild(y,x);return}
+  if(x.nodeType!==1){if(x.nodeValue!==y.nodeValue)x.nodeValue=y.nodeValue;return}
+  for(const at of [...x.attributes])if(!y.hasAttribute(at.name))x.removeAttribute(at.name);
+  for(const at of [...y.attributes])if(x.getAttribute(at.name)!==at.value)x.setAttribute(at.name,at.value);
+  const foc=x===document.activeElement;
+  if(x.nodeName==="INPUT"){if(x.type==="checkbox"||x.type==="radio")x.checked=y.hasAttribute("checked");else if(!foc&&x.value!==(y.getAttribute("value")||""))x.value=y.getAttribute("value")||"";return}
+  if(x.nodeName==="TEXTAREA"){if(!foc&&x.value!==y.value)x.value=y.value;return}
+  morph(x,y)});
+ an.slice(bn.length).forEach(n=>n.remove())}
+// Accueil « Le fil » (B7, choisi par Cyril 12/11) : 3 étapes reliées par un fil laiton, l'étape 1 éclairée, prénom et bouton dans une carte.
+const IC7={
+ tel:'<rect x="9" y="3.5" width="14" height="25" rx="3"/><path d="M14 6.5h4"/><rect x="12" y="10" width="3.2" height="3.2" rx=".8"/><path d="M17.5 11.6h3"/><rect x="12" y="15.5" width="3.2" height="3.2" rx=".8" fill="currentColor" fill-opacity=".25"/><path d="m12.7 17.1.9.9 1.5-1.7"/><path d="M17.5 17.1h3"/><path d="M12 22h8.5"/><circle cx="16" cy="25.6" r=".6" fill="currentColor"/>',
+ artisan:'<path d="M7.5 15.5a8.5 8.5 0 0 1 17 0"/><path d="M14 7.4V12M18 7.4V12"/><path d="M5.5 15.5h21v2.2h-21z"/><path d="M10 20.5c.8 3.4 3.2 5.5 6 5.5s5.2-2.1 6-5.5"/><path d="M4 29c1.6-1.8 3.7-2.8 6-3.2M28 29c-1.6-1.8-3.7-2.8-6-3.2"/>',
+ devis:'<path d="M8 3.5h11l5 5v15"/><path d="M19 3.5v5h5"/><path d="M8 3.5v25h9"/><path d="M11.5 12h7M11.5 15.5h9M11.5 19h5"/><circle cx="22.5" cy="24.5" r="5"/><path d="m20.4 24.6 1.5 1.5 2.8-3"/>'};
+const ic7=k=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC7[k]}</svg>`;
+function introH(){const has=S.travaux.length>0,ok='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+ return`<section class="hero7"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Trois étapes simples. « Je ne sais pas » est toujours une bonne réponse.</p>
+ <ol class="fil7"><li class="on"><div class="g7">${ic7("tel")}</div><span class="n7">Étape 1 · vous êtes ici</span><b>Vous décrivez<br>vos travaux</b><span class="pt7">≈ 5 min</span></li>
+ <li><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2</span><b>${esc(CONFIG.artisan)} prépare<br>votre devis</b><span class="pt7">Il vérifie tout</span></li>
+ <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Vous recevez<br>votre devis</b><span class="pt7">Sous ${esc(CONFIG.delai)}</span></li></ol>
+ <div class="carte7"><div class="q" style="margin:0"><label class="lab" for="in-pre">${has?"Votre prénom":"Pour commencer, votre prénom"}</label><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
+ <button class="btn go" type="button" data-start="1">${has?"Reprendre ma demande":"C'est parti"}</button>
+ <div class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span><button class="lien7" type="button" data-example="1">Voir un exemple</button>${has?`<button class="lien7" type="button" data-reset="1">Recommencer</button>`:""}</div></div></section>`}
+function list(sec){const d=D[sec],o=S[sec],out=[];
+ const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
+  if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
+ if(d.g)o.items.forEach((it,i)=>{const b=badge(sec,it),skip=b?({fenetres:["taille","Lc","Hc"],portes:["largeur"]}[sec]||[]):[];const parts=d.g.f.filter(f=>!skip.includes(f.k)).map(f=>fmt(f,it)).filter(Boolean);if(sec==="fenetres"&&b&&/^Porte-fenêtre/.test(it.taille||""))parts.unshift("Porte-fenêtre");const pc=(it.piece||"").trim();out.push({sec,t:`${d.g.n} n°${i+1}`,pc,b:b||(parts.find(p=>!/^Pièce :/.test(p))||"").replace(/^[^:]*: /,""),parts:parts.filter(p=>!(pc&&/^(Pièce|Quelle pièce \?) :/.test(p)))})});
+if(d.f&&!(d.g&&d.g.cnt&&o.n===0))d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
+// Ce que le plan décrit (quand le client est passé par le plan, il remplace les étapes cloisons, fenêtres, portes, doublage, plafond).
+function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win:[],extD:[],intD:[],plaf:[]};(t.floors||[]).forEach(f=>{const H=f.hauteur_m||2.5;(f.pieces||[]).forEach(p=>{{const Z=(p.zones||[]).filter(z=>z.plafond&&z.plafond.a_refaire),pz=Z.length?Z.map(z=>[z.nom,z.plafond]):p.plafond&&p.plafond.a_refaire?[[p.nom,p.plafond]]:[];pz.forEach(([n,q])=>{const ex=[q.baisser&&/^oui/i.test(q.baisser)?"à baisser":null,q.support&&!/je ne sais/i.test(q.support)?"support "+q.support.toLowerCase():null].filter(Boolean);o.plaf.push({piece:n,simple:`Plafond · ${n} · ≈ ${fr(q.surface_m2||0)} m² · plaques standard${ex.length?" · "+ex.join(", "):""}`,txt:`plafond ${n} ${fr(q.surface_m2||0)} m²`})})}
+ (p.cloisons_a_creer||[]).forEach(c=>{o.cloN++;o.clo+=(c.longueur_m||0)*H;if(c.portes)o.intD.push({piece:p.nom,simple:`Porte de cloison · ${c.porte_largeur_cm||83} cm${c.galandage?" (galandage)":""} · ${p.nom}, cloison`,txt:`porte de cloison ${c.porte_largeur_cm||83} cm${c.galandage?" (galandage)":""}${c.pose_porte&&!/je ne sais/i.test(c.pose_porte)?", pose "+c.pose_porte.toLowerCase():""}`})});
+ (p.murs||[]).forEach((m,mi)=>{const ouv=(m.ouvertures||[]);if(m.type==="mur extérieur"&&/isoler|refaire/i.test(m.travaux||""))o.dbl+=Math.max(0,(m.longueur_m||0)*H-ouv.reduce((a,x)=>a+(x.largeur_cm||0)*(x.hauteur_cm||0)/1e4,0));
+  ouv.forEach(x=>{const nsp=v=>v&&!/je ne sais/i.test(v);const d=[x.materiau,x.couleur,x.ouverture&&x.k!=="porte"?x.ouverture.toLowerCase():null,x.pose&&nsp(x.pose)?(x.k==="porte"?"pose "+x.pose.toLowerCase():x.pose.toLowerCase()):null,x.volet&&x.volet!=="Aucun"?(/je ne sais/i.test(x.volet)?"volet à définir":x.volet.toLowerCase())+(x.volet_commande&&nsp(x.volet_commande)?" "+x.volet_commande.toLowerCase():""):null].filter(nsp);const e={piece:p.nom,txt:`${x.repere} ${String(x.designation||"").toLowerCase()} ${x.largeur_cm}×${x.hauteur_cm}${d.length?" · "+d.join(", "):""}`,simple:`${x.repere} · ${x.designation||""} · ${x.largeur_cm} × ${x.hauteur_cm} cm · ${p.nom}, mur ${mi+1}${f.nom&&t.floors.length>1?" ("+f.nom+")":""}${/^oui|^à changer/i.test(x.a_changer||"")?" · à changer":/^à créer/i.test(x.a_changer||"")?" · à créer":/^non,|^déjà/i.test(x.a_changer||"")?" · déjà en place":" · état non précisé"}`,vol:x.volet&&x.volet!=="Aucun"?`↳ ${/je ne sais/i.test(x.volet)?"Volet (type à définir)":/^volet/i.test(x.volet)?x.volet:"Volet "+x.volet.toLowerCase()}${[x.volet_commande,x.volet_pose&&"pose "+x.volet_pose.toLowerCase(),x.volet_enroulement&&"enroulement "+x.volet_enroulement.toLowerCase(),x.volet_couleur].filter(nsp).map(v=>" · "+v).join("")}`:null};(x.menuiserie_exterieure?(x.k==="porte"?o.extD:o.win):o.intD).push(e)})})})});return o}
+function totals(){const r=[];if(SIMPLE())return r;const tp=tPieces();if(S.mode==="plan"&&tp.length){const ps=planStats();r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`);if(ps.clo)r.push(`≈ ${fr(ps.clo)} m² de cloison`);if(ps.dbl)r.push(`≈ ${fr(ps.dbl)} m² de murs à isoler`);if(ps.win.length)r.push(`${ps.win.length} fenêtre${ps.win.length>1?"s":""}`);if(ps.extD.length)r.push(`${ps.extD.length} porte${ps.extD.length>1?"s":""} extérieure${ps.extD.length>1?"s":""}`);if(ps.intD.length)r.push(`${ps.intD.length} porte${ps.intD.length>1?"s":""} intérieure${ps.intD.length>1?"s":""}`);
+  ["combles","rampants"].forEach(k=>{if(S.travaux.includes(k)&&pn(S[k].surface)&&!(k==="combles"&&/aménag/i.test(S.combles.type||"")))r.push(`≈ ${fr(pn(S[k].surface))} m² de ${k==="combles"?"combles":"rampants"}`)});return r}if(S.mode==="plan"&&tp.length){r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`)}const sum=(sec,a,b)=>S[sec].items.reduce((s,it)=>{const x=pn(it[a]),y=pn(it[b]);return s+(x&&y&&!it[a+"_dk"]&&!it[b+"_dk"]?x*y:0)},0);
+ if(S.travaux.includes("cloison")){const v=sum("cloison","L","H");if(v)r.push(`≈ ${fr(v)} m² de cloison`)}
+ if(S.travaux.includes("doublage")){const v=sum("doublage","L","H");if(v)r.push(`≈ ${fr(v)} m² de murs à isoler`)}
+ if(S.travaux.includes("plafond")){const v=sum("plafond","L","l");if(v)r.push(`≈ ${fr(v)} m² de plafond`)}
+ if(S.travaux.includes("fenetres")&&S.fenetres.items.length)r.push(`${S.fenetres.items.length} fenêtre${S.fenetres.items.length>1?"s":""}`);
+ if(S.travaux.includes("portes")&&S.portes.items.length)r.push(`${S.portes.items.length} porte${S.portes.items.length>1?"s":""}`);
+ if(S.travaux.includes("sol")&&S.sol.items.length){const v=S.sol.items.reduce((a,it)=>a+(!it.surface_dk&&pn(it.surface)||0),0);r.push(v?`≈ ${fr(v)} m² de sol`:`sol : ${S.sol.items.length} pièce${S.sol.items.length>1?"s":""}`)}
+ if(S.travaux.includes("escalier")&&S.escalier.items.length)r.push(`${S.escalier.items.length} escalier${S.escalier.items.length>1?"s":""}`);return r}
+const ROPEN=new Set();
+function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
+ let h=`<div class="recap">`;if(tot.length)h+=`<div class="rblock" style="border-color:var(--mint)"><h3>Ce que nous avons compris</h3><div class="tot">${tot.join(" · ")}</div></div>`;
+ st.forEach(s=>{let items;if(s==="travaux")items=[S.travaux.map(k=>TRAVAUX.find(t=>t[0]===k)[1]).join(", ")];
+  else if(s==="mode")items=[S.mode==="plan"?"Plan dessiné":"Questions travaux par travaux, sans dessin"];
+  else if(s==="plan")items=[(()=>{const M=tPieces().flatMap(p=>p.murs||[]),n=M.filter(m=>m.travaux).length,c=tPieces().reduce((a,p)=>a+(p.cloisons_a_creer||[]).length,0);return n||c?`Travaux indiqués : ${n} mur${n>1?"s":""}${c?` + ${c} cloison${c>1?"s":""} à créer`:""}`:"Travaux : pas de mur coché (l'artisan précisera)"})()].concat(tPieces().map(p=>`${p.nom}${p.etage&&S.plan.trace.floors.length>1?" ("+p.etage+")":""} : ≈ ${fr(p.surface_m2)} m²${p.estimee?" (estimé)":""} · ${(p.murs||[]).filter(m=>m.type==="mur extérieur").length} mur(s) extérieur(s)${p.sol&&p.sol.resume&&!(p.zones&&p.zones.length)?" · sol : "+p.sol.resume:""}${p.zones&&p.zones.length?" · "+p.zones.map(z=>`${z.nom} ${fr(z.surface_m2)} m²${z.sol&&z.sol.resume?" (sol : "+z.sol.resume+")":""}`).join(", "):""}`)).concat((()=>{const ps=planStats(),L=[];if(ps.cloN)L.push(`<b>Cloisons</b> : ${ps.cloN} à créer, ≈ ${fr(ps.clo)} m²`);[["Fenêtres",ps.win],["Portes",ps.extD.concat(ps.intD)],["Plafonds",ps.plaf]].forEach(([n,a])=>{if(a.length){L.push(`<b>${n} (${a.length})</b>`);a.forEach(x=>L.push("<b></b>"+esc(x.simple)+(x.vol?`<br><span class="volet">${esc(x.vol)}</span>`:"")))}});return L})());
+  else if(s==="planOld")items=(()=>{const lay=layout(),W=walls(lay),e=W.filter(w=>w.type==="ext").reduce((a,w)=>a+w.b-w.a,0),c=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((a,w)=>a+w.b-w.a,0);return[`Murs extérieurs ≈ ${fr(e)} m · murs entre pièces ≈ ${fr(c)} m`]})().concat(S.plan.rooms.map(r=>{const[L,l]=dimsOf(r);return`${r.nom} : ${fr(L)} × ${fr(l)} m${r.dk?" (estimé)":""}${r.trav.length?" · "+r.trav.map(k=>PTRAV[k]).join(", "):""}`}));
+  else if(s==="simple")items=list(s).concat([`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s ou documents":" ou document"}`]);
+  else if(s==="photos")items=[`${files.photos.length} photo${files.photos.length>1?"s":""}`,`${files.plan.length} plan${files.plan.length>1?"s":""}`];
+  else items=list(s);if(!items.length)items=[D[s]&&D[s].g&&D[s].g.cnt?"Rien à prévoir":"—"];
+  const its=items.filter(x=>typeof x==="object"),txt=items.filter(x=>typeof x!=="object");
+  h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3>${its.map(x=>`<div class="ritem${ROPEN.has(x.sec+x.t)?" open":""}"><button type="button" class="ri-s" data-rtog="${esc(x.sec+x.t)}" aria-expanded="${ROPEN.has(x.sec+x.t)}"><span class="ri-ic">${IC[x.sec]||""}</span><span class="ri-t"><b>${esc(x.t)}${x.pc?" · "+esc(x.pc):""}</b>${x.b?`<span class="ri-b">${esc(x.b)}</span>`:""}</span><span class="ri-m">Voir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><ul>${x.parts.map(p=>{const k=p.indexOf(" : ");return`<li>${k>0?`<span>${esc(p.slice(0,k))}</span><b>${esc(p.slice(k+3))}</b>`:esc(p)}</li>`}).join("")}</ul></div>`).join("")}${txt.length?`<ul>${txt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`});
+ return h+`<button type="button" class="add" data-goto="travaux" style="margin-top:4px">+ Ajouter des travaux</button></div>`}
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="open"?undefined:v))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
+ return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
+  contact:{prenom:cap(S.contact.prenom).trim(),nom:cap(S.contact.nom).trim(),telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
+  logement:{...S.logement,commune:cap(S.logement.commune).trim()},mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.projet,
+  fichiers:{photos:files.photos.map(f=>(f.tag&&D[f.tag]?D[f.tag].t+" · ":"")+f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
+let lastPayload=null;
+// Finir plus tard : la demande (sans photos) est compressée dans un lien, que le client s'envoie à lui-même (partage ou e-mail).
+async function packS(){const j=JSON.stringify({v:1,cur,S},(k,v)=>typeof v==="string"&&v.startsWith("data:")?undefined:v);let u=new TextEncoder().encode(j),z="r";try{if(window.CompressionStream){u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer());z="z"}}catch(e){}let bin="";for(let i=0;i<u.length;i+=8192)bin+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return z+btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+async function unpackS(t){const bin=atob(t.slice(1).replace(/-/g,"+").replace(/_/g,"/")),u=Uint8Array.from(bin,c=>c.charCodeAt(0));const txt=t[0]==="z"?await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).text():new TextDecoder().decode(u);return JSON.parse(txt)}
+// Page où le client reprendra : celle de l'artisan (GHL) si elle est transmise par ?p=, sinon cette page.
+function pageBase(){try{const p=(new URLSearchParams(location.search).get("p")||"").trim();if(/^https?:\/\/[^\s#"<>]+$/.test(p)&&p.length<600)return p}catch(e){}return location.href.split("#")[0]}
+async function later(){save();let url=null;try{url=pageBase()+"#reprise="+await packS()}catch(e){}
+ const subj="Ma demande de devis à terminer",em=(S.contact&&S.contact.email)||"",np=files.photos.length+files.plan.length;
+ const mail=()=>{const a=document.createElement("a");a.href=`mailto:${encodeURIComponent(em)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent("Bonjour,\n\nVoici le lien pour reprendre ma demande là où je l'ai laissée :\n"+url+"\n\n(Les photos ne sont pas dans le lien : je les ajouterai à nouveau.)\n")}`;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()};
+ confirmBig(PRE()?`À tout à l'heure, ${PRE()}`:"Finir plus tard",`Vos réponses et votre plan restent gardés sur cet appareil : revenez sur cette page quand vous voulez. Pour continuer sur un autre téléphone ou ordinateur, envoyez-vous le lien : il vous ramène exactement où vous en êtes. Attention : ${np?`vos ${np} photo${np>1?"s":""} ne sont pas gardée${np>1?"s":""}`:"les photos ne sont pas gardées"}, il faudra les ajouter à nouveau à l'étape Photos.`,url?"📩 M'envoyer le lien":"OK",()=>{if(!url)return;if(navigator.share)navigator.share({title:subj,text:"Reprendre ma demande de devis là où je l'ai laissée (les photos seront à ajouter à nouveau)",url}).catch(e=>{if(!e||e.name!=="AbortError")mail()});else mail()},"Fermer","📩")}
+function finish(){cur="done";try{localStorage.removeItem("clikdevis-brouillon")}catch(e){};render();scrollTo(0,0)}
+let SENDING=false;
+function shrink(dataUrl,max,q){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>res(b),"image/jpeg",q)};im.onerror=()=>res(null);im.src=dataUrl})}
+async function sendReq(p){const go=document.getElementById("go"),err=document.getElementById("err"),old=go?go.textContent:"";SENDING=true;if(go){go.disabled=true;go.textContent="Envoi en cours…"}if(err)err.textContent="";
+ try{let tot=0;const MAXT=4.5*1024*1024,pj=[];
+  for(const k of ["photos","plan"]){let i=0;for(const f of files[k].slice(0,10)){let b=null;if(f.img)b=await shrink(f.img,1600,.8);else if(f.file&&f.file.size<3*1024*1024)b=f.file;if(!b||tot+b.size>MAXT)continue;tot+=b.size;i++;pj.push([(k==="photos"?"photo_":"plan_")+i,b,(k==="photos"?"photo_":"plan_")+i+(f.img?".jpg":".pdf")])}}
+  // Photos rangées dans la fiche GHL de l'artisan (service ProClik) ; leurs liens partent avec la demande. En cas d'échec, elles partent à Make comme avant.
+  let rangees=false;if(pj.length&&/^https:\/\//.test(CONFIG.service||"")){try{if(go)go.textContent="Envoi des photos…";const fp=new FormData();fp.append("artisan",CONFIG.code||"");fp.append("nom",[p.contact.prenom,p.contact.nom].filter(Boolean).join(" "));pj.forEach(x=>fp.append(x[0],x[1],x[2]));const ap=new AbortController(),tp=setTimeout(()=>ap.abort(),45000);const r=await fetch(CONFIG.service.replace(/\/+$/,"")+"/photos",{method:"POST",body:fp,signal:ap.signal});clearTimeout(tp);const j=await r.json();if(j&&j.ok){p.fichiers.photos_liens=j.photos||[];p.fichiers.plans_liens=j.plans||[];if(j.refus&&j.refus.length)p.fichiers.refus=j.refus;rangees=true}}catch(e){}if(go)go.textContent="Envoi en cours…"}
+  const fd=new FormData();fd.append("donnees",JSON.stringify(p));if(!rangees)pj.forEach(x=>fd.append(x[0],x[1],x[2]));
+  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),60000);await fetch(CONFIG.webhook,{method:"POST",body:fd,mode:"no-cors",signal:ac.signal});clearTimeout(tm);SENDING=false;finish()}
+ catch(e){SENDING=false;if(go){go.disabled=false;go.textContent=old}const er=document.getElementById("err");if(er)er.textContent="L'envoi n'est pas passé (réseau trop faible ?). Votre demande est bien gardée sur cet appareil : réessayez dans un instant."}}
+function doneH(){const p=lastPayload,pre=S.contact.prenom||"",ok='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+ return`<section class="done9"><div class="ok9" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29"/><path d="M19 33.5l9 9L46 23"/></svg></div>
+ <h1>Merci${pre?" "+esc(pre):""} !</h1><p class="sub">Votre demande est bien arrivée chez ${esc(CONFIG.entreprise)}. Vous n'avez plus rien à faire.</p>
+ <ol class="fil7 fin9"><li class="fait"><div class="g7">${ok}</div><span class="n7">Étape 1 · fait</span><b>Vous avez décrit<br>vos travaux</b><span class="pt7">Bravo</span></li>
+ <li class="on"><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2 · en cours</span><b>${esc(CONFIG.artisan)} prépare<br>votre devis</b><span class="pt7">Il vérifie tout</span></li>
+ <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Vous recevez<br>votre devis</b><span class="pt7">Sous ${esc(CONFIG.delai)}</span></li></ol>
+ <div class="carte9"><p><b>Et maintenant ?</b> ${esc(CONFIG.artisan)} relit votre demande et vos photos, ligne par ligne. Votre devis arrive par e-mail${S.contact.email?` à <b>${esc(S.contact.email)}</b>`:""}, à signer en ligne si tout vous convient.</p>
+ <p class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span></p></div>
+ ${CONFIG.demo?`<p class="note">Mode démonstration : rien n'a été envoyé.</p><details><summary>Voir les données qui seront transmises à Cliky</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`:""}
+ <button class="lien7" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
+// Question en cours (Cyril 12/11) : la première question sans réponse de l'écran est doucement mise en avant.
+function focus9(){const qs=[...document.querySelectorAll("#app .q")].filter(q=>!q.closest(".pg-off,.mini,[hidden]")&&!q.classList.contains("cmini")&&q.offsetParent);qs.forEach(q=>q.classList.remove("now9"));
+ if(cur==="logement"||qs.length<2||document.querySelector("#app .q.miss"))return;
+ const nx=qs.find(q=>{const e=q.querySelector("[data-k][data-s]");if(!e){return q.classList.contains("cnt")&&!q.querySelector('[aria-pressed="true"]')}const s=e.dataset.s,i=e.dataset.i===""?null:+e.dataset.i,d=D[s];if(!d)return false;const f=[...(d.g?d.g.f:[]),...(d.f||[])].find(x=>x.k===e.dataset.k);return f&&missF(s,i,[f])});
+ if(nx)nx.classList.add("now9")}
+// Aucune question oubliée (Cyril 12/11) : chaque question visible demande une réponse, au moins « Je ne sais pas ».
+let MISS=null,MISSMSG="";document.addEventListener("input",e=>{const t=e.target;if(MISS&&t.dataset&&t.dataset.s&&`${t.dataset.s}-${t.dataset.i||"x"}-${t.dataset.k}`===MISS){MISS=null;t.closest(".q")?.classList.remove("miss");t.closest(".q")?.querySelector(".bulle9")?.remove();const er=document.getElementById("err");if(er)er.textContent=""}});
+function missF(sec,i,fs){const o=obj(sec,i)||{};for(const f of fs){if(f.sh&&!f.sh(o))continue;if(i==null&&f.v&&!f.v(o))continue;if(/facultatif/i.test(f.l||""))continue;
+  if(f.t==="chips"){if((o[f.k]??f.def)==null)return f}
+  else if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);if(!dk&&pn(o[f.k])==null&&f.def==null)return f}
+  else if(f.t==="multi"){if(!(Array.isArray(o[f.k])&&o[f.k].length))return f}}return null}
+function missMsg(f){const dk=f.dk||(Array.isArray(f.o)&&f.o.includes(DK));const l=(f.l||"").replace(/\s*\([^)]*\)/g,"");return`Il manque une réponse à « ${l} ». ${dk?"Si vous ne savez pas, touchez « Je ne sais pas ».":"Touchez la réponse qui convient."}`}
+// Montre la question oubliée : message, contour laiton, et l'écran défile jusqu'à elle.
+function missShow(sec,i,f){MISS=`${sec}-${i??"x"}-${f.k}`;const m="";{const dk=f.dk||(Array.isArray(f.o)&&f.o.includes(DK)),l=esc((f.l||"").replace(/\s*\([^)]*\)/g,""));MISSMSG=`Il manque une réponse à « ${l} ». ${dk?`Si vous ne savez pas, touchez <b>« Je ne sais pas »</b>, ${esc(CONFIG.artisan)} vérifiera sur place.`:"Touchez la réponse qui convient."}`}if(i!=null&&D[sec].g&&D[sec].g.cnt&&iOpen(sec)!==i){S[sec].open=i;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitPage.toItem=true;save()}render();const er=document.getElementById("err");if(er)er.textContent=m;fitJump(f.k);if(er)er.textContent=m;
+ const q=document.querySelector("#app .q.miss");if(q){q.classList.remove("miss-a");void q.offsetWidth;q.classList.add("miss-a");q.scrollIntoView({behavior:"smooth",block:"center"})}return false}
+function missFirst(sec){const d=D[sec];if(!d||sec==="logement")return null;
+ if(d.g&&(!d.g.cnt||S[sec].n>0)){const it=S[sec].items||[];for(let i=0;i<it.length;i++){const f=missF(sec,i,d.g.f);if(f)return[i,f]}}
+ if(d.f&&!(d.g&&d.g.cnt&&!(S[sec].n>0))){const f=missF(sec,null,d.f);if(f)return[null,f]}return null}
+function missSec(sec){const m=missFirst(sec);return m?missShow(sec,m[0],m[1]):true}
+// Téléphone, écran en plusieurs parties : on ne passe pas à la partie suivante si une question de celle-ci est restée sans réponse.
+function missHere(sec){const m=missFirst(sec);if(!m)return false;const el=document.querySelector(`#app [data-s="${sec}"][data-i="${m[0]??""}"][data-k="${m[1].k}"]`);if(!el||el.closest(".pg-off"))return false;missShow(sec,m[0],m[1]);return true}
+function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m;fitJump(k);return false};
+ if(cur==="travaux"&&!S.travaux.length)return e("Choisissez au moins un type de travaux.");
+ if(cur==="mode"&&!S.mode)return e("Choisissez une des deux façons.");
+ if(cur==="plan"&&!tPieces().length)return e("Ajoutez au moins une pièce avec « + Pièce ».");
+ if(cur==="logement"){if(!/^\d{5}$/.test((S.logement.cp||"").trim()))return e("Indiquez un code postal à 5 chiffres.");if(!(S.logement.commune||"").trim())return e("Indiquez la commune.");const L=S.logement;if(L.type&&L.type!=="Maison"&&L.type!==DK){if(L.niveau==null)L.niveau=0;L.ou=[L.niveau?"Étage "+L.niveau:"Rez-de-chaussée"]}}
+ if(cur==="simple"&&(S.simple.desc||"").trim().length<3)return e("Décrivez vos travaux en quelques mots, même très court.","desc");
+ if(D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n==null)return e("Indiquez combien, même 0 si finalement rien n'est à prévoir.");
+ if(cur==="autre"&&!(S.autre.desc||"").trim())return e("Décrivez votre projet en quelques mots.","desc");
+ if(cur==="contact"){const c=S.contact;if(!(c.prenom||"").trim()||!(c.nom||"").trim())return e("Indiquez votre prénom et votre nom.","prenom");
+  if(((c.tel||"").replace(/\D/g,"")).length<10)return e("Indiquez un numéro de téléphone à 10 chiffres.","tel");
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||""))return e("Indiquez une adresse e-mail valide.","email");
+  if(!c.rgpd)return e("Cochez la case d'accord pour que nous puissions préparer votre devis.","rgpd")}
+ if(cur==="logement"){const f=missF("logement",null,D.logement.f.filter(f=>LQ[S.lq||0].includes(f.k)));if(f)return missShow("logement",null,f)}
+ return missSec(cur)}
+// Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
+function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.tete9,.sub,.err,.hp,.qph,.iok"))}
+// Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
+function fitPage(){const b=document.body,over=()=>{if(innerWidth>600||["intro","done","plan"].includes(cur))return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
+ cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
+function fitPage0(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont,#app .iok.pg-off,#app .qph.pg-off").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
+ if(!B.length||["intro","done","plan","logement"].includes(cur))return;
+ const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
+ const Y=e=>e.getBoundingClientRect();let top0=Y(B[0]).top+scrollY;const avail0=H-parseFloat(getComputedStyle(document.body).paddingBottom)-28-((document.querySelector("#app .qph")||{}).offsetHeight||0);
+ // Petit écran : le schéma seul sur une page ne sert à rien, on le cache s'il ne tient pas avec la question suivante.
+ if(B.length>1&&B[0].classList.contains("schema")&&Y(B[1]).bottom+scrollY-top0>avail0-top0){B[0].classList.add("pg-off");B.shift();top0=Y(B[0]).top+scrollY}
+ const avail=avail0-top0;
+ if(Y(B[B.length-1]).bottom+scrollY-top0<=avail)return;
+ // Sur iPad/ordinateur les questions d'une fiche sont sur 2 colonnes : une ligne entière (questions côte à côte) reste dans la même partie.
+ const U=[];B.forEach(e=>{const l=U[U.length-1],le=l&&l[l.length-1];if(le&&le.parentElement===e.parentElement&&e.parentElement.classList.contains("item")&&Math.abs(Y(le).top-Y(e).top)<3)l.push(e);else U.push([e])});
+ const PU=[];let pg=[],start=top0;const okB=document.querySelector("#app .iok"),okH=okB?okB.offsetHeight+14:0;U.forEach(u=>{const t=Y(u[0]).top+scrollY,inI=u[0].parentElement.classList.contains("item"),b=Math.max(...u.map(x=>Y(x).bottom))+scrollY+(inI?34:0)+(okB&&u.some(x=>x.nextElementSibling===okB)?okH:0);if(pg.length&&b-start>avail){const o=pg.length>1&&pg[pg.length-1][0].classList.contains("item-h")?pg.pop():null;PU.push(pg);pg=o?[o]:[];start=o?Y(o[0]).top+scrollY:t}pg.push(u)});PU.push(pg);
+ let pages=PU.map(p=>p.flat());
+ if(pages.length<2){fitPage.toItem=false;return}
+ const apply=i=>{pages.forEach((p,k)=>p.forEach(e=>e.classList.toggle("pg-off",k!==i)));{const q=document.querySelector("#app .qph");if(q)q.classList.toggle("pg-off",document.body.classList.contains("tight")&&i!==pages.length-1)}{const ok=document.querySelector("#app .iok"),pv=ok&&ok.previousElementSibling;if(ok)ok.classList.toggle("pg-off",!!pv&&pv.classList.contains("pg-off"))}document.querySelectorAll("#app .item:not(.mini)").forEach(it=>{const kids=[...it.children],on=kids.filter(e=>!e.classList.contains("pg-off"));it.classList.toggle("pg-off",!on.length);it.classList.toggle("cont",!!on.length&&kids[0].classList.contains("pg-off"))})};
+ // Contrôle final, partie par partie : si une partie dépasse encore, son dernier bloc passe à la suivante
+ // (jamais une fiche réduite à son titre, et chaque question reste atteignable).
+ const real=p=>p.filter(u=>!u[0].classList.contains("item-h")).length;
+ for(let k=0;k<PU.length;k++){apply(k);for(let g=0;g<6&&document.documentElement.scrollHeight>H+1&&real(PU[k])>1;g++){const u=PU[k].pop();if(!PU[k+1])PU.push([]);PU[k+1].unshift(u);pages=PU.map(p=>p.flat());apply(k)}}
+ fitPage.pages=pages;if(fitPage.toItem){fitPage.toItem=false;const h0=document.querySelector("#app .item:not(.mini)>.item-h");const j=h0?pages.findIndex(p=>p.includes(h0)):-1;if(j>=0)fitPage.p[cur]=j}const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;apply(i);
+ const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
+// Téléphone : s'il reste de la place, on la prend (Cyril 11/11) : détails réaffichés, boutons plus grands, cartes qui remplissent l'écran
+function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
+ if(innerWidth>600||cur==="plan"||cur==="done"||(fitPage.pages||[]).length>1||!sec)return;
+ const ty=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName),H=ty&&fitPage.H?fitPage.H:(fitPage.H=innerHeight),pb=()=>parseFloat(getComputedStyle(b).paddingBottom),abs=e=>{let y=0;for(let n=e;n;n=n.offsetParent)y+=n.offsetTop;return y},fits=()=>document.documentElement.scrollHeight<=H+1;const an=sec.style.animation;sec.style.animation="none";try{if(!fits())return;
+ for(const r of R){b.classList.add(r);if(!fits()){b.classList.remove(r);break}}
+ if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}
+ else{const ch=[...sec.querySelectorAll(".q:not(.cnt) .chips .chip:not(.dk)")].filter(e=>e.offsetParent&&!e.closest(".pg-off"));if(ch.length){const rows=new Set(ch.map(e=>Math.round(e.getBoundingClientRect().top))).size,h0=Math.max(...ch.map(e=>e.offsetHeight)),used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0);let add=Math.min(Math.floor((H-used-6)/rows),78-h0);if(add>3){const set=()=>b.style.setProperty("--ch",(h0+add)+"px");set();b.classList.add("grow");while(!fits()&&add>0){add-=3;set()}if(add<=0)b.classList.remove("grow")}}}}finally{sec.style.animation=an}}
+function fitGo(dir){const P=fitPage.pages||[];if(P.length<2)return false;const i=fitPage.p[cur]||0,j=i+dir;if(j<0||j>=P.length)return false;
+ const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;render();fitPage.pages[j]?.forEach(e=>{e.classList.remove("lq-out","lq-outb");e.classList.add(dir>0?"lq-in":"lq-back");setTimeout(()=>e.classList.remove("lq-in","lq-back"),400)});scrollTo(0,0)};
+ if(RM){fin();return true}P[i].forEach(e=>e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
+function fitJump(k){const P=fitPage.pages||[];if(P.length<2||!k)return;const j=P.findIndex(p=>p.some(e=>e.querySelector(`[data-k="${k}"]`)));if(j>=0&&j!==fitPage.p[cur]){fitPage.p[cur]=j;const m=document.getElementById("err").textContent;render();document.getElementById("err").textContent=m;scrollTo(0,0)}}
+const fitRz=()=>{clearTimeout(fitPage.rt);fitPage.rt=setTimeout(()=>{const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName))return;if(cur!=="intro"&&cur!=="done"&&cur!=="plan")render()},250)};addEventListener("resize",fitRz);if(window.visualViewport)visualViewport.addEventListener("resize",fitRz);addEventListener("focusout",()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)))fitRz()},350));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(innerWidth<=600)fitRoom()});
+function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;S.lq=q;save();
+ const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
+ if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
+let NAV9=0;
+function go(dir){if(go.busy)return;const st=steps();let n=st.indexOf(cur);
+ let iLeft=false;if(dir>0&&D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n>0){const k=iOpen(cur),ok=document.querySelector("#app .iok");if(k>=0&&ok&&!ok.classList.contains("pg-off")){if(iDone(cur,k,true))return;iLeft=true}}
+ if(dir>0&&!iLeft&&cur!=="logement"&&(fitPage.pages||[]).length>1&&missHere(cur))return;
+ if(!iLeft&&cur!=="logement"&&fitGo(dir))return;
+ if(cur==="logement"){const[i,v]=lqPos();if(dir>0&&i<v.length-1){if(!validate())return;lqMove(v[i+1],1);return}if(dir<0&&i>0){lqMove(v[i-1],-1);return}}
+ if(false){const P=S.plan,e=m=>{document.getElementById("err").textContent=m};
+  if(dir>0){if(P.sub==="pieces"){if(!P.rooms.length)return e("Ajoutez au moins une pièce avec le bouton +.");P.sub=0}
+   else{const r=P.rooms[P.sub];if(!dimsOk(r))return e("Entrez la longueur et la largeur, ou choisissez une taille de pièce.");P.sub=P.sub+1<P.rooms.length?P.sub+1:"apercu"}}
+  else{if(P.sub==="pieces"){cur=st[n-1]}else if(P.sub===0)P.sub="pieces";else if(P.sub==="apercu")P.sub=P.rooms.length-1;else P.sub--}
+  save();render();scrollTo({top:0,behavior:"auto"});return}
+ if(dir>0&&cur==="plan"&&!S.plan.noWallOk&&tPieces().length){const M=tPieces().flatMap(p=>p.murs||[]),c=tPieces().reduce((a,p)=>a+(p.cloisons_a_creer||[]).length,0),miss=[];
+  if(S.travaux.includes("doublage")&&!M.some(m=>m.travaux&&m.type==="mur extérieur"))miss.push("isoler des murs");if(S.travaux.includes("cloison")&&!c&&!M.some(m=>m.travaux&&m.type!=="mur extérieur"))miss.push("créer des cloisons");if(S.travaux.includes("plafond")&&!planStats().plaf.length)miss.push("refaire des plafonds");
+  if(miss.length){confirmBig("Il manque des travaux sur le plan",`Vous souhaitez ${miss.join(", ").replace(/, ([^,]*)$/," et $1")}, mais rien n'est indiqué sur votre plan. Ouvrez le plan : « Travaux » puis les murs concernés, et touchez chaque pièce dont le plafond est à refaire. Sinon, l'artisan le précisera avec vous.`,"Continuer quand même",()=>{S.plan.noWallOk=true;save();go(1)},"Retour au plan");return}}
+ if(dir>0){if(!validate())return;if(cur==="recap"&&!navigator.onLine){document.getElementById("err").textContent="Pas de connexion internet : votre demande est bien gardée sur cet appareil. Réessayez dès que le réseau revient.";return}if(cur==="recap"){if(SENDING)return;lastPayload=payload();if(CONFIG.demo){finish();return}sendReq(lastPayload);return}
+  cur=st[n+1];fitPage.p=fitPage.p||{};fitPage.p[cur]=0;if(cur==="logement")S.lq=0;if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1];fitPage.p=fitPage.p||{};fitPage.p[cur]=99;if(cur==="logement")S.lq=99}
+ save();NAV9=dir;const RM9=matchMedia("(prefers-reduced-motion:reduce)").matches,sec9=document.querySelector("#app>section");
+ const fin9=()=>{go.busy=0;render();NAV9=0;scrollTo({top:0,behavior:RM9?"auto":"smooth"})};
+ if(RM9||!sec9||cur==="done"){fin9();return}go.busy=1;sec9.classList.add(dir>0?"s9o":"s9ob");setTimeout(fin9,150)}
+function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode="plan";S.plan={H:2.5,sub:"apercu",obj:"Avoir droit aux aides",trace:{"floors":[{"nom":"Rez-de-chaussée","hauteur_m":2.5,"hauteur_choisie":true,"pieces":[{"nom":"Séjour","surface_m2":20,"estimee":false,"points":[[0,0],[5,0],[5,4],[0,4]],"murs":[{"type":"mur extérieur","longueur_m":5,"travaux":"Isoler","ouvertures":[{"repere":"F1","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":140,"hauteur_cm":135,"k":"fenetre","w":1.4,"h":1.35,"p":1.8,"al":0.9,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Aucun"}]},{"type":"mur entre pièces","longueur_m":4,"travaux":null,"ouvertures":[]},{"type":"mur extérieur","longueur_m":5,"travaux":null,"ouvertures":[{"repere":"P1","designation":"Porte d'entrée","menuiserie_exterieure":true,"ouverture":null,"t":"Porte d'entrée","a_changer":"À changer","type":"porte","largeur_cm":90,"hauteur_cm":215,"k":"porte","w":0.9,"h":2.15,"p":3.2,"al":0,"pose":null}]},{"type":"mur extérieur","longueur_m":4,"travaux":"Isoler","ouvertures":[]}],"cloisons_a_creer":[],"sol":{"actuel_a_deposer":"Aucune","revetement":"Aucun","resume":null}},{"nom":"Cuisine","surface_m2":9.6,"estimee":false,"points":[[5,0],[8.2,0],[8.2,3],[5,3]],"murs":[{"type":"mur extérieur","longueur_m":3.2,"travaux":"Isoler","ouvertures":[{"repere":"F2","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":100,"hauteur_cm":115,"k":"fenetre","w":1,"h":1.15,"p":1,"al":1.05,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Aucun"}]},{"type":"mur extérieur","longueur_m":3,"travaux":"Isoler","ouvertures":[]},{"type":"mur entre pièces","longueur_m":3.2,"travaux":null,"ouvertures":[]},{"type":"mur entre pièces","longueur_m":3,"travaux":null,"ouvertures":[]}],"cloisons_a_creer":[],"sol":{"actuel_a_deposer":"Aucune","revetement":"Aucun","resume":null}},{"nom":"Chambre","surface_m2":10.5,"estimee":true,"points":[[5,3],[8.5,3],[8.5,6],[5,6]],"murs":[{"type":"mur entre pièces","longueur_m":3.5,"travaux":null,"ouvertures":[{"repere":"P2","designation":"Bloc-porte","menuiserie_exterieure":false,"ouverture":null,"t":"Bloc-porte","a_changer":"Déjà en place","type":"porte","largeur_cm":83,"hauteur_cm":204,"k":"porte","w":0.83,"h":2.04,"p":1.2,"al":0,"pose":null}]},{"type":"mur extérieur","longueur_m":3,"travaux":"Isoler","ouvertures":[{"repere":"F3","designation":"Fenêtre","menuiserie_exterieure":true,"ouverture":"Oscillo-battant","t":"Fenêtre","ouv":"Oscillo-battant","a_changer":"À changer","type":"fenêtre","largeur_cm":120,"hauteur_cm":135,"k":"fenetre","w":1.2,"h":1.35,"p":0.9,"al":0.9,"materiau":"PVC","couleur":"Blanc RAL 9016","pose":"Dépose complète","pose_position":"Applique intérieure","volet":"Roulant coffre extérieur","volet_commande":"Radio (télécommande)","volet_pose":"Sur façade","volet_enroulement":"Extérieur","volet_couleur":"Blanc RAL 9016"}]},{"type":"mur extérieur","longueur_m":3.5,"travaux":"Isoler","ouvertures":[]},{"type":"mur entre pièces","longueur_m":3,"travaux":null,"ouvertures":[]}],"cloisons_a_creer":[{"travaux":"Créer","composition":{"oss":"M48","mont":"Simples","laine":"45 mm","peau":"1 peau","plaque":"Standard","porte":"83"},"portes":1,"porte_largeur_cm":83,"galandage":false,"pose_porte":"À la création de la cloison","longueur_m":3,"points":[[7,3],[7,6]]}],"sol":{"actuel_a_deposer":"Aucune","revetement":"Parquet","resume":"parquet stratifié flottante + plinthes"}}]}]},rooms:[{type:"sejour",nom:"Séjour",L:5,l:4,dk:false,size:1,trav:["doublage"]},{type:"cuisine",nom:"Cuisine",L:3.2,l:3,dk:false,size:1,trav:["doublage"]},{type:"chambre",nom:"Chambre 1",L:3.8,l:2.9,dk:false,size:1,trav:["doublage","cloison"]},{type:"chambre",nom:"Chambre 2",L:null,l:null,dk:true,size:1,trav:["doublage"]},{type:"sdb",nom:"Salle de bain",L:2.4,l:2,dk:false,size:1,trav:["doublage"]}]};
+ S.logement={cp:"38920",commune:"Crolles",type:"Maison",age:"Oui",occupe:"Oui",ou:["Rez-de-chaussée","Étage(s)"]};
+ S.cloison={items:[{L:3.8,H:2.5,piece:"Chambre",portes:1,largeur:"83 cm",galandage:"Non"}],phonique:"Standard"};
+ S.doublage={items:[{L:4.2,H:2.5,ext:"Oui",etat:"Abîmé ou irrégulier",fen:1},{L:3.1,H:2.5,ext:"Oui",etat:"Bon, bien droit",fen:0}],objectif:"Avoir droit aux aides",epaisseur_dk:true};
+ S.fenetres={items:[{piece:"Chambre",Lc:120,Hc:135,ouv:"Battant",ob:"Oui",mat:"PVC",coul:"Blanc",volet:"Motorisé",pose:"Dépose complète"}]};
+ S.finition={fin:"Prêt à peindre"};S.projet={delai:"Dans les 3 mois",budget:"5 000 à 10 000 €",msg:"Exemple de démonstration."};
+ S.contact={prenom:"Exemple",nom:"Démo",tel:"06 00 00 00 00",email:"exemple@exemple.fr",rgpd:true};cur="travaux";render()}
+
+addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
+ if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),toit:S.travaux.includes("rampants")?{forme:R.forme||null,hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2")}:null},"*");return}
+ if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
+ if(d.type==="proclik-plan-sheet")return;
+ if(d.type==="proclik-plan-trav"&&Array.isArray(d.travaux)){d.travaux.forEach(k=>{if(TRAVAUX.some(t=>t[0]===k)&&!S.travaux.includes(k))S.travaux.push(k)});save();return}
+ if(d.type==="proclik-plan-checking"){clearTimeout(PFT);return}
+ if(d.type==="proclik-plan-finish"){clearTimeout(PFT);closePlan();return}
+ if(d.type==="proclik-plan-help"){toForm(PRE()?`Pas de souci, ${PRE()}, on vous aide`:"Pas de souci, on vous aide","Remplissez plutôt le formulaire : quelques cases à cocher, quelques mots et vos photos. Votre plan reste gardé sur cet appareil si vous voulez y revenir.");return}
+ if(d.type==="proclik-plan-step"){const b=document.getElementById("pf-done");if(b)b.classList.toggle("fin",!!d.fin);return}
+ if(d.type==="proclik-plan"){S.plan.trace=d.plan;save();updSub();if(cur==="plan"){document.getElementById("cheer").textContent=cheerN(planCheer());const er=document.getElementById("err");if(er&&tPieces().length)er.textContent=""}}});
+// Passer au formulaire simple à tout moment depuis le plan (Cyril 10/11) : le plan reste gardé sur l'appareil.
+const ICF_BIG=ICF.replace('class="mic"','class="mic" width="44" height="44" style="color:#A8823F"');
+function toForm(t,p){closePlan(true);confirmBig(t||"Remplir le formulaire à la place ?",p||"Pas de souci : quelques cases à cocher, quelques mots et vos photos. Votre plan reste gardé sur cet appareil si vous voulez y revenir.","Oui, le formulaire",()=>{S.mode="texte";cur="simple";save();render();scrollTo(0,0)},"Rester sur le plan",ICF_BIG);BCNO=()=>{if(cur==="plan")openPlan()}}
+let BCNO=null;
+let BC=null;function confirmBig(t,p,ok,cb,no,soft){const bg=document.getElementById("bigconf");bg.classList.toggle("soft",!!soft);{const ic=bg.querySelector(".bc-ic");if(soft&&soft[0]==="<")ic.innerHTML=soft;else ic.textContent=soft||"⚠️"}document.getElementById("bc-t").textContent=t;document.getElementById("bc-p").textContent=p;document.getElementById("bc-ok").textContent=ok;document.getElementById("bc-no").textContent=no||"Non, garder";BC=cb;BCNO=null;document.getElementById("bigconf").hidden=false}
+document.getElementById("bc-no").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BC=null;const f=BCNO;BCNO=null;if(f)f()});document.getElementById("bc-ok").addEventListener("click",()=>{document.getElementById("bigconf").hidden=true;BCNO=null;const f=BC;BC=null;if(f)f()});
+function netUI(){document.getElementById("offline").hidden=navigator.onLine!==false}addEventListener("online",netUI);addEventListener("offline",netUI);netUI();
+let PDR=null;
+function pPt(svg,e){const m=svg.getScreenCTM().inverse(),q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const r=q.matrixTransform(m);return[r.x,r.y]}
+document.addEventListener("pointerdown",e=>{const svg=e.target.closest("#pplan");if(!svg||cur!=="plan")return;const g=e.target.closest("[data-pjmp]");const lay=layout();PVB=vbOf(lay);
+ if(!g){PDR={bg:true};return}const i=+g.dataset.pjmp,r=S.plan.rooms[i],p=pPt(svg,e);PDR={i,p0:p,x0:r.x,y0:r.y,moved:false,svg};try{svg.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()});
+document.addEventListener("pointermove",e=>{if(!PDR||PDR.bg)return;const r=S.plan.rooms[PDR.i],p=pPt(PDR.svg,e),dx=p[0]-PDR.p0[0],dy=p[1]-PDR.p0[1];if(!PDR.moved&&Math.hypot(dx,dy)<.12)return;PDR.moved=true;
+ const[w,h]=fp(r);let nx=PDR.x0+dx,ny=PDR.y0+dy,bx=null,by=null;S.plan.rooms.forEach((q,k)=>{if(k===PDR.i||q.x==null)return;const[qw,qh]=fp(q);
+  [q.x-w,q.x+qw,q.x,q.x+qw-w].forEach(c=>{const d=c-nx;if(Math.abs(d)<.4&&(bx==null||Math.abs(d)<Math.abs(bx)))bx=d});[q.y-h,q.y+qh,q.y,q.y+qh-h].forEach(c=>{const d=c-ny;if(Math.abs(d)<.4&&(by==null||Math.abs(d)<Math.abs(by)))by=d})});
+ r.x=Math.round((bx!=null?nx+bx:Math.round(nx/.05)*.05)*100)/100;r.y=Math.round((by!=null?ny+by:Math.round(ny/.05)*.05)*100)/100;S.plan.sel=PDR.i;PDR.svg.innerHTML=plan2dInner(layout())});
+document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PVB=null;if(D.bg){if(S.plan.sel!=null&&e.target.closest("#pplan")){S.plan.sel=null;save();render()}return}
+ if(!D.moved){S.plan.sel=S.plan.sel===D.i?null:D.i}save();render()});
+document.addEventListener("click",ev=>{const t=ev.target.closest("[data-rtog]");if(!t)return;ev.stopPropagation();const r=t.parentNode,o=r.classList.toggle("open");t.setAttribute("aria-expanded",o);ROPEN[o?"add":"delete"](t.dataset.rtog);if(innerWidth<=600)render()},true);
+document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
+ if(MISS&&ds.s&&`${ds.s}-${ds.i||"x"}-${ds.k}`===MISS)MISS=null;
+ if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur="travaux";render();return}
+ if(ds.example){example();return}
+ if(ds.mode){S.mode=ds.mode;save();render();return}
+ if(ds.openplan){openPlan();return}
+ if(ds.toform){toForm();return}
+ if(ds.later){later();return}
+ if(b.id==="pf-done"){const f=document.getElementById("pframe");clearTimeout(PFT);PFT=setTimeout(()=>closePlan(),1500);try{f.contentWindow.postMessage({type:"proclik-plan-check"},"*")}catch(x){closePlan()}return}
+ if(ds.pcnt){const[t,d]=ds.pcnt.split("|"),R=S.plan.rooms;if(+d>0){R.push({type:t,nom:ptName(t),L:null,l:null,dk:false,size:1,trav:trsOk().filter(k=>k!=="cloison")})}else{for(let j=R.length-1;j>=0;j--)if(R[j].type===t){R.splice(j,1);break}}renum(t);save();render();return}
+ if(ds.pop){const[k,ix,sg]=ds.pop.split("|"),P=S.plan,o=ix===""?P:P.rooms[+ix],st=+ds.pst;if(ix!==""&&o.dk){const[a,b]=dimsOf(o);o.L=a;o.l=b;o.dk=false}const v=pn(o[k])??(k==="H"?2.5:0);let nv=sg==="+"?v+st:v-st;o[k]=Math.max(0,Math.round(nv*100)/100);if(ix==="")P.H_dk=false;save();render();return}
+ if(ds.pdk){S.plan.H_dk=!S.plan.H_dk;save();render();return}
+ if(ds.psize){const[i,k]=ds.psize.split("|").map(Number),r=S.plan.rooms[i];if(r.dk&&r.size===k){r.dk=false}else{r.dk=true;r.size=k}save();render();return}
+ if(ds.ptrav){const[i,k]=ds.ptrav.split("|"),r=S.plan.rooms[+i];r.trav.includes(k)?r.trav.splice(r.trav.indexOf(k),1):r.trav.push(k);save();render();return}
+ if(ds.pjump!=null){S.plan.sub=+ds.pjump;save();render();return}
+ if(ds.pback){S.plan.sub="pieces";save();render();scrollTo(0,0);return}
+ if(ds.prot!=null){const r=S.plan.rooms[+ds.prot];r.rot=!r.rot;save();render();return}
+ if(ds.pdesel){S.plan.sel=null;save();render();return}
+ if(ds.pv3!=null){S.plan.v3=ds.pv3==="1";save();render();return}
+ if(ds.proom){const r=planRooms().find(x=>x.nom===ds.proom),it=S.plafond.items,j=it.findIndex(x=>x.piece===ds.proom);if(j>=0){it.splice(j,1);if(!it.length)it.push({H:2.5})}else if(r){const n={piece:r.nom,L:r.L,l:r.l,H:r.H};const e=it.findIndex(x=>!x.piece&&!pn(x.L)&&!pn(x.l));if(e>=0)it[e]={...it[e],...n};else it.push(n)}save();render();return}
+ if(ds.pq){const[k,v]=ds.pq.split("|");S.plan[k]=S.plan[k]===v?undefined:v;save();render();return}
+ if(ds.reset&&!ds.ok){confirmBig("Tout recommencer ?","Toutes vos réponses, vos photos et votre plan seront effacés. Cette action est définitive.","Oui, tout effacer",()=>{b.dataset.ok="1";b.click();delete b.dataset.ok});return}
+ if(ds.reset){S=fresh();files.photos=[];files.plan=[];try{localStorage.removeItem("clikdevis-brouillon")}catch(e){};cur="intro";render();return}
+ if(b.id==="go"){go(1);return}if(b.id==="back"){go(-1);return}
+ if(ds.goto){cur=ds.goto;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;if(cur==="logement")S.lq=0;render();scrollTo(0,0);return}
+ if(ds.trav){const k=ds.trav,a=S.travaux;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);save();render();return}
+ if(ds.iok!=null){iDone(cur,+ds.iok,false);return}
+ if(ds.iopen!=null){S[cur].open=+ds.iopen;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;fitPage.toItem=true;save();render();document.querySelector("#app .item:not(.mini)")?.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(ds.cedit){S[cur].cedit=true;save();render();return}
+ if(ds.cnt!=null){const o=S[cur],n=+ds.cnt,it=o.items;o.n=n;o.open=undefined;o.cedit=false;while(it.length<n)it.push(newItem(cur));if(it.length>n)it.length=n;save();render();if(n===0){clearTimeout(go.t);go.t=setTimeout(()=>{if(S[cur]&&S[cur].n===0)go(1)},380)}return}
+ if(ds.add){const it=S[cur].items;it.push(newItem(cur));if(D[cur].g.cnt){S[cur].n=it.length;S[cur].open=it.length-1}save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);if(D[cur].g&&D[cur].g.cnt){S[cur].n=S[cur].items.length;S[cur].open=undefined}save();render();return}
+ const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
+ if(ds.multi){const a=(Array.isArray(o[k])?o[k]:[]).filter(x=>ds.v===DK?x===DK:x!==DK);o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
+ if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="logement"&&cur==="logement"&&o[k]!=null&&!ds.multi&&LQ[S.lq||0].length===1){save();render();clearTimeout(go.t);go.t=setTimeout(()=>{if(cur==="logement")go(1)},380);return}if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();return}
+ if(ds.pre!=null){o[k]=+ds.pre;o[k+"_dk"]=false;o[k+"_o"]=false;save();render();return}
+ if(ds.preo){o[k+"_o"]=true;o[k+"_dk"]=false;save();render();setTimeout(()=>document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus(),30);return}
+ if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();return}
+ if(ds.op){const st=+ds.st;const v=pn(o[k])??0;let nv=ds.op==="+"?v+st:v-st;if(nv<0)nv=0;o[k]=Math.round(nv*100)/100;o[k+"_dk"]=false;save();render();document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus();return}
+ if(ds.step){const v=(o[k]??+ds.min)+(+ds.step);o[k]=Math.max(+ds.min,Math.min(+ds.max,v));save();render();return}
+});
+// Fiches en accordéon (Cyril 11/11) : une seule fiche ouverte ; « C'est bon » la replie en une ligne et ouvre la suivante.
+function iOpen(sec){const o=S[sec],it=o.items||[];if(o.open===-1)return -1;if(o.open!=null&&o.open<it.length)return o.open;const k=it.findIndex(x=>!x._ok);return k}
+function iSum(sec,it){const b=badge(sec,it),v=D[sec].g.f.filter(f=>(!f.sh||f.sh(it))&&f.t==="chips"&&f.k!=="piece").map(f=>it[f.k]??f.def).filter(x=>x&&x!==DK&&!/^\d+ cm$/.test(x)&&!/ × /.test(x));return[b,...v].filter(Boolean).slice(0,4).join(" · ")}
+function iDone(sec,i,leave){const o=S[sec],it=o.items;{const f=missF(sec,i,D[sec].g.f);if(f){missShow(sec,i,f);return true}}MISS=null;it[i]._ok=true;let k=it.findIndex((x,j)=>j>i&&!x._ok);if(k<0)k=it.findIndex(x=>!x._ok);o.open=k<0?-1:k;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitPage.toItem=true;save();if(k<0&&leave&&!(D[sec].f||[]).some(f=>!f.v||f.v(o))){fitPage.toItem=false;return false}render();const el=document.querySelector("#app .item:not(.mini)")||document.querySelector("#app .cnt");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return true}
+function newItem(sec){const it=S[sec].items,last=it[it.length-1]||{},d=D[sec];if(d.g.copy&&it.length)return Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k)));if(sec==="doublage"||sec==="cloison")return{H:last.H??2.5,portes:0,fen:0};if(sec==="plafond")return{H:last.H??2.5};return{}}
+function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
+// Code postal <-> commune : propositions de la base officielle des communes (geo.api.gouv.fr, gratuite, sans clé).
+// Sans réseau, rien ne s'affiche et le client tape comme avant.
+const GEO="https://geo.api.gouv.fr/communes?fields=nom,codesPostaux&",geoC={};let geoT=null,geoN=0;
+async function geoGet(q){if(geoC[q])return geoC[q];const a=new AbortController(),t=setTimeout(()=>a.abort(),6000);try{const r=await fetch(GEO+q,{signal:a.signal});clearTimeout(t);if(!r.ok)return null;const j=await r.json();geoC[q]=j;return j}catch(e){clearTimeout(t);return null}}
+const geoNorm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+function geoBox(k){const el=document.getElementById("logement-x-"+k);if(!el)return null;let b=document.getElementById("geo-"+k);if(!b){b=document.createElement("div");b.className="geo";b.id="geo-"+k;b.setAttribute("aria-live","polite");el.closest(".q").appendChild(b)}return b}
+function geoClear(){["cp","commune"].forEach(k=>{const b=document.getElementById("geo-"+k);if(b)b.innerHTML=""})}
+function geoSet(cp,nom){const L=S.logement;L.cp=cp;L.commune=nom;save();const a=document.getElementById("logement-x-cp"),b=document.getElementById("logement-x-commune");if(a)a.value=cp;if(b)b.value=nom;const e=document.getElementById("err");if(e)e.textContent="";geoClear()}
+function geoChips(k,txt,list){const b=geoBox(k);if(!b)return;if(!list.length){b.innerHTML="";return}
+ b.innerHTML=`<p class="gh">${esc(txt)}</p>${list.map(x=>`<button type="button" class="gi" role="option" data-geocp="${esc(x.cp)}" data-geonom="${esc(x.nom)}"><span>${esc(x.nom)}</span><small>${esc(x.cp)}</small></button>`).join("")}`;b.setAttribute("role","listbox")}
+async function geoFromCp(){const L=S.logement,cp=(L.cp||"").trim(),n=++geoN;if(!/^\d{5}$/.test(cp)){const b=document.getElementById("geo-cp");if(b)b.innerHTML="";return}
+ const j=await geoGet("codePostal="+cp);if(n!==geoN||cur!=="logement"||!j)return;
+ const list=j.map(c=>({cp,nom:c.nom})).sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
+ if(!list.length){geoChips("cp","",[]);return}
+ if(list.some(x=>geoNorm(x.nom)===geoNorm(L.commune))){geoChips("cp","",[]);return}
+ if(list.length===1&&!(L.commune||"").trim()){geoSet(cp,list[0].nom);return}
+ geoChips("cp","Choisissez votre commune",list)}
+async function geoFromNom(){const L=S.logement,nom=(L.commune||"").trim(),n=++geoN;const b0=document.getElementById("geo-commune");
+ if(geoNorm(nom).length<2){if(b0)b0.innerHTML="";return}
+ const cp=(L.cp||"").trim(),withCp=/^\d{5}$/.test(cp);
+ let j=await geoGet("nom="+encodeURIComponent(nom)+(withCp?"&codePostal="+cp:"")+"&boost=population&limit=8");
+ if(withCp&&j&&!j.length)j=await geoGet("nom="+encodeURIComponent(nom)+"&boost=population&limit=8");
+ if(n!==geoN||cur!=="logement"||!j)return;
+ const list=[];j.forEach(c=>(c.codesPostaux||[]).forEach(p=>{if(!withCp||j.every(d=>!(d.codesPostaux||[]).includes(cp))||p===cp)list.push({cp:p,nom:c.nom})}));
+ const top=list.slice(0,6);
+ if(top.length===1&&geoNorm(top[0].nom)===geoNorm(nom)&&top[0].cp===cp){if(b0)b0.innerHTML="";return}
+ const cb=document.getElementById("geo-cp");if(cb)cb.innerHTML="";
+ geoChips("commune","Choisissez votre commune",top)}
+function geoAsk(k){clearTimeout(geoT);if(k==="cp"){geoFromCp();return}geoT=setTimeout(geoFromNom,300)}
+function geoInit(){geoBox("cp");geoBox("commune");if(/^\d{5}$/.test((S.logement.cp||"").trim())&&!(S.logement.commune||"").trim())geoFromCp()}
+document.addEventListener("click",ev=>{const b=ev.target.closest("[data-geocp]");if(!b){if(!ev.target.closest(".geo,#logement-x-cp,#logement-x-commune"))geoClear();return}ev.stopPropagation();geoSet(b.dataset.geocp,b.dataset.geonom)},true);
+// Majuscule au début du prénom, du nom et de la commune (Cyril 11/11) : à la sortie du champ, sans gêner la frappe
+const CAPW=/^(de|du|des|la|le|les|sur|sous|en|et|lès|lez|aux|au|à)$/i;
+function cap(v){let w=0;return String(v||"").replace(/\s+/g," ").replace(/^ /,"").replace(/[^\s-]+/g,m=>{const i=w++;if(i&&CAPW.test(m))return m.toLowerCase();const a=m.match(/^([dl])['’](.+)$/i);if(a&&i)return a[1].toLowerCase()+"'"+a[2].charAt(0).toUpperCase()+a[2].slice(1);return m.charAt(0).toUpperCase()+m.slice(1)})}
+document.addEventListener("focusout",ev=>{const el=ev.target;if(!el||!el.dataset)return;if(el.id==="in-pre"){const v=cap(el.value).trim();if(v!==el.value){el.value=v;S.contact.prenom=v;save()}return}if(!el.dataset.cap||!el.dataset.s)return;const v=cap(el.value).trim();if(v===el.value)return;el.value=v;obj(el.dataset.s,el.dataset.i===""?null:+el.dataset.i)[el.dataset.k]=v;save()});
+document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pnum){planInput(el);return}if(!ds.s)return;const o=obj(ds.s,ds.i===""?null:+ds.i);
+ if(ds.num){o[ds.k]=el.value.replace(",",".");o[ds.k+"_dk"]=false;save();const it=el.closest(".item");if(it){const b=badge(ds.s,o);let bd=it.querySelector(".badge");if(b&&!bd){bd=document.createElement("span");bd.className="badge";it.querySelector(".item-h div").prepend(bd)}if(bd)bd.textContent=b}return}
+ if(ds.txt){o[ds.k]=el.value;save();if(ds.s==="logement"&&(ds.k==="cp"||ds.k==="commune"))geoAsk(ds.k);return}
+ if(ds.chk){o[ds.k]=el.checked;save();return}});
+document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)return;const k=el.dataset.file;
+ [...el.files].forEach(f=>{if(!/^image\/|application\/pdf/.test(f.type))return;if(f.size>15*1024*1024)return;
+  if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>{files[k].push({name:f.name,img:r.result,file:f,tag:el.dataset.tag||null});render()};r.readAsDataURL(f)}else{files[k].push({name:f.name,img:null,file:f});render()}});});
+render();
+{const hp=new URLSearchParams(location.hash.slice(1)),rp=hp.get("reprise");if(rp)unpackS(rp).then(o=>{if(!o||!o.S||!o.S.travaux)return;S=o.S;cur=o.cur||"travaux";save();hp.delete("reprise");try{history.replaceState(null,"",location.pathname+location.search+(hp.toString()?"#"+hp.toString():""))}catch(e){}render()}).catch(()=>{})};
+})();
+// Intégré dans une page (GHL) plus haute que l'écran : la barre Retour / Continuer remonte au bas de la partie visible.
+if(window.top!==window&&"IntersectionObserver" in window){const vp=document.createElement("div");vp.style.cssText="position:fixed;left:0;top:0;width:1px;height:100%;pointer-events:none;visibility:hidden";document.body.appendChild(vp);
+ new IntersectionObserver(es=>{const e=es[es.length-1],vb=e.isIntersecting?Math.max(0,Math.round(innerHeight-e.intersectionRect.bottom)):0;document.documentElement.style.setProperty("--vb",vb+"px")},{threshold:Array.from({length:201},(_,i)=>i/200)}).observe(vp)}
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
+<style>/* Couleurs de la carte de visite (maquette) */
+html:root,html:root[data-theme="light"]{--mint:#6F5546;--mint-ink:#6F5546;--acc:#6F5546;--go-bg:#6F5546;--go-fg:#fff;--pc-anneau:#6F5546;--ink:#141414;--fg:#141414;--laiton:#B08D74;--bg:#F3F0EC;--surface:#F3F0EC;--soft:#F3F0EC;--muted:#6B6862;--line:rgba(20,20,20,.13);--lo:rgba(30,28,24,.17);--ilo:rgba(30,28,24,.15);--f-body:"Geist","Inter",system-ui,sans-serif;--f-display:"Geist","Inter",system-ui,sans-serif}
+html:root .logo,html:root .foot{--pl:#B08D74}
+.theme-b{display:none!important}
+h1,h2{letter-spacing:-.035em}
+</style>
