@@ -71,3 +71,6 @@ html body .ev:not(.free) b{color:color-mix(in srgb,var(--c) 55%,var(--fg))}
 html body .ev.sel{background:color-mix(in srgb,var(--c) 28%,var(--bg))!important}
 html body .ev.sel b{color:var(--fg)}
 html body .ev::before{width:4px}
+
+/* 9. Pastilles pleines bleu nuit : chiffre lisible le jour (blanc) comme la nuit (encre) */
+html body #chx .ch-menu button i,html body .dv-seg button i,html body .rg-n,html body .cl-type button[aria-checked="true"] .cl-case{color:var(--n1-nuit-fg)}

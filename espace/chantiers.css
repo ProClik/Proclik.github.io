@@ -6,13 +6,13 @@
 /* Le menu du haut : deux galets (En cours, Tous les chantiers) */
 html body #chx .ch-seg{grid-template-columns:repeat(2,1fr)}
 /* Le menu à icônes d'un chantier : 4 galets par ligne, le choisi est creusé */
-html body #chx .ch-menu{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px;border-radius:22px}
+html body #chx .ch-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px;border-radius:22px}
 html body #chx .ch-menu button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 2px 8px;border-radius:16px;font-size:12px;min-width:0}
 #chx .ch-menu svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #chx .ch-menu button[aria-selected="true"] svg{color:var(--accx)}
 #chx .ch-menu button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #chx .ch-menu button i{position:absolute;top:4px;right:calc(50% - 24px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--acc);color:#fff;font:800 10px/16px var(--f,inherit);font-style:normal}
-@media (min-width:900px){html body #chx .ch-menu{grid-template-columns:repeat(8,1fr)}}
+@media (min-width:600px){html body #chx .ch-menu{grid-template-columns:repeat(5,1fr)}}@media (min-width:900px){html body #chx .ch-menu{grid-template-columns:repeat(9,1fr)}}
 #chx .ch-pane{display:flex;flex-direction:column;gap:14px;margin-top:14px}
 #chx .ch-pane .grid2{margin:0}
 #chx .ch-back2{align-self:flex-start;font-size:13px;font-weight:700;color:var(--muted);background:none;border:0;padding:2px 0;cursor:pointer}
@@ -156,3 +156,12 @@ html body .btn.go.ch-arm{box-shadow:0 0 0 2px var(--acc),-6px -6px 14px var(--hi
 #wkc .wkc-col{cursor:copy}
 #ch-livadd svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--accx);stroke-width:2;stroke-linecap:round}
 .ch-livl .cf-li .tx b,.ch-livl .cf-li .tx small{white-space:normal}
+
+/* Planning du chantier (12/11) */
+#chx .ch-ag{width:100%;display:flex;align-items:center;gap:12px;text-align:left;border:0;background:none;font:inherit;color:inherit;cursor:pointer}
+#chx .ch-agd{flex:none;width:48px;display:grid;justify-items:center;padding:6px 0;border-radius:12px;background:color-mix(in srgb,var(--c) 16%,var(--bg));box-shadow:inset 3px 0 0 var(--c);line-height:1.05}
+#chx .ch-agd b{font-size:19px}
+#chx .ch-agd small{font-size:10.5px;color:var(--muted)}
+#chx .ch-ag .tx{flex:1;min-width:0;display:grid;gap:2px}
+#chx .ch-ag .tx b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#chx .ch-ag .tx small{color:var(--muted);font-size:12.5px}
