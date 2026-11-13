@@ -398,6 +398,7 @@ html body #sheet.wzon::before{display:none}
 @keyframes s9i{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}@keyframes s9b{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.s9i>*,.s9b>*{animation:none!important}}
 @media (orientation:landscape) and (max-height:560px){html body #sheet.wzon{left:12px;transform:none;top:10px;bottom:10px;width:min(380px,46vw);max-height:none}.wz-q h3{font-size:17px}.wz-q .qk button{min-height:42px}}
+
 </style>
 <link rel="stylesheet" href="../devis/plan-relief.css?v=17">
 <style>
@@ -411,7 +412,7 @@ html.pro body{padding-bottom:0;overflow:hidden}
 html.pro[data-pv="cotes"] body,html.pro[data-pv="devis"] body{overflow:auto;padding-bottom:24px}
 html.pro .wrap{gap:8px;padding-top:4px!important}
 html.pro[data-pv="plan"] .wrap{height:100%;display:flex;flex-direction:column;padding-bottom:10px}
-html.pro #rooms,html.pro #cap,html.pro #z-lock,html.pro #clbanner,html.pro #todo-bar,html.pro .cl-client,html.pro .verrou,html.pro .gorecap{display:none!important}
+html.pro #rooms,html.pro #cap,html.pro #z-lock,html.pro #todo-bar,html.pro .cl-client,html.pro .verrou,html.pro .gorecap{display:none!important}
 html.pro:not([data-pv="plan"]) .board,html.pro:not([data-pv="cotes"]) #pn-cotes,html.pro:not([data-pv="devis"]) #pn-devis{display:none!important}
 html.pro[data-pv="devis"] #floors{display:none}
 html.pro #floors .lab{display:none}
@@ -462,8 +463,18 @@ html.pro.plein .pro-menu,html.pro.plein #floors{display:none!important}
 html.pro.plein .wrap{max-width:none;padding:calc(6px + env(safe-area-inset-top,0px)) 0 calc(6px + env(safe-area-inset-bottom,0px))!important}
 html.pro.plein body{padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}
 html.pro .panel{margin-top:2px}
-@media (max-width:560px){html.pro .ud{font-size:0!important;width:40px;padding:8px 0!important}html.pro #t-undo::before{content:"↶";font-size:19px}html.pro #t-redo::before{content:"↷";font-size:19px}}
+@media (max-width:560px){}
 html.pro #pro-bulle{font-size:13px}
+/* Plan de l'Espace = même écran que le formulaire (Cyril 13/11) : carte de consigne, Annuler / Rétablir écrits, zoom ;
+   sans les étapes guidées du client. Les outils de l'artisan (Les cotes, Pré-devis, À vérifier, cadenas, plein écran) restent. */
+html.pro #clbanner{display:flex!important}
+html.pro #cltl,html.pro #clb-v,html.pro #clb-h,html.pro #clb-p,html.pro #pro-bulle{display:none!important}
+html.pro:not([data-pv="plan"]) #clbanner,html.pro:not([data-pv="plan"]) #clb-open{display:none!important}
+html.pro.clhide #clbanner{display:none!important}
+html.pro .fl.mr{top:auto;bottom:96px}
+html.pro .wrap>#clbanner{order:0;margin:0}
+html.pro #clbanner #chk-btn{position:static;transform:none;margin-left:auto;min-height:38px;background:var(--mint)!important;color:var(--paper)!important}html.pro #clbanner #chk-btn[hidden]{display:none}
+@media (max-width:640px){html.pro #clbanner{flex-wrap:wrap;row-gap:8px;padding:10px 12px}html.pro #clbanner #clb-t{flex:1 1 calc(100% - 46px);font-size:14.5px}html.pro #clbanner #clb-b{order:2;margin-left:auto;padding:8px 16px}}
 </style>
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(!/[?&]client/.test(location.search)&&/[?&]attendre/.test(location.search))document.documentElement.classList.add("attendre","bloque");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client");else if(/[?&]embed/.test(location.search)){document.documentElement.classList.add("pro");document.documentElement.dataset.pv="plan"}}catch(e){}</script>
 
@@ -843,7 +854,7 @@ let PD=null,edSeg=null,shSeg=null,PZ=null;const PTR=new Map();
 /* téléphone couché : la consigne se place juste sous le bloc des étages, quelle que soit sa hauteur */
 function lsPos(){try{const f=$("floors");document.documentElement.style.setProperty("--ls-bt",(f&&matchMedia("(orientation:landscape) and (max-height:520px)").matches?Math.round(f.getBoundingClientRect().bottom+6):48)+"px")}catch(e){}}
 /* Masquer la consigne (Cyril 12/11) : bouton « Masquer » dans la carte ; « Consigne » la ramène ; chaque nouvelle consigne la réaffiche toute seule */
-if(CL)try{const bn=$("clbanner"),x=document.createElement("button"),o=document.createElement("button");x.type=o.type="button";x.id="clb-x";x.setAttribute("aria-label","Masquer la consigne");x.title="Masquer la consigne";x.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg><span>Masquer</span>';
+if(CL||PRO)try{const bn=$("clbanner"),x=document.createElement("button"),o=document.createElement("button");x.type=o.type="button";x.id="clb-x";x.setAttribute("aria-label","Masquer la consigne");x.title="Masquer la consigne";x.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg><span>Masquer</span>';
  o.id="clb-open";o.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>Consigne</span>';bn.appendChild(x);const pl=()=>{if(bn.nextSibling!==o)bn.after(o)};pl();setTimeout(pl,0);setTimeout(pl,800);addEventListener("resize",pl);
  const set=h=>{pl();document.documentElement.classList.toggle("clhide",h);o.classList.remove("nouv");o._t=$("clb-t").textContent;try{sessionStorage.setItem("pk-clhide",h?"1":"")}catch(e){}try{clLayout()}catch(e){}dispatchEvent(new Event("resize"))};
  x.onclick=()=>set(true);o.onclick=()=>set(false);try{if(sessionStorage.getItem("pk-clhide"))document.documentElement.classList.add("clhide")}catch(e){}
@@ -1347,7 +1358,7 @@ $("send").addEventListener("click",()=>{const box=$("recap");box.hidden=false;le
  ST.floors.forEach(f=>{h+=`<div class="rc"><b>${esc(f.nom)}</b> · hauteur ${fr(f.H)} m · ${dal(f).type==="Bois"?"plancher bois":"dalle béton"} ${dal(f).ep}</div>`;f.rooms.forEach(rm=>{h+=`<div class="rc">— <b>${esc(rm.nom)}</b> · ${fr1(Math.abs(sarea(rm.pts)))} m²${solTxt(rm)?" · sol : "+esc(solTxt(rm)):""}${(NT.get(rm)||"").trim()?" · « "+esc(NT.get(rm))+" »":""}${rth(rm)}</div>`;
   segs(f).filter(sg=>sg.rm===rm).forEach(sg=>{const t=[compTxt(sg),opTxt(sg),(NT.get(sg.a)||"").trim()?"« "+esc(NT.get(sg.a))+" »":""].filter(Boolean).join(" · "),ph=rth(sg.a);if(t||ph)h+=`<div class="rc" style="padding-left:18px">${segName(sg)} · ${fr(dist(sg.a,sg.b))} m${t?" · "+t:""}${ph}</div>`})})});
  const cc=combCalc();if(cc)h+=`<div class="rc"><b>Toiture et combles</b> · ${esc(cc.txt)}${(NT.get(ST.comb)||"").trim()?" · « "+esc(NT.get(ST.comb))+" »":""}${rth(ST.comb)}</div>`;box.innerHTML=h});
-function say(n,t){if(CL&&t){t=t.replace(/ Touchez son sol pour choisir le sol, ou un mur pour sa composition\./," Touchez son sol pour indiquer le sol, une cote pour la corriger, ou « + Pièce » pour la suivante.").replace(/Touchez son sol pour la nommer et choisir le sol, ou un mur pour sa composition\./,"Touchez une cote pour la corriger.")}const c=$("cap");c.classList.toggle("idle",n==null);$("capn").textContent=n==null?"i":n;$("capt").textContent=t;if(CL)clBanner(t);if(PRO)bulle(t)}
+function say(n,t){if(CL&&t){t=t.replace(/ Touchez son sol pour choisir le sol, ou un mur pour sa composition\./," Touchez son sol pour indiquer le sol, une cote pour la corriger, ou « + Pièce » pour la suivante.").replace(/Touchez son sol pour la nommer et choisir le sol, ou un mur pour sa composition\./,"Touchez une cote pour la corriger.")}const c=$("cap");c.classList.toggle("idle",n==null);$("capn").textContent=n==null?"i":n;$("capt").textContent=t;if(CL)clBanner(t);if(PRO)proBanner(t)}
 const CLIDLE="Touchez une cote pour la changer. Touchez une pièce pour la nommer et choisir le sol. Doigt appuyé sur une pièce pour la déplacer.";
 function GN(){return CL&&ST.floors.some(f=>f.comb)&&(ST.trav||[]).includes("rampants")&&!!roofGeo()?7:6}
 function roofOk(){return!!G.t7||(ST.comb.ft||[]).length>0}
@@ -1444,9 +1455,12 @@ function quizBuild(){const Q=SH,fl=[];for(let fi=0;fi<Q.nf;fi++){const L=[];Obje
  ST.fi=0;ST.ri=0;G.m1=true;G.skip[2]=true;closeSheet(true);all();const n=fl.reduce((a,L)=>a+L.length,0);say(null,`✏️ Voilà votre plan : ${n} pièce${n>1?"s":""} dessinée${n>1?"s":""}. Les tailles sont estimées : touchez une cote pour la corriger, ou faites glisser un mur. Ensuite, les fenêtres et les portes.`)}
 function gIntro(){$("in-t").textContent=ST.pre?`${ST.pre}, votre logement en ${GN()} étapes`:`Votre logement en ${GN()} étapes`;{const ol=$("intro").querySelector("ol"),l7=ol&&ol.querySelector(".li7");if(ol&&GN()===7&&!l7)ol.insertAdjacentHTML("beforeend",'<li class="li7"><b>7</b><span>Le toit</span></li>');if(l7&&GN()!==7)l7.remove()}const T=ST.trav||[],D={2:["cloison"],3:["fenetres","portes"],5:["doublage","cloison"],6:["plafond"]};$("intro").querySelectorAll("li").forEach((li,i)=>{const on=(D[i+1]||[]).some(k=>T.includes(k));li.classList.toggle("on",on)});{const L=gList();$("in-t").textContent=(ST.pre?ST.pre+", votre":"Votre")+` logement en ${L.length} étapes`;let c=0;$("intro").querySelectorAll("ol li").forEach((li,i)=>{const on=L.includes(i+1);li.hidden=!on;if(on){const b=li.querySelector("b");if(b)b.textContent=++c}})}{const lg=$("intro").querySelector(".in-leg");if(lg)lg.hidden=!$("intro").querySelector("li.on:not([hidden])")}requestAnimationFrame(()=>requestAnimationFrame(()=>{$("intro").hidden=false;setTimeout(()=>{try{$("in-ok").focus({preventScroll:true})}catch(e){}},360)}))}
 if(CL){$("in-ok").addEventListener("click",()=>{$("intro").hidden=true;try{localStorage.setItem("pk-intro","1")}catch(e){}});$("clb-h").addEventListener("click",e=>{e.stopPropagation();gIntro()});$("in-quiz").addEventListener("click",()=>{$("intro").hidden=true;try{localStorage.setItem("pk-intro","1")}catch(e){}openQuiz()});$("in-help").addEventListener("click",()=>{$("intro").hidden=true;try{parent.postMessage({type:"proclik-plan-help"},"*")}catch(e){}})}
+/* mode artisan : la consigne s'écrit dans la même carte que chez le client (sans les étapes) */
+const PROIDLE="Touchez un sol ou un mur pour le régler, une cote pour la corriger.";
+function proBanner(t){const b=$("clbanner");if(!b)return;const bd=$("board");if(b.parentNode===bd)bd.parentNode.insertBefore(b,bd);const ck=$("chk-btn"),mq=$("clb-x");if(ck&&ck.parentNode!==b)b.insertBefore(ck,mq&&mq.parentNode===b?mq:null);const tool=["win","door","clo","todo","trace"].includes(ST.mode);b.classList.toggle("tool",tool);b.classList.remove("done");$("clb-t").textContent=t||PROIDLE;const x=$("clb-b");if(x){delete x.dataset.skip;delete x.dataset.next;x.hidden=!tool;x.textContent=ST.mode==="clo"?(ST.cur&&ST.cur.length>1?"✓ Terminer la cloison":"Annuler"):ST.mode==="todo"?"✓ C'est fait":"Annuler"}}
 function clBanner(t){if(CL&&t&&!["win","door","clo","todo","trace"].includes(ST.mode)){GMSG=t;clearTimeout(GTM);GTM=setTimeout(()=>{GMSG=null;clGuide()},4200)}if(!t&&!["win","door","clo","todo","trace"].includes(ST.mode)){GMSG=null;return clGuide()}const b=$("clbanner");if(!b)return;const tool=["win","door","clo","todo","trace"].includes(ST.mode);b.classList.toggle("tool",tool);b.classList.remove("done");$("clb-t").textContent=t||CLIDLE;const x=$("clb-b");delete x.dataset.skip;delete x.dataset.next;{const pv=$("clb-p");if(pv)pv.hidden=true}x.hidden=!tool;x.textContent=ST.mode==="clo"?(ST.cur&&ST.cur.length>1?"✓ Terminer la cloison":"Annuler"):ST.mode==="todo"?"✓ C'est fait":"Annuler"}
-function clIcon(){const pc=document.querySelector("#clbanner .pcl");if(!pc)return;const md={win:"win",door:"door",clo:"clo",todo:"todo",trace:"room"}[ST.mode]||(GMSG?null:{1:"room",2:"clo",3:"win",5:"todo"}[gStep()]);const sv=md&&(document.querySelector(`.cltool[data-cl="${md}"] svg`)||document.querySelector(`#ctr-bar [data-tr="${md}"] svg`));if(pc.dataset.k===(md||""))return;pc.dataset.k=md||"";pc.innerHTML=sv?sv.outerHTML:"<i></i>";pc.classList.toggle("ic",!!sv)}
-if(CL&&$("clb-t"))new MutationObserver(()=>clIcon()).observe($("clb-t"),{childList:true,characterData:true,subtree:true});
+function clIcon(){const pc=document.querySelector("#clbanner .pcl");if(!pc)return;const md={win:"win",door:"door",clo:"clo",todo:"todo",trace:"room"}[ST.mode]||(GMSG||!CL?null:{1:"room",2:"clo",3:"win",5:"todo"}[gStep()]);const sv=md&&(document.querySelector(`.cltool[data-cl="${md}"] svg`)||document.querySelector(`#ctr-bar [data-tr="${md}"] svg`));if(pc.dataset.k===(md||""))return;pc.dataset.k=md||"";pc.innerHTML=sv?sv.outerHTML:"<i></i>";pc.classList.toggle("ic",!!sv)}
+if((CL||PRO)&&$("clb-t"))new MutationObserver(()=>clIcon()).observe($("clb-t"),{childList:true,characterData:true,subtree:true});
 function all(){tabs();draw();rows()}
 // ---------- Vue 3D (axonométrie dessinée, sans bibliothèque) ----------
 const WE=.2,DALB=["12 cm","16 cm","20 cm","25 cm"],DALW=["20 cm","25 cm","30 cm"];
