@@ -29,6 +29,7 @@ var IC={
  notes:I('<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h5"/>'),
  photo:I('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'),
  cli:I('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'),
+ agenda:I('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M7.5 14h2M11 14h2M14.5 14h2M7.5 17h2M11 17h2"/>'),
  docs:I('<path d="M8 3h8l4 4v14H8z"/><path d="M16 3v4h4"/><path d="M4 7v14h12"/>'),
  tel:I('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>'),
  sms:I('<path d="M4 5h16v11H9l-5 4z"/>'),
@@ -43,7 +44,7 @@ var IC={
  acompte:I('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/>'),
  prod:I('<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>'),
  chantier:I('<path d="M3 20h18M6 20V10l6-4 6 4v10"/><path d="M10 20v-5h4v5"/>')};
-var ONG=[['trav','Travaux'],['fin','Finances'],['four','Fournitures'],['plan','Plan'],['notes','Notes'],['photo','Photos'],['cli','Client'],['docs','Documents']];
+var ONG=[['trav','Travaux'],['agenda','Planning'],['fin','Finances'],['four','Fournitures'],['plan','Plan'],['notes','Notes'],['photo','Photos'],['cli','Client'],['docs','Documents']];
 
 /* ---------- état ---------- */
 var vue=X.lsGet('pc-chv','cours');
@@ -114,6 +115,7 @@ function partie(c,o){
  if(o==='fin')return finances(c);
  if(o==='four')return (X.fourHTML?X.fourHTML(c)+achats(c)+'</div>':'')+(window.PCPLAN&&PCPLAN.livHTML?PCPLAN.livHTML(c):'');
  if(o==='plan')return window.pcPlanCard?window.pcPlanCard(c):'<div class="card"><p class="hint">Pas de plan pour ce chantier.</p></div>';
+ if(o==='agenda')return agenda(c);
  if(o==='notes')return notes(c);
  if(o==='photo')return photos(c);
  if(o==='cli')return cliCard(c,dos(c),false);
@@ -310,7 +312,29 @@ function action(c,a){var o=dos(c);if(!o)return;var tel=String(o.tel||'').replace
  if(X.itineraire)X.itineraire(adr);else location.href='https://www.google.com/maps/dir/?api=1&destination='+q;}
 
 /* ---------- les gestes de la page ---------- */
+/* ---------- Planning du chantier (Cyril 12/11) : ses jours, visites et livraisons, et un bouton pour en ajouter ---------- */
+var JC=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],MC=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+var TYC={run:'Chantier',plan:'Chantier prévu',done:'Chantier fait',visit:'Visite',liv:'Livraison',autre:'Rendez-vous',pc:'Point ProClik'};
+function evsCh(c){var L=(X.EV||[]).filter(function(e){if(e.k==='free'||e.k==='pc')return false;var x=e.x||{};
+  return x.ch===c.id||(c.id==='alpes'&&x.ch===1)||(c.n&&String(e.t||'').indexOf(c.n)>-1)});
+ return L.sort(function(a,b){return (a.d+a.s)<(b.d+b.s)?-1:1})}
+function agenda(c){var T=X.iso?X.iso(X.TODAY||new Date()):'',L=evsCh(c),av=L.filter(function(e){return e.d>=T}),pa=L.filter(function(e){return e.d<T});
+ function ligne(e){var d=new Date(e.d+'T12:00:00'),col=(window.PCCOUL&&PCCOUL.ev(e))||'var(--k-'+e.k+')',jour=e.x&&e.x.jour;
+  return '<button type="button" class="cf-li ch-ag" data-agd="'+e.d+'" style="--c:'+col+'"><span class="ch-agd"><small>'+JC[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+MC[d.getMonth()]+'</small></span>'+
+   '<span class="tx"><b>'+esc(e.t)+'</b><small>'+(jour?'Toute la journée':e.s.replace(':','h')+' – '+e.e.replace(':','h'))+(e.w?' · '+esc(e.w):'')+'</small></span><span class="pill">'+(TYC[e.k]||'')+'</span></button>'}
+ var h='<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
+  (av.length?'<div class="lst cf-l" style="padding:0!important">'+av.map(ligne).join('')+'</div>':'<p class="hint" style="margin:4px 0 0">Aucun jour ni rendez-vous prévu pour ce chantier.</p>')+
+  (c.st!=='done'?'<button type="button" class="btn go cf-go" id="ch-agadd" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter au planning</span></span></button>':'')+
+  '<button type="button" class="btn" id="ch-agvoir" style="width:100%;margin-top:10px">Voir dans le planning</button></div>';
+ if(pa.length)h+='<div class="card"><details><summary style="cursor:pointer;font-weight:700">Déjà passés ('+pa.length+')</summary><div class="lst cf-l" style="padding:0!important;margin-top:8px">'+pa.slice().reverse().map(ligne).join('')+'</div></details></div>';
+ return h}
+function voirPlanning(d){X.go('planning');try{if(X.calWeek)X.calWeek(new Date((d||X.iso(X.TODAY))+'T12:00:00'));var s=document.getElementById('seg-semaine');if(s)s.click();if(X.renderCalWeek)X.renderCalWeek()}catch(_){}}
+
 function lier(c){var id=c.id;
+ /* planning du chantier */
+ var aga=$('#ch-agadd');if(aga)aga.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'chantier',ch:id,d:X.iso(X.TODAY)})});
+ var agv=$('#ch-agvoir');if(agv)agv.addEventListener('click',function(){var L=evsCh(c),T=X.iso(X.TODAY),n=L.filter(function(e){return e.d>=T})[0];voirPlanning(n?n.d:null)});
+ $$('#chx [data-agd]').forEach(function(b){b.addEventListener('click',function(){voirPlanning(b.dataset.agd)})});
  $$('#chx [data-aller]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,b.dataset.aller)})});
  $$('#chx [data-cact]').forEach(function(b){b.addEventListener('click',function(){action(c,b.dataset.cact)})});
  $$('#chx [data-chdos]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.chdos;if(X.cf&&X.cf.ficheClient)X.cf.ficheClient(k);else X.openDossier(k)})});
