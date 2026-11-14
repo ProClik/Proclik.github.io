@@ -295,7 +295,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 /* couleur de l'anneau du logo (choix de Cyril 9/11) : bleu nuit le jour, crème la nuit */
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
-<link rel="stylesheet" href="relief.css?v=5">
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=5">
 <style>@media (max-width:600px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -439,6 +439,13 @@ html body .q{transition:background .35s,box-shadow .35s}
 .done9>.lien7{animation:fil7m .6s 1.4s both}.done9 details{width:100%;max-width:640px;text-align:left}
 @media (max-width:600px){.ok9{width:72px;height:72px}.done9 h1{font-size:28px}.fin9 .fait .g7 svg{width:26px;height:26px}.carte9{font-size:14.5px;padding:14px 16px}}
 @media (prefers-reduced-motion:reduce){.s9i>*,.s9b>*,.s9o,.s9ob,.ok9,.ok9 circle,.ok9 path,.done9 *{animation:none!important}.ok9 circle,.ok9 path{stroke-dashoffset:0}}
+/* Style DÉFINITIF (Cyril 14/11) = celui de la démo RT2O « Lauzière Rénovation » ; valeurs communes dans /n1.css.
+   Fond plus profond la nuit, blocs posés dessus ; ce qui se touche = liseré fin + petite ombre (plus de relief en coussin). Rien ne bouge de place. */
+html:root:root{--bg:var(--n1-bg);--surface:var(--n1-bg);--soft:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);
+  --mint:var(--n1-nuit);--mint-ink:var(--n1-nuit);--acc:var(--n1-nuit);--laiton:var(--n1-laiton);--go-bg:var(--n1-nuit);--go-fg:var(--n1-nuit-fg);
+  --calme:var(--n1-calme);--calme-sh:var(--n1-calme-sh);
+  --up:var(--n1-pk);--up-s:var(--n1-pk);--shadow:var(--n1-pk);--in:var(--n1-in)}
+html body .btn.go,html body #pf-done{box-shadow:var(--n1-go-sh)}
 </style>
 
 <div class="wrap">
