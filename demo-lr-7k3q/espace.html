@@ -326,6 +326,13 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .vq{width:0;height:0;border:6px solid transparent;border-top:8px solid var(--cc);margin-top:-1px}
 .vdv{display:block;width:13px;height:13px;transform:rotate(45deg);background:var(--bg);box-shadow:inset 0 0 0 2.5px var(--laiton)}
 .vdep{display:block;width:12px;height:12px;border-radius:3px;background:var(--nuit)}
+
+.paie{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(4,minmax(0,1fr));gap:8px 6px;font-size:13px;align-items:center}
+.paie>b{font-size:11px;color:var(--muted);text-align:center}.paie>span{text-align:center}.paie>span.qui{text-align:left;font-weight:700;gap:6px}.paie .av{width:26px;height:26px;font-size:11px}
+.phm{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;box-shadow:inset 0 0 0 1.8px var(--laiton);color:var(--laiton);flex:none}.phm svg{width:17px;height:17px}
+.sig{height:96px;border-radius:14px;background:var(--bg);box-shadow:var(--in);display:grid;place-items:center;color:var(--muted);font-size:13px}
+.sigs{width:100%;height:90px}.sigs path{fill:none;stroke:var(--nuit);stroke-width:3;stroke-linecap:round;stroke-dasharray:600;stroke-dashoffset:600;animation:trace .8s ease forwards}
+@keyframes trace{to{stroke-dashoffset:0}}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
@@ -416,7 +423,8 @@ V.acc=function(){
   S.av.filter(function(a){return a.etat==='chef'}).forEach(function(a){D+=ln('sign','Avenant à valider · '+a.ch,a.txt+' · '+eur(a.tot)+' HT, préparé par Cliky','voirAv(\''+a.id+'\')')});
   S.conges.filter(function(c){return c.etat==='attente'}).forEach(function(c){D+=ln('cal','Congé · '+c.qui,c.du+' · personne d\'autre absent ces jours-là','conge('+c.id+')')});
   S.alerte.forEach(function(a,i){D+=ln('alert',a.t,'Signalé par '+a.qui+' depuis le chantier','location.href=\'plan.html?r=chef\'')});
-  D+=ln('shield','Clim\'Isère · assurance à renouveler','Expire dans 18 jours. Cliky a écrit pour demander la nouvelle attestation.','');
+  if(!S.recep.signe)D+=ln('sign','Chalet Girard · réception à faire','Réserves, PV signé par le client, DOE et facture de solde en un seul passage','reception()');
+  D+=ln('shield','Papiers · 1 manquant, 3 bientôt','Menuiserie Chartreuse : attestation URSSAF manquante avant jeudi','onglet.chef=\'ges\';S.ges=\'pap\';go(\'ges\')');
   h+=blk('À décider','bell',D);
   if(S.jeu.on)h+=defiCarte(1);
   h+=blk('Ce mois-ci','euro','<div class="chif"><div><b>86 400 €</b><small>signé</small></div><div><b>54 300 €</b><small>encaissé</small></div><div><b>25 %</b><small>marge moyenne</small></div><div><b>3</b><small>devis à relancer</small></div></div>');
@@ -438,6 +446,7 @@ function ficheCh(id){var c=CH.filter(function(x){return x.id===id})[0],r=role();
     '<div class="post"><span>Heures</span><b>'+c.hr+' / '+c.hp+' h</b></div>'+bar(c.hr/c.hp)+'<div class="post" style="margin-top:10px"><span>Matériel</span><b>'+eur(c.mr)+' / '+eur(c.mp)+'</b></div>'+bar(c.mr/c.mp)+
     '<div class="post" style="margin-top:12px"><span>Marge prévue → tendance</span><b style="color:var(--'+(c.mgt<c.mg-3?'alert':'ok')+')">'+c.mg+' % → '+c.mgt+' %</b></div>'+(c.note?'<p style="font-size:13px;margin:8px 0 0;color:var(--alert);font-weight:700">'+c.note+'</p>':'')+'</div>';
   h+='<div class="blk"><h2>Lots du chantier</h2>'+RT.metiersOn().map(function(k){return '<div class="lot"><span>'+RT.METIERS[k].n+'</span><small class="muted">'+RT.METIERS[k].taches.length+' étapes</small></div>'}).join('')+'</div>';
+  h+='<div class="row" style="margin-bottom:8px"><button class="btn2 pk" onclick="materiel(\''+id+'\')">'+ic('truck')+'Matériel du chantier</button>'+(id==='hue'&&r==='chef'?'<button class="go" onclick="reception()">'+ic('sign')+'Faire la réception</button>':'')+'</div>';
   h+='<div class="row">'+(id==='rey'?'<a class="go" style="text-decoration:none;flex:1" href="plan.html?r=chef">'+ic('plan')+'Plan et murs</a>':'')+'<button class="btn2 pk" onclick="fermer();S.role=\'client\';save();rRoles();go(\'cli\')">'+ic('eye')+'Ce que voit le client</button></div></div>';
   fen(h)}
 /* planning : voir plus bas */
@@ -475,6 +484,7 @@ V.bacc=function(){
   var nd=S.dem.filter(function(d){return d.etat==='nouv'}).length,nm=S.mat.filter(function(m){return m.etat==='dem'}).length;
   h+='<div class="ck-top monte"><span class="ico">'+ic('robot')+'</span><div><b class="t">Votre journée, par Cliky</b><p><b>'+nd+' demande'+(nd>1?'s':'')+'</b> à rappeler, la situation n°2 de Mme Rey est prête à partir, la relance de M. et Mme Bonnet est écrite'+(nm?', et <b>'+nm+' demande de matériel</b> du chantier à commander':'')+'.</p></div></div>';
   var D='';
+  D+=ln('euro','Paie de novembre prête','Heures, paniers et trajets calculés depuis le pointage','fen(vuePaie())');
   S.dem.filter(function(d){return d.etat==='nouv'}).forEach(function(d){D+=ln('send',d.nom+' · '+d.t,d.lieu+' · '+d.h,'voirDem(\''+d.id+'\')')});
   S.mat.filter(function(m){return m.etat==='dem'}).forEach(function(m){D+=ln('truck','Matériel · '+m.t,'Demandé par '+m.qui+' · '+m.ch,'go(\'cmd\')')});
   S.av.filter(function(a){return a.etat==='signe'&&!a.fact}).forEach(function(a){D+=ln('sign','Avenant signé · '+a.ch,eur(a.tot)+' HT à ajouter à la prochaine facture','factAv(\''+a.id+'\')')});
@@ -773,8 +783,8 @@ if(!S.ges)S.ges='dev';
 function sansTitre(h){return h.replace(/^<h1>.*?<\/h1><p class="sous">.*?<\/p>/,'')}
 V.ges=function(){var g=S.ges;
   var h='<h1>Gestion</h1><p class="sous">Les patrons voient tout : devis, factures, clients et chiffres</p>';
-  h+='<div class="row chips" style="margin-bottom:12px">'+[['dev','Devis'],['fac','Factures'],['cli','Clients'],['chf','Chiffres'],['cmd','Commandes']].map(function(o){return '<button class="pk" aria-pressed="'+(g===o[0])+'" onclick="S.ges=\''+o[0]+'\';save();re()">'+o[1]+'</button>'}).join('')+'</div>';
-  if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else h+=vueChiffres();
+  h+='<div class="row chips" style="margin-bottom:12px">'+[['dev','Devis'],['fac','Factures'],['cli','Clients'],['chf','Chiffres'],['cmd','Commandes'],['paie','Paie'],['pap','Papiers']].map(function(o){return '<button class="pk" aria-pressed="'+(g===o[0])+'" onclick="S.ges=\''+o[0]+'\';save();re()">'+o[1]+'</button>'}).join('')+'</div>';
+  if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else if(g==='paie')h+=vuePaie();else if(g==='pap')h+=vuePapiers();else h+=vueChiffres();
   return h};
 var CLI=[{n:'Mme Rey',l:'Grenoble',e:'Chantier en cours',ch:'rey',ca:48600,pay:14580},{n:'M. et Mme Bonnet',l:'Meylan',e:'Chantier en cours',ch:'mey',ca:31200,pay:9360,ret:1},{n:'M. Faure',l:'Revel',e:'Chantier en cours',ch:'rev',ca:92000,pay:27600},
  {n:'Cabinet Martin',l:'Saint-Martin-d\'Hères',e:'Chantier en cours',ch:'cab',ca:22400,pay:11200},{n:'M. et Mme Girard',l:'Alpe d\'Huez',e:'Chantier en cours',ch:'hue',ca:64000,pay:44800},
@@ -798,6 +808,52 @@ function vraie(){var el=$('vc');if(!el||!window.VraieCarte)return;var f=CARTE_F,
   if(f!=='ch')DEVIS.forEach(function(v,i){P.push({lat:v.g[0],lon:v.g[1],ancre:'center',html:'<span class="vdv" title="'+v.n+'"></span>',onClick:function(){voirDevis(i)}})});
   if(f!=='dv')CH.forEach(function(c){P.push({lat:GEO[c.id][0],lon:GEO[c.id][1],z:2,html:bulleHtml(c),onClick:function(){ficheCh(c.id)}})});
   VraieCarte(el,{bornes:[[5.66,45.07],[6.10,45.30]],points:P})}
+
+/* ================= 5 points : matériel, paie, papiers, réception ================= */
+/* 5 · matériel calculé depuis le plan */
+function nbEl(t){return S.plan.el.filter(function(e){return t.indexOf(e.t)>=0}).length}
+function matPlan(){return [
+  ['Placo',[['Plaques BA13 120 × 250',17,'faux plafonds séjour, chambre 2, entrée'],['Plaques hydro 120 × 250',4,'salle de bain et WC'],['Suspentes',45,'1 tous les 1,2 m²'],['Fourrures F530',38,'barres de 3 m']]],
+  ['Électricité',[['Spots LED GU10 encastrés',16,'6 séjour, 4 chambre 2, 3 salle de bain, 2 entrée, 1 WC'],['Prises de courant',nbEl(['pc','pc2','p32']),'comptées sur les murs du plan'],['Interrupteurs',nbEl(['int','vv']),'comptés sur les murs du plan'],['Détecteur de fumée',1,'entrée'],['Boîtiers d\'encastrement',16+nbEl(['pc','pc2','int','vv']),'spots, prises, interrupteurs']]],
+  ['Sols',[['Parquet chêne contrecollé',50.3,'m² · 45,7 m² + 10 % de chute'],['Sous-couche résiliente 2 mm',50.3,'m²'],['Carrelage 60 × 60 antidérapant',17.5,'m² · salle de bain + entrée, + 10 %'],['Carrelage 30 × 60',1.6,'m² · WC, + 10 %']]],
+  ['Plomberie et ventilation',[['Receveur extra-plat 120 × 120',1,'salle de bain'],['Bouches VMC Ø 125',2,'salle de bain et WC']]]]}
+function materiel(id){if(id!=='rey'){fen('<h3>Matériel du chantier</h3><p class="muted">Dans la démo, la liste calculée depuis le plan est faite pour l\'appartement Rey.</p><button class="go" style="width:100%" onclick="materiel(\'rey\')">Voir l\'appartement Rey</button>');return}
+  var h='<h3>Matériel · Appartement Rey</h3><p class="muted" style="margin:0 0 10px">Calculé depuis le plan (murs, plafond, sol). Le plan change, la liste suit.</p>';
+  matPlan().forEach(function(g){h+='<div class="blk" style="margin-bottom:8px"><h2 style="font-size:15px">'+g[0]+'</h2>'+g[1].map(function(l){return '<div class="post" style="padding:7px 0;border-top:1px solid var(--line)"><span><b style="font-size:14px">'+l[0]+'</b><br><small class="muted">'+l[2]+'</small></span><b style="font-size:16px">'+String(l[1]).replace('.',',')+'</b></div>'}).join('')+'</div>'});
+  h+=S.cmdPlan?'<div class="ck-top"><span class="ico">'+ic('truck')+'</span><div><b class="t">Commande envoyée</b><p>Livraison mercredi 18 sur le chantier, déjà posée dans le planning.</p></div></div>':'<button class="go" style="width:100%" onclick="commanderPlan()">'+ic('truck')+'Préparer la commande fournisseur</button><p class="muted" style="font-size:12px;margin:8px 2px 0">Quantités d\'exemple, à vérifier avant de commander. Rien ne part sans votre accord.</p>';
+  fen(h)}
+function commanderPlan(){fen('<h3>Commande préparée par Cliky</h3><p class="muted" style="margin:0 0 10px">Une commande par fournisseur, avec la livraison sur le chantier.</p>'+
+  [['Négoce matériaux','Placo, sols, receveur','placo + sols'],['Négoce électricité','Spots, prises, interrupteurs, boîtiers','électricité'],['Négoce plomberie','Bouches VMC','plomberie']].map(function(f){return '<div class="post" style="padding:9px 0;border-top:1px solid var(--line)"><span><b style="font-size:14px">'+f[0]+'</b><br><small class="muted">'+f[1]+'</small></span><span class="etq ok">Prête</span></div>'}).join('')+
+  '<div class="post" style="padding:9px 0;border-top:1px solid var(--line)"><span>Livraison</span><b>Mercredi 18 novembre, 7 h 30</b></div><button class="go" style="width:100%;margin-top:10px" onclick="S.cmdPlan=1;LIV.rey.push([0,2,\'Spots, prises, parquet (commande du plan)\']);RT.evt(\'chef\',N.chef,\'Commande du plan envoyée · livraison mercredi\',\'truck\');save();fermer();toast(\'Commandes envoyées · livraison posée dans le planning\',\'truck\')">'+ic('send')+'Envoyer les commandes</button>')}
+/* 3 · heures vers la paie */
+var PAIE=[['Mathieu',151.67,9,20,'Zone 2'],['Lucas',151.67,4.5,20,'Zone 1'],['Benoît',151.67,12,19,'Zone 5'],['Kevin',140,0,18,'Zone 2'],['Damien',151.67,6,20,'Zone 3'],['Thomas',147,2,19,'Zone 3']];
+function vuePaie(){var h='<div class="pile">'+blk('Paie de novembre · prête pour le comptable','euro','<p class="muted" style="font-size:13px;margin:0 0 8px">Calculée depuis le pointage : heures, heures en plus, paniers repas et zones de trajet du BTP. Chiffres d\'exemple.</p>'+
+  '<div class="paie"><span></span><b>Heures</b><b>En plus</b><b>Paniers</b><b>Trajet</b>'+PAIE.map(function(r){return '<span class="qui"><span class="av">'+r[0][0]+'</span>'+r[0]+'</span><span>'+String(r[1]).replace('.',',')+'</span><span'+(r[2]>8?' style="color:var(--warn);font-weight:800"':'')+'>'+String(r[2]).replace('.',',')+'</span><span>'+r[3]+'</span><span>'+r[4]+'</span>'}).join('')+'</div>'+
+  '<button class="go" style="width:100%;margin-top:12px" onclick="S.paieOk=1;save();re();toast(\'Fichier de paie envoyé au comptable\',\'send\')">'+ic('send')+(S.paieOk?'Renvoyer au comptable':'Envoyer au comptable')+'</button>'+(S.paieOk?'<p class="muted" style="font-size:12px;margin:8px 0 0;text-align:center">Envoyé le 16 novembre. Le comptable reçoit un tableau prêt à saisir.</p>':''));
+  h+=blk('À vérifier avant l\'envoi','alert',ln('clock','Benoît · 12 h en plus','Chalet Girard, Alpe d\'Huez : grand déplacement les 3 et 4 novembre ?','toast(\'Cliky a demandé à Benoît de confirmer\',\'chat\')')+ln('cal','Kevin · 140 h','2 jours de congé posés et acceptés : rien à faire',''));
+  return h+'</div>'}
+/* 4 · papiers obligatoires */
+var PAP=[{g:'Sous-traitants · attestation URSSAF (tous les 6 mois)',l:[['Plâtrerie Belledonne','Valable jusqu\'au 12 mars 2027','ok'],['Élec Alpes','Expire dans 9 jours · Cliky a demandé la nouvelle','warn'],['Carrelage Dauphiné','Valable jusqu\'au 2 février 2027','ok'],['Menuiserie Chartreuse','Manquante : ne pas les faire venir jeudi sans elle','alert']]},
+ {g:'Assurances',l:[['Décennale de l\'entreprise','Valable jusqu\'au 31 décembre 2026 · jointe à chaque devis','ok'],['Décennale Élec Alpes','Valable jusqu\'au 30 juin 2027','ok'],['Clim\'Isère · responsabilité civile','Expire dans 18 jours · demande envoyée','warn']]},
+ {g:'Habilitations et formations',l:[['Mathieu · habilitation électrique B2V BR','Fin le 10 janvier 2027 · recyclage à planifier','warn'],['Lucas · habilitation BS','Valable jusqu\'en 2028','ok'],['Damien · travail en hauteur','Valable jusqu\'en 2027','ok']]}];
+function vuePapiers(){var n=0;PAP.forEach(function(g){g.l.forEach(function(x){if(x[2]!=='ok')n++})});
+  var h='<div class="pile"><div class="ck-top monte"><span class="ico">'+ic('shield')+'</span><div><b class="t">'+n+' papiers à surveiller</b><p>Cliky relance tout seul les sous-traitants 15 jours avant la fin. Une attestation URSSAF manquante peut rendre l\'entreprise responsable des dettes du sous-traitant.</p></div></div>';
+  PAP.forEach(function(g){h+=blk(g.g,'doc',g.l.map(function(x){return '<div class="post" style="padding:9px 0;border-top:1px solid var(--line);gap:10px"><span><b style="font-size:14px">'+x[0]+'</b><br><small class="muted">'+x[1]+'</small></span><span class="etq '+x[2]+'">'+(x[2]==='ok'?'OK':x[2]==='warn'?'Bientôt':'Manquant')+'</span></div>'}).join(''))});
+  return h+'</div>'}
+/* 2 · fin de chantier : réception, réserves, PV, DOE */
+if(!S.recep)S.recep={res:[{t:'Éclat de peinture sur la porte',p:'Chambre 1',ok:0},{t:'Joint silicone de la douche à reprendre',p:'Salle de bain',ok:0},{t:'Plinthe décollée',p:'Séjour',ok:0}],signe:0};
+function reception(){var R=S.recep,h='<h3>Réception · Chalet Girard</h3>';
+  if(!R.signe){h+='<p class="muted" style="margin:0 0 10px">Visite avec M. et Mme Girard. Notez les réserves : chacune est photographiée et posée sur le plan.</p>';
+    h+=R.res.map(function(r,i){return '<div class="post" style="padding:9px 0;border-top:1px solid var(--line)"><span class="qui"><span class="phm">'+ic('image')+'</span><span><b style="font-size:14px">'+r.t+'</b><br><small class="muted">'+r.p+'</small></span></span><button class="rond2 pk" onclick="S.recep.res.splice('+i+',1);save();reception()" aria-label="Enlever">'+ic('x')+'</button></div>'}).join('');
+    h+='<button class="btn2 pk" style="width:100%;margin:8px 0" onclick="S.recep.res.push({t:\'Trace sur le mur du couloir\',p:\'Entrée\',ok:0});save();reception()">'+ic('plus')+'Ajouter une réserve (photo)</button>';
+    h+='<div class="blk" style="margin-top:6px"><h2 style="font-size:15px">Signature du client</h2><div class="sig" id="sig"><span>M. et Mme Girard signent ici, sur le téléphone</span></div></div><button class="go" style="width:100%;margin-top:10px" onclick="signerPV()">'+ic('sign')+'Signer le procès-verbal ('+R.res.length+' réserve'+(R.res.length>1?'s':'')+')</button>'}
+  else{var lv=R.res.filter(function(r){return r.ok}).length;
+    h+='<div class="ck-top"><span class="ico">'+ic('check')+'</span><div><b class="t">PV signé le 16 novembre</b><p>Le chantier est réceptionné. La garantie de parfait achèvement court jusqu\'au 16 novembre 2027 : Cliky vous le rappellera.</p></div></div>';
+    h+='<div class="blk" style="margin-top:10px"><h2 style="font-size:15px">Réserves à lever ('+lv+' sur '+R.res.length+')</h2>'+R.res.map(function(r,i){return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span><b style="font-size:14px">'+r.t+'</b><br><small class="muted">'+r.p+(r.ok?' · levée, photo après travaux':'')+'</small></span>'+(r.ok?'<span class="etq ok">Levée</span>':'<button class="btn2 pk" onclick="S.recep.res['+i+'].ok=1;save();reception()">'+ic('check')+'Levée</button>')+'</div>'}).join('')+'</div>';
+    h+='<div class="blk" style="margin-top:10px"><h2 style="font-size:15px">Créé tout seul</h2>'+[['doc','Dossier des ouvrages exécutés (DOE)','Plans à jour, photos des réseaux avant fermeture, notices et garanties des appareils, attestation Consuel'],['euro','Facture de solde','19 200 € HT, prête à partir'],['sign','PV de réception','Signé, rangé dans les documents du client']].map(function(x){return ln(x[0],x[1],x[2],'toast(\'Document d\\\'exemple\',\'doc\')')}).join('')+'</div>'}
+  fen(h)}
+function signerPV(){var z=$('sig');z.innerHTML='<svg viewBox="0 0 300 90" class="sigs"><path d="M20 60 C40 20 60 80 80 45 S120 30 130 55 S170 70 190 35 S240 50 280 40"/></svg>';
+  setTimeout(function(){S.recep.signe=1;RT.evt('client','Girard','PV de réception signé','sign');save();reception();toast('PV signé · DOE et facture de solde créés','check')},900)}
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
