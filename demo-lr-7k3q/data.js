@@ -3,7 +3,7 @@
 (function(){
   var RT=window.RT={};
   RT.NOMS={chef:'Antoine',bureau:'Claire',ouvrier:'Lucas',client:'Mme Rey'};
-  RT.ROLES={chef:'Patron',bureau:'Bureau',ouvrier:'Ouvrier',client:'Client'};
+  RT.ROLES={chef:'Direction',bureau:'Bureau',ouvrier:'Terrain',client:'Client'};
   /* --- Plan du chantier Rey (appartement T3, Grenoble) : cotes en cm, pièces dans le sens des aiguilles d'une montre --- */
   RT.HAUT=250;
   RT.PIECES=[
