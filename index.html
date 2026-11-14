@@ -11,7 +11,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"ProClik","slogan":"Votre commerce en un clic","description":"Création de sites pour commerces et artisans, reliés à une appli qui range demandes, devis, factures et agenda.","url":"https://proclik.github.io/","image":"https://proclik.github.io/partage.png","areaServed":{"@type":"AdministrativeArea","name":"Isère"},"address":{"@type":"PostalAddress","addressRegion":"Isère","addressCountry":"FR"}}</script>
 <link rel="apple-touch-icon" href="espace/icone-1024.png?v=4"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Nunito:wght@800;900&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="/n1.css?v=2">
 <style>
 /* Mise en page : 7 bandes pleine largeur, contenu centré 1080px, un seul bouton fort par écran */
@@ -229,7 +229,8 @@ body[data-v="pc"] .cl, body[data-v="cl"] .pc{display:none!important}
 /* 2. atouts */
 .trois{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:36px}
 .trois>div{display:flex;flex-direction:column;gap:8px;min-width:0}
-.trois h3{font-size:19px;font-weight:800}
+.trois h3{font-size:19px;font-weight:800}.trois.sec>div{display:block;padding:22px;border-radius:20px;background:var(--calme);box-shadow:var(--sh)}.trois.sec .pastille{margin-bottom:14px}.trois.sec p{margin-top:6px}
+#securite .lead{max-width:60ch;margin-top:10px}
 .trois p{color:var(--muted)}
 @media (max-width:760px){.trois{grid-template-columns:1fr;gap:22px}}
 
@@ -752,6 +753,18 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
 </div></section>
 
 <!-- 6. GARANTIE + QUESTIONS (+ AVIS) -->
+<!-- SÉCURITÉ DES DONNÉES -->
+<section id="securite"><div class="wrap">
+  <span class="num"><b>6</b><span class="pc">Vos données</span><span class="cl">Vos données</span></span>
+  <h2>Vos données <span class="or">restent les vôtres.</span></h2>
+  <p class="lead">Clients, devis, plans, photos, factures : ce sont les informations de votre entreprise. Elles sont traitées avec le plus grand soin.</p>
+  <div class="trois sec">
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.2"/><path d="M4 10h16"/></svg></span><h3>Un espace par entreprise</h3><p>Vos clients, devis, photos et plans restent dans votre espace, séparés de ceux des autres entreprises. Rien n'est mélangé.</p></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="3.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg></span><h3>Un accès rien qu'à vous</h3><p>On entre avec un code personnel. Sans lui, rien ne s'ouvre, même avec le lien. La connexion est chiffrée (https).</p></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></span><h3>Jamais revendues</h3><p>Vos données ne servent qu'à votre activité. Elles ne sont ni revendues, ni partagées avec d'autres clients, y compris par Cliky.</p></div>
+  </div>
+</div></section>
+
 <section id="questions"><div class="wrap">
   <span class="num"><b>6</b><span class="pc">La garantie</span><span class="cl">Avis et questions</span></span>
   <div class="deux">
@@ -769,6 +782,7 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Je ne suis pas à l'aise avec les applis.</span></summary><p>C'est fait pour vous : un gros bouton par étape, et on vous montre tout sur votre téléphone.</p></details>
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Puis-je garder mon site actuel ?</span></summary><p>Oui. L'Espace existe aussi tout seul, avec une petite page de demande à votre nom.</p></details>
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Mes devis et factures sont-ils conformes ?</span></summary><p>Oui, ils sont faits avec un logiciel de facturation, prêts pour la facture électronique 2026.</p></details>
+        <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Mes données sont-elles protégées ?</span></summary><p>Oui. Votre espace est séparé de celui des autres entreprises, on y entre avec un code personnel et la connexion est chiffrée. Vos données ne sont ni revendues ni partagées.</p></details>
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Et si j'arrête ?</span></summary><p>Texte à écrire avec Cyril.</p></details>
       </div>
       <div class="cl">

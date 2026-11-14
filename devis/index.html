@@ -1,9 +1,9 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
 <title>Clik'Devis BRS</title><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+
+
+<link rel="stylesheet" href="../fonts/fonts.css">
 <script src="../espace/theme.js?v=1"></script>
 <script src="boutons-icones.js?v=3" defer></script>
 <script src="icones.js?v=1" defer></script>
@@ -119,6 +119,7 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .tips{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:grid;gap:2px}
 .check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
 .check input{width:22px;height:22px;margin-top:1px;accent-color:var(--ink);flex:none}
+.check .rgl{display:block;margin-top:3px;font-size:13px;color:var(--muted,inherit);text-decoration:underline;text-underline-offset:2px}
 .note{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .err{color:var(--err);font-weight:700;font-size:14px;min-height:1.2em;margin:6px 0 0}
 .nav{position:fixed;left:0;right:0;bottom:var(--vb,0px);transition:bottom .15s;background:var(--surface);border-top:1px solid var(--line);
@@ -809,7 +810,7 @@ function fieldH0(f,sec,i,id){const o=obj(sec,i),da=`data-s="${sec}" data-i="${i?
  if(f.t==="step"){const v=o[f.k]??f.min;return`<div class="q"><span class="lab">${esc(f.l)}</span>${hint}<div class="numbox" style="width:max-content"><button type="button" aria-label="Moins" data-step="-1" ${da} data-min="${f.min}" data-max="${f.max}">−</button><input type="text" readonly value="${v}" aria-label="${esc(f.l)}" style="width:64px"><button type="button" aria-label="Plus" data-step="1" ${da} data-min="${f.min}" data-max="${f.max}">+</button></div></div>`}
  if(f.t==="text"||f.t==="tel"||f.t==="email")return`<div class="q">${lab}${hint}<input id="${id}" type="${f.t}" ${f.im?`inputmode="${f.im}"`:""} ${f.ac?`autocomplete="${f.ac}"`:""} ${f.cap?`autocapitalize="words" data-cap="1"`:""} placeholder="${esc(f.ph||"")}" value="${esc(o[f.k]||"")}" ${da} data-txt="1"></div>`;
  if(f.t==="area")return`<div class="q">${lab}${hint}<textarea id="${id}" placeholder="${esc(f.ph||"")}" ${da} data-txt="1">${esc(o[f.k]||"")}</textarea></div>`;
- if(f.t==="check")return`<div class="q"><label class="check"><input id="${id}" type="checkbox" ${o[f.k]?"checked":""} ${da} data-chk="1"><span>${esc(f.l)}</span></label></div>`;
+ if(f.t==="check")return`<div class="q"><label class="check"><input id="${id}" type="checkbox" ${o[f.k]?"checked":""} ${da} data-chk="1"><span>${esc(f.l)}${f.h||""}</span></label></div>`;
  if(f.t==="note")return`<p class="note">${esc(f.l)}</p>`;
  if(f.t==="file"){const L=files[f.k];return`<div class="q"><span class="lab">${esc(f.l)}</span><label class="drop" for="${id}"><b>${esc(f.big)}</b><span>${esc(f.small)}</span><input id="${id}" type="file" accept="${f.acc}" ${f.multi?"multiple":""} data-file="${f.k}"></label><div class="thumbs">${L.map(x=>`<figure>${x.img?`<img src="${x.img}" alt="">`:`<div class="pdf">PDF</div>`}<figcaption>${esc(x.name)}</figcaption></figure>`).join("")}</div></div>`}
  return"";
