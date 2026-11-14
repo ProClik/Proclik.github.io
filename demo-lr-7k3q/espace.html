@@ -337,6 +337,12 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .sitl>span:first-child{display:flex;flex-direction:column;font-size:14px}.sitl small{color:var(--muted);font-size:12px}
 .sitp{display:flex;align-items:center;gap:8px}.sitp b{min-width:44px;text-align:center;font-size:15px}.sitp button{width:38px;height:38px;border-radius:12px;font-size:20px;font-weight:700}.sitp button:disabled{opacity:.35}
 .certif{display:flex;gap:8px;font-size:13px;margin:10px 2px;align-items:flex-start}.certif input{margin-top:3px;accent-color:var(--nuit)}
+.lst{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.lst:first-of-type{border-top:0}
+.lst .cb{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;padding:0}.lst .cb svg{width:18px;height:18px}
+.lst .lx{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px}.lst .lx small{color:var(--muted);font-size:12px}.lst .lx small svg{width:13px;height:13px;vertical-align:-2px}
+.lst.fini .lx b{text-decoration:line-through;color:var(--muted)}
+.lin{display:flex;gap:8px}.lin input{flex:1;min-width:0;font:inherit;font-size:16px;padding:13px 14px;border-radius:14px;border:0;background:var(--bg);color:var(--fg);box-shadow:var(--in)}
+.lin .mic{width:50px;flex:none;border-radius:14px;display:grid;place-items:center}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
@@ -941,6 +947,44 @@ var _doc=V.doc;V.doc=function(){var h=_doc();
   if(S.fac.f2==='envoyee')h=h.replace(/(<b>Situation n°2<\/b><small>[^<]*<\/small><\/span>)/,'$1');
   var p=S.fac.f2==='envoyee'?'<button class="go" style="width:100%;margin-top:10px" onclick="payerSit()">'+ic('euro')+'Payer la situation n°2 en ligne</button>':S.fac.f2==='payee'?'<p class="muted" style="margin:10px 2px 0">Situation n°2 payée. Merci.</p>':'';
   return h.replace(/(<\/section>)(<\/div>)$/,p+'$1$2')};
+/* ================= Liste du chantier : tout le monde ajoute, tout le monde voit ================= */
+if(!S.liste)S.liste=[
+ {id:1,ch:'rey',k:'mat',t:'Plaques de plâtre BA13 × 42',qui:'Claire',h:'mardi',etat:'cmd',info:'livraison jeudi'},
+ {id:2,ch:'rey',k:'outil',t:'Rapporter la ponceuse girafe du dépôt',qui:'Mathieu',h:'hier',etat:'a'},
+ {id:3,ch:'rey',k:'faire',t:'Protéger le parquet du couloir avant l\'enduit',qui:'Antoine',h:'hier',etat:'a'},
+ {id:4,ch:'rey',k:'info',t:'Mme Rey absente vendredi : clé chez la gardienne',qui:'Claire',h:'ce matin',etat:'a'}];
+var LK={mat:['truck','Matériel'],outil:['wrench','Outil'],faire:['check','À faire'],info:['idea','À savoir']};
+function quiSuisJe(){return N[role()]||N.chef}
+function listeHtml(ch){var L=S.liste.filter(function(x){return x.ch===ch}),na=L.filter(function(x){return x.etat!=='ok'}).length;
+  var h='<p class="muted" style="font-size:12.5px;margin:-4px 0 8px">Ouvriers, bureau et patrons voient la même liste. Ce que l\'un ajoute, les autres le voient tout de suite.</p>';
+  h+=L.length?L.map(function(x){var e=x.etat==='ok'?['ok',x.k==='mat'?'Livré':'Fait']:x.etat==='cmd'?['ok','Commandé']:x.k==='mat'?['warn','À commander']:['',LK[x.k][1]];
+    return '<div class="lst'+(x.etat==='ok'?' fini':'')+'"><button class="cb pk" aria-label="Cocher" onclick="lstOk('+x.id+')">'+(x.etat==='ok'?ic('check'):'')+'</button><span class="lx"><b>'+x.t+'</b><small>'+ic(LK[x.k][0])+' ajouté par '+x.qui+' · '+x.h+(x.info?' · '+x.info:'')+'</small></span><span class="etq '+e[0]+'">'+e[1]+'</span></div>'}).join(''):'<p class="muted" style="margin:0">Rien pour l\'instant.</p>';
+  h+='<button class="go" style="width:100%;margin-top:10px" onclick="ajoutListe(\'mat\',\''+ch+'\')">'+ic('plus')+'Ajouter à la liste</button>';
+  return blk('La liste du chantier'+(na?' <span class="etq warn" style="margin-left:auto">'+na+' en cours</span>':''),'doc',h)}
+function lstOk(id){var x=S.liste.filter(function(y){return y.id===id})[0];x.etat=x.etat==='ok'?'a':'ok';if(x.etat==='ok')RT.evt(role()==='ouvrier'?'ouvrier':'bureau',quiSuisJe(),'Coché sur la liste Rey : '+x.t,'check');save();if($('voile').classList.contains('on')&&$('fen').querySelector('.lst'))reListe();re();toast(x.etat==='ok'?'Coché pour tout le monde':'Remis dans la liste','check')}
+function reListe(){var ch=reListe.ch;if(ch)ficheCh(ch)}
+var LSUG={mat:null,outil:['Ponceuse girafe','Perforateur','Laser de niveau','Échafaudage roulant','Aspirateur de chantier'],faire:['Protéger les sols','Vider la benne','Fermer l\'eau en partant','Rappeler le client'],info:['Clé chez la gardienne','Parking interdit devant l\'immeuble','Ascenseur en panne']};
+function ajoutListe(k,ch){ch=ch||'rey';ajoutListe.k=k;ajoutListe.ch=ch;var v=($('lst-t')||{}).value||'';
+  var sug=k==='mat'?(function(){var L=[];(role()==='ouvrier'?(S.mesMet[N.ouvrier]||[]):RT.metiersOn()).forEach(function(m){if(S.metiers[m])RT.METIERS[m].mat.slice(0,role()==='ouvrier'?9:3).forEach(function(x){L.push(x)})});return L})():LSUG[k];
+  fen('<h3>Ajouter à la liste</h3><p class="muted" style="margin:0 0 10px">'+CH.filter(function(c){return c.id===ch})[0].n+' · tout le monde le verra</p>'+
+   '<div class="row chips" style="margin-bottom:10px">'+Object.keys(LK).map(function(x){return '<button class="pk" aria-pressed="'+(x===k)+'" onclick="ajoutListe(\''+x+'\',\''+ch+'\')">'+LK[x][1]+'</button>'}).join('')+'</div>'+
+   '<div class="lin"><input id="lst-t" placeholder="'+(k==='mat'?'Ex. vis placo 25 mm, 1 boîte':k==='outil'?'Ex. rapporter la ponceuse':k==='faire'?'Ex. protéger le parquet':'Ex. clé chez la gardienne')+'" value="'+v.replace(/"/g,'&quot;')+'"><button class="pk mic" aria-label="Dicter" onclick="lstDicte()">'+ic('mic')+'</button></div>'+
+   '<p class="muted" style="font-size:12.5px;margin:12px 2px 6px">Ou touchez pour ajouter directement</p><div class="row chips">'+sug.map(function(s,i){return '<button class="pk" onclick="lstAdd('+i+')">'+s+'</button>'}).join('')+'</div>'+
+   '<button class="go" style="width:100%;margin-top:14px" onclick="lstAdd()">'+ic('plus')+'Ajouter</button>');ajoutListe.sug=sug}
+function lstDicte(){var t=ajoutListe.k==='mat'?'Une boîte de vis placo 25 millimètres':ajoutListe.k==='outil'?'Rapporter le laser de niveau':ajoutListe.k==='faire'?'Vider la benne avant vendredi':'Le voisin du dessous travaille de nuit, pas de bruit avant 9 heures',i=0,e=$('lst-t');
+  var it=setInterval(function(){i+=3;e.value=t.slice(0,i);if(i>=t.length)clearInterval(it)},40)}
+function lstAdd(i){var t=i===undefined?($('lst-t').value||'').trim():ajoutListe.sug[i];if(!t){$('lst-t').focus();return}
+  var k=ajoutListe.k,ch=ajoutListe.ch,q=quiSuisJe(),id=Date.now(),cn=CH.filter(function(c){return c.id===ch})[0];
+  S.liste.unshift({id:id,ch:ch,k:k,t:t.charAt(0).toUpperCase()+t.slice(1),qui:q,h:'à l\'instant',etat:'a'});
+  if(k==='mat')S.mat.unshift({id:id,ch:cn.n.replace('Appartement ','')+', '+cn.l,t:t,etat:'dem',qui:q});
+  RT.evt(role()==='ouvrier'?'ouvrier':'bureau',q,'Ajouté à la liste '+cn.n+' : '+t,LK[k][0]);save();fermer();re();
+  toast(k==='mat'?'Sur la liste de tous · '+N.bureau+' le commande':'Sur la liste de tous','check')}
+/* l'ouvrier passe par la liste ; le bureau qui commande met la liste à jour */
+manque=function(){ajoutListe('mat','rey')};
+var _cmdr=commander;commander=function(id){_cmdr(id);S.liste.forEach(function(x){if(x.id===id){x.etat='cmd';x.info='livraison demain matin'}});save();re()};
+var _cmdV=V.cmd;V.cmd=function(){return _cmdV().replace(/<\/div>$/,listeHtml('rey')+'</div>')};
+var _jour=V.jour;V.jour=function(){return _jour().replace('Il manque du matériel<small>Le bureau commande</small>','Ajouter à la liste<small>Matériel, outil, à faire : tout le monde le voit</small>').replace(/(<div class="gros monte">[\s\S]*?<\/div>)/,'$1'+listeHtml('rey'))};
+var _fCh=ficheCh;ficheCh=function(id){_fCh(id);reListe.ch=id;var f=$('fen'),p=f.querySelector('.pile');if(p){var d=document.createElement('div');d.innerHTML=listeHtml(id);p.insertBefore(d.firstChild,p.children[1]||null)}};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
