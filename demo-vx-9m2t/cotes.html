@@ -1,0 +1,844 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Prise de cotes</title><meta name="robots" content="noindex">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Maquette « Prise de cotes menuiserie » au style N1 : bleu nuit pour les actions, laiton en touche, seul ce qui se touche est en relief. */
+:root{
+  --bg:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.09);
+  --nuit:#1B2440;--nuit-fg:#fff;--laiton:#A8823F;--calme:#F6F7F9;
+  --calme-sh:0 1px 2px rgba(14,19,34,.06),0 10px 28px rgba(14,19,34,.07);
+  --teinte:color-mix(in srgb,var(--nuit) 7%,var(--calme));--tint:color-mix(in srgb,var(--laiton) 12%,var(--calme));
+  --pk:0 1px 1px rgba(255,255,255,.9) inset,0 0 0 1px rgba(14,19,34,.08),0 2px 3px rgba(14,19,34,.08),0 8px 16px -8px rgba(14,19,34,.25);
+  --in:inset 2px 2px 5px rgba(26,34,64,.12),inset -2px -2px 5px rgba(255,255,255,.9);
+  --up:var(--pk);--wall:#D6DAE2;--wall2:#C3C8D3;--old:#9AA2B4;--glass:#DCE7F2;
+  --ok:#3E8E6A;--warn:#C27C2C;--doux:cubic-bezier(.22,1,.36,1);
+  --f:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141927;--fg:#F1F3F9;--muted:#AEB6CC;--line:rgba(255,255,255,.08);
+  --nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--calme:#1F2638;--calme-sh:0 10px 28px rgba(0,0,0,.35);
+  --pk:0 1px 0 rgba(255,255,255,.06) inset,0 0 0 1px rgba(255,255,255,.07),0 8px 16px -8px rgba(0,0,0,.6);
+  --in:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(255,255,255,.04);
+  --wall:#2C3347;--wall2:#3A4259;--old:#6E778D;--glass:#2A3A52;--ok:#6FC39B;--warn:#E3A65E;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141927;--fg:#F1F3F9;--muted:#AEB6CC;--line:rgba(255,255,255,.08);
+  --nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--calme:#1F2638;--calme-sh:0 10px 28px rgba(0,0,0,.35);
+  --pk:0 1px 0 rgba(255,255,255,.06) inset,0 0 0 1px rgba(255,255,255,.07),0 8px 16px -8px rgba(0,0,0,.6);
+  --in:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(255,255,255,.04);
+  --wall:#2C3347;--wall2:#3A4259;--old:#6E778D;--glass:#2A3A52;--ok:#6FC39B;--warn:#E3A65E;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:500 15px/1.45 var(--f);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
+h1,h2,h3{text-wrap:balance;margin:0}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--laiton);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font:800 22px var(--f)}
+.top .tag{font:700 12px var(--f);color:var(--muted)}
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;box-shadow:var(--in);width:max-content;max-width:100%;overflow-x:auto}
+.tabs button{border:0;background:transparent;padding:9px 16px;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--bg);box-shadow:var(--up);color:var(--fg)}
+.view[hidden]{display:none!important}
+
+
+
+[hidden]{display:none!important}
+/* dictée : le micro toujours au centre, en bas */
+.dkl{border:0;background:transparent;color:var(--muted);font:700 13px var(--f);padding:6px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;align-self:center}
+.foot{position:relative}
+.mic{position:absolute;left:50%;top:50%;transform:translate(-50%,-44%);width:54px;height:54px;border-radius:50%;border:0;background:var(--bg);box-shadow:var(--pk),0 0 0 1px color-mix(in srgb,var(--laiton) 45%,transparent);display:grid;place-items:center;color:var(--nuit);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.mic svg{width:24px;height:24px}
+.mic.on{background:var(--nuit);color:var(--nuit-fg);box-shadow:0 0 0 0 color-mix(in srgb,var(--laiton) 60%,transparent);animation:micp 1.4s ease-out infinite}
+@keyframes micp{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--laiton) 55%,transparent)}100%{box-shadow:0 0 0 16px transparent}}
+@media (prefers-reduced-motion:reduce){.mic.on{animation:none;box-shadow:0 0 0 3px var(--laiton)}}
+.heard{position:absolute;left:12px;right:12px;bottom:84px;z-index:3;background:var(--nuit);color:var(--nuit-fg);border-radius:14px;padding:8px 12px;font:700 13.5px var(--f);text-align:center;pointer-events:none;box-shadow:0 10px 24px -10px rgba(0,0,0,.4)}
+.heard small{display:block;font-weight:600;font-size:11.5px;opacity:.75}
+.bpd{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.bpd button{min-height:58px;border-radius:13px;border:0;background:var(--bg);box-shadow:var(--pk);cursor:pointer;display:grid;place-items:center;align-content:center;gap:1px;font-weight:800;font-size:19px;font-variant-numeric:tabular-nums;color:var(--fg);touch-action:manipulation;position:relative}
+.bpd button small{font-size:11.5px;font-weight:600;color:var(--muted)}
+.bpd button[aria-pressed="true"]{background:var(--teinte);box-shadow:0 0 0 1.5px var(--nuit)}
+.oth{display:grid;grid-template-columns:auto 1fr auto 1fr auto;gap:6px;align-items:center;margin-top:8px;padding:8px;border-radius:13px;background:var(--bg);box-shadow:var(--in)}
+.oth span,.oth em{font-weight:700;font-size:13px;color:var(--muted);font-style:normal}
+.oth input{min-width:0;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--calme);color:var(--fg);font:800 17px var(--f);text-align:center;font-variant-numeric:tabular-nums}
+.oth .go{min-height:40px;padding:0 14px;border-radius:11px;font-size:14px}
+/* photos là où c'est utile */
+.qt{display:flex;gap:10px;align-items:flex-start}.qt>div{flex:1;min-width:0}
+.cam{flex:none;display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 10px 0 8px;border-radius:999px;border:0;background:var(--bg);box-shadow:var(--pk);font:800 12px var(--f);color:var(--fg);cursor:pointer;touch-action:manipulation}
+.cam svg{width:18px;height:18px}.cam img{width:26px;height:26px;border-radius:7px;object-fit:cover;margin-left:-2px}
+.cam.on{box-shadow:0 0 0 1.5px var(--laiton)}
+.phx{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.phx button{aspect-ratio:4/3;border-radius:14px;border:0;background:var(--bg);box-shadow:var(--pk);display:grid;place-items:center;gap:4px;font-weight:800;font-size:13.5px;cursor:pointer;overflow:hidden;position:relative;padding:0}
+.phx button svg{width:30px;height:30px}.phx button img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.phx button b{position:relative;z-index:1}.phx button.on b{background:var(--nuit);color:var(--nuit-fg);padding:3px 8px;border-radius:99px;align-self:end;margin-bottom:8px}
+/* nouvelle menuiserie : copier la précédente */
+.cp{display:grid;gap:8px}
+.cp button{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;text-align:left;padding:12px;border-radius:16px;border:0;background:var(--bg);box-shadow:var(--pk);cursor:pointer;color:var(--fg)}
+.cp button .ico{width:44px;height:44px;border-radius:12px;background:var(--calme);display:grid;place-items:center;color:var(--nuit)}.cp button .ico svg{width:26px;height:26px}
+.cp button b{display:block;font-size:15px}.cp button small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
+.cp button.main{box-shadow:var(--pk),0 0 0 1.5px var(--laiton)}
+/* récap compact : une ligne par partie */
+.rs{display:grid;gap:5px}
+.rs button{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;text-align:left;padding:6px 12px;border-radius:13px;border:0;background:var(--bg);box-shadow:var(--pk);cursor:pointer;color:var(--fg)}
+.rs button h5{margin:0;font:800 10.5px var(--f);letter-spacing:.07em;text-transform:uppercase;color:var(--laiton)}
+.rs button p{margin:1px 0 0;font-weight:700;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rs button p i{font-style:normal;color:var(--laiton)}
+.rs button em{font-style:normal;font-size:11px;font-weight:800;color:var(--laiton);white-space:nowrap}
+.rs button em.ok{color:var(--ok)}
+.rs .phs{display:inline-flex;gap:4px;vertical-align:middle;margin-left:6px}.rs .phs img{width:20px;height:20px;border-radius:5px;object-fit:cover}
+.rcf{display:grid;grid-template-columns:auto 1fr;gap:8px;margin-top:auto}
+/* ---------- maquette : téléphone ---------- */
+.demo{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.demo{grid-template-columns:minmax(0,1fr)}.side{order:2}}
+.phone{position:relative;border-radius:30px;background:var(--bg);box-shadow:0 0 0 1px var(--line),0 24px 60px -24px rgba(14,19,34,.35);min-height:740px;display:flex;flex-direction:column;overflow:hidden}
+@media (max-width:460px){.phone{border-radius:22px;min-height:640px}}
+.ph-h{display:flex;align-items:center;gap:10px;padding:10px 12px 6px}
+.ph-h .t{flex:1;min-width:0}
+.ph-h b{display:block;font:800 16px var(--f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph-h small{display:block;font:600 12px var(--f);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ring{flex:none;width:34px;height:34px}
+.ib{flex:none;min-width:40px;height:40px;padding:0 12px;border-radius:999px;border:0;background:var(--bg);box-shadow:var(--pk);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;font:800 13px var(--f);color:var(--fg);transition:transform .15s var(--doux)}
+.ib:active{transform:scale(.96);box-shadow:var(--in)}
+.ib svg{width:18px;height:18px}
+.exc{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);background:var(--teinte);border-radius:99px;padding:3px 9px;margin:0 14px;align-self:flex-start}
+.exc::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--laiton)}
+.ph-b{flex:1;display:flex;flex-direction:column;gap:9px;padding:4px 12px 12px;min-height:0}
+.secs{display:flex;gap:5px;overflow-x:auto;padding:2px 12px 6px;scrollbar-width:none}.secs::-webkit-scrollbar{display:none}
+.secs button{flex:none;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:5px 10px;font:700 12px var(--f);background:var(--calme);color:var(--muted);cursor:pointer;box-shadow:0 0 0 1px var(--line)}
+.secs button.ok{color:var(--fg)}.secs button.ok::before{content:"✓";color:var(--ok);font-weight:800}
+.secs button.cur{background:var(--nuit);color:var(--nuit-fg);box-shadow:none}.secs button.cur::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--laiton)}
+.secs button.rcb{color:var(--nuit);box-shadow:0 0 0 1.5px var(--nuit)}
+.q h3{font:800 20px/1.2 var(--f);letter-spacing:-.01em}
+.q p.h{margin:3px 0 0;color:var(--muted);font-size:13px;line-height:1.35}
+.q{display:grid;gap:9px;animation:s9i .18s var(--doux) both}
+.q.back{animation-name:s9b}
+.q.still{animation:none}
+@keyframes s9i{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+@keyframes s9b{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.q{animation:none}}
+.blk{background:var(--calme);border-radius:18px;box-shadow:var(--calme-sh);padding:9px}
+.ch{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ch.one{grid-template-columns:1fr}
+.ch button{min-height:48px;border-radius:13px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:0;background:var(--bg);box-shadow:var(--pk);padding:8px 11px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;line-height:1.25;transition:transform .15s var(--doux),background .15s;outline:2px solid transparent;outline-offset:-2px}
+.ch button:active{transform:scale(.97)}
+.ch button small{display:block;font-weight:600;font-size:12px;color:var(--muted);margin-top:2px}
+.ch button>svg{flex:none;width:26px;height:26px;color:var(--fg)}
+.ch button[aria-pressed="true"]{background:var(--teinte);outline-color:var(--nuit);box-shadow:none}
+.ch button[aria-pressed="true"]::after{content:"✓";margin-left:auto;width:22px;height:22px;flex:none;border-radius:50%;background:var(--nuit);color:var(--nuit-fg);display:grid;place-items:center;font-size:12px;font-weight:800}
+.ch button.dk{grid-column:1/-1;justify-content:center;min-height:40px;color:var(--muted);font-weight:700}
+.ch button .sw{width:24px;height:24px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px var(--line)}
+.ch.pics button{flex-direction:column;align-items:stretch;text-align:center;gap:3px;padding:6px 6px 8px;position:relative}
+.ch.pics button>svg.pic{width:100%;height:auto;max-height:84px}.ch.pics.big button>svg.pic{max-height:140px}
+.ch.pics button[aria-pressed="true"]::after{position:absolute;top:8px;right:8px}
+.ill{border-radius:16px;background:var(--calme);box-shadow:var(--calme-sh);padding:4px;display:grid;place-items:center;height:min(25svh,150px)}
+.ill svg{width:100%;height:100%;display:block}
+.ill .mk{opacity:.28;transition:opacity .25s}.ill .mk.on{opacity:1}
+.meas{display:grid;gap:4px}
+.mrow{display:grid;grid-template-columns:30px 1fr minmax(0,1.3fr) auto;align-items:center;gap:8px;padding:3px 8px;border-radius:12px;transition:background .15s}
+.mrow.cur{background:var(--tint)}
+.mrow i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12.5px;background:var(--teinte);color:var(--nuit)}
+.mrow.cur i{background:var(--laiton);color:#fff}
+.mrow label{font-weight:700;font-size:14px}
+.mrow input{width:100%;min-width:0;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:800 20px var(--f);text-align:right;padding:0 12px;font-variant-numeric:tabular-nums;box-shadow:var(--in)}
+.mrow span{font-weight:700;color:var(--muted);font-size:13px}
+.mrow input.auto{color:var(--muted);font-weight:600}
+.keep{border-radius:12px;padding:6px 12px;background:var(--teinte);font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.keep b{font-size:18px;font-variant-numeric:tabular-nums}
+.alert{border-radius:14px;padding:10px 12px;font-size:13.5px;border-left:3px solid var(--warn);background:var(--calme)}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:6px}
+.lnk{white-space:nowrap;border:0;background:transparent;font-weight:700;color:var(--muted);cursor:pointer;padding:10px 4px}
+.go{min-height:48px;touch-action:manipulation;padding:0 24px;border-radius:16px;border:0;background:var(--nuit);color:var(--nuit-fg);font:800 15.5px var(--f);cursor:pointer;box-shadow:0 1px 2px rgba(14,19,34,.18),0 8px 18px -6px rgba(14,19,34,.35);transition:transform .15s var(--doux)}
+.go:active{transform:scale(.97)}
+.go.full{width:100%}
+.go:disabled{opacity:.35;cursor:default}
+.ghost{min-height:48px;padding:0 18px;border-radius:14px;border:0;background:var(--bg);box-shadow:var(--pk);font:800 14.5px var(--f);cursor:pointer}
+.ghost.full{width:100%}
+.rc{display:grid;gap:6px}.rcg{display:grid;gap:6px;padding:10px}.rcg h5{margin:2px 4px;font:800 11px var(--f);letter-spacing:.06em;text-transform:uppercase;color:var(--laiton)}
+.rc button{background:var(--bg)!important;box-shadow:var(--pk);border:0!important;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;text-align:left;min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:13.5px}
+.rc button span{color:var(--muted);font-weight:600}
+.rc button b{font-weight:800;text-align:right}
+.rc button b.ask{color:var(--laiton)}
+.list{display:grid;gap:9px}
+.item{display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:center;padding:7px 10px 7px 9px;border-radius:14px;border:0;background:var(--bg);box-shadow:var(--pk)!important;text-align:left;cursor:pointer;color:var(--fg)}
+.item .ico{position:relative;width:38px;height:38px;border-radius:11px;background:var(--calme);color:var(--nuit);display:grid;place-items:center;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--laiton) 35%,transparent)}
+.item .ico svg{width:23px;height:23px}
+.item .no{position:absolute;top:-5px;left:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--nuit);color:var(--bg);font-weight:800;font-size:10px;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg)}
+.item .txt{display:grid;gap:0;min-width:0}
+.item .l1{display:flex;align-items:baseline;gap:8px;min-width:0}
+.item b{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .dim{margin-left:auto;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:var(--nuit);white-space:nowrap}
+.item .dim i{font-style:normal;color:var(--laiton);font-weight:700;margin:0 3px}
+.item small{display:block;color:var(--muted);font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item em{font-style:normal;font-weight:800;font-size:11px}
+.item em.ok{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}.item em.ok svg{width:13px;height:13px}
+.item em.todo{color:var(--laiton);padding:4px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--laiton) 55%,transparent);white-space:nowrap}
+.item.todo{box-shadow:var(--pk),inset 3px 0 0 var(--laiton)!important}
+.list{gap:7px!important}
+.card.sum{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:9px 14px!important}
+.sum-n{display:flex;align-items:baseline;gap:2px}.sum-n b{font-size:24px;font-weight:800;line-height:1;color:var(--nuit)}.sum-n span{font-weight:700;color:var(--muted);font-size:13px}
+.sum-t{display:grid;gap:4px;min-width:0}.sum-t b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lfoot{display:grid;gap:2px;margin-top:auto;justify-items:center}
+.addr{align-self:center;width:58px;height:58px;border-radius:50%;border:0;background:var(--nuit);color:var(--nuit-fg);display:grid;place-items:center;cursor:pointer;margin-top:4px;touch-action:manipulation;box-shadow:0 0 0 3px var(--bg),0 0 0 4.5px color-mix(in srgb,var(--laiton) 70%,transparent),0 10px 22px -10px rgba(14,19,34,.5);transition:transform .15s}
+.addr:active{transform:scale(.94)}.addr svg{width:26px;height:26px}
+.lfoot .end{font-size:13.5px;padding:8px}.lfoot .end:disabled{opacity:.4}
+.bar{display:block;height:6px;border-radius:99px;background:color-mix(in srgb,var(--nuit) 10%,transparent);overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;border-radius:99px;background:var(--laiton)}
+.hd{font:800 13px var(--f);color:var(--muted);margin-top:4px}
+.card{border-radius:18px;background:var(--calme);padding:12px 14px;display:grid;gap:4px;font-size:14px}
+.blink{animation:bl 1.5s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+.doc{border-radius:18px;background:var(--calme);padding:14px;font-size:12.5px;display:grid;gap:14px}
+.doc h4{margin:0 0 6px;font:800 13px var(--f);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.doc h5{margin:0 0 3px;font:800 11px var(--f);letter-spacing:.05em;text-transform:uppercase;color:var(--laiton)}
+.doc table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.doc td{padding:3px 0;vertical-align:top;border-bottom:1px solid var(--line)}
+.doc .fg td:first-child{color:var(--muted);padding-right:8px;width:50%}
+.doc .fg td:last-child{font-weight:700;text-align:right}
+.doc .all{font-weight:600;color:var(--muted)}.doc b.ask{color:var(--laiton)}
+.fh{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--nuit)}.doc .fh svg{width:30px;height:30px;flex:none}.fh b{display:block;font:800 16px var(--f)}.fh small{color:var(--muted);font-weight:600}
+.fmeta{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}.fmeta span{display:block;font-size:11px;color:var(--muted);font-weight:700}.fmeta b{font-size:13px}
+.tws{overflow-x:auto}
+.doc .sum th{text-align:left;font-size:11px;color:var(--muted);padding:4px 6px 4px 0;border-bottom:1.5px solid var(--nuit);font-weight:800}
+.doc .sum td{padding:6px 6px 6px 0;font-weight:600}.doc .r{text-align:right}
+.doc i{font-style:normal;display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:11px;background:var(--nuit);color:var(--nuit-fg);font-weight:800;font-size:11.5px}
+.frep{display:grid;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.frh{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.frh i{min-width:28px!important;height:28px!important;border-radius:14px!important;font-size:13px!important}
+.frh b{display:block;font:800 14px var(--f)}.frh small{color:var(--muted);font-weight:600}
+.frh em{font-style:normal;font:800 14px var(--f);font-variant-numeric:tabular-nums;padding:5px 10px;border-radius:999px;border:1.5px solid var(--nuit);white-space:nowrap}
+.frb{display:grid;gap:10px}.fgs{display:grid;gap:10px}
+.doc .cro{display:grid;place-items:center;border-radius:12px;background:var(--bg);padding:6px}.doc .cro svg{width:100%;max-width:260px}
+.doc svg{width:100%;height:auto}
+.fcov{border-radius:14px;background:var(--nuit);color:var(--nuit-fg);padding:14px;display:grid;gap:12px}
+.fct{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.doc .fct svg{width:34px;height:34px}
+.fct b{display:block;font:800 17px var(--f)}.fct small{opacity:.75;font-weight:600}
+.fbig{text-align:center;line-height:1}.fbig b{font:800 30px var(--f);color:var(--laiton)}.fbig small{display:block;font-size:11px}
+.fcov .fmeta{border-top:1px solid color-mix(in srgb,var(--nuit-fg) 20%,transparent);padding-top:10px}.fcov .fmeta span{color:inherit;opacity:.65}
+.ftiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}@media (min-width:520px){.ftiles{grid-template-columns:repeat(4,1fr)}}
+.ftiles div{border-radius:12px;background:var(--bg);padding:10px;display:grid;gap:2px}.ftiles b{font:800 22px var(--f);font-variant-numeric:tabular-nums}.ftiles span{font-size:11.5px;color:var(--muted);font-weight:700}
+.ftiles .warn b{color:var(--laiton)}.ftiles .ok b{color:var(--ok)}
+.doc .sum td.th{width:44px;padding-right:8px}.doc .th svg{width:40px;height:40px;display:block}.doc .sum td{vertical-align:middle}
+.doc .dn{display:block;font-weight:700}.doc .fb{display:block;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.fpl{display:grid;gap:10px}@media (min-width:520px){.fpl{grid-template-columns:1fr 170px;align-items:center}}
+.leg{list-style:none;margin:0;padding:0;display:grid;gap:6px}.leg li{display:flex;gap:8px;align-items:center;font-size:12px}.leg b{font-weight:800}
+.fab{font:800 15px var(--f);letter-spacing:.18em;text-align:center;color:var(--nuit);padding:4px 0 2px}
+.pdt{display:grid;gap:1px}.pdt b{font:800 15px/1.25 var(--f);color:var(--nuit)}.pdt small{color:var(--muted);font-weight:600}
+.pdl{margin:0;padding-left:16px;display:grid;gap:2px;font-size:12.5px;line-height:1.35}.pdl li::marker{color:var(--laiton)}
+@media (min-width:520px){.frb{grid-template-columns:200px 1fr;align-items:start}}
+.fn{margin:0;font-size:11.5px;color:var(--muted)}
+.noplan{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:12px;background:var(--bg);padding:8px 10px}
+.toast{position:absolute;left:16px;right:16px;bottom:16px;background:var(--nuit);color:var(--nuit-fg);border-radius:16px;padding:12px 14px;font-weight:700;font-size:14px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+.vocsel{display:flex;flex-wrap:wrap;gap:6px}
+.vocsel button{border:0;background:var(--bg);box-shadow:var(--up);border-radius:999px;padding:7px 13px;font-weight:700;font-size:13px;cursor:pointer}
+.vocsel button[aria-pressed="true"]{box-shadow:var(--in);outline:2px solid var(--nuit);outline-offset:-2px}
+
+/* ---------- colonne d'explication ---------- */
+.side{display:grid;gap:14px}
+.side h2{font:800 19px var(--f)}
+.side p{margin:0;max-width:62ch}
+.note{border-radius:18px;background:var(--calme);padding:14px 16px;display:grid;gap:8px}
+.note ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.ex{font:700 12px var(--f);color:var(--laiton)}
+
+/* ---------- synthèse ---------- */
+.syn{display:grid;gap:18px;max-width:980px}
+.syn h2{font:800 20px var(--f)}
+.syn p{margin:0;max-width:70ch}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.box{border-radius:18px;background:var(--calme);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.box h3{font:800 15.5px var(--f)}
+.box ul{margin:0;padding-left:18px;display:grid;gap:5px}
+.tw{overflow-x:auto;border-radius:16px;background:var(--calme)}
+.tw table{border-collapse:collapse;min-width:760px;width:100%;font-size:13.5px}
+.tw th,.tw td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tw th{font-weight:800;font-size:12.5px;color:var(--muted)}
+.tw td:first-child{font-weight:800}
+.src{font-size:13px;color:var(--muted)}
+.src a{color:inherit}
+.q2{border-left:3px solid var(--laiton);padding:4px 0 4px 12px}
+/* démo Valcroix : la prise de cotes prend tout l'écran du téléphone */
+body{padding:0!important}.wrap{max-width:560px;gap:0}.demo{display:block}
+.phone{border-radius:0!important;box-shadow:none!important;min-height:100dvh!important;padding-top:env(safe-area-inset-top)}
+a.ib{text-decoration:none;font-size:20px}
+@media(min-width:600px){.wrap{padding:20px 0}.phone{border-radius:30px!important;box-shadow:0 0 0 1px var(--line),0 24px 60px -24px rgba(14,19,34,.35)!important;min-height:740px!important}}
+</style>
+
+<div class="wrap">
+  <section class="view" id="v-demo">
+    <div class="demo">
+      <div class="phone" id="phone"></div>
+    </div>
+  </section>
+
+</div>
+
+<script src="demo.js"></script><script src="data.js"></script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const DK="Je ne sais pas";
+
+/* ---------- vocabulaire par fournisseur ---------- */
+const VOC={
+  proclik:{nom:"Mots simples",
+    tunnelTitre:"Largeur entre les murs",reno:"On garde l'ancien cadre",renoS:"Le nouveau se pose dessus",depose:"On enlève tout",deposeS:"Dépose totale de l'ancien cadre",
+    app:"Contre l'isolation, côté intérieur",tun:"Entre les murs",feu:"Dans le creux du mur (feuillure)",ite:"Côté extérieur (isolation dehors)",
+    doub:"Épaisseur du doublage",cadreL:"Largeur de l'ancien cadre",cadreH:"Hauteur de l'ancien cadre",
+    tabL:"Largeur entre les murs",tabH:"Hauteur entre l'appui et le haut",sens:"Les charnières sont à…",aile:"Recouvrement de l'ancien cadre",G:"Gauche",D:"Droite"},
+  millet:{nom:"Style MILLET",
+    reno:"Rénovation (dormant réno)",renoS:"Pose sur dormant existant",depose:"Dépose totale",deposeS:"Pattes de fixation",
+    app:"Applique (tapée)",tun:"Tunnel / embrasure",feu:"Feuillure (sans aile)",ite:"Applique extérieure",
+    doub:"Épaisseur du doublage",cadreL:"Largeur dos de dormant (ou passage)",cadreH:"Hauteur dos de dormant (ou passage)",
+    tabL:"Largeur tableau fini",tabH:"Hauteur tableau fini",sens:"Vu de l'intérieur, paumelles à…",aile:"Aile du dormant réno",G:"Gauche",D:"Droite"},
+  kline:{nom:"Style K·LINE",
+    reno:"Sur dormant conservé",renoS:"Aile de recouvrement",depose:"En dépose totale",deposeS:"Reprise du doublage",
+    app:"Applique intérieure",tun:"Entre mur",feu:"En feuillure",ite:"Applique extérieure (ITE)",
+    doub:"Épaisseur du doublage",cadreL:"Largeur dormant conservé",cadreH:"Hauteur dormant conservé",
+    tabL:"Largeur entre mur",tabH:"Hauteur au sol fini / appui",sens:"Vu de l'intérieur, paumelles à…",aile:"Aile de recouvrement",G:"Gauche",D:"Droite"},
+  caseo:{nom:"Style CASEO",
+    reno:"Rénovation sur ancien dormant",renoS:"Recouvrement de l'ancien dormant",depose:"Rénovation complète",deposeS:"Dépose totale de l'ancien dormant",
+    app:"Applique intérieure",tun:"Tunnel",feu:"Feuillure",ite:"Applique extérieure",
+    doub:"Épaisseur du doublage",cadreL:"LP · largeur de passage",cadreH:"HP · hauteur de passage",
+    tabL:"LT · largeur tableau",tabH:"HT · hauteur tableau",sens:"Vu de l'intérieur, paumelles à…",aile:"Recouvrement",G:"Gauche",D:"Droite"},
+  minco:{nom:"Style MINCO",
+    reno:"Pose sur ancien dormant (R++)",renoS:"Cale sur le dormant existant",depose:"Dépose totale (R1)",deposeS:"Équerres et pattes support",
+    app:"Pose en applique",tun:"Pose entre murs",feu:"Pose en feuillure",ite:"Applique extérieure",
+    doub:"Épaisseur du doublage",cadreL:"Largeur dormant existant",cadreH:"Hauteur dormant existant",
+    tabL:"Largeur tableau maçonnerie finie",tabH:"Hauteur tableau maçonnerie finie",sens:"Vue intérieure, ouvrant principal à…",aile:"Recouvrement (moulure)",G:"Gauche",D:"Droite"}
+};
+let V="proclik";
+const v=k=>VOC[V][k]||VOC.proclik[k];
+
+
+/* Mots « métier » communs aux fabricants (termes usuels de menuiserie) : titres et réponses.
+   La valeur enregistrée ne change pas, seul l'affichage suit le fabricant. */
+const PRO={t:{type:"Type de menuiserie ?",bat:"Type de chantier ?",pose:"Type de rénovation ?",pos:"Type de pose ?",vrPose:"Pose du coffre ?",vrExist:"Volet existant ?",vbModele:"Modèle de volets ?",vbPose:"Fixation des volets ?",
+ D:"Diagonales (contrôle d'équerrage)",all:"Hauteur d'allège",appui:"Appui maçonnerie ?",seuil:"Type de seuil ?",vant:"Nombre de vantaux ?",ouv:"Type d'ouverture ?",ouvP:"Sens d'ouverture ?",serv:"Vantail de service (vue intérieure) ?",
+ vbSens:"Ferrage, vu de l'extérieur ?",vol:"Volet ?",volm:"Manœuvre ?",volc:it=>/filaire|radio/.test(it.volm||"")?"Côté alimentation du moteur (vue intérieure) ?":"Côté de manœuvre (vue intérieure) ?",mat:"Matériau ?",vcoul:"Teinte ?",ci:"Teinte intérieure ?",ce:"Teinte extérieure ?",vitr:"Vitrage ?",sb:"Soubassement ?",photo:"Photos des deux côtés"},
+ o:{"bat|Neuf":"Construction neuve","appui|Rien":"Appui brut","seuil|Seuil normal":"Seuil standard","seuil|Seuil plat (accès fauteuil)":"Seuil PMR",
+ "ouv|Battant":"Ouvrant à la française","ouv|Soufflet":"Soufflet (abattant)","ouv|Fixe":"Châssis fixe","ouvP|Vers moi":"Poussant","ouvP|Vers dehors":"Tirant",
+ "vol|Aucun":"Sans volet","vol|Garder le volet actuel":"Volet existant conservé","vol|Volet roulant coffre intérieur":"Bloc-baie, coffre intérieur","vol|Volet roulant coffre extérieur":"Volet rénovation, coffre extérieur",
+ "volm|Manuel":"Manœuvre manuelle","volm|Électrique filaire":"Motorisation filaire","volm|Électrique radio":"Motorisation radio","volm|Solaire":"Motorisation solaire",
+ "vrPose|Dans l'ouverture":"Coffre tunnel","vrPose|Sur la façade":"Coffre en applique","vrEnr|Extérieur":"Enroulement extérieur","vrEnr|Intérieur":"Enroulement intérieur","vrPose|Dans un caisson maçonné":"Caisson maçonné (traditionnel)","vol|Volet roulant caisson maçonné":"Volet roulant traditionnel, caisson maçonné","vrExist|Non, c'est neuf":"Pas d'existant","vrExist|Oui, on l'enlève":"Dépose de l'existant","vrExist|Oui, on garde le coffre":"Coffre existant conservé",
+ "vbModele|Pleins":"Volets pleins","vbModele|Persiennés":"Persiennes","vbModele|Barres et écharpe":"Barres et écharpe (Z)","vbModele|À cadre":"Volets à cadre",
+ "vbPose|On garde les gonds":"Gonds existants","vbPose|Nouveaux gonds":"Gonds à sceller","vbPose|Sur un cadre":"Sur pré-cadre",
+ "vitr|Clair":"Double vitrage clair","vitr|Dépoli":"Vitrage dépoli","vitr|Sécurité":"Vitrage retardateur d'effraction","vitr|Phonique":"Vitrage acoustique",
+ "sb|Oui":"Avec soubassement","sb|Non":"Sans soubassement","vant|1 + 1 petite":"1 vantail + semi-fixe"}};
+const metier=()=>V!=="proclik";
+const qT=(q,it)=>{const f=metier()&&PRO.t[q.id];return f?(typeof f==="function"?f(it):f):q.t(it)};
+const volcTxt=it=>/Manuel/.test(it.volm||"")?"la sangle ou la manivelle":/filaire/.test(it.volm||"")?"l'arrivée du fil électrique":/radio/.test(it.volm||"")?"le moteur et son alimentation":/Solaire/.test(it.volm||"")?"le moteur (côté panneau)":"la commande";
+const qH=(q,it)=>{const h=q.h?q.h(it):"";if(metier()&&PRO.t[q.id]){const c=q.t(it);return "En clair : "+c+(h?" "+h:"")}return h};
+const oL=(q,x)=>q.lab?q.lab(x):(metier()&&PRO.o[q.id+"|"+x])||x;
+/* ---------- petites icônes au trait ---------- */
+const IC={
+ fen:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="20" height="24" rx="1.5"/><path d="M16 4v24M6 16h20"/></svg>',
+ pf:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="18" height="28" rx="1.5"/><path d="M16 2v28M7 22h18"/></svg>',
+ baie:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="28" height="22" rx="1.5"/><path d="M16 6v22M10 17h4M18 17h4"/></svg>',
+ fixe:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="20" height="20" rx="1.5"/><path d="M10 10l12 12"/></svg>',
+ pe:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="16" height="28" rx="1.5"/><circle cx="20" cy="17" r="1.4" fill="currentColor"/></svg>',
+ ps:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="16" height="28" rx="1.5"/><rect x="11" y="6" width="10" height="9"/><circle cx="20" cy="20" r="1.4" fill="currentColor"/></svg>',
+ garage:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L16 4l13 8v16H3z"/><path d="M8 28V15h16v13M8 19h16M8 23h16"/></svg>',
+ neuf:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 28h24M7 28V12h18v16M7 12l9-7 9 7"/><path d="M13 28v-8h6v8"/></svg>',
+ pi:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 30V3h20v27"/><rect x="9" y="6" width="14" height="24" rx="1"/><path d="M19 18h3"/></svg>',
+ vr:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="22" height="6" rx="1.5"/><path d="M7 9v18M25 9v18M8 13h16M8 17h16M8 21h16"/></svg>',
+ vb:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="12" height="24" rx="1"/><rect x="17" y="4" width="12" height="24" rx="1"/><path d="M6 9h6M6 14h6M6 19h6M6 24h6M20 9h6M20 14h6M20 19h6M20 24h6"/></svg>',
+ reno:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 28h24M7 28V12h18v16M7 12l9-7 9 7"/><path d="M20 16l-6 6-2 4 4-2 6-6z"/></svg>'
+};
+
+/* ---------- données d'exemple ---------- */
+const S0={lastFab:"Millet",plan:true,chantier:"M. et Mme Durand · Voiron",four:"l'ADV Valcroix",items:[
+ {no:1,fab:"Millet",piece:"Séjour",type:"Porte-fenêtre",bat:"Rénovation",pose:"reno",aile:"40 mm",L:[1384,1381,1386],H:[2152,2150,2149],D:[2558,2561],vant:"2",ouv:"Battant",serv:"D",vol:"Garder le volet actuel",mat:"PVC",ci:"Blanc",ce:"Gris anthracite",vitr:"Clair",sb:"Oui",fini:true},
+ {no:2,fab:"Millet",piece:"Cuisine",type:"Fenêtre",bat:"Rénovation",pose:"depose",pos:"app",doub:"120 mm",L:[1002,998,1001],H:[1253,1255,1251],D:[1609,1611],all:"1040",appui:"Appui avec rejingot",vant:"1",ouv:"Oscillo-battant",sens:"G",vol:"Volet roulant coffre intérieur",volm:"Électrique radio",volc:"D",mat:"PVC",ci:"Blanc",ce:"Blanc",vitr:"Clair",fini:true},
+ {no:3,fab:"Millet",piece:"Chambre",type:"Fenêtre",bat:"Rénovation",pose:"depose",pos:"app",doub:"120 mm",L:[1201,1203,1200],H:[1352,1350,1351],D:[1808,1806],all:"920",appui:"Appui avec rejingot",vant:"2",ouv:"Battant",serv:"D",vol:"Volet roulant coffre intérieur",volm:"Électrique radio",volc:"G",mat:"PVC",ci:"Blanc",ce:"Gris anthracite",vitr:"Phonique",photo:true,fini:true},
+ {no:4,fab:"Millet",piece:"Entrée",type:"Porte d'entrée",bat:"Rénovation",pose:"depose",pos:"tun",L:[902,900,903],H:[2152,2151,2153],seuil:"Seuil plat (accès fauteuil)",vant:"1",ouvP:"Vers moi",sens:"D",mat:"Aluminium",ci:"Blanc",ce:"Gris anthracite",vitr:"Sécurité",photo:true,fini:true},
+ {no:5,fab:"Millet",piece:"Séjour",type:"Volet roulant",vrPose:"Dans l'ouverture",vrExist:"Oui, on l'enlève",L:[1402,1400,1401],H:[2160,2158,2161],volm:"Solaire",volc:"D",mat:"Aluminium",vcoul:"Gris anthracite",photo:true,fini:true},
+ {no:6,piece:"Salle de bain",type:"Fenêtre",fromPlan:true,L:[],H:[],fini:false}
+]};
+/* Démo Valcroix : la prise de cotes s'ouvre depuis un dossier de l'Espace (?d=…), lecture seule pour l'ADV et le poseur (&lect=1). */
+const QS=new URLSearchParams(location.search),DID=QS.get("d")||"durand",LECT=QS.get("lect")==="1",SK="pcd-vlx-v1",CK="pcd-vlx-cotes-"+DID;
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const DOS=(window.VX&&VX.dos(DID))||null;
+function seed(){
+ if(DID==="durand")return S0;
+ if(DID==="nouveau")return {lastFab:"Millet",plan:false,chantier:"Nouveau client · à ranger",four:"l'ADV Valcroix",items:[]};
+ const tpl=t=>S0.items.find(x=>x.type===t)||S0.items[1],M=(VX.MEN[DID]||[]);
+ return {lastFab:DOS.fab,plan:false,chantier:DOS.cl+" · "+DOS.v,four:"l'ADV Valcroix",items:M.map((m,i)=>Object.assign(JSON.parse(JSON.stringify(tpl(m[1]==="Baie coulissante"?"Porte-fenêtre":m[1]))),{no:i+1,fab:DOS.fab,piece:m[0],type:m[1],L:[m[2],m[2]+2,m[2]+1],H:[m[3],m[3]+1,m[3]+2],vant:m[4],vitr:/Salle de bain|WC|Sanitaires/.test(m[0])?"Dépoli":"Clair",mat:/bois-alu/i.test(DOS.quoi)?"Bois-alu":/alu/i.test(DOS.quoi)?"Aluminium":"PVC",fini:true}))}}
+const S=ld(CK)||seed();
+function persist(){sv(CK,S);const st=ld(SK);if(!st||DID==="nouveau")return;st.cotes=st.cotes||{};const c=st.cotes[DID]||{};c.n=S.items.filter(i=>i.fini).length;c.tot=S.items.length;st.cotes[DID]=c;sv(SK,st)}
+const ESP="espace.html";
+let cur=null,step=0,dir=1,mode="list",toast="";
+
+/* ---------- les questions (une à la fois) ---------- */
+const isPorte=it=>/Porte d'entrée|Porte de service|Porte de garage/.test(it.type||"");
+const isVol=it=>/^Volet/.test(it.type||"");
+const isBP=it=>it.type==="Bloc-porte intérieur";
+const TIC=it=>({"Fenêtre":IC.fen,"Porte-fenêtre":IC.pf,"Baie coulissante":IC.baie,"Châssis fixe":IC.fixe,"Porte d'entrée":IC.pe,"Porte de service":IC.ps,"Porte de garage":IC.garage,"Bloc-porte intérieur":IC.pi,"Volet roulant":IC.vr,"Volets battants":IC.vb})[it.type]||IC.fen;
+const isFen=it=>/Fenêtre|Châssis fixe/.test(it.type||"");
+const Q=[
+ {id:"fab",nodk:0,t:()=>"Quel fabricant ?",h:()=>"Les questions et la fiche prendront ses mots.",o:()=>FABS.map(f=>[f[0],f[1]])},
+ {id:"piece",t:()=>"Dans quelle pièce ?",o:()=>["Séjour","Cuisine","Chambre","Salle de bain","WC","Entrée","Garage","Autre"].map(x=>[x])},
+ {id:"type",t:()=>"Qu'est-ce qu'on mesure ?",o:()=>[["Fenêtre","",IC.fen],["Porte-fenêtre","",IC.pf],["Baie coulissante","",IC.baie],["Châssis fixe","",IC.fixe],["Porte d'entrée","",IC.pe],["Porte de service","",IC.ps],["Porte de garage","",IC.garage],["Bloc-porte intérieur","Porte + huisserie",IC.pi],["Volet roulant","Seul, sans fenêtre",IC.vr],["Volets battants","Seuls, sans fenêtre",IC.vb]]},
+ {id:"bat",t:()=>"Le bâtiment est…",o:()=>[["Neuf","Construction en cours",IC.neuf],["Rénovation","Il y a déjà une menuiserie",IC.reno]],nodk:1},
+ {id:"pose",when:it=>it.bat==="Rénovation"&&it.type!=="Porte de garage",t:()=>"Et l'ancienne menuiserie ?",o:()=>[["reno",v("reno"),v("renoS")],["depose",v("depose"),v("deposeS")]],lab:x=>x==="reno"?v("reno"):x==="depose"?v("depose"):x,one:1},
+ {id:"aile",when:it=>it.pose==="reno",t:()=>v("aile")+" ?",h:()=>"La largeur du rebord du nouveau cadre qui cache l'ancien. Si vous ne savez pas, le fournisseur choisira.",o:()=>["30 mm","40 mm","60 mm","75 mm"].map(x=>[x])},
+ {id:"pos",when:it=>it.pose!=="reno",t:()=>"Où se pose la nouvelle menuiserie dans le mur ?",o:()=>[["app","Isolation par l'intérieur"],["tun","Au milieu du mur"],["feu","Dans le creux prévu"],["ite","Isolation par dehors"]],lab:x=>v(x)||x},
+ {id:"doub",when:it=>it.pose!=="reno"&&it.pos==="app",t:()=>v("doub")+" ?",h:()=>"De la maçonnerie jusqu'à la face du placo, au bord de l'ouverture. Le fournisseur choisit la tapée.",o:()=>["100 mm","120 mm","140 mm","160 mm","180 mm","200 mm"].map(x=>[x]),grid4:1},
+ {id:"vrPose",vw:1,t:()=>"Où se pose le volet roulant ?",o:()=>[["Dans l'ouverture","Entre les murs (tunnel)"],["Sur la façade","Coffre devant le mur (applique)"],["Dans un caisson maçonné","Caché dans le mur, au-dessus"]]},
+ {id:"vrExist",vw:1,t:()=>"Il y a déjà un volet ?",o:()=>[["Non, c'est neuf"],["Oui, on l'enlève"],["Oui, on garde le coffre"]],one:1},
+ {id:"vbModele",vw:1,t:()=>"Quel modèle de volets ?",o:()=>[["Pleins","Planches jointives"],["Persiennés","Lames inclinées"],["Barres et écharpe","Le « Z » derrière"],["À cadre","Panneau dans un cadre"]]},
+ {id:"vbPose",vw:1,t:()=>"Pour les accrocher…",o:()=>[["On garde les gonds","Déjà dans le mur"],["Nouveaux gonds","À sceller ou visser"],["Sur un cadre","Pré-cadre posé dans l'ouverture"]],one:1},
+ {id:"L",kind:"m3",t:it=>isBP(it)?"Largeur de l'ouverture dans la cloison":isVol(it)?"Largeur du tableau, côté dehors":it.pose==="reno"?v("cadreL"):v("tabL"),h:it=>isBP(it)?"D'une cloison à l'autre, à 3 hauteurs.":isVol(it)?"Dehors, d'un mur à l'autre, à 3 hauteurs.":it.pose==="reno"?"Posez le mètre sur l'ancien cadre, d'un bord à l'autre, à 3 hauteurs.":"Posez le mètre d'un mur à l'autre, à 3 hauteurs.",labs:["En haut","Au milieu","En bas"],ill:"L"},
+ {id:"H",kind:"m3",t:it=>isBP(it)?"Hauteur du sol fini jusqu'en haut de l'ouverture":isVol(it)?"Hauteur du tableau, côté dehors":it.pose==="reno"?v("cadreH"):(isPorte(it)||it.type==="Porte-fenêtre"?"Hauteur du sol fini jusqu'en haut":v("tabH")),h:()=>"Même chose en hauteur, à gauche, au milieu et à droite.",labs:["À gauche","Au milieu","À droite"],ill:"H"},
+ {id:"Li",kind:"m3",vw:1,t:()=>"Largeur du tableau, côté intérieur",h:it=>{const a=minOf(it.L),b=minOf(it.Li);return a&&b&&Math.abs(a-b)>10?"Le tableau "+(b>a?"s'ouvre vers l'intérieur":"se resserre vers l'intérieur")+" : "+Math.abs(a-b)+" mm d'écart avec le dehors.":"Recopié du dehors : changez ce qui diffère."},labs:["En haut","Au milieu","En bas"],ill:"Li"},
+ {id:"Hi",kind:"m3",vw:1,t:()=>"Hauteur du tableau, côté intérieur",h:()=>"À gauche, au milieu et à droite, côté intérieur.",labs:["À gauche","Au milieu","À droite"],ill:"Hi"},
+ {id:"D",kind:"m3",opt:1,t:()=>"Les 2 diagonales (pour vérifier l'équerre)",h:()=>"D'un coin à l'autre, en croix. Vous pouvez passer.",labs:["Diagonale 1","Diagonale 2"],ill:"D"},
+ {id:"all",kind:"m1",when:it=>it.type==="Fenêtre"||it.type==="Châssis fixe",t:()=>"Hauteur entre le sol et le bas de la fenêtre (allège)",h:()=>"Du sol fini jusqu'à l'appui. Si le sol n'est pas encore fait, dites-le dans la remarque.",ill:"all"},
+ {id:"appui",when:it=>!isPorte(it)&&it.type!=="Porte-fenêtre"&&it.type!=="Baie coulissante",t:()=>"En bas, côté extérieur, il y a…",o:()=>[["Appui avec rejingot","Petite marche en béton"],["Appui sans rejingot","Plat"],["Rien","Brut, à faire"]]},
+ {id:"seuil",when:it=>isPorte(it)||it.type==="Porte-fenêtre"||it.type==="Baie coulissante",t:()=>"Au sol, le passage doit être…",o:()=>[["Seuil normal"],["Seuil plat (accès fauteuil)"]],one:1},
+ {id:"vant",when:it=>it.type!=="Châssis fixe"&&it.type!=="Porte de garage",t:it=>isVol(it)?"Combien de battants ?":"Combien de parties qui s'ouvrent ?",h:it=>{const l=minOf(it.L);return l?(l<=900?"Avec "+l+" mm de large, 1 partie suffit en général.":"Avec "+l+" mm de large, on met en général 2 parties."):""},o:it=>(it.type==="Volets battants"?["1","2","3 repliables","4 repliables"]:it.type==="Baie coulissante"?["2","3","4"]:isPorte(it)?["1","1 + 1 petite"]:["1","2","3"]).map(x=>[x,x==="1"?"vantail":""]),grid4:1,auto:it=>{const l=minOf(it.L);return l&&!isPorte(it)&&it.type!=="Baie coulissante"?(l<=900?"1":"2"):null}},
+ {id:"ouv",when:it=>!isPorte(it)&&it.type!=="Châssis fixe"&&it.type!=="Baie coulissante",t:()=>"Comment elle s'ouvre ?",o:()=>[["Battant","À la française"],["Oscillo-battant","Bascule en haut aussi"],["Soufflet","Bascule seulement"],["Fixe","Ne s'ouvre pas"]]},
+ {id:"ouvP",when:it=>isPorte(it)&&it.type!=="Porte de garage",t:()=>"Vue de l'intérieur, la porte s'ouvre…",o:()=>[["Vers moi","Vers l'intérieur (poussant)"],["Vers dehors","Vers l'extérieur (tirant)"]]},
+ {id:"sens",when:it=>(it.vant==="1"||it.vant==="1 + 1 petite")&&it.ouv!=="Fixe",t:it=>isBP(it)?"Placez-vous du côté où la porte s'ouvre en poussant. Les paumelles sont à…":"Placez-vous à l'intérieur, face à la "+(isPorte(it)?"porte":"fenêtre")+". "+v("sens"),o:()=>[["G"],["D"]],lab:x=>x==="G"?v("G"):x==="D"?v("D"):x},
+ {id:"serv",when:it=>(it.vant==="2"||it.vant==="3")&&it.ouv!=="Fixe",t:()=>"Vue de l'intérieur, quelle partie s'ouvre en premier ?",h:()=>"C'est celle qui porte la poignée.",o:()=>[["G"],["D"]],lab:x=>x==="G"?v("G"):x==="D"?v("D"):x},
+ {id:"vbSens",vw:it=>it.vant==="1",t:()=>"Vu de dehors, les gonds sont à…",o:()=>[["G"],["D"]],lab:x=>x==="G"?v("G"):x==="D"?v("D"):x},
+ {id:"vol",when:it=>!isPorte(it),t:()=>"Un volet roulant ?",o:()=>[["Aucun"],["Garder le volet actuel"],["Volet roulant coffre intérieur","Avec la fenêtre (bloc-baie)"],["Volet roulant coffre extérieur","Coffre sur la façade"],["Volet roulant caisson maçonné","Caché dans le mur, au-dessus de la fenêtre"],["Volets battants","On les mesure à part ensuite"]]},
+ {id:"vrEnr",when:it=>/coffre|caisson/.test(it.vol||""),t:()=>"Sens d'enroulement ?",h:()=>"Vu de côté : de quel côté du rouleau descend le tablier.",o:()=>[["Extérieur","Le tablier descend côté dehors"],["Intérieur","Le tablier descend côté fenêtre"]]},
+ {id:"volm",when:it=>/coffre|caisson/.test(it.vol||""),t:()=>"Le volet se manœuvre…",o:()=>[["Manuel","Sangle ou manivelle"],["Électrique filaire"],["Électrique radio","Télécommande"],["Solaire"]]},
+ {id:"volc",when:it=>/coffre|caisson/.test(it.vol||""),t:it=>"Vu de l'intérieur, "+volcTxt(it)+" est à…",h:it=>/filaire|radio/.test(it.volm||"")?"C'est là que l'électricien amène le courant : à vérifier sur place.":"",o:()=>[["G"],["D"]],lab:x=>x==="G"?v("G"):x==="D"?v("D"):x},
+ {id:"mat",t:()=>"En quelle matière ?",o:it=>(it.type==="Volet roulant"?["PVC","Aluminium"]:it.type==="Volets battants"?["Bois","PVC","Aluminium"]:["PVC","Aluminium","Bois","Mixte bois-alu"]).map(x=>[x])},
+ {id:"vcoul",vw:1,t:()=>"Couleur du volet ?",o:()=>COUL,sw:1},
+ {id:"ci",t:()=>"Couleur côté intérieur ?",o:()=>COUL,sw:1},
+ {id:"ce",t:()=>"Couleur côté extérieur ?",o:it=>[["Comme l'intérieur","",""]].concat(COUL),sw:1},
+ {id:"vitr",when:it=>it.type!=="Porte de garage",t:()=>"Quel vitrage ?",h:it=>/Salle de bain|WC/.test(it.piece||"")?"Pour une "+it.piece.toLowerCase()+", on met souvent du dépoli.":"",o:()=>[["Clair"],["Dépoli","On ne voit pas à travers"],["Sécurité","Retarde l'effraction"],["Phonique","Rue bruyante"]],auto:it=>/Salle de bain|WC/.test(it.piece||"")?"Dépoli":null},
+ {id:"sb",when:it=>it.type==="Porte-fenêtre",t:()=>"Un bas plein (soubassement) ?",o:()=>[["Oui"],["Non","Vitrée jusqu'en bas"]],one:1},
+ {id:"bpPose",vw:1,t:()=>"Quand se pose la porte ?",o:()=>[["Au montage de la cloison","L'huisserie se pose avec les rails"],["En fin de chantier","Cloison finie, posée dans l'ouverture"],["En remplacement","On dépose l'ancien bloc-porte"]]},
+ {id:"bpDim",vw:1,kind:"bpdim",t:()=>"Quelle dimension de porte ?",h:()=>"Les tailles standard (largeur × hauteur de la porte, en cm). Sinon, écrivez la vôtre en dessous."},
+ {id:"ep",vw:1,t:()=>"Épaisseur de la cloison ?",h:()=>"Mesurée au bord de l'ouverture, plaques comprises. Elle donne la largeur de l'huisserie.",o:()=>["50 mm","72 mm","98 mm","Plus de 98 mm"].map(x=>[x]),grid4:0},
+ {id:"bpMod",vw:1,t:()=>"Quelle porte ?",o:()=>[["Alvéolaire","Légère, la plus courante"],["Pleine","Plus lourde, meilleure contre le bruit"],["Vitrée","Avec une partie en verre"],["Isophonique","Contre le bruit, chambre ou bureau"]]},
+ {id:"bpFin",vw:1,t:()=>"Quelle finition ?",o:()=>[["Prête à peindre","Prépeinte, sous-couche à recouvrir"],["Finie blanche","Laquée, rien à peindre"],["Stratifiée","Aspect bois ou couleur"],["À choisir avec le client"]]},
+ {id:"bpSer",vw:1,t:()=>"Quelle serrure ?",h:it=>/Salle de bain|WC/.test(it.piece||"")?"Pour une "+it.piece.toLowerCase()+", on met en général une condamnation.":"",o:()=>[["Bec de cane","Sans clé"],["À clé","Clé simple"],["Condamnation","Verrou intérieur (WC, salle de bain)"]],auto:it=>/Salle de bain|WC/.test(it.piece||"")?"Condamnation":null},
+ {id:"photo",kind:"photo",t:()=>"Une photo de chaque côté",h:()=>"Intérieur puis extérieur. Le fournisseur voit tout de suite le support."}
+];
+const FABS=[["Millet","Portes et fenêtres","millet"],["Minco","Bois-alu","minco"],["K·LINE","Alu et PVC","kline"],["Tryba","PVC et alu","proclik"],["Bouvet","Bois et mixte","proclik"],["Autre","On l'écrit en remarque","proclik"]];
+const FABV=f=>(FABS.find(x=>x[0]===f)||[,,"proclik"])[2];
+const COUL=[["Blanc","RAL 9016","#F1F0EA"],["Gris anthracite","RAL 7016","#383E42"],["Gris clair","RAL 7035","#CBD0CC"],["Noir","RAL 9005","#141414"],["Chêne doré","Plaxé","#B57E43"],["Autre","On l'écrit en remarque","conic-gradient(#F1F0EA 0 33%,#383E42 0 66%,#B8C4B0 0)"]];
+const minOf=a=>{const n=(a||[]).map(Number).filter(x=>x>0);return n.length?Math.min(...n):0};
+const ecart=a=>{const n=(a||[]).map(Number).filter(x=>x>0);return n.length>1?Math.max(...n)-Math.min(...n):0};
+const VOLQ={"Bloc-porte intérieur":["fab","piece","type","bat","bpPose","ep","bpDim","L","H","D","sens","bpMod","bpFin","bpSer","photo"],"Volet roulant":["fab","piece","type","vrPose","vrEnr","vrExist","L","H","Li","Hi","D","volm","volc","mat","vcoul","photo"],"Volets battants":["fab","piece","type","vbModele","vbPose","L","H","D","vant","vbSens","mat","vcoul","photo"]};
+const bpStd=it=>isBP(it)&&/montage|fin/i.test(it.bpPose||"");
+const steps=it=>VOLQ[it.type]?VOLQ[it.type].map(id=>Q.find(q=>q.id===id)).filter(q=>q&&(typeof q.vw!=="function"||q.vw(it))&&!(q.id==="bpDim"&&!bpStd(it))&&!(["L","H","D"].includes(q.id)&&bpStd(it))):Q.filter(q=>!q.vw&&(!q.when||q.when(it)));
+const valTxt=(q,it)=>{const x=it[q.id];if(x===DK)return DK;if(q.id==="D"){const n=(x||[]).filter(Number).length;return n===2?(ecart(x)?"écart "+ecart(x)+" mm":"d'équerre"):"Non relevées"}if(q.kind==="m3"){const m=minOf(x);return m?m+" mm":""}if(q.kind==="m1")return x?x+" mm":"";if(q.kind==="photo")return it.photo?"2 photos":"";if(x==null||x==="")return"";return oL(q,x)};
+
+/* ---------- dessins ---------- */
+/* ---------- dessins d'explication (vus de face ou de dessus, toujours étiquetés) ---------- */
+const NU="var(--nuit)",LA="var(--laiton)",MU="var(--muted)",WA="var(--wall)",W2="var(--wall2)",GL="var(--glass)";
+const T=(x,y,t,o="")=>`<text x="${x}" y="${y}" font-size="${o.fs||10}" font-weight="${o.fw||700}" text-anchor="${o.a||"middle"}" fill="${o.c||MU}" font-family="Manrope,sans-serif">${t}</text>`;
+const arrowH=(x1,x2,y,c=LA,w=2.4)=>`<line x1="${x1+5}" y1="${y}" x2="${x2-5}" y2="${y}" stroke="${c}" stroke-width="${w}"/><path d="M${x1} ${y}l7 -4.5v9z M${x2} ${y}l-7 -4.5v9z" fill="${c}"/>`;
+const arrowV=(x,y1,y2,c=LA,w=2.4)=>`<line x1="${x}" y1="${y1+5}" x2="${x}" y2="${y2-5}" stroke="${c}" stroke-width="${w}"/><path d="M${x} ${y1}l-4.5 7h9z M${x} ${y2}l-4.5 -7h9z" fill="${c}"/>`;
+const pin=(x,y,n)=>`<circle cx="${x}" cy="${y}" r="9" fill="${LA}"/>${T(x,y+3.6,n,{c:"#fff",fs:10.5,fw:800})}`;
+/* Dessins au trait (style « coupe fabricant ») : traits bleu nuit, hachures fines, pas d'aplats de couleur. */
+let HID=0;
+const lis=(x,y,w,h,r=1)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${LA}" stroke-width=".6" opacity=".55"/>`;
+const defs=u=>`<defs><pattern id="hm${u}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="${NU}" stroke-width=".7" opacity=".5"/></pattern><pattern id="hi${u}" width="8" height="6" patternUnits="userSpaceOnUse"><path d="M0 6 L4 0 L8 6" fill="none" stroke="${NU}" stroke-width=".7" opacity=".55"/></pattern></defs>`;
+const mur=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#hm${u})" stroke="${NU}" stroke-width="1"/>`+lis(x+1.6,y+1.6,w-3.2,h-3.2,0);
+const isol=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#hi${u})" stroke="${NU}" stroke-width="1"/>`;
+/* profil de menuiserie en coupe : dormant + ouvrant + double vitrage (traits) */
+function profil(x,y,w,h){const dw=w*.32,ow=w*.2;let s="";
+ [[x,dw,0],[x+w-dw,dw,1]].forEach(([dx,ww,r])=>{s+=`<rect x="${dx}" y="${y}" width="${ww}" height="${h}" rx="1.2" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/>${lis(dx+1.4,y+1.4,ww-2.8,h-2.8,.6)}<line x1="${dx+ww/2}" y1="${y+2}" x2="${dx+ww/2}" y2="${y+h-2}" stroke="${NU}" stroke-width=".7"/>`;
+  const ox=r?dx-ow+2:dx+ww-2;s+=`<rect x="${ox}" y="${y+2}" width="${ow}" height="${h-4}" rx="1" fill="var(--calme)" stroke="${NU}" stroke-width="1.1"/>`});
+ const g0=x+dw+ow-1,g1=x+w-dw-ow+1,c=y+h/2;
+ s+=`<line x1="${g0}" y1="${c-2.4}" x2="${g1}" y2="${c-2.4}" stroke="${NU}" stroke-width="1"/><line x1="${g0}" y1="${c+2.4}" x2="${g1}" y2="${c+2.4}" stroke="${NU}" stroke-width="1"/>`;
+ return s}
+/* coupe vue de dessus : où se pose la menuiserie dans l'épaisseur du mur */
+function coupe(pos){const u=HID++;
+ let s=`<svg class="pic" viewBox="0 0 140 112" aria-hidden="true">${defs(u)}${T(70,10,"DEHORS",{fs:8.5})}${T(70,109,"DEDANS",{fs:8.5})}`;
+ const yM=pos==="ite"?36:24,mas=38,ins=13;
+ if(pos==="ite")s+=isol(u,0,yM-ins,48,ins)+isol(u,92,yM-ins,48,ins);
+ s+=mur(u,0,yM,48,mas)+mur(u,92,yM,48,mas);
+ if(pos!=="ite")s+=isol(u,0,yM+mas,48,ins)+isol(u,92,yM+mas,48,ins)+`<rect x="0" y="${yM+mas+ins}" width="48" height="3" fill="none" stroke="${NU}" stroke-width="1"/><rect x="92" y="${yM+mas+ins}" width="48" height="3" fill="none" stroke="${NU}" stroke-width="1"/>`;
+ if(pos==="feu")s+=mur(u,48,yM,7,12)+mur(u,85,yM,7,12);
+ const F={app:[40,yM+mas,60],tun:[48,yM+14,44],feu:[48,yM+12,44],ite:[40,yM-ins-10,60]}[pos];const[fx,fy,fw]=F;
+ s+=profil(fx,fy,fw,10);
+ if(pos==="app")s+=T(24,yM+mas+ins/2+3,"ISOLANT",{fs:6.5,c:NU});if(pos==="ite")s+=T(24,yM-ins/2+2.5,"ISOLANT",{fs:6.5,c:NU});
+ s+=T(24,yM+mas/2+3,"MUR",{fs:7.5,c:NU});
+ return s+"</svg>"}
+/* fenêtre vue de face, au trait, avec le symbole d'ouverture (la pointe du triangle = côté des charnières) */
+function face(o){const{w=64,h=78,hinge,ouv,nv=1,serv,porte}=o;const x=(100-w)/2,y=(96-h)/2,d=4;let s=`<svg class="pic" viewBox="0 0 100 100" aria-hidden="true"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" fill="none" stroke="${NU}" stroke-width="2.2"/>`+lis(x+2,y+2,w-4,h-4,1);
+ const pw=(w-2*d)/nv;for(let i=0;i<nv;i++){const x0=x+d+pw*i,x1=x0+pw,y0=y+d,y1=y+h-d;
+  s+=`<rect x="${x0+.5}" y="${y0}" width="${pw-1}" height="${y1-y0}" fill="none" stroke="${NU}" stroke-width="1.3"/><rect x="${x0+4}" y="${y0+4}" width="${pw-8}" height="${y1-y0-8}" fill="none" stroke="${NU}" stroke-width=".7" opacity=".6"/>`;
+  const hg=nv===1?hinge:(i===0?"G":"D");const op=nv===1||!serv||(serv==="G"?i===0:i===1);
+  if(ouv==="Fixe"){s+=T(x+w/2,y+h/2+4,"FIXE",{fs:10,c:NU});continue}
+  if(hg&&ouv!=="Soufflet"){const hx=hg==="G"?x0+4:x1-4,ox=hg==="G"?x1-4:x0+4;s+=`<path d="M${ox} ${y0+4}L${hx} ${(y0+y1)/2}L${ox} ${y1-4}" fill="none" stroke="${NU}" stroke-width="1.1" opacity="${op?1:.45}"/>`;
+   const px=(hg==="G"?x0:x1)-2;s+=`<rect x="${px}" y="${y0+h*.12}" width="4" height="9" rx="1.5" fill="none" stroke="${LA}" stroke-width="1.4"/><rect x="${px}" y="${y1-h*.12-9}" width="4" height="9" rx="1.5" fill="none" stroke="${LA}" stroke-width="1.4"/>`;
+   if(op)s+=`<rect x="${(hg==="G"?x1-8:x0+5)}" y="${(y0+y1)/2-8}" width="3.5" height="16" rx="1.7" fill="none" stroke="${NU}" stroke-width="1.3"/>`}
+  if(/Oscillo|Soufflet/.test(ouv||""))s+=`<path d="M${x0+4} ${y0+4}L${(x0+x1)/2} ${y1-4}L${x1-4} ${y0+4}" fill="none" stroke="${NU}" stroke-width="1.1" ${ouv==="Soufflet"?"":'stroke-dasharray="4 3"'}/>`}
+ if(porte)s+=`<line x1="4" y1="${y+h}" x2="96" y2="${y+h}" stroke="${NU}" stroke-width="1.6"/>`;
+ return s+"</svg>"}
+/* porte vue de dessus : vers l'intérieur ou vers l'extérieur */
+function dessus(dir){const y=50,u=HID++;let s=`<svg class="pic" viewBox="0 0 100 100" aria-hidden="true">${defs(u)}${T(50,12,"DEHORS",{fs:8.5})}${T(50,96,"DEDANS",{fs:8.5})}${mur(u,0,y-7,24,14)}${mur(u,76,y-7,24,14)}`;
+ const sg=dir==="in"?1:-1;s+=`<rect x="${dir==="in"?22:22}" y="${dir==="in"?y:y-50}" width="4" height="50" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/><path d="M24 ${y+sg*50} A52 52 0 0 ${dir==="in"?0:1} 76 ${y}" fill="none" stroke="${NU}" stroke-width="1" stroke-dasharray="4 3"/><circle cx="24" cy="${y}" r="2.6" fill="none" stroke="${LA}" stroke-width="1.4"/>`;return s+"</svg>"}
+/* volet roulant vu de côté : coffre dans l'ouverture ou sur la façade */
+function vrCoupe(k){const u=HID++;let s=`<svg class="pic" viewBox="0 0 100 100" aria-hidden="true">${defs(u)}${T(16,96,"DEHORS",{fs:8,a:"start"})}${T(84,96,"DEDANS",{fs:8,a:"end"})}${mur(u,34,4,30,22)}${mur(u,34,78,30,8)}`;
+ const cof=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="none" stroke="${NU}" stroke-width="1.4"/><circle cx="${x+w/2}" cy="${y+h/2}" r="${Math.min(w,h)/2-3}" fill="none" stroke="${NU}" stroke-width=".8"/>`;
+ if(k==="cai")s+=`<rect x="36" y="8" width="24" height="16" fill="var(--calme)" stroke="${NU}" stroke-width="1"/>`+cof(38,9,20,14)+`<line x1="42" y1="23" x2="42" y2="78" stroke="${NU}" stroke-width="1.4" stroke-dasharray="3 2"/>`;
+ else if(k==="tun")s+=cof(36,26,18,16)+`<line x1="40" y1="42" x2="40" y2="78" stroke="${NU}" stroke-width="1.4" stroke-dasharray="3 2"/>`;
+ else s+=cof(11,6,23,21)+`<rect x="30.5" y="27" width="3" height="53" fill="none" stroke="${NU}" stroke-width=".9"/><line x1="32" y1="28" x2="32" y2="79" stroke="${NU}" stroke-width="1.4" stroke-dasharray="3 2"/>`;
+ return s+`<rect x="58" y="26" width="6" height="52" fill="none" stroke="${NU}" stroke-width="1.3"/><line x1="61" y1="28" x2="61" y2="76" stroke="${NU}" stroke-width=".6"/></svg>`}
+/* bas de la fenêtre vu de côté : appui avec ou sans rejingot */
+function appuiPic(k){const u=HID++;let s=`<svg class="pic" viewBox="0 0 100 70" aria-hidden="true">${defs(u)}${T(10,66,"DEHORS",{fs:8,a:"start"})}${T(92,66,"DEDANS",{fs:8,a:"end"})}`;
+ const fen=y=>`<rect x="58" y="${y}" width="14" height="16" fill="none" stroke="${NU}" stroke-width="1.4"/>${lis(59.5,y+1.5,11,13,.5)}<line x1="65" y1="${y}" x2="65" y2="${y+16}" stroke="${NU}" stroke-width=".7"/>`;
+ if(k==="rej")s+=`<path d="M6 40 H58 V30 H94 V54 H6 Z" fill="url(#hm${u})" stroke="${NU}" stroke-width="1"/>${fen(14)}${T(46,26,"rejingot",{fs:8.5,c:NU})}<path d="M52 28 l5 3" stroke="${NU}" stroke-width=".8"/>`;
+ else if(k==="plat")s+=`<rect x="6" y="36" width="88" height="18" fill="url(#hm${u})" stroke="${NU}" stroke-width="1"/>${fen(20)}`;
+ else s+=`<path d="M6 44 L20 38 L40 46 L60 36 L94 42 V54 H6 Z" fill="url(#hm${u})" stroke="${NU}" stroke-width="1" stroke-dasharray="3 2"/>`;
+ return s+"</svg>"}
+/* sens d'enroulement vu de côté : le tablier descend côté dehors ou côté fenêtre */
+function vrEnrPic(k){const cx=46,cy=28,r=12,tx=k==="ext"?cx-r:cx+r;let s=`<svg class="pic" viewBox="0 0 100 100" aria-hidden="true">${T(14,97,"DEHORS",{fs:8,a:"start"})}${T(88,97,"DEDANS",{fs:8,a:"end"})}`;
+ s+=`<rect x="26" y="8" width="40" height="38" rx="3" fill="none" stroke="${NU}" stroke-width="1.5"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${NU}" stroke-width="1.2"/><circle cx="${cx}" cy="${cy}" r="3" fill="none" stroke="${NU}" stroke-width="1"/>`;
+ s+=`<path d="M${cx} ${cy-r-4} A${r+4} ${r+4} 0 0 ${k==="ext"?0:1} ${k==="ext"?cx-r-4:cx+r+4} ${cy}" fill="none" stroke="${LA}" stroke-width="1.4"/>`;
+ s+=`<line x1="${tx}" y1="${cy}" x2="${tx}" y2="86" stroke="${NU}" stroke-width="2"/>`;for(let y=52;y<86;y+=6)s+=`<line x1="${tx-3}" y1="${y}" x2="${tx+3}" y2="${y}" stroke="${NU}" stroke-width=".8"/>`;
+ s+=`<rect x="72" y="46" width="5" height="40" fill="none" stroke="${NU}" stroke-width="1.2"/><line x1="74.5" y1="48" x2="74.5" y2="84" stroke="${NU}" stroke-width=".6"/>`;
+ return s+"</svg>"}
+/* volet roulant de face : commande à gauche ou à droite */
+function vrFace(side){const x=side==="G"?13:87;return `<svg class="pic" viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="10" width="56" height="14" rx="2" fill="none" stroke="${NU}" stroke-width="1.6"/>${lis(24,12,52,10,1)}<rect x="24" y="24" width="52" height="64" fill="none" stroke="${NU}" stroke-width="1.6"/>${[30,36,42,48,54].map(y=>`<line x1="24" y1="${y}" x2="76" y2="${y}" stroke="${NU}" stroke-width=".8"/>`).join("")}<circle cx="${x}" cy="17" r="6" fill="none" stroke="${LA}" stroke-width="1.8"/><circle cx="${x}" cy="17" r="1.8" fill="${LA}"/><line x1="${side==="G"?x+6:x-6}" y1="17" x2="${side==="G"?22:78}" y2="17" stroke="${LA}" stroke-width="1.2"/></svg>`}
+/* volet battant de face : gonds à gauche ou à droite (vu de dehors) */
+function vbFace(side){const g=side==="G"?28:72;return `<svg class="pic" viewBox="0 0 100 100" aria-hidden="true"><rect x="28" y="8" width="44" height="84" rx="1.5" fill="none" stroke="${NU}" stroke-width="2"/>${lis(30.5,10.5,39,79,1)}${[22,36,50,64,78].map(y=>`<line x1="32" y1="${y}" x2="68" y2="${y}" stroke="${NU}" stroke-width=".8" opacity=".6"/>`).join("")}<path d="M32 26 L68 70" stroke="${NU}" stroke-width="1"/><rect x="${g-3}" y="17" width="6" height="8" rx="1.5" fill="none" stroke="${LA}" stroke-width="1.6"/><rect x="${g-3}" y="75" width="6" height="8" rx="1.5" fill="none" stroke="${LA}" stroke-width="1.6"/></svg>`}
+/* choix illustrés : chaque bouton porte son propre dessin */
+function picFor(q,it,x){const porte=isPorte(it)||isBP(it),nv=parseInt(it.vant)||1;
+ if(q.id==="pos")return coupe(x);
+ if(q.id==="sens")return face({hinge:x,ouv:porte?"Battant":(it.ouv||"Battant"),porte,w:porte?46:64,h:porte?86:78});
+ if(q.id==="serv")return face({nv,serv:x,ouv:it.ouv||"Battant",w:76});
+ if(q.id==="ouv")return face({hinge:"G",ouv:x});
+ if(q.id==="ouvP")return dessus(x==="Vers moi"?"in":"out");
+ if(q.id==="vrPose")return vrCoupe(/ouverture/.test(x)?"tun":/caisson/.test(x)?"cai":"fac");
+ if(q.id==="appui")return appuiPic(/avec/.test(x)?"rej":/sans/.test(x)?"plat":"rien");
+ if(q.id==="volc")return vrFace(x);
+ if(q.id==="vrEnr")return vrEnrPic(x==="Extérieur"?"ext":"int");
+ if(q.id==="vbSens")return vbFace(x);
+ return ""}
+const CAMQ={pos:"Le tableau",pose:"L'ancien cadre",L:"Le mètre posé",appui:"L'appui",seuil:"Le seuil",vrExist:"Le coffre",vol:"Le volet",vbPose:"Les gonds",doub:"Le doublage",ep:"La cloison"};
+const CAMI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l1.6-2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>';
+const camBtn=(it,k)=>{const ph=(it.ph||{})[k];return `<button class="cam ${ph?"on":""}" data-cam="${k}" aria-label="Photo : ${CAMQ[k]||k}">${ph?`<img src="${ph}" alt="">`:CAMI}${ph?"✓":"Photo"}</button>`};
+const PICQ=["pos","sens","serv","ouv","ouvP","vrPose","vrEnr","appui","volc","vbSens"];
+/* grand dessin des mesures, vue de face au trait : le mètre ruban montre où mesurer ; mesure en cours pleine, les autres en pâle */
+function ill(kind,it){const inside=kind==="Li"||kind==="Hi";if(inside)kind=kind[0];
+ const reno=it.pose==="reno",porte=isPorte(it)||isBP(it)||/Porte-fenêtre|Baie/.test(it.type||""),vol=isVol(it)&&!inside;
+ const X=78,W=144,Y=porte?22:34,H=porte?160:114,base=porte?182:148,dp=12;
+ let s=`<svg viewBox="0 0 300 215" aria-label="Où mesurer"><rect x="0" y="0" width="300" height="215" rx="12" fill="var(--calme)"/>`;
+ /* ouverture avec la profondeur du tableau */
+ s+=`<rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="none" stroke="${NU}" stroke-width="1.6"/><path d="M${X} ${Y} L${X+dp} ${Y+dp} M${X+W} ${Y} L${X+W-dp} ${Y+dp} M${X} ${Y+H} L${X+dp} ${Y+H-(porte?0:dp)} M${X+W} ${Y+H} L${X+W-dp} ${Y+H-(porte?0:dp)}" stroke="${NU}" stroke-width="1"/><rect x="${X+dp}" y="${Y+dp}" width="${W-2*dp}" height="${H-dp-(porte?0:dp)}" fill="none" stroke="${NU}" stroke-width="1"/>`+lis(X-3,Y-3,W+6,H+(porte?3:6),1.5);
+ if(!porte)s+=`<path d="M${X-14} ${Y+H} h${W+28} v9 h-${W+28} Z" fill="none" stroke="${NU}" stroke-width="1.3"/>`+lis(X-12,Y+H+2,W+24,5,.5);
+ if(porte||kind==="all")s+=`<line x1="10" y1="${base+(porte?0:46)}" x2="290" y2="${base+(porte?0:46)}" stroke="${NU}" stroke-width="1.6"/>${T(282,base+(porte?0:46)-5,"sol fini",{fs:8.5,a:"end"})}`;
+ if(reno&&!vol){const fx=X+dp,fy=Y+dp,fw=W-2*dp,fh=H-dp-(porte?0:dp);s+=`<rect x="${fx+3}" y="${fy+3}" width="${fw-6}" height="${fh-6}" fill="none" stroke="${MU}" stroke-width="5" opacity=".55"/><line x1="${fx+fw/2}" y1="${fy+6}" x2="${fx+fw/2}" y2="${fy+fh-6}" stroke="${MU}" stroke-width="3" opacity=".55"/>${T(fx+fw/2,fy+fh-12,"ancien cadre",{fs:9})}`}
+ const tag=vol?"VUE DE DEHORS":"VUE DE L'INTÉRIEUR";s+=`<rect x="8" y="8" width="${tag.length*6.2+14}" height="18" rx="9" fill="none" stroke="${NU}" stroke-width=".8" opacity=".5"/>${T(15,20.5,tag,{fs:9,a:"start",c:NU,fw:800})}`;
+ const g=(i,inner)=>`<g class="mk${i===cur3?" on":""}" data-k="${i}">${inner}</g>`;
+ /* le mètre ruban : bande avec graduations + boîtier au départ */
+ const ticks=(n,f)=>Array.from({length:n},(_,k)=>f(k)).join("");
+ const tapeH=(x1,x2,y)=>`<rect x="${x1}" y="${y-4}" width="${x2-x1}" height="8" fill="var(--calme)" stroke="${LA}" stroke-width="1.4"/>${ticks(Math.floor((x2-x1)/6),k=>`<line x1="${x1+k*6}" y1="${y-4}" x2="${x1+k*6}" y2="${y-(k%5?1.5:-1)}" stroke="${LA}" stroke-width=".8"/>`)}<rect x="${x1-15}" y="${y-9}" width="16" height="18" rx="4" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/><circle cx="${x1-7}" cy="${y}" r="3.5" fill="none" stroke="${NU}" stroke-width="1"/>`;
+ const tapeV=(x,y1,y2)=>`<rect x="${x-4}" y="${y1}" width="8" height="${y2-y1}" fill="var(--calme)" stroke="${LA}" stroke-width="1.4"/>${ticks(Math.floor((y2-y1)/6),k=>`<line x1="${x-4}" y1="${y2-k*6}" x2="${x-(k%5?1.5:-1)}" y2="${y2-k*6}" stroke="${LA}" stroke-width=".8"/>`)}<rect x="${x-9}" y="${y2-1}" width="18" height="16" rx="4" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/><circle cx="${x}" cy="${y2+7}" r="3.5" fill="none" stroke="${NU}" stroke-width="1"/>`;
+ const xa=reno&&!vol?X+dp+3:X,xb=reno&&!vol?X+W-dp-3:X+W,ya=reno&&!vol?Y+dp+3:Y,yb=reno&&!vol?Y+H-(porte?0:dp)-3:Y+H;
+ if(kind==="L")[.2,.5,.8].forEach((f,i)=>{const y=ya+(yb-ya)*f;s+=g(i,tapeH(xa,xb,y)+pin(X+W/2,y-14,i+1))});
+ if(kind==="H")[.22,.5,.78].forEach((f,i)=>{const x=xa+(xb-xa)*f;s+=g(i,tapeV(x,ya,yb)+pin(x+15,(ya+yb)/2-14*(i-1),i+1))});
+ if(kind==="D"){s+=g(0,`<line x1="${xa+3}" y1="${ya+3}" x2="${xb-3}" y2="${yb-3}" stroke="${LA}" stroke-width="2.2"/>`+pin(xa+(xb-xa)*.3,ya+(yb-ya)*.3-8,1))+g(1,`<line x1="${xb-3}" y1="${ya+3}" x2="${xa+3}" y2="${yb-3}" stroke="${LA}" stroke-width="2.2"/>`+pin(xa+(xb-xa)*.7,ya+(yb-ya)*.3-8,2))}
+ if(kind==="all")s+=`<g class="mk on">${tapeV(X+W/2,Y+H+9,base+46)}${T(X+W/2+12,(Y+H+base+56)/2+4,"allège",{a:"start",c:NU,fw:800,fs:11})}</g>`;
+ return s+"</svg>"}
+let cur3=0;
+
+/* parties du questionnaire : on peut revenir sur n'importe laquelle à tout moment */
+const SECT=[["Fabricant",["fab"]],["Pièce",["piece"]],["Menuiserie",["type"]],["Pose",["bat","bpPose","ep","bpDim","pose","aile","pos","doub","vrPose","vrExist","vbModele","vbPose"]],["Cotes",["L","H","Li","Hi","D","all","appui","seuil"]],["Ouverture",["vant","ouv","ouvP","sens","serv","vbSens"]],["Volet",["vol","vrEnr","volm","volc"]],["Finitions",["bpMod","bpFin","bpSer","mat","ci","ce","vcoul","vitr","sb"]],["Photos",["photo"]]];
+function secs(it,L,curId){const out=[];SECT.forEach(([n,ids],si)=>{const qs=L.filter(q=>ids.includes(q.id));if(!qs.length)return;const done=qs.every(q=>valTxt(q,it)!==""),cur=qs.some(q=>q.id===curId);out.push(`<button data-a="sec" data-s="${L.indexOf(qs[0])}" class="${cur?"cur":done?"ok":""}">${n}</button>`)});return `<nav class="secs" aria-label="Parties">${out.join("")}<button data-a="rcv" class="rcb">Tout revoir</button></nav>`}
+/* ---------- rendu ---------- */
+const P=$("#phone");
+const CAM=document.createElement("input");CAM.type="file";CAM.accept="image/*";CAM.setAttribute("capture","environment");CAM.hidden=true;document.body.appendChild(CAM);let camK=null;
+function fakePh(k){const c=document.createElement("canvas");c.width=160;c.height=120;const x=c.getContext("2d");x.fillStyle="#DCE4F0";x.fillRect(0,0,160,120);x.strokeStyle="#1B2440";x.lineWidth=3;x.strokeRect(40,18,80,88);x.beginPath();x.moveTo(80,18);x.lineTo(80,106);x.stroke();x.strokeStyle="#A8823F";x.lineWidth=2;x.strokeRect(36,14,88,96);return c.toDataURL("image/jpeg",.7)}
+function savePh(k,url){const it=S.items[cur];if(!it)return;(it.ph=it.ph||{})[k]=url;if(k==="int"||k==="ext")it.photo=!!(it.ph.int||it.ph.ext);render()}
+CAM.addEventListener("change",()=>{const f=CAM.files&&CAM.files[0],k=camK;CAM.value="";if(!f||!k)return;const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const m=640,r=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=img.width*r;c.height=img.height*r;c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);savePh(k,c.toDataURL("image/jpeg",.72))};img.onerror=()=>savePh(k,fakePh(k));img.src=u});
+function head(t,s,back){if(LECT&&(back==="end"||!back))back="esp";return `<div class="ph-h">${back==="esp"||(!back&&!LECT)?`<a class="ib" href="${ESP}" aria-label="Retour à l'Espace">‹</a>`:back?`<button class="ib" data-a="${back}" aria-label="Retour">‹</button>`:`<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="var(--nuit)" stroke-width="5"/><circle cx="32" cy="32" r="5" fill="var(--laiton)"/></svg>`}<div class="t"><b>${esc(t)}</b><small>${esc(s)}</small></div>${mode==="wz"?`<button class="ib" data-a="rcv">Récap</button>`:mode==="list"?`<button class="ib" data-a="end">Fiche</button>`:""}</div>${mode==="list"?`<span class="exc">Démonstration · client et cotes d'exemple</span>`:""}`}
+function render(){
+ let h="";
+ if(mode==="list"){
+  const ok=S.items.filter(i=>i.fini).length;
+  h=head("Prise de cotes",S.chantier+" · pour "+S.four)+`<div class="ph-b">
+   ${(()=>{const n=S.items.length,rest=S.items.filter(i=>!i.fini);return `<div class="card sum"><div class="sum-n"><b>${ok}</b><span>/ ${n}</span></div><div class="sum-t"><b>${ok===n?"Tout est mesuré":rest.length+" à mesurer : "+rest.map(r=>esc(r.piece||r.type||"")).join(", ")}</b><i class="bar"><i style="width:${n?ok/n*100:0}%"></i></i></div></div>`})()}
+   <div class="list">${S.items.map((it,i)=>[it,i]).sort((x,y)=>x[0].no-y[0].no).map(([it,i])=>`<button class="item ${it.fini?"":"todo"}" data-a="open" data-i="${i}"><span class="ico">${TIC(it)}<span class="no">${it.no}</span></span><span class="txt"><span class="l1"><b>${esc(it.type||"Menuiserie")}</b>${it.fini?`<span class="dim">${minOf(it.L)}<i>×</i>${minOf(it.H)}</span>`:""}</span><small>${esc([it.piece,...(it.fini?[it.mat]:[it.fromPlan?"venue du plan":"à finir"])].filter(Boolean).join(" · "))}</small></span>${it.fini?`<em class="ok" aria-label="Prête"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3L15 6.5"/></svg></em>`:`<em class="todo">À mesurer</em>`}</button>`).join("")}</div>
+   <button class="addr" data-a="add" aria-label="Ajouter une menuiserie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><div class="lfoot"><button class="lnk end" data-a="end" ${ok?"":"disabled"}>J'ai terminé, voir la fiche ›</button></div></div>`;
+ }else if(mode==="new"){
+  const done=S.items.filter(i=>i.fini),seen=new Set(),models=[];for(const x of [...done].reverse()){const k=[x.type,x.pose,x.pos,x.mat,x.ouv,x.ci,x.ce].join("|");if(!seen.has(k)){seen.add(k);models.push(x)}if(models.length>=3)break}
+  h=head("Menuiserie n°"+(S.items.length+1),"Comment on commence ?","list")+`<div class="ph-b"><div class="q"><div><h3>Pareille qu'une autre ?</h3><p class="h">On reprend tout sauf la pièce, les cotes, le sens et les photos. Vous ne répondez qu'à ce qui change.</p></div>
+   <div class="cp">${models.map((x,j)=>`<button data-a="copy" data-i="${S.items.indexOf(x)}" class="${j?"":"main"}"><span class="ico">${TIC(x)}</span><span><b>Comme la n°${x.no} · ${esc(x.type)}</b><small>${esc(resume(x)||x.piece||"")}</small></span></button>`).join("")}
+   <button data-a="blank"><span class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8v16M8 16h16"/></svg></span><span><b>Une autre, je réponds à tout</b><small>Nouveau type ou autre modèle</small></span></button></div></div>
+   <div class="foot"><button class="lnk" data-a="list">‹ Retour</button><span></span></div></div>`;
+ }else if(mode==="wz"){
+  const it=S.items[cur],L=steps(it);if(step>=L.length){mode="rc";S.back=null;return render()}
+  const q=L[step];
+  h=head(it.type?`${it.type} n°${it.no}`:`Menuiserie n°${it.no}`,(it.piece||"")+(it.piece?" · ":"")+(it._copy?(()=>{const r=L.filter(x=>valTxt(x,it)==="").length;return r?"Comme la n°"+it._copy+" · plus que "+r+" question"+(r>1?"s":""):"Comme la n°"+it._copy})():"Question "+(step+1)+" sur "+L.length),"list")+secs(it,L,q.id)+`<div class="ph-b">
+   <div class="q ${dir<0?"back":dir===0?"still":""}"><div class="qt"><div><h3>${esc(qT(q,it))}</h3>${qH(q,it)?`<p class="h">${esc(qH(q,it))}</p>`:""}</div>${CAMQ[q.id]?camBtn(it,q.id):""}</div>
+   ${q.ill?`<div class="ill">${ill(q.ill,it)}</div>`:""}
+   ${body(q,it)}</div>
+   <div class="foot"><button class="lnk" data-a="prev">‹ Retour</button><button class="mic ${DIC.on?"on":""}" data-a="mic" aria-label="${DIC.on?"Arrêter la dictée":"Dicter la réponse"}" aria-pressed="${DIC.on}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>${q.kind?`<button class="go" data-a="next" ${q.kind==="m3"&&!q.opt&&minOf(it[q.id])===0&&it[q.id]!==DK?"disabled":""}>${q.opt&&!minOf(it[q.id])?"Passer":"Continuer"}</button>`:`<button class="lnk" data-a="next">Passer ›</button>`}</div></div>`;
+ }else if(mode==="rc"){
+  const it=S.items[cur],L=steps(it);
+  h=head(`${it.type} n°${it.no}`,it.piece+" · récapitulatif","list")+`<div class="ph-b">
+   <div class="rs">${SECT.map(([n,ids])=>{const qs=L.filter(q=>ids.includes(q.id));if(!qs.length)return"";const miss=qs.filter(q=>{const t=valTxt(q,it);return(!t||t===DK)&&q.id!=="D"});const first=miss[0]||qs[0];
+    const vals=qs.map(q=>{const t=valTxt(q,it);if(q.id==="D"&&t==="Non relevées")return"";if(q.id==="photo")return"";return !t||t===DK?`<i>${esc(shortT(q,it))} ?</i>`:esc(q.kind==="m3"?shortT(q,it)+" "+t:t)}).filter(Boolean).join(" · ");
+    const phs=Object.entries(it.ph||{}).filter(([k])=>ids.includes(k)||(n==="Photos"&&(k==="int"||k==="ext")));
+    return `<button data-a="goto" data-i="${L.indexOf(first)}"><span><h5>${n}</h5><p>${vals||(n==="Photos"?(phs.length?phs.length+" photo"+(phs.length>1?"s":""):"<i>Aucune photo</i>"):"")}${phs.length?`<span class="phs">${phs.map(([,u])=>`<img src="${u}" alt="">`).join("")}</span>`:""}</p></span><em class="${miss.length?"":"ok"}">${miss.length?miss.length+" à voir":"✓"}</em></button>`}).join("")}</div>
+   <div class="rcf">${S.back!=null&&!it.fini?`<button class="ghost" data-a="resume">‹ Reprendre</button>`:`<button class="ghost" data-a="done">C'est bon</button>`}<button class="go" data-a="${S.back!=null&&!it.fini?"done":"donext"}">${S.back!=null&&!it.fini?"C'est bon":"C'est bon, suivante ›"}</button></div></div>`;
+ }else if(mode==="end"){
+  h=head("C'est terminé",S.chantier,"list")+`<div class="ph-b">
+   <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" style="margin:4px auto 0"><circle cx="32" cy="32" r="28" fill="none" stroke="var(--nuit)" stroke-width="3"/><path d="M20 33l8 8 16-17" fill="none" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <h3 style="text-align:center;font:800 20px var(--f)">${S.items.filter(i=>i.fini).length} menuiseries prêtes</h3>
+   <p style="margin:0;text-align:center;color:var(--muted)">Et maintenant ?</p>
+   <button class="go full" data-a="bon">Voir la fiche et créer le PDF</button>
+   <button class="ghost full" data-a="plan">Faire le plan du logement</button>
+   <button class="ghost full" data-a="send">Envoyer à l'ADV pour Pro Devis</button></div>`;
+ }else if(mode==="bon"){
+  const its=S.items.filter(i=>i.fini);
+  h=head("Fiche de prise de cotes","Pour "+S.four+" · mots : "+VOC[V].nom,"end")+`<div class="ph-b">${fiche(its)}
+  <button class="go full" data-a="pdf">Créer le PDF</button>
+  ${LECT?"":`<button class="ghost full" data-a="send">Envoyer à ${esc(S.four)}</button>`}
+  <p style="margin:0;font-size:12.5px;color:var(--muted);text-align:center">Dans la vraie version, le PDF se range dans le dossier du client, avec les photos et le plan. Ici, rien n'est créé ni envoyé.</p></div>`;
+ }
+ if(!LECT)persist();
+ P.innerHTML=h+(toast?`<div class="toast" role="status">${esc(toast)}</div>`:"")+(DIC.on&&mode==="wz"?`<div class="heard" aria-live="polite">${DIC.txt?"« "+esc(DIC.txt)+" »":"Je vous écoute…"}<small>${DIC.hint||micHint()}</small></div>`:"");
+ const f=P.querySelector(".mrow.cur input");if(f){f.focus({preventScroll:true});try{f.setSelectionRange(f.value.length,f.value.length)}catch(e){}}
+}
+
+/* cotes détaillées pour le bon : toutes les mesures prises, puis la retenue */
+function bonV(q,it){const x=it[q.id];
+ if((q.id==="L"||q.id==="H")&&Array.isArray(x)){const n=x.filter(Number);return n.length?`<span class="all">${n.join(" · ")}</span> <b>→ ${minOf(x)} mm</b>`:"À vérifier"}
+ if(q.id==="D"&&!(Array.isArray(x)&&x.filter(Number).length===2))return "Non relevées";
+ if(q.id==="D"&&Array.isArray(x)&&x.filter(Number).length===2)return `<span class="all">${x.join(" · ")}</span> <b>→ ${ecart(x)?"écart "+ecart(x)+" mm":"d'équerre"}</b>`;
+ const t=valTxt(q,it);return t&&t!==DK?esc(t):'<b class="ask">À vérifier</b>'}
+/* croquis vu de l'intérieur, à l'échelle, avec cotes, vantaux et charnières */
+function croquis(it){const L=minOf(it.L)||1000,H=minOf(it.H)||1200,k=Math.min(150/L,130/H),w=L*k,h=H*k,x=60,y=12,nv=parseInt(it.vant)||1,nu="var(--nuit)",la="var(--laiton)";
+ const cc=(COUL.find(c=>c[0]===(isVol(it)?it.vcoul:it.ci))||[])[2];const fr=cc&&!/gradient/.test(cc)?cc:"var(--bg)";
+ let s=`<svg viewBox="0 0 230 ${h+56}" aria-label="Croquis repère ${it.no}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fr}" stroke="${nu}" stroke-width="2.5"/><rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" fill="var(--bg)" stroke="${nu}" stroke-width="1"/>`;
+ if(!isVol(it)&&it.ouv!=="Fixe"&&it.type!=="Châssis fixe"&&it.type!=="Baie coulissante"&&it.type!=="Porte de garage"){const pw=w/nv;for(let i=0;i<nv;i++){const x0=x+pw*i,x1=x0+pw,hinge=nv===1?it.sens:(i===0?"G":"D");if(hinge!=="G"&&hinge!=="D")continue;const hx=hinge==="G"?x0+6:x1-6,ox=hinge==="G"?x1-6:x0+6;s+=`<path d="M${ox} ${y+6}L${hx} ${y+h/2}L${ox} ${y+h-6}" fill="none" stroke="${nu}" stroke-width=".9"/>`;if(/Oscillo/.test(it.ouv||"")&&(nv===1||(it.serv==="D"?i===1:i===0)))s+=`<path d="M${x0+6} ${y+6}L${x0+pw/2} ${y+h-6}L${x1-6} ${y+6}" fill="none" stroke="${nu}" stroke-width=".9" stroke-dasharray="3 2"/>`}}
+ for(let i=1;i<nv;i++)s+=`<line x1="${x+w*i/nv}" y1="${y}" x2="${x+w*i/nv}" y2="${y+h}" stroke="${nu}" stroke-width="2"/>`;
+ if(it.ouv!=="Fixe"&&it.type!=="Châssis fixe"){const side=nv===1?it.sens:it.serv;if(side==="G"||side==="D"){const hx=nv===1?(side==="G"?x:x+w):(side==="G"?x:x+w);s+=`<rect x="${hx-3}" y="${y+h*.15}" width="6" height="12" rx="2" fill="${la}"/><rect x="${hx-3}" y="${y+h*.85-12}" width="6" height="12" rx="2" fill="${la}"/>`;const px=nv===1?(side==="G"?x+w-8:x+8):(side==="G"?x+w/nv-6:x+w-w/nv+6);s+=`<rect x="${px-2}" y="${y+h/2-8}" width="4" height="16" rx="2" fill="${nu}"/>`}}
+ if(/Porte-fenêtre/.test(it.type)&&it.sb==="Oui")s+=`<line x1="${x}" y1="${y+h*.78}" x2="${x+w}" y2="${y+h*.78}" stroke="${nu}" stroke-width="1.5"/>`;
+ s+=`<line x1="${x}" y1="${y+h+14}" x2="${x+w}" y2="${y+h+14}" stroke="currentColor" stroke-width="1"/><text x="${x+w/2}" y="${y+h+28}" font-size="11" font-weight="800" text-anchor="middle" fill="currentColor">${L}</text>`;
+ s+=`<line x1="${x-14}" y1="${y}" x2="${x-14}" y2="${y+h}" stroke="currentColor" stroke-width="1"/><text x="${x-18}" y="${y+h/2+4}" font-size="11" font-weight="800" text-anchor="end" fill="currentColor">${H}</text>`;
+ if(it.all&&it.all!==DK)s+=`<text x="${x+w/2}" y="${y+h+44}" font-size="10" text-anchor="middle" fill="var(--muted)">allège ${it.all}</text>`;
+ return s+`<text x="${x+w+8}" y="${y+10}" font-size="9.5" fill="var(--muted)">${isBP(it)?"vu côté":"vu de"}</text><text x="${x+w+8}" y="${y+22}" font-size="9.5" fill="var(--muted)">${isBP(it)?"poussant":"l'intérieur"}</text></svg>`}
+/* plan d'exemple (Durand) : pièces + repères posés sur les murs */
+function planSvg(its){const R={"Séjour":[10,10,150,110],"Cuisine":[160,10,90,70],"Salle de bain":[160,80,90,40],"Chambre":[10,120,120,80],"Entrée":[130,120,120,80]};
+ const W={"Séjour":[85,120,"h"],"Cuisine":[205,10,"h"],"Salle de bain":[250,100,"v"],"Chambre":[10,160,"v"],"Entrée":[200,200,"h"]};
+ let s=`<svg viewBox="0 0 260 210" aria-label="Plan du logement">`;
+ for(const[n,[x,y,w,h]]of Object.entries(R))s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="var(--bg)" stroke="var(--nuit)" stroke-width="3" stroke-linejoin="round"/><text x="${x+w/2}" y="${y+h/2+4}" font-size="10" text-anchor="middle" fill="var(--muted)">${n}</text>`;
+ const used={};its.forEach(it=>{const p=W[it.piece];if(!p)return;const o=(used[it.piece]=(used[it.piece]||0)+1)-1;let[cx,cy,d]=p;if(d==="h")cx+=o*26;else cy+=o*22;const ww=d==="h"?22:0,hh=d==="v"?18:0;s+=`<line x1="${cx-ww/2}" y1="${cy-hh/2}" x2="${cx+ww/2}" y2="${cy+hh/2}" stroke="var(--laiton)" stroke-width="6"/><circle cx="${cx+(d==="v"?(cx<20?14:-14):0)}" cy="${cy+(d==="h"?(cy<20?14:-14):0)}" r="8" fill="var(--nuit)"/><text x="${cx+(d==="v"?(cx<20?14:-14):0)}" y="${cy+(d==="h"?(cy<20?14:-14):0)+3.5}" font-size="10" font-weight="800" text-anchor="middle" fill="var(--bg)">${it.no}</text>`});
+ return s+"</svg>"}
+
+/* Fiche finale : ordre d'un devis menuiserie (repère, quantité, désignation, dimensions, croquis vue intérieure, caractéristiques par rubrique) */
+const GRP=[["Cotes relevées",["L","H","D","all"]],["Pose",["bat","pose","aile","pos","doub","appui","seuil","vrPose","vrExist","vbPose"]],["Ouverture",["vbModele","vant","ouv","ouvP","sens","serv","vbSens"]],["Volet",["vol","vrEnr","volm","volc"]],["Finitions",["mat","ci","ce","vcoul","vitr","sb"]]];
+function design(it){const v=it.vant&&!isVol(it)?(it.vant==="1"?" 1 vantail":" "+it.vant+" vantaux"):it.type==="Volets battants"&&it.vant?" "+it.vant+(it.vant==="1"?" battant":" battants"):"";const o=it.ouv&&it.ouv!=="Battant"?" "+it.ouv.toLowerCase():"";return it.type+v+o+(it.mat?" · "+it.mat:"")}
+
+/* Bloc d'une menuiserie dans l'ordre d'un devis Pro Devis : fabricant, titre, Haut × Larg, croquis à gauche, liste à puces à droite */
+function blocPD(it){const A='<b class="ask">à vérifier</b>',val=(k,f)=>{const x=it[k];return x&&x!==DK?(f?f(x):esc(x)):A};
+ const nv=parseInt(it.vant)||1,vol=isVol(it),porte=isPorte(it);
+ const titre=vol?it.type+(it.type==="Volets battants"&&it.vant?" "+it.vant+(it.vant==="1"?" battant":" battants"):"")+(it.mat?" ("+it.mat+")":""):it.type+(it.vant&&it.type!=="Châssis fixe"?" "+(nv===1?"1 vantail":it.vant+" vantaux"):"")+(it.mat?" ("+it.mat+")":"");
+ const li=[];const add=x=>x&&li.push(x);
+ if(isBP(it)){add("Pose : "+val("bpPose",x=>esc(x.toLowerCase())));add("Porte : "+val("bpMod"));add("Finition : "+val("bpFin"));add("Huisserie pour cloison de "+val("ep"));add(bpStd(it)?"Porte de "+val("bpDim",x=>esc(x.replace(/^Autre : /,"")))+(/^Autre/.test(it.bpDim||"")?"":" cm (dimension standard)"):"Dimensions de l'ouverture dans la cloison");if(it.sens==="G"||it.sens==="D")add("Poussant "+(it.sens==="D"?"droite":"gauche"));add("Serrure : "+val("bpSer"));
+  const mes=["L","H","Li","Hi","D"].map(k=>{const q=steps(it).find(x=>x.id===k);return q?`<tr><td>${esc(bonT(q,it))}</td><td>${bonV(q,it)}</td></tr>`:""}).join("");
+  return `<section class="frep"><div class="fab">${esc((it.fab||"Fabricant à choisir").toUpperCase())}</div><div class="pdt"><b>${esc("Bloc-porte intérieur"+(it.bpMod&&it.bpMod!==DK?" "+it.bpMod.toLowerCase():""))}</b><b>Haut ${minOf(it.H)||"?"} mm x Larg ${minOf(it.L)||"?"} mm</b><small>Repère ${it.no} · ${esc(it.piece||"")} · quantité 1</small></div><div class="frb"><div class="cro">${croquis(it)}</div><ul class="pdl">${li.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="fg"><h5>Cotes relevées sur place</h5><table>${mes}</table></div></section>`}
+ if(vol){add("Couleur du volet : "+val("vcoul"))}else{add("Couleur intérieure de la menuiserie : "+val("ci"));add("Couleur extérieure de la menuiserie : "+val("ce"))}
+ if(it.type==="Volet roulant"){add("Pose : "+val("vrPose"));add("Volet existant : "+val("vrExist"))}
+ else if(it.type==="Volets battants"){add("Modèle : "+val("vbModele"));add("Accroche : "+val("vbPose"))}
+ else if(it.pose==="reno"){add("Pose : "+esc(v("reno")));add(esc(v("aile"))+" : "+val("aile"))}
+ else{add("Pose : "+val("pos",x=>esc(v(x)||x)));if(it.pos==="app")add("Tapée : "+val("doub"))}
+ add(vol?"Dimensions tableau extérieur":it.pose==="reno"?"Dimensions dos de dormant existant":"Dimensions tableau");
+ if(steps(it).some(q=>q.id==="appui"))add("Appui : "+val("appui"));if(steps(it).some(q=>q.id==="seuil"))add("Seuil : "+val("seuil"));
+ if(!vol&&it.type!=="Porte de garage")add("Vitrage : "+val("vitr"));
+ if(!vol&&!porte&&it.type!=="Châssis fixe"&&it.type!=="Baie coulissante")add("Ouverture intérieure");
+ if(porte&&it.ouvP)add("Ouverture "+(it.ouvP==="Vers moi"?"intérieure (poussant)":"extérieure (tirant)"));
+ if(it.sens==="G"||it.sens==="D")add(porte?"Paumelles à "+(it.sens==="D"?"droite":"gauche")+" (vue intérieure)":(it.sens==="D"?"Droite":"Gauche")+" tirant (vue intérieure)");
+ if(it.serv==="G"||it.serv==="D")add("Vantail principal à "+(it.serv==="D"?"droite":"gauche")+" (vue intérieure)");
+ if(it.vbSens==="G"||it.vbSens==="D")add("Gonds à "+(it.vbSens==="D"?"droite":"gauche")+" (vue extérieure)");
+ if(!vol&&it.vant&&it.type!=="Châssis fixe")add((nv===1?"1 vantail":it.vant+" vantaux")+(it.ouv?" "+it.ouv.toLowerCase()+(nv>1&&it.ouv!=="Fixe"?"s":""):""));
+ if(it.type==="Porte-fenêtre")add("Soubassement : "+val("sb"));
+ if(!vol&&it.vol)add("Volet : "+val("vol"));
+ if(it.vrEnr)add("Enroulement "+val("vrEnr",x=>esc(x.toLowerCase())));if(it.volm)add("Manœuvre du volet : "+val("volm"));if(it.volc==="G"||it.volc==="D")add("Commande du volet à "+(it.volc==="D"?"droite":"gauche")+" (vue intérieure)");
+ if(it.all&&it.all!==DK)add("Allège : "+esc(it.all)+" mm");
+ const mes=["L","H","Li","Hi","D"].map(k=>{const q=steps(it).find(x=>x.id===k);return q?`<tr><td>${esc(bonT(q,it))}</td><td>${bonV(q,it)}</td></tr>`:""}).join("");
+ return `<section class="frep"><div class="fab">${esc((it.fab||"Fabricant à choisir").toUpperCase())}</div>
+  <div class="pdt"><b>${esc(titre)}</b><b>Haut ${minOf(it.H)||"?"} mm x Larg ${minOf(it.L)||"?"} mm</b><small>Repère ${it.no} · ${esc(it.piece||"")} · quantité 1</small></div>
+  <div class="frb"><div class="cro">${croquis(it)}</div><ul class="pdl">${li.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+  <div class="fg"><h5>Cotes relevées sur place</h5><table>${mes}<tr><td>Photos intérieur et extérieur</td><td>${it.photo||it.no<3?"2 jointes":'<b class="ask">À prendre</b>'}</td></tr></table></div></section>`}
+
+/* vignette du récap : la menuiserie en petit, vue de l'intérieur */
+function thumb(it){const L=minOf(it.L)||1000,H=minOf(it.H)||1200,k=Math.min(34/L,40/H),w=L*k,h=H*k,x=(44-w)/2,y=(44-h)/2,nv=isVol(it)&&it.type==="Volet roulant"?0:(parseInt(it.vant)||1);let s=`<svg viewBox="0 0 44 44" aria-hidden="true"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1" fill="var(--bg)" stroke="var(--nuit)" stroke-width="1.6"/>`;for(let i=1;i<nv;i++)s+=`<line x1="${x+w*i/nv}" y1="${y}" x2="${x+w*i/nv}" y2="${y+h}" stroke="var(--nuit)" stroke-width="1.2"/>`;if(it.type==="Volet roulant")for(let i=1;i<5;i++)s+=`<line x1="${x}" y1="${y+h*i/5}" x2="${x+w}" y2="${y+h*i/5}" stroke="var(--nuit)" stroke-width=".8"/>`;return s+"</svg>"}
+function fiche(its){const st=steps;
+ const nAsk=its.reduce((n,it)=>n+steps(it).filter(q=>!["photo","D"].includes(q.id)&&(!valTxt(q,it)||valTxt(q,it)===DK)).length,0);
+ const cnt=f=>its.filter(f).length,fabs=[...new Set(its.map(i=>i.fab).filter(Boolean))];
+ const ring=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="32" cy="32" r="5" fill="var(--laiton)"/></svg>`;
+ const head=`<header class="fcov"><div class="fct">${ring}<div><b>Fiche de prise de cotes</b><small>Menuiseries${fabs.length?" · "+esc(fabs.join(", ")):""}</small></div><div class="fbig"><b>${its.length}</b><small>menuiserie${its.length>1?"s":""}</small></div></div>
+  <div class="fmeta"><div><span>Client</span><b>${esc(S.chantier.split(" · ")[0])}</b></div><div><span>Chantier</span><b>${esc(S.chantier.split(" · ")[1]||"")}</b></div><div><span>Pour</span><b>${esc(S.four)}</b></div><div><span>Relevé le</span><b>${DOS&&DOS.id!=="durand"?"12/11/2026":"16/11/2026"} · ${DOS&&VX.COMS[DOS.com]?VX.COMS[DOS.com].n:"Julien"}</b></div></div></header>
+  <div class="ftiles"><div><b>${cnt(i=>/fenêtre|châssis|baie/i.test(i.type))}</b><span>Fenêtres et baies</span></div><div><b>${cnt(i=>isPorte(i))}</b><span>Portes</span></div><div><b>${cnt(i=>isVol(i))}</b><span>Volets seuls</span></div><div class="${nAsk?"warn":"ok"}"><b>${nAsk}</b><span>${nAsk?"Point"+(nAsk>1?"s":"")+" à vérifier":"Tout est vérifié"}</span></div></div>`;
+ const sum=`<section class="fsec"><h4>Récapitulatif</h4><div class="tws"><table class="sum"><thead><tr><th></th><th>Rep.</th><th>Désignation</th><th>Pièce</th><th class="r">Haut × Larg (mm)</th></tr></thead><tbody>${its.map(it=>`<tr><td class="th">${thumb(it)}</td><td><i>${it.no}</i></td><td><b class="dn">${esc(design(it))}</b><small class="fb">${esc(it.fab||"")}</small></td><td>${esc(it.piece)}</td><td class="r"><b>${minOf(it.H)} × ${minOf(it.L)}</b></td></tr>`).join("")}</tbody></table></div></section>`;
+ const plan=S.plan?`<section class="fsec fplan"><h4>Plan du logement</h4><div class="fpl">${planSvg(its)}<ul class="leg">${its.map(it=>`<li><i>${it.no}</i><span><b>${esc(it.piece)}</b> ${esc(it.type)}</span></li>`).join("")}</ul></div></section>`:`<section class="fsec noplan"><span>Pas encore de plan pour ce chantier.</span><button class="ghost" data-a="plan">Faire le plan</button></section>`;
+ const reps=its.map(it=>{const keepV=V;if(it.fab)V=FABV(it.fab);const r=blocPD(it);V=keepV;return r}).join("");
+ return `<div class="doc">${head}${sum}${plan}${reps}<p class="fn">Préparé avec ProClik. Cotes brutes relevées sur place, sans déduction : la plus petite de 3 mesures est retenue. Le fabricant calcule ses cotes de fabrication selon le type de pose indiqué.</p></div>`}
+const PROS={Li:"Largeur int.",Hi:"Hauteur int.",type:"Menuiserie",bat:"Chantier",pose:"Rénovation",pos:"Type de pose",doub:"Doublage",all:"Allège",appui:"Appui",seuil:"Seuil",vant:"Vantaux",ouv:"Ouverture",ouvP:"Sens d'ouverture",sens:"Ferrage (vue int.)",serv:"Vantail de service",vbSens:"Ferrage (vue ext.)",vol:"Volet",volm:"Manœuvre",volc:"Côté manœuvre",mat:"Matériau",vcoul:"Teinte",ci:"Teinte intérieure",ce:"Teinte extérieure",vitr:"Vitrage",sb:"Soubassement",vrPose:"Pose du coffre",vrExist:"Existant",vbModele:"Modèle",vbPose:"Fixation",ep:"Épaisseur de cloison",bpMod:"Porte",bpFin:"Finition",bpSer:"Serrure",bpPose:"Pose",bpDim:"Dimension de la porte",vrEnr:"Enroulement"};
+function shortT(q,it){if(metier()&&PROS[q.id])return PROS[q.id];return({Li:"Largeur intérieur",Hi:"Hauteur intérieur",vrEnr:"Sens d'enroulement",bpDim:"Dimension de la porte",bpPose:"Pose",ep:"Épaisseur de cloison",bpMod:"Porte",bpFin:"Finition",bpSer:"Serrure",fab:"Fabricant",piece:"Pièce",type:"Menuiserie",bat:"Bâtiment",pose:"Ancienne menuiserie",aile:v("aile"),pos:"Pose dans le mur",doub:"Doublage",L:"Largeur",H:"Hauteur",D:"Diagonales",all:"Allège",appui:"Bas extérieur",seuil:"Seuil",vant:"Parties qui s'ouvrent",ouv:"Ouverture",ouvP:"Ouverture de la porte",sens:"Charnières (vu de l'intérieur)",serv:"Partie avec poignée",vol:"Volet",volm:"Manœuvre du volet",vrPose:"Pose du volet",vrExist:"Volet existant",vbModele:"Modèle",vbPose:"Accroche",vbSens:"Gonds (vu de dehors)",vcoul:"Couleur",volc:"Commande du volet",mat:"Matière",ci:"Couleur intérieure",ce:"Couleur extérieure",vitr:"Vitrage",sb:"Soubassement",photo:"Photos"})[q.id]||q.id}
+function bonT(q,it){if(["L","H","Li","Hi"].includes(q.id))return q.t(it);if(q.id==="pos")return"Type de pose";if(q.id==="pose")return"Rénovation";if(q.id==="doub")return v("doub");if(q.id==="sens")return v("sens").replace("…","");if(q.id==="vant")return"Vantaux";return shortT(q,it)}
+const alertTxt=(q,e)=>`Écart de ${e} mm entre vos mesures : l'ouverture n'est pas ${q.id==="D"?"d'équerre":"droite"}. On le signale au fournisseur.`;
+function body(q,it){
+ if(q.kind==="bpdim"){const cur=it.bpDim||"",m=cur.match(/^Autre : (\d+) × (\d+)/);
+  return `<div class="blk"><div class="bpd">${["63 × 204","73 × 204","83 × 204","93 × 204"].map(x=>`<button data-v="${x}" aria-pressed="${cur===x}">${x}<small>${x.split(" × ").map(n=>n+"0").join(" × ")} mm</small></button>`).join("")}</div>
+   <div class="oth"><span>Autre</span><input id="bw" inputmode="numeric" placeholder="Larg." value="${m?m[1]:""}" aria-label="Largeur de la porte en mm"><em>×</em><input id="bh" inputmode="numeric" placeholder="Haut." value="${m?m[2]:""}" aria-label="Hauteur de la porte en mm"><button class="go" data-a="bpdimok">OK</button></div>
+   <div class="ch one" style="margin-top:8px"><button class="dk" data-v="${DK}" aria-pressed="${cur===DK}">${DK}</button></div></div>`}
+ if(q.kind==="m3"){if((q.id==="Li"||q.id==="Hi")&&!(it[q.id]||[]).some(Number)){const src=minOf(it[q.id==="Li"?"L":"H"]);if(src){it[q.id]=[src,src,src].map(String);(it._auto=it._auto||{})[q.id]=[true,true,true]}}const a=it[q.id]=Array.isArray(it[q.id])?it[q.id]:[];const m=minOf(a),e=ecart(a);
+  return `<div class="meas">${q.labs.map((l,i)=>`<div class="mrow ${i===cur3?"cur":""}"><i>${i+1}</i><label for="m${i}">${l}</label><input id="m${i}" inputmode="numeric" pattern="[0-9]*" data-m="${i}" enterkeyhint="next" class="${(it._auto&&it._auto[q.id]&&it._auto[q.id][i])?"auto":""}" value="${esc(a[i]||"")}" placeholder="mm"><span>mm</span></div>`).join("")}</div>
+  <div class="keep" ${m&&q.id!=="D"?"":"hidden"}><span>On garde la plus petite</span><b>${m} mm</b></div>
+  <div class="alert" ${e>10?"":"hidden"}>${alertTxt(q,e)}</div>
+  <button class="dkl" data-v="${DK}">${DK}, je mesurerai plus tard</button>`}
+ if(q.kind==="m1")return `<div class="meas"><div class="mrow cur"><i>↕</i><label for="m0">Allège</label><input id="m0" inputmode="numeric" data-m1="1" value="${esc(it.all||"")}" placeholder="mm"><span>mm</span></div></div><div class="ch one"><button class="dk" data-v="${DK}">${DK}</button></div>`;
+ if(q.kind==="photo"){const ph=it.ph||{};return `<div class="phx">${(isBP(it)?[["int","Côté poussant"],["ext","Côté tirant"]]:[["int","Intérieur"],["ext","Extérieur"]]).map(([k,l])=>`<button data-cam="${k}" class="${ph[k]?"on":""}">${ph[k]?`<img src="${ph[k]}" alt="">`:CAMI}<b>${ph[k]?l+" ✓":l}</b></button>`).join("")}</div><p style="margin:0;font-size:12.5px;color:var(--muted)">Touchez pour ouvrir l'appareil photo. Si l'appareil n'est pas disponible, la maquette met une photo d'exemple.</p>`}
+ const o=q.o(it),val=it[q.id];
+ const pics=PICQ.includes(q.id);
+ return `<div class="blk"><div class="ch ${pics?"pics"+(o.length<=2?" big":""):q.one?"one":""}" ${q.grid4?'style="grid-template-columns:repeat(3,1fr)"':""}>${o.map(([x,sub,ic])=>{const lab=oL(q,x);if(lab!==x&&!q.lab)sub=sub?x+" · "+sub:x;const sw=q.sw&&ic?`<span class="sw" style="background:${ic}"></span>`:"";return `<button data-v="${esc(x)}" aria-pressed="${val===x}">${pics?picFor(q,it,x):!q.sw&&ic?ic:""}${sw}<span>${esc(lab)}${sub?`<small>${esc(sub)}</small>`:""}</span></button>`}).join("")}${q.nodk?"":`<button class="dk" data-v="${DK}" aria-pressed="${val===DK}">${DK}</button>`}</div></div>`;
+}
+
+
+/* ---------- aller vite ---------- */
+const COPYK=["vrEnr","bpDim","bpPose","ep","bpMod","bpFin","fab","type","bat","pose","aile","pos","doub","appui","seuil","ouv","ouvP","vol","volm","mat","ci","ce","vcoul","vitr","sb","vrPose","vrExist","vbModele","vbPose"];
+function newItem(src){const it={no:S.items.length+1,fab:src?src.fab:S.lastFab,L:[],H:[],fini:false,t0:Date.now()};
+ if(src){COPYK.forEach(k=>{if(src[k]!=null&&src[k]!==DK)it[k]=src[k]});it._copy=src.no}
+ S.items.push(it);cur=S.items.length-1;mode="wz";S.back=null;S.fromRc=false;if(it.fab)V=FABV(it.fab);dir=1;cur3=0;
+ const L=steps(it);step=Math.max(0,L.findIndex(q=>valTxt(q,it)===""));render()}
+/* question suivante : si la menuiserie est copiée, on saute ce qui est déjà répondu */
+function nxt(it,from){const L=steps(it);if(!it._copy)return from+1;for(let i=from+1;i<L.length;i++)if(valTxt(L[i],it)==="")return i;return L.length}
+function finTime(it){if(it.t0&&!it.dt)it.dt=Math.round((Date.now()-it.t0)/1000)}
+const dur=it=>it.dt?" en "+(it.dt>=60?Math.floor(it.dt/60)+" min "+String(it.dt%60).padStart(2,"0"):it.dt+" s"):"";
+const resume=it=>[it.mat,it.ouv&&!isVol(it)?it.ouv:"",it.ci,it.vitr].filter(x=>x&&x!==DK).join(" · ");
+
+/* ---------- dictée : le mètre dans une main, le téléphone dans l'autre ---------- */
+const DIC={on:false,eng:null,txt:"",hint:"",kind:""};
+const nrm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ").replace(/\s+/g," ").trim();
+const NW={zero:0,un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,treize:13,quatorze:14,quinze:15,seize:16,vingt:20,vingts:20,trente:30,quarante:40,cinquante:50,soixante:60};
+function words2n(t){let tot=0,c=0,any=false;const w=nrm(t).replace(/-/g," ").split(" ");for(let i=0;i<w.length;i++){const x=w[i];
+ if(x==="quatre"&&/^vingts?$/.test(w[i+1]||"")){c+=80;i++;any=true;continue}
+ if(x in NW){c+=NW[x];any=true}else if(/^cents?$/.test(x)){c=(c||1)*100;any=true}else if(x==="mille"){tot+=(c||1)*1000;c=0;any=true}}
+ return any?tot+c:null}
+/* « 1202 », « mille deux cent deux », « 1,20 m », « un mètre vingt » → millimètres */
+function spoken2mm(t){const s=nrm(t);let m=s.match(/(\d+)[,.](\d{1,3})\s*(m|metre)/);if(m)return Math.round(parseFloat(m[1]+"."+m[2])*1000);
+ m=s.match(/(\d+)\s*(?:m|metres?)\s*(\d{1,2})\b/);if(m)return +m[1]*1000+ +m[2]*10;
+ const d=s.match(/\d{2,5}/g);if(d)return +d[0];
+ if(/metre/.test(s)){const[a,b]=s.split(/metres?/);const A=words2n(a),B=words2n(b||"");if(A!=null)return A*1000+(B!=null?(B<100?B*10:B):0)}
+ const n=words2n(s);return n}
+function micHint(){const it=cur!=null?S.items[cur]:null;if(!it||mode!=="wz")return"";const q=steps(it)[step];if(!q)return"";
+ if(q.kind==="m3")return"Dites la mesure : « mille deux cent deux ». Puis « suivant ».";if(q.kind==="m1")return"Dites l'allège : « neuf cent cinquante ».";if(q.kind==="photo")return"Dites « photo intérieur » ou « suivant ».";
+ const o=q.o(it).slice(0,2).map(([x])=>"« "+oL(q,x)+" »").join(" ou ");return"Dites "+o+", ou « je ne sais pas ».";}
+function heard(t,final){DIC.txt=t;const el=P.querySelector(".heard");if(el)el.firstChild.textContent="« "+t+" »";if(final)applySpeech(t)}
+function applySpeech(t){const it=cur!=null?S.items[cur]:null;if(!it||mode!=="wz")return;const q=steps(it)[step];if(!q)return;const s=nrm(t);
+ const click=sel=>{const b=P.querySelector(sel);if(b){b.click();return true}return false};
+ if(/\b(retour|precedent)\b/.test(s))return click('[data-a="prev"]');
+ if(/\b(recap|recapitulatif)\b/.test(s))return click('[data-a="rcv"]');
+ if(/je (ne )?sais pas|plus tard/.test(s))return click('[data-v="'+DK+'"]');
+ if(/^(suivant|suivante|continuer|continue|passer|ok|valider|c est bon)$/.test(s))return click('[data-a="next"]');
+ if(/photo/.test(s)){if(click('[data-cam="'+(/ext/.test(s)?"ext":"int")+'"]'))return;return click('[data-cam]')}
+ if(q.kind==="m3"||q.kind==="m1"){const v=spoken2mm(s);if(!v||v<100||v>9000){DIC.hint="Je n'ai pas compris la mesure. Redites-la, en millimètres.";render();return}
+  const f=P.querySelector(q.kind==="m1"?"#m0":"#m"+cur3);if(!f)return;f.value=String(v);f.dispatchEvent(new Event("input",{bubbles:true}));DIC.hint="";
+  const nIn=P.querySelectorAll(".meas input").length;
+  if(q.kind==="m3"&&cur3<nIn-1){const n=P.querySelector("#m"+(cur3+1));if(n){cur3++;P.querySelectorAll(".mrow").forEach((r,i)=>r.classList.toggle("cur",i===cur3));P.querySelectorAll(".ill .mk[data-k]").forEach(g=>g.classList.toggle("on",+g.dataset.k===cur3))}
+   if(it._auto&&it._auto[q.id]&&cur3===1)DIC.hint="Les autres ont pris la même valeur. Dites « suivant » si c'est pareil.";}
+  else setTimeout(()=>click('[data-a="next"]'),500);
+  const el=P.querySelector(".heard small");if(el)el.textContent=DIC.hint||micHint();return}
+ /* choix : on cherche la réponse dite parmi les boutons */
+ const bs=[...P.querySelectorAll('.ch button[data-v]:not(.dk)')];let best=null,sc=0;
+ bs.forEach(b=>{const v=b.dataset.v,lab=nrm(b.querySelector("span")?b.querySelector("span").firstChild.textContent:b.textContent),raw=nrm(v);
+  let k=0;if(v==="G"&&/\bgauche\b/.test(s))k=9;if(v==="D"&&/\bdroite?\b/.test(s))k=9;
+  if(s===lab||s===raw)k=10;else if(lab&&s.includes(lab))k=Math.max(k,8);else if(raw.length>2&&s.includes(raw))k=Math.max(k,7);
+  else{const ws=lab.split(" ").filter(w=>w.length>3);const hit=ws.filter(w=>s.includes(w)).length;if(hit)k=Math.max(k,hit/ws.length*6)}
+  const n=spoken2mm(s);if(n!=null&&parseInt(raw)===n&&/^\d/.test(raw))k=Math.max(k,9);
+  if(k>sc){sc=k;best=b}});
+ if(best&&sc>=3){DIC.hint="";best.click()}else{DIC.hint="Je n'ai pas trouvé cette réponse. "+micHint();const el=P.querySelector(".heard small");if(el)el.textContent=DIC.hint}}
+/* moteur : dictée claude.ai si disponible, sinon reconnaissance vocale du navigateur, sinon simulation (maquette) */
+let CLD=null;(async()=>{try{if(window.claude&&claude.use){CLD=await claude.use("dictation");if(CLD){CLD.onPartial(({text})=>heard(text,false));CLD.onFinal(({text})=>heard(text,true));CLD.onState(({state})=>{if(state==="idle"&&DIC.on&&DIC.kind==="cld"){DIC.on=false;render()}})}}}catch(e){CLD=null}})();
+function micStart(){DIC.txt="";DIC.hint="";
+ if(CLD){DIC.kind="cld";DIC.on=true;render();CLD.start().catch(()=>{DIC.on=false;say("Dictée refusée : vous pouvez toujours taper.")});return}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(SR){try{const r=new SR();r.lang="fr-FR";r.continuous=true;r.interimResults=true;
+  r.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){const x=e.results[i];heard(x[0].transcript.trim(),x.isFinal)}};
+  r.onend=()=>{if(DIC.on&&DIC.kind==="sr"){try{r.start()}catch(x){DIC.on=false;render()}}};
+  r.onerror=e=>{if(e.error==="no-speech"||e.error==="aborted")return;DIC.kind="";try{r.abort()}catch(x){}simStart()};
+  DIC.eng=r;DIC.kind="sr";DIC.on=true;render();r.start();return}catch(e){}}
+ simStart()}
+/* maquette : sans micro disponible, on simule une phrase dite pour montrer le principe */
+function simStart(){DIC.kind="sim";DIC.on=true;render();const it=S.items[cur],q=it&&steps(it)[step];let t="suivant";
+ if(q){if(q.kind==="m3")t=["mille deux cent deux","mille deux cents","mille cent quatre-vingt-dix-huit"][cur3]||"suivant";else if(q.kind==="m1")t="neuf cent cinquante";else if(q.kind==="photo")t="suivant";else{const o=q.o(it);t=oL(q,o[0][0])}}
+ DIC.hint="Maquette : micro indisponible ici, phrase simulée.";
+ let i=0;const w=t.split(" ");const tick=()=>{if(!DIC.on)return;i++;heard(w.slice(0,i).join(" "),false);if(i<w.length)setTimeout(tick,160);else setTimeout(()=>{applySpeech(t);setTimeout(()=>{if(DIC.kind==="sim"){DIC.on=false;DIC.txt="";render()}},700)},250)};setTimeout(tick,300)}
+function micStop(){DIC.on=false;DIC.txt="";if(DIC.kind==="cld"&&CLD)CLD.stop().catch(()=>{});if(DIC.kind==="sr"&&DIC.eng)try{DIC.eng.stop()}catch(e){}render()}
+/* ---------- actions ---------- */
+let adv;
+let tt;function say(m){toast=m;render();clearTimeout(tt);tt=setTimeout(()=>{toast="";render()},2600)}
+P.addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;const a=b.dataset.a,it=cur!=null?S.items[cur]:null;
+ if(a==="bpdimok"){const w=+(P.querySelector("#bw").value||"").replace(/\D/g,""),h=+(P.querySelector("#bh").value||"").replace(/\D/g,"");if(!w||!h||w<300||h<1500){say("Écrivez la largeur et la hauteur de la porte, en millimètres.");return}it.bpDim="Autre : "+w+" × "+h+" mm";it.L=[w];it.H=[h];
+  if(S.fromRc&&steps(it).slice(step+1).every(x=>valTxt(x,it)!=="")){S.fromRc=false;mode="rc";render();return}step=nxt(it,step);dir=1;cur3=0;render();return}
+ if(a==="mic"){DIC.on?micStop():micStart();return}
+ if(a==="list"){if(DIC.on)micStop();mode="list";cur=null;render();return}
+ if(a==="end"){mode="end";render();return}
+ if(a==="open"){cur=+b.dataset.i;const x=S.items[cur];if(!x.fab&&S.lastFab)x.fab=S.lastFab;if(x.fab)V=FABV(x.fab),vs();mode=x.fini?"rc":"wz";step=0;dir=1;cur3=0;if(!x.fini){const L=steps(x);step=Math.max(0,L.findIndex(q=>valTxt(q,x)===""));}render();return}
+ if(a==="add"){const last=[...S.items].reverse().find(i=>i.fini);if(last){mode="new";render();return}newItem(null);return}
+ if(a==="copy"){newItem(S.items[+b.dataset.i]);return}
+ if(a==="blank"){newItem(null);return}
+ if(a==="donext"){it.fini=true;it.fromPlan=false;finTime(it);newItem(it);say("N°"+it.no+" prête"+dur(it)+". On enchaîne avec la suivante.");return}
+ if(a==="prev"){if(step===0){mode="list";cur=null}else{step--;dir=-1;cur3=0}render();return}
+ if(a==="next"){step=nxt(it,step);dir=1;cur3=0;render();return}
+ if(a==="goto"){mode="wz";S.fromRc=true;step=+b.dataset.i;dir=1;cur3=0;render();return}
+ if(a==="sec"){clearTimeout(adv);const n=+b.dataset.s;dir=n<step?-1:1;step=n;cur3=0;render();return}
+ if(a==="rcv"){clearTimeout(adv);S.back=step;mode="rc";render();return}
+ if(a==="resume"){mode="wz";step=S.back||0;dir=0;render();return}
+ if(a==="done"){it.fini=true;it.fromPlan=false;finTime(it);mode="list";cur=null;say("Menuiserie n°"+it.no+" prête"+dur(it)+" ✓");return}
+ if(a==="bon"){mode="bon";render();return}
+ if(a==="pdf"){say("Démo : en vrai, le PDF « Cotes "+S.chantier.split(" · ")[0]+".pdf » est rangé dans le dossier.");return}
+ if(a==="send"){const st=ld(SK);if(st&&DID!=="nouveau"){st.cotes=st.cotes||{};st.cotes[DID]=Object.assign(st.cotes[DID]||{},{envoye:1,n:S.items.filter(i=>i.fini).length,tot:S.items.length});st.fil=st.fil||[];st.fil.unshift({to:["adv","agence"],t:"Julien a envoyé les cotes "+S.chantier.split(" · ")[0]+" ("+S.items.length+" menuiseries) : à chiffrer dans Pro Devis",i:"ruler",h:new Date().toTimeString().slice(0,5),lu:[]});sv(SK,st)}say("Envoyé à l'ADV. Retour à l'Espace…");setTimeout(()=>location.href=ESP,1300);return}
+ if(a==="plan"){S.plan=true;say("Plan fait : les menuiseries sont posées sur les murs, il est ajouté au bon.");return}
+ 
+ if(b.dataset.cam){camK=b.dataset.cam;let ok=false;try{CAM.click();ok=true}catch(x){}clearTimeout(window._phT);window._phT=setTimeout(()=>{if(document.hasFocus()&&!(it.ph||{})[camK]&&!CAM.files.length)savePh(camK,fakePh(camK))},1400);return}
+ if(b.dataset.v!=null&&mode==="wz"){const q=steps(it)[step];
+  if(q.kind==="m3"||q.kind==="m1"){it[q.id]=DK}else it[q.id]=b.dataset.v;
+  if(q.id==="fab"){S.lastFab=it.fab;V=FABV(it.fab);vs()}
+  if(q.id==="bpDim"){const m=(it.bpDim||"").match(/(\d+) × (\d+)/);if(m){it.L=[+m[1]*10];it.H=[+m[2]*10]}}
+  if(q.id==="bpPose"&&!bpStd(it)&&it.bpDim){delete it.bpDim;it.L=[];it.H=[]}
+  // réponses déduites : on les met d'office, on peut les changer
+  steps(it).forEach(x=>{if(x.auto&&it[x.id]==null){const g=x.auto(it);if(g)it[x.id]=g}});
+  if(q.id==="ce"&&it.ce==="Comme l'intérieur")it.ce=it.ci;
+  b.parentElement.querySelectorAll("button[data-v]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  clearTimeout(adv);adv=setTimeout(()=>{if(S.fromRc&&valTxt(q,it)!==""&&steps(it).slice(step+1).every(x=>valTxt(x,it)!=="")){S.fromRc=false;mode="rc";render();return}step=nxt(it,step);dir=1;cur3=0;render()},190);return}
+});
+P.addEventListener("input",e=>{
+ const t=e.target,it=S.items[cur];if(!it)return;
+ if(t.dataset.m1){it.all=t.value.replace(/\D/g,"");return}
+ if(t.dataset.m!=null){const q=steps(it)[step];if(!Array.isArray(it[q.id]))it[q.id]=[];const val=t.value.replace(/\D/g,""),k=+t.dataset.m,au=(it._auto=it._auto||{})[q.id]=it._auto[q.id]||[];it[q.id][k]=val;au[k]=false;t.classList.remove("auto");
+  /* 1re mesure tapée : les autres prennent la même valeur, on ne change que celles qui diffèrent */
+  if(k===0)for(let j=1;j<q.labs.length;j++){if(!it[q.id][j]||au[j]){it[q.id][j]=val;au[j]=!!val;const f=P.querySelector("#m"+j);if(f){f.value=val;f.classList.toggle("auto",!!val)}}}
+  const m=minOf(it[q.id]),e=ecart(it[q.id]),keep=P.querySelector(".keep"),al=P.querySelector(".alert"),go=P.querySelector('[data-a="next"]');
+  if(keep){keep.hidden=!m||q.id==="D";keep.querySelector("b").textContent=m+" mm"}
+  if(al){al.hidden=!(e>10);al.textContent=alertTxt(q,e)}
+  if(go){go.disabled=!m&&!q.opt;go.textContent=q.opt&&!m?"Passer":"Continuer"}
+}
+});
+P.addEventListener("focusin",e=>{const t=e.target;if(t.dataset&&t.dataset.m!=null&&t.value){t._sel=1;setTimeout(()=>{try{t.select()}catch(x){}},0)}if(t.dataset&&t.dataset.m!=null&&+t.dataset.m!==cur3){cur3=+t.dataset.m;P.querySelectorAll(".mrow").forEach((r,i)=>r.classList.toggle("cur",i===cur3));P.querySelectorAll(".ill .mk[data-k]").forEach(g=>g.classList.toggle("on",+g.dataset.k===cur3))}});
+
+/* toucher une case déjà remplie : tout est sélectionné, on tape directement la bonne valeur */
+P.addEventListener("pointerup",e=>{const t=e.target;if(t.dataset&&t.dataset.m!=null&&t._sel){t._sel=0;e.preventDefault();try{t.select()}catch(x){}}});
+P.addEventListener("keydown",e=>{const t=e.target;if(e.key!=="Enter"||!t.dataset||(t.dataset.m==null&&!t.dataset.m1))return;e.preventDefault();const n=t.dataset.m!=null&&P.querySelector("#m"+(+t.dataset.m+1));if(n)n.focus();else{const g=P.querySelector('[data-a="next"]');if(g&&!g.disabled)g.click()}});
+/* ---------- fournisseur / vocabulaire ---------- */
+const VS=$("#vocsel");if(S.lastFab)V=FABV(S.lastFab);
+function vs(){if(!VS)return;VS.innerHTML=Object.keys(VOC).map(k=>`<button data-k="${k}" aria-pressed="${k===V}">${VOC[k].nom}</button>`).join("")}
+VS&&VS.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;V=b.dataset.k;vs();render()});
+vs();
+
+/* ---------- onglets ---------- */
+document.querySelectorAll('[role="tab"]').forEach(t=>t.addEventListener("click",()=>{document.querySelectorAll('[role="tab"]').forEach(x=>x.setAttribute("aria-selected",x===t));["demo","syn","plan"].forEach(k=>$("#v-"+k).hidden=k!==t.dataset.tab)}));
+
+/* départ : la cuisine en cours, à la question des largeurs, pour montrer le cœur de l'appli */
+if(LECT)mode="bon";
+render();
+})();
+</script>
+
+</body></html>
