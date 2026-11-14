@@ -11,7 +11,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"ProClik","slogan":"Votre commerce en un clic","description":"Création de sites pour commerces et artisans, reliés à une appli qui range demandes, devis, factures et agenda.","url":"https://proclik.github.io/","image":"https://proclik.github.io/partage.png","areaServed":{"@type":"AdministrativeArea","name":"Isère"},"address":{"@type":"PostalAddress","addressRegion":"Isère","addressCountry":"FR"}}</script>
 <link rel="apple-touch-icon" href="espace/icone-1024.png?v=4"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Nunito:wght@800;900&display=swap">
 <style>
 /* Mise en page : 7 bandes pleine largeur, contenu centré 1080px, un seul bouton fort par écran */
 :root{
@@ -329,8 +329,7 @@ h2.t-vu .mot{opacity:1;transform:none;filter:none}
 .vw-n{margin:0;font-size:12px;color:var(--muted)}
 .mod.large .mod-b{width:min(1060px,100%);grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 @media (max-width:760px){.mod.large .mod-b{grid-template-columns:1fr}.vw.pc .vw-ph{width:100%;height:auto;aspect-ratio:4/3;padding:8px;border-radius:20px}.vw.pc .vw-in{border-radius:13px}}
-html{scroll-snap-type:y proximity;scroll-padding-top:56px}
-main>section{scroll-snap-align:start}
+html{scroll-padding-top:56px}
 @media (prefers-reduced-motion:reduce){html{scroll-snap-type:none}}
 
 .v-pas{display:flex;flex-direction:column;gap:9px;flex:none;width:min(300px,100%)}
@@ -438,9 +437,147 @@ main>section{scroll-snap-align:start}
 /* aperçus vivants dans le bandeau */
 .v-card{overflow:hidden}.v-card iframe.lv,.v-ph iframe.lv{position:absolute;border:0;left:6px;top:6px;background:#fff;transform-origin:0 0;pointer-events:none;opacity:0;transition:opacity .6s;border-radius:10px}
 .v-ph iframe.lv{left:3px;top:3px;border-radius:12px}.v-card iframe.lv.ok,.v-ph iframe.lv.ok{opacity:1}
+
+/* accueil : chiffres dans les écrans, prix discret, tient dans un écran */
+.scr{position:relative;container-type:inline-size;overflow:hidden}
+.ipad .scr{border-radius:2.7cqw}.iphone .scr{border-radius:3.75cqw}
+.ipad .scr img,.iphone .scr img{border-radius:0}
+.nb{position:absolute;left:calc(var(--x)*1%);top:calc(var(--y)*1%);width:calc(var(--w)*1%);height:calc(var(--h)*1%);box-sizing:border-box;display:flex;align-items:center;padding-left:calc(var(--p)*1cqw);background:#EDEEF2;color:#0E1322;font-weight:800;font-size:calc(var(--fs)*1cqw);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;overflow:hidden;pointer-events:none}
+.jg{position:absolute;left:calc(var(--x)*1%);top:calc(var(--y)*1%);width:calc(var(--w)*1%);height:calc(var(--h)*1%);pointer-events:none}
+.nb.b{background:#F7F8FA}.nb.r{color:#8B3C20}.nb i{font-style:normal}
+@media (prefers-color-scheme:dark){.nb{background:#1E2434;color:#F4F6FA}.nb.b{background:#262D40}.nb.r{color:#F7D2CC}}
+.prod .actions{align-items:center;flex-wrap:nowrap;gap:12px}
+.prod .actions .btn{white-space:nowrap}
+.dp{font-size:14px;font-weight:600;color:var(--muted);margin-left:8px;white-space:nowrap;text-decoration:none}
+.dp b{color:var(--fg);font-weight:800}
+@media (max-width:560px){.prod .actions{flex-wrap:wrap;justify-content:center;gap:10px}.prod .actions .btn{padding-inline:18px;font-size:15px}.dp{flex:1 1 100%;text-align:center;margin:0}}
+html.fit .hero{padding-block:10px 14px}
+html.fit .prod .sur{display:none}
+html.fit .hero h1{font-size:clamp(32px,min(5.4vw,7.2vh),62px)}
+@media (min-width:760px){html.fit .hero h1{font-size:clamp(30px,min(4.2vw,7vh),60px);white-space:nowrap}html.fit .hero h1 br{display:none}html.fit .hero h1 .or{margin-left:.28em}}
+html.fit .hero .lead{margin-top:8px;font-size:clamp(15px,1.7vw,17px)}
+html.fit .hero .actions{margin-top:14px}
+html.fit .hero .actions .btn{min-height:44px;padding-block:0}
+html.fit .univers{margin-top:14px;gap:28px}
+html.fit .appareils{margin-bottom:5%}
+html.fit .sat{gap:6px}
+html.fit .sat .pas{padding:6px 10px 6px 7px;font-size:14px}
+html.fit .sat .pas .ic{width:28px;height:28px;padding:6px}
+html.fit .legende.c{margin-top:8px;font-size:12px}
+html.fit .vitrine{margin-top:8px}
+@media (max-width:699px){html.fit .vitrine{display:none}html.fit .univers{gap:14px 10px;margin-top:10px}html.fit .appareils{width:84%;margin-bottom:8%}html.fit .sat .pas{font-size:12.5px;padding:5px 8px 5px 6px;gap:8px}html.fit .sat .pas .ic{width:24px;height:24px;padding:5px}html.fit .sat .pas .chev{display:none}html.fit .sat li.t{font-size:11px;padding-bottom:0}}
+
+/* démo : trois téléphones entiers, centrés, comme de vrais appareils */
+.duo{height:auto;min-height:0;padding:34px 12px 26px;display:flex;justify-content:center;align-items:center;gap:clamp(10px,2vw,22px);overflow:hidden}
+.duo .f,.duo .f1,.duo .f2,.duo .f3{position:relative;flex:none;margin:0;width:clamp(86px,11.4vw,152px);aspect-ratio:480/1038;border:0;padding:5px;box-sizing:border-box;border-radius:clamp(18px,2.4vw,28px);background:#0E1322;box-shadow:0 0 0 1.5px rgba(255,255,255,.14) inset,0 28px 44px -20px rgba(14,19,34,.7),0 8px 14px -8px rgba(14,19,34,.4);overflow:visible;z-index:1}
+.duo .f2{width:clamp(96px,12.6vw,168px);z-index:2}
+.duo .f img{position:absolute;inset:5px;width:calc(100% - 10px);height:calc(100% - 10px);border-radius:clamp(14px,2vw,23px);object-fit:cover;object-position:top}
+.duo .f::after{content:"";position:absolute;inset:5px;border-radius:clamp(14px,2vw,23px);background:linear-gradient(115deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 30%);pointer-events:none;z-index:2}
+.duo .ex{left:14px;top:12px;z-index:5}
+@media (max-width:760px){.vue{grid-template-columns:minmax(0,1fr)}.duo{padding:36px 8px 20px}.duo .f,.duo .f1,.duo .f2,.duo .f3{width:clamp(80px,24vw,110px)}.duo .f2{width:clamp(88px,27vw,122px)}}
+
+/* prix : style soigné */
+.prix .m{display:flex;align-items:flex-start;gap:4px;margin:6px 0 4px;line-height:1}
+.prix .m b{font-size:clamp(46px,5.4vw,62px);font-weight:800;letter-spacing:-.04em;line-height:.9;font-variant-numeric:tabular-nums}
+.prix .m sup{font-size:24px;font-weight:800;margin-top:4px;color:var(--laiton)}
+.prix .m .u{align-self:flex-end;display:flex;flex-direction:column;gap:1px;margin:0 0 5px 8px;padding-left:10px;border-left:2px solid var(--laiton);font-size:13px;font-weight:600;color:var(--muted);line-height:1.15}
+.prix .m .u i{font-style:normal;font-weight:800;color:var(--fg);letter-spacing:.06em}
+.prix .fort .m b{background:linear-gradient(180deg,var(--fg),color-mix(in srgb,var(--fg) 70%,var(--laiton)));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.prix .m .pre{align-self:flex-end;margin:0 4px 6px 0;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.c-n small em{font-style:normal;font-weight:800;font-size:15px;color:var(--fg)}
+.ic,.ic *{stroke-linejoin:round;stroke-linecap:round}
+.prix .m b,.prix .m sup,.c-res b,.dp b{font-family:"Nunito","Manrope",system-ui,sans-serif;font-weight:900}
+.prix .m b{letter-spacing:-.02em}
+
+/* fenêtres sur téléphone : l'écran du téléphone tient dans la hauteur */
+@media (max-width:760px){
+.mod-vis:has(.vw){padding-top:52px;padding-bottom:16px}
+.vw{gap:10px}
+.vw-ch{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none;margin-inline:-20px;padding:2px 20px;width:calc(100% + 40px)}.vw-ch::-webkit-scrollbar{display:none}
+.vw.tel .vw-ph{width:clamp(138px,calc((100dvh - 520px)*.466),240px);border-radius:28px;padding:6px}.vw.tel .vw-in{border-radius:22px}
+.tel-c,.tels .tel-c,.tels.n2 .tel-c{width:clamp(110px,calc((100dvh - 470px)*.42),150px)}
+.mod-vis .tel-c img{width:100%;height:auto}
+}
+
+/* le téléphone ne déborde plus sur les listes */
+@media (min-width:981px){.appareils{width:calc(100% - 16%)}}
+@media (min-width:1500px){.appareils{width:100%}.univers{column-gap:64px}.iphone{right:-4%}}
+
+/* Compris / En option : donnent envie d'ouvrir */
+.sat li.t{line-height:1.25}
+.sat li.t::after{content:"Touchez pour découvrir";display:block;margin-top:3px;text-transform:none;letter-spacing:0;font-weight:600;font-size:12.5px;color:var(--muted)}
+.sat.d li.t::after{color:var(--muted)}
+.sat .pas .chev{width:16px;height:16px;padding:0;border-radius:0;background:none;stroke:var(--laiton);stroke-width:2.4;opacity:.9;transition:transform .3s}
+.sat .pas:hover .chev,.sat .pas:focus-visible .chev{transform:translateX(3px)}
+.sat .pas:hover{box-shadow:0 12px 26px -12px rgba(14,19,34,.35),0 0 0 1.5px color-mix(in srgb,var(--laiton) 70%,transparent)}
+@media (max-width:980px){.sat li.t::after{font-size:11px}.sat .pas .chev{display:none}}
+
+/* haut de gamme : même esprit que les sites exemples (grands titres, filets fins, beaucoup d'air) */
+main>section:not(.hero){padding-block:clamp(64px,9vw,112px);border-top:1px solid var(--line);position:relative}
+main>section:not(.hero)::before{content:"";position:absolute;left:50%;top:-1px;translate:-50% 0;width:min(240px,40%);height:1px;background:linear-gradient(90deg,transparent,var(--laiton),transparent);opacity:.7}
+main>section:not(.hero) .num{gap:12px;margin-bottom:clamp(14px,2vw,22px);font-size:11.5px;letter-spacing:.22em;color:var(--laiton)}
+main>section:not(.hero) .num b{width:auto;height:auto;border-radius:0;background:none;color:var(--laiton);font-size:11.5px;letter-spacing:.22em;display:inline}
+main>section:not(.hero) .num b::before{content:"0"}
+main>section:not(.hero) .num b::after{content:"";display:inline-block;width:30px;height:1px;background:var(--laiton);vertical-align:middle;margin-left:12px;opacity:.7}
+main>section:not(.hero) h2{font-size:clamp(34px,5vw,60px);line-height:1.04;font-weight:800;letter-spacing:-.035em}
+main>section:not(.hero) h2 .or{box-shadow:inset 0 -.1em 0 color-mix(in srgb,var(--laiton) 55%,transparent)}
+main>section:not(.hero) .lead{font-size:clamp(17px,1.7vw,20px);line-height:1.5;max-width:560px}
+/* cartes : filet fin, peu d'ombre */
+.trois>div,.etapes>div,.prix>div,.calc,.vue{background:var(--calme);border-radius:24px;box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 0 0 1px var(--line),0 24px 48px -36px rgba(14,19,34,.28)}
+@media (prefers-color-scheme:dark){.trois>div,.etapes>div,.prix>div,.calc,.vue{box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 0 0 1px var(--line),0 24px 48px -36px rgba(0,0,0,.6)}}
+.trois{gap:18px;margin-top:clamp(28px,4vw,48px)}.etapes{gap:18px;margin-top:clamp(28px,4vw,48px)}
+.trois>div{padding:26px 26px 26px}.trois>div h3{font-size:19px;letter-spacing:-.01em}.trois>div p{font-size:15.5px;line-height:1.55}
+.trois>div .pastille,.etapes .pastille{background:none;box-shadow:0 0 0 1px color-mix(in srgb,var(--laiton) 45%,transparent);color:var(--laiton);border-radius:50%}
+.etapes>div{padding:30px 28px}.etapes b.n{font-size:12px;letter-spacing:.2em;font-weight:700;margin-bottom:14px}
+.etapes h3{font-size:22px;letter-spacing:-.02em}.etapes p{font-size:15.5px;line-height:1.55}
+/* démo */
+.onglets{margin-top:clamp(26px,3.5vw,40px)}
+.vue{padding:clamp(22px,3vw,40px);border-radius:28px}
+.vue h3{font-size:clamp(24px,2.6vw,32px);letter-spacing:-.03em;line-height:1.1}.vue p{font-size:16.5px;line-height:1.55}
+/* tarifs */
+.prix{gap:18px}.prix>div{padding:30px 28px}.prix h3{font-size:19px;letter-spacing:-.01em}
+.prix .fort{box-shadow:0 0 0 1.5px var(--laiton),0 30px 60px -36px rgba(14,19,34,.4)}
+.prix .fort::before{content:"Recommandé";position:absolute;top:-11px;left:28px;padding:3px 12px;border-radius:99px;background:var(--laiton);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.prix>div{position:relative}
+.prix p{font-size:15px;line-height:1.55}
+.calc{padding:clamp(20px,3vw,32px);border-radius:28px}
+/* questions et contact */
+.faq summary,.faq details>summary{font-size:17px}
+#contact h2{font-size:clamp(40px,6.4vw,76px);letter-spacing:-.04em}
+#contact .lead{margin-inline:auto}
+#contact .btn{min-height:58px;padding-inline:34px;font-size:17px}
+footer{border-top:1px solid var(--line)}
+main>section:not(.hero) .num b{display:none}
+main>section:not(.hero) .num::before{content:"";display:inline-block;width:30px;height:1px;background:var(--laiton);opacity:.7}
 </style>
 
-<style>.calc{margin-top:22px;padding:20px 22px;border-radius:20px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}.calc .c-l{flex:1 1 220px;display:flex;flex-direction:column;gap:2px}.calc .c-l small{color:var(--muted);font-size:13px}.c-ch{display:flex;gap:6px;padding:4px;border-radius:999px;background:var(--bg);flex-wrap:wrap}.c-ch button{all:unset;cursor:pointer;padding:9px 16px;border-radius:999px;font:700 14px var(--f);color:var(--muted)}.c-ch button.on{background:var(--nuit);color:var(--nuit-fg)}.c-ch[hidden]{display:none}.c-opt{flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.c-opt label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--bg);cursor:pointer;font:700 14px var(--f)}.c-opt input{margin-top:3px;accent-color:var(--nuit);width:18px;height:18px}.c-opt small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}.c-res{display:flex;gap:22px;flex:1 1 100%;flex-wrap:wrap}.c-res>div{display:flex;flex-direction:column}.c-res>div[hidden]{display:none}.c-res small{color:var(--muted);font-size:12.5px;font-weight:600}.c-res b{font-size:24px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}</style><body data-v="pc">
+<style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
+.c-top{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;justify-content:space-between}
+.calc .c-l{display:flex;flex-direction:column;gap:2px}.calc .c-l b{font-size:20px;font-weight:800;letter-spacing:-.01em}.calc .c-l small{color:var(--muted);font-size:13px}
+.c-ch{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--bg);box-shadow:inset 0 1px 3px rgba(14,19,34,.12);flex-wrap:wrap;align-self:flex-start;border-radius:24px}
+.c-ch button{all:unset;cursor:pointer;padding:10px 18px;border-radius:999px;font:700 14px var(--f);color:var(--muted);transition:background .25s,color .25s,box-shadow .25s}
+.c-ch button.on{background:var(--nuit);color:var(--nuit-fg);box-shadow:0 6px 14px -6px rgba(14,19,34,.5)}.c-ch[hidden]{display:none}
+.c-sur{margin:0;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--laiton)}
+.c-opt{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.c-o{position:relative;display:flex;align-items:center;gap:12px;padding:11px 14px 11px 11px;border-radius:18px;background:var(--bg);cursor:pointer;box-shadow:0 0 0 1px var(--line);transition:transform .25s,box-shadow .25s,background .25s}
+.c-o:hover{transform:translateY(-2px)}
+.c-o input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.c-i{width:40px;height:40px;flex:none;border-radius:13px;display:grid;place-items:center;background:color-mix(in srgb,var(--laiton) 16%,transparent);color:var(--laiton);transition:background .25s,color .25s}
+.c-i .ic{width:22px;height:22px}
+.c-n{flex:1;min-width:0;font:700 14.5px var(--f)}.c-n small{display:block;color:var(--muted);font-weight:600;font-size:12.5px;margin-top:1px}
+.c-ck{width:24px;height:24px;flex:none;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--line);transition:background .25s,box-shadow .25s}
+.c-ck svg{width:14px;height:14px;fill:none;stroke:var(--nuit-fg);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .35s .05s}
+.c-o:has(input:checked){box-shadow:0 0 0 2px var(--nuit),0 12px 24px -14px rgba(14,19,34,.5)}
+.c-o:has(input:checked) .c-i{background:var(--nuit);color:var(--laiton)}
+.c-o:has(input:checked) .c-ck{background:var(--nuit);box-shadow:none}.c-o:has(input:checked) .c-ck svg{stroke-dashoffset:0}
+.c-o:has(input:focus-visible){outline:2px solid var(--laiton);outline-offset:3px}
+.c-bas{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between;padding:18px 20px;border-radius:20px;background:var(--nuit);color:var(--nuit-fg)}
+.c-res{display:flex;gap:10px 30px;flex-wrap:wrap}.c-res>div{display:flex;flex-direction:column}.c-res>div[hidden]{display:none}
+.c-res small{opacity:.7;font-size:12.5px;font-weight:600}
+.c-res b{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.c-g b{color:var(--laiton);font-size:38px}.c-u{font-size:20px;font-weight:800;margin-left:2px;color:var(--nuit-fg);opacity:.85}
+.c-bas .btn{background:var(--nuit-fg);color:var(--nuit)}
+@media (max-width:560px){.c-bas .btn{width:100%;justify-content:center}}</style><body data-v="pc">
 
 <header class="wrap top">
   <div class="logo pc"><svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg>ProClik</div>
@@ -459,33 +596,33 @@ main>section{scroll-snap-align:start}
   <div class="pc prod">
     <p class="sur">L'Espace ProClik</p>
     <h1>Tout votre métier.<br><span class="or">Une seule appli.</span></h1>
-    <p class="lead">Demandes, devis, chantiers, factures. Rangés pour vous, sur votre téléphone, votre iPad et votre ordinateur.</p>
-    <div class="actions"><a class="btn" href="#contact">Prendre rendez-vous</a><a class="btn sec" href="#demo">Essayer l'Espace</a></div>
+    <p class="lead">Votre site, vos demandes, vos devis et votre agenda, réunis dans une seule appli.</p>
+    <div class="actions"><a class="btn" href="#contact">Prendre rendez-vous</a><a class="btn sec" href="#demo">Essayer l'Espace</a><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
 
     <div class="univers">
       <ul class="sat g"><li class="t">Compris</li>
-<li class="a1"><button class="pas" type="button" id="p-a1" data-k="a1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M14 10h4M14 13h3"/></svg>Carte de visite virtuelle<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
-        <li class="a2"><button class="pas" type="button" id="p-a2" data-k="a2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 12h9v8M13 4v8"/></svg>Formulaire et plan<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
-        <li class="a3"><button class="pas" type="button" id="p-a3" data-k="a3" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Tout se dicte<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
-        <li class="b1"><button class="pas" type="button" id="p-b1" data-k="b1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v15H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Agenda synchronisé<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+<li class="a1"><button class="pas" type="button" id="p-a1" data-k="a1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3.7"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M14 10h4M14 13h3"/></svg>Carte de visite virtuelle<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+        <li class="a2"><button class="pas" type="button" id="p-a2" data-k="a2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M4 12h9v8M13 4v8"/></svg>Formulaire et plan<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+        <li class="a3"><button class="pas" type="button" id="p-a3" data-k="a3" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="4.7"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Tout se dicte<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+        <li class="b1"><button class="pas" type="button" id="p-b1" data-k="b1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Agenda synchronisé<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="b2"><button class="pas" type="button" id="p-b2" data-k="b2" aria-haspopup="dialog"><svg class="ic fr" viewBox="0 0 24 24"><defs><clipPath id="bouclier-fr"><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/></clipPath></defs><g clip-path="url(#bouclier-fr)" stroke="none"><rect x="5" y="2" width="4.7" height="20" fill="#1F4FA8"/><rect x="9.7" y="2" width="4.6" height="20" fill="#fff"/><rect x="14.3" y="2" width="4.7" height="20" fill="#E1392F"/></g><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/><path d="m9 11.5 2.2 2.2 4-4.2" stroke="#fff" stroke-width="3.4"/><path d="m9 11.5 2.2 2.2 4-4.2" stroke="#141A2E" stroke-width="1.8"/></svg>Factures conformes<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="b3"><button class="pas" type="button" id="p-b3" data-k="b3" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Carte des chantiers<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
       </ul>
       <div class="appareils">
-        <div class="ipad"><picture><source srcset="vitrine/ipad-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" loading="lazy" src="vitrine/ipad.jpg" alt="L'accueil de l'Espace sur iPad : chiffre d'affaires et liste des choses à faire" width="1600" height="1112"></picture></div>
-        <div class="iphone"><picture><source srcset="vitrine/iphone-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" loading="lazy" src="vitrine/iphone.jpg" alt="L'Espace sur téléphone" width="600" height="1298"></picture></div>
+        <div class="ipad"><div class="scr"><picture><source srcset="vitrine/ipad-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" loading="lazy" src="vitrine/ipad.jpg" alt="L'accueil de l'Espace sur iPad : chiffre d'affaires et liste des choses à faire" width="1600" height="1112"></picture><canvas class="jg" width="584" height="252" style="--x:13.875;--y:68.525;--w:36.500;--h:22.662" aria-hidden="true"></canvas><span class="nb a" data-n="8640" style="--x:11.688;--y:30.845;--w:9.438;--h:3.867;--fs:2.6;--p:0.4" aria-hidden="true"><i>0</i></span><span class="nb a" data-n="14210" style="--x:34.250;--y:30.845;--w:10.812;--h:3.867;--fs:2.6;--p:0.4" aria-hidden="true"><i>0</i></span><span class="nb r" data-n="2760" style="--x:56.437;--y:30.845;--w:9.438;--h:3.867;--fs:2.6;--p:0.4" aria-hidden="true"><i>0</i></span><span class="nb a" data-n="9850" style="--x:78.812;--y:30.845;--w:9.438;--h:3.867;--fs:2.6;--p:0.4" aria-hidden="true"><i>0</i></span><span class="nb b" data-n="8640" style="--x:11.875;--y:55.665;--w:9.625;--h:3.777;--fs:2.6;--p:0.4" aria-hidden="true"><i>0</i></span></div></div>
+        <div class="iphone"><div class="scr"><picture><source srcset="vitrine/iphone-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" loading="lazy" src="vitrine/iphone.jpg" alt="L'Espace sur téléphone" width="600" height="1298"></picture><span class="nb a" data-n="8640" style="--x:7.667;--y:29.892;--w:24.000;--h:2.928;--fs:6.5;--p:0.9" aria-hidden="true"><i>0</i></span><span class="nb a" data-n="14210" style="--x:55.667;--y:29.892;--w:27.333;--h:2.928;--fs:6.5;--p:0.9" aria-hidden="true"><i>0</i></span><span class="nb r" data-n="2760" style="--x:7.667;--y:50.000;--w:24.000;--h:3.005;--fs:6.5;--p:0.9" aria-hidden="true"><i>0</i></span><span class="nb a" data-n="9850" style="--x:55.167;--y:50.000;--w:23.833;--h:3.005;--fs:6.5;--p:0.9" aria-hidden="true"><i>0</i></span><span class="nb b" data-n="8640" style="--x:7.500;--y:72.419;--w:28.833;--h:3.544;--fs:6.5;--p:0.9" aria-hidden="true"><i>0</i></span></div></div>
       </div>
       <ul class="sat d"><li class="t">En option</li>
-        <li class="o1 opt"><button class="pas" type="button" id="p-o1" data-k="o1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky<small class="ia">IA ProClik</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
-        <li class="o2 opt"><button class="pas" type="button" id="p-o2" data-k="o2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v15H4z"/><path d="M4 10h16M9 14l2 2 4-4"/></svg>Réservation<small>et acompte</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+        <li class="o1 opt"><button class="pas" type="button" id="p-o1" data-k="o1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="4.7"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky<small class="ia">IA ProClik</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+        <li class="o2 opt"><button class="pas" type="button" id="p-o2" data-k="o2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M4 10h16M9 14l2 2 4-4"/></svg>Réservation<small>et acompte</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="o3 opt"><button class="pas" type="button" id="p-o3" data-k="o3" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Avis Google<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="o4 opt"><button class="pas" type="button" id="p-o4" data-k="o4" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></svg>Réseaux sociaux<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
-        <li class="o5 opt"><button class="pas" type="button" id="p-o5" data-k="o5" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>SMS<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
+        <li class="o5 opt"><button class="pas" type="button" id="p-o5" data-k="o5" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4.2 3.4A.4.4 0 0 1 4 19.1V7a2 2 0 0 1 2-2z"/></svg>SMS<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
       </ul>
     </div>
     <p class="legende c"><span>Écrans d'exemple, clients fictifs</span></p>
     <div class="vitrine" data-v="c">
-      <div class="v-l"><span class="v-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01M7 13h6M7 16h10"/></svg></span>
+      <div class="v-l"><span class="v-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01M7 13h6M7 16h10"/></svg></span>
       <div class="v-t"><small>Pour aller plus loin</small><h2>Votre site sur mesure</h2><p>Un vrai site à votre image, qui donne confiance et vous amène des clients. Créé avec vous, relié à votre Espace.</p></div></div>
       <div class="v-car"><div class="v-st"><div class="v-card" data-i="0"><img src="sites/martin/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="1"><img src="sites/salon/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="2"><img src="sites/agence/vue.jpg" alt="" loading="lazy"></div></div><div class="v-ph"><img src="sites/martin/vue-m.jpg" alt="" loading="lazy"><img src="sites/salon/vue-m.jpg" alt="" loading="lazy"><img src="sites/agence/vue-m.jpg" alt="" loading="lazy"></div><div class="v-cap"><b></b><small></small></div></div>
       <div class="v-pas" role="tablist"><button class="pas-s vp" type="button" data-k="s1" data-i="0" aria-haspopup="dialog" style="--c:#1E4657"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M12 3.5v17M5 12h14"/></svg></i><span>Menuiserie Martin<small>Menuisier</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="1" aria-haspopup="dialog" style="--c:#4A3243"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M8.7 7.7 20 17M8.7 16.3 20 7"/></svg></i><span>Maison Lila<small>Salon de coiffure</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="2" aria-haspopup="dialog" style="--c:#27325A"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-6 8 6v10zM10 20v-5h4v5"/></svg></i><span>Belledonne Immobilier<small>Agence immobilière</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
@@ -502,7 +639,7 @@ main>section{scroll-snap-align:start}
     <div class="chaine" aria-label="Comment se passe votre projet">
       <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></span><div><small>1</small><h3>Vous décrivez</h3></div></div><ul><li>Quelques questions simples</li><li>Vos photos, si vous voulez</li></ul></div>
       <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><div><small>2</small><h3>Devis clair</h3></div></div><ul><li>Prix détaillé, sans surprise</li><li>Visite si besoin</li></ul></div>
-      <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v15H4z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><small>3</small><h3>Pose à la date prévue</h3></div></div><ul><li>Rappel la veille</li><li>Chantier propre</li></ul></div>
+      <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><small>3</small><h3>Pose à la date prévue</h3></div></div><ul><li>Rappel la veille</li><li>Chantier propre</li></ul></div>
       <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><small>4</small><h3>Facture et garantie</h3></div></div><ul><li>Facture envoyée par mail</li><li>Garanties de la pose</li></ul></div>
     </div>
   </div>
@@ -533,11 +670,11 @@ main>section{scroll-snap-align:start}
   <div class="etapes pc">
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10h1.5a2 2 0 0 1 0 4H16M8 3v2M11 3v2"/></svg></span><b class="n">Étape 1</b></div><h3>On se rencontre</h3><p>Autour d'un café, on regarde votre métier et ce qui vous prend du temps.</p></div>
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></span><b class="n">Étape 2</b></div><h3>On prépare tout</h3><p>Votre site, votre Espace, vos produits et vos prix. Vous n'avez rien à installer.</p></div>
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span><b class="n">Étape 3</b></div><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg></span><b class="n">Étape 3</b></div><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p></div>
   </div>
   <div class="etapes cl">
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><b class="n">Étape 1</b></div><h3>Décrivez vos travaux</h3><p>En ligne, en quelques minutes, avec des photos si vous le souhaitez.</p></div>
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><b class="n">Étape 2</b></div><h3>Recevez votre devis</h3><p>Clair et détaillé. On passe chez vous si c'est nécessaire.</p></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="4.2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><b class="n">Étape 2</b></div><h3>Recevez votre devis</h3><p>Clair et détaillé. On passe chez vous si c'est nécessaire.</p></div>
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><b class="n">Étape 3</b></div><h3>On pose</h3><p>À la date convenue, avec un rappel la veille.</p></div>
   </div>
 </div></section>
@@ -548,13 +685,13 @@ main>section{scroll-snap-align:start}
   <div class="pc">
     <h2>Essayez, <span class="or">vous verrez.</span></h2>
     <div class="onglets" role="tablist" aria-label="Démo">
-      <button id="o-site" role="tab" aria-selected="true" data-o="site"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18M7 13h6M7 16h10"/></svg>Formulaire</button>
-      <button id="o-esp" role="tab" aria-selected="false" data-o="esp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg>L'Espace</button>
-      <button id="o-cli" role="tab" aria-selected="false" data-o="cli"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky</button>
-      <button id="o-res" role="tab" aria-selected="false" data-o="res"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Réservation</button>
+      <button id="o-site" role="tab" aria-selected="true" data-o="site"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M7 13h6M7 16h10"/></svg>Formulaire</button>
+      <button id="o-esp" role="tab" aria-selected="false" data-o="esp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg>L'Espace</button>
+      <button id="o-cli" role="tab" aria-selected="false" data-o="cli"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4.7"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky</button>
+      <button id="o-res" role="tab" aria-selected="false" data-o="res"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="4.2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Réservation</button>
     </div>
     <div class="vue" data-p="site"><div><h3>Votre client décrit ses travaux</h3><p>Un formulaire simple, question par question, ou un plan qu'il dessine du bout du doigt.</p><a class="btn" href="#demo">Essayer le formulaire</a></div>
-      <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-formulaire.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-form-logement.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-plan.jpg" alt=""></div></div></div>
+      <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-formulaire.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-form-travaux.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-plan.jpg" alt=""></div></div></div>
     <div class="vue" data-p="esp" hidden><div><h3>Tout votre travail, rangé</h3><p>Demandes, devis, chantiers, factures, dépenses. Un gros bouton vous dit quoi faire ensuite.</p><a class="btn" href="#demo">Ouvrir l'Espace</a></div>
       <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-accueil.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-devis.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-chantiers.jpg" alt=""></div></div></div>
     <div class="vue" data-p="cli" hidden><div><h3>Le pré-devis prêt avant vous</h3><p>En option, Cliky prépare le pré-devis à partir de la demande. Vous vérifiez, vous corrigez une ligne, vous validez.</p><a class="btn" href="#demo">Voir un pré-devis</a></div>
@@ -579,33 +716,34 @@ main>section{scroll-snap-align:start}
   <div class="pc">
     <h2>Composez <span class="or">votre ProClik.</span></h2>
     <div class="prix">
-      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>Espace</h3><div class="m">49 € <small>HT / mois</small></div><p>L'appli et votre carte de visite virtuelle : présentation, formulaire, réservation, sur un seul écran.</p><div class="sp"></div><a class="btn sec" href="#contact">En parler</a></div>
-      <div class="fort"><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18M7 13h6M7 16h10"/></svg></span>Site + Espace</h3><div class="m">69 € <small>HT / mois</small></div><p>+ création du site dès 490 €, ou 3 × 163 € sans frais. Votre site à votre image, l'Espace derrière.</p><div class="sp"></div><a class="btn" href="#contact">Prendre rendez-vous</a></div>
-      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 12h3M12 12h7M5 17h11M20 17h-1"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg></span>Options</h3><div class="m">À la carte</div><p>Cliky, Réservation, SMS, Assistant du site, Avis Google, Réseaux sociaux, Votre image.</p><div class="sp"></div><a class="btn sec" href="#contact">Voir le détail</a></div>
+      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg></span>Espace</h3><div class="m"><b>49</b><sup>€</sup><span class="u"><i>HT</i>par mois</span></div><p>L'appli et votre carte de visite virtuelle : présentation, formulaire, réservation, sur un seul écran.</p><div class="sp"></div><a class="btn sec" href="#contact">En parler</a></div>
+      <div class="fort"><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M7 13h6M7 16h10"/></svg></span>Site + Espace</h3><div class="m"><b>69</b><sup>€</sup><span class="u"><i>HT</i>par mois</span></div><p>+ création du site dès 490 €, ou 3 × 163 € sans frais. Votre site à votre image, l'Espace derrière.</p><div class="sp"></div><a class="btn" href="#contact">Prendre rendez-vous</a></div>
+      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 12h3M12 12h7M5 17h11M20 17h-1"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="17" r="2"/></svg></span>Options</h3><div class="m"><span class="pre">dès</span><b>9</b><sup>€</sup><span class="u"><i>HT</i>par mois</span></div><p>Cliky, Réservation, SMS, Assistant du site, Avis Google, Réseaux sociaux, Votre image.</p><div class="sp"></div><a class="btn sec" href="#contact">Voir le détail</a></div>
     </div>
     <div class="calc" id="calc" aria-label="Calculer mon prix">
-      <div class="c-l"><b>Calculez votre prix</b><small>Prix HT. Options : prix provisoires.</small></div>
-      <div class="c-ch" role="group" aria-label="Forfait"><button type="button" class="on" data-f="e" aria-pressed="true">Espace · 49 €</button><button type="button" data-f="s" aria-pressed="false">Site + Espace · 69 €</button></div>
+      <div class="c-top"><div class="c-l"><b>Calculez votre prix</b><small>Prix HT. Options : prix provisoires.</small></div>
+      <div class="c-ch" role="group" aria-label="Forfait"><button type="button" class="on" data-f="e" aria-pressed="true">Espace · 49 €</button><button type="button" data-f="s" aria-pressed="false">Site + Espace · 69 €</button></div></div>
       <div class="c-ch c-pay" role="group" aria-label="Paiement de la création du site" hidden><button type="button" class="on" data-p="c" aria-pressed="true">Création du site 490 € comptant</button><button type="button" data-p="t" aria-pressed="false">3 × 163 €</button></div>
+      <p class="c-sur">Ajoutez des options</p>
       <div class="c-opt" role="group" aria-label="Options">
-        <label><input type="checkbox" data-o="cliky" data-m="99" data-u="490"><span>Cliky <small>99 €/mois + 490 € mise en service</small></span></label>
-        <label><input type="checkbox" data-o="resa" data-m="19"><span>Réservation <small>19 €/mois</small></span></label>
-        <label><input type="checkbox" data-o="sms" data-m="9"><span>SMS <small>9 €/mois</small></span></label>
-        <label><input type="checkbox" data-o="ass" data-m="39"><span>Assistant du site <small>39 €/mois</small></span></label>
-        <label><input type="checkbox" data-o="avis" data-m="9"><span>Avis Google <small>9 €/mois</small></span></label>
-        <label><input type="checkbox" data-o="res" data-m="39"><span>Réseaux sociaux <small>39 €/mois</small></span></label>
-        <label><input type="checkbox" data-o="img" data-u="590"><span>Votre image <small>590 € une fois (490 € avec un site)</small></span></label>
+        <label class="c-o"><input type="checkbox" data-o="cliky" data-m="99" data-u="490"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4.7"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg></span><span class="c-n">Cliky<small><em>99 €</em>/mois + 490 € mise en service</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
+        <label class="c-o"><input type="checkbox" data-o="resa" data-m="19"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M4 10h16M9 14l2 2 4-4"/></svg></span><span class="c-n">Réservation<small><em>19 €</em>/mois</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
+        <label class="c-o"><input type="checkbox" data-o="sms" data-m="9"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4.2 3.4A.4.4 0 0 1 4 19.1V7a2 2 0 0 1 2-2z"/></svg></span><span class="c-n">SMS<small><em>9 €</em>/mois</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
+        <label class="c-o"><input type="checkbox" data-o="ass" data-m="39"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18 16l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg></span><span class="c-n">Assistant du site<small><em>39 €</em>/mois</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
+        <label class="c-o"><input type="checkbox" data-o="avis" data-m="9"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span><span class="c-n">Avis Google<small><em>9 €</em>/mois</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
+        <label class="c-o"><input type="checkbox" data-o="res" data-m="39"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></svg></span><span class="c-n">Réseaux sociaux<small><em>39 €</em>/mois</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
+        <label class="c-o"><input type="checkbox" data-o="img" data-u="590"><span class="c-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-1.8 0-1.3-1-1.6-1-2.7 0-1 .8-1.5 1.8-1.5H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/></svg></span><span class="c-n">Votre image<small><em>590 €</em> une fois (490 € avec un site)</small></span><span class="c-ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
       </div>
-      <div class="c-res"><div><small>Chaque mois</small><b id="c-m">49 €</b></div><div id="c-cr" hidden><small>Une fois (création, mises en service)</small><b id="c-c"></b></div><div><small>Première année</small><b id="c-a">588 €</b></div></div>
-      <a class="btn" href="#contact">Prendre rendez-vous</a>
+      <div class="c-bas"><div class="c-res"><div class="c-g"><small>Votre prix</small><b><span id="c-m">49 €</span><span class="c-u">/mois</span></b></div></div>
+      <a class="btn" href="#contact">Prendre rendez-vous</a></div>
     </div>
   </div>
   <div class="cl">
     <h2>Ce que <span class="or">nous posons.</span></h2>
     <div class="prix">
-      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M12 3.5v17M5 12h14"/></svg></span>Fenêtres</h3><p>Bois, PVC ou alu. Rénovation ou dépose totale.</p><div class="sp"></div><a class="btn sec" href="#contact">Demander un devis</a></div>
+      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="3.2"/><path d="M12 3.5v17M5 12h14"/></svg></span>Fenêtres</h3><p>Bois, PVC ou alu. Rénovation ou dépose totale.</p><div class="sp"></div><a class="btn sec" href="#contact">Demander un devis</a></div>
       <div class="fort"><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4h12v17M4 21h16"/><circle cx="15" cy="12.5" r=".6"/></svg></span>Portes</h3><p>Porte d'entrée, portes intérieures, porte de garage.</p><div class="sp"></div><a class="btn" href="#contact">Demander un devis</a></div>
-      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="1.5"/><path d="M5 8h14M5 12h14M5 16h14"/></svg></span>Volets</h3><p>Battants ou roulants, manuels ou motorisés.</p><div class="sp"></div><a class="btn sec" href="#contact">Demander un devis</a></div>
+      <div><h3><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="3.2"/><path d="M5 8h14M5 12h14M5 16h14"/></svg></span>Volets</h3><p>Battants ou roulants, manuels ou motorisés.</p><div class="sp"></div><a class="btn sec" href="#contact">Demander un devis</a></div>
     </div>
   </div>
 </div></section>
@@ -842,7 +980,34 @@ go(0);if("IntersectionObserver"in window){new IntersectionObserver(function(e){i
 <script>(function(){var c=document.getElementById("calc");if(!c)return;var f="e",p="c",fm=function(n){return n.toLocaleString("fr-FR")+" €"};
 function r(){var s=f==="s",mo=s?69:49,once=s?(p==="c"?490:489):0;
 [].forEach.call(c.querySelectorAll("[data-o]"),function(i){if(!i.checked)return;mo+=+i.dataset.m||0;var u=+i.dataset.u||0;if(i.dataset.o==="img"&&s)u=490;once+=u});
-c.querySelector(".c-pay").hidden=!s;document.getElementById("c-cr").hidden=!(once>0);document.getElementById("c-m").textContent=fm(mo);document.getElementById("c-c").textContent=fm(once);document.getElementById("c-a").textContent=fm(mo*12+once)}
+c.querySelector(".c-pay").hidden=!s;tw("c-m",mo)}
+var cur={};function tw(id,v){var e=document.getElementById(id),a=cur[id]==null?v:cur[id],t0=performance.now();cur[id]=v;if(matchMedia("(prefers-reduced-motion:reduce)").matches||a===v){e.textContent=fm(v);return}cancelAnimationFrame(e._r);(function st(t){var q=Math.min(1,(t-t0)/450),k=1-Math.pow(1-q,3);e.textContent=fm(Math.round(a+(v-a)*k));if(q<1)e._r=requestAnimationFrame(st)})(t0)}
 function bind(sel,key){[].forEach.call(c.querySelectorAll(sel),function(b){b.addEventListener("click",function(){if(key==="f")f=b.dataset.f;else p=b.dataset.p;[].forEach.call(c.querySelectorAll(sel),function(x){var o=x===b;x.classList.toggle("on",o);x.setAttribute("aria-pressed",o)});r()})})}
 bind("[data-f]","f");bind("[data-p]","p");[].forEach.call(c.querySelectorAll("[data-o]"),function(i){i.addEventListener("change",r)});r()})();</script>
+<script>(function(){var root=document.documentElement,pr=document.querySelector(".hero .prod");if(!pr)return;
+function bot(){var v=pr.querySelector(".vitrine"),e=v&&getComputedStyle(v).display!="none"?v:pr.querySelector(".legende");return e.getBoundingClientRect().bottom+scrollY}
+function fit(){var v=pr.querySelector(".vitrine");[pr,v].forEach(function(e){if(e){e.style.transform="";e.style.marginBottom=""}});root.classList.remove("fit");
+var t=pr.getBoundingClientRect().top+scrollY,av=innerHeight-t-12,h=bot()-t;
+if(h>av){root.classList.add("fit");
+if(v&&getComputedStyle(v).display!="none"){v.style.transformOrigin="top center";v.style.transform="scale(.62)";v.style.marginBottom=(-v.offsetHeight*.38)+"px"}
+t=pr.getBoundingClientRect().top+scrollY;av=innerHeight-t-12;h=bot()-t;
+if(h>av){var k=Math.max(.45,av/h);pr.style.transformOrigin="top center";pr.style.transform="scale("+k.toFixed(3)+")";pr.style.marginBottom=(-pr.offsetHeight*(1-k))+"px"}}}
+var rt;function again(){clearTimeout(rt);rt=setTimeout(fit,80)}
+addEventListener("resize",again);addEventListener("orientationchange",again);
+var nbs=[].slice.call(document.querySelectorAll(".nb"));
+function isb(n){return n.className.indexOf(" b")>-1}
+function fmt(n,b){var s=String(Math.round(n));if(!b&&s.length>3)s=s.slice(0,-3)+" "+s.slice(-3);return s+" €"}
+function tune(){nbs.forEach(function(n){var i=n.firstChild;i.textContent=fmt(n.dataset.n,isb(n));if(!n.dataset.f)n.dataset.f=n.getAttribute("style").match(/--fs:([\d.]+)/)[1];n.style.setProperty("--fs",n.dataset.f);var pad=parseFloat(getComputedStyle(n).paddingLeft),w=n.clientWidth-pad*1.7,m=i.offsetWidth;if(m>0&&w>0)n.style.setProperty("--fs",(parseFloat(n.dataset.f)*w/m).toFixed(3))})}
+var cvs=document.querySelector(".jg"),BR=[[243,861],[352,802],[460,832],[570,774],[678,816],[787,797]];
+function bars(ms){if(!cvs)return;var im=cvs.parentNode.querySelector("img"),c=cvs.getContext("2d"),W=cvs.clientWidth*(window.devicePixelRatio||1);if(ms>3000||!im||!im.complete||!W){c.clearRect(0,0,cvs.width,cvs.height);return}
+if(cvs.width!=Math.round(W)){cvs.width=Math.round(W);cvs.height=Math.round(W*252/584)}var k=cvs.width/584;c.setTransform(k,0,0,k,0,0);c.clearRect(0,0,584,252);
+BR.forEach(function(b,j){var q=(ms-j*70)/1500;q=q<0?0:q>1?1:q;var e=1-Math.pow(1-q,3),cv=(1010-b[1])*(1-e);if(cv<.5)return;c.drawImage(im,b[0]-15,b[1]-5,30,3,b[0]-15-222,b[1]-762,30,cv)})}
+var calm=matchMedia("(prefers-reduced-motion:reduce)").matches,raf=0;
+function play(){if(calm)return;cancelAnimationFrame(raf);var t0=performance.now(),D=1500;
+function st(t){var all=1;nbs.forEach(function(n,k){var q=(t-t0-k*90)/D;q=q<0?0:q>1?1:q;if(q<1)all=0;var e=1-Math.pow(1-q,3);n.firstChild.textContent=fmt(n.dataset.n*e,isb(n))});bars(all?1e9:t-t0);if(!all)raf=requestAnimationFrame(st)}raf=requestAnimationFrame(st)}
+var ap=document.querySelector(".appareils"),seen=0,tm;
+function init(){tune();fit();if(!calm&&ap&&"IntersectionObserver"in window){new IntersectionObserver(function(e){if(e[0].isIntersecting){if(!seen){seen=1;nbs.forEach(function(n){n.firstChild.textContent=fmt(0,isb(n))});bars(-1);tm=setTimeout(play,900)}else play()}else{clearTimeout(tm);cancelAnimationFrame(raf);if(seen){nbs.forEach(function(n){n.firstChild.textContent=fmt(n.dataset.n,isb(n))});bars(1e9)}}},{threshold:.5}).observe(ap)}}
+var go=function(){init();addEventListener("load",function(){tune();fit()})};
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);else go();
+})();</script>
 </body></html>
