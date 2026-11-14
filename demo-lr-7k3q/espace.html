@@ -473,7 +473,7 @@ function ficheCh(id){var c=CH.filter(function(x){return x.id===id})[0],r=role();
   h+='<div class="row">'+(id==='rey'?'<a class="go" style="text-decoration:none;flex:1" href="plan.html?r=chef">'+ic('plan')+'Plan et murs</a>':'')+'<button class="btn2 pk" onclick="fermer();S.role=\'client\';save();rRoles();go(\'cli\')">'+ic('eye')+'Ce que voit le client</button></div></div>';
   fen(h)}
 /* planning : voir plus bas */
-QS.chef=[['Fais-moi le point de la semaine','Cette semaine : <b>5 chantiers</b>, 212 heures pointées. Rey avance comme prévu (placo). <b>Meylan est en retard</b> d\'un jour et perd 8 points de marge sur le carrelage. Revel démarre bien. À faire : relancer 3 devis et caler la réception du chalet Girard.'],
+QS.chef=[['Fais-moi le point de la semaine','Cette semaine : <b>5 chantiers</b>, 212 heures au planning. Rey avance comme prévu (placo). <b>Meylan est en retard</b> d\'un jour et perd 8 points de marge sur le carrelage. Revel démarre bien. À faire : relancer 3 devis et caler la réception du chalet Girard.'],
  ['Prépare le devis de la visite Lopez',function(){return 'Voici le pré-devis d\'après votre dictée de ce matin (maison de 110 m², Saint-Ismier). <b>Chiffres d\'exemple, à vérifier.</b><div style="margin-top:8px">'+[['Dépose et évacuation',6800],['Électricité complète',14500],['Plomberie',7900],['Placo et isolation',11200],['Salle de bain',12400],['Sols',9800],['Peinture',8600]].map(function(l){return '<div class="lot"><span>'+l[0]+'</span><b>'+eur(l[1])+'</b></div>'}).join('')+'<div class="tot"><span>Total HT</span><span>71 200 €</span></div></div>'}],
  ['Quel chantier perd de l\'argent ?','<b>Maison Bonnet, Meylan.</b> 270 heures passées sur 340 prévues alors que le chantier n\'est qu\'au carrelage. Marge prévue 27 %, tendance <b>19 %</b>. La cause : la pose en diagonale demandée par le client, qui n\'était pas dans le devis. Je peux préparer un avenant.'],
  ['Écris un post Instagram avec les photos de Revel','« Avant / après en cours à Revel 🏡 Dépose terminée, la maison est prête à renaître. Rendez-vous dans quelques semaines pour la suite ! #rénovation #Grésivaudan » Les 4 meilleures photos sont choisies. Je le publie ?']];
@@ -492,7 +492,7 @@ function acces(){
   function T(k,lab){return '<button onclick="S.acces.'+k+'=!S.acces.'+k+';save();re();toast(\''+lab+'\'+(S.acces.'+k+'?\' : accès donné\':\' : accès retiré\'),\'key\')">'+(A[k]?'✓':'—')+'</button>'}
   var R=[['Ses chantiers et son planning',O,O,P('les siens'),O,P('le sien')],['Lire le plan et les cotes',O,O,O,O,O],['Modifier le plan',O,O,X,X,X],['Demander du matériel',O,O,O,O,X],
     ['Prix de vente et devis',O,T('ref_prix','Prix pour les référents'),X,O,P('les siens')],['Prix d\'achat et marges',O,X,X,T('bureau_marges','Marges pour le bureau'),X],['Factures et paiements',O,X,X,O,P('les siennes')],
-    ['Heures pointées',O,P('son équipe'),P('les siennes'),O,X],['Coordonnées des clients',O,P('ses chantiers'),P('adresse du jour'),O,X],['Cliky',O,O,O,O,P('messages')]];
+    ['Qui est où',O,P('son équipe'),P('les siennes'),O,X],['Coordonnées des clients',O,P('ses chantiers'),P('adresse du jour'),O,X],['Cliky',O,O,O,O,P('messages')]];
   return '<div style="overflow-x:auto"><table class="acc"><tr><th></th><th>Patrons</th><th>Référent</th><th>Ouvrier</th><th>Bureau</th><th>Client</th></tr>'+R.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</table></div><p class="muted" style="font-size:12px;margin:8px 0 0">Touchez une case entourée pour donner ou retirer l\'accès.</p>'}
 function conge(id){var c=S.conges.filter(function(x){return x.id===id})[0];fen('<h3>Congé de '+c.qui+'</h3><p class="muted">'+c.du+'</p><p style="font-size:14px">Cliky a vérifié : personne d\'autre n\'est absent, et '+(c.qui==='Lucas'?'Mathieu peut avancer seul sur le chantier Rey ces jours-là.':'le planning reste tenable.')+'</p><div class="row"><button class="go" style="flex:1" onclick="okConge('+id+',1)">'+ic('check')+'Accepter</button><button class="btn2 pk" onclick="okConge('+id+',0)">Refuser</button></div>')}
 function okConge(id,o){var c=S.conges.filter(function(x){return x.id===id})[0];c.etat=o?'ok':'non';RT.evt('chef',N.chef,'Congé de '+c.qui+(o?' accepté':' refusé'),'cal');fermer();re();toast(c.qui+' est prévenu sur son téléphone','check')}
@@ -507,7 +507,7 @@ V.bacc=function(){
   var nd=S.dem.filter(function(d){return d.etat==='nouv'}).length,nm=S.mat.filter(function(m){return m.etat==='dem'}).length;
   h+='<div class="ck-top monte"><span class="ico">'+ic('robot')+'</span><div><b class="t">Votre journée, par Cliky</b><p><b>'+nd+' demande'+(nd>1?'s':'')+'</b> à rappeler, la situation n°2 de Mme Rey est prête à partir, la relance de M. et Mme Bonnet est écrite'+(nm?', et <b>'+nm+' demande de matériel</b> du chantier à commander':'')+'.</p></div></div>';
   var D='';
-  D+=ln('euro','Paie de novembre prête','Heures, paniers et trajets calculés depuis le pointage','fen(vuePaie())');
+  D+=ln('euro','Paie de novembre prête','Paniers et trajets calculés depuis le planning','fen(vuePaie())');
   S.dem.filter(function(d){return d.etat==='nouv'}).forEach(function(d){D+=ln('send',d.nom+' · '+d.t,d.lieu+' · '+d.h,'voirDem(\''+d.id+'\')')});
   S.mat.filter(function(m){return m.etat==='dem'}).forEach(function(m){D+=ln('truck','Matériel · '+m.t,'Demandé par '+m.qui+' · '+m.ch,'go(\'cmd\')')});
   S.av.filter(function(a){return a.etat==='signe'&&!a.fact}).forEach(function(a){D+=ln('sign','Avenant signé · '+a.ch,eur(a.tot)+' HT à ajouter à la prochaine facture','factAv(\''+a.id+'\')')});
@@ -680,11 +680,11 @@ function vueJour(w){var d=S.plv.jour||0,auj=w===0&&d===0;
   CH.forEach(function(c){var Q=qui(w,c.id,d),b=BES[c.id][w][d],m=b-Q.length,T=stJour(c.id,w,d);if(!Q.length&&!b&&!T.length)return;
     h+='<section class="chj monte" style="--cc:'+CC[c.id]+'"><div class="chj-h" onclick="ficheCh(\''+c.id+'\')">'+pastille(c.id)+'<span class="tx"><b>'+c.n+'</b><small>'+c.l+'</small></span><span class="fl">'+ic('arrow')+'</span></div>'+
       (Q.length||stJour(c.id,w,d).length?planGens(c.id,Q,auj,stJour(c.id,w,d)):'')+
-      '<div class="gens">'+Q.map(function(p){var o=ou(c.id,p);return '<button class="gen pk" onclick="caseP('+w+',\''+p+'\','+d+')"><span class="av">'+p[0]+'</span><span class="tx"><b>'+p+'</b><small>'+o[0]+' · '+o[1]+'</small></span>'+(auj?'<span class="etq '+(TEL[p]?'ok':'warn')+'">'+(TEL[p]?'Arrivé '+TEL[p]:'Pas pointé')+'</span>':'')+'</button>'}).join('')+T.map(function(t){return '<button class="gen pk st" onclick="voirST(\''+t.id+'\')"><span class="av">'+t.n+'</span><span class="tx"><b>'+t.c+'</b><small>Sous-traitant'+(t.nb>1?' · '+t.nb+' pers.':'')+' · '+t.ou[0]+' · '+t.ou[1]+'</small></span></button>'}).join('')+
+      '<div class="gens">'+Q.map(function(p){var o=ou(c.id,p);return '<button class="gen pk" onclick="caseP('+w+',\''+p+'\','+d+')"><span class="av">'+p[0]+'</span><span class="tx"><b>'+p+'</b><small>'+o[0]+' · '+o[1]+'</small></span>'+(auj?'<span class="etq '+(TEL[p]?'ok':'warn')+'">'+(TEL[p]?'Arrivé '+TEL[p]:'Pas indiqué')+'</span>':'')+'</button>'}).join('')+T.map(function(t){return '<button class="gen pk st" onclick="voirST(\''+t.id+'\')"><span class="av">'+t.n+'</span><span class="tx"><b>'+t.c+'</b><small>Sous-traitant'+(t.nb>1?' · '+t.nb+' pers.':'')+' · '+t.ou[0]+' · '+t.ou[1]+'</small></span></button>'}).join('')+
       (m>0?'<button class="gen pk manq" onclick="ajoutCh('+w+',\''+c.id+'\','+d+')"><span class="av">'+ic('plus')+'</span><span class="tx"><b>Il manque '+(m>1?m+' personnes':'quelqu\'un')+'</b><small>Touchez pour choisir qui vient</small></span></button>':'')+'</div></section>'});
   var abs=EQUIPE.filter(function(p){return !COUL[S.pl[w][p][d]]});
   if(abs.length)h+='<section class="blk monte"><h2 style="font-size:15px">Pas sur un chantier</h2><div class="gens" style="padding:0">'+abs.map(function(p){var c=S.pl[w][p][d];return '<button class="gen pk'+(c?'':' manq')+'" onclick="caseP('+w+',\''+p+'\','+d+')"><span class="av">'+p[0]+'</span><span class="tx"><b>'+p+'</b><small>'+(c?nomCase(c):'Rien de prévu : touchez pour le placer')+'</small></span></button>'}).join('')+'</div></section>';
-  if(auj)h+='<p class="muted" style="font-size:12px;margin:0">Point vert : arrivé sur le chantier. Point orange : pas encore pointé. Touchez quelqu\'un pour le changer de chantier.</p>';
+  if(auj)h+='<p class="muted" style="font-size:12px;margin:0">Point vert : arrivé sur le chantier. Point orange : pas encore indiqué. Touchez quelqu\'un pour le changer de chantier.</p>';
   return h}
 /* SEMAINE : une ligne par chantier, le nombre de personnes par jour */
 function vueSem(w){var h='';
@@ -732,7 +732,7 @@ function carteSvg(f,w,d){var s='<svg viewBox="0 0 360 252" class="map" role="img
   return s+'</svg>'}
 function vueCarte(){var f=CARTE_F;setTimeout(vraie,0);
   var h='<div class="row chips">'+[['tout','Tout'],['ch','Chantiers en cours'],['dv','Devis et demandes']].map(function(o){return '<button class="pk" aria-pressed="'+(f===o[0])+'" onclick="CARTE_F=\''+o[0]+'\';re()">'+o[1]+'</button>'}).join('')+'</div>';
-  h+='<section class="blk monte" style="padding:8px;position:relative"><span class="direct"><i></i>En direct · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':',' h ')+'</span>'+'<div class="vc" id="vc"><div class="vc-svg">'+carteSvg(f,0,0)+'</div></div>'+'<div class="leg2"><span><i class="lv"></i>Arrivé</span><span><i class="lw"></i>Pas encore pointé</span><span><i class="ls"></i>Sous-traitant</span><span><i class="ld"></i>Devis ou demande</span><span><i class="lp"></i>Dépôt</span></div></section>';
+  h+='<section class="blk monte" style="padding:8px;position:relative"><span class="direct"><i></i>En direct · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':',' h ')+'</span>'+'<div class="vc" id="vc"><div class="vc-svg">'+carteSvg(f,0,0)+'</div></div>'+'<div class="leg2"><span><i class="lv"></i>Arrivé</span><span><i class="lw"></i>Pas encore indiqué</span><span><i class="ls"></i>Sous-traitant</span><span><i class="ld"></i>Devis ou demande</span><span><i class="lp"></i>Dépôt</span></div></section>';
   if(f!=='dv')h+=blk('Sur les chantiers en ce moment','box',CH.map(function(c){var Q=qui(0,c.id,0),T=stJour(c.id,0,0);return '<button class="ln pk dir" onclick="ficheCh(\''+c.id+'\')">'+pastille(c.id,undefined,1)+'<span class="tx"><b>'+c.n+' · '+c.l+'</b><span class="qq">'+(Q.length||T.length?Q.map(function(q){return '<span class="q1"><i class="pt '+(TEL[q]?'ok':'warn')+'"></i>'+q+' <small>'+(TEL[q]?'depuis '+TEL[q]:'pas encore là')+'</small></span>'}).join('')+T.map(function(t){return '<span class="q1"><i class="pt" style="background:var(--laiton)"></i>'+t.s+(t.nb>1?' ×'+t.nb:'')+' <small>sous-traitant</small></span>'}).join(''):'<small>Personne aujourd\'hui</small>')+'</span></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
   if(f!=='ch')h+=blk('Devis et demandes','doc',DEVIS.map(function(v,i){return '<button class="ln pk" onclick="voirDevis('+i+')"><span class="pa big dvp">◆</span><span class="tx"><b>'+v.n+' · '+v.l+'</b><small>'+v.t+' · '+v.e+'</small></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
   return h}
@@ -740,11 +740,11 @@ function voirDevis(i){var v=DEVIS[i];fen('<h3>'+v.n+' · '+v.l+'</h3><p class="m
 function vueUn(w){var p=S.plv.qui,L=S.pl[w][p];
   var h='<div class="row chips" style="margin-bottom:2px">'+EQUIPE.map(function(x){return '<button class="pk" aria-pressed="'+(x===p)+'" onclick="S.plv.qui=\''+x+'\';save();re()">'+x+'</button>'}).join('')+'</div>';
   var met=(S.mesMet[p]||[]).map(function(k){return RT.METIERS[k].n}).join(', ');
-  h+='<section class="blk monte"><div class="post"><span class="qui"><span class="av" style="width:44px;height:44px;font-size:16px">'+p[0]+'</span><span><b style="font-size:17px">'+p+'</b><br><small class="muted">'+(met||'Ouvrier polyvalent')+'</small></span></span>'+(w===0?'<span class="etq '+(TEL[p]?'ok':'warn')+'">'+(TEL[p]?'Arrivé à '+TEL[p]:'Pas encore pointé')+'</span>':'')+'</div>';
+  h+='<section class="blk monte"><div class="post"><span class="qui"><span class="av" style="width:44px;height:44px;font-size:16px">'+p[0]+'</span><span><b style="font-size:17px">'+p+'</b><br><small class="muted">'+(met||'Ouvrier polyvalent')+'</small></span></span>'+(w===0?'<span class="etq '+(TEL[p]?'ok':'warn')+'">'+(TEL[p]?'Arrivé à '+TEL[p]:'Pas encore indiqué')+'</span>':'')+'</div>';
   h+='<div style="margin-top:10px">'+L.map(function(c,d){var C=CH.filter(function(x){return x.id===c})[0],neu=S.chg[w+p+d];
     return '<button class="jr pk'+(w===0&&d===0?' aujr':'')+'" onclick="caseP('+w+',\''+p+'\','+d+')"><span class="jd"><b>'+JOURS[d]+'</b><small>'+DATES[w][d]+'</small></span><span class="dotc '+(c||'off')+'"></span><span class="tx"><b>'+(C?C.n:nomCase(c))+'</b><small>'+(C?C.l+' · 8 h → 17 h':c?'Toute la journée':'Rien de prévu : touchez pour le placer')+'</small></span>'+(neu?'<span class="etq warn">Changé</span>':'')+'</button>'}).join('')+'</div>';
   var j=L.filter(function(c){return COUL[c]}).length;
-  h+='<div class="chif" style="margin-top:12px"><div><b>'+j*8+' h</b><small>prévues</small></div><div><b>'+(w===0?'7 h 30':'—')+'</b><small>pointées</small></div><div><b>'+L.filter(function(c){return !c}).length+'</b><small>jour libre</small></div><div><b>'+(S.envoye?(S.vu[p]?'Oui':'Non'):'—')+'</b><small>a vu sa semaine</small></div></div></section>';
+  h+='<div class="chif" style="margin-top:12px"><div><b>'+j*8+' h</b><small>prévues</small></div><div><b>'+(w===0?(TEL[p]?'Oui':'—'):'—')+'</b><small>sur place</small></div><div><b>'+L.filter(function(c){return !c}).length+'</b><small>jour libre</small></div><div><b>'+(S.envoye?(S.vu[p]?'Oui':'Non'):'—')+'</b><small>a vu sa semaine</small></div></div></section>';
   h+='<button class="btn2 pk" onclick="semaineCopie(\''+p+'\','+w+')">'+ic('cal')+'Mettre '+p+' toute la semaine sur un chantier</button>';
   return h}
 function vueCh(w){var ch=S.plv.ch,C=CH.filter(function(x){return x.id===ch})[0];
@@ -776,7 +776,7 @@ V.sem=function(){var p=N.ouvrier,w=S.plv.semO||0,L=S.pl[w][p],chg=[0,1,2,3,4].so
 
 /* ================= MOTIVATION : 10 secondes par jour, pour toute l'équipe ================= */
 if(!S.jeu)S.jeu={on:1,defi:'photos',val:22,rec:'Croissants lundi matin',rep:-1,pouce:0,serie:12};
-var DEFIS={photos:['photos de fin de journée',30,'cam'],point:['jours sans oubli de pointage',30,'clock'],range:['chantiers laissés propres le soir',25,'check']};
+var DEFIS={photos:['photos de fin de journée',30,'cam'],point:['jours où chacun dit où il est',30,'clock'],range:['chantiers laissés propres le soir',25,'check']};
 var RECS=['Croissants lundi matin','Resto d\'équipe le vendredi','Une demi-journée offerte'];
 var QJ={
  placo:['Pour une cloison en BA13, on espace les montants de combien en général ?',['40 cm','60 cm','90 cm'],1,'60 cm d\'axe en axe, c\'est l\'entraxe courant. On resserre à 40 cm pour poser du lourd ou du carrelage.'],
@@ -850,8 +850,8 @@ function commanderPlan(){fen('<h3>Commande préparée par Cliky</h3><p class="mu
   '<div class="post" style="padding:9px 0;border-top:1px solid var(--line)"><span>Livraison</span><b>Mercredi 18 novembre, 7 h 30</b></div><button class="go" style="width:100%;margin-top:10px" onclick="S.cmdPlan=1;LIV.rey.push([0,2,\'Spots, prises, parquet (commande du plan)\']);RT.evt(\'chef\',N.chef,\'Commande du plan envoyée · livraison mercredi\',\'truck\');save();fermer();toast(\'Commandes envoyées · livraison posée dans le planning\',\'truck\')">'+ic('send')+'Envoyer les commandes</button>')}
 /* 3 · heures vers la paie */
 var PAIE=[['Mathieu',151.67,9,20,'Zone 2'],['Lucas',151.67,4.5,20,'Zone 1'],['Benoît',151.67,12,19,'Zone 5'],['Kevin',140,0,18,'Zone 2'],['Damien',151.67,6,20,'Zone 3'],['Thomas',147,2,19,'Zone 3']];
-function vuePaie(){var h='<div class="pile">'+blk('Paie de novembre · prête pour le comptable','euro','<p class="muted" style="font-size:13px;margin:0 0 8px">Calculée depuis le pointage : heures, heures en plus, paniers repas et zones de trajet du BTP. Chiffres d\'exemple.</p>'+
-  '<div class="paie"><span></span><b>Heures</b><b>En plus</b><b>Paniers</b><b>Trajet</b>'+PAIE.map(function(r){return '<span class="qui"><span class="av">'+r[0][0]+'</span>'+r[0]+'</span><span>'+String(r[1]).replace('.',',')+'</span><span'+(r[2]>8?' style="color:var(--warn);font-weight:800"':'')+'>'+String(r[2]).replace('.',',')+'</span><span>'+r[3]+'</span><span>'+r[4]+'</span>'}).join('')+'</div>'+
+function vuePaie(){var h='<div class="pile">'+blk('Paie de novembre · prête pour le comptable','euro','<p class="muted" style="font-size:13px;margin:0 0 8px">Salariés au mois : heures du contrat, heures en plus validées par le chef, paniers repas et zones de trajet du BTP pris dans le planning. Chiffres d\'exemple.</p>'+
+  '<div class="paie"><span></span><b>Contrat</b><b>En plus</b><b>Paniers</b><b>Trajet</b>'+PAIE.map(function(r){return '<span class="qui"><span class="av">'+r[0][0]+'</span>'+r[0]+'</span><span>'+String(r[1]).replace('.',',')+'</span><span'+(r[2]>8?' style="color:var(--warn);font-weight:800"':'')+'>'+String(r[2]).replace('.',',')+'</span><span>'+r[3]+'</span><span>'+r[4]+'</span>'}).join('')+'</div>'+
   '<button class="go" style="width:100%;margin-top:12px" onclick="S.paieOk=1;save();re();toast(\'Fichier de paie envoyé au comptable\',\'send\')">'+ic('send')+(S.paieOk?'Renvoyer au comptable':'Envoyer au comptable')+'</button>'+(S.paieOk?'<p class="muted" style="font-size:12px;margin:8px 0 0;text-align:center">Envoyé le 16 novembre. Le comptable reçoit un tableau prêt à saisir.</p>':''));
   h+=blk('À vérifier avant l\'envoi','alert',ln('clock','Benoît · 12 h en plus','Chalet Girard, Alpe d\'Huez : grand déplacement les 3 et 4 novembre ?','toast(\'Cliky a demandé à Benoît de confirmer\',\'chat\')')+ln('cal','Kevin · 140 h','2 jours de congé posés et acceptés : rien à faire',''));
   return h+'</div>'}
@@ -887,7 +887,7 @@ function sitCalc(){var cu=0,av=0;SIT.lots.forEach(function(l,i){cu+=l[1]*S.sit.p
 function sitPas(i,d){S.sit.p[i]=Math.max(SIT.lots[i][2],Math.min(100,S.sit.p[i]+d));save();situation()}
 function situation(){var c=sitCalc(),h='<h3>Situation n°2 · Cabinet Martin</h3>';
   if(S.sit.fait){h+='<div class="ck-top"><span class="ico">'+ic('check')+'</span><div><b class="t">Situation n°2 créée</b><p>'+eur(c.net)+' TTC à payer, retenue de garantie déduite. Elle est dans les factures, prête à partir.</p></div></div>';fen(h);return}
-  h+='<p class="muted" style="margin:0 0 10px">Avancement de chaque partie du devis (22 400 € HT). <b>Cliky l\'a proposé</b> d\'après le pointage et les photos du chantier : vous ajustez d\'un toucher.</p><div class="blk">';
+  h+='<p class="muted" style="margin:0 0 10px">Avancement de chaque partie du devis (22 400 € HT). <b>Cliky l\'a proposé</b> d\'après le planning, les photos et la liste du chantier : vous ajustez d\'un toucher.</p><div class="blk">';
   SIT.lots.forEach(function(l,i){var p=S.sit.p[i];h+='<div class="sitl"><span><b>'+l[0]+'</b><small>'+eur(l[1])+' HT · déjà facturé '+l[2]+' %</small></span><span class="sitp"><button class="pk" onclick="sitPas('+i+',-10)" aria-label="Moins 10 %"'+(p<=l[2]?' disabled':'')+'>−</button><b>'+p+' %</b><button class="pk" onclick="sitPas('+i+',10)" aria-label="Plus 10 %"'+(p>=100?' disabled':'')+'>+</button></span></div>'});
   h+='</div><div class="blk" style="margin-top:10px">'+
    '<div class="lot"><span>Travaux faits à ce jour ('+c.pct+' %)</span><b>'+eur(c.cu)+' HT</b></div>'+
@@ -1049,6 +1049,35 @@ var _lh2=listeHtml;listeHtml=function(ch){var h=_lh2(ch);if(!voitPrix())return h
   S.liste.forEach(function(x){if(x.px&&x.ch===ch)h=h.replace('<b>'+x.t+'</b><small>','<b>'+x.t+'</b><small><span class="pxl">'+eur2(x.px)+' HT</span> · ')});return h};
 var _cmdV2=V.cmd;V.cmd=function(){var h=_cmdV2();if(!S.bons.length)return h;
   return h.replace(/<\/div>$/,blk('Bons fournisseur lus par Cliky','doc',S.bons.map(function(b){return ln('doc',b.f+' · '+b.n,'Chantier '+b.ch+' · '+b.nl+' lignes · photo de '+b.qui,'', '<b>'+eur2(b.tot)+' HT</b>')}).join(''))+'</div>')};
+/* ================= Où je suis : présence (pas des heures), pour tout le monde dans l'entreprise ================= */
+if(!S.ici)S.ici={Antoine:{l:'dev',x:'Mme Lopez, Saint-Ismier',h:'09 h 30'},Maxime:{l:'rev',h:'08 h 40'},Claire:{l:'bur',h:'08 h 15'}};
+var LIEUX={bur:['stock','Au bureau'],dep:['truck','Au dépôt'],dev:['doc','Chez un client pour un devis'],fou:['box','Chez un fournisseur'],route:['pin','En route']};
+function lieuTx(o){if(!o)return 'Pas encore indiqué';var c=CH.filter(function(x){return x.id===o.l})[0];return c?'Chantier '+c.n.replace(/^(Appartement|Maison|Chalet) /,'')+' · '+c.l:LIEUX[o.l][1]+(o.x?' · '+o.x:'')}
+function syncTel(){Object.keys(S.ici).forEach(function(p){if(TEL.hasOwnProperty(p))TEL[p]=CH.some(function(c){return c.id===S.ici[p].l})?S.ici[p].h:''})}
+if(!S.ici[N.ouvrier])TEL[N.ouvrier]='';syncTel();
+function ouBlk(){var me=quiSuisJe(),o=S.ici[me],ch=role()==='ouvrier'?'rey':null;
+  var h='<section class="blk monte"><div class="pointe"><span class="ico">'+ic('pin')+'</span><div style="flex:1"><b>'+(o?lieuTx(o):'Où êtes-vous ?')+'</b><br><small class="muted">'+(o?'Depuis '+o.h+' · l\'équipe le voit sur la carte':'Pas pour les heures : juste pour savoir qui est où')+'</small></div>';
+  if(o)h+='<button class="btn2 pk" onclick="ouChoisir()">Changer</button></div></section>';
+  else h+='</div><div style="display:flex;gap:8px;margin-top:12px">'+(ch?'<button class="go" style="flex:1" onclick="iciSet(\''+ch+'\')">Sur le chantier Rey</button><button class="btn2 pk" onclick="ouChoisir()">Ailleurs</button>':'<button class="go" style="flex:1" onclick="ouChoisir()">Je l\'indique</button>')+'</div></section>';
+  return h}
+function ouChoisir(){var me=quiSuisJe(),o=S.ici[me];
+  fen('<h3>Où êtes-vous ?</h3><p class="muted" style="margin:0 0 10px">Un toucher suffit. Ce n\'est pas un pointage d\'heures : c\'est pour que tout le monde sache qui est où.</p>'+
+   '<p style="font-weight:700;font-size:14px;margin:0 0 6px">Sur un chantier</p>'+CH.map(function(c){return '<button class="ln pk" onclick="iciSet(\''+c.id+'\')">'+pastille(c.id,undefined,1)+'<span class="tx"><b>'+c.n+'</b><small>'+c.l+'</small></span>'+(o&&o.l===c.id?'<span class="etq ok">Ici</span>':'')+'</button>'}).join('')+
+   '<p style="font-weight:700;font-size:14px;margin:12px 0 6px">Ailleurs</p>'+Object.keys(LIEUX).map(function(k){return ln(LIEUX[k][0],LIEUX[k][1],k==='dev'?'Choisir le client':'',k==='dev'?'ouDevis()':'iciSet(\''+k+'\')',o&&o.l===k?'<span class="etq ok">Ici</span>':'')}).join(''))}
+function ouDevis(){fen('<h3>Chez quel client ?</h3>'+DEVIS.map(function(v,i){return ln('doc',v.n,v.l+' · '+v.t,'iciSet(\'dev\','+i+')')}).join('')+ln('plus','Un autre client','Je le dicte','iciSet(\'dev\',-1)'))}
+function iciSet(l,i){var me=quiSuisJe(),t=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':',' h ');
+  S.ici[me]={l:l,h:t,x:l==='dev'?(i>=0?DEVIS[i].n+', '+DEVIS[i].l:'Nouveau client'):''};
+  if(me===N.ouvrier&&l==='rey'){S.point.arr=t}
+  syncTel();RT.evt(role()==='ouvrier'?'ouvrier':'bureau',me,me+' : '+lieuTx(S.ici[me]),'pin');save();fermer();re();toast('C\'est noté, l\'équipe le voit','pin')}
+/* l'ouvrier : le bloc pointage devient « où je suis » */
+var _jour2=V.jour;V.jour=function(){return _jour2().replace(/<section class="blk monte"><div class="pointe">[\s\S]*?<\/div><\/section>/,ouBlk())};
+/* patrons et bureau aussi */
+var _acc=V.acc;V.acc=function(){return _acc().replace('<div class="pile">','<div class="pile">'+ouBlk())};
+var _bacc=V.bacc;V.bacc=function(){return _bacc().replace('<div class="pile">','<div class="pile">'+ouBlk())};
+/* carte : ceux qui ne sont pas sur un chantier */
+function ailleursBlk(){var L=Object.keys(S.ici).filter(function(p){return EQUIPE.indexOf(p)<0||!CH.some(function(c){return c.id===S.ici[p].l})});
+  if(!L.length)return '';return blk('Patrons, bureau et ailleurs','pin',L.map(function(p){var o=S.ici[p];return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span class="qui"><span class="av">'+p[0]+'</span><span><b style="font-size:14px">'+p+'</b><br><small class="muted">'+lieuTx(o)+'</small></span></span><small class="muted">depuis '+o.h+'</small></div>'}).join(''))}
+var _vc=vueCarte;vueCarte=function(){var h=_vc();return CARTE_F==='dv'?h:h+ailleursBlk()};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
