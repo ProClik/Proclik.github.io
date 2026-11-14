@@ -150,7 +150,7 @@
   /* 3/11 (vidéo de Cyril) : on remet en blocs AVANT que l'écran soit dessiné. Avec un délai de 80 ms, chaque clic
      montrait l'ancienne mise en page (pastilles, pas de blocs) pendant 5 à 6 images, puis tout sautait. */
   function tout(){fil=0;if(obs)obs.disconnect();try{tout0()}finally{if(obs)obs.observe(surv,{childList:true,subtree:true,characterData:true})}}
-  function tout0(){titreDepenses();$$("section.view").forEach(function(v){if(v.id==="v-accueil"||v.id==="v-reseaux")return;blocs(v);if(!menuTuiles(v))poseTuiles(v);
+  function tout0(){titreDepenses();$$("section.view").forEach(function(v){if(v.id==="v-accueil"||v.id==="v-reseaux"||v.id==="v-cotes")return;blocs(v);if(!menuTuiles(v))poseTuiles(v);
     var o=ORD[v.id.replace(/^v-/,"")];if(o)try{o(v)}catch(e){}})}
   function plusTard(){if(!fil)fil=setTimeout(tout,80)}
   surv=$("main")||document.body;
