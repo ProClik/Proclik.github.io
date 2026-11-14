@@ -290,6 +290,65 @@ body[data-v="pc"] .cl, body[data-v="cl"] .pc{display:none!important}
 /* 7. contact */
 .contact{text-align:center}
 .contact .lead{margin-inline:auto}
+
+/* rendez-vous guidé : une question à la fois, créneaux réels de l'agenda */
+#rdv{position:relative;max-width:620px;margin:26px auto 0;text-align:left}
+#rdv .barre-r{height:8px;border-radius:999px;background:var(--teinte);margin-bottom:22px;overflow:hidden}
+#rdv .barre-r i{display:block;height:100%;width:20%;border-radius:999px;background:var(--laiton);transition:width .8s ease}
+#rdv .rp{display:none}#rdv .rp.on{display:block;animation:rp-in .5s ease}
+@keyframes rp-in{from{opacity:0;transform:translateY(6px)}}
+#rdv .q-r{font-size:19px;font-weight:800;text-align:center;margin:0 0 16px}
+#rdv .petit-q{font-size:15px;color:var(--muted);margin:20px 0 10px;font-weight:700}
+#rdv .rr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}#rdv .rr.r3{grid-template-columns:repeat(3,1fr)}
+#rdv .rg{position:relative;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#rdv .rg input{position:absolute;opacity:0;pointer-events:none}
+#rdv .rg>span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;height:100%;padding:10px 8px;border-radius:18px;text-align:center;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 6px 16px -10px rgba(14,19,34,.25);transition:background .25s,color .25s,box-shadow .25s}
+#rdv .rg b{font-size:14.5px;font-weight:700;line-height:1.2}
+#rdv .rg small{font-size:12px;color:var(--muted);font-weight:600}
+#rdv .rg svg{width:22px;height:22px;color:var(--muted);margin-bottom:2px}
+#rdv .rg input:checked+span{background:var(--nuit);color:var(--nuit-fg);box-shadow:0 8px 18px -8px rgba(14,19,34,.5)}
+#rdv .rg input:checked+span small,#rdv .rg input:checked+span svg{color:var(--nuit-fg)}
+#rdv .rg input:focus-visible+span{outline:2px solid var(--laiton);outline-offset:3px}
+#rdv .champ-r{display:block;margin-bottom:14px}
+#rdv .champ-r span{display:block;font-size:14px;font-weight:700;margin:0 0 6px 6px}
+#rdv .champ-r small{font-weight:500;color:var(--muted)}
+#rdv .champ-r input{width:100%;font:500 17px Manrope,system-ui,sans-serif;color:var(--fg);background:var(--calme);border:0;border-radius:16px;padding:15px 16px;box-shadow:0 0 0 1px var(--line);outline:none}
+#rdv .champ-r input:focus{box-shadow:0 0 0 2px var(--laiton)}
+#rdv .champ-r.err input{box-shadow:0 0 0 2px rgba(181,96,58,.7)}
+#rdv .envoi{width:100%;margin-top:8px;justify-content:center}#rdv .envoi[disabled]{opacity:.6}
+#rdv .retour{appearance:none;border:0;background:none;color:var(--muted);font:600 14.5px Manrope,system-ui,sans-serif;cursor:pointer;margin:16px auto 0;display:block;padding:8px 14px;border-radius:999px}
+#rdv .piege{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+#rdv .heures-r{grid-template-columns:repeat(4,1fr);max-width:460px;margin-left:auto;margin-right:auto}
+@media (max-width:520px){#rdv .heures-r{grid-template-columns:repeat(3,1fr)}#rdv .rr{grid-template-columns:1fr 1fr}#rdv .rr.r3{grid-template-columns:1fr}}
+#rdv .pris-r{text-align:center;color:#B5603A;font-weight:700;font-size:14px;margin:12px 0 0}
+#rdv [hidden]{display:none!important}
+#rdv .fin{text-align:center}#rdv .fin b{display:block;font-size:22px;margin-top:14px}
+#rdv .rond-r{width:72px;height:72px;margin:0 auto;border-radius:50%;display:grid;place-items:center;background:var(--calme);box-shadow:0 0 0 1px var(--line),var(--sh);color:var(--laiton)}
+#rdv .rond-r svg{width:32px;height:32px}
+#rdv .recap{color:var(--muted);margin:8px 0 0}
+#rdv .cal-r{max-width:460px;margin:0 auto;padding:16px 14px 12px;border-radius:24px;background:var(--teinte)}
+#rdv .cal-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+#rdv .mois-r{font-size:16.5px;font-weight:800;text-transform:capitalize}
+#rdv .cal-b{appearance:none;border:0;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--calme);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+#rdv .cal-b:disabled{opacity:.3;cursor:default}#rdv .cal-b svg{width:18px;height:18px}
+#rdv .cal-s,#rdv .cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+#rdv .cal-s span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding-bottom:4px}
+#rdv .cal-g .rg>span,#rdv .cal-g .cj{aspect-ratio:1;min-height:0;padding:0;border-radius:50%;gap:0;position:relative}
+#rdv .cal-g .rg b{font-size:15.5px}
+#rdv .cal-g .rg i{position:absolute;bottom:17%;width:5px;height:5px;border-radius:50%;background:var(--laiton)}
+#rdv .cal-g .rg input:checked+span i{background:var(--nuit-fg)}
+#rdv .cal-g .cj{display:grid;place-items:center;font-size:15px;font-weight:600;color:var(--muted);opacity:.4}
+#rdv .cal-g .cj.auj{opacity:.75;box-shadow:inset 0 0 0 1px var(--laiton)}
+#rdv .cal-l{display:flex;align-items:center;justify-content:center;gap:7px;margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+#rdv .cal-l i{width:6px;height:6px;border-radius:50%;background:var(--laiton)}
+@media (max-width:420px){#rdv .cal-r{padding:14px 8px 10px}#rdv .cal-s,#rdv .cal-g{gap:4px}}
+#rdv .ex-r{font-size:13px;color:var(--muted);margin:14px 0 0;line-height:1.45}
+#rdv .ex-r .ex{margin-right:6px;font-weight:800;color:var(--laiton)}
+#rdv .apres-r{list-style:none;padding:0;margin:18px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+#rdv .apres-r li{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;padding:8px 13px;border-radius:999px;background:var(--teinte);color:var(--muted)}
+#rdv .ci{width:17px;height:17px;color:var(--laiton)}
+#rdv .ics-r{margin-top:16px;min-height:48px;font-size:15px;justify-content:center}
+#rdv .demo-r{font-size:13.5px;color:var(--laiton);margin:14px auto 0;max-width:440px}
 .contact .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
 footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
 footer .wrap{display:flex;gap:10px 22px;flex-wrap:wrap}
@@ -802,8 +861,30 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
   <h2 class="cl">Parlons de <span class="or">votre projet.</span></h2>
   <p class="lead pc">Choisissez un moment, on vient vous voir ou on s'appelle.</p>
   <p class="lead cl">Décrivez vos travaux en quelques minutes, ou appelez-nous.</p>
-  <div class="actions">
-    <a class="btn pc" href="#contact">Prendre rendez-vous</a>
+  <div class="pc">
+<form class="rdv" id="rdv" novalidate>
+      <div class="barre-r"><i></i></div>
+      <div class="rp on" data-q="activite"><p class="q-r">Quelle est votre activité ?</p><div class="rr">
+        <label class="rg"><input type="radio" name="activite" value="Artisan du bâtiment"><span><b>Artisan du bâtiment</b></span></label><label class="rg"><input type="radio" name="activite" value="Commerce"><span><b>Commerce, boutique</b></span></label><label class="rg"><input type="radio" name="activite" value="Restaurant"><span><b>Restaurant, café</b></span></label><label class="rg"><input type="radio" name="activite" value="Beauté et bien-être"><span><b>Beauté, bien-être</b></span></label><label class="rg"><input type="radio" name="activite" value="Service"><span><b>Service, conseil</b></span></label><label class="rg"><input type="radio" name="activite" value="Autre"><span><b>Autre</b></span></label>
+      </div></div>
+      <div class="rp" data-q="lieu"><p class="q-r">Où préférez-vous qu'on se voie ?</p><div class="rr r3">
+        <label class="rg"><input type="radio" name="lieu" value="Chez moi"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Chez vous</b></span></label><label class="rg"><input type="radio" name="lieu" value="En visio"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10 5-3v10l-5-3"/></svg><b>En visio</b></span></label><label class="rg"><input type="radio" name="lieu" value="Au téléphone"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg><b>Au téléphone</b></span></label>
+      </div></div>
+      <div class="rp" data-q="jour"><p class="q-r">Quel jour vous arrange ?</p><div class="cal-r"><div class="cal-h"><button class="cal-b cal-p" type="button" aria-label="Mois précédent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button><b class="mois-r"></b><button class="cal-b cal-n" type="button" aria-label="Mois suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></button></div><div class="cal-s" aria-hidden="true"><span>lun.</span><span>mar.</span><span>mer.</span><span>jeu.</span><span>ven.</span><span>sam.</span><span>dim.</span></div><div class="cal-g jours-r"></div><p class="cal-l"><i></i>créneaux libres</p></div>
+        <p class="q-r petit-q">Plutôt…</p><div class="rr r3 moments"><label class="rg"><input type="radio" name="moment" value="Matin"><span><b>Le matin</b></span></label><label class="rg"><input type="radio" name="moment" value="Après-midi"><span><b>L'après-midi</b></span></label><label class="rg"><input type="radio" name="moment" value="Fin de journée"><span><b>En fin de journée</b></span></label></div>
+        <p class="q-r petit-q heures-t" hidden>À quelle heure ?</p><div class="rr heures-r" hidden></div><p class="pris-r" hidden>Ce créneau vient d'être pris. Choisissez-en un autre.</p><p class="ex-r" hidden><span class="ex">Exemple</span> Créneaux d'exemple : quand l'agenda sera branché, vous verrez ici les vraies disponibilités de ProClik.</p></div>
+      <div class="rp" data-q="coord"><p class="q-r">Comment vous joindre ?</p>
+        <label class="champ-r"><span>Votre prénom</span><input name="prenom" autocomplete="given-name" required></label>
+        <label class="champ-r"><span>Votre téléphone</span><input name="tel" type="tel" inputmode="tel" autocomplete="tel" required></label>
+        <label class="champ-r"><span>Votre entreprise <small>(si vous voulez)</small></span><input name="entreprise" autocomplete="organization"></label>
+        <label class="champ-r"><span>Votre ville <small>(si on vient chez vous)</small></span><input name="ville" autocomplete="address-level2"></label>
+        <input class="piege" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn go envoi" type="submit">Réserver mon café</button></div>
+      <div class="rp fin"><div class="rond-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div><b>C'est noté, <span data-k="prenom"></span> !</b><p class="recap"></p><ul class="apres-r"><li><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="3"/><path d="m7 18-1 3 4-3"/><path d="m8.5 11.5 2.2 2.2 4.8-4.8"/></svg>Confirmation par SMS</li><li><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Rappel la veille</li><li class="vis-r" hidden><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10.5 5-3v9l-5-3"/></svg>Lien visio dans le message</li></ul><a class="btn ics-r" download="rendez-vous-proclik.ics" hidden><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg>Ajouter à mon agenda</a><p class="demo-r" hidden>Mode démonstration : la réservation n'est pas encore envoyée. Pour l'instant, appelez-nous ou écrivez-nous.</p></div>
+      <button class="retour" type="button" hidden>← Retour</button>
+    </form>
+  </div>
+  <div class="actions cl">
     <a class="btn cl" href="#contact">Demander un devis</a>
   </div>
   <p class="note">[téléphone] · [e-mail]</p>
@@ -973,6 +1054,71 @@ var u=c.querySelector(".c-u");if(devis){cur["c-m"]=null;cancelAnimationFrame(doc
 var cur={};function tw(id,v){var e=document.getElementById(id),a=cur[id]==null?v:cur[id],t0=performance.now();cur[id]=v;if(matchMedia("(prefers-reduced-motion:reduce)").matches||a===v){e.textContent=fm(v);return}cancelAnimationFrame(e._r);(function st(t){var q=Math.min(1,(t-t0)/450),k=1-Math.pow(1-q,3);e.textContent=fm(Math.round(a+(v-a)*k));if(q<1)e._r=requestAnimationFrame(st)})(t0)}
 function bind(sel,key){[].forEach.call(c.querySelectorAll(sel),function(b){b.addEventListener("click",function(){if(key==="f")f=b.dataset.f;else p=b.dataset.p;[].forEach.call(c.querySelectorAll(sel),function(x){var o=x===b;x.classList.toggle("on",o);x.setAttribute("aria-pressed",o)});r()})})}
 [].forEach.call(c.querySelectorAll("[data-t]"),function(b){b.addEventListener("click",function(){t=+b.dataset.t;[].forEach.call(c.querySelectorAll("[data-t]"),function(x){var o=x===b;x.classList.toggle("on",o);x.setAttribute("aria-pressed",o)});r()})});bind("[data-f]","f");bind("[data-p]","p");[].forEach.call(c.querySelectorAll("[data-o]"),function(i){i.addEventListener("change",r)});r()})();</script>
+<script>/* rendez-vous guidé, une question à la fois ; créneaux réels de l'agenda GHL ProClik via le service ProClik */
+  (function(){var f=document.getElementById("rdv");if(!f)return;
+    var SERVICE="https://proclik-calcul.proclik-test.workers.dev"; /* adresse du service ProClik (ce n'est pas une clé) */
+    var pas=[].slice.call(f.querySelectorAll(".rp")),k=0,barre=f.querySelector(".barre-r i"),ret=f.querySelector(".retour");
+    var J=["dim.","lun.","mar.","mer.","jeu.","ven.","sam."],M=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+    var box=f.querySelector(".jours-r"),moments=f.querySelector(".moments"),momT=moments.previousElementSibling,heures=f.querySelector(".heures-r"),heuresT=f.querySelector(".heures-t"),pris=f.querySelector(".pris-r");
+    var reel=null,exemple=false,exR=f.querySelector(".ex-r"),moisR=f.querySelector(".mois-r"); /* {"2026-10-30": ["2026-10-30T09:00:00+01:00", …]} quand l'agenda répond ; sinon créneaux d'exemple marqués « Exemple » */
+    function galet(nom,val,haut,gros,bas){return '<label class="rg"><input type="radio" name="'+nom+'" value="'+val+'"><span>'+(haut?'<small>'+haut+'</small>':'')+'<b>'+gros+'</b>'+(bas?'<small>'+bas+'</small>':'')+'</span></label>'}
+    function libJour(d){return J[d.getDay()]+" "+d.getDate()+" "+M[d.getMonth()]}
+    var MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+    function cleJ(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+    /* exemple de ce que donnera l'agenda GHL : un mois de jours ouvrés, des créneaux libres, quelques jours complets */
+    function joursDemo(){var d=new Date(),n=0,H=["09:00","10:30","14:00","15:30","17:00"],R=[[0,2,3],[1,2,4],[],[0,1,3,4],[2,3],[0,4],[1,3],[0,2,4],[1,2],[],[3,4],[0,1,2]];reel={};exemple=true;
+      while(n<31){d.setDate(d.getDate()+1);n++;var j=d.getDay();if(j===0||j===6)continue;var cle=cleJ(d);reel[cle]=R[n%R.length].map(function(i){return cle+"T"+H[i]+":00"})}
+      joursReels()}
+    var vue=null,choix="",cp=f.querySelector(".cal-p"),cn=f.querySelector(".cal-n");
+    function bornes(){var c=Object.keys(reel).sort(),a=new Date(),b=c.length?new Date(c[c.length-1]+"T12:00:00"):a;return [a.getFullYear()*12+a.getMonth(),b.getFullYear()*12+b.getMonth()]}
+    function grille(){var y=Math.floor(vue/12),m=vue%12,prem=new Date(y,m,1),dec=(prem.getDay()+6)%7,nb=new Date(y,m+1,0).getDate(),auj=cleJ(new Date()),h="";
+      for(var i=0;i<dec;i++)h+="<span></span>";
+      for(var j=1;j<=nb;j++){var cle=cleJ(new Date(y,m,j)),l=reel[cle]||[];
+        h+=l.length?'<label class="rg"><input type="radio" name="jour" value="'+cle+'"'+(cle===choix?" checked":"")+' aria-label="'+libJour(new Date(y,m,j))+', '+l.length+' créneau'+(l.length>1?"x":"")+' libre'+(l.length>1?"s":"")+'"><span><b>'+j+'</b><i></i></span></label>':'<span class="cj'+(cle===auj?" auj":"")+'">'+j+'</span>'}
+      box.innerHTML=h;moisR.textContent=MOIS[m]+" "+y;var bo=bornes();cp.disabled=vue<=bo[0];cn.disabled=vue>=bo[1]}
+    function joursReels(){var c=Object.keys(reel).filter(function(k){return reel[k].length}).sort(),p=c.filter(function(k){return c.length&&k.slice(0,7)===c[0].slice(0,7)}).length,
+      d=c.length?new Date((p<3&&c[p]?c[p]:c[0])+"T12:00:00"):new Date(); /* fin de mois presque vide : on ouvre directement le mois suivant (la flèche ‹ y ramène) */
+      vue=d.getFullYear()*12+d.getMonth();choix="";grille();exR.hidden=!exemple;
+      moments.hidden=momT.hidden=true;heures.hidden=heuresT.hidden=true}
+    cp.addEventListener("click",function(){vue--;grille()});cn.addEventListener("click",function(){vue++;grille()});
+    function heure(s){var m=/T(\d{2}):(\d{2})/.exec(s);return m?(+m[1])+" h "+m[2]:s}
+    function charge(){var c=new AbortController(),tm=setTimeout(function(){c.abort()},6000);
+      return fetch(SERVICE+"/rdv/creneaux",{signal:c.signal}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(tm);
+        if(j&&j.ok&&j.jours&&j.jours.length){reel={};exemple=false;j.jours.forEach(function(x){reel[x.date]=x.creneaux});joursReels()}}).catch(function(){})}
+    joursDemo();charge();
+    function va(i){k=i;pas.forEach(function(p,j){p.classList.toggle("on",j===k)});barre.style.width=(Math.min(k+1,pas.length-1)/(pas.length-1)*100)+"%";
+      ret.hidden=k===0||k===pas.length-1}
+    var coche=function(n){return [].some.call(f.querySelectorAll('[name="'+n+'"]'),function(r){return r.checked})};
+    var val=function(n){var c=f.querySelector('[name="'+n+'"]:checked');return c?c.value:""};
+    f.addEventListener("change",function(e){if(e.target.type!=="radio")return;var q=pas[k].getAttribute("data-q");
+      if(q==="activite"||q==="lieu")return setTimeout(function(){va(k+1)},450);
+      if(q!=="jour")return;
+      if(reel&&e.target.name==="jour"){choix=e.target.value;pris.hidden=true;heures.innerHTML=(reel[e.target.value]||[]).map(function(s){return galet("heure",s,"",heure(s),"")}).join("");heures.hidden=heuresT.hidden=false;return}
+      if(coche("heure"))setTimeout(function(){va(k+1)},450)});
+    ret.addEventListener("click",function(){if(k>0)va(k-1)});
+    var bouton=f.querySelector(".envoi"),demo=f.querySelector(".demo-r");
+    var ics=f.querySelector(".ics-r");
+    function z(d){return d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"")}
+    function fini(don,texte,montreDemo){f.querySelector('[data-k="prenom"]').textContent=don.prenom;f.querySelector(".recap").textContent=texte;
+      f.querySelector(".vis-r").hidden=don.lieu!=="En visio";
+      var deb=don.debut&&new Date(don.debut);ics.hidden=!(deb&&!isNaN(deb));
+      if(!ics.hidden){var fin=new Date(deb.getTime()+30*60000);ics.href="data:text/calendar;charset=utf-8,"+encodeURIComponent(["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ProClik//RDV//FR","BEGIN:VEVENT","UID:"+z(deb)+"@proclik","DTSTAMP:"+z(new Date()),"DTSTART:"+z(deb),"DTEND:"+z(fin),"SUMMARY:Café ProClik ("+don.lieu.toLowerCase()+")","DESCRIPTION:30 minutes pour parler de votre activité.","END:VEVENT","END:VCALENDAR"].join("\r\n"))}
+      demo.hidden=!montreDemo;va(pas.length-1)}
+    f.addEventListener("submit",function(e){e.preventDefault();var ok=true;
+      ["prenom","tel"].forEach(function(n){var c=f[n],bon=n==="tel"?c.value.replace(/\D/g,"").length>=10:c.value.trim().length>0;c.parentNode.classList.toggle("err",!bon);if(!bon)ok=false});
+      if(!ok)return;
+      var don={prenom:f.prenom.value.trim(),telephone:f.tel.value.trim(),entreprise:f.entreprise.value.trim(),ville:f.ville.value.trim(),activite:val("activite"),lieu:val("lieu"),site:f.site.value};
+      don.debut=val("heure");var d=new Date(don.debut.slice(0,10)+"T12:00:00"),quand=libJour(d)+" à "+heure(don.debut);
+      if(exemple){demo.textContent="Exemple : l'agenda n'est pas encore branché, rien n'est envoyé. Une fois branché, ce rendez-vous arrivera directement dans l'agenda ProClik.";fini(don,"C'est réservé : "+don.lieu.toLowerCase()+", "+quand+".",true);return}
+      bouton.disabled=true;bouton.textContent="Je réserve…";
+      fetch(SERVICE+"/rdv/reserver",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(don)})
+        .then(function(r){return r.json().then(function(j){return [r.status,j]})})
+        .then(function(a){bouton.disabled=false;bouton.textContent="Réserver mon café";
+          if(a[1]&&a[1].ok)return fini(don,"C'est réservé : "+don.lieu.toLowerCase()+", "+quand+". Vous recevez la confirmation.",false);
+          if(a[0]===409){charge().then(function(){pris.hidden=false;va(2)});return}
+          demo.textContent="Petit souci de notre côté : appelez-nous ou écrivez-nous, on cale le rendez-vous ensemble.";fini(don,don.lieu+", "+quand+".",true)})
+        .catch(function(){bouton.disabled=false;bouton.textContent="Réserver mon café";demo.textContent="Pas de réseau : appelez-nous ou écrivez-nous, on cale le rendez-vous ensemble.";fini(don,don.lieu+", "+quand+".",true)})});
+    va(0)})();</script>
 <script>(function(){var root=document.documentElement,pr=document.querySelector(".hero .prod");if(!pr)return;
 function bot(){var v=pr.querySelector(".vitrine"),e=v&&getComputedStyle(v).display!="none"?v:pr.querySelector(".legende");return e.getBoundingClientRect().bottom+scrollY}
 function fit(){var v=pr.querySelector(".vitrine");[pr,v].forEach(function(e){if(e){e.style.transform="";e.style.marginBottom=""}});root.classList.remove("fit");
