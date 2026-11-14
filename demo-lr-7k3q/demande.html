@@ -1,0 +1,126 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Demande de travaux</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="demo.css">
+<script src="demo.js"></script><script src="data.js"></script>
+<style>
+body{min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) 16px 8px;max-width:640px;margin:0 auto;width:100%}
+.top .sp{flex:1}
+.top .ret{width:40px;height:40px;border-radius:50%;display:grid;place-items:center}
+.fil{display:flex;gap:6px;max-width:640px;margin:4px auto 0;padding:0 16px;width:100%}
+.fil i{flex:1;height:5px;border-radius:99px;background:var(--teinte);transition:background .4s}
+.fil i.f{background:var(--nuit)}.fil i.c{background:var(--laiton)}
+main{flex:1;max-width:640px;margin:0 auto;width:100%;padding:18px 16px 30px;display:flex;flex-direction:column}
+.q{animation:entre .38s var(--doux) both}
+@keyframes entre{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+.q.ar{animation-name:entreAr}@keyframes entreAr{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.k{font-size:13px;font-weight:700;color:var(--muted);margin:0 0 6px}
+h1{font-size:clamp(24px,6vw,30px);line-height:1.15;letter-spacing:-.02em;margin:0 0 6px}
+.aide{color:var(--muted);margin:0 0 18px;font-size:15px}
+.cartes{display:grid;gap:10px}
+@media(min-width:560px){.cartes.d2{grid-template-columns:1fr 1fr}}
+.carte{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;text-align:left;width:100%}
+.carte b{display:block;font-size:16px}.carte small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.carte[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--nuit);background:color-mix(in srgb,var(--nuit) 9%,var(--bg))}
+.carte[aria-pressed="true"] .ico{background:var(--nuit);color:var(--nuit-fg)}
+.carte.jsp{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.champ{width:100%;border:0;background:var(--bg);box-shadow:var(--in);padding:15px 16px;border-radius:14px;font-size:16px;outline:none}
+.champ:focus{box-shadow:var(--in),0 0 0 2px var(--nuit)}
+textarea.champ{min-height:120px;resize:vertical}
+.lab{font-size:13px;font-weight:700;color:var(--muted);margin:12px 0 6px;display:block}
+.d2c{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bas{margin-top:auto;padding-top:20px;display:flex;gap:10px}
+.bas .go{flex:1}
+.pj{display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;width:100%;margin-top:10px;text-align:left}
+.recap{display:grid;gap:8px}
+.recap button{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;text-align:left;width:100%;background:var(--calme);box-shadow:var(--calme-sh)}
+.recap small{color:var(--muted);font-weight:700;font-size:12px;display:block}
+.recap b{font-size:15px}
+.fin{text-align:center;padding-top:20px}
+.coche{width:84px;height:84px;margin:0 auto 14px}
+.coche path{stroke:var(--nuit);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:trace .7s .2s var(--doux) forwards}
+.coche circle{stroke:var(--teinte);stroke-width:3;fill:none}
+@keyframes trace{to{stroke-dashoffset:0}}
+.etp{display:grid;gap:10px;text-align:left;margin:20px 0}
+.etp div{display:flex;gap:12px;align-items:center}
+.etp i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px;background:var(--teinte);color:var(--muted);flex:none}
+.etp .f i{background:var(--nuit);color:var(--nuit-fg)}.etp .c i{background:var(--bg);box-shadow:0 0 0 2px var(--laiton);color:var(--fg)}
+.pied{text-align:center;padding:10px 16px 18px}
+.pied .logo{justify-content:center;font-size:13px;color:var(--muted)}
+.pied .logo svg{width:22px;height:24px}
+</style></head><body>
+<div class="top"><button class="ret pk" id="ret" aria-label="Revenir"></button><span class="sp"></span><span class="ex">Exemple · rien n'est envoyé</span><button class="theme pk" data-theme-ic onclick="PCD.toggleTheme()" aria-label="Jour ou nuit"></button></div>
+<div class="fil" id="fil"></div>
+<main id="m"></main>
+<div class="pied"><a class="logo" href="#" style="text-decoration:none"><span data-logo></span>Formulaire ProClik · Lauzière Rénovation</a></div>
+<script>
+var $=function(i){return document.getElementById(i)},ic=PCD.ic;
+document.querySelectorAll('[data-logo]').forEach(function(e){e.innerHTML=PCD.logo});
+document.querySelectorAll('[data-theme-ic]').forEach(function(b){b.innerHTML=PCD.themeIc()});
+$('ret').innerHTML=ic('back');
+var R={};var pas=0,sens=1;
+/* Les questions s'adaptent au besoin : chaque métier a ses propres questions, « Je ne sais pas » partout. */
+var BES=[['comp','home','Rénover toute une maison ou un appartement','Tous les travaux, de A à Z, avec une seule équipe'],['piece','box','Rénover une ou plusieurs pièces','Salle de bain, cuisine, chambre…'],
+ ['elec','idea','Électricité','Mise aux normes, prises, tableau'],['plomb','wrench','Plomberie','Salle d\'eau, fuite, raccordement'],['clim','sun','Climatisation','Rafraîchir et chauffer'],
+ ['fin','image','Sols et peinture','Carrelage, parquet, peinture'],['ext','pin','Terrasse','Créer une terrasse extérieure']];
+var JSP=['Je ne sais pas',0,0,0,1];
+var Qs={
+ besoin:{k:'Votre projet',t:'Que voulez-vous faire ?',a:'Touchez ce qui ressemble le plus à votre projet.',c:BES.map(function(b){return [b[0],b[1],b[2],b[3]]}),seul:1},
+ logement:{r:'Logement',k:'Votre logement',t:'C\'est pour…',c:[['Une maison'],['Un appartement'],['Un local professionnel','','Bureau, commerce, restaurant']]},
+ surface:{r:'Surface',k:'Votre logement',t:'Quelle surface environ ?',c:[['Moins de 50 m²'],['50 à 90 m²'],['90 à 130 m²'],['Plus de 130 m²'],JSP],d2:1},
+ annee:{r:'Âge du logement',k:'Votre logement',t:'Il date de quand ?',a:'Ça nous aide à savoir dans quel état sont l\'électricité et la plomberie.',c:[['Avant 1950'],['1950 à 1990'],['Après 1990'],JSP],d2:1},
+ occupe:{r:'Pendant les travaux',k:'Pendant les travaux',t:'Vous habiterez dedans pendant les travaux ?',c:[['Oui'],['Non, il sera vide'],JSP]},
+ pieces:{r:'Pièces',k:'Les pièces',t:'Quelles pièces ?',a:'Plusieurs choix possibles.',c:[['Salle de bain'],['Cuisine'],['WC'],['Chambre'],['Séjour'],['Entrée ou couloir']],multi:1,d2:1},
+ elecq:{r:'Électricité',k:'L\'électricité',t:'Qu\'est-ce qu\'il faut faire ?',a:'Plusieurs choix possibles.',c:[['Tout remettre aux normes'],['Changer le tableau'],['Ajouter des prises'],['Refaire l\'éclairage'],['Je ne sais pas']],multi:1},
+ plombq:{r:'Plomberie',k:'La plomberie',t:'Qu\'est-ce qu\'il faut faire ?',c:[['Refaire une salle d\'eau'],['Changer des tuyaux anciens'],['Réparer une fuite'],['Installer un appareil','','Lave-linge, chauffe-eau…'],JSP]},
+ climq:{r:'Climatisation',k:'La climatisation',t:'Combien de pièces à équiper ?',c:[['1 pièce'],['2 pièces'],['3 pièces ou plus'],JSP],d2:1},
+ finq:{r:'Travaux',k:'Sols et peinture',t:'Qu\'est-ce qu\'il faut faire ?',a:'Plusieurs choix possibles.',c:[['Carrelage'],['Parquet'],['Peinture des murs'],['Peinture des plafonds'],['Je ne sais pas']],multi:1,d2:1},
+ terq:{r:'Terrasse',k:'La terrasse',t:'Quelle taille environ ?',c:[['Moins de 15 m²'],['15 à 30 m²'],['Plus de 30 m²'],JSP],d2:1},
+ plan:{r:'Plan ou photos',k:'Pour bien préparer la visite',t:'Avez-vous un plan ou des photos ?',a:'Ce n\'est pas obligatoire. Vous pouvez aussi dessiner votre plan en quelques minutes : on le retrouve ensuite sur le chantier.',pj:1},
+ budget:{r:'Budget',k:'Votre budget',t:'Quel budget avez-vous en tête ?',a:'Une idée suffit, ça nous aide à vous proposer la bonne solution.',c:[['Moins de 10 000 €'],['10 000 à 30 000 €'],['30 000 à 60 000 €'],['Plus de 60 000 €'],JSP],d2:1},
+ delai:{r:'Quand',k:'Le calendrier',t:'Vous aimeriez commencer quand ?',c:[['Dès que possible'],['Dans 1 à 3 mois'],['Dans plus de 3 mois'],['Je ne sais pas encore',0,0,0,1]]},
+ coord:{k:'Vos coordonnées',t:'Qui doit-on rappeler ?',form:1},
+ recap:{k:'Dernière vérification',t:'Tout est bon ?',a:'Touchez une ligne pour la changer.',recap:1}};
+function ordre(){var b=R.besoin,o=['besoin'],M={comp:['logement','surface','annee','occupe','plan'],piece:['logement','pieces','surface','plan'],elec:['logement','elecq','annee'],plomb:['logement','plombq','plan'],clim:['logement','climq'],fin:['logement','finq','surface','plan'],ext:['terq','plan']};
+ return o.concat(M[b]||['logement','surface','plan']).concat(['budget','delai','coord','recap'])}
+function fil(){var o=ordre(),n=R.besoin?o.length:9;var s='';for(var i=0;i<n;i++)s+='<i class="'+(i<pas?'f':i===pas?'c':'')+'"></i>';$('fil').innerHTML=s}
+function libre(k){return k==='besoin'?(BES.filter(function(b){return b[0]===R.besoin})[0]||[])[2]:Array.isArray(R[k])?R[k].join(', '):R[k]}
+function rendre(){var o=ordre(),k=o[pas],q=Qs[k];fil();$('ret').style.visibility=pas?'visible':'hidden';
+ var h='<div class="q'+(sens<0?' ar':'')+'"><p class="k">'+q.k+'</p><h1>'+q.t+'</h1>'+(q.a?'<p class="aide">'+q.a+'</p>':'<div style="height:12px"></div>');
+ if(q.c){h+='<div class="cartes'+(q.d2?' d2':'')+'">';q.c.forEach(function(c){var v=c[0],sel=q.multi?(R[k]||[]).indexOf(c[2]!==undefined&&k==='besoin'?c[2]:v)>=0:R[k]===v,label=k==='besoin'?c[2]:c[0],sous=k==='besoin'?c[3]:c[2];
+   h+='<button class="carte pk'+(c[4]?' jsp':'')+'" aria-pressed="'+sel+'" onclick="choix(\''+k+'\',\''+v.replace(/'/g,"\\'")+'\')">'+(k==='besoin'?'<span class="ico">'+ic(c[1])+'</span>':'')+'<span><b>'+label+'</b>'+(sous?'<small>'+sous+'</small>':'')+'</span></button>'});h+='</div>'}
+ if(q.txt)h+='<textarea class="champ" id="t" placeholder="Votre projet en quelques phrases">'+(R[k]||'')+'</textarea><button class="pj pk" onclick="dicter()"><span class="ico">'+ic('mic')+'</span><span><b>Le dire à voix haute</b><small class="muted" style="display:block">On écrit pour vous</small></span></button>';
+ if(q.pj)h+='<button class="pj pk" onclick="R.plan=\'Plan dessiné par le client\';rendre()"><span class="ico">'+ic(R.plan==='Plan dessiné par le client'?'check':'plan')+'</span><span><b>Dessiner mon plan</b><small class="muted" style="display:block">'+(R.plan==='Plan dessiné par le client'?'Plan ajouté (exemple)':'Pièces, murs, portes et fenêtres, en quelques minutes')+'</small></span></button><button class="pj pk" onclick="R.plan=\'3 photos jointes\';rendre()"><span class="ico">'+ic(R.plan==='3 photos jointes'?'check':'cam')+'</span><span><b>Ajouter des photos</b>'+(R.plan==='3 photos jointes'?'<small class="muted" style="display:block">3 photos ajoutées (exemple)</small>':'')+'</span></button><button class="carte pk jsp" style="margin-top:10px" onclick="R.plan=\'Pas de plan pour l\\\'instant\';suite()"><span><b>Je n\'ai pas de plan pour l\'instant</b></span></button>';
+ if(q.form){var c=R.co||{};h+='<label class="lab" for="so">Commune des travaux</label><input class="champ" id="so" value="'+(c.so||'')+'" placeholder="Par exemple : Meylan" autocapitalize="words">'+
+  '<div class="d2c"><div><label class="lab" for="no">Prénom et nom</label><input class="champ" id="no" value="'+(c.no||'')+'" autocapitalize="words"></div><div><label class="lab" for="te">Téléphone</label><input class="champ" id="te" inputmode="tel" value="'+(c.te||'')+'"></div></div>'+
+  '<label class="lab" for="ma">E-mail</label><input class="champ" id="ma" type="email" inputmode="email" value="'+(c.ma||'')+'"><button class="pj pk" style="margin-top:14px" onclick="exemple()"><span class="ico">'+ic('idea')+'</span><span><b>Remplir avec un exemple</b><small class="muted" style="display:block">Pour la démonstration</small></span></button>'}
+ if(q.recap){h+='<div class="recap">';ordre().forEach(function(x,i){if(x==='coord'||x==='recap')return;h+='<button onclick="va('+i+')"><span><small>'+(Qs[x].r||Qs[x].k)+'</small><b>'+(libre(x)||'—')+'</b></span>'+ic('arrow')+'</button>'});
+  var c=R.co||{};h+='<button onclick="va('+ordre().indexOf('coord')+')"><span><small>Vos coordonnées</small><b>'+[c.so,c.no,c.te].filter(Boolean).join(' · ')+'</b></span>'+ic('arrow')+'</button></div>'}
+ var bt=q.recap?'<button class="go" onclick="envoyer()">'+ic('send')+'Envoyer ma demande</button>':(q.seul||(q.c&&!q.multi))?'':'<button class="go" id="cont" onclick="suite()">Continuer '+ic('arrow')+'</button>';
+ h+='<div class="bas">'+bt+'</div></div>';$('m').innerHTML=h;
+ if(q.form)['so','no','te','ma'].forEach(function(i){$(i).oninput=function(){R.co=R.co||{};R.co[i]=this.value;verif()}});
+ if(q.txt)$('t').oninput=function(){R[k]=this.value;verif()};
+ verif()}
+function verif(){var o=ordre(),k=o[pas],q=Qs[k],b=$('cont');if(!b)return;var ok=true;
+ if(q.multi)ok=(R[k]||[]).length>0;if(q.txt)ok=(R[k]||'').trim().length>3;if(q.form){var c=R.co||{};ok=!!(c.so&&c.no&&(c.te||c.ma))}if(q.pj)ok=!!R.plan;b.disabled=!ok}
+window.choix=function(k,v){var q=Qs[k];if(q.multi){var a=R[k]=R[k]||[],i=a.indexOf(v);if(i>=0)a.splice(i,1);else a.push(v);rendre();return}
+ R[k]=v;rendre();setTimeout(suite,260)};
+window.suite=function(){sens=1;if(pas<ordre().length-1)pas++;rendre();scrollTo(0,0)};
+window.va=function(i){sens=-1;pas=i;rendre()};
+$('ret').onclick=function(){if(pas){sens=-1;pas--;rendre()}};
+window.dicter=function(){var t=$('t'),k=ordre()[pas];t.value=Qs[k].ex||'Une machine pour visser 4 vis sur un boîtier en aluminium, environ 300 boîtiers par jour, avec contrôle du couple.';R[k]=t.value;verif()};
+window.exemple=function(){R.co={so:'Crolles',no:'Camille Durand',te:'06 00 00 00 00',ma:'camille@exemple.fr'};rendre()};
+window.envoyer=function(){var c=R.co||{},b=BES.filter(function(x){return x[0]===R.besoin})[0];
+ var det=ordre().filter(function(k){return Qs[k].r}).map(function(k){return Qs[k].r+' : '+String(libre(k)||'—').toLowerCase()}).join(' · ')+'.';
+ var d=new Date(),L=[];try{L=JSON.parse(localStorage.getItem('rt2o-dem-new')||'[]')}catch(e){}
+ L.unshift({id:'n'+Date.now(),nom:c.no,lieu:c.so,t:b[2],det:det,bud:R.budget||'—',quand:R.delai||'—',h:'à '+d.getHours()+' h '+String(d.getMinutes()).padStart(2,'0'),etat:'nouv',plan:R.plan==='Plan dessiné par le client'});
+ try{localStorage.setItem('rt2o-dem-new',JSON.stringify(L))}catch(e){}
+ $('fil').innerHTML='';$('ret').style.visibility='hidden';
+ $('m').innerHTML='<div class="fin q"><svg class="coche" viewBox="0 0 84 84"><circle cx="42" cy="42" r="38"/><path d="M26 43l11 11 22-24"/></svg><h1>Merci, c\'est envoyé</h1><p class="aide">Démonstration : rien n\'est vraiment envoyé.</p>'+
+ '<div class="etp"><div class="f"><i>'+ic('check')+'</i><span><b>Votre demande est reçue</b></span></div><div class="c"><i>2</i><span><b>On vous rappelle pour fixer une visite</b><br><small class="muted">Sous 48 h ouvrées</small></span></div><div><i>3</i><span><b>Vous recevez votre devis, lot par lot</b></span></div></div>'+
+ '<a class="go" href="espace.html?r=bureau" style="text-decoration:none">Voir la demande arriver au bureau '+ic('arrow')+'</a></div>'};
+rendre();
+</script>
+</body></html>

@@ -1,0 +1,80 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Créer un compte artisan</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="demo.css">
+<script src="demo.js"></script><script src="data.js"></script>
+<style>
+body{min-height:100dvh}
+.top{display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) 16px 8px;max-width:1100px;margin:0 auto}
+.top .sp{flex:1}.rond{width:40px;height:40px;border-radius:50%;display:grid;place-items:center}
+main{max-width:1100px;margin:0 auto;padding:6px 16px 40px;display:grid;gap:18px}
+@media(min-width:900px){main{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start}.apercu{position:sticky;top:12px}}
+h1{font-size:26px;letter-spacing:-.02em;margin:6px 0 2px}
+.sous{color:var(--muted);margin:0 0 14px;font-size:14px}
+h2{font-size:16px;margin:0 0 10px}
+.lab{font-size:13px;font-weight:700;color:var(--muted);margin:0 0 6px;display:block}
+.champ{width:100%;border:0;background:var(--bg);box-shadow:var(--in);padding:14px 16px;border-radius:14px;font-size:16px;outline:none}
+.pres{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.pres button{padding:9px 13px;border-radius:99px;font-weight:700;font-size:13px}
+.mt{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mt button{display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;text-align:left;font-weight:700;font-size:14px}
+.mt .cb{width:22px;height:22px;border-radius:7px;box-shadow:inset 0 0 0 2px var(--muted);display:grid;place-items:center;flex:none}
+.mt button[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--nuit);background:color-mix(in srgb,var(--nuit) 9%,var(--bg))}
+.mt button[aria-pressed="true"] .cb{background:var(--nuit);box-shadow:none;color:var(--nuit-fg)}
+.mt .cb svg{width:14px;height:14px}
+.sz{display:flex;gap:4px;background:var(--teinte);border-radius:99px;padding:4px}
+.sz button{flex:1;padding:9px 4px;border-radius:99px;font-weight:700;font-size:13px;color:var(--muted)}
+.sz button[aria-pressed="true"]{background:var(--bg);color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--nuit)}
+.apercu{background:var(--calme);border-radius:26px;box-shadow:var(--calme-sh);padding:16px}
+.apercu h2{display:flex;align-items:center;gap:8px}
+.sec{border-top:1px solid var(--line);padding:12px 0}.sec:first-of-type{border:0}
+.sec h3{font-size:13px;color:var(--muted);margin:0 0 8px;font-weight:800}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{background:var(--bg);box-shadow:var(--pk);padding:7px 11px;border-radius:99px;font-size:13px;font-weight:700;animation:monte .35s var(--doux) both}
+.tags span small{color:var(--muted);font-weight:600}
+.q{font-size:14px;padding:10px 12px;border-radius:14px;background:var(--bg);box-shadow:var(--pk);margin-top:6px;animation:monte .35s var(--doux) both}
+.q b{display:block}.q span{color:var(--muted);font-size:13px}
+.nav{display:flex;gap:4px;padding:6px;border-radius:20px;background:var(--bg);box-shadow:var(--pk);margin-bottom:6px}
+.nav span{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--muted);padding:6px 0}
+.nav span:first-child{color:var(--fg)}
+</style></head><body>
+<div class="top"><a class="rond pk" href="espace.html?r=chef" aria-label="Retour" id="ret"></a><span class="sp"></span><span class="ex">Écran ProClik · création de compte</span><button class="rond pk" data-theme-ic onclick="PCD.toggleTheme()" aria-label="Jour ou nuit"></button></div>
+<main>
+<div>
+<h1>Nouveau compte artisan</h1><p class="sous">Cochez le ou les métiers : l'Espace se met tout seul à l'image de l'entreprise.</p>
+<section class="blk" style="margin-bottom:14px"><label class="lab" for="nom">Nom de l'entreprise</label><input class="champ" id="nom" value="Lauzière Rénovation">
+<label class="lab" style="margin-top:12px">Taille de l'équipe</label><div class="sz" id="sz"></div></section>
+<section class="blk"><h2>Métiers</h2><div class="pres" id="pres"></div><div class="mt" id="mt"></div></section>
+<button class="go" style="width:100%;margin-top:14px" onclick="creer()">Créer l'Espace</button>
+</div>
+<div class="apercu" id="ap"></div>
+</main>
+<div class="toast" id="toast" style="position:fixed;left:50%;top:14px;transform:translate(-50%,-220%);background:var(--nuit);color:var(--nuit-fg);padding:12px 16px;border-radius:16px;font-weight:700;transition:transform .4s;z-index:9"></div>
+<script>
+var $=function(i){return document.getElementById(i)},ic=PCD.ic,S=RT.S,M=RT.METIERS;
+$('ret').innerHTML=ic('back');document.querySelectorAll('[data-theme-ic]').forEach(function(b){b.innerHTML=PCD.themeIc()});
+var sel=Object.assign({},S.metiers),taille='6 à 20';
+var PRES=[['Électricien',['elec']],['Plombier',['plomb']],['Plombier-chauffagiste',['plomb','clim']],['Peintre',['peint']],['Carreleur',['carre']],['Plaquiste',['placo','peint']],['Tous corps d\'état',RT.ORDRE]];
+function rend(){
+  $('sz').innerHTML=['Seul','2 à 5','6 à 20'].map(function(t){return '<button aria-pressed="'+(taille===t)+'" onclick="taille=\''+t+'\';rend()">'+t+'</button>'}).join('');
+  $('pres').innerHTML=PRES.map(function(p,i){var on=RT.ORDRE.every(function(k){return !!sel[k]===(p[1].indexOf(k)>=0)});return '<button class="pk" style="'+(on?'box-shadow:inset 0 0 0 1.5px var(--nuit)':'')+'" onclick="preset('+i+')">'+p[0]+'</button>'}).join('');
+  $('mt').innerHTML=RT.ORDRE.map(function(k){var on=!!sel[k];return '<button class="pk" aria-pressed="'+on+'" onclick="bas(\''+k+'\')"><span class="cb">'+(on?ic('check'):'')+'</span>'+M[k].n+'</button>'}).join('');
+  var on=RT.ORDRE.filter(function(k){return sel[k]}),eq=taille!=='Seul';
+  var nav=[['home','Accueil'],['box','Chantiers'],['cal','Planning'],['chat','Cliky'],['gear','Réglages']];
+  var h='<h2>'+ic('eye')+'Ce que l\'artisan verra</h2><div class="nav">'+nav.map(function(n){return '<span>'+ic(n[0])+n[1]+'</span>'}).join('')+'</div>';
+  if(!on.length){$('ap').innerHTML=h+'<p class="muted">Cochez au moins un métier.</p>';return}
+  h+='<div class="sec"><h3>SUR LE PLAN, EN TOUCHANT UN MUR</h3>'+on.map(function(k){return '<div class="q"><b>'+M[k].n+'</b><span>'+M[k].vue+'</span></div>'}).join('')+'</div>';
+  h+='<div class="sec"><h3>ÉTAPES D\'UN CHANTIER</h3><div class="tags">'+on.map(function(k){return M[k].taches.map(function(t){return '<span>'+t+' <small>· '+M[k].n+'</small></span>'}).join('')}).join('')+'</div></div>';
+  h+='<div class="sec"><h3>« IL MANQUE DU MATÉRIEL » PROPOSE</h3><div class="tags">'+on.map(function(k){return M[k].mat.slice(0,3).map(function(t){return '<span>'+t+'</span>'}).join('')}).join('')+'</div></div>';
+  h+='<div class="sec"><h3>CLIKY SAIT RÉPONDRE À</h3>'+on.slice(0,4).map(function(k){return '<div class="q"><b>« '+M[k].ck+' »</b></div>'}).join('')+'</div>';
+  h+='<div class="sec"><h3>LE FORMULAIRE DE SES CLIENTS DEMANDE</h3><div class="tags">'+on.map(function(k){return '<span>'+M[k].n+'</span>'}).join('')+(on.length>2?'<span>Rénovation complète</span>':'')+'</div></div>';
+  h+='<div class="sec"><h3>ACCÈS</h3><div class="tags">'+(eq?'<span>Chef</span><span>Référent</span><span>Ouvriers</span><span>Bureau</span><span>Clients</span>':'<span>L\'artisan seul</span><span>Ses clients</span>')+'</div></div>';
+  $('ap').innerHTML=h}
+function preset(i){sel={};PRES[i][1].forEach(function(k){sel[k]=1});rend()}
+function bas(k){sel[k]=sel[k]?0:1;rend()}
+function creer(){if(!RT.ORDRE.some(function(k){return sel[k]}))return;S.metiers={};RT.ORDRE.forEach(function(k){S.metiers[k]=sel[k]?1:0});RT.save();
+  var t=$('toast');t.textContent='Espace prêt pour '+$('nom').value;t.style.transform='translate(-50%,0)';setTimeout(function(){location.href='espace.html?r=chef'},1100)}
+rend();
+</script>
+</body></html>
