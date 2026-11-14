@@ -358,6 +358,9 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .lot svg{width:15px;height:15px;vertical-align:-2px}
 .mst{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--teinte);margin-bottom:8px}.mst svg{width:20px;height:20px;flex:none;margin-top:2px}
 .mst span{display:flex;flex-direction:column;font-size:14px}.mst small{color:var(--muted);font-size:12.5px}.mst.ok svg{color:var(--ok)}
+.nom{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--laiton) 70%,transparent);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:pointer}
+svg text.nom{cursor:pointer;text-decoration:none}
+.fp{display:flex;gap:14px;align-items:center}.fpav{width:56px!important;height:56px!important;font-size:22px!important;flex:none}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
@@ -808,8 +811,8 @@ if(!S.ges)S.ges='dev';
 function sansTitre(h){return h.replace(/^<h1>.*?<\/h1><p class="sous">.*?<\/p>/,'')}
 V.ges=function(){var g=S.ges;
   var h='<h1>Gestion</h1><p class="sous">Les patrons voient tout : devis, factures, clients et chiffres</p>';
-  h+='<div class="row chips" style="margin-bottom:12px">'+[['dev','Devis'],['fac','Factures'],['cli','Clients'],['chf','Chiffres'],['cmd','Commandes'],['paie','Paie'],['pap','Papiers'],['docs','Documents']].map(function(o){return '<button class="pk" aria-pressed="'+(g===o[0])+'" onclick="S.ges=\''+o[0]+'\';save();re()">'+o[1]+'</button>'}).join('')+'</div>';
-  if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else if(g==='paie')h+=vuePaie();else if(g==='pap')h+=vuePapiers();else if(g==='docs')h+=vueDocs();else h+=vueChiffres();
+  h+='<div class="row chips" style="margin-bottom:12px">'+[['dev','Devis'],['fac','Factures'],['cli','Clients'],['chf','Chiffres'],['cmd','Commandes'],['paie','Paie'],['pap','Papiers'],['docs','Documents'],['veh','Véhicules']].map(function(o){return '<button class="pk" aria-pressed="'+(g===o[0])+'" onclick="S.ges=\''+o[0]+'\';save();re()">'+o[1]+'</button>'}).join('')+'</div>';
+  if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else if(g==='paie')h+=vuePaie();else if(g==='pap')h+=vuePapiers();else if(g==='docs')h+=vueDocs();else if(g==='veh')h+=vueVeh();else h+=vueChiffres();
   return h};
 var CLI=[{n:'Mme Rey',l:'Grenoble',e:'Chantier en cours',ch:'rey',ca:48600,pay:14580},{n:'M. et Mme Bonnet',l:'Meylan',e:'Chantier en cours',ch:'mey',ca:31200,pay:9360,ret:1},{n:'M. Faure',l:'Revel',e:'Chantier en cours',ch:'rev',ca:92000,pay:27600},
  {n:'Cabinet Martin',l:'Saint-Martin-d\'Hères',e:'Chantier en cours',ch:'cab',ca:22400,pay:12472},{n:'M. et Mme Girard',l:'Alpe d\'Huez',e:'Chantier en cours',ch:'hue',ca:64000,pay:44800},
@@ -1124,6 +1127,58 @@ function dossier(id){var c=CH.filter(function(x){return x.id===id})[0],pr=voitPr
 /* branchements : Gestion › Documents, bureau, fiche chantier */
 var _cmdV3=V.cmd;V.cmd=function(){return _cmdV3().replace(/<\/div>$/,blk('Documents et base de prix','doc',ln('send','Bons et factures reçus par e-mail',S.mails.length+' rangés par chantier par Cliky','fen(vueDocs())')))+'</div>'};
 var _fCh2=ficheCh;ficheCh=function(id){_fCh2(id);var r=$('fen').querySelector('.row');if(r)r.insertAdjacentHTML('beforeend','<button class="btn2 pk" onclick="dossier(\''+id+'\')">'+ic('doc')+'Dossier du chantier</button>')};
+/* ================= Chaque prénom se touche : fiche pour appeler, écrire, savoir où il est ================= */
+var PERS={Antoine:['Patron','01'],Maxime:['Patron','02'],Claire:['Bureau · coordinatrice','03'],Mathieu:['Ouvrier référent','04'],Lucas:['Ouvrier','05'],'Benoît':['Ouvrier référent','06'],Kevin:['Ouvrier','07'],Damien:['Ouvrier référent','08'],Thomas:['Ouvrier','09']};
+var NOM_RE=new RegExp('(^|[^A-Za-zÀ-ÿ])('+Object.keys(PERS).join('|')+')(?![A-Za-zÀ-ÿ])','g');
+function nomsWrap(root){if(!root)return;
+  root.querySelectorAll('svg text').forEach(function(t){var n=t.textContent.trim();if(PERS[n]&&!t.classList.contains('nom')){t.classList.add('nom');t.setAttribute('data-n',n)}});
+  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(x){var p=x.parentNode;if(!p||p.closest('.nom,#roles,script,style,input,textarea,svg,.toast,h1,h3,.fpx'))return 2;NOM_RE.lastIndex=0;return NOM_RE.test(x.nodeValue)?1:2}}),L=[];
+  while(w.nextNode())L.push(w.currentNode);
+  L.forEach(function(x){var f=document.createElement('span');NOM_RE.lastIndex=0;f.innerHTML=x.nodeValue.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(NOM_RE,'$1<span class="nom" data-n="$2">$2</span>');x.parentNode.replaceChild(f,x);while(f.firstChild)f.parentNode.insertBefore(f.firstChild,f);f.remove()})}
+var nomObs=new MutationObserver(function(){nomObs.disconnect();nomsWrap(document.body);nomObs.observe(document.body,{childList:true,subtree:true})});
+nomObs.observe(document.body,{childList:true,subtree:true});setTimeout(function(){nomsWrap(document.body)},0);
+var nomCible=null,nomPasse=0;
+document.addEventListener('click',function(e){if(nomPasse)return;var t=e.target.closest&&e.target.closest('.nom');if(!t)return;
+  var n=t.getAttribute('data-n');if(n===quiSuisJe())return;e.preventDefault();e.stopPropagation();
+  var a=t.parentNode&&t.parentNode.closest('[onclick],a[href]');nomCible=a&&!$('fen').contains(a)?a:null;ficheP(n)},true);
+function ficheP(n){var P=PERS[n],o=S.ici&&S.ici[n],tel='06 12 34 56 '+P[1],met=(S.mesMet&&S.mesMet[n]||[]).map(function(k){return RT.METIERS[k].n}).join(', ');
+  var ou=o?lieuTx(o)+' · depuis '+o.h:(TEL[n]?'Sur son chantier depuis '+TEL[n]:EQUIPE.indexOf(n)>=0?'N\'a pas encore dit où il est':'Pas indiqué');
+  var h='<div class="fp"><span class="av fpav">'+n[0]+'</span><div><h3 style="margin:0">'+n+'</h3><p class="muted" style="margin:2px 0 0">'+P[0]+(met?' · '+met:'')+'</p></div></div>'+
+   '<div class="post" style="margin:12px 0;padding:10px 12px;border-radius:14px;background:var(--teinte)"><span><small class="muted">En ce moment</small><br><b style="font-size:14px">'+ou+'</b></span>'+ic('pin')+'</div>'+
+   '<a class="go" style="width:100%;text-decoration:none" href="tel:'+tel.replace(/ /g,'')+'" onclick="event.preventDefault();toast(\'Appel à '+n+' · '+tel+'\',\'phone\')">'+ic('phone')+'Appeler '+n+'</a>'+
+   '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn2 pk" style="flex:1;justify-content:center" onclick="toast(\'SMS à '+n+'\',\'send\')">'+ic('send')+'SMS</button><button class="btn2 pk" style="flex:1;justify-content:center" onclick="msgP(\''+n+'\')">'+ic('chat')+'Message</button></div>'+
+   '<p class="muted" style="font-size:12px;text-align:center;margin:10px 0 0">'+tel+' · numéro d\'exemple</p>'+
+   (nomCible?'<button class="btn2 pk" style="width:100%;justify-content:center;margin-top:8px" onclick="nomSuite()">'+ic('arrow')+'Ouvrir ce que j\'avais touché</button>':'');
+  fen('<div class="fpx">'+h+'</div>'+vehLigne(n))}
+function nomSuite(){var c=nomCible;fermer();nomCible=null;if(c){nomPasse=1;c.click();nomPasse=0}}
+function msgP(n){fen('<div class="fpx"><h3>Message à '+n+'</h3><div class="lin"><input id="msgp" placeholder="Votre message…"><button class="pk mic" aria-label="Dicter" onclick="var e=$(\'msgp\'),t=\'Tu peux passer au dépôt avant 17 h ?\',i=0,k=setInterval(function(){i+=3;e.value=t.slice(0,i);if(i>=t.length)clearInterval(k)},40)">'+ic('mic')+'</button></div><button class="go" style="width:100%;margin-top:10px" onclick="fermer();toast(\''+n+' reçoit votre message sur son téléphone\',\'send\')">'+ic('send')+'Envoyer</button></div>')}
+/* ================= Véhicules : qui a quel véhicule, où il est, entretiens ================= */
+var VEH0=[{id:'v1',n:'Fourgon 1',m:'Fourgon 3 places',im:'GE-482-KM',a:'Mathieu',av:['Lucas'],ct:'Contrôle technique : 12 mars 2027',en:'Vidange dans 1 200 km',st:'warn'},
+ {id:'v2',n:'Fourgon 2',m:'Fourgon 3 places',im:'FT-219-LR',a:'Damien',av:['Thomas'],ct:'Contrôle technique : 4 juin 2027',en:'Entretien à jour',st:'ok'},
+ {id:'v3',n:'Camion benne',m:'Benne 3,5 t',im:'EK-907-PB',a:'Benoît',av:[],ct:'Contrôle technique : dans 19 jours',en:'Pneus neige montés',st:'alert'},
+ {id:'v4',n:'Utilitaire',m:'Petit utilitaire',im:'GA-115-VS',a:'Kevin',av:[],ct:'Contrôle technique : 2 février 2028',en:'Entretien à jour',st:'ok'},
+ {id:'v5',n:'Voiture 1',m:'Voiture',im:'GH-640-AN',a:'Antoine',av:[],ct:'Neuve',en:'Entretien à jour',st:'ok'},
+ {id:'v6',n:'Voiture 2',m:'Voiture',im:'FZ-338-MX',a:'Maxime',av:[],ct:'Contrôle technique : 9 avril 2027',en:'Entretien à jour',st:'ok'},
+ {id:'v7',n:'Remorque',m:'Remorque 750 kg',im:'EW-552-DT',a:null,av:[],ct:'—',en:'Au dépôt, libre',st:'ok'}];
+if(!S.veh)S.veh=VEH0.map(function(v){return {id:v.id,a:v.a,av:v.av.slice()}});
+function vehD(id){var v=VEH0.filter(function(x){return x.id===id})[0],s=S.veh.filter(function(x){return x.id===id})[0];return Object.assign({},v,s)}
+function vehDe(p){var r=null;S.veh.forEach(function(s){if(s.a===p)r=[vehD(s.id),'conduit'];else if(s.av.indexOf(p)>=0&&!r)r=[vehD(s.id),'avec']});return r}
+function vehOu(v){if(!v.a)return 'Au dépôt';var o=S.ici&&S.ici[v.a];if(o)return lieuTx(o);if(TEL[v.a])for(var i=0;i<CH.length;i++)if(qui(0,CH[i].id,0).indexOf(v.a)>=0)return 'Chantier '+CH[i].n.replace(/^(Appartement|Maison|Chalet|Cabinet) /,'')+' · '+CH[i].l;return 'Avec '+v.a}
+function vueVeh(){var h='<div class="pile">'+blk('Les véhicules ('+VEH0.length+')','truck','<p class="muted" style="font-size:12.5px;margin:0 0 6px">Qui l\'a, où il est en ce moment, et ce qui arrive (contrôle technique, entretien). Immatriculations d\'exemple.</p>'+
+  S.veh.map(function(s){var v=vehD(s.id);return '<button class="ln pk" onclick="ficheV(\''+v.id+'\')"><span class="ico">'+ic('truck')+'</span><span class="tx"><b>'+v.n+' · '+(v.a||'libre')+(v.av.length?' + '+v.av.join(', '):'')+'</b><small>'+v.im+' · '+vehOu(v)+'</small></span>'+(v.st!=='ok'?'<span class="pt '+v.st+'"></span>':'<span class="fl">'+ic('arrow')+'</span>')+'</button>'}).join(''));
+  var A=S.veh.map(function(s){return vehD(s.id)}).filter(function(v){return v.st!=='ok'});
+  if(A.length)h+=blk('À prévoir','alert',A.map(function(v){return ln('clock',v.n+' · '+(v.st==='alert'?v.ct:v.en),v.im+' · Cliky l\'a mis dans le planning d\'un jour où '+(v.a||'personne')+' est au dépôt','ficheV(\''+v.id+'\')')}).join(''));
+  return h+'</div>'}
+function ficheV(id){var v=vehD(id),T=['Antoine','Maxime','Claire'].concat(EQUIPE);
+  fen('<div class="fpx"><h3>'+v.n+'</h3><p class="muted" style="margin:0 0 10px">'+v.m+' · '+v.im+'</p></div>'+
+   '<div class="blk"><div class="post" style="padding:4px 0"><span>Attitré à</span><b>'+(v.a||'Personne')+'</b></div>'+(v.av.length?'<div class="post" style="padding:4px 0"><span>Monte avec lui</span><b>'+v.av.join(', ')+'</b></div>':'')+
+   '<div class="post" style="padding:4px 0"><span>En ce moment</span><b style="text-align:right">'+vehOu(v)+'</b></div><div class="post" style="padding:4px 0"><span>Contrôle</span><b style="text-align:right;color:var(--'+(v.st==='alert'?'alert':'fg')+')">'+v.ct.replace('Contrôle technique : ','')+'</b></div><div class="post" style="padding:4px 0"><span>Entretien</span><b style="text-align:right">'+v.en+'</b></div></div>'+
+   '<p class="fpx" style="font-weight:700;font-size:14px;margin:12px 0 6px">Changer de conducteur</p><div class="row chips fpx">'+T.map(function(p){return '<button class="pk" aria-pressed="'+(p===v.a)+'" onclick="vehA(\''+id+'\',\''+p+'\')">'+p+'</button>'}).join('')+'<button class="pk" aria-pressed="'+(!v.a)+'" onclick="vehA(\''+id+'\',\'\')">Au dépôt</button></div>'+
+   '<button class="btn2 pk" style="width:100%;justify-content:center;margin-top:12px" onclick="toast(\'Souci signalé au bureau avec la photo\',\'alert\')">'+ic('alert')+'Signaler un souci (photo, voyant, choc)</button>')}
+function vehA(id,p){var s=S.veh.filter(function(x){return x.id===id})[0];S.veh.forEach(function(x){if(p&&x.a===p&&x.id!==id)x.a=null});s.a=p||null;RT.evt('bureau',quiSuisJe(),vehD(id).n+' : '+(p||'rendu au dépôt'),'truck');save();ficheV(id);re();toast(p?p+' a maintenant le '+vehD(id).n.toLowerCase():'Rendu au dépôt','truck')}
+function vehLigne(n){var r=vehDe(n);if(!r)return '<p class="muted" style="font-size:13px;margin:10px 2px 0">Pas de véhicule attitré.</p>';var v=r[0];
+  return '<button class="ln pk" style="margin-top:10px" onclick="ficheV(\''+v.id+'\')"><span class="ico">'+ic('truck')+'</span><span class="tx"><b>'+(r[1]==='conduit'?v.n+' · '+v.im:'Monte avec '+v.a)+'</b><small>'+(r[1]==='conduit'?v.m+' · '+v.en:v.n+' · '+v.im)+'</small></span><span class="fl">'+ic('arrow')+'</span></button>'}
+var _cmdV4=V.cmd;V.cmd=function(){return _cmdV4().replace(/<\/div>$/,blk('Véhicules','truck',ln('truck','Qui a quel véhicule','7 véhicules · '+S.veh.map(function(s){return vehD(s.id)}).filter(function(v){return v.st!=='ok'}).length+' à prévoir','fen(vueVeh())')))+'</div>'};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
