@@ -474,7 +474,7 @@ function ficheCh(id){var c=CH.filter(function(x){return x.id===id})[0],r=role();
   h+='<div class="pile" style="margin-top:12px">';
   h+='<div class="blk"><h2>Équipe</h2><div class="qui">'+c.eq.map(function(p){return '<span class="av">'+p[0]+'</span><b style="font-size:14px;margin-right:8px">'+p+'</b>'}).join('')+'</div></div>';
   if(r==='chef')h+='<div class="blk"><h2>Rentabilité <span class="etq" style="margin-left:auto">visible par le chef</span></h2>'+
-    '<div class="post"><span>Heures</span><b>'+c.hr+' / '+c.hp+' h</b></div>'+bar(c.hr/c.hp)+'<div class="post" style="margin-top:10px"><span>Matériel</span><b>'+eur(c.mr)+' / '+eur(c.mp)+'</b></div>'+bar(c.mr/c.mp)+
+    '<div class="post"><span>Heures <small class="muted">(d\'après « Où je suis »)</small></span><b>'+c.hr+' / '+c.hp+' h</b></div>'+bar(c.hr/c.hp)+'<div class="post" style="margin-top:10px"><span>Matériel</span><b>'+eur(c.mr)+' / '+eur(c.mp)+'</b></div>'+bar(c.mr/c.mp)+
     '<div class="post" style="margin-top:12px"><span>Marge prévue → tendance</span><b style="color:var(--'+(c.mgt<c.mg-3?'alert':'ok')+')">'+c.mg+' % → '+c.mgt+' %</b></div>'+(c.note?'<p style="font-size:13px;margin:8px 0 0;color:var(--alert);font-weight:700">'+c.note+'</p>':'')+'</div>';
   h+='<div class="blk"><h2>Lots du chantier</h2>'+RT.metiersOn().map(function(k){return '<div class="lot"><span>'+RT.METIERS[k].n+'</span><small class="muted">'+RT.METIERS[k].taches.length+' étapes</small></div>'}).join('')+'</div>';
   h+='<div class="row" style="margin-bottom:8px"><button class="btn2 pk" onclick="materiel(\''+id+'\')">'+ic('truck')+'Matériel du chantier</button>'+(id==='hue'&&r==='chef'?'<button class="go" onclick="reception()">'+ic('sign')+'Faire la réception</button>':'')+'</div>';
@@ -1064,12 +1064,12 @@ function lieuTx(o){if(!o)return 'Pas encore indiqué';var c=CH.filter(function(x
 function syncTel(){Object.keys(S.ici).forEach(function(p){if(TEL.hasOwnProperty(p))TEL[p]=CH.some(function(c){return c.id===S.ici[p].l})?S.ici[p].h:''})}
 if(!S.ici[N.ouvrier])TEL[N.ouvrier]='';syncTel();
 function ouBlk(){var me=quiSuisJe(),o=S.ici[me],ch=role()==='ouvrier'?'rey':null;
-  var h='<section class="blk monte"><div class="pointe"><span class="ico">'+ic('pin')+'</span><div style="flex:1"><b>'+(o?lieuTx(o):'Où êtes-vous ?')+'</b><br><small class="muted">'+(o?'Depuis '+o.h+' · l\'équipe le voit sur la carte':'Pas pour les heures : juste pour savoir qui est où')+'</small></div>';
+  var h='<section class="blk monte"><div class="pointe"><span class="ico">'+ic('pin')+'</span><div style="flex:1"><b>'+(o?lieuTx(o):'Où êtes-vous ?')+'</b><br><small class="muted">'+(o?'Depuis '+o.h+' · l\'équipe le voit sur la carte':'Pour savoir qui est où et compter le temps sur chaque chantier')+'</small></div>';
   if(o)h+='<button class="btn2 pk" onclick="ouChoisir()">Changer</button></div></section>';
   else h+='</div><div style="display:flex;gap:8px;margin-top:12px">'+(ch?'<button class="go" style="flex:1" onclick="iciSet(\''+ch+'\')">Sur le chantier Rey</button><button class="btn2 pk" onclick="ouChoisir()">Ailleurs</button>':'<button class="go" style="flex:1" onclick="ouChoisir()">Je l\'indique</button>')+'</div></section>';
   return h}
 function ouChoisir(){var me=quiSuisJe(),o=S.ici[me];
-  fen('<h3>Où êtes-vous ?</h3><p class="muted" style="margin:0 0 10px">Un toucher suffit. Ce n\'est pas un pointage d\'heures : c\'est pour que tout le monde sache qui est où.</p>'+
+  fen('<h3>Où êtes-vous ?</h3><p class="muted" style="margin:0 0 10px">Un toucher suffit. Tout le monde sait qui est où, et le temps passé sur chaque chantier se compte tout seul.</p>'+
    '<p style="font-weight:700;font-size:14px;margin:0 0 6px">Sur un chantier</p>'+CH.map(function(c){return '<button class="ln pk" onclick="iciSet(\''+c.id+'\')">'+pastille(c.id,undefined,1)+'<span class="tx"><b>'+c.n+'</b><small>'+c.l+'</small></span>'+(o&&o.l===c.id?'<span class="etq ok">Ici</span>':'')+'</button>'}).join('')+
    '<p style="font-weight:700;font-size:14px;margin:12px 0 6px">Ailleurs</p>'+Object.keys(LIEUX).map(function(k){return ln(LIEUX[k][0],LIEUX[k][1],k==='dev'?'Choisir le client':'',k==='dev'?'ouDevis()':'iciSet(\''+k+'\')',o&&o.l===k?'<span class="etq ok">Ici</span>':'')}).join(''))}
 function ouDevis(){fen('<h3>Chez quel client ?</h3>'+DEVIS.map(function(v,i){return ln('doc',v.n,v.l+' · '+v.t,'iciSet(\'dev\','+i+')')}).join('')+ln('plus','Un autre client','Je le dicte','iciSet(\'dev\',-1)'))}
@@ -1193,6 +1193,25 @@ function annuaire(){var r=role(),h='<div class="fpx"><h3>'+(r==='client'?'Vos co
   fen(h)}
 (function(){var b=document.createElement('button');b.className='theme pk';b.id='annBtn';b.setAttribute('aria-label','L\'équipe');b.innerHTML=ic('users');b.onclick=annuaire;var g=$('regBtn');g.parentNode.insertBefore(b,g)})();
 rRoles=function(){$('roles').innerHTML=Object.keys(RT.ROLES).map(function(k){return '<button data-r="'+k+'" aria-pressed="'+(role()===k)+'">'+RT.ROLES[k]+'</button>'}).join('')};rRoles();
+/* ================= Temps passé sur chaque chantier, compté avec « Où je suis » ================= */
+var TPS={rey:[['Mathieu',20,155],['Lucas',18,138],['Antoine',3,7]]};
+function tempsDe(id){var c=CH.filter(function(x){return x.id===id})[0];if(TPS[id])return TPS[id];var n=c.eq.length,h=Math.round(c.hr/n);return c.eq.map(function(p){return [p,Math.max(1,Math.round(h/7.7)),h]})}
+function hNow(p,id){var o=S.ici&&S.ici[p];var t=o&&o.l===id?o.h:(!o&&TEL[p]&&qui(0,id,0).indexOf(p)>=0?TEL[p]:'');if(!t)return 0;var m=/(\d+)\s*h\s*(\d+)/.exec(t);if(!m)return 0;var d=new Date(),mins=d.getHours()*60+d.getMinutes()-(+m[1]*60+ +m[2]);return Math.max(0,Math.min(10*60,mins))/60}
+function tempsBlk(id){var c=CH.filter(function(x){return x.id===id})[0],T=tempsDe(id),r=role(),me=quiSuisJe();if(r==='ouvrier')T=T.filter(function(t){return t[0]===me});if(!T.length)return '';
+  var tj=0,th=0,h='<p class="muted" style="font-size:12.5px;margin:-4px 0 8px">Compté tout seul avec « Où je suis » : de l\'arrivée sur le chantier jusqu\'au moment où l\'on indique un autre endroit.</p>';
+  h+=T.map(function(t){var n=hNow(t[0],id);tj+=t[1];th+=t[2]+n;return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span class="qui"><span class="av">'+t[0][0]+'</span><span><b style="font-size:14px">'+t[0]+'</b>'+(n?'<br><small style="color:var(--ok);font-weight:700">sur place aujourd\'hui · '+(Math.round(n*10)/10).toString().replace('.',',')+' h</small>':'')+'</span></span><b>'+t[1]+' j · '+Math.round(t[2]+n)+' h</b></div>'}).join('');
+  if(r!=='ouvrier')h+='<div class="post" style="padding:10px 0 4px;border-top:1px solid var(--line)"><span><b>Total</b><br><small class="muted">prévu au devis : '+c.hp+' h</small></span><b>'+tj+' j · '+Math.round(th)+' h</b></div>'+bar(th/c.hp);
+  if(r!=='ouvrier')h+=clikyT(id);
+  return '<div class="blk"><h2>Temps passé sur le chantier</h2>'+h+'</div>'}
+var CLT={rey:[['Cloisons et doublages','42 m²',61,1.30,'m²'],['Bandes et enduit','96 m²',38,0.35,'m²'],['Pose des portes','5 portes',11,2.5,'porte']]};
+function f1(x){return (Math.round(x*100)/100).toString().replace('.',',')}
+function clikyT(id){var L=CLT[id];if(!L)return '';var ok=S.cliT&&S.cliT[id];
+  var h='<div style="margin-top:14px;padding:12px;border-radius:14px;background:var(--tint,rgba(27,36,64,.06))"><b style="display:flex;gap:8px;align-items:center">'+ic('robot')+' Cliky apprend de ce chantier</b><p class="muted" style="font-size:12.5px;margin:4px 0 8px">Le temps réel de chaque lot est comparé aux heures de sa base. Les prochains devis prennent le bon temps tout seuls.</p>';
+  h+=L.map(function(l){var q=parseFloat(l[1]),r=l[2]/q,d=Math.round((r/l[3]-1)*100);return '<div class="post" style="padding:7px 0;border-top:1px solid var(--line)"><span><b style="font-size:13.5px">'+l[0]+'</b><br><small class="muted">'+l[1]+' en '+l[2]+' h, soit '+f1(r)+' h par '+l[4]+' (base '+f1(l[3])+' h)</small></span><b style="color:'+(d>0?'var(--warn,#B4532A)':'var(--ok)')+'">'+(d>0?'+':'')+d+' %</b></div>'}).join('');
+  h+=ok?'<p style="margin:8px 0 0;font-size:13px"><b style="color:var(--ok)">✓ Base de Cliky mise à jour.</b> Prochain devis cloisons : '+f1((1.30*3+61/42)/4)+' h par m² (moyenne des 4 derniers chantiers).</p>':'<button class="go" style="margin-top:8px;width:100%" onclick="clikyApp(\''+id+'\')">Donner ces temps à Cliky</button><p class="muted" style="font-size:11.5px;margin:6px 0 0">À la fin du chantier, c\'est fait tout seul.</p>';
+  return h+'<p class="muted" style="font-size:11px;margin:8px 0 0">Chiffres d\'exemple.</p></div>'}
+function clikyApp(id){S.cliT=S.cliT||{};S.cliT[id]=1;save();RT.evt('chef','Cliky','Temps réels de l\'Appartement Rey ajoutés à la base','robot');toast('Cliky a mis sa base à jour');ficheCh(id)}
+var _fCh3=ficheCh;ficheCh=function(id){_fCh3(id);var p=$('fen').querySelector('.pile');if(!p)return;var d=document.createElement('div');d.innerHTML=tempsBlk(id);if(d.firstChild)p.insertBefore(d.firstChild,p.children[2]||null)};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
