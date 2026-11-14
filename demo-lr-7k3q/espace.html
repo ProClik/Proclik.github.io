@@ -356,6 +356,8 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .cout{margin-top:12px;padding:12px;border-radius:14px;background:var(--teinte)}.cout small{display:block;margin-top:4px}
 .pxl{color:var(--fg);font-weight:700}
 .lot svg{width:15px;height:15px;vertical-align:-2px}
+.mst{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--teinte);margin-bottom:8px}.mst svg{width:20px;height:20px;flex:none;margin-top:2px}
+.mst span{display:flex;flex-direction:column;font-size:14px}.mst small{color:var(--muted);font-size:12.5px}.mst.ok svg{color:var(--ok)}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
@@ -806,8 +808,8 @@ if(!S.ges)S.ges='dev';
 function sansTitre(h){return h.replace(/^<h1>.*?<\/h1><p class="sous">.*?<\/p>/,'')}
 V.ges=function(){var g=S.ges;
   var h='<h1>Gestion</h1><p class="sous">Les patrons voient tout : devis, factures, clients et chiffres</p>';
-  h+='<div class="row chips" style="margin-bottom:12px">'+[['dev','Devis'],['fac','Factures'],['cli','Clients'],['chf','Chiffres'],['cmd','Commandes'],['paie','Paie'],['pap','Papiers']].map(function(o){return '<button class="pk" aria-pressed="'+(g===o[0])+'" onclick="S.ges=\''+o[0]+'\';save();re()">'+o[1]+'</button>'}).join('')+'</div>';
-  if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else if(g==='paie')h+=vuePaie();else if(g==='pap')h+=vuePapiers();else h+=vueChiffres();
+  h+='<div class="row chips" style="margin-bottom:12px">'+[['dev','Devis'],['fac','Factures'],['cli','Clients'],['chf','Chiffres'],['cmd','Commandes'],['paie','Paie'],['pap','Papiers'],['docs','Documents']].map(function(o){return '<button class="pk" aria-pressed="'+(g===o[0])+'" onclick="S.ges=\''+o[0]+'\';save();re()">'+o[1]+'</button>'}).join('')+'</div>';
+  if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else if(g==='paie')h+=vuePaie();else if(g==='pap')h+=vuePapiers();else if(g==='docs')h+=vueDocs();else h+=vueChiffres();
   return h};
 var CLI=[{n:'Mme Rey',l:'Grenoble',e:'Chantier en cours',ch:'rey',ca:48600,pay:14580},{n:'M. et Mme Bonnet',l:'Meylan',e:'Chantier en cours',ch:'mey',ca:31200,pay:9360,ret:1},{n:'M. Faure',l:'Revel',e:'Chantier en cours',ch:'rev',ca:92000,pay:27600},
  {n:'Cabinet Martin',l:'Saint-Martin-d\'Hères',e:'Chantier en cours',ch:'cab',ca:22400,pay:12472},{n:'M. et Mme Girard',l:'Alpe d\'Huez',e:'Chantier en cours',ch:'hue',ca:64000,pay:44800},
@@ -1078,6 +1080,50 @@ var _bacc=V.bacc;V.bacc=function(){return _bacc().replace('<div class="pile">','
 function ailleursBlk(){var L=Object.keys(S.ici).filter(function(p){return EQUIPE.indexOf(p)<0||!CH.some(function(c){return c.id===S.ici[p].l})});
   if(!L.length)return '';return blk('Patrons, bureau et ailleurs','pin',L.map(function(p){var o=S.ici[p];return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span class="qui"><span class="av">'+p[0]+'</span><span><b style="font-size:14px">'+p+'</b><br><small class="muted">'+lieuTx(o)+'</small></span></span><small class="muted">depuis '+o.h+'</small></div>'}).join(''))}
 var _vc=vueCarte;vueCarte=function(){var h=_vc();return CARTE_F==='dv'?h:h+ailleursBlk()};
+/* ================= Bons et factures fournisseurs par e-mail : Cliky range tout par chantier, en compta, et grossit sa base de prix ================= */
+var ADR='bons.lauziere@proclik.fr';
+if(!S.mails)S.mails=[{f:'Élec Alpes',d:'Facture FA-2291',ch:'cab',tot:2650,h:'vendredi 13',k:'fac',st:1},{f:'Négoce électricité',d:'Bon de livraison BL-7710',ch:'mey',tot:486.4,h:'jeudi 12',k:'bl'},{f:'Loueur de matériel',d:'Facture location échafaudage',ch:'hue',tot:310,h:'mercredi 11',k:'fac'}];
+var PRIXB=[['Plaque BA13 120 × 250','Négoce matériaux',[7.10,7.35],9],['Plaque hydro 120 × 250','Négoce matériaux',[10.90,10.90],3],['Câble R2V 3G2,5 · 100 m','Négoce électricité',[118,124],4],['Disjoncteur 20 A','Négoce électricité',[9.80,9.80],6],['Colle carrelage C2 · 25 kg','Négoce matériaux',[17.50,18.20],5],['Peinture mate blanche · 15 L','Négoce peinture',[86,86],7]];
+if(!S.prixB)S.prixB=PRIXB.map(function(p){return {n:p[0],f:p[1],av:p[2][0],px:p[2][1],nb:p[3]}});
+function bonFait(){return S.bons.some(function(b){return b.n===BON.n})}
+function bonAppliquer(qui){var ok=[],plus=[];BON.l.forEach(function(l){var x=bonMatch(l);if(x)ok.push([l,x]);else plus.push(l)});
+  ok.forEach(function(o){S.mat=S.mat.filter(function(m){return m.id!==o[1].id});o[1].etat='ok';o[1].pris=1;o[1].px=o[0][1]*o[0][2];o[1].info='récupéré · '+BON.n});
+  plus.forEach(function(l){S.liste.unshift({id:Date.now()+Math.random(),ch:'rey',k:'mat',t:l[0]+' × '+l[1],qui:'Cliky',h:'à l\'instant',etat:'ok',px:l[1]*l[2],info:'en plus sur '+BON.n})});
+  var tot=bonTot();S.bons.unshift({n:BON.n,f:BON.f,ch:'Rey',tot:tot,qui:qui,nl:BON.l.length});CH[0].mr+=tot;
+  var nv=0,mt=0;BON.l.forEach(function(l){var p=S.prixB.filter(function(x){return x.n===l[0]})[0];if(p){if(p.px!==l[2]){p.av=p.px;p.px=l[2];mt++}p.nb++}else{S.prixB.unshift({n:l[0],f:BON.f,av:l[2],px:l[2],nb:1,neu:1});nv++}});
+  return {ok:ok,plus:plus,tot:tot,nv:nv,mt:mt}}
+/* le bon arrive par e-mail */
+function mailArrive(){if(bonFait()){toast('Ce bon est déjà rangé','check');return}
+  var E=[['send','E-mail reçu de '+BON.f,BON.n+'.pdf, envoyé à '+ADR],['robot','Cliky lit le bon',BON.l.length+' lignes, '+eur2(bonTot())+' HT'],['pin','Chantier trouvé : Appartement Rey','grâce à l\'adresse de livraison et à la référence « REY »']];
+  fen('<h3>Un bon arrive</h3><p class="muted" style="margin:0 0 10px">Personne ne touche à rien : Cliky fait tout.</p><div id="mstp"></div><div id="mres"></div>');
+  var i=0,t=setInterval(function(){if(i<E.length){$('mstp').insertAdjacentHTML('beforeend','<div class="mst monte">'+ic(E[i][0])+'<span><b>'+E[i][1]+'</b><small>'+E[i][2]+'</small></span></div>');i++}else{clearInterval(t);
+    var r=bonAppliquer('e-mail'),ex=[['check','Liste du chantier',r.ok.length+' lignes cochées « récupéré », '+r.plus.length+' en plus'],['euro','Comptabilité',eur2(r.tot)+' HT dans les coûts du chantier et l\'export du comptable'],['doc','Rangé','Dossier Rey › Bons et factures fournisseurs'],['stock','Base de prix',(r.mt?r.mt+' prix mis à jour, ':'')+r.nv+' nouveaux articles appris']];
+    RT.evt('bureau','Cliky','Bon '+BON.n+' reçu par e-mail · rangé dans le chantier Rey · '+eur2(r.tot)+' HT','doc');S.mails.unshift({f:BON.f,d:'Bon de livraison '+BON.n,ch:'rey',tot:r.tot,h:'à l\'instant',k:'bl',neu:1});save();
+    var j=0,t2=setInterval(function(){if(j<ex.length){$('mstp').insertAdjacentHTML('beforeend','<div class="mst ok monte">'+ic(ex[j][0])+'<span><b>'+ex[j][1]+'</b><small>'+ex[j][2]+'</small></span></div>');j++}else{clearInterval(t2);$('mres').innerHTML='<button class="go" style="width:100%;margin-top:12px" onclick="fermer();re()">'+ic('check')+'Parfait</button>'}},450)}},650)}
+/* écran Documents (patrons et bureau) */
+function vueDocs(){var h='<div class="pile">';
+  h+='<div class="ck-top monte"><span class="ico">'+ic('send')+'</span><div><b class="t">Votre adresse pour les fournisseurs</b><p><b>'+ADR+'</b> (adresse d\'exemple). Donnez-la une fois à chaque fournisseur : ses bons et factures arrivent ici, Cliky les lit et les range.</p></div></div>';
+  if(!bonFait())h+='<button class="go monte" style="width:100%" onclick="mailArrive()">'+ic('send')+'Voir un bon arriver par e-mail</button>';
+  h+=blk('Arrivés par e-mail','send',S.mails.map(function(m){var c=CH.filter(function(x){return x.id===m.ch})[0];return '<button class="ln pk" onclick="dossier(\''+m.ch+'\')">'+pastille(m.ch,undefined,1)+'<span class="tx"><b>'+m.f+' · '+m.d+'</b><small>'+m.h+' · rangé dans '+c.n+' · '+eur2(m.tot)+' HT en compta</small></span>'+(m.neu?'<span class="etq ok">Nouveau</span>':'<span class="fl">'+ic('arrow')+'</span>')+'</button>'}).join(''));
+  h+=blk('Dossiers des chantiers','doc','<p class="muted" style="font-size:12.5px;margin:0 0 6px">Tout est rangé à sa place, chantier par chantier.</p>'+CH.map(function(c){return '<button class="ln pk" onclick="dossier(\''+c.id+'\')">'+pastille(c.id,undefined,1)+'<span class="tx"><b>'+c.n+'</b><small>'+docsDe(c.id).reduce(function(s,g){return s+g[2].length},0)+' documents</small></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
+  h+=blk('La base de prix de Cliky','stock','<p class="muted" style="font-size:12.5px;margin:0 0 8px">Chaque bon lu la fait grossir. Cliky s\'en sert pour vos devis et vos commandes, et vous prévient quand un prix monte. Chiffres d\'exemple.</p>'+
+    S.prixB.slice(0,12).map(function(p){var up=p.px>p.av+.001;return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span><b style="font-size:14px">'+p.n+'</b>'+(p.neu?' <span class="etq ok">Appris</span>':'')+'<br><small class="muted">'+p.f+' · '+p.nb+' achat'+(p.nb>1?'s':'')+'</small></span><span style="text-align:right"><b>'+eur2(p.px)+'</b>'+(up?'<br><small style="color:var(--alert);font-weight:700">↑ '+eur2(p.av)+' avant</small>':'')+'</span></div>'}).join('')+'<p class="muted" style="font-size:12.5px;margin:8px 0 0">'+S.prixB.length+' articles connus</p>');
+  return h+'</div>'}
+function docsDe(id){var c=CH.filter(function(x){return x.id===id})[0],F=S.mails.filter(function(m){return m.ch===id}).map(function(m){return [m.d+' · '+m.f,m.h]});
+  S.bons.filter(function(b){return b.ch===c.n.split(' ').pop()&&!F.some(function(f){return f[0].indexOf(b.n)>=0})}).forEach(function(b){F.push(['Bon '+b.n+' · photo de '+b.qui,'aujourd\'hui'])});
+  var G=[['doc','Devis et avenants',[['Devis signé','octobre']].concat(id==='rey'?S.av.filter(function(a){return a.etat==='signe'}).map(function(a){return ['Avenant · '+a.txt,'signé']}):[])],
+   ['euro','Factures au client',id==='rey'?[['Acompte 30 %','payé'],['Situation n°2',S.fac.f2==='payee'?'payée':'en cours']]:[['Acompte 30 %','payé']]],
+   ['truck','Bons et factures fournisseurs',F],['image','Photos',id==='rey'?[['Photos de fin de journée · 14','novembre'],['Réseaux avant fermeture · 3','novembre']]:[['Photos de fin de journée · 9','novembre']]],
+   ['plan','Plans',[['Plan du logement','à jour']]]];
+  if(id==='hue')G.push(['sign','Réception',[['PV de réception',S.recep&&S.recep.signe?'signé':'à faire'],['DOE',S.recep&&S.recep.signe?'créé':'après la réception']]]);
+  return G}
+function dossier(id){var c=CH.filter(function(x){return x.id===id})[0],pr=voitPrix();
+  var h='<h3>Dossier · '+c.n+'</h3><p class="muted" style="margin:0 0 10px">'+c.l+' · tout est rangé ici, le reste vient tout seul.</p>';
+  docsDe(id).forEach(function(g){if(!pr&&(g[0]==='euro'||g[0]==='truck'||g[0]==='doc'))return;h+='<div class="blk" style="margin-bottom:8px"><h2 style="font-size:15px"><span class="ico" style="width:28px;height:28px;border-radius:9px">'+ic(g[0])+'</span>'+g[1]+' <span class="etq" style="margin-left:auto">'+g[2].length+'</span></h2>'+(g[2].length?g[2].map(function(d){return '<div class="post" style="padding:7px 0;border-top:1px solid var(--line)"><span style="font-size:14px">'+d[0]+'</span><small class="muted">'+d[1]+'</small></div>'}).join(''):'<p class="muted" style="margin:0;font-size:13px">Rien pour l\'instant</p>')+'</div>'});
+  fen(h)}
+/* branchements : Gestion › Documents, bureau, fiche chantier */
+var _cmdV3=V.cmd;V.cmd=function(){return _cmdV3().replace(/<\/div>$/,blk('Documents et base de prix','doc',ln('send','Bons et factures reçus par e-mail',S.mails.length+' rangés par chantier par Cliky','fen(vueDocs())')))+'</div>'};
+var _fCh2=ficheCh;ficheCh=function(id){_fCh2(id);var r=$('fen').querySelector('.row');if(r)r.insertAdjacentHTML('beforeend','<button class="btn2 pk" onclick="dossier(\''+id+'\')">'+ic('doc')+'Dossier du chantier</button>')};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
