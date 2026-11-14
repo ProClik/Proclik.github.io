@@ -114,9 +114,9 @@ window.dicter=function(){var t=$('t'),k=ordre()[pas];t.value=Qs[k].ex||'Une mach
 window.exemple=function(){R.co={so:'Crolles',no:'Camille Durand',te:'06 00 00 00 00',ma:'camille@exemple.fr'};rendre()};
 window.envoyer=function(){var c=R.co||{},b=BES.filter(function(x){return x[0]===R.besoin})[0];
  var det=ordre().filter(function(k){return Qs[k].r}).map(function(k){return Qs[k].r+' : '+String(libre(k)||'—').toLowerCase()}).join(' · ')+'.';
- var d=new Date(),L=[];try{L=JSON.parse(localStorage.getItem('rt2o-dem-new')||'[]')}catch(e){}
+ var d=new Date(),L=[];try{L=JSON.parse(localStorage.getItem('lzr-dem-new')||'[]')}catch(e){}
  L.unshift({id:'n'+Date.now(),nom:c.no,lieu:c.so,t:b[2],det:det,bud:R.budget||'—',quand:R.delai||'—',h:'à '+d.getHours()+' h '+String(d.getMinutes()).padStart(2,'0'),etat:'nouv',plan:R.plan==='Plan dessiné par le client'});
- try{localStorage.setItem('rt2o-dem-new',JSON.stringify(L))}catch(e){}
+ try{localStorage.setItem('lzr-dem-new',JSON.stringify(L))}catch(e){}
  $('fil').innerHTML='';$('ret').style.visibility='hidden';
  $('m').innerHTML='<div class="fin q"><svg class="coche" viewBox="0 0 84 84"><circle cx="42" cy="42" r="38"/><path d="M26 43l11 11 22-24"/></svg><h1>Merci, c\'est envoyé</h1><p class="aide">Démonstration : rien n\'est vraiment envoyé.</p>'+
  '<div class="etp"><div class="f"><i>'+ic('check')+'</i><span><b>Votre demande est reçue</b></span></div><div class="c"><i>2</i><span><b>On vous rappelle pour fixer une visite</b><br><small class="muted">Sous 48 h ouvrées</small></span></div><div><i>3</i><span><b>Vous recevez votre devis, lot par lot</b></span></div></div>'+

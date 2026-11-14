@@ -67,7 +67,7 @@
   };
   PCD.ic=function(n){return '<svg class="i" viewBox="0 0 24 24"><path d="'+(P[n]||P.box)+'"/></svg>'};
   /* mémoire partagée de la démo (formulaire → Espace, salarié → encadrant) : tout reste dans ce navigateur */
-  var SK='pcd-rt2o-v1';
+  var SK='pcd-lzr-v1';
   PCD.load=function(){try{return JSON.parse(localStorage.getItem(SK)||'null')}catch(e){return null}};
   PCD.save=function(s){try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}};
 })();

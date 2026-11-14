@@ -362,7 +362,7 @@ var PART=[{n:'Clim\'Isère',m:'Climatisation',a:'Assurance décennale : expire d
 if(!S.fac)S.fac={};if(!S.ck)S.ck={};if(!S.tch)S.tch={};if(!S.plx)S.plx={};
 function save(){RT.save()}
 /* demandes envoyées par le formulaire du site */
-(function(){var L=[];try{L=JSON.parse(localStorage.getItem('rt2o-dem-new')||'[]');localStorage.removeItem('rt2o-dem-new')}catch(x){}
+(function(){var L=[];try{L=JSON.parse(localStorage.getItem('lzr-dem-new')||'[]');localStorage.removeItem('lzr-dem-new')}catch(x){}
  if(L.length){S.dem=L.concat(S.dem);L.forEach(function(d){RT.evt('bureau','Site','Nouvelle demande · '+d.nom+', '+d.lieu,'send')});save()}})();
 
 /* ---------- Outils ---------- */
