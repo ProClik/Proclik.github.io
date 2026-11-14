@@ -11,7 +11,12 @@
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"ProClik","slogan":"Votre commerce en un clic","description":"Création de sites pour commerces et artisans, reliés à une appli qui range demandes, devis, factures et agenda.","url":"https://proclik.github.io/","image":"https://proclik.github.io/partage.png","areaServed":{"@type":"AdministrativeArea","name":"Isère"},"address":{"@type":"PostalAddress","addressRegion":"Isère","addressCountry":"FR"}}</script>
 <link rel="apple-touch-icon" href="espace/icone-1024.png?v=4"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
+<<<<<<< HEAD
 <link rel="stylesheet" href="fonts/fonts.css">
+=======
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Nunito:wght@800;900&display=swap">
+<link rel="stylesheet" href="/n1.css?v=2">
+>>>>>>> origin/main
 <style>
 /* Mise en page : 7 bandes pleine largeur, contenu centré 1080px, un seul bouton fort par écran */
 :root{
@@ -548,6 +553,8 @@ main>section:not(.hero) .lead{font-size:clamp(17px,1.7vw,20px);line-height:1.5;m
 footer{border-top:1px solid var(--line)}
 main>section:not(.hero) .num b{display:none}
 main>section:not(.hero) .num::before{content:"";display:inline-block;width:30px;height:1px;background:var(--laiton);opacity:.7}
+/* Style DÉFINITIF (Cyril 14/11) = celui de la démo RT2O « Lauzière Rénovation » ; valeurs communes dans /n1.css (fond plus profond la nuit, blocs posés dessus). */
+html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nuit:var(--n1-nuit);--nuit-fg:var(--n1-nuit-fg);--laiton:var(--n1-laiton);--calme:var(--n1-calme);--sh:var(--n1-calme-sh)}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -815,7 +822,7 @@ main>section:not(.hero) .num::before{content:"";display:inline-block;width:30px;
   </div>
 </div>
 
-<footer><div class="wrap"><span class="pc">ProClik · Isère</span><span class="cl">Menuiserie Martin · client fictif</span><a href="confidentialite/">Mentions légales et confidentialité</a><span>Pages à part : Cliky, Réservation, Factures 2026, Tarifs détaillés</span></div></footer>
+<footer><div class="wrap"><span class="pc">ProClik · Isère</span><span class="cl">Menuiserie Martin · client fictif</span><span>Mentions légales</span><span>Pages à part : Cliky, Réservation, Factures 2026, Tarifs détaillés</span></div></footer>
 
 <script>
 document.querySelectorAll('.choix button').forEach(b=>b.addEventListener('click',()=>{

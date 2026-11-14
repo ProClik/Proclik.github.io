@@ -261,3 +261,10 @@ html body #clb-open.nouv::after{content:"";width:8px;height:8px;border-radius:50
 }
 /* N1 : le OK des fiches en bleu nuit (plus en laiton) */
 html.client body #sheet .sh-h [data-close]{background:var(--mint)!important;color:var(--paper)!important}
+
+/* Style DÉFINITIF (Cyril 14/11) = celui de la démo RT2O « Lauzière Rénovation » ; valeurs communes dans /n1.css.
+   Fond plus profond la nuit ; ce qui se touche = liseré fin + petite ombre (plus de relief en coussin) ; creux plus légers.
+   Le dessin du plan (murs, sols, cotes) ne change pas. */
+html:root:root{--bg:var(--n1-bg);--surface:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);
+  --mint:var(--n1-nuit);--mint-ink:var(--n1-nuit);--acc:var(--n1-nuit);--laiton:var(--n1-laiton);
+  --up:var(--n1-pk);--up-s:var(--n1-pk);--up-xs:var(--n1-pk);--shadow:var(--n1-pk);--in:var(--n1-in);--in-s:var(--n1-in)}
