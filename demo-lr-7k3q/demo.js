@@ -12,6 +12,16 @@
   PCD.themeIc=function(){var d=document.documentElement.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');return PCD.ic(d==='dark'?'sun':'moon')};
   PCD.logo='<svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="var(--nuit)"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg>';
   var P={
+    devis:'M6 3h8l4 4v6M14 3v4h4M6 3v18h6M13 20l1-3 5-5 2 2-5 5z',
+    chart:'M4 20V10M10 20V4M16 20v-7M22 20H2',
+    folder:'M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z',
+    car:'M5 16l1.5-5A2 2 0 0 1 8.4 9.5h7.2a2 2 0 0 1 1.9 1.5L19 16M4 16h16v3H4zM7 19v1.5M17 19v1.5M7.5 13.5h.01M16.5 13.5h.01',
+    brief:'M3 8h18v12H3zM9 8V5h6v3M3 13h18',
+    monitor:'M3 4h18v12H3zM8 20h8M12 16v4',
+    helmet:'M4 16a8 8 0 0 1 16 0zM2 16h20v2H2zM12 8v3M9 5.6V9M15 5.6V9',
+    user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
+    gift:'M3 9h18v4H3zM5 13v8h14v-8M12 9v12M12 9C9 9 7 5 9.5 4.5S12 9 12 9zM12 9c3 0 5-4 2.5-4.5S12 9 12 9z',
+    pay:'M3 6h18v12H3zM3 10h18M7 15h4',
     thumb:'M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7',
     trophy:'M8 4h8v5a4 4 0 0 1-8 0zM8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M9 17h6',
     lock:'M6 11h12v10H6zM8 11V8a4 4 0 0 1 8 0v3',

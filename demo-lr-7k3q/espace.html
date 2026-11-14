@@ -364,6 +364,7 @@ svg text.nom{cursor:pointer;text-decoration:none}
 .anl{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}.anl .tx{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px}.anl small{color:var(--muted);font-size:12px}
 .anc{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}.anc svg{width:18px;height:18px}
 @media (max-width:420px){header .theme{width:38px;height:38px}header a.theme{padding:0 10px!important}}
+.aic{display:inline-flex;align-items:center;gap:7px}.aic svg.i{width:17px;height:17px;opacity:.85}.chips .aic svg.i{color:var(--laiton,#A8823F)}#roles .aic svg.i{width:16px;height:16px}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit;white-space:nowrap">Le site</a>
@@ -1212,6 +1213,12 @@ function clikyT(id){var L=CLT[id];if(!L)return '';var ok=S.cliT&&S.cliT[id];
   return h+'<p class="muted" style="font-size:11px;margin:8px 0 0">Chiffres d\'exemple.</p></div>'}
 function clikyApp(id){S.cliT=S.cliT||{};S.cliT[id]=1;save();RT.evt('chef','Cliky','Temps réels de l\'Appartement Rey ajoutés à la base','robot');toast('Cliky a mis sa base à jour');ficheCh(id)}
 var _fCh3=ficheCh;ficheCh=function(id){_fCh3(id);var p=$('fen').querySelector('.pile');if(!p)return;var d=document.createElement('div');d.innerHTML=tempsBlk(id);if(d.firstChild)p.insertBefore(d.firstChild,p.children[2]||null)};
+/* ================= Icônes sur les menus et les choix ================= */
+var ICM={'Direction':'brief','Bureau':'monitor','Terrain':'helmet','Client':'user','Devis':'devis','Factures':'doc','Clients':'users','Chiffres':'chart','Commandes':'truck','Paie':'pay','Papiers':'shield','Documents':'folder','Véhicules':'car','Jour':'sun','Semaine':'cal','Mois':'cal','Carte':'map','Matériel':'box','Outil':'wrench','À faire':'check','À savoir':'idea','Tout':'list','Chantiers en cours':'home','Devis et demandes':'devis','Carte bancaire':'pay','Virement instantané':'euro','Activées':'check'};
+function icDe(t){if(ICM[t])return ICM[t];if(/ \?$/.test(t)||/^(Fais|Prépare|Écris|Combien|Est-ce|Quand|Je voudrais|Quelles|Qui|Quel)/.test(t))return 'chat';if(/photos/.test(t))return 'cam';if(/où il est/.test(t))return 'pin';if(/propres/.test(t))return 'check';if(/Croissants|Resto|offerte/.test(t))return 'gift';return ''}
+function MET_N(){var m=RT.METIERS||{};return Object.keys(m).map(function(k){return m[k].n})}
+function icDeco(root){(root||document).querySelectorAll('#roles button, .chips button, [aria-pressed]').forEach(function(b){if(b.dataset.icd||b.querySelector('svg,.dotc,.av'))return;var t=b.textContent.trim(),o=b.getAttribute('onclick')||'',n=/lstAdd/.test(o)?'plus':/^Lun|^Mar|^Mer|^Jeu|^Ven|^Sam|^Dim/.test(t)?'':icDe(t)||(MET_N().indexOf(t)>=0?'hammer':'');b.dataset.icd=1;if(!n)return;b.insertAdjacentHTML('afterbegin',ic(n));b.classList.add('aic')})}
+new MutationObserver(function(){icDeco()}).observe(document.body,{childList:true,subtree:true});setTimeout(icDeco,0);
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
