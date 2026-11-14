@@ -361,9 +361,12 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .nom{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--laiton) 70%,transparent);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:pointer}
 svg text.nom{cursor:pointer;text-decoration:none}
 .fp{display:flex;gap:14px;align-items:center}.fpav{width:56px!important;height:56px!important;font-size:22px!important;flex:none}
+.anl{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}.anl .tx{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px}.anl small{color:var(--muted);font-size:12px}
+.anc{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}.anc svg{width:18px;height:18px}
+@media (max-width:420px){header .theme{width:38px;height:38px}header a.theme{padding:0 10px!important}}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
-<a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
+<a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit;white-space:nowrap">Le site</a>
 <button class="theme pk" id="regBtn" onclick="go('reg')" aria-label="Réglages"></button><button class="theme pk" data-theme-ic onclick="PCD.toggleTheme()" aria-label="Jour ou nuit"></button></div>
 <div class="roles" id="roles" role="group" aria-label="Voir l'Espace en tant que"></div>
 <div class="bandeau"><span class="ex">Démonstration ProClik · personnes, chantiers et chiffres d'exemple</span></div>
@@ -498,7 +501,7 @@ function acces(){
   var R=[['Ses chantiers et son planning',O,O,P('les siens'),O,P('le sien')],['Lire le plan et les cotes',O,O,O,O,O],['Modifier le plan',O,O,X,X,X],['Demander du matériel',O,O,O,O,X],
     ['Prix de vente et devis',O,T('ref_prix','Prix pour les référents'),X,O,P('les siens')],['Prix d\'achat et marges',O,X,X,T('bureau_marges','Marges pour le bureau'),X],['Factures et paiements',O,X,X,O,P('les siennes')],
     ['Qui est où',O,P('son équipe'),P('les siennes'),O,X],['Coordonnées des clients',O,P('ses chantiers'),P('adresse du jour'),O,X],['Cliky',O,O,O,O,P('messages')]];
-  return '<div style="overflow-x:auto"><table class="acc"><tr><th></th><th>Patrons</th><th>Référent</th><th>Ouvrier</th><th>Bureau</th><th>Client</th></tr>'+R.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</table></div><p class="muted" style="font-size:12px;margin:8px 0 0">Touchez une case entourée pour donner ou retirer l\'accès.</p>'}
+  return '<div style="overflow-x:auto"><table class="acc"><tr><th></th><th>Direction</th><th>Référent</th><th>Ouvrier</th><th>Bureau</th><th>Client</th></tr>'+R.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</table></div><p class="muted" style="font-size:12px;margin:8px 0 0">Touchez une case entourée pour donner ou retirer l\'accès.</p>'}
 function conge(id){var c=S.conges.filter(function(x){return x.id===id})[0];fen('<h3>Congé de '+c.qui+'</h3><p class="muted">'+c.du+'</p><p style="font-size:14px">Cliky a vérifié : personne d\'autre n\'est absent, et '+(c.qui==='Lucas'?'Mathieu peut avancer seul sur le chantier Rey ces jours-là.':'le planning reste tenable.')+'</p><div class="row"><button class="go" style="flex:1" onclick="okConge('+id+',1)">'+ic('check')+'Accepter</button><button class="btn2 pk" onclick="okConge('+id+',0)">Refuser</button></div>')}
 function okConge(id,o){var c=S.conges.filter(function(x){return x.id===id})[0];c.etat=o?'ok':'non';RT.evt('chef',N.chef,'Congé de '+c.qui+(o?' accepté':' refusé'),'cal');fermer();re();toast(c.qui+' est prévenu sur son téléphone','check')}
 function voirAv(id){var a=S.av.filter(function(x){return x.id===id})[0];
@@ -1081,7 +1084,7 @@ var _acc=V.acc;V.acc=function(){return _acc().replace('<div class="pile">','<div
 var _bacc=V.bacc;V.bacc=function(){return _bacc().replace('<div class="pile">','<div class="pile">'+ouBlk())};
 /* carte : ceux qui ne sont pas sur un chantier */
 function ailleursBlk(){var L=Object.keys(S.ici).filter(function(p){return EQUIPE.indexOf(p)<0||!CH.some(function(c){return c.id===S.ici[p].l})});
-  if(!L.length)return '';return blk('Patrons, bureau et ailleurs','pin',L.map(function(p){var o=S.ici[p];return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span class="qui"><span class="av">'+p[0]+'</span><span><b style="font-size:14px">'+p+'</b><br><small class="muted">'+lieuTx(o)+'</small></span></span><small class="muted">depuis '+o.h+'</small></div>'}).join(''))}
+  if(!L.length)return '';return blk('Direction, bureau et ailleurs','pin',L.map(function(p){var o=S.ici[p];return '<div class="post" style="padding:8px 0;border-top:1px solid var(--line)"><span class="qui"><span class="av">'+p[0]+'</span><span><b style="font-size:14px">'+p+'</b><br><small class="muted">'+lieuTx(o)+'</small></span></span><small class="muted">depuis '+o.h+'</small></div>'}).join(''))}
 var _vc=vueCarte;vueCarte=function(){var h=_vc();return CARTE_F==='dv'?h:h+ailleursBlk()};
 /* ================= Bons et factures fournisseurs par e-mail : Cliky range tout par chantier, en compta, et grossit sa base de prix ================= */
 var ADR='bons.lauziere@proclik.fr';
@@ -1128,7 +1131,7 @@ function dossier(id){var c=CH.filter(function(x){return x.id===id})[0],pr=voitPr
 var _cmdV3=V.cmd;V.cmd=function(){return _cmdV3().replace(/<\/div>$/,blk('Documents et base de prix','doc',ln('send','Bons et factures reçus par e-mail',S.mails.length+' rangés par chantier par Cliky','fen(vueDocs())')))+'</div>'};
 var _fCh2=ficheCh;ficheCh=function(id){_fCh2(id);var r=$('fen').querySelector('.row');if(r)r.insertAdjacentHTML('beforeend','<button class="btn2 pk" onclick="dossier(\''+id+'\')">'+ic('doc')+'Dossier du chantier</button>')};
 /* ================= Chaque prénom se touche : fiche pour appeler, écrire, savoir où il est ================= */
-var PERS={Antoine:['Patron','01'],Maxime:['Patron','02'],Claire:['Bureau · coordinatrice','03'],Mathieu:['Ouvrier référent','04'],Lucas:['Ouvrier','05'],'Benoît':['Ouvrier référent','06'],Kevin:['Ouvrier','07'],Damien:['Ouvrier référent','08'],Thomas:['Ouvrier','09']};
+var PERS={Antoine:['Direction','01'],Maxime:['Direction','02'],Claire:['Bureau · coordinatrice','03'],Mathieu:['Ouvrier référent','04'],Lucas:['Ouvrier','05'],'Benoît':['Ouvrier référent','06'],Kevin:['Ouvrier','07'],Damien:['Ouvrier référent','08'],Thomas:['Ouvrier','09']};
 var NOM_RE=new RegExp('(^|[^A-Za-zÀ-ÿ])('+Object.keys(PERS).join('|')+')(?![A-Za-zÀ-ÿ])','g');
 function nomsWrap(root){if(!root)return;
   root.querySelectorAll('svg text').forEach(function(t){var n=t.textContent.trim();if(PERS[n]&&!t.classList.contains('nom')){t.classList.add('nom');t.setAttribute('data-n',n)}});
@@ -1179,6 +1182,17 @@ function vehA(id,p){var s=S.veh.filter(function(x){return x.id===id})[0];S.veh.f
 function vehLigne(n){var r=vehDe(n);if(!r)return '<p class="muted" style="font-size:13px;margin:10px 2px 0">Pas de véhicule attitré.</p>';var v=r[0];
   return '<button class="ln pk" style="margin-top:10px" onclick="ficheV(\''+v.id+'\')"><span class="ico">'+ic('truck')+'</span><span class="tx"><b>'+(r[1]==='conduit'?v.n+' · '+v.im:'Monte avec '+v.a)+'</b><small>'+(r[1]==='conduit'?v.m+' · '+v.en:v.n+' · '+v.im)+'</small></span><span class="fl">'+ic('arrow')+'</span></button>'}
 var _cmdV4=V.cmd;V.cmd=function(){return _cmdV4().replace(/<\/div>$/,blk('Véhicules','truck',ln('truck','Qui a quel véhicule','7 véhicules · '+S.veh.map(function(s){return vehD(s.id)}).filter(function(v){return v.st!=='ok'}).length+' à prévoir','fen(vueVeh())')))+'</div>'};
+/* ================= Annuaire : Direction, Bureau, Terrain, Clients ================= */
+PERS.Antoine[0]='Direction · cogérant';PERS.Maxime[0]='Direction · cogérant';
+var GRP=[['Direction','key',['Antoine','Maxime']],['Bureau','stock',['Claire']],['Terrain','wrench',EQUIPE]];
+function annuaire(){var r=role(),h='<div class="fpx"><h3>'+(r==='client'?'Vos contacts':'L\'équipe')+'</h3><p class="muted" style="margin:0 0 10px">Touchez un prénom pour appeler ou écrire.</p></div>';
+  var G=r==='client'?[['Direction','key',['Antoine']],['Bureau','stock',['Claire']],['Terrain','wrench',['Mathieu','Lucas']]]:GRP;
+  G.forEach(function(g){h+='<div class="blk" style="margin-bottom:8px"><h2 style="font-size:15px"><span class="ico" style="width:28px;height:28px;border-radius:9px">'+ic(g[1])+'</span>'+g[0]+' <span class="etq" style="margin-left:auto">'+g[2].length+'</span></h2>'+g[2].map(function(p){var o=S.ici&&S.ici[p];return '<div class="anl"><span class="av">'+p[0]+'</span><span class="tx"><b>'+p+'</b><small>'+PERS[p][0]+(r!=='client'?' · '+(o?lieuTx(o):TEL[p]?'sur son chantier':'pas indiqué'):'')+'</small></span><button class="pk anc" aria-label="Appeler '+p+'" onclick="toast(\'Appel à '+p+'\',\'phone\')">'+ic('phone')+'</button></div>'}).join('')+'</div>'});
+  if(r!=='client'){var C=r==='ouvrier'?CLI.filter(function(c){return c.ch==='rey'}):CLI.filter(function(c){return c.ch});
+    h+='<div class="blk"><h2 style="font-size:15px"><span class="ico" style="width:28px;height:28px;border-radius:9px">'+ic('home')+'</span>Clients'+(r==='ouvrier'?' de vos chantiers':' des chantiers en cours')+' <span class="etq" style="margin-left:auto">'+C.length+'</span></h2>'+C.map(function(c){return '<div class="anl"><span class="av" style="background:'+CC[c.ch]+';color:#fff">'+LET[c.ch]+'</span><span class="tx"><b>'+c.n+'</b><small>'+c.l+'</small></span><button class="pk anc" aria-label="Appeler '+c.n+'" onclick="toast(\'Appel à '+c.n.replace(/'/g,'')+'\',\'phone\')">'+ic('phone')+'</button></div>'}).join('')+'</div>'}
+  fen(h)}
+(function(){var b=document.createElement('button');b.className='theme pk';b.id='annBtn';b.setAttribute('aria-label','L\'équipe');b.innerHTML=ic('users');b.onclick=annuaire;var g=$('regBtn');g.parentNode.insertBefore(b,g)})();
+var _rRoles=rRoles;rRoles=function(){_rRoles();var c=$('roles').querySelector('[data-r="client"]');if(c)c.textContent='Client · '+N.client};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
