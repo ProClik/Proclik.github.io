@@ -111,6 +111,15 @@ body{min-height:100dvh;overflow-x:hidden}
 .rm svg{display:block;width:100%;height:auto;max-height:52dvh;background:var(--calme);border-radius:18px}
 .rm .lst{margin-top:10px}.rm .ln2{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}.rm .ln2 span{color:var(--muted)}.rm .ln2 b{text-align:right}
 .tl{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}.tl div{background:var(--calme);border-radius:16px;padding:10px 12px}.tl b{display:block;font-size:18px}.tl small{color:var(--muted);font-size:12px;font-weight:700}
+
+.phr{fill:var(--bg);stroke:var(--laiton);stroke-width:2.5}.phi{fill:none;stroke:var(--laiton);stroke-width:1.8;stroke-linejoin:round}.phg{cursor:pointer}
+.phbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 6px}.phbar small{color:var(--muted);font-size:12.5px;flex:1;min-width:160px}
+.pt.phl{background:transparent;box-shadow:inset 0 0 0 2px var(--laiton);border-radius:4px}
+.ill{display:block;width:100%;height:auto;border-radius:16px}
+.il-f{fill:#D9D4CB}.il-m{fill:#A9AFB8}.il-g{fill:none;stroke:#E07B2E;stroke-width:9;stroke-linecap:round}.il-b{fill:none;stroke:#3C78C8;stroke-width:9;stroke-linecap:round}.il-r{fill:none;stroke:#C8463C;stroke-width:9;stroke-linecap:round}
+.il-e{stroke:#777;stroke-width:16}.il-x{fill:#F2F0EA;stroke:#6E6A62;stroke-width:3}.il-c{stroke:#1B2440;stroke-width:2.5;stroke-dasharray:6 5}.il-t{font:800 15px Manrope,sans-serif;fill:#1B2440}
+.lst2{margin-top:10px}.lst2 div{display:flex;justify-content:space-between;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:14px}.lst2 span{color:var(--muted)}.lst2 b{text-align:right}
+.voile.phv{z-index:50;display:flex}
 </style></head><body>
 <div class="top"><a class="rond pk" href="espace.html" aria-label="Retour à l'Espace" id="retour"></a>
 <h1>Plan du chantier<small>Appartement Rey · Grenoble · T3, 68 m²</small></h1>
@@ -187,6 +196,7 @@ function rPlan(){if(typeof VUE!=='undefined'&&VUE!=='murs')return rPlanVue();
   /* points des éléments, côté pièce */
   S.plan.el.forEach(function(e){if(!RT.typeOn(e.t))return;var p=RT.piece(e.r),m=RT.murs(p)[e.m];if(!m)return;var n=[-m.d[1],m.d[0]];
     var x=m.a[0]+m.d[0]*e.x+n[0]*16,y=m.a[1]+m.d[1]*e.x+n[1]*16;s+='<circle class="pts" cx="'+x+'" cy="'+y+'" r="6"/>'});
+  S.plan.ph.forEach(function(ph){var p=RT.piece(ph.r),m=RT.murs(p)[ph.m];if(!m)return;var n=[-m.d[1],m.d[0]],x0=phX(ph.x,m.L),x=m.a[0]+m.d[0]*x0+n[0]*36,y=m.a[1]+m.d[1]*x0+n[1]*36;s+='<rect class="phr" x="'+(x-13)+'" y="'+(y-13)+'" width="26" height="26" rx="7"/><path class="phi" transform="translate('+(x-9)+' '+(y-8)+') scale(.75)" d="M2 6h4l2-3h8l2 3h4v12H2z M12 8a4 4 0 1 0 0.01 0z"/>'});
   /* noms et surfaces */
   RT.PIECES.forEach(function(p){var a=aire(p.p)/1e4;
     s+='<text class="nom" x="'+p.lb[0]+'" y="'+p.lb[1]+'" font-size="'+(p.id==='wc'?24:30)+'">'+p.n+'</text>';
@@ -239,6 +249,7 @@ function rMur(){
   var L=[];ouv.forEach(function(o){var oo=o.o,w=Math.round(o.x2-o.x1);L.push({x:o.x1,h:'<button class="it pk" disabled style="cursor:default"><span class="pt ouv"></span><span class="tx"><b>'+oo.n+' '+w+' × '+oo.h+'</b><small>'+(oo.al?'allège à '+oo.al+' cm du sol · ':'')+'à '+Math.round(o.x1)+' cm de l\'angle gauche</small></span></button>'})});
   E.forEach(function(o){var T=RT.TYPES[o.e.t];L.push({x:o.e.x,h:'<button class="it pk'+(sel===o.i?' on':'')+'" onclick="choisir('+o.i+')"><span class="pt '+T.f+'"></span><span class="tx"><b>'+T.n+'</b><small>milieu à <b style="display:inline;color:var(--fg)">'+Math.round(o.e.h)+' cm</b> du sol · à <b style="display:inline;color:var(--fg)">'+Math.round(o.e.x)+' cm</b> de l\'angle gauche</small></span></button>'})});
   L.sort(function(a,b){return a.x-b.x});
+  var PH=phMur();h+='<div class="phbar"><button class="btnv pk" onclick="prendrePhoto()">'+ic('image')+'Photo avant fermeture</button><small>'+(PH.length?PH.length+' photo'+(PH.length>1?'s':'')+' épinglée'+(PH.length>1?'s':'')+' sur ce mur':'Avant le placo ou la faïence : photographiez les gaines et les tuyaux')+'</small></div>'+(PH.length?'<div class="liste">'+PH.map(function(o){return '<button class="it pk" onclick="voirPhoto('+o.i+')"><span class="pt phl"></span><span class="tx"><b>'+o.p.t+'</b><small>'+o.p.qui+', le '+o.p.d+' · à '+phX(o.p.x,m.L)+' cm de l\'angle</small></span></button>'}).join('')+'</div>':'');
   h+=infoMetier(p,m,ouv);
   h+='<h3 style="font-size:15px;margin:14px 2px 6px">Sur ce mur, de gauche à droite</h3><div class="liste">'+(L.length?L.map(function(o){return o.h}).join(''):'<div class="muted" style="padding:6px 2px">Rien de prévu sur ce mur.</div>')+'</div>';
   $('fen').innerHTML=h;
@@ -291,6 +302,7 @@ function svgMur(m,ouv,E){
     for(var i=0;i<pts.length-1;i++){var d=pts[i+1]-pts[i];if(d>fs*1.6)s+='<text class="ck" font-size="'+(fs*.82)+'" x="'+((pts[i]+pts[i+1])/2)+'" y="'+(y2-fs*.45)+'">'+Math.round(d)+'</text>'}}
   /* éléments */
   E.forEach(function(o){s+=sym(o.e,o.i,fs)});
+  s+=svgPh(fs);
   /* cotes */
   if(sel>=0){var e=S.plan.el[sel],T=RT.TYPES[e.t],y=H-e.h;
     s+='<line class="cs" stroke-dasharray="6 5" x1="0" y1="'+y+'" x2="'+e.x+'" y2="'+y+'"/><line class="cs" x1="'+e.x+'" y1="'+H+'" x2="'+e.x+'" y2="'+y+'" stroke-dasharray="6 5"/>';
@@ -429,6 +441,25 @@ function fermerP(){$('voile').classList.remove('on')}
 function rVues(){$('vues').innerHTML=[['murs','plan','Murs'],['plaf','sparks','Plafond'],['sol','image','Sol']].map(function(v){return '<button aria-pressed="'+(VUE===v[0])+'" onclick="VUE=\''+v[0]+'\';rVues();VUE===\'murs\'?rPlan():rPlanVue()">'+ic(v[1])+v[2]+'</button>'}).join('');
   $('cons').textContent=VUE==='murs'?'Touchez un mur pour le voir de face, avec ses prises et ses cotes.':VUE==='plaf'?'Touchez une pièce pour voir son plafond : spots, VMC, cotes depuis les murs.':'Touchez une pièce pour voir son sol : revêtement, sens de pose, quantités.';
   $('leg').innerHTML=VUE==='murs'?'<span><i></i>Prises, interrupteurs, eau… (touchez le mur)</span><span class="ex">Plan d\'exemple</span>':VUE==='plaf'?'<span><i class="sp"></i>Spot</span><span><i></i>Plafonnier</span><span><i class="vm"></i>VMC</span><span><i class="df"></i>Détecteur de fumée</span><span>- - - Faux plafond</span>':'<span><i class="se"></i>Barre de seuil</span><span>Flèche : sens des lames</span><span class="ex">Plan d\'exemple</span>'}
+
+/* ---------- photos des réseaux avant fermeture, épinglées sur le mur ---------- */
+if(!S.plan.ph){S.plan.ph=[{r:'ch2',m:0,x:0.55,h:150,k:'elec',t:'Gaines électriques avant placo',qui:'Lucas',d:'12 novembre'},{r:'sdb',m:0,x:0.45,h:110,k:'eau',t:'Arrivées d\'eau avant faïence',qui:'Mathieu',d:'10 novembre'},{r:'sej',m:3,x:0.6,h:60,k:'elec',t:'Saignées et boîtiers avant enduit',qui:'Mathieu',d:'6 novembre'}];RT.save()}
+function phX(f,L){return f<=1?Math.round(f*L):Math.min(f,L-10)}
+function phMur(){return S.plan.ph.map(function(p,i){return {p:p,i:i}}).filter(function(o){return o.p.r===cur.r&&o.p.m===cur.m})}
+function svgPh(fs){var s='';phMur().forEach(function(o){var m=RT.murs(RT.piece(cur.r))[cur.m],x=phX(o.p.x,m.L),y=H-o.p.h,w=fs*1.9;
+  s+='<g class="phg" onclick="event.stopPropagation();voirPhoto('+o.i+')"><rect x="'+(x-w/2)+'" y="'+(y-w/2)+'" width="'+w+'" height="'+w+'" rx="'+(fs*.45)+'" class="phr"/><path transform="translate('+(x-fs*.6)+' '+(y-fs*.5)+') scale('+(fs/20)+')" d="M2 6h4l2-3h8l2 3h4v12H2z M12 8a4 4 0 1 0 0.01 0z" class="phi"/></g>'});return s}
+function illus(k){var s='<svg viewBox="0 0 400 250" class="ill" role="img" aria-label="Photo du mur avant fermeture"><rect width="400" height="250" class="il-f"/>';
+  for(var x=20;x<400;x+=60)s+='<rect x="'+x+'" y="0" width="10" height="250" class="il-m"/>';
+  if(k==='eau'){s+='<path d="M0 170 H150 Q170 170 170 150 V70" class="il-b"/><path d="M0 190 H210 Q230 190 230 170 V70" class="il-r"/><circle cx="170" cy="66" r="9" class="il-x"/><circle cx="230" cy="66" r="9" class="il-x"/><path d="M300 250 V200" class="il-e"/>'}
+  else{s+='<path d="M0 40 C80 40 90 120 140 120 S210 60 260 60" class="il-g"/><path d="M0 52 C90 52 120 190 150 200" class="il-g"/><path d="M260 60 C300 60 320 130 340 130" class="il-g"/><circle cx="140" cy="120" r="16" class="il-x"/><circle cx="150" cy="205" r="16" class="il-x"/><circle cx="340" cy="135" r="16" class="il-x"/>'}
+  s+='<line x1="12" y1="248" x2="12" y2="120" class="il-c"/><text x="18" y="185" class="il-t">'+(k==='eau'?'110':'150')+' cm</text></svg>';return s}
+function voirPhoto(i){var p=S.plan.ph[i],m=RT.murs(RT.piece(p.r))[p.m],v=document.createElement('div');v.className='voile on phv';
+  v.innerHTML='<div class="fen"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px"><b style="font-size:17px">'+p.t+'</b><button class="rond pk" aria-label="Fermer" onclick="this.closest(\'.phv\').remove()">'+ic('x')+'</button></div>'+illus(p.k)+
+   '<p class="muted" style="font-size:12px;margin:6px 2px 0">Dessin d\'exemple : dans l\'appli, c\'est la vraie photo prise sur le chantier.</p><div class="lst2"><div><span>Pièce</span><b>'+RT.piece(p.r).n+', mur '+(p.m+1)+'</b></div><div><span>Position</span><b>à '+phX(p.x,m.L)+' cm de l\'angle gauche, '+p.h+' cm du sol</b></div><div><span>Prise par</span><b>'+p.qui+', le '+p.d+', avant fermeture</b></div></div>'+
+   '<p style="font-size:14px;margin:12px 2px 0">Avant de percer ce mur, regardez la photo : on voit où passent '+(p.k==='eau'?'les tuyaux d\'eau.':'les gaines électriques.')+'</p></div>';
+  v.addEventListener('click',function(e){if(e.target===v)v.remove()});document.body.appendChild(v)}
+function prendrePhoto(){var m=RT.murs(RT.piece(cur.r))[cur.m],n=S.plan.ph.filter(function(p){return p.r===cur.r&&p.m===cur.m}).length;
+  S.plan.ph.push({r:cur.r,m:cur.m,x:Math.min(m.L-20,Math.round(m.L*(.3+.2*n))),h:130,k:filt==='plomb'?'eau':'elec',t:filt==='plomb'?'Tuyaux d\'eau avant fermeture':'Gaines avant fermeture',qui:RT.NOMS[role()]||RT.NOMS.ouvrier,d:'16 novembre'});RT.save();rPlan();rMur();toast('Photo épinglée sur le mur, à sa place','check')}
 rRoles();rVerrou();rPlan();rVues();
 var qv=q.get('vue');if(qv==='plaf'||qv==='sol'){VUE=qv;rVues();rPlanVue();if(q.get('piece'))ouvrirPiece(q.get('piece'))}
 var o=q.get('mur');if(o){var a=o.split('-');cur={r:a[0],m:+a[1]};rPlan();rMur();$('voile').classList.add('on')}
