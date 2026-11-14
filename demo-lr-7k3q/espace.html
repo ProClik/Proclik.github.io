@@ -343,6 +343,19 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .lst.fini .lx b{text-decoration:line-through;color:var(--muted)}
 .lin{display:flex;gap:8px}.lin input{flex:1;min-width:0;font:inherit;font-size:16px;padding:13px 14px;border-radius:14px;border:0;background:var(--bg);color:var(--fg);box-shadow:var(--in)}
 .lin .mic{width:50px;flex:none;border-radius:14px;display:grid;place-items:center}
+.cpt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:14px;border-radius:16px;margin-bottom:8px}
+.cpt .cb{width:30px;height:30px;border-radius:9px;box-shadow:inset 0 0 0 2px var(--muted);display:grid;place-items:center;flex:none}
+.cpt.ok .cb{background:var(--ok);box-shadow:none;color:#fff}.cpt.ok b{text-decoration:line-through;color:var(--muted)}
+.cpt>span:last-child{display:flex;flex-direction:column;font-size:15px}.cpt small{color:var(--muted);font-size:12px}
+.bonp{position:relative;overflow:hidden;background:#fbfaf6;color:#222;border-radius:6px;padding:14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.15);transform:rotate(-.6deg)}
+.bonh{display:flex;justify-content:space-between;border-bottom:1px dashed #999;padding-bottom:6px;margin-bottom:6px}
+.bonl{display:grid;grid-template-columns:1fr 30px 76px;gap:6px;padding:3px 0;border-radius:3px;transition:background .3s}.bonl span:nth-child(n+2){text-align:right}
+.bonl.lu{background:rgba(40,160,90,.16)}.bonl.tot{border-top:1px dashed #999;margin-top:4px;padding-top:6px;font-weight:700}
+.bonp .scan{position:absolute;left:0;right:0;height:3px;background:var(--laiton);box-shadow:0 0 12px var(--laiton);top:0;animation:scan 2.4s linear forwards}
+@keyframes scan{to{top:100%;opacity:0}}
+.cout{margin-top:12px;padding:12px;border-radius:14px;background:var(--teinte)}.cout small{display:block;margin-top:4px}
+.pxl{color:var(--fg);font-weight:700}
+.lot svg{width:15px;height:15px;vertical-align:-2px}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
@@ -949,7 +962,7 @@ var _doc=V.doc;V.doc=function(){var h=_doc();
   return h.replace(/(<\/section>)(<\/div>)$/,p+'$1$2')};
 /* ================= Liste du chantier : tout le monde ajoute, tout le monde voit ================= */
 if(!S.liste)S.liste=[
- {id:1,ch:'rey',k:'mat',t:'Plaques de plâtre BA13 × 42',qui:'Claire',h:'mardi',etat:'cmd',info:'livraison jeudi'},
+ {id:1,ch:'rey',k:'mat',t:'Plaques de plâtre BA13 × 42',qui:'Claire',h:'mardi',etat:'cmd',info:'livraison jeudi',liv:1},
  {id:2,ch:'rey',k:'outil',t:'Rapporter la ponceuse girafe du dépôt',qui:'Mathieu',h:'hier',etat:'a'},
  {id:3,ch:'rey',k:'faire',t:'Protéger le parquet du couloir avant l\'enduit',qui:'Antoine',h:'hier',etat:'a'},
  {id:4,ch:'rey',k:'info',t:'Mme Rey absente vendredi : clé chez la gardienne',qui:'Claire',h:'ce matin',etat:'a'}];
@@ -957,7 +970,7 @@ var LK={mat:['truck','Matériel'],outil:['wrench','Outil'],faire:['check','À fa
 function quiSuisJe(){return N[role()]||N.chef}
 function listeHtml(ch){var L=S.liste.filter(function(x){return x.ch===ch}),na=L.filter(function(x){return x.etat!=='ok'}).length;
   var h='<p class="muted" style="font-size:12.5px;margin:-4px 0 8px">Ouvriers, bureau et patrons voient la même liste. Ce que l\'un ajoute, les autres le voient tout de suite.</p>';
-  h+=L.length?L.map(function(x){var e=x.etat==='ok'?['ok',x.k==='mat'?'Livré':'Fait']:x.etat==='cmd'?['ok','Commandé']:x.k==='mat'?['warn','À commander']:['',LK[x.k][1]];
+  h+=L.length?L.map(function(x){var e=x.etat==='ok'?['ok',x.k==='mat'?(/récupéré|en plus/.test(x.info||'')?'Récupéré':'Livré'):'Fait']:x.etat==='cmd'?['ok','Commandé']:x.k==='mat'?['warn','À commander']:['',LK[x.k][1]];
     return '<div class="lst'+(x.etat==='ok'?' fini':'')+'"><button class="cb pk" aria-label="Cocher" onclick="lstOk('+x.id+')">'+(x.etat==='ok'?ic('check'):'')+'</button><span class="lx"><b>'+x.t+'</b><small>'+ic(LK[x.k][0])+' ajouté par '+x.qui+' · '+x.h+(x.info?' · '+x.info:'')+'</small></span><span class="etq '+e[0]+'">'+e[1]+'</span></div>'}).join(''):'<p class="muted" style="margin:0">Rien pour l\'instant.</p>';
   h+='<button class="go" style="width:100%;margin-top:10px" onclick="ajoutListe(\'mat\',\''+ch+'\')">'+ic('plus')+'Ajouter à la liste</button>';
   return blk('La liste du chantier'+(na?' <span class="etq warn" style="margin-left:auto">'+na+' en cours</span>':''),'doc',h)}
@@ -981,10 +994,61 @@ function lstAdd(i){var t=i===undefined?($('lst-t').value||'').trim():ajoutListe.
   toast(k==='mat'?'Sur la liste de tous · '+N.bureau+' le commande':'Sur la liste de tous','check')}
 /* l'ouvrier passe par la liste ; le bureau qui commande met la liste à jour */
 manque=function(){ajoutListe('mat','rey')};
-var _cmdr=commander;commander=function(id){_cmdr(id);S.liste.forEach(function(x){if(x.id===id){x.etat='cmd';x.info='livraison demain matin'}});save();re()};
+var _cmdr=commander;commander=function(id){_cmdr(id);S.liste.forEach(function(x){if(x.id===id){x.etat='cmd';x.info='livraison demain matin';x.liv=1}});save();re()};
 var _cmdV=V.cmd;V.cmd=function(){return _cmdV().replace(/<\/div>$/,listeHtml('rey')+'</div>')};
 var _jour=V.jour;V.jour=function(){return _jour().replace('Il manque du matériel<small>Le bureau commande</small>','Ajouter à la liste<small>Matériel, outil, à faire : tout le monde le voit</small>').replace(/(<div class="gros monte">[\s\S]*?<\/div>)/,'$1'+listeHtml('rey'))};
 var _fCh=ficheCh;ficheCh=function(id){_fCh(id);reListe.ch=id;var f=$('fen'),p=f.querySelector('.pile');if(p){var d=document.createElement('div');d.innerHTML=listeHtml(id);p.insertBefore(d.firstChild,p.children[1]||null)}};
+/* ================= Chez le fournisseur : on coche au comptoir, photo du bon, Cliky lit, les coûts vont aux patrons et au bureau ================= */
+function eur2(v){return v.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'}
+function voitPrix(){return role()==='chef'||role()==='bureau'}
+if(!S.lst2){S.lst2=1;var _b=Date.now();
+  [['Montants 48 mm × 3 m × 20','mont'],['Rails 48 mm × 3 m × 10','rail'],['Enduit à joint 25 kg × 2','endu'],['Bandes à joint × 2','band']].forEach(function(a,i){S.liste.splice(1,0,{id:_b+i,ch:'rey',k:'mat',t:a[0],key:a[1],qui:'Mathieu',h:'hier',etat:'cmd',f:'Négoce matériaux, Grenoble',info:'à prendre au comptoir'})})}
+if(!S.bons)S.bons=[];
+(function(){var t=S.bons.reduce(function(s,b){return s+b.tot},0);if(t)CH[0].mr+=t})();
+/* lignes du bon (chiffres d'exemple) ; m = mots pour reconnaître la ligne de la liste */
+var BON={n:'BL 48213',f:'Négoce matériaux, Grenoble',l:[['Montant M48 3,00 m',20,3.95,'mont',/montant/i],['Rail R48 3,00 m',10,3.20,'rail',/rail/i],['Enduit joint prise 25 kg',2,21.50,'endu',/enduit/i],['Bande papier 150 m',2,6.90,'band',/bande/i],['Vis TTPC 25 mm boîte 1000',1,18.50,'vis',/vis/i],['Couteau à enduire 25 cm',1,12.90,null,null]]};
+function bonMatch(l){return S.liste.filter(function(x){return x.ch==='rey'&&x.k==='mat'&&x.etat!=='ok'&&(x.key===l[3]||(l[4]&&l[4].test(x.t)))})[0]}
+function aPrendre(){return S.liste.filter(function(x){return x.ch==='rey'&&x.k==='mat'&&x.etat!=='ok'&&!x.liv})}
+function comptoir(){var L=aPrendre(),n=L.filter(function(x){return x.pris}).length;
+  var h='<h3>Chez le fournisseur</h3><p class="muted" style="margin:0 0 10px">Appartement Rey. Touchez chaque ligne quand vous l\'avez en main.</p>';
+  if(!L.length){fen(h+'<p>Tout est récupéré.</p>');return}
+  h+='<div class="post" style="margin-bottom:6px"><b>'+n+' sur '+L.length+' en main</b><small class="muted">'+(n===L.length?'Tout y est':'Il reste '+(L.length-n))+'</small></div>'+bar(n/L.length);
+  h+='<div style="margin-top:10px">'+L.map(function(x){return '<button class="cpt pk'+(x.pris?' ok':'')+'" onclick="prendre('+x.id+')"><span class="cb">'+(x.pris?ic('check'):'')+'</span><span><b>'+x.t+'</b><small>'+(x.f||'Fournisseur à choisir')+'</small></span></button>'}).join('')+'</div>';
+  h+='<button class="go" style="width:100%;margin-top:12px" onclick="photoBon()">'+ic('cam')+'Photographier le bon de livraison ou la facture</button><p class="muted" style="font-size:12.5px;text-align:center;margin:8px 0 0">Cliky lit le bon et coche tout seul ce qui est dessus.</p>';
+  fen(h)}
+function prendre(id){var x=S.liste.filter(function(y){return y.id===id})[0];x.pris=!x.pris;save();comptoir()}
+function photoBon(){var pr=voitPrix();
+  var h='<h3>Le bon du fournisseur</h3><div class="bonp"><div class="bonh"><b>'+BON.f+'</b><span>'+BON.n+' · 16/11</span></div>'+BON.l.map(function(l,i){return '<div class="bonl" id="bl'+i+'"><span>'+l[0]+'</span><span>'+l[1]+'</span><span>'+eur2(l[1]*l[2])+'</span></div>'}).join('')+'<div class="bonl tot"><span>Total HT</span><span></span><span>'+eur2(bonTot())+'</span></div><i class="scan"></i></div>'+
+   '<div id="bonr"><p class="muted" style="text-align:center;margin:10px 0 0">'+ic('robot')+' Cliky lit le bon…</p></div>';
+  fen(h);var i=0,t=setInterval(function(){var e=$('bl'+i);if(e)e.classList.add('lu');i++;if(i>BON.l.length){clearInterval(t);bonRes()}},350)}
+function bonTot(){return BON.l.reduce(function(s,l){return s+l[1]*l[2]},0)}
+function bonRes(){var pr=voitPrix(),ok=[],plus=[];BON.l.forEach(function(l){var x=bonMatch(l);if(x)ok.push([l,x]);else plus.push(l)});
+  var manq=aPrendre().filter(function(x){return !ok.some(function(o){return o[1]===x})});
+  var h='<div class="ck-top" style="margin-top:10px"><span class="ico">'+ic('robot')+'</span><div><b class="t">Cliky a lu le bon</b><p>'+ok.length+' ligne'+(ok.length>1?'s':'')+' de la liste '+(ok.length>1?'sont':'est')+' bien sur le bon'+(plus.length?', '+plus.length+' en plus':'')+(manq.length?', '+manq.length+' manquante'+(manq.length>1?'s':''):', rien ne manque')+'.</p></div></div><div class="blk" style="margin-top:10px">';
+  h+=ok.map(function(o){return '<div class="lot"><span>'+ic('check')+' '+o[1].t+'</span>'+(pr?'<b>'+eur2(o[0][1]*o[0][2])+'</b>':'<b style="color:var(--ok)">Récupéré</b>')+'</div>'}).join('');
+  h+=plus.map(function(l){return '<div class="lot"><span>'+ic('plus')+' '+l[0]+' <small class="muted">pas sur la liste, ajouté</small></span>'+(pr?'<b>'+eur2(l[1]*l[2])+'</b>':'')+'</div>'}).join('');
+  h+=manq.map(function(x){return '<div class="lot"><span style="color:var(--alert)">'+ic('alert')+' '+x.t+'</span><b style="color:var(--alert)">Pas sur le bon</b></div>'}).join('');
+  h+='</div>'+(pr?'<div class="tot" style="padding:10px 4px 0"><span>Coût ajouté au chantier Rey</span><span>'+eur2(bonTot())+' HT</span></div>':'<p class="muted" style="font-size:12.5px;margin:8px 2px 0">Les prix partent directement au bureau et aux patrons.</p>');
+  h+='<button class="go" style="width:100%;margin-top:12px" onclick="bonOk()">'+ic('check')+'Valider</button>';
+  $('bonr').innerHTML=h;bonRes.ok=ok;bonRes.plus=plus}
+function bonOk(){var tot=bonTot(),q=quiSuisJe();
+  bonRes.ok.forEach(function(o){S.mat=S.mat.filter(function(m){return m.id!==o[1].id});o[1].etat='ok';o[1].pris=1;o[1].px=o[0][1]*o[0][2];o[1].info='récupéré · '+BON.n});
+  bonRes.plus.forEach(function(l){S.liste.unshift({id:Date.now()+Math.random(),ch:'rey',k:'mat',t:l[0]+' × '+l[1],qui:'Cliky',h:'à l\'instant',etat:'ok',px:l[1]*l[2],info:'en plus sur '+BON.n})});
+  S.bons.unshift({n:BON.n,f:BON.f,ch:'Rey',tot:tot,qui:q,nl:BON.l.length});CH[0].mr+=tot;
+  RT.evt('bureau','Cliky','Bon '+BON.n+' lu ('+q+') · '+eur2(tot)+' HT ajoutés au chantier Rey','euro');save();fermer();re();
+  toast(voitPrix()?eur2(tot)+' HT ajoutés aux coûts du chantier':'Matériel coché · le bureau a les prix','check')}
+/* coûts visibles par les patrons et le bureau */
+var _lh=listeHtml;listeHtml=function(ch){var h=_lh(ch);
+  if(voitPrix())h=h.replace(/(<b>([^<]*)<\/b><small>)/g,function(m){return m}).replace(/<div class="lst([^"]*)"><button class="cb pk" aria-label="Cocher" onclick="lstOk\(([\d.]+)\)">/g,function(m,c,id){return m});
+  if(ch==='rey'&&aPrendre().length)h=h.replace('<button class="go" style="width:100%;margin-top:10px" onclick="ajoutListe','<div class="row" style="margin-top:10px;gap:8px"><button class="btn2 pk" style="flex:1;justify-content:center" onclick="comptoir()">'+ic('truck')+'Je suis chez le fournisseur</button><button class="btn2 pk" style="flex:1;justify-content:center" onclick="photoBon()">'+ic('cam')+'Photo du bon</button></div><button class="go" style="width:100%;margin-top:10px" onclick="ajoutListe');
+  if(voitPrix()&&ch==='rey'){var c=CH[0],sp=S.liste.filter(function(x){return x.ch==='rey'&&x.px}).reduce(function(s,x){return s+x.px},0);
+    h=h.replace(/(<\/section>)$/,'<div class="cout"><div class="post"><span><b>Coûts du chantier</b><br><small class="muted">Visible par les patrons et le bureau</small></span><b>'+eur(c.mr)+' / '+eur(c.mp)+'</b></div>'+bar(c.mr/c.mp)+(sp?'<small class="muted">Dont '+eur2(sp)+' HT lus sur les bons par Cliky</small>':'')+'</div>$1')}
+  return h};
+/* prix sur chaque ligne (patrons et bureau) */
+var _lh2=listeHtml;listeHtml=function(ch){var h=_lh2(ch);if(!voitPrix())return h;
+  S.liste.forEach(function(x){if(x.px&&x.ch===ch)h=h.replace('<b>'+x.t+'</b><small>','<b>'+x.t+'</b><small><span class="pxl">'+eur2(x.px)+' HT</span> · ')});return h};
+var _cmdV2=V.cmd;V.cmd=function(){var h=_cmdV2();if(!S.bons.length)return h;
+  return h.replace(/<\/div>$/,blk('Bons fournisseur lus par Cliky','doc',S.bons.map(function(b){return ln('doc',b.f+' · '+b.n,'Chantier '+b.ch+' · '+b.nl+' lignes · photo de '+b.qui,'', '<b>'+eur2(b.tot)+' HT</b>')}).join(''))+'</div>')};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
