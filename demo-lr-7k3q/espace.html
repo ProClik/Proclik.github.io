@@ -333,6 +333,10 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .sig{height:96px;border-radius:14px;background:var(--bg);box-shadow:var(--in);display:grid;place-items:center;color:var(--muted);font-size:13px}
 .sigs{width:100%;height:90px}.sigs path{fill:none;stroke:var(--nuit);stroke-width:3;stroke-linecap:round;stroke-dasharray:600;stroke-dashoffset:600;animation:trace .8s ease forwards}
 @keyframes trace{to{stroke-dashoffset:0}}
+.sitl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.sitl:last-child{border:0}
+.sitl>span:first-child{display:flex;flex-direction:column;font-size:14px}.sitl small{color:var(--muted);font-size:12px}
+.sitp{display:flex;align-items:center;gap:8px}.sitp b{min-width:44px;text-align:center;font-size:15px}.sitp button{width:38px;height:38px;border-radius:12px;font-size:20px;font-weight:700}.sitp button:disabled{opacity:.35}
+.certif{display:flex;gap:8px;font-size:13px;margin:10px 2px;align-items:flex-start}.certif input{margin-top:3px;accent-color:var(--nuit)}
 </style></head><body>
 <div class="top"><div class="logo"><span data-logo></span><span>Espace<small>Lauzière Rénovation</small></span></div><div class="sp"></div>
 <a class="theme pk" href="index.html" aria-label="Voir le site" style="width:auto;padding:0 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;text-decoration:none;color:inherit">Le site</a>
@@ -787,7 +791,7 @@ V.ges=function(){var g=S.ges;
   if(g==='dev')h+=sansTitre(V.dem());else if(g==='fac')h+=sansTitre(V.fac());else if(g==='cmd')h+=sansTitre(V.cmd());else if(g==='cli')h+=vueClients();else if(g==='paie')h+=vuePaie();else if(g==='pap')h+=vuePapiers();else h+=vueChiffres();
   return h};
 var CLI=[{n:'Mme Rey',l:'Grenoble',e:'Chantier en cours',ch:'rey',ca:48600,pay:14580},{n:'M. et Mme Bonnet',l:'Meylan',e:'Chantier en cours',ch:'mey',ca:31200,pay:9360,ret:1},{n:'M. Faure',l:'Revel',e:'Chantier en cours',ch:'rev',ca:92000,pay:27600},
- {n:'Cabinet Martin',l:'Saint-Martin-d\'Hères',e:'Chantier en cours',ch:'cab',ca:22400,pay:11200},{n:'M. et Mme Girard',l:'Alpe d\'Huez',e:'Chantier en cours',ch:'hue',ca:64000,pay:44800},
+ {n:'Cabinet Martin',l:'Saint-Martin-d\'Hères',e:'Chantier en cours',ch:'cab',ca:22400,pay:12472},{n:'M. et Mme Girard',l:'Alpe d\'Huez',e:'Chantier en cours',ch:'hue',ca:64000,pay:44800},
  {n:'Durand',l:'Domène',e:'Devis envoyé',ca:14800},{n:'Petit',l:'La Tronche',e:'Devis envoyé',ca:56000},{n:'Garnier',l:'Crolles',e:'Devis envoyé',ca:9400},{n:'Mme Lopez',l:'Saint-Ismier',e:'Demande'},{n:'M. Blanc',l:'Gières',e:'Demande'}];
 function vueClients(){return '<div class="pile">'+blk('Clients ('+CLI.length+')','users',CLI.map(function(c,i){return '<button class="ln pk" onclick="ficheCli('+i+')">'+(c.ch?pastille(c.ch,undefined,1):'<span class="pa big dvp">◆</span>')+'<span class="tx"><b>'+c.n+'</b><small>'+c.l+' · '+c.e+(c.ca?' · '+eur(c.ca)+' HT':'')+'</small></span>'+(c.ret?'<span class="etq alert">Retard</span>':'<span class="fl">'+ic('arrow')+'</span>')+'</button>'}).join(''))+'</div>'}
 function ficheCli(i){var c=CLI[i],C=c.ch&&CH.filter(function(x){return x.id===c.ch})[0];
@@ -854,6 +858,89 @@ function reception(){var R=S.recep,h='<h3>Réception · Chalet Girard</h3>';
   fen(h)}
 function signerPV(){var z=$('sig');z.innerHTML='<svg viewBox="0 0 300 90" class="sigs"><path d="M20 60 C40 20 60 80 80 45 S120 30 130 55 S170 70 190 35 S240 50 280 40"/></svg>';
   setTimeout(function(){S.recep.signe=1;RT.evt('client','Girard','PV de réception signé','sign');save();reception();toast('PV signé · DOE et facture de solde créés','check')},900)}
+/* ================= Fonctions des logiciels du bâtiment : situations, retenue, TVA, signature, paiement, relances, comptable ================= */
+if(!S.facx)S.facx=[];if(S.relAuto===undefined)S.relAuto=1;
+/* --- situations de travaux, Cabinet Martin (pro : TVA 20 %, retenue de garantie 5 %) --- */
+var SIT={cl:'Cabinet Martin',ch:'cab',tva:20,ret:5,lots:[['Dépose et mise en sécurité',2400,100,100],['Tableau électrique et protections',5600,100,100],['Câblage et prises',9800,30,70],['Éclairage des bureaux',3200,0,40],['Consuel et essais',1400,0,0]]};
+if(!S.sit)S.sit={p:SIT.lots.map(function(l){return l[3]}),fait:0};
+function sitCalc(){var cu=0,av=0;SIT.lots.forEach(function(l,i){cu+=l[1]*S.sit.p[i]/100;av+=l[1]*l[2]/100});
+  var ht=cu-av,ttc=ht*(1+SIT.tva/100),ret=ttc*SIT.ret/100;return {cu:cu,av:av,ht:ht,tva:ht*SIT.tva/100,ttc:ttc,ret:ret,net:ttc-ret,pct:Math.round(cu/224)}}
+function sitPas(i,d){S.sit.p[i]=Math.max(SIT.lots[i][2],Math.min(100,S.sit.p[i]+d));save();situation()}
+function situation(){var c=sitCalc(),h='<h3>Situation n°2 · Cabinet Martin</h3>';
+  if(S.sit.fait){h+='<div class="ck-top"><span class="ico">'+ic('check')+'</span><div><b class="t">Situation n°2 créée</b><p>'+eur(c.net)+' TTC à payer, retenue de garantie déduite. Elle est dans les factures, prête à partir.</p></div></div>';fen(h);return}
+  h+='<p class="muted" style="margin:0 0 10px">Avancement de chaque partie du devis (22 400 € HT). <b>Cliky l\'a proposé</b> d\'après le pointage et les photos du chantier : vous ajustez d\'un toucher.</p><div class="blk">';
+  SIT.lots.forEach(function(l,i){var p=S.sit.p[i];h+='<div class="sitl"><span><b>'+l[0]+'</b><small>'+eur(l[1])+' HT · déjà facturé '+l[2]+' %</small></span><span class="sitp"><button class="pk" onclick="sitPas('+i+',-10)" aria-label="Moins 10 %"'+(p<=l[2]?' disabled':'')+'>−</button><b>'+p+' %</b><button class="pk" onclick="sitPas('+i+',10)" aria-label="Plus 10 %"'+(p>=100?' disabled':'')+'>+</button></span></div>'});
+  h+='</div><div class="blk" style="margin-top:10px">'+
+   '<div class="lot"><span>Travaux faits à ce jour ('+c.pct+' %)</span><b>'+eur(c.cu)+' HT</b></div>'+
+   '<div class="lot"><span>Moins la situation n°1</span><b>− '+eur(c.av)+' HT</b></div>'+
+   '<div class="lot"><span>Cette situation</span><b>'+eur(c.ht)+' HT</b></div>'+
+   '<div class="lot"><span>TVA 20 % (locaux professionnels)</span><b>'+eur(c.tva)+'</b></div>'+
+   '<div class="lot"><span>Retenue de garantie 5 %</span><b>− '+eur(c.ret)+'</b></div>'+
+   '<div class="tot"><span>À payer</span><span>'+eur(c.net)+' TTC</span></div></div>'+
+   '<p class="muted" style="font-size:12.5px;margin:8px 2px 0">La retenue est gardée par le client jusqu\'à un an après la réception. Cliky vous rappellera de la réclamer.</p>'+
+   '<button class="go" style="width:100%;margin-top:10px" onclick="sitOk()"'+(c.ht<=0?' disabled':'')+'>'+ic('doc')+'Créer la situation n°2</button>';
+  fen(h)}
+function sitOk(){var c=sitCalc();S.sit.fait=1;S.facx.push({id:'fs2',cl:'Martin',t:'Situation n°2 ('+c.pct+' %)',m:Math.round(c.net),etat:'prete'});RT.evt('bureau','Cliky','Situation n°2 Cabinet Martin créée · '+eur(c.net)+' TTC','euro');save();situation();re();toast('Situation créée, prête à envoyer','check')}
+/* --- devis : bibliothèque maison, TVA réduite, signature et acompte en ligne --- */
+var BIB=[['dep','Dépose de la salle de bain existante','forfait',1,980],['rec','Receveur extra-plat 90 × 120 et paroi','u',1,1450],['fai','Faïence murale posée','m²',14,95],['sol','Carrelage de sol posé','m²',5,85],['vas','Meuble vasque 80 cm posé','u',1,890],['wc','WC suspendu posé','u',1,1150],['plo','Alimentations et évacuations','forfait',1,1200],['ele','Électricité : 3 spots, prise rasoir, sèche-serviettes','forfait',1,1350],['pei','Peinture plafond pièce humide','m²',5,32],['vmc','Bouche VMC hygroréglable','u',1,240]];
+if(!S.dv)S.dv={l:['dep','rec','fai','sol','vas','wc','plo','ele'],q:{},tva:10,etat:'brouillon'};
+function dvQ(k){var b=BIB.filter(function(x){return x[0]===k})[0];return S.dv.q[k]!==undefined?S.dv.q[k]:b[3]}
+function dvTot(){var ht=0;S.dv.l.forEach(function(k){var b=BIB.filter(function(x){return x[0]===k})[0];ht+=b[4]*dvQ(k)});return {ht:ht,tva:ht*S.dv.tva/100,ttc:ht*(1+S.dv.tva/100)}}
+function dvTog(k){var i=S.dv.l.indexOf(k);if(i>=0)S.dv.l.splice(i,1);else S.dv.l.push(k);save();devisBlanc()}
+function dvTva(t){S.dv.tva=t;save();devisBlanc()}
+function devisBlanc(){var t=dvTot(),h='<h3>Devis · M. Blanc, Gières</h3><p class="muted" style="margin:0 0 10px">Salle de bain. Cliky a repris la demande et les photos du client.</p>';
+  if(S.dv.etat!=='brouillon'){h+=dvSuivi();fen(h);return}
+  h+='<div class="blk"><h2 style="font-size:15px">Ma bibliothèque d\'ouvrages</h2><p class="muted" style="font-size:12.5px;margin:0 0 8px">Vos prix maison (fourniture + pose). Prix d\'exemple : vous mettez les vôtres une fois, ils servent à chaque devis.</p><div class="row chips">'+
+   BIB.map(function(b){return '<button class="pk" aria-pressed="'+(S.dv.l.indexOf(b[0])>=0)+'" onclick="dvTog(\''+b[0]+'\')">'+b[1].split(' :')[0]+'</button>'}).join('')+'</div></div>';
+  h+='<div class="blk" style="margin-top:10px">'+S.dv.l.map(function(k){var b=BIB.filter(function(x){return x[0]===k})[0];return '<div class="lot"><span>'+b[1]+(b[2]==='forfait'?'':' · '+String(dvQ(k)).replace('.',',')+' '+b[2])+'</span><b>'+eur(b[4]*dvQ(k))+'</b></div>'}).join('')+
+   '<div class="lot"><span>Total HT</span><b>'+eur(t.ht)+'</b></div><div class="lot"><span>TVA '+String(S.dv.tva).replace('.',',')+' %</span><b>'+eur(t.tva)+'</b></div><div class="tot"><span>Total TTC</span><span>'+eur(t.ttc)+'</span></div></div>';
+  h+='<div class="blk" style="margin-top:10px"><h2 style="font-size:15px">La TVA</h2><p class="muted" style="font-size:12.5px;margin:0 0 8px">Logement de plus de 2 ans : Cliky met le taux réduit et ajoute au devis la phrase que le client certifie en signant. Plus de papier à courir après.</p><div class="row chips">'+
+   [[10,'10 % rénovation'],[5.5,'5,5 % économie d\'énergie'],[20,'20 %']].map(function(o){return '<button class="pk" aria-pressed="'+(S.dv.tva===o[0])+'" onclick="dvTva('+o[0]+')">'+o[1]+'</button>'}).join('')+'</div></div>';
+  h+='<button class="go" style="width:100%;margin-top:12px" onclick="dvEnv()">'+ic('send')+'Envoyer pour signature en ligne</button>';
+  fen(h)}
+function dvEnv(){S.dv.etat='envoye';RT.evt('bureau',N.chef,'Devis M. Blanc envoyé pour signature · '+eur(dvTot().ht)+' HT','send');save();devisBlanc();re();toast('M. Blanc reçoit un lien par SMS et e-mail','send')}
+function dvSuivi(){var t=dvTot(),ac=t.ttc*.3,h='';
+  if(S.dv.etat==='envoye')return '<div class="ck-top"><span class="ico">'+ic('send')+'</span><div><b class="t">Envoyé pour signature</b><p>'+eur(t.ht)+' HT. M. Blanc signe sur son téléphone. Sans réponse, Cliky le relance dans 5 jours.</p></div></div><button class="btn2 pk" style="width:100%;margin-top:10px;justify-content:center" onclick="dvClient()">'+ic('eye')+'Voir ce que reçoit M. Blanc</button>';
+  h='<div class="ck-top"><span class="ico">'+ic('check')+'</span><div><b class="t">Devis signé en ligne</b><p>Signé par M. Blanc avec la certification de TVA réduite. Créés tout seuls : la fiche client, le chantier à planifier et la facture d\'acompte de '+eur(ac)+' TTC.</p></div></div>';
+  h+=S.dv.etat==='paye'?'<p class="muted" style="margin:10px 2px 0">Acompte payé en ligne par carte. Il est rapproché tout seul de la facture.</p>':'<p class="muted" style="margin:10px 2px 0">Acompte envoyé avec un lien de paiement.</p>';
+  return h}
+function dvClient(){var t=dvTot();fen('<p class="muted" style="margin:0 0 4px">Ce que voit M. Blanc sur son téléphone</p><h3>Lauzière Rénovation · votre devis</h3><div class="blk">'+S.dv.l.map(function(k){var b=BIB.filter(function(x){return x[0]===k})[0];return '<div class="lot"><span>'+b[1]+'</span><b>'+eur(b[4]*dvQ(k))+'</b></div>'}).join('')+'<div class="tot"><span>Total TTC</span><span>'+eur(t.ttc)+'</span></div></div>'+
+  (S.dv.tva<20?'<label class="certif"><input type="checkbox" checked disabled> Je certifie que le logement a plus de 2 ans et que les travaux permettent la TVA à '+String(S.dv.tva).replace('.',',')+' %.</label>':'')+
+  '<div class="sign" id="sgd">Signez ici avec le doigt</div><button class="go" style="width:100%" onclick="dvSigne()">'+ic('sign')+'Je signe le devis</button>')}
+function dvSigne(){$('sgd').innerHTML='<svg viewBox="0 0 200 70"><path d="M10 45 C25 15 45 60 65 30 S95 25 110 48 S150 20 190 35"/></svg>';
+  setTimeout(function(){var t=dvTot();S.dv.etat='signe';S.facx.push({id:'fab',cl:'Blanc',t:'Acompte 30 %',m:Math.round(t.ttc*.3),etat:'envoyee',lien:1});
+   if(!CLI.some(function(c){return c.n==='M. Blanc'&&c.e==='Devis signé'}))CLI.forEach(function(c){if(c.n==='M. Blanc'){c.e='Devis signé';c.ca=Math.round(t.ht)}});
+   RT.evt('bureau','M. Blanc','Devis signé en ligne · acompte envoyé','sign');save();
+   fen('<p class="muted" style="margin:0 0 4px">Ce que voit M. Blanc</p><h3>Merci, c\'est signé</h3><p>Pour réserver vos dates, l\'acompte de 30 % : <b>'+eur(t.ttc*.3)+'</b>.</p>'+payBtns('dvPaye()'));re()},900)}
+function dvPaye(){S.dv.etat='paye';S.facx.forEach(function(f){if(f.id==='fab')f.etat='payee'});RT.evt('bureau','M. Blanc','Acompte payé en ligne','euro');save();fermer();re();toast('Acompte reçu · '+N.chef+' et '+N.bureau+' sont prévenus','check')}
+/* --- paiement en ligne (côté client) --- */
+function payBtns(fn){return '<div class="row chips" style="margin:6px 0 10px"><button class="pk" aria-pressed="true">Carte bancaire</button><button class="pk">Virement instantané</button></div><button class="go" style="width:100%" onclick="'+fn+'">'+ic('shield')+'Payer en ligne</button><p class="muted" style="font-size:12px;text-align:center;margin:8px 0 0">Paiement sécurisé. Exemple : rien n\'est débité dans la démo.</p>'}
+function payerSit(){fen('<h3>Situation n°2 · 9 720 € TTC</h3><p class="muted" style="margin:0 0 6px">Placo des chambres et du séjour, 40 % du chantier.</p>'+payBtns('paye2()'))}
+function paye2(){S.fac.f2='payee';RT.evt('bureau','Mme Rey','Situation n°2 payée en ligne · 9 720 €','euro');save();fermer();re();toast('Paiement reçu, merci','check')}
+/* --- factures : vue complète --- */
+var STF=[['Plâtrerie Belledonne','Faux plafonds Rey',4200],['Élec Alpes','Tableau Cabinet Martin',2650]];
+V.fac=function(){var h='<h1>Factures</h1><p class="sous">Acomptes, situations et soldes</p><div class="pile">';
+  var E={payee:['ok','Payée'],prete:['warn','Prête'],retard:['alert','Retard'],envoyee:['','Envoyée'],relancee:['warn','Relancée']};
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn2 pk" onclick="situation()">'+ic('plus')+(S.sit.fait?'Situation Cabinet Martin':'Nouvelle situation')+'</button><button class="btn2 pk" onclick="devisBlanc()">'+ic('doc')+'Devis M. Blanc</button></div>';
+  h+=blk('En cours','euro',FAC.concat(S.facx).map(function(f){var st=S.fac[f.id]||f.etat,e=E[st]||['ok','Envoyée'];var act=st==='prete'?(f.id==='fs2'?'envSit()':'envFac(\''+f.id+'\')'):st==='retard'?'relance(\''+f.id+'\')':'';
+    return ln('doc',f.cl+' · '+f.t,eur(f.m)+' TTC'+(st==='retard'?' · '+f.j+' jours de retard':st==='relancee'?' · relance envoyée':'')+(st==='envoyee'?' · lien de paiement en ligne':''),act,'<span class="etq '+e[0]+'">'+e[1]+'</span>')}).join('')+
+    S.av.filter(function(a){return a.etat==='signe'}).map(function(a){return ln('sign','Rey · avenant signé',eur(a.tot)+' HT · '+(a.fact?'ajouté à la situation n°2':'à ajouter'),a.fact?'':'factAv(\''+a.id+'\')')}).join(''));
+  var c=sitCalc(),rc=SIT.lots.reduce(function(s,l){return s+l[1]*l[2]/100},0)*1.2*.05+(S.sit.fait?c.ret:0);
+  h+=blk('Retenues de garantie','shield',ln('clock','Cabinet Martin · '+eur(rc)+' retenus','5 % de chaque situation · à réclamer un an après la réception, Cliky vous le rappellera')+ln('check','Chalet Girard · pas de retenue','Particulier : prévu au devis, sans retenue'));
+  h+=blk('Sous-traitants · autoliquidation','users','<p class="muted" style="font-size:12.5px;margin:0 0 6px">Leurs factures arrivent sans TVA. Cliky vérifie la mention et note la TVA que vous déclarez, pour le comptable.</p>'+STF.map(function(s){return ln('doc',s[0]+' · '+eur(s[2])+' HT',s[1]+' · TVA autoliquidée '+eur(s[2]*.2)+' · mention vérifiée','','<span class="etq ok">OK</span>')}).join(''));
+  h+=blk('Relances des impayés','bell','<div class="post"><span><b style="font-size:14px">Relances automatiques</b><br><small class="muted">3 jours après l\'échéance : e-mail aimable. 10 jours : e-mail et SMS. 20 jours : '+N.bureau+' est prévenue pour appeler. Écrites par Cliky.</small></span><button class="btn2 pk" aria-pressed="'+(!!S.relAuto)+'" onclick="S.relAuto=S.relAuto?0:1;save();re()">'+(S.relAuto?'Activées':'Arrêtées')+'</button></div>');
+  h+=blk('Pour le comptable','send','<p class="muted" style="font-size:12.5px;margin:0 0 8px">Factures, paiements reçus, dépenses et autoliquidations du mois, dans un fichier que son logiciel lit (FEC), avec les PDF.</p><button class="go" style="width:100%" onclick="S.compta=1;save();re();toast(\'Export de novembre envoyé au comptable\',\'send\')">'+ic('send')+(S.compta?'Renvoyer l\'export de novembre':'Envoyer l\'export de novembre')+'</button>');
+  h+=blk('Les marges',role()==='chef'?'euro':'lock',(role()==='chef'||S.acces.bureau_marges)?'<p style="margin:0">Marge moyenne du mois : <b>25 %</b>.</p>':verrouTx('Réservé au chef. '+N.chef+' peut vous donner l\'accès dans ses réglages.'));
+  return h+'</div>'};
+function envSit(){S.facx.forEach(function(f){if(f.id==='fs2')f.etat='envoyee'});RT.evt('bureau',N.bureau,'Situation n°2 envoyée au Cabinet Martin','euro');save();re();toast('Envoyée avec le lien de paiement','send')}
+/* --- devis : un devis à faire --- */
+var _dem=V.dem;V.dem=function(){var h=_dem();var st={brouillon:['warn','À faire'],envoye:['','Envoyé'],signe:['ok','Signé'],paye:['ok','Acompte payé']}[S.dv.etat];
+  return h.replace('<div class="pile">','<div class="pile">'+blk('Devis à faire','doc',ln('doc','M. Blanc · salle de bain','Gières · '+(S.dv.etat==='brouillon'?'préparé par Cliky depuis la bibliothèque':eur(dvTot().ht)+' HT'),'devisBlanc()','<span class="etq '+st[0]+'">'+st[1]+'</span>')))};
+/* --- client : payer en ligne --- */
+var _doc=V.doc;V.doc=function(){var h=_doc();
+  if(S.fac.f2==='envoyee')h=h.replace(/(<b>Situation n°2<\/b><small>[^<]*<\/small><\/span>)/,'$1');
+  var p=S.fac.f2==='envoyee'?'<button class="go" style="width:100%;margin-top:10px" onclick="payerSit()">'+ic('euro')+'Payer la situation n°2 en ligne</button>':S.fac.f2==='payee'?'<p class="muted" style="margin:10px 2px 0">Situation n°2 payée. Merci.</p>':'';
+  return h.replace(/(<\/section>)(<\/div>)$/,p+'$1$2')};
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
