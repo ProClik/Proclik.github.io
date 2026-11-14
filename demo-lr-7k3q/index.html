@@ -87,6 +87,7 @@ footer .pc{display:inline-flex;align-items:center;gap:7px}footer .pc b{color:#1B
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1)}
 .reveal.on{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
+@media (max-width:699px){.hero{min-height:0;padding-bottom:185px}.p2{min-height:0}}
 </style></head><body>
 <div class="ex">Site d'exemple réalisé par ProClik · entreprise, contenus et coordonnées fictifs</div>
 <header class="nav"><div class="bar"><a class="marque" href="#haut">Lauzière<b></b></a>
@@ -132,7 +133,7 @@ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isInter
 var LITE=matchMedia("(hover:none),(max-width:899px)").matches,R=matchMedia("(prefers-reduced-motion: reduce)").matches;
 var wrap=document.createElement("div");wrap.id="fondwrap";var c=document.createElement("canvas");c.id="fond";c.setAttribute("aria-hidden","true");wrap.appendChild(c);document.body.insertBefore(wrap,document.body.firstChild);
 var x=c.getContext("2d"),W=0,H=0,dpr=1,vis=true,run=false,t0=performance.now(),last=t0,p=0,sv=0,lastY=scrollY,mx=.5,tx=.5,L=1400,RH=2000,now=0,dtS=.016;
-var NAV="27,36,64",LAI="184,149,90",GRI="120,135,160",GOU=[],TR=[];
+var HERO=document.querySelector('.hero'),NAV="27,36,64",LAI="184,149,90",GRI="120,135,160",GOU=[],TR=[];
 function cl(u,a,b){return u<a?a:u>b?b:u}function ease(u){u=cl(u,0,1);return u*u*(3-2*u)}function rnd(a,b){return a+Math.random()*(b-a)}
 function span(){try{var ss=document.querySelectorAll("main section"),s2=ss[1]||ss[0],r=s2.getBoundingClientRect();RH=Math.max(H*1.4,r.bottom+scrollY);wrap.style.height=RH+"px";L=Math.max(H*.6,(RH-H)*.88)}catch(e){RH=H*2;L=H}}
 function taille(){dpr=LITE?1:Math.min(1.5,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;span()}
@@ -161,7 +162,7 @@ function draw(e){
  /* 3 · repères de chantier qui scintillent */
  for(var j=0;j<10;j++){var a=Math.max(0,Math.sin(now/1000+j*1.7))*e,sx=W*((j*.137+.08)%1),sy=H*((j*.211+.15)%.85);if(a<.05)continue;x.strokeStyle="rgba("+LAI+","+(a*.7)+")";x.lineWidth=1.2;x.beginPath();x.moveTo(sx-5,sy);x.lineTo(sx+5,sy);x.moveTo(sx,sy-5);x.lineTo(sx,sy+5);x.stroke()}
  /* 4 · le rouleau peint une bande en haut à droite, des gouttes tombent */
- var sz=Math.min(W,H)*(W<700?.2:.15),cx=W*(W<700?.8:.85),base=H*(.17+.4*e),aller=.5-.5*Math.cos(now/1400),cy=base+aller*sz*.9;
+ var ph=W<700,hb=ph&&HERO?HERO.getBoundingClientRect().bottom:0,sz=ph?Math.min(W*.24,100):Math.min(W,H)*.15,cx=ph?W*.5+sz*.05:W*.85,base=ph?hb-sz*1.55-8:H*(.17+.4*e),aller=.5-.5*Math.cos(now/1400),cy=base+aller*sz*.45;
  var bx=cx-sz*.45,bw=sz*.9;x.fillStyle="rgba("+LAI+",.14)";x.fillRect(bx,base-sz*.1,bw,(cy-base)+sz*.2);
  TR.push({y:cy,a:1});if(TR.length>40)TR.shift();
  if(aller>.97&&now-ro.last>900){ro.last=now;for(var q=0;q<3;q++)GOU.push({x:bx+rnd(.1,.9)*bw,y:cy+sz*.12,vy:rnd(10,30),a:1,r:rnd(2,4)})}
