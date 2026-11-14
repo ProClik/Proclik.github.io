@@ -228,7 +228,8 @@ body[data-v="pc"] .cl, body[data-v="cl"] .pc{display:none!important}
 /* 2. atouts */
 .trois{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:36px}
 .trois>div{display:flex;flex-direction:column;gap:8px;min-width:0}
-.trois h3{font-size:19px;font-weight:800}
+.trois h3{font-size:19px;font-weight:800}.trois.sec>div{display:block;padding:22px;border-radius:20px;background:var(--calme);box-shadow:var(--sh)}.trois.sec .pastille{margin-bottom:14px}.trois.sec p{margin-top:6px}
+#securite .lead{max-width:60ch;margin-top:10px}
 .trois p{color:var(--muted)}
 @media (max-width:760px){.trois{grid-template-columns:1fr;gap:22px}}
 
@@ -749,6 +750,18 @@ main>section:not(.hero) .num::before{content:"";display:inline-block;width:30px;
 </div></section>
 
 <!-- 6. GARANTIE + QUESTIONS (+ AVIS) -->
+<!-- SÉCURITÉ DES DONNÉES -->
+<section id="securite"><div class="wrap">
+  <span class="num"><b>6</b><span class="pc">Vos données</span><span class="cl">Vos données</span></span>
+  <h2>Vos données <span class="or">restent les vôtres.</span></h2>
+  <p class="lead">Clients, devis, plans, photos, factures : ce sont les informations de votre entreprise. Elles sont traitées avec le plus grand soin.</p>
+  <div class="trois sec">
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.2"/><path d="M4 10h16"/></svg></span><h3>Un espace par entreprise</h3><p>Vos clients, devis, photos et plans restent dans votre espace, séparés de ceux des autres entreprises. Rien n'est mélangé.</p></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="3.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg></span><h3>Un accès rien qu'à vous</h3><p>On entre avec un code personnel. Sans lui, rien ne s'ouvre, même avec le lien. La connexion est chiffrée (https).</p></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 5.6v5.2c0 4.3-2.9 7.6-7 9.2-4.1-1.6-7-4.9-7-9.2V5.6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></span><h3>Jamais revendues</h3><p>Vos données ne servent qu'à votre activité. Elles ne sont ni revendues, ni partagées avec d'autres clients, y compris par Cliky.</p></div>
+  </div>
+</div></section>
+
 <section id="questions"><div class="wrap">
   <span class="num"><b>6</b><span class="pc">La garantie</span><span class="cl">Avis et questions</span></span>
   <div class="deux">
@@ -766,6 +779,7 @@ main>section:not(.hero) .num::before{content:"";display:inline-block;width:30px;
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Je ne suis pas à l'aise avec les applis.</span></summary><p>C'est fait pour vous : un gros bouton par étape, et on vous montre tout sur votre téléphone.</p></details>
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Puis-je garder mon site actuel ?</span></summary><p>Oui. L'Espace existe aussi tout seul, avec une petite page de demande à votre nom.</p></details>
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Mes devis et factures sont-ils conformes ?</span></summary><p>Oui, ils sont faits avec un logiciel de facturation, prêts pour la facture électronique 2026.</p></details>
+        <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Mes données sont-elles protégées ?</span></summary><p>Oui. Votre espace est séparé de celui des autres entreprises, on y entre avec un code personnel et la connexion est chiffrée. Vos données ne sont ni revendues ni partagées.</p></details>
         <details><summary><span class="qi"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span><span class="qt">Et si j'arrête ?</span></summary><p>Texte à écrire avec Cyril.</p></details>
       </div>
       <div class="cl">
