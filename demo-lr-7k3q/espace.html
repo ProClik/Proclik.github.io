@@ -1192,7 +1192,7 @@ function annuaire(){var r=role(),h='<div class="fpx"><h3>'+(r==='client'?'Vos co
     h+='<div class="blk"><h2 style="font-size:15px"><span class="ico" style="width:28px;height:28px;border-radius:9px">'+ic('home')+'</span>Clients'+(r==='ouvrier'?' de vos chantiers':' des chantiers en cours')+' <span class="etq" style="margin-left:auto">'+C.length+'</span></h2>'+C.map(function(c){return '<div class="anl"><span class="av" style="background:'+CC[c.ch]+';color:#fff">'+LET[c.ch]+'</span><span class="tx"><b>'+c.n+'</b><small>'+c.l+'</small></span><button class="pk anc" aria-label="Appeler '+c.n+'" onclick="toast(\'Appel à '+c.n.replace(/'/g,'')+'\',\'phone\')">'+ic('phone')+'</button></div>'}).join('')+'</div>'}
   fen(h)}
 (function(){var b=document.createElement('button');b.className='theme pk';b.id='annBtn';b.setAttribute('aria-label','L\'équipe');b.innerHTML=ic('users');b.onclick=annuaire;var g=$('regBtn');g.parentNode.insertBefore(b,g)})();
-var _rRoles=rRoles;rRoles=function(){_rRoles();var c=$('roles').querySelector('[data-r="client"]');if(c)c.textContent='Client · '+N.client};
+rRoles=function(){$('roles').innerHTML=Object.keys(RT.ROLES).map(function(k){return '<button data-r="'+k+'" aria-pressed="'+(role()===k)+'">'+RT.ROLES[k]+'</button>'}).join('')};rRoles();
 (function(){var r=new URLSearchParams(location.search).get('r');if(r&&RT.ROLES[r]){S.role=r;save()}})();
 rRoles();go(onglet[role()]);
 </script>
