@@ -1,0 +1,48 @@
+/* Démo ProClik pour une PME industrielle : style N1 (bleu nuit pour les actions, laiton en simple touche,
+   blocs calmes, seul ce qui se touche ressort). Même dessin le jour et la nuit, seules les couleurs changent. */
+:root{
+  --bg:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.09);
+  --nuit:#1B2440;--nuit-fg:#fff;--laiton:#A8823F;--calme:#F6F7F9;
+  --calme-sh:0 1px 2px rgba(14,19,34,.06),0 10px 28px rgba(14,19,34,.07);
+  --teinte:color-mix(in srgb,var(--nuit) 7%,var(--calme));
+  --ok:#3E8E6A;--warn:#C27C2C;--alert:#B9577A;
+  --pk:0 1px 1px rgba(255,255,255,.9) inset,0 0 0 1px rgba(14,19,34,.08),0 2px 3px rgba(14,19,34,.08),0 8px 16px -8px rgba(14,19,34,.25);
+  --in:inset 2px 2px 5px rgba(26,34,64,.12),inset -2px -2px 5px rgba(255,255,255,.9);
+  --doux:cubic-bezier(.22,1,.36,1)}
+:root[data-theme="dark"]{
+  --bg:#141927;--fg:#F1F3F9;--muted:#AEB6CC;--line:rgba(255,255,255,.08);
+  --nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--calme:#1F2638;
+  --calme-sh:0 10px 28px rgba(0,0,0,.35);
+  --ok:#6FC39B;--warn:#E3A65E;--alert:#E08AAA;
+  --pk:0 1px 0 rgba(255,255,255,.06) inset,0 0 0 1px rgba(255,255,255,.07),0 8px 16px -8px rgba(0,0,0,.6);
+  --in:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(255,255,255,.04)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141927;--fg:#F1F3F9;--muted:#AEB6CC;--line:rgba(255,255,255,.08);
+  --nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--calme:#1F2638;
+  --calme-sh:0 10px 28px rgba(0,0,0,.35);
+  --ok:#6FC39B;--warn:#E3A65E;--alert:#E08AAA;
+  --pk:0 1px 0 rgba(255,255,255,.06) inset,0 0 0 1px rgba(255,255,255,.07),0 8px 16px -8px rgba(0,0,0,.6);
+  --in:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(255,255,255,.04)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ex{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--muted);
+  background:var(--teinte);border-radius:99px;padding:3px 9px}
+.ex::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--laiton)}
+.blk{background:var(--calme);border-radius:22px;box-shadow:var(--calme-sh);padding:16px}
+.pk{background:var(--bg);box-shadow:var(--pk);border-radius:14px;transition:transform .15s var(--doux),box-shadow .15s}
+.pk:active{transform:scale(.97);box-shadow:var(--in)}
+.go{background:var(--nuit);color:var(--nuit-fg);font-weight:700;border-radius:16px;padding:15px 18px;display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 1px 2px rgba(14,19,34,.18),0 8px 18px -6px rgba(14,19,34,.35);transition:transform .15s var(--doux),filter .15s}
+.go:active{transform:scale(.97);filter:brightness(.92)}
+.go[disabled]{opacity:.4;pointer-events:none}
+.ico{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--teinte);color:var(--nuit);flex:none}
+.muted{color:var(--muted)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.02em}
+.logo svg{width:36px;height:40px}
+.theme{width:40px;height:40px;border-radius:50%;display:grid;place-items:center}
+@keyframes monte{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.monte{animation:monte .45s var(--doux) both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
