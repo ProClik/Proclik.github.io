@@ -11,7 +11,15 @@ body{min-height:100dvh}
 .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   padding:max(8px,env(safe-area-inset-top)) 12px 8px;display:flex;align-items:center;gap:8px}
 .top .logo svg{width:28px;height:32px}
-.roles{flex:1;display:flex;gap:3px;background:var(--teinte);border-radius:99px;padding:3px;min-width:0;max-width:460px;margin:0 auto}
+.marque{flex:1;min-width:0;line-height:1.15}.marque b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.marque small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.quibar{padding:0 12px 8px;max-width:760px;margin:0 auto}.qlab{display:block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 4px 5px}
+.roles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.roles button.pers{display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:14px;text-align:left;min-width:0;color:var(--fg)!important;font-size:inherit!important}
+.pers i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px;background:var(--teinte);color:var(--nuit)}
+.pers span{min-width:0;display:block}.pers b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pers small{display:block;font-size:10.5px;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roles button.pers[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--nuit);background:var(--calme)}.roles button.pers[aria-pressed="true"] i{background:var(--nuit);color:var(--nuit-fg)}
+@media(max-width:600px){.qlab{display:none}.top{padding-bottom:6px}.quibar{padding-bottom:6px}.hi{margin:2px 0 8px}}
+@media(max-width:430px){.pers i{display:none}.roles button.pers{justify-content:center;text-align:center;padding:6px 3px}}
 .roles button{flex:1;padding:8px 2px;border-radius:99px;font-weight:700;font-size:12.5px;color:var(--muted);white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
 .roles button[aria-pressed="true"]{background:var(--bg);color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--nuit)}
 .rb{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;position:relative;flex:none}
@@ -52,11 +60,11 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .now .gh{border-radius:14px;padding:12px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--nuit-fg) 30%,transparent);color:inherit;font-size:14px}
 /* étapes du dossier */
 .pipe{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.pipe button{border-radius:12px;padding:7px 0 6px;display:grid;justify-items:center;gap:1px;min-width:0}
-.pipe button b{font-size:18px;font-variant-numeric:tabular-nums;line-height:1.1}
-.pipe button small{font-size:9.5px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis}
+.pipe button,.pipe span{border-radius:12px;padding:7px 0 6px;display:grid;justify-items:center;gap:1px;min-width:0}
+.pipe b{font-size:18px;font-variant-numeric:tabular-nums;line-height:1.1}
+.pipe small{font-size:9.5px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis}
 .pipe button[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--nuit);background:color-mix(in srgb,var(--nuit) 9%,var(--bg))}
-.pipe button.z{opacity:.45}
+.pipe .z{opacity:.45}
 .steps{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:6px 0 2px;position:relative}
 .steps::before{content:"";position:absolute;left:7%;right:7%;top:8px;height:2px;background:var(--line)}
 .steps span{display:grid;justify-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--muted);position:relative;text-align:center}
@@ -71,7 +79,7 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .tabc{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
 .tabc th{font-size:11px;color:var(--muted);text-align:right;font-weight:700;padding:0 4px 6px}
 .tabc th:first-child,.tabc td:first-child{text-align:left}
-.tabc td{padding:8px 4px;border-top:1px solid var(--line);text-align:right;font-weight:700}
+.tabc td{padding:5px 4px;border-top:1px solid var(--line);text-align:right;font-weight:700}
 .tabc td:first-child{font-weight:800}
 /* option : bandeau icône + nom, jamais « incluse » */
 .opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:16px;width:100%;text-align:left;background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--laiton) 45%,transparent)}
@@ -133,7 +141,13 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 @media(min-width:900px){
   .nav{left:16px;top:96px;bottom:auto;transform:none;flex-direction:column;width:104px}
   .nav .plus{margin:4px auto;align-self:center}
-  main{padding-left:140px;max-width:900px}
+  main{padding-left:150px;max-width:1180px}
+  .quibar{max-width:1180px;padding-left:150px}
+}
+@media(min-width:1000px){
+  .pile{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .pile>.now,.pile>.pipe,.pile>.seg,.pile>.full{grid-column:1/-1}
+  .pile>section.blk:has(.grille){grid-column:1/-1}
 }
 /* fenêtre */
 .voile{position:fixed;inset:0;background:rgba(10,14,26,.35);z-index:40;display:none;align-items:flex-end;justify-content:center}
@@ -177,6 +191,10 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .sms{background:var(--calme);border-radius:16px 16px 16px 6px;padding:11px 13px;font-size:14px;line-height:1.45}
 .toast{position:fixed;left:50%;top:max(12px,env(safe-area-inset-top));transform:translate(-50%,-220%);opacity:0;z-index:60;background:var(--nuit);color:var(--nuit-fg);padding:11px 15px;border-radius:15px;font-weight:700;font-size:14px;
   display:flex;gap:10px;align-items:center;transition:transform .45s var(--doux);max-width:calc(100% - 32px);box-shadow:0 12px 30px -10px rgba(0,0,0,.4)}
+.mplan{width:100%;max-height:150px;display:block}
+.planf{position:fixed;inset:0;z-index:70;background:var(--bg);display:none;flex-direction:column}.planf.on{display:flex}
+.pfh{display:flex;align-items:center;gap:10px;padding:max(8px,env(safe-area-inset-top)) 12px 8px}.pfh b{flex:1;font-size:15px}.pfh .go{padding:9px 14px;font-size:14px}.pfh .ferme{width:38px;height:38px;border-radius:50%;display:grid;place-items:center}
+.planf iframe{flex:1;border:0;width:100%}
 .toast.on{transform:translate(-50%,0);opacity:1}
 .mini{font-size:12px;color:var(--muted);margin:6px 2px 0;line-height:1.4}
 .carte{width:100%;height:auto;display:block;border-radius:14px;background:var(--teinte)}
@@ -186,13 +204,15 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
-  <div class="roles" id="roles" role="group" aria-label="Voir l'Espace en tant que"></div>
+  <div class="marque"><b>Valcroix Matériaux</b><small>Espace menuiserie · démonstration</small></div>
   <button class="rb pk" id="cloche" aria-label="Du nouveau"></button>
 </header>
+<div class="quibar"><span class="qlab">Voir l'Espace de</span><div class="roles" id="roles" role="group" aria-label="Voir l'Espace de"></div></div>
 <main id="m"></main>
 <nav class="nav" id="nav"></nav>
 <div class="voile" id="voile"><div class="fen" id="fen" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status"></div>
+<div class="planf" id="planf"><div class="pfh"><b>Plan</b><button class="go" onclick="planFermer(1)">J'ai terminé</button><button class="ferme pk" onclick="planFermer(0)" aria-label="Fermer">''</button></div><iframe title="Plan du logement" allow="microphone"></iframe></div>
 <script>
 var $=function(i){return document.getElementById(i)},ic=PCD.ic,S,D=VX.DOSSIERS,N=VX.NOMS;
 function charger(){var s=PCD.load();S=s&&s.v===3?s:Object.assign(VX.etat0(),{v:3});}
@@ -224,8 +244,9 @@ var NAV={
   agence:[['jour','chart','Tableau'],['pp','cal','Planning'],['pos','helmet','Poseurs'],['cli','users','Dossiers']],
   poseur:[['jour','hammer','Mes poses'],['pp','cal','Planning'],['pap','shield','Papiers']]};
 var ong={com:'jour',adv:'jour',agence:'jour',poseur:'jour'};
-$('logo').innerHTML=PCD.logo;
-function rRoles(){$('roles').innerHTML=Object.keys(VX.ROLES).map(function(k){return '<button data-r="'+k+'" aria-pressed="'+(role()===k)+'">'+VX.ROLES[k]+'</button>'}).join('')}
+$('logo').innerHTML=PCD.logo;$('planf').querySelector('.ferme').innerHTML=ic('x');
+var RL={agence:'Responsable',com:'Commercial',adv:'ADV',poseur:'Poseur'};
+function rRoles(){$('roles').innerHTML=Object.keys(VX.ROLES).map(function(k){return '<button class="pers pk" data-r="'+k+'" aria-pressed="'+(role()===k)+'"><i>'+N[k][0]+'</i><span><b>'+N[k]+'</b><small>'+RL[k]+'</small></span></button>'}).join('')}
 $('roles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.role=b.dataset.r;save();rRoles();go(ong[role()])});
 function nb(o){var r=role();if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return (r!=='agence'&&r!=='adv')?0:D.filter(function(d){return acaler(d)&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
 function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){if(n[0]==='+')return '<button class="plus" onclick="nouveau()" aria-label="Nouveau rendez-vous ou prise de cotes"><span class="g">'+ic('plus')+'</span></button>';var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="g">'+ic(n[1])+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
@@ -253,9 +274,9 @@ V.com_jour=function(){var d=VX.dos('durand'),cot=S.cotes.durand,fait=cot&&cot.en
   return h+'</div>'};
 V.com_cli=function(){var L=mesDos(),f=S.fcli;
   var cnt=VX.ETAPES.map(function(_,i){return L.filter(function(d){return et(d)===i}).length});
-  var h=hi('Mes clients',L.length+' dossiers · touchez une étape pour trier');
-  h+='<div class="pile"><div class="pipe">'+VX.ETAPES.map(function(e,i){return '<button class="pk'+(cnt[i]?'':' z')+'" aria-pressed="'+(f===i)+'" onclick="S.fcli=S.fcli==='+i+'?null:'+i+';re()"><b>'+cnt[i]+'</b><small>'+e+'</small></button>'}).join('')+'</div>';
-  var M=L.filter(function(d){return f==null||et(d)===f});
+  var h=hi('Mes clients',L.length+' dossiers, du plus récent au plus avancé');
+  h+='<div class="pile"><div class="pipe">'+VX.ETAPES.map(function(e,i){return '<span class="pk'+(cnt[i]?'':' z')+'"><b>'+cnt[i]+'</b><small>'+e+'</small></span>'}).join('')+'</div>';
+  var M=L.slice().sort(function(a,b){return et(a)-et(b)});
   h+='<section class="blk">'+(M.length?M.map(dosLn).join(''):'<p class="mini">Aucun dossier à cette étape.</p>')+'</section></div>';return h};
 function dosLn(d,court){var e=et(d),c=e===6?(d.sav&&!S.poseOk.petit?'warn':'ok'):(d.relance&&e===1&&!S.relance[d.id])||(d.arc&&S.arcOk==='ecart')||(acaler(d)&&!place(d.id))?'warn':'la';
   return '<button class="ln pk" onclick="ouvrir(\''+d.id+'\')"><span class="pt '+c+'"></span><span class="tx"><b>'+d.cl+' · '+d.v+'</b>'+(court?'':'<small>'+suite(d)+'</small>')+'</span><span class="etq">'+VX.ETAPES[e]+'</span></button>'}
@@ -272,7 +293,7 @@ function suite(d){var e=et(d);
   return d.suite}
 V.com_moi=function(){var c=VX.CHIF.julien,h=hi('Mes chiffres','Novembre · chiffres d\'exemple');
   h+='<div class="pile"><section class="blk"><div class="chif"><div><b>'+c.cours+'</b><small>en cours</small></div><div><b>'+c.dev+'</b><small>devis envoyés</small></div><div><b>'+c.sig+'</b><small>signés</small></div><div><b>'+c.tx+'</b><small>transformés</small></div></div><p class="mini" style="margin-top:10px">Signé ce mois : <b>'+c.ca+' HT</b>. Délai moyen entre le métré et la signature : 9 jours.</p></section>';
-  h+=blk('Où ça bloque','alert',ln('send','2 devis sans nouvelles','Plus de 7 jours','S.fcli=1;go(\'cli\')')+ln('clock','1 commande en retard','Fabricant, semaine annoncée dépassée','ouvrir(\'moreau\')'));
+  h+=blk('Où ça bloque','alert',ln('send','2 devis sans nouvelles','Plus de 7 jours','go(\'cli\')')+ln('clock','1 commande en retard','Fabricant, semaine annoncée dépassée','ouvrir(\'moreau\')'));
   h+=optB('devis','Vos clients veulent aussi des matériaux ?','Placo, isolant, mastic : devis comptoir en 2 minutes')+'</div>';return h};
 function nouveau(){fen('<h3>Nouveau</h3><p class="sous">Qu\'est-ce que vous voulez faire ?</p><div class="pile">'+
   ln('cal','Un rendez-vous de métré','Le client, le jour, l\'heure : c\'est tout','nvRdv()')+
@@ -293,6 +314,7 @@ function ouvrir(id){var d=VX.dos(id),e=et(d),r=role(),men=id==='durand'?(S.cotes
   h+='<section class="blk"><div class="steps">'+VX.ETAPES.map(function(x,i){return '<span class="'+(i<e?'f':i===e?'c':'')+'"><i></i>'+x+'</span>'}).join('')+'</div><p style="margin:8px 0 0;font-size:13.5px;font-weight:700">'+suite(d)+'</p></section>';
   h+='<section class="blk"><h2>'+ic('ruler')+men+' menuiseries<span class="sp"></span><small>'+d.fab+'</small></h2><p class="mini" style="margin:0 0 8px">'+d.quoi+'</p>'+
     '<a class="btn2 pk" style="text-decoration:none;width:100%" href="cotes.html?d='+id+(e===0&&r==='com'?'':'&lect=1')+'">'+ic('doc')+(e===0&&r==='com'?'Prendre les cotes':'Voir la fiche de cotes')+'</a></section>';
+  h+='<section class="blk"><h2>'+ic('plan')+'Plan du logement<span class="sp"></span><small>'+(aPlan(id)?'avec les repères':'pas encore fait')+'</small></h2>'+(aPlan(id)?miniPlan(d):'<p class="mini" style="margin:0 0 8px">Le même plan que celui du formulaire client : 2 minutes pendant le métré, et chaque menuiserie se pose à sa place.</p>')+'<button class="btn2 pk" style="width:100%;margin-top:8px" onclick="planOuvrir(\''+id+'\')">'+ic('plan')+(aPlan(id)?'Ouvrir le plan':'Faire le plan')+'</button></section>';
   var docs=[['Fiche de cotes',e>=1||(id==='durand'&&S.cotes.durand&&S.cotes.durand.envoye)],['Devis Pro Devis',e>=1&&!(id==='durand'&&e===1)],['Bon de commande',e>=3],['ARC fabricant',e>=4||(id==='martin'&&S.arcOk==='ok')||(id==='martin'?'la':false)],['Bon de livraison',e>=5],['PV de réception',e>=6||S.poseOk[id]]];
   if(r!=='poseur')h+='<section class="blk"><h2>'+ic('folder')+'Documents</h2><div class="docs">'+docs.map(function(x){return '<span class="'+(x[1]==='la'?'la':x[1]?'ok':'')+'">'+x[0]+'</span>'}).join('')+'</div></section>';
   h+='<section class="blk"><h2>'+ic('hammer')+'Pose<span class="sp"></span><small>'+poseTxt(d)+'</small></h2>'+(acaler(d)&&!place(id)&&r!=='com'&&r!=='poseur'?'<button class="go" style="width:100%" onclick="fermer();PL.v=\'poses\';PL.sel=\''+id+'\';go(\'pp\')">'+ic('cal')+'Caler la pose</button>':'<p class="mini" style="margin:0">'+(r==='com'?'Le poseur et le client sont prévenus par SMS. Vous voyez la fin de pose ici.':'Matériel à retirer à l\'agence, quai 2.')+'</p>')+'</section>';
@@ -437,6 +459,17 @@ function sigInit(){var c=$('sigc');if(!c)return;var r=c.getBoundingClientRect(),
 function finPose(){var d=VX.dos(PZ.id);S.poseOk[PZ.id]=1;S.et[PZ.id]=6;
   evt(['com','agence','adv'],(PZ.id==='petit'?'SAV ':'Pose ')+d.cl+' terminée par KB Pose · PV signé, photos dans le dossier','check');save();fermer();re();toast('Terminé ! Le commercial et l\'agence sont prévenus','check')}
 
+/* ---------- plan du logement : le vrai plan du formulaire, dans une fenêtre ---------- */
+function aPlan(id){return (S.plans&&S.plans[id])||['durand','garcia','roux','martin','petit','chabert'].indexOf(id)>=0}
+function miniPlan(d){var n=Math.min(d.nbm,7),P=[[14,10,96,62],[110,10,96,62],[14,72,70,52],[84,72,64,52],[148,72,58,52]],s='<svg viewBox="0 0 220 136" class="mplan" role="img" aria-label="Plan avec les menuiseries numérotées">';
+  P.forEach(function(r){s+='<rect x="'+r[0]+'" y="'+r[1]+'" width="'+r[2]+'" height="'+r[3]+'" fill="var(--bg)" stroke="var(--nuit)" stroke-width="2.2"/>'});
+  var W=[[40,10,'h'],[150,10,'h'],[206,40,'v'],[206,98,'v'],[110,124,'h'],[40,124,'h'],[14,98,'v']];
+  for(var i=0;i<n;i++){var w=W[i];s+=(w[2]==='h'?'<rect x="'+(w[0]-12)+'" y="'+(w[1]-2.5)+'" width="24" height="5" fill="var(--laiton)"/>':'<rect x="'+(w[0]-2.5)+'" y="'+(w[1]-12)+'" width="5" height="24" fill="var(--laiton)"/>')+'<circle cx="'+(w[2]==='h'?w[0]:w[0]+(w[0]>100?-12:12))+'" cy="'+(w[2]==='h'?w[1]+(w[1]>60?-11:11):w[1])+'" r="7.5" fill="var(--nuit)"/><text x="'+(w[2]==='h'?w[0]:w[0]+(w[0]>100?-12:12))+'" y="'+((w[2]==='h'?w[1]+(w[1]>60?-11:11):w[1])+3.5)+'" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--nuit-fg)">'+(i+1)+'</text>'}
+  return s+'</svg>'}
+var PLID=null;
+function planOuvrir(id){PLID=id;fermer();var f=$('planf');f.querySelector('iframe').src='../devis/plan.html?client&embed'+(aPlan(id)?'':'&new');f.querySelector('b').textContent='Plan · '+VX.dos(id).cl;f.classList.add('on')}
+function planFermer(fini){$('planf').classList.remove('on');$('planf').querySelector('iframe').src='about:blank';if(fini&&PLID){S.plans=S.plans||{};S.plans[PLID]=1;evt(['com','adv','agence','poseur'].filter(function(r){return r!==role()}),'Plan du logement '+VX.dos(PLID).cl+' rangé dans le dossier','plan');save();toast('Plan rangé dans le dossier','plan')}var id=PLID;PLID=null;if(id)ouvrir(id)}
+addEventListener('message',function(e){var t=e.data&&e.data.type;if(PLID&&(t==='proclik-plan-finish'))planFermer(1)});
 /* ======================= options (jamais incluses) ======================= */
 function option(k){var O={devis:['Option Devis','devis','Les devis du comptoir et des matériaux, à côté de la menuiserie (qui reste dans Pro Devis).',['Devis comptoir en 2 minutes : on cherche l\'article, on tape la quantité, c\'est fait','Vos prix et vos remises par client pro, le PDF à votre nom, signé en ligne','Le même dossier client que la menuiserie : tout ce qu\'il achète au même endroit']],
   cliky:['Option Cliky','robot','L\'assistant qui fait le suivi à votre place.',['Il lit les ARC et les bons de livraison reçus par e-mail et les range dans le bon dossier','Il compare l\'ARC à vos cotes et vous prévient au moindre écart','Il relance les devis sans réponse et prévient les clients à chaque étape']]}[k];
