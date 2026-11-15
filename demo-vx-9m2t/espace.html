@@ -251,6 +251,14 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .srch .mic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
 .voir{width:100%;padding:13px;border-radius:16px;font-weight:700;font-size:14px;color:var(--muted)}
 .grp .voir{margin-top:8px}
+
+.cl1 .nm{gap:1px;padding:9px 4px 9px 16px}
+.cl1 .nm b{display:flex;align-items:center;gap:7px}
+.cl1 .nm small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+.cl1 .nm small .urg{color:var(--alert);font-weight:800}
+.cl1 .pu{width:8px;height:8px;border-radius:50%;background:var(--alert);flex:none}
+.cl1 button.mot.act{margin-right:12px;border:0;cursor:pointer;padding:8px 11px;font-size:13px;font-weight:800;color:var(--nuit);background:var(--bg);border-radius:12px;white-space:nowrap}
+.lst.w{box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.08))}.gh2.w{color:var(--nuit)}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -340,13 +348,19 @@ function actMot(d){var m=motCourt(d),r=role(),id=d.id;
   if(m==='À commander'&&r==='adv')return "traiter('cmd','"+id+"')";
   return "ouvrir('"+id+"')"}
 var PRIO={'Métré 10 h':.5,'Écart ARC':1,'ARC à voir':2,'Pose à caler':3,'À commander':4,'Réserve':5,'À relancer':6};
-function carteCli(d){var w=aFaire(d),m=motCourt(d);return '<div class="cl1"><button class="nm" onclick="ouvrir(\''+d.id+'\')"><b>'+d.cl+'</b>'+(LC.q?'<small>'+d.v+'</small>':'')+'</button>'+(w?'<button class="mot w pk" onclick="'+actMot(d)+'">'+m+'</button>':'<button class="nm2" onclick="ouvrir(\''+d.id+'\')"><span class="mot">'+(d.old?'Terminé':m)+'</span>'+ic('right')+'</button>')+'</div>'}
+function court(d){var t=d.quoi;return t.length<=24?t:t.replace(/fenêtres?/g,'fen.').replace(/porte-fenêtre/,'porte-fen.').replace(' + volets roulants',' + volets').replace(', bureaux','')}
+function court0(d){return d.quoi.replace(/^(\d+) fenêtres et 1 porte d'entrée, PVC$/,'$1 fen. + 1 porte, PVC').replace(' + volets roulants',' + volets').replace(', bureaux','').replace('porte-fenêtre','porte-fen.')}
+function depuis(d){var a=d.att;if(a==null)return '';return a===0?'aujourd\'hui':a===1?'depuis hier':'depuis '+a+' jours'}
+function urg(d){return d.att>=7||(d.arc&&S.arcOk==='ecart')}
+function carteCli(d){var w=aFaire(d),m=motCourt(d),u=w&&urg(d);
+  var l2=d.old?court(d)+' · '+d.suite.replace(' · PV signé',''):court(d)+(w&&d.att!=null?' · <span class="'+(u?'urg':'')+'">'+depuis(d)+'</span>':'')+(LC.q?' · '+d.v:'');
+  return '<div class="cl1"><button class="nm" onclick="ouvrir(\''+d.id+'\')"><b>'+(u?'<i class="pu" aria-label="Urgent"></i>':'')+d.cl+'</b><small>'+l2+'</small></button>'+(w?'<button class="mot act pk" onclick="'+actMot(d)+'">'+m+'</button>':'<button class="nm2" onclick="ouvrir(\''+d.id+'\')"><span class="mot">'+(d.old?'Terminé':m)+'</span>'+ic('right')+'</button>')+'</div>'}
 var LC={q:'',term:false};
 function sans(t){return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s/g,'')}
 function listeCli(L){var q=sans(LC.q);
   if(q){var R=L.filter(function(d){return sans(d.cl+' '+d.v+' '+d.tel+' '+d.fab).indexOf(q)>=0});
     return '<section class="grp"><h2 class="gh2">'+R.length+' résultat'+(R.length>1?'s':'')+'</h2>'+(R.length?'<div class="lst">'+R.slice(0,30).map(carteCli).join('')+'</div>':'<p class="mini">Aucun client trouvé. Essayez la ville ou le téléphone.</p>')+'</section>'}
-  var A=L.filter(aFaire).sort(function(x,y){return (PRIO[motCourt(x)]||9)-(PRIO[motCourt(y)]||9)}),C=L.filter(function(d){return !aFaire(d)&&et(d)<6}),T=L.filter(function(d){return !aFaire(d)&&et(d)===6});
+  var A=L.filter(aFaire).sort(function(x,y){return (urg(y)?1:0)-(urg(x)?1:0)||(PRIO[motCourt(x)]||9)-(PRIO[motCourt(y)]||9)}),C=L.filter(function(d){return !aFaire(d)&&et(d)<6}),T=L.filter(function(d){return !aFaire(d)&&et(d)===6});
   var h='';
   if(A.length)h+='<section class="grp"><h2 class="gh2 w">À faire · '+A.length+'</h2><div class="lst w">'+A.map(carteCli).join('')+'</div></section>';
   if(C.length)h+='<section class="grp"><h2 class="gh2">En cours · '+C.length+'</h2><div class="lst">'+C.map(carteCli).join('')+'</div></section>';

@@ -21,16 +21,16 @@
   VX.PLANNING0={kb:['petit','libre','libre','garcia','garcia'],duval:['roux','roux','ail','ail','libre'],tl:['off','off','off','off','off']};
   /* dossiers clients : e = étape (index VX.ETAPES) */
   VX.DOSSIERS=[
-    {id:'durand',cl:'M. et Mme Durand',v:'Voiron',com:'julien',e:0,fab:'Millet',nbm:6,quoi:'5 fenêtres et 1 porte d\'entrée, PVC',rdv:'Lundi 16 · 10 h 00',suite:'Métré chez le client à 10 h',tel:'06 00 00 01 01',x:118,y:96},
-    {id:'blanc',cl:'M. Blanc',v:'Moirans',com:'julien',e:1,fab:'Minco',nbm:4,quoi:'4 fenêtres bois-alu',mt:'6 850 €',suite:'Devis envoyé il y a 8 jours, sans réponse',relance:true,tel:'06 00 00 01 02',x:86,y:132},
-    {id:'lopez',cl:'SCI Lopez',v:'Tullins',com:'sarah',e:2,fab:'K·LINE',nbm:7,quoi:'7 menuiseries alu, bureaux',mt:'18 900 €',suite:'Signé hier : commande à passer',tel:'06 00 00 01 03',x:40,y:150},
-    {id:'martin',cl:'Mme Martin',v:'Coublevie',com:'julien',e:3,fab:'K·LINE',nbm:3,quoi:'2 fenêtres et 1 porte-fenêtre alu',mt:'7 420 €',suite:'ARC reçu ce matin : à contrôler',arc:true,tel:'06 00 00 01 04',x:132,y:72},
-    {id:'moreau',cl:'M. Moreau',v:'Saint-Égrève',com:'sarah',e:3,fab:'Bouvet',nbm:2,quoi:'2 baies coulissantes alu',mt:'9 300 €',suite:'Fabrication : livraison annoncée semaine 48',liv:'Semaine 48',tel:'06 00 00 01 05',x:214,y:170},
+    {id:'durand',att:0,cl:'M. et Mme Durand',v:'Voiron',com:'julien',e:0,fab:'Millet',nbm:6,quoi:'5 fenêtres et 1 porte d\'entrée, PVC',rdv:'Lundi 16 · 10 h 00',suite:'Métré chez le client à 10 h',tel:'06 00 00 01 01',x:118,y:96},
+    {id:'blanc',att:8,cl:'M. Blanc',v:'Moirans',com:'julien',e:1,fab:'Minco',nbm:4,quoi:'4 fenêtres bois-alu',mt:'6 850 €',suite:'Devis envoyé il y a 8 jours, sans réponse',relance:true,tel:'06 00 00 01 02',x:86,y:132},
+    {id:'lopez',att:1,cl:'SCI Lopez',v:'Tullins',com:'sarah',e:2,fab:'K·LINE',nbm:7,quoi:'7 menuiseries alu, bureaux',mt:'18 900 €',suite:'Signé hier : commande à passer',tel:'06 00 00 01 03',x:40,y:150},
+    {id:'martin',att:0,cl:'Mme Martin',v:'Coublevie',com:'julien',e:3,fab:'K·LINE',nbm:3,quoi:'2 fenêtres et 1 porte-fenêtre alu',mt:'7 420 €',suite:'ARC reçu ce matin : à contrôler',arc:true,tel:'06 00 00 01 04',x:132,y:72},
+    {id:'moreau',att:2,cl:'M. Moreau',v:'Saint-Égrève',com:'sarah',e:3,fab:'Bouvet',nbm:2,quoi:'2 baies coulissantes alu',mt:'9 300 €',suite:'Fabrication : livraison annoncée semaine 48',liv:'Semaine 48',tel:'06 00 00 01 05',x:214,y:170},
     {id:'garcia',cl:'M. Garcia',v:'Saint-Jean-de-Moirans',com:'julien',e:4,fab:'Millet',nbm:5,quoi:'5 fenêtres PVC + volets roulants',mt:'8 760 €',suite:'Livré à l\'agence · pose jeudi et vendredi par KB Pose',pose:'kb',tel:'06 00 00 01 06',x:98,y:112},
-    {id:'bernard',cl:'M. Bernard',v:'Grenoble',com:'sarah',e:4,fab:'Tryba',nbm:4,quoi:'4 fenêtres PVC',mt:'5 980 €',suite:'Livré à l\'agence · pose à caler',acaler:true,tel:'06 00 00 01 07',x:250,y:196},
+    {id:'bernard',att:3,cl:'M. Bernard',v:'Grenoble',com:'sarah',e:4,fab:'Tryba',nbm:4,quoi:'4 fenêtres PVC',mt:'5 980 €',suite:'Livré à l\'agence · pose à caler',acaler:true,tel:'06 00 00 01 07',x:250,y:196},
     {id:'roux',cl:'Famille Roux',v:'Voreppe',com:'julien',e:5,fab:'Tryba',nbm:3,quoi:'1 porte d\'entrée alu + 2 baies',mt:'11 240 €',suite:'Pose en cours (lundi et mardi) · Pose Alpes',pose:'duval',tel:'06 00 00 01 08',x:170,y:130},
-    {id:'chabert',cl:'Mme Chabert',v:'Voiron',com:'sarah',e:3,fab:'Millet',nbm:6,quoi:'6 fenêtres PVC + 2 volets roulants',mt:'9 870 €',suite:'ARC confirmé : arrivée jeudi 19 à l\'agence',tel:'06 00 00 01 10',x:120,y:100},
-    {id:'petit',cl:'M. Petit',v:'Rives',com:'julien',e:6,fab:'Millet',nbm:4,quoi:'4 fenêtres PVC',mt:'5 120 €',suite:'Posé · 1 réserve : volet de la chambre à régler lundi',sav:true,pose:'kb',tel:'06 00 00 01 09',x:60,y:70}
+    {id:'chabert',att:0,cl:'Mme Chabert',v:'Voiron',com:'sarah',e:3,fab:'Millet',nbm:6,quoi:'6 fenêtres PVC + 2 volets roulants',mt:'9 870 €',suite:'ARC confirmé : arrivée jeudi 19 à l\'agence',tel:'06 00 00 01 10',x:120,y:100},
+    {id:'petit',att:5,cl:'M. Petit',v:'Rives',com:'julien',e:6,fab:'Millet',nbm:4,quoi:'4 fenêtres PVC',mt:'5 120 €',suite:'Posé · 1 réserve : volet de la chambre à régler lundi',sav:true,pose:'kb',tel:'06 00 00 01 09',x:60,y:70}
   ];
   /* anciens dossiers terminés (pour voir la liste tenir avec beaucoup de clients) : noms et villes fictifs */
   (function(){var N=['M. Arnaud','Mme Barbier','M. Benoit','Mme Bertrand','M. Blanchard','Mme Bonnet','M. Boyer','Mme Brun','M. Carpentier','Mme Caron','M. Clément','Mme Colin','M. Dupuis','Mme Fabre','M. Faure','Mme Fleury','M. Fontaine','Mme Gauthier','M. Gérard','Mme Giraud','M. Guérin','Mme Henry','M. Joly','Mme Lacroix','M. Lambert','Mme Lefèvre','M. Lemaire','Mme Mallet','M. Masson','Mme Mercier','M. Meyer','Mme Michaud','M. Noël','Mme Perrin','M. Picard','Mme Renaud','M. Rolland','Mme Vidal'],
