@@ -3,7 +3,10 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../fonts/fonts.css">
 <link rel="stylesheet" href="demo.css">
-<script src="demo.js"></script><script src="data.js"></script><script src="vraie-carte.js"></script>
+<link rel="stylesheet" href="../n1.css">
+<link rel="stylesheet" href="../espace/barre.css?v=16">
+<link rel="stylesheet" href="../espace/menu-commun.css?v=1">
+<script src="demo.js?v=2"></script><script src="data.js"></script><script src="vraie-carte.js"></script>
 <style>
 
 body{min-height:100dvh}
@@ -45,18 +48,10 @@ h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .chips button[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--nuit);background:color-mix(in srgb,var(--nuit) 9%,var(--bg))}
 .btn2{padding:11px 14px;border-radius:13px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px}
 .vide{color:var(--muted);font-size:14px;padding:6px 2px}
-/* barre du bas (téléphone) / menu à gauche (grand écran) */
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));z-index:30;display:flex;gap:4px;padding:6px;border-radius:26px;
-  background:var(--calme);box-shadow:var(--calme-sh),0 0 0 1px var(--line);width:min(440px,calc(100% - 24px))}
-.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:20px;font-size:11px;font-weight:700;color:var(--muted);position:relative}
-.nav button .g{width:38px;height:30px;border-radius:14px;display:grid;place-items:center}
-.nav button[aria-selected="true"]{color:var(--fg)}
-.nav button[aria-selected="true"] .g{color:var(--nuit);box-shadow:0 0 0 2px var(--laiton);background:var(--bg)}
-.nav .bd{position:absolute;top:4px;right:calc(50% - 22px);min-width:18px;height:18px;border-radius:9px;background:var(--alert);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px}
-@media(min-width:900px){
-  .nav{left:16px;top:120px;bottom:auto;transform:none;flex-direction:column;width:110px}
-  main{padding-left:150px;max-width:930px}
-}
+/* menu : commun à tous les Espaces (../espace/menu-commun.css) */
+@media(min-width:900px){main{max-width:930px}}
+.dic-m{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--bg);box-shadow:var(--pk),0 0 0 6px color-mix(in srgb,var(--nuit) 12%,transparent);color:var(--nuit)}
+.dic-m svg.i{width:26px;height:26px}
 /* planning des postes */
 .post{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
 .qui{display:flex;align-items:center;gap:8px}
@@ -408,10 +403,10 @@ function save(){RT.save()}
 
 /* ---------- Outils ---------- */
 var onglet={chef:'acc',bureau:'bacc',ouvrier:'jour',client:'cli'};
-var NAV={chef:[['acc','home','Accueil'],['ch','box','Chantiers'],['pl','cal','Planning'],['ges','euro','Gestion'],['ck','chat','Cliky']],
+var NAV={chef:[['acc','home','Accueil'],['ch','chantier','Chantiers'],['pl','cal','Planning'],['ges','euro','Gestion'],['ck','chat','Cliky']],
  bureau:[['bacc','home','Accueil'],['dem','send','Demandes'],['fac','euro','Factures'],['cmd','truck','Commandes'],['bck','chat','Cliky']],
  ouvrier:[['jour','clock','Ma journée'],['oplan','plan','Plan'],['sem','cal','Semaine'],['moi','team','Moi']],
- client:[['cli','home','Mon chantier'],['doc','doc','Documents'],['msg','chat','Messages']]};
+ client:[['cli','home','Chantier'],['doc','doc','Documents'],['msg','chat','Messages']]};
 function role(){return S.role||'chef'}
 function eur(v){return Math.round(v).toLocaleString('fr-FR')+' €'}
 function toast(t,k){var e=$('toast');e.innerHTML=ic(k||'bell')+'<span>'+t+'</span>';e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2800)}
@@ -433,7 +428,9 @@ function nb(k){
   return 0}
 function rRoles(){$('roles').innerHTML=Object.keys(RT.ROLES).map(function(k){return '<button data-r="'+k+'" aria-pressed="'+(role()===k)+'">'+RT.ROLES[k]+(k==='chef'?' · '+N.chef:k==='bureau'?' · '+N.bureau:k==='ouvrier'?' · '+N.ouvrier:'')+'</button>'}).join('')}
 $('roles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.role=b.dataset.r;save();rRoles();go(onglet[role()])});
-function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(onglet[r]===n[0])+'"><span class="g">'+ic(n[1])+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
+function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){var c=nb(n[0]);return '<button role="tab" data-o="'+n[0]+'" data-v="'+n[0]+'" id="nb-'+n[0]+'" aria-selected="'+(onglet[r]===n[0])+'"><span class="ico" aria-hidden="true">'+ic(n[1])+'</span>'+n[2]+'<span class="badge"'+(c?'':' hidden')+'>'+(c||'')+'</span></button>'}).join('');
+  /* autre personne = autres onglets : le menu commun se refait */
+  if(window.PCBarre&&rNav.k!==r){rNav.k=r;setTimeout(function(){PCBarre.applique()},0)}}
 $('nav').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.o==='oplan'){location.href='plan.html?r=ouvrier';return}go(b.dataset.o)});
 function go(o){onglet[role()]=o;rNav();$('regBtn').hidden=role()!=='chef';$('regBtn').innerHTML=ic('gear');var f=V[o];$('m').innerHTML=f?f():'';scrollTo(0,0)}
 function re(){go(onglet[role()])}
@@ -534,13 +531,13 @@ function voirDem(id){var d=S.dem.filter(function(x){return x.id===id})[0];
 function visite(id){var d=S.dem.filter(function(x){return x.id===id})[0];d.etat='visite';RT.evt('bureau',N.bureau,'Visite proposée à '+d.nom+' ('+d.lieu+')','cal');fermer();re();toast(d.nom+' choisit son créneau, il arrivera dans l\'agenda d\''+N.chef,'check')}
 V.dem=function(){var h='<h1>Demandes</h1><p class="sous">Arrivées par le site, déjà résumées par Cliky</p><div class="pile">';
   h+=blk('Demandes','send',S.dem.map(function(d){return ln(d.plan?'plan':'send',d.nom+' · '+d.t,d.lieu+' · '+(d.etat==='nouv'?'à rappeler':'visite proposée'),d.etat==='nouv'?'voirDem(\''+d.id+'\')':'',d.etat==='nouv'?'<span class="etq warn">Nouvelle</span>':'<span class="etq ok">Visite</span>')}).join(''));
-  h+=blk('Devis à relancer','doc',ln('doc','Durand · Domène','Salle de bain · 14 800 € HT · envoyé il y a 8 jours','relDevis(this)')+ln('doc','Petit · La Tronche','Appartement 85 m² · 56 000 € HT · envoyé il y a 12 jours','relDevis(this)'));
+  h+=blk('Devis à relancer','devis',ln('devis','Durand · Domène','Salle de bain · 14 800 € HT · envoyé il y a 8 jours','relDevis(this)')+ln('devis','Petit · La Tronche','Appartement 85 m² · 56 000 € HT · envoyé il y a 12 jours','relDevis(this)'));
   return h+'</div>'};
 function relDevis(b){b.disabled=true;b.querySelector('small').textContent='Relance envoyée par e-mail, rédigée par Cliky';toast('Relance envoyée','send')}
 V.fac=function(){var h='<h1>Factures</h1><p class="sous">Acomptes, situations et soldes</p><div class="pile">';
   var E={payee:['ok','Payée'],prete:['warn','Prête'],retard:['alert','Retard'],envoyee:['','Envoyée']};
   h+=blk('En cours','euro',FAC.map(function(f){var st=S.fac[f.id]||f.etat,e=E[st]||['ok','Envoyée'];var act=st==='prete'?'envFac(\''+f.id+'\')':st==='retard'?'relance(\''+f.id+'\')':'';
-    return ln('doc',f.cl+' · '+f.t,eur(f.m)+' TTC'+(st==='retard'?' · '+f.j+' jours de retard':st==='relancee'?' · relance envoyée':''),act,'<span class="etq '+e[0]+'">'+e[1]+'</span>')}).join('')+
+    return ln('facture',f.cl+' · '+f.t,eur(f.m)+' TTC'+(st==='retard'?' · '+f.j+' jours de retard':st==='relancee'?' · relance envoyée':''),act,'<span class="etq '+e[0]+'">'+e[1]+'</span>')}).join('')+
     S.av.filter(function(a){return a.etat==='signe'}).map(function(a){return ln('sign','Rey · avenant signé',eur(a.tot)+' HT · '+(a.fact?'ajouté à la situation n°2':'à ajouter'),a.fact?'':'factAv(\''+a.id+'\')')}).join(''));
   h+=blk('Les marges',role()==='chef'?'euro':'lock',(role()==='chef'||S.acces.bureau_marges)?'<p style="margin:0">Marge moyenne du mois : <b>25 %</b>.</p>':verrouTx('Réservé au chef. '+N.chef+' peut vous donner l\'accès dans ses réglages.'));
   return h+'</div>'};
@@ -610,7 +607,7 @@ V.cli=function(){var c=CH[0];
 V.doc=function(){var h='<h1>Documents</h1><p class="sous">Tout ce qui concerne votre chantier</p><div class="pile">';
   var A=S.av.filter(function(a){return a.etat==='client'});
   if(A.length)h+=blk('À signer','sign',A.map(function(a){return ln('sign','Avenant · '+a.txt,eur(a.tot)+' HT · à signer avant les travaux','signer(\''+a.id+'\')','<span class="etq warn">À signer</span>')}).join(''));
-  h+=blk('Signés','doc',ln('doc','Devis · rénovation complète','48 600 € HT · signé le 2 octobre')+S.av.filter(function(a){return a.etat==='signe'}).map(function(a){return ln('sign','Avenant · '+a.txt,eur(a.tot)+' HT · signé aujourd\'hui')}).join('')+ln('plan','Plan de l\'appartement','Validé le 4 novembre','location.href=\'plan.html?r=client\''));
+  h+=blk('Signés','devis',ln('devis','Devis · rénovation complète','48 600 € HT · signé le 2 octobre')+S.av.filter(function(a){return a.etat==='signe'}).map(function(a){return ln('sign','Avenant · '+a.txt,eur(a.tot)+' HT · signé aujourd\'hui')}).join('')+ln('plan','Plan de l\'appartement','Validé le 4 novembre','location.href=\'plan.html?r=client\''));
   h+=blk('Factures','euro',ln('euro','Acompte 30 %','14 580 € TTC · payé')+ln('euro','Situation n°2',S.fac.f2==='envoyee'?'9 720 € TTC · à payer en ligne':'9 720 € TTC · arrive bientôt'));
   return h+'</div>'};
 function signer(id){var a=S.av.filter(function(x){return x.id===id})[0];
@@ -744,8 +741,8 @@ function carteSvg(f,w,d){var s='<svg viewBox="0 0 360 252" class="map" role="img
 function vueCarte(){var f=CARTE_F;setTimeout(vraie,0);
   var h='<div class="row chips">'+[['tout','Tout'],['ch','Chantiers en cours'],['dv','Devis et demandes']].map(function(o){return '<button class="pk" aria-pressed="'+(f===o[0])+'" onclick="CARTE_F=\''+o[0]+'\';re()">'+o[1]+'</button>'}).join('')+'</div>';
   h+='<section class="blk monte" style="padding:8px;position:relative"><span class="direct"><i></i>En direct · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':',' h ')+'</span>'+'<div class="vc" id="vc"><div class="vc-svg">'+carteSvg(f,0,0)+'</div></div>'+'<div class="leg2"><span><i class="lv"></i>Arrivé</span><span><i class="lw"></i>Pas encore indiqué</span><span><i class="ls"></i>Sous-traitant</span><span><i class="ld"></i>Devis ou demande</span><span><i class="lp"></i>Dépôt</span></div></section>';
-  if(f!=='dv')h+=blk('Sur les chantiers en ce moment','box',CH.map(function(c){var Q=qui(0,c.id,0),T=stJour(c.id,0,0);return '<button class="ln pk dir" onclick="ficheCh(\''+c.id+'\')">'+pastille(c.id,undefined,1)+'<span class="tx"><b>'+c.n+' · '+c.l+'</b><span class="qq">'+(Q.length||T.length?Q.map(function(q){return '<span class="q1"><i class="pt '+(TEL[q]?'ok':'warn')+'"></i>'+q+' <small>'+(TEL[q]?'depuis '+TEL[q]:'pas encore là')+'</small></span>'}).join('')+T.map(function(t){return '<span class="q1"><i class="pt" style="background:var(--laiton)"></i>'+t.s+(t.nb>1?' ×'+t.nb:'')+' <small>sous-traitant</small></span>'}).join(''):'<small>Personne aujourd\'hui</small>')+'</span></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
-  if(f!=='ch')h+=blk('Devis et demandes','doc',DEVIS.map(function(v,i){return '<button class="ln pk" onclick="voirDevis('+i+')"><span class="pa big dvp">◆</span><span class="tx"><b>'+v.n+' · '+v.l+'</b><small>'+v.t+' · '+v.e+'</small></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
+  if(f!=='dv')h+=blk('Sur les chantiers en ce moment','chantier',CH.map(function(c){var Q=qui(0,c.id,0),T=stJour(c.id,0,0);return '<button class="ln pk dir" onclick="ficheCh(\''+c.id+'\')">'+pastille(c.id,undefined,1)+'<span class="tx"><b>'+c.n+' · '+c.l+'</b><span class="qq">'+(Q.length||T.length?Q.map(function(q){return '<span class="q1"><i class="pt '+(TEL[q]?'ok':'warn')+'"></i>'+q+' <small>'+(TEL[q]?'depuis '+TEL[q]:'pas encore là')+'</small></span>'}).join('')+T.map(function(t){return '<span class="q1"><i class="pt" style="background:var(--laiton)"></i>'+t.s+(t.nb>1?' ×'+t.nb:'')+' <small>sous-traitant</small></span>'}).join(''):'<small>Personne aujourd\'hui</small>')+'</span></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
+  if(f!=='ch')h+=blk('Devis et demandes','devis',DEVIS.map(function(v,i){return '<button class="ln pk" onclick="voirDevis('+i+')"><span class="pa big dvp">◆</span><span class="tx"><b>'+v.n+' · '+v.l+'</b><small>'+v.t+' · '+v.e+'</small></span><span class="fl">'+ic('arrow')+'</span></button>'}).join(''));
   return h}
 function voirDevis(i){var v=DEVIS[i];fen('<h3>'+v.n+' · '+v.l+'</h3><p class="muted" style="margin:0 0 10px">'+v.t+'</p><p style="font-size:15px"><b>'+v.e+'</b></p><p class="muted" style="font-size:13px">À '+(Math.round(Math.hypot((v.g[0]-45.219)*111,(v.g[1]-5.862)*79))+' km du dépôt')+'. Cliky peut caler la visite le jour où une équipe est déjà dans le coin.</p><button class="go" style="width:100%" onclick="fermer();toast(\'Visite proposée mardi, quand Mathieu est à côté\',\'cal\')">'+ic('cal')+'Caler la visite intelligemment</button>')}
 function vueUn(w){var p=S.plv.qui,L=S.pl[w][p];
@@ -773,7 +770,7 @@ function poser(w,p,d,c,muet){if(S.pl[w][p][d]===c){if(!muet)re();return}S.pl[w][
 function ajoutCh(w,ch,d){var libres=EQUIPE.filter(function(p){var c=S.pl[w][p][d];return !c||(c!==ch&&BES[c]&&compte(w,c,d)>BES[c][w][d])});
   fen('<h3>'+CHN[ch]+' · '+JOURS[d]+' '+DATES[w][d]+'</h3><p class="muted" style="margin:0 0 10px">Qui peut venir ?</p>'+(libres.length?libres.map(function(p){var c=S.pl[w][p][d];return ln('team',p,c?'Prévu sur '+nomCase(c)+', où il y a assez de monde':'Libre ce jour-là','poser('+w+',\''+p+'\','+d+',\''+ch+'\');fermer()')}).join(''):'<p>Personne n\'est libre. Cliky peut chercher un artisan partenaire.</p>')+
    '<h3 style="font-size:15px;margin:14px 0 6px">Tous les autres</h3>'+EQUIPE.filter(function(p){return libres.indexOf(p)<0&&S.pl[w][p][d]!==ch}).map(function(p){return ln('team',p,'Prévu sur '+nomCase(S.pl[w][p][d]),'poser('+w+',\''+p+'\','+d+',\''+ch+'\');fermer()')}).join(''))}
-function semaineCopie(p,w){fen('<h3>'+p+' toute la semaine</h3>'+CH.map(function(c){return ln('box',c.n,c.l,'[0,1,2,3,4].forEach(function(d){poser('+w+',\''+p+'\',d,\''+c.id+'\',1)});fermer();re();toast(\''+p+' est sur '+CHN[c.id]+' toute la semaine\',\'cal\')')}).join(''))}
+function semaineCopie(p,w){fen('<h3>'+p+' toute la semaine</h3>'+CH.map(function(c){return ln('chantier',c.n,c.l,'[0,1,2,3,4].forEach(function(d){poser('+w+',\''+p+'\',d,\''+c.id+'\',1)});fermer();re();toast(\''+p+' est sur '+CHN[c.id]+' toute la semaine\',\'cal\')')}).join(''))}
 function envoyerPl(){S.envoye=1;EQUIPE.forEach(function(p){S.vu[p]=false});S.chg={};save();re();toast('Chacun reçoit sa semaine sur son téléphone','send');
   setTimeout(function(){['Mathieu','Damien','Benoît','Thomas'].forEach(function(p){S.vu[p]=true});save();if(role()==='chef'&&onglet.chef==='pl')re()},2500)}
 /* côté ouvrier : sa semaine, avec les changements à confirmer */
@@ -827,11 +824,11 @@ function vueClients(){return '<div class="pile">'+blk('Clients ('+CLI.length+')'
 function ficheCli(i){var c=CLI[i],C=c.ch&&CH.filter(function(x){return x.id===c.ch})[0];
   fen('<h3>'+c.n+'</h3><p class="muted" style="margin:0 0 10px">'+c.l+' · '+c.e+'</p><div class="blk"><div class="post"><span>Téléphone</span><b>06 00 00 00 00</b></div><div class="post" style="margin-top:6px"><span>E-mail</span><b>client@exemple.fr</b></div></div>'+
    (c.ca?'<div class="chif" style="margin-top:10px"><div><b>'+eur(c.ca)+'</b><small>devis HT</small></div><div><b>'+(c.pay?eur(c.pay):'—')+'</b><small>payé</small></div>'+(C?'<div><b>'+C.mgt+' %</b><small>marge</small></div><div><b>'+ETP[C.e]+'</b><small>étape</small></div>':'')+'</div>':'')+
-   (C?'<button class="go" style="width:100%;margin-top:12px" onclick="fermer();ficheCh(\''+c.ch+'\')">'+ic('box')+'Voir le chantier</button>':'<button class="go" style="width:100%;margin-top:12px" onclick="fermer();toast(\'Relance préparée par Cliky\',\'send\')">'+ic('send')+(c.e==='Demande'?'Proposer une visite':'Relancer le devis')+'</button>'))}
+   (C?'<button class="go" style="width:100%;margin-top:12px" onclick="fermer();ficheCh(\''+c.ch+'\')">'+ic('chantier')+'Voir le chantier</button>':'<button class="go" style="width:100%;margin-top:12px" onclick="fermer();toast(\'Relance préparée par Cliky\',\'send\')">'+ic('send')+(c.e==='Demande'?'Proposer une visite':'Relancer le devis')+'</button>'))}
 function vueChiffres(){
   var h='<div class="pile">'+blk('Ce mois-ci','euro','<div class="chif"><div><b>86 400 €</b><small>signé HT</small></div><div><b>54 300 €</b><small>encaissé</small></div><div><b>19 040 €</b><small>à encaisser</small></div><div><b>80 200 €</b><small>devis en attente</small></div></div>');
-  h+=blk('Marge par chantier','box',CH.map(function(c){var bad=c.mgt<c.mg-3;return '<div style="padding:8px 0"><div class="post"><span>'+pastille(c.id)+' <b style="font-size:14px">'+c.n+'</b></span><b style="color:var(--'+(bad?'alert':'ok')+')">'+c.mgt+' %</b></div><div class="barre"><i style="width:'+c.mgt*3+'%;background:'+CC[c.id]+'"></i></div><small class="muted">Prévue '+c.mg+' %'+(bad?' · '+c.note:'')+'</small></div>'}).join(''));
-  h+=blk('Les devis','doc','<div class="chif"><div><b>12</b><small>envoyés en 3 mois</small></div><div><b>7</b><small>signés</small></div><div><b>58 %</b><small>signés</small></div><div><b>9 j</b><small>pour signer</small></div></div>');
+  h+=blk('Marge par chantier','chantier',CH.map(function(c){var bad=c.mgt<c.mg-3;return '<div style="padding:8px 0"><div class="post"><span>'+pastille(c.id)+' <b style="font-size:14px">'+c.n+'</b></span><b style="color:var(--'+(bad?'alert':'ok')+')">'+c.mgt+' %</b></div><div class="barre"><i style="width:'+c.mgt*3+'%;background:'+CC[c.id]+'"></i></div><small class="muted">Prévue '+c.mg+' %'+(bad?' · '+c.note:'')+'</small></div>'}).join(''));
+  h+=blk('Les devis','devis','<div class="chif"><div><b>12</b><small>envoyés en 3 mois</small></div><div><b>7</b><small>signés</small></div><div><b>58 %</b><small>signés</small></div><div><b>9 j</b><small>pour signer</small></div></div>');
   return h+'</div>'}
 
 /* vraie carte de l'Espace (fond OpenFreeMap) avec les bulles en direct ; repli sur la carte dessinée */
@@ -908,7 +905,7 @@ function situation(){var c=sitCalc(),h='<h3>Situation n°2 · Cabinet Martin</h3
    '<div class="lot"><span>Retenue de garantie 5 %</span><b>− '+eur(c.ret)+'</b></div>'+
    '<div class="tot"><span>À payer</span><span>'+eur(c.net)+' TTC</span></div></div>'+
    '<p class="muted" style="font-size:12.5px;margin:8px 2px 0">La retenue est gardée par le client jusqu\'à un an après la réception. Cliky vous rappellera de la réclamer.</p>'+
-   '<button class="go" style="width:100%;margin-top:10px" onclick="sitOk()"'+(c.ht<=0?' disabled':'')+'>'+ic('doc')+'Créer la situation n°2</button>';
+   '<button class="go" style="width:100%;margin-top:10px" onclick="sitOk()"'+(c.ht<=0?' disabled':'')+'>'+ic('facture')+'Créer la situation n°2</button>';
   fen(h)}
 function sitOk(){var c=sitCalc();S.sit.fait=1;S.facx.push({id:'fs2',cl:'Martin',t:'Situation n°2 ('+c.pct+' %)',m:Math.round(c.net),etat:'prete'});RT.evt('bureau','Cliky','Situation n°2 Cabinet Martin créée · '+eur(c.net)+' TTC','euro');save();situation();re();toast('Situation créée, prête à envoyer','check')}
 /* --- devis : bibliothèque maison, TVA réduite, signature et acompte en ligne --- */
@@ -953,7 +950,7 @@ V.fac=function(){var h='<h1>Factures</h1><p class="sous">Acomptes, situations et
   var E={payee:['ok','Payée'],prete:['warn','Prête'],retard:['alert','Retard'],envoyee:['','Envoyée'],relancee:['warn','Relancée']};
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn2 pk" onclick="situation()">'+ic('plus')+(S.sit.fait?'Situation Cabinet Martin':'Nouvelle situation')+'</button><button class="btn2 pk" onclick="devisBlanc()">'+ic('doc')+'Devis M. Blanc</button></div>';
   h+=blk('En cours','euro',FAC.concat(S.facx).map(function(f){var st=S.fac[f.id]||f.etat,e=E[st]||['ok','Envoyée'];var act=st==='prete'?(f.id==='fs2'?'envSit()':'envFac(\''+f.id+'\')'):st==='retard'?'relance(\''+f.id+'\')':'';
-    return ln('doc',f.cl+' · '+f.t,eur(f.m)+' TTC'+(st==='retard'?' · '+f.j+' jours de retard':st==='relancee'?' · relance envoyée':'')+(st==='envoyee'?' · lien de paiement en ligne':''),act,'<span class="etq '+e[0]+'">'+e[1]+'</span>')}).join('')+
+    return ln('facture',f.cl+' · '+f.t,eur(f.m)+' TTC'+(st==='retard'?' · '+f.j+' jours de retard':st==='relancee'?' · relance envoyée':'')+(st==='envoyee'?' · lien de paiement en ligne':''),act,'<span class="etq '+e[0]+'">'+e[1]+'</span>')}).join('')+
     S.av.filter(function(a){return a.etat==='signe'}).map(function(a){return ln('sign','Rey · avenant signé',eur(a.tot)+' HT · '+(a.fact?'ajouté à la situation n°2':'à ajouter'),a.fact?'':'factAv(\''+a.id+'\')')}).join(''));
   var c=sitCalc(),rc=SIT.lots.reduce(function(s,l){return s+l[1]*l[2]/100},0)*1.2*.05+(S.sit.fait?c.ret:0);
   h+=blk('Retenues de garantie','shield',ln('clock','Cabinet Martin · '+eur(rc)+' retenus','5 % de chaque situation · à réclamer un an après la réception, Cliky vous le rappellera')+ln('check','Chalet Girard · pas de retenue','Particulier : prévu au devis, sans retenue'));
@@ -965,7 +962,7 @@ V.fac=function(){var h='<h1>Factures</h1><p class="sous">Acomptes, situations et
 function envSit(){S.facx.forEach(function(f){if(f.id==='fs2')f.etat='envoyee'});RT.evt('bureau',N.bureau,'Situation n°2 envoyée au Cabinet Martin','euro');save();re();toast('Envoyée avec le lien de paiement','send')}
 /* --- devis : un devis à faire --- */
 var _dem=V.dem;V.dem=function(){var h=_dem();var st={brouillon:['warn','À faire'],envoye:['','Envoyé'],signe:['ok','Signé'],paye:['ok','Acompte payé']}[S.dv.etat];
-  return h.replace('<div class="pile">','<div class="pile">'+blk('Devis à faire','doc',ln('doc','M. Blanc · salle de bain','Gières · '+(S.dv.etat==='brouillon'?'préparé par Cliky depuis la bibliothèque':eur(dvTot().ht)+' HT'),'devisBlanc()','<span class="etq '+st[0]+'">'+st[1]+'</span>')))};
+  return h.replace('<div class="pile">','<div class="pile">'+blk('Devis à faire','devis',ln('devis','M. Blanc · salle de bain','Gières · '+(S.dv.etat==='brouillon'?'préparé par Cliky depuis la bibliothèque':eur(dvTot().ht)+' HT'),'devisBlanc()','<span class="etq '+st[0]+'">'+st[1]+'</span>')))};
 /* --- client : payer en ligne --- */
 var _doc=V.doc;V.doc=function(){var h=_doc();
   if(S.fac.f2==='envoyee')h=h.replace(/(<b>Situation n°2<\/b><small>[^<]*<\/small><\/span>)/,'$1');
@@ -1216,12 +1213,27 @@ function clikyT(id){var L=CLT[id];if(!L)return '';var ok=S.cliT&&S.cliT[id];
 function clikyApp(id){S.cliT=S.cliT||{};S.cliT[id]=1;save();RT.evt('chef','Cliky','Temps réels de l\'Appartement Rey ajoutés à la base','robot');toast('Cliky a mis sa base à jour');ficheCh(id)}
 var _fCh3=ficheCh;ficheCh=function(id){_fCh3(id);var p=$('fen').querySelector('.pile');if(!p)return;var d=document.createElement('div');d.innerHTML=tempsBlk(id);if(d.firstChild)p.insertBefore(d.firstChild,p.children[2]||null)};
 /* ================= Icônes sur les menus et les choix ================= */
-var ICM={'Direction':'brief','Bureau':'monitor','Terrain':'helmet','Client':'user','Devis':'devis','Factures':'doc','Clients':'users','Chiffres':'chart','Commandes':'truck','Paie':'pay','Papiers':'shield','Documents':'folder','Véhicules':'car','Jour':'sun','Semaine':'cal','Mois':'cal','Carte':'map','Matériel':'box','Outil':'wrench','À faire':'check','À savoir':'idea','Tout':'list','Chantiers en cours':'home','Devis et demandes':'devis','Carte bancaire':'pay','Virement instantané':'euro','Activées':'check'};
+var ICM={'Direction':'brief','Bureau':'monitor','Terrain':'helmet','Client':'user','Devis':'devis','Factures':'facture','Clients':'users','Chiffres':'chart','Commandes':'truck','Paie':'pay','Papiers':'shield','Documents':'folder','Véhicules':'car','Jour':'sun','Semaine':'cal','Mois':'cal','Carte':'map','Matériel':'box','Outil':'wrench','À faire':'check','À savoir':'idea','Tout':'list','Chantiers en cours':'home','Devis et demandes':'devis','Carte bancaire':'pay','Virement instantané':'euro','Activées':'check'};
 function icDe(t){if(ICM[t])return ICM[t];if(/ \?$/.test(t)||/^(Fais|Prépare|Écris|Combien|Est-ce|Quand|Je voudrais|Quelles|Qui|Quel)/.test(t))return 'chat';if(/photos/.test(t))return 'cam';if(/où il est/.test(t))return 'pin';if(/propres/.test(t))return 'check';if(/Croissants|Resto|offerte/.test(t))return 'gift';return ''}
 function MET_N(){var m=RT.METIERS||{};return Object.keys(m).map(function(k){return m[k].n})}
 function icDeco(root){(root||document).querySelectorAll('#roles button, .chips button, [aria-pressed]').forEach(function(b){if(b.dataset.icd||b.querySelector('svg,.dotc,.av'))return;var t=b.textContent.trim(),o=b.getAttribute('onclick')||'',n=/lstAdd/.test(o)?'plus':/^Lun|^Mar|^Mer|^Jeu|^Ven|^Sam|^Dim/.test(t)?'':icDe(t)||(MET_N().indexOf(t)>=0?'hammer':'');b.dataset.icd=1;if(!n)return;b.insertAdjacentHTML('afterbegin',ic(n));b.classList.add('aic')})}
 new MutationObserver(function(){icDeco()}).observe(document.body,{childList:true,subtree:true});setTimeout(icDeco,0);
 (function(){var q=new URLSearchParams(location.search),r=q.get('r'),o=q.get('o');if(r&&RT.ROLES[r]){S.role=r;save()}if(o&&NAV[role()]&&NAV[role()].some(function(n){return n[0]===o}))onglet[role()]=o})();
 rRoles();go(onglet[role()]);
+/* ---------- Menu commun ProClik (même menu que l'Espace BRS : barre à encoche + galet + panneau, menu de côté centré) ---------- */
+var DICT={chef:['Mets Lucas sur le chantier Rey demain','Relance la facture du Cabinet Martin','Combien d’heures sur Meylan cette semaine ?'],
+ bureau:['Commande 12 plaques BA13 pour Saint-Ismier','Relance M. Durand pour son devis','Prépare la situation n°2 du Cabinet Martin'],
+ ouvrier:['Il manque 3 rails de 48 chez Mme Rey','J’ai fini la cuisine, photos envoyées','Je pars du chantier à 16 h'],
+ client:['Est-ce qu’on peut décaler jeudi ?','J’ai une question sur le devis','Merci pour la cuisine !']};
+function dictee(){var EX=DICT[role()]||[];
+  fen('<div style="text-align:center;padding:6px 0 4px"><span class="dic-m">'+ic('mic')+'</span><h3 style="margin:12px 0 4px">Parlez à ProClik</h3><p class="sous" style="margin:0">Dites-le comme à un collègue. Cliky range tout seul.</p></div>'+
+   EX.map(function(t){return '<button class="ln pk" onclick="fermer();toast(\'C’est noté (exemple)\',\'mic\')"><span class="ico">'+ic('mic')+'</span><span class="tx"><b style="white-space:normal">« '+t+' »</b></span></button>'}).join('')+
+   '<p class="mini" style="text-align:center;margin-top:10px">Exemples de démonstration : touchez une phrase</p>')}
+window.PC_MENU={cle:false,familles:[],
+  tous:function(){return NAV[role()].map(function(n){return n[0]})},
+  defaut:function(){return NAV[role()].map(function(n){return n[0]}).slice(0,4)},
+  reglages:function(){return role()==='chef'},ouvreReglages:function(){go('reg')},micro:dictee};
 </script>
+<script src="../espace/barre.js?v=20"></script>
+<script src="../espace/familles.js?v=6"></script>
 </body></html>

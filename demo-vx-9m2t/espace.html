@@ -3,7 +3,10 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="demo.css">
-<script src="demo.js"></script><script src="data.js"></script>
+<link rel="stylesheet" href="../n1.css">
+<link rel="stylesheet" href="../espace/barre.css?v=16">
+<link rel="stylesheet" href="../espace/menu-commun.css?v=1">
+<script src="demo.js?v=2"></script><script src="data.js"></script>
 <style>
 /* Démo « Espace menuiserie » d'un négoce : même style que la démo RT2O (style définitif ProClik).
    Téléphone d'abord : chaque écran tient sans défiler, une seule action principale par écran. */
@@ -128,22 +131,10 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .jr .e span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jr .e svg.i{width:16px;height:16px;color:var(--muted)}
 .jr .vide{font-size:12.5px;color:var(--muted);padding:6px 0}
-/* barre du bas / menu à gauche */
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:max(10px,env(safe-area-inset-bottom));z-index:30;display:flex;gap:2px;padding:5px;border-radius:24px;
-  background:var(--calme);box-shadow:var(--calme-sh),0 0 0 1px var(--line);width:min(440px,calc(100% - 24px))}
-.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:18px;font-size:11px;font-weight:700;color:var(--muted);position:relative}
-.nav button .g{width:36px;height:28px;border-radius:13px;display:grid;place-items:center}
-.nav button[aria-selected="true"]{color:var(--fg)}
-.nav button[aria-selected="true"] .g{color:var(--nuit);box-shadow:0 0 0 2px var(--laiton);background:var(--bg)}
-.nav .plus{flex:none;width:54px;margin:-14px 4px 0;align-self:flex-start}
-.nav .plus .g{width:50px;height:50px;border-radius:50%;background:var(--nuit);color:var(--nuit-fg);box-shadow:0 0 0 4px var(--calme),var(--n1-go-sh,0 8px 18px -6px rgba(14,19,34,.35))}
-.nav .bd{position:absolute;top:2px;right:calc(50% - 22px);min-width:17px;height:17px;border-radius:9px;background:var(--alert);color:#fff;font-size:10.5px;display:grid;place-items:center;padding:0 4px}
-@media(min-width:900px){
-  .nav{left:16px;top:96px;bottom:auto;transform:none;flex-direction:column;width:104px}
-  .nav .plus{margin:4px auto;align-self:center}
-  main{padding-left:150px;max-width:1180px}
-  .quibar{max-width:1180px;padding-left:150px}
-}
+/* menu : commun à tous les Espaces (../espace/menu-commun.css) */
+@media(min-width:900px){main,.quibar{max-width:1180px}}
+.dic-m{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--bg);box-shadow:var(--pk),0 0 0 6px color-mix(in srgb,var(--nuit) 12%,transparent);color:var(--nuit)}
+.dic-m svg.i{width:26px;height:26px}
 @media(min-width:1000px){
   .pile{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
   .pile>.now,.pile>.pipe,.pile>.seg,.pile>.full{grid-column:1/-1}
@@ -304,7 +295,7 @@ function mesDos(){var r=role();return r==='com'?D.filter(function(d){return d.co
 
 /* ---------- rôles et navigation ---------- */
 var NAV={
-  com:[['jour','home','Journée'],['cli','users','Clients'],['+'],['pp','cal','Planning'],['moi','chart','Mes chiffres']],
+  com:[['jour','home','Journée'],['cli','users','Clients'],['pp','cal','Planning'],['moi','chart','Mes chiffres'],['nouv','plus','Nouveau']],
   adv:[['jour','home','À traiter'],['cmd','truck','Commandes'],['pp','cal','Planning'],['cli','users','Dossiers']],
   agence:[['jour','chart','Tableau'],['pp','cal','Planning'],['pos','helmet','Poseurs'],['cli','users','Dossiers']],
   poseur:[['jour','hammer','Mes poses'],['pp','cal','Planning'],['pap','shield','Papiers']]};
@@ -314,8 +305,10 @@ var RL={agence:'Responsable',com:'Commercial',adv:'ADV',poseur:'Poseur'};
 function rRoles(){$('roles').innerHTML=Object.keys(VX.ROLES).map(function(k){return '<button class="pers pk" data-r="'+k+'" aria-pressed="'+(role()===k)+'"><i>'+N[k][0]+'</i><span><b>'+N[k]+'</b><small>'+RL[k]+'</small></span></button>'}).join('')}
 $('roles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.role=b.dataset.r;save();rRoles();go(ong[role()])});
 function nb(o){var r=role();if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return (r!=='agence'&&r!=='adv')?0:D.filter(function(d){return acaler(d)&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
-function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){if(n[0]==='+')return '<button class="plus" onclick="nouveau()" aria-label="Nouveau rendez-vous ou prise de cotes"><span class="g">'+ic('plus')+'</span></button>';var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="g">'+ic(n[1])+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
-$('nav').addEventListener('click',function(e){var b=e.target.closest('button[data-o]');if(b)go(b.dataset.o)});
+function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){var c=nb(n[0]);return '<button role="tab" data-o="'+n[0]+'" data-v="'+n[0]+'" id="nb-'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="ico" aria-hidden="true">'+ic(n[1])+'</span>'+n[2]+'<span class="badge"'+(c?'':' hidden')+'>'+(c||'')+'</span></button>'}).join('');
+  /* autre personne = autres onglets : le menu commun se refait */
+  if(window.PCBarre&&rNav.k!==r){rNav.k=r;setTimeout(function(){PCBarre.applique()},0)}}
+$('nav').addEventListener('click',function(e){var b=e.target.closest('button[data-o]');if(!b)return;if(b.dataset.o==='nouv'){nouveau();return}go(b.dataset.o)});
 function rCloche(){var n=nonLus();$('cloche').innerHTML=ic('bell')+(n?'<span class="bd">'+n+'</span>':'')}
 $('cloche').onclick=function(){var r=role(),L=S.fil.filter(function(f){return f.to.indexOf(r)>=0});
   fen('<h3>Du nouveau</h3><p class="sous">Ce que les autres ont fait et qui vous concerne. Personne n\'a besoin de vous appeler.</p>'+(L.length?L.slice(0,8).map(function(f){return '<div class="ln" style="background:var(--calme)"><span class="ico">'+ic(f.i)+'</span><span class="tx"><b style="white-space:normal">'+f.t+'</b><small>'+f.h+'</small></span></div>'}).join(''):'<p class="mini">Rien pour l\'instant. Essayez une action dans un autre accès : elle arrivera ici.</p>'));
@@ -329,7 +322,7 @@ V.com_jour=function(){var d=VX.dos('durand'),cot=S.cotes.durand,fait=cot&&cot.en
   var h=hi('Bonjour Julien','Lundi 16 novembre · '+VX.AGENCE);
   h+='<div class="pile">';
   if(!fait){h+='<section class="now"><span class="k">Maintenant · 10 h 00 · Métré</span><b class="t">M. et Mme Durand, Voiron</b><p>'+d.quoi+' · '+d.fab+(cot?' · '+cot.n+' sur '+cot.tot+' mesurées':'')+'</p>'+
-    '<div class="row"><a class="gw" href="cotes.html?d=durand">'+ic('ruler')+(cot?'Reprendre les cotes':'Prendre les cotes')+'</a><button class="gh" onclick="toast(\'Itinéraire ouvert dans votre GPS (démo)\',\'map\')">'+ic('map')+'Y aller</button></div></section>'}
+    '<div class="row"><a class="gw" href="cotes.html?d=durand">'+ic('ruler')+(cot?'Reprendre les cotes':'Prendre les cotes')+'</a><button class="gh" onclick="toast(\'Itinéraire ouvert dans votre GPS (démo)\',\'map\')">'+ic('route')+'Y aller</button></div></section>'}
   else h+='<section class="now"><span class="k">Ensuite · 14 h 30 · Showroom</span><b class="t">M. Lambert, projet de baie</b><p>Les cotes Durand sont parties chez Nadia pour le chiffrage. Bravo.</p><div class="row"><button class="gw" onclick="ouvrir(\'durand\')">'+ic('folder')+'Voir le dossier Durand</button></div></section>';
   var A=[];var b=VX.dos('blanc');if(et(b)===1&&!S.relance.blanc)A.push(ln('send','Relancer M. Blanc','Devis envoyé il y a 8 jours, pas de réponse','relancer(\'blanc\')','<span class="etq la">À faire</span>'));
   var m=VX.dos('martin');A.push(S.arcOk==='ecart'?ln('alert','ARC Martin : 2 écarts','Nadia les a signalés à K·LINE','ouvrir(\'martin\')','<span class="etq alert">Écart</span>'):S.arcOk==='ok'?ln('check','ARC Martin validé','Livraison prévue semaine 49','ouvrir(\'martin\')','<span class="etq ok">OK</span>'):ln('doc','ARC Martin en contrôle','Nadia compare avec vos cotes','ouvrir(\'martin\')','<span class="etq">ADV</span>'));
@@ -418,7 +411,7 @@ function action(d){var id=d.id,e=et(d),r=role();
 function ouvrir(id){var d=VX.dos(id),e=et(d),r=role(),men=id==='durand'?(S.cotes.durand?S.cotes.durand.tot:d.nbm):d.nbm,A=action(d),w=aFaire(d);
   var docs=[['Fiche de cotes',e>=1||(id==='durand'&&S.cotes.durand&&S.cotes.durand.envoye)],['Devis Pro Devis',e>=1&&!(id==='durand'&&e===1)],['Bon de commande',e>=3],['ARC fabricant',e>=4||(id==='martin'&&S.arcOk==='ok')],['Bon de livraison',e>=5],['PV de réception',e>=6||S.poseOk[id]]],nd=docs.filter(function(x){return x[1]}).length;
   var h='<h3>'+d.cl+'</h3><p class="sous">'+d.v+' · '+VX.COMS[d.com].n+' · '+d.fab+'</p>';
-  h+='<div class="fc-ct"><button class="pk" onclick="toast(\'Appel de '+q(d.cl)+' (démo)\',\'phone\')">'+ic('phone')+'Appeler</button><button class="pk" onclick="toast(\'SMS ouvert (démo)\',\'chat\')">'+ic('chat')+'SMS</button><button class="pk" onclick="toast(\'Itinéraire ouvert (démo)\',\'map\')">'+ic('map')+'Y aller</button></div>';
+  h+='<div class="fc-ct"><button class="pk" onclick="toast(\'Appel de '+q(d.cl)+' (démo)\',\'phone\')">'+ic('phone')+'Appeler</button><button class="pk" onclick="toast(\'SMS ouvert (démo)\',\'chat\')">'+ic('chat')+'SMS</button><button class="pk" onclick="toast(\'Itinéraire ouvert (démo)\',\'map\')">'+ic('route')+'Y aller</button></div>';
   h+='<section class="now fc-now"><span class="k">Étape '+(e+1)+' sur 7 · '+VX.ETAPES[e]+'</span>'+barre(e)+'<b class="t">'+suite(d)+'</b>'+(A?'<button class="gw" onclick="'+A[2]+'">'+ic(A[1])+A[0]+'</button>':'<p>'+(w?'À suivre par '+(r==='com'?'l\'agence':VX.COMS[d.com].n):'Rien à faire pour vous : ça avance.')+'</p>')+'</section>';
   h+='<div class="tuiles">';
   h+='<a class="tu pk" href="cotes.html?d='+id+(e===0&&r==='com'?'':'&lect=1')+'"><span class="tt">'+ic('ruler')+'Cotes</span><b>'+men+'</b><small>menuiseries '+d.fab+'</small></a>';
@@ -536,7 +529,7 @@ V.agence_jour=function(){var h=hi('Bonjour Philippe','Menuiserie · '+VX.AGENCE)
 /* ======================= POSEUR (Karim, KB Pose) ======================= */
 V.poseur_jour=function(){var h=hi('Bonjour Karim','KB Pose · pour '+VX.NEGOCE),pet=S.poseOk.petit,gar=S.poseOk.garcia,b=place('bernard');
   h+='<div class="pile">';
-  if(!pet)h+='<section class="now"><span class="k">Aujourd\'hui · 8 h 00 · SAV</span><b class="t">M. Petit, Rives</b><p>Régler le volet roulant de la chambre (réserve de la pose).</p><div class="row"><button class="gw" onclick="pose(\'petit\')">'+ic('hammer')+'Commencer</button><button class="gh" onclick="toast(\'Itinéraire ouvert (démo)\',\'map\')">'+ic('map')+'Y aller</button></div></section>';
+  if(!pet)h+='<section class="now"><span class="k">Aujourd\'hui · 8 h 00 · SAV</span><b class="t">M. Petit, Rives</b><p>Régler le volet roulant de la chambre (réserve de la pose).</p><div class="row"><button class="gw" onclick="pose(\'petit\')">'+ic('hammer')+'Commencer</button><button class="gh" onclick="toast(\'Itinéraire ouvert (démo)\',\'map\')">'+ic('route')+'Y aller</button></div></section>';
   else if(!gar)h+='<section class="now"><span class="k">Jeudi 19 · 8 h 00 · Pose</span><b class="t">M. Garcia, Saint-Jean-de-Moirans</b><p>5 fenêtres PVC Millet + volets roulants · 2 jours</p><div class="row"><button class="gw" onclick="pose(\'garcia\')">'+ic('hammer')+'Commencer</button><a class="gh" style="text-decoration:none" href="cotes.html?d=garcia&lect=1">'+ic('doc')+'Cotes</a></div></section>';
   else h+='<section class="now"><span class="k">Bravo</span><b class="t">Poses de la semaine terminées</b><p>Le commercial, l\'agence et les clients ont été prévenus.</p></section>';
   var A=[ln('truck','Retirer le matériel Garcia','Mercredi 17 h · agence de Voiron, quai 2','toast(\'Le magasin prépare : 5 fenêtres + 5 volets\',\'box\')',gar?'<span class="etq ok">Fait</span>':'<span class="etq la">Mer.</span>')];
@@ -601,5 +594,19 @@ if(p.get('o')&&NAV[role()].some(function(n){return n[0]===p.get('o')}))ong[role(
 rRoles();go(ong[role()]);
 /* retour depuis la prise de cotes : on relit l'état */
 addEventListener('pageshow',function(){charger();rRoles();re()});
+/* ---------- Menu commun ProClik (même menu que l'Espace BRS : barre à encoche + galet + panneau, menu de côté centré) ---------- */
+var DICT={com:['Rendez-vous chez M. Blanc jeudi à 10 h','Relance M. Blanc pour son devis','5 fenêtres PVC Millet pour les Durand'],
+ adv:['L’ARC Martin est bon, je valide','Préviens Mme Chabert que sa porte arrive lundi','Cale la pose Garcia jeudi avec KB Pose'],
+ agence:['Combien de devis signés ce mois-ci ?','Qui est libre pour un métré mardi ?','Montre-moi les poses de la semaine'],
+ poseur:['Pose Garcia terminée, photos envoyées','Il manque un appui de fenêtre chez les Durand','Je ne suis pas dispo vendredi']};
+function dictee(){var EX=DICT[role()]||[];
+  fen('<div style="text-align:center;padding:6px 0 4px"><span class="dic-m">'+ic('mic')+'</span><h3 style="margin:12px 0 4px">Parlez à ProClik</h3><p class="sous" style="margin:0">Dites-le comme à un collègue. Cliky range tout seul.</p></div>'+
+   EX.map(function(t){return '<button class="ln pk" onclick="fermer();toast(\'C’est noté (exemple)\',\'mic\')"><span class="ico">'+ic('mic')+'</span><span class="tx"><b style="white-space:normal">« '+t+' »</b></span></button>'}).join('')+
+   '<p class="mini" style="text-align:center;margin-top:10px">Exemples de démonstration : touchez une phrase</p>')}
+window.PC_MENU={cle:false,familles:[],reglages:false,micro:dictee,
+  tous:function(){return NAV[role()].map(function(n){return n[0]})},
+  defaut:function(){return NAV[role()].map(function(n){return n[0]}).slice(0,4)}};
 </script>
+<script src="../espace/barre.js?v=20"></script>
+<script src="../espace/familles.js?v=6"></script>
 </body></html>
