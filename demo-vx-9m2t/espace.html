@@ -286,6 +286,13 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .ev.v{background:color-mix(in srgb,#8A63B8 15%,var(--calme))}.ev.v i{font-style:normal;font-size:10.5px;font-weight:800;color:#6E4D99;margin-right:6px;text-transform:uppercase;letter-spacing:.04em}
 .ev.l{background:none;color:var(--muted);font-weight:600;box-shadow:inset 0 0 0 1px var(--line)}
 .cl1>.mot{margin-right:16px;align-self:center}
+
+.mais{width:15px;height:15px;flex:none;vertical-align:-3px;margin-right:5px;display:inline-block}
+.marque b .mais{width:17px;height:17px;vertical-align:-3px;margin-right:6px}
+.vx{display:inline-flex;align-items:center}.vx .mais{width:14px;height:14px;margin-right:4px}
+.tm{display:inline-flex;align-items:center}.tm .mais{width:26px;height:26px;margin-right:9px}
+.ev.v i .mais{width:13px;height:13px;vertical-align:-2px;margin-right:4px}
+.nav .g .mais{width:22px;height:22px;margin:0}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -323,26 +330,28 @@ function optB(k,t,s){return '<button class="opt" onclick="option(\''+k+'\')"><sp
 function hi(t,s,x){return '<div class="hi"><div><h1>'+t+'</h1><p>'+s+'</p></div>'+(x||'<span class="ex">Exemple</span>')+'</div>'}
 function mesDos(){var r=role();return r==='com'?D.filter(function(d){return d.com==='julien'}):D}
 
+/* petit logo du négoce (fictif) : une maison blanche dans un carré terre cuite, posé à côté de son nom */
+var MAISON='<svg class="mais" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#C2462E"/><path d="M5.5 12.2 12 6.5l6.5 5.7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.6 11v6.6h8.8V11" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M10.7 17.6v-3.6h2.6v3.6" fill="#fff"/></svg>';
 /* ---------- rôles et navigation ---------- */
 var NAV={
   com:[['jour','home','Journée'],['cli','users','Clients'],['+'],['pp','cal','Planning'],['moi','chart','Mes chiffres']],
   adv:[['jour','home','À traiter'],['cmd','truck','Commandes'],['pp','cal','Planning'],['cli','users','Dossiers']],
   agence:[['jour','chart','Tableau'],['pp','cal','Planning'],['pos','helmet','Poseurs'],['cli','users','Dossiers']],
   poseur:[['jour','hammer','Mes poses'],['pp','cal','Planning'],['pap','shield','Papiers']],
-  relie:[['jour','home','Accueil'],['cli','users','Mes clients'],['pp','cal','Planning'],['neg','team','Valcroix']]};
+  relie:[['jour','home','Accueil'],['cli','users','Mes clients'],['pp','cal','Planning'],['neg','maison','Valcroix']]};
 var ong={com:'jour',adv:'jour',agence:'jour',poseur:'jour',relie:'jour'};
 $('logo').innerHTML=PCD.logo;$('planf').querySelector('.ferme').innerHTML=ic('x');
 var RL={agence:'Responsable',com:'Commercial',adv:'ADV',poseur:'Poseur',relie:'Son Espace'};
 function rRoles(){$('roles').innerHTML=Object.keys(VX.ROLES).map(function(k){return '<button class="pers pk" data-r="'+k+'" aria-pressed="'+(role()===k)+'"><i>'+N[k][0]+'</i><span><b>'+N[k]+'</b><small>'+RL[k]+'</small></span></button>'}).join('')}
 $('roles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.role=b.dataset.r;save();rRoles();go(ong[role()])});
 function nb(o){var r=role();if(o==='neg')return negCount();if(o==='pp'&&r==='relie')return 0;if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return (r!=='agence'&&r!=='adv')?0:D.filter(function(d){return acaler(d)&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
-function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){if(n[0]==='+')return '<button class="plus" onclick="nouveau()" aria-label="Nouveau rendez-vous ou prise de cotes"><span class="g">'+ic('plus')+'</span></button>';var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="g">'+ic(n[1])+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
+function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){if(n[0]==='+')return '<button class="plus" onclick="nouveau()" aria-label="Nouveau rendez-vous ou prise de cotes"><span class="g">'+ic('plus')+'</span></button>';var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="g">'+(n[1]==='maison'?MAISON:ic(n[1]))+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
 $('nav').addEventListener('click',function(e){var b=e.target.closest('button[data-o]');if(b)go(b.dataset.o)});
 function rCloche(){var n=nonLus();$('cloche').innerHTML=ic('bell')+(n?'<span class="bd">'+n+'</span>':'')}
 $('cloche').onclick=function(){var r=role(),L=S.fil.filter(function(f){return f.to.indexOf(r)>=0});
   fen('<h3>Du nouveau</h3><p class="sous">Ce que les autres ont fait et qui vous concerne. Personne n\'a besoin de vous appeler.</p>'+(L.length?L.slice(0,8).map(function(f){return '<div class="ln" style="background:var(--calme)"><span class="ico">'+ic(f.i)+'</span><span class="tx"><b style="white-space:normal">'+f.t+'</b><small>'+f.h+'</small></span></div>'}).join(''):'<p class="mini">Rien pour l\'instant. Essayez une action dans un autre accès : elle arrivera ici.</p>'));
   L.forEach(function(f){if(f.lu.indexOf(r)<0)f.lu.push(r)});save();rCloche()};
-function go(o){var mq=document.querySelector('.marque');if(mq)mq.innerHTML=role()==='relie'?'<b>BRS</b><small>Son propre Espace ProClik · démonstration</small>':'<b>Valcroix Matériaux</b><small>Espace menuiserie · démonstration</small>';document.documentElement.classList.toggle('lrv',role()==='relie');ong[role()]=o;rNav();rCloche();var f=V[role()+'_'+o]||V[o];$('m').innerHTML=f?f():'';scrollTo(0,0)}
+function go(o){var mq=document.querySelector('.marque');if(mq)mq.innerHTML=role()==='relie'?'<b>BRS</b><small>Son propre Espace ProClik · démonstration</small>':'<b>'+MAISON+'Valcroix Matériaux</b><small>Espace menuiserie · démonstration</small>';document.documentElement.classList.toggle('lrv',role()==='relie');ong[role()]=o;rNav();rCloche();var f=V[role()+'_'+o]||V[o];$('m').innerHTML=f?f():'';scrollTo(0,0)}
 function re(){go(ong[role()])}
 var V={};
 
@@ -584,7 +593,7 @@ function lies(){return Object.keys(S.lien).map(function(id){return VX.dos(id)})}
 function negCount(){return lies().filter(function(d){return S.lien[d.id].etat==='envoye'}).length}
 V.relie_jour=function(){var h=hi('Bonjour Aurélien','BRS · votre Espace ProClik');h+='<div class="pile">';
   h+='<section class="now"><span class="k">Aujourd\'hui · votre chantier</span><b class="t">M. Vasseur, Meylan</b><p>Isolation des combles · 2e jour</p><div class="row"><button class="gw" onclick="toast(\'Votre chantier (démo)\',\'hammer\')">'+ic('hammer')+'Ouvrir</button></div></section>';
-  var n=negCount();h+='<button class="negl pk" onclick="go(\'neg\')"><span class="vx">Valcroix</span><b>'+(n?n+' pose à accepter':'Rien de nouveau')+'</b>'+ic('right')+'</button>';
+  var n=negCount();h+='<button class="negl pk" onclick="go(\'neg\')"><span class="vx">'+MAISON+'Valcroix</span><b>'+(n?n+' pose à accepter':'Rien de nouveau')+'</b>'+ic('right')+'</button>';
   h+='<section class="grp lcl"><h2 class="gh2">'+ic('list')+'À faire<span class="nb">2</span></h2><div class="lst"><div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>Mme Ollier</b><small>Cloisons + 2 portes · facture à envoyer</small></button></div><div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>Mme Roche</b><small>Salle de bain · devis envoyé il y a 6 jours</small></button></div></div></section>';
   return h+'</div>'};
 V.relie_cli=function(){var A=VX.PROPRES.map(function(c){return '<div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>'+c.cl+'</b><small>'+c.quoi+' · '+c.v+'</small></button><span class="mot">'+c.e+'</span></div>'});
@@ -592,10 +601,10 @@ V.relie_cli=function(){var A=VX.PROPRES.map(function(c){return '<div class="cl1"
 V.relie_pp=function(){var P=[[['Vasseur · combles','m']],[['Vasseur · combles','m']],[],[],[['Ollier · cloisons','m']]];
   lies().forEach(function(d){var L=S.lien[d.id];P[L.j].push([d.cl.replace(/^(M\.|Mme) /,'')+' · pose'+(L.etat==='envoye'?' (à accepter)':''),'v'])});
   var h=hi('Planning','Semaine 47 · vos chantiers et ceux de Valcroix');
-  h+='<div class="pile"><section class="blk">'+VX.JL.map(function(j,i){return '<div class="jr2"><b>'+j+'</b><div>'+(P[i].length?P[i].map(function(x){return '<span class="ev '+x[1]+'">'+(x[1]==='v'?'<i>Valcroix</i>':'')+x[0]+'</span>'}).join(''):'<span class="ev l">Libre</span>')+'</div></div>'}).join('')+'</section><div class="legende"><span><i style="background:var(--nuit)"></i>Vos chantiers</span><span><i style="background:#8A63B8"></i>Poses Valcroix</span></div></div>';return h};
+  h+='<div class="pile"><section class="blk">'+VX.JL.map(function(j,i){return '<div class="jr2"><b>'+j+'</b><div>'+(P[i].length?P[i].map(function(x){return '<span class="ev '+x[1]+'">'+(x[1]==='v'?'<i>'+MAISON+'Valcroix</i>':'')+x[0]+'</span>'}).join(''):'<span class="ev l">Libre</span>')+'</div></div>'}).join('')+'</section><div class="legende"><span><i style="background:var(--nuit)"></i>Vos chantiers</span><span><i style="background:#8A63B8"></i>Poses Valcroix</span></div></div>';return h};
 V.relie_neg=function(){var L=lies(),A=L.filter(function(d){return S.lien[d.id].etat==='envoye'}),C=L.filter(function(d){return S.lien[d.id].etat==='ok'});
   var row=function(d){var x=S.lien[d.id];return '<div class="cl1"><button class="nm" onclick="lieOuvrir(\''+d.id+'\')"><b>'+d.cl+'</b><small>'+d.quoi+' · '+VX.JL[x.j]+'</small></button>'+(x.etat==='envoye'?'<button class="mot act pk" onclick="lieRep(\''+d.id+'\',1)">Accepter</button>':'<button class="nm2" onclick="lieOuvrir(\''+d.id+'\')">'+ic('right')+'</button>')+'</div>'};
-  var h=hi('Valcroix Matériaux','Les poses qu\'ils vous confient','<span class="ex">'+ic('team')+'Relié</span>')+'<div class="pile lcl">';
+  var h=hi('<span class="tm">'+MAISON+'Valcroix Matériaux</span>','Les poses qu\'ils vous confient','<span class="ex">'+ic('team')+'Relié</span>')+'<div class="pile lcl">';
   if(A.length)h+='<section class="grp"><h2 class="gh2 w">'+ic('alert')+'À accepter<span class="nb">'+A.length+'</span></h2><div class="lst">'+A.map(row).join('')+'</div></section>';
   h+='<section class="grp"><h2 class="gh2">'+ic('cal')+'Calées<span class="nb">'+C.length+'</span></h2><div class="lst">'+C.map(row).join('')+'</div></section>';
   h+='<button class="negl pk" onclick="toast(\'Novembre : '+C.length+' pose'+(C.length>1?'s':'')+' · facture préparée, à vérifier avant envoi (démo)\',\'doc\')">'+ic('doc')+'<b>Ma facture de pose à Valcroix</b>'+ic('right')+'</button>';
