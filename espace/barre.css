@@ -1,12 +1,17 @@
 /* Menu du bas sur téléphone : barre en relief à encoche + galet central qui ouvre l'éventail (voir barre.js). */
 .pb,.pb-menu,.pb-scrim{display:none}
-@media (max-width:899px){
+@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
   /* l'ancienne rangée de 7 boutons et les ronds micro / menu de l'en-tête passent dans le nouveau menu */
   html body nav.nav{display:none!important}
+  /* iPad (même couché) : comme le téléphone, barre du bas + panneau (Cyril, 15/11) ; plus de menu de côté */
+  html body{padding-left:0!important}
+  html body nav#fam.fam,html body #fam-sous{display:none!important}
   html body header.head #speak,html body header.head #menu{display:none!important}
   html body .app{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
 
   .pb{--pb-bas:5px;display:block;position:fixed;z-index:25;left:5px;right:5px;bottom:var(--pb-bas);height:68px}
+  /* iPad couché : la barre garde une largeur de téléphone agrandi, centrée, pour que les boutons restent sous le pouce */
+  .pb{left:max(5px,calc(50% - 300px));right:max(5px,calc(50% - 300px))}
   .pb-fond{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
   .pb-fond .pb-of{flood-color:var(--lo)}
   .pb-fond path{fill:var(--rs);stroke:var(--hi);stroke-width:1}
@@ -75,7 +80,7 @@ html body .prod-c{display:flex;gap:14px;align-items:flex-start;margin:0}
 html body .prod-add{width:100%;justify-content:center;gap:10px;opacity:.75}
 
 /* Forme « encoche ronde » (image de Cyril, 2/11) : le galet central est posé dans une encoche ronde, avec un anneau de vide autour */
-@media (max-width:899px){
+@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
   .pb.pb-ronde .pb-c{top:-21px}
   .pb.pb-ronde::before{content:"";position:absolute;left:50%;top:-30px;width:80px;height:80px;margin-left:-40px;border-radius:50%;background:var(--bg);clip-path:inset(30px 0 0 0);box-shadow:inset 0 3px 6px var(--ilo)}
   .pb.pb-ronde .pb-l{grid-template-columns:1fr 1fr 104px 1fr 1fr}
@@ -83,7 +88,7 @@ html body .prod-add{width:100%;justify-content:center;gap:10px;opacity:.75}
 }
 
 /* Retouches du 2/11 au soir (Cyril) */
-@media (max-width:899px){
+@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
   /* la page s'efface en douceur derrière la barre : plus de contenu qui passe dans l'encoche */
   .pb::after{content:"";position:absolute;z-index:-1;left:-5px;right:-5px;bottom:calc(-1 * var(--pb-bas));height:150px;pointer-events:none;
     background:linear-gradient(to top,var(--bg) 0,var(--bg) 55%,color-mix(in srgb,var(--bg) 0%,transparent) 100%)}

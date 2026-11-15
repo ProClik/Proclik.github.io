@@ -7,7 +7,7 @@
   "use strict";
   var d=document,$=function(s,r){return (r||d).querySelector(s)},$$=function(s,r){return [].slice.call((r||d).querySelectorAll(s))};
   if($("#pb")||!$("#nb-accueil"))return;
-  var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
+  var mq=matchMedia("(max-width:899px), (pointer:coarse) and (max-width:1400px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
   var TOUS0=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
   /* un onglet caché (ex. Réseaux sans l'option, Cyril 15/11) ne va ni dans la barre ni dans l'éventail */

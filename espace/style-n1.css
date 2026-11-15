@@ -90,7 +90,7 @@ html body .tdb .bar-f>span{background:color-mix(in srgb,var(--n1-nuit) 22%,trans
 html body .tdb .bar.on .bar-f>span{background:var(--n1-nuit)}
 /* barre du bas (téléphone) : posée comme un bloc calme, icônes à plat ; onglet où l'on est = fond + anneau laiton.
    Le galet central et l'éventail se touchent : liseré fin + petite ombre. */
-@media (max-width:899px){
+@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
   html body .pb-fond path{fill:var(--n1-calme);stroke:var(--n1-line)}
   html body .pb-fond .pb-of{flood-color:rgba(14,19,34,.07)}
   :root[data-theme="dark"] body .pb-fond .pb-of{flood-color:rgba(0,0,0,.35)}
