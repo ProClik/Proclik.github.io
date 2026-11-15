@@ -4,9 +4,9 @@
   var VX=window.VX={};
   VX.NEGOCE='Valcroix Matériaux';
   VX.AGENCE='Agence de Voiron';
-  VX.ROLES={agence:'Agence',com:'Commercial',adv:'ADV',poseur:'Poseur'};
-  VX.NOMS={agence:'Philippe',com:'Julien',adv:'Nadia',poseur:'Karim'};
-  VX.FONCT={agence:'Responsable menuiserie',com:'Commercial menuiserie',adv:'Administration des ventes',poseur:'KB Pose · sous-traitant'};
+  VX.ROLES={agence:'Agence',com:'Commercial',adv:'ADV',poseur:'Poseur',relie:'Poseur relié'};
+  VX.NOMS={agence:'Philippe',com:'Julien',adv:'Nadia',poseur:'Karim',relie:'Lucas'};
+  VX.FONCT={agence:'Responsable menuiserie',com:'Commercial menuiserie',adv:'Administration des ventes',poseur:'KB Pose · sous-traitant',relie:'LR Rénovation · son propre Espace ProClik'};
   VX.ETAPES=['Métré','Devis','Signé','Commande','Livraison','Pose','Terminé'];
   VX.JOURS=['Lun 16','Mar 17','Mer 18','Jeu 19','Ven 20'];
   VX.JL=['Lundi 16','Mardi 17','Mercredi 18','Jeudi 19','Vendredi 20'];
@@ -16,9 +16,13 @@
   VX.POSEURS={
     kb:{n:'KB Pose',qui:'Karim B.',nb:2,tel:'06 00 00 00 21',c:'a',pap:{urssaf:['ok','valable jusqu\'au 12/04/2027'],dec:['ok','valable jusqu\'au 31/12/2026'],kbis:['ok','moins de 3 mois']},poses:9,reserves:1},
     duval:{n:'Pose Alpes',qui:'Équipe Duval',nb:3,tel:'06 00 00 00 22',c:'b',pap:{urssaf:['ok','valable jusqu\'au 02/03/2027'],dec:['warn','expire le 28/11/2026'],kbis:['ok','moins de 3 mois']},poses:12,reserves:0},
+    lr:{n:'LR Rénovation',qui:'Lucas R.',nb:2,tel:'06 00 00 00 24',c:'d',propre:1,pap:{urssaf:['ok','valable jusqu\'au 20/05/2027'],dec:['ok','valable jusqu\'au 31/12/2027'],kbis:['ok','moins de 3 mois']},poses:6,reserves:0},
     tl:{n:'TL Menuiseries',qui:'Thomas L.',nb:1,tel:'06 00 00 00 23',c:'c',pap:{urssaf:['alert','expirée depuis le 05/11/2026'],dec:['ok','valable jusqu\'au 30/06/2027'],kbis:['ok','moins de 3 mois']},poses:4,reserves:2}
   };
-  VX.PLANNING0={kb:['petit','libre','libre','garcia','garcia'],duval:['roux','roux','ail','ail','libre'],tl:['off','off','off','off','off']};
+  VX.PLANNING0={kb:['petit','libre','libre','garcia','garcia'],duval:['roux','roux','ail','ail','libre'],tl:['off','off','off','off','off'],lr:['libre','libre','faure','libre','libre']};
+  /* poseur relié : il a SON propre Espace ProClik ; les chantiers confiés par le négoce y arrivent, il choisit ce qu'il partage en retour */
+  VX.LIEN0={faure:{j:2,etat:'ok',part:{cotes:1}}};
+  VX.PROPRES=[{cl:'Mme Roche',v:'Crolles',quoi:'Salle de bain complète',e:'Devis envoyé'},{cl:'M. Vasseur',v:'Meylan',quoi:'Isolation des combles',e:'Chantier lundi'},{cl:'Mme Ollier',v:'Voiron',quoi:'Cloisons + 2 portes',e:'Facture à envoyer'}];
   /* dossiers clients : e = étape (index VX.ETAPES) */
   VX.DOSSIERS=[
     {id:'durand',att:0,cl:'M. et Mme Durand',v:'Voiron',com:'julien',e:0,fab:'Millet',nbm:6,quoi:'5 fenêtres et 1 porte d\'entrée, PVC',rdv:'Lundi 16 · 10 h 00',suite:'Métré chez le client à 10 h',tel:'06 00 00 01 01',x:118,y:96},
@@ -30,6 +34,7 @@
     {id:'bernard',att:3,cl:'M. Bernard',v:'Grenoble',com:'sarah',e:4,fab:'Tryba',nbm:4,quoi:'4 fenêtres PVC',mt:'5 980 €',suite:'Livré à l\'agence · pose à caler',acaler:true,tel:'06 00 00 01 07',x:250,y:196},
     {id:'roux',cl:'Famille Roux',v:'Voreppe',com:'julien',e:5,fab:'Tryba',nbm:3,quoi:'1 porte d\'entrée alu + 2 baies',mt:'11 240 €',suite:'Pose en cours (lundi et mardi) · Pose Alpes',pose:'duval',tel:'06 00 00 01 08',x:170,y:130},
     {id:'chabert',att:0,cl:'Mme Chabert',v:'Voiron',com:'sarah',e:3,fab:'Millet',nbm:6,quoi:'6 fenêtres PVC + 2 volets roulants',mt:'9 870 €',suite:'ARC confirmé : arrivée jeudi 19 à l\'agence',tel:'06 00 00 01 10',x:120,y:100},
+    {id:'faure',att:0,cl:'M. Faure',v:'Réaumont',com:'sarah',e:5,fab:'Millet',nbm:3,quoi:'3 fenêtres PVC',mt:'4 380 €',suite:'Pose mercredi · LR Rénovation (son Espace)',pose:'lr',tel:'06 00 00 01 11',x:150,y:60},
     {id:'petit',att:5,cl:'M. Petit',v:'Rives',com:'julien',e:6,fab:'Millet',nbm:4,quoi:'4 fenêtres PVC',mt:'5 120 €',suite:'Posé · 1 réserve : volet de la chambre à régler lundi',sav:true,pose:'kb',tel:'06 00 00 01 09',x:60,y:70}
   ];
   /* anciens dossiers terminés (pour voir la liste tenir avec beaucoup de clients) : noms et villes fictifs */
@@ -50,6 +55,7 @@
     petit:[['Séjour','Fenêtre',1200,1350,'2'],['Cuisine','Fenêtre',1000,1250,'1'],['Chambre','Fenêtre',1200,1350,'2'],['Salle de bain','Fenêtre',600,800,'1']]
   };
   /* ARC Martin : cotes prises / ARC du fabricant (l'écart ressort) */
+  VX.MEN.faure=[['Séjour','Fenêtre',1200,1350,'2'],['Chambre','Fenêtre',1000,1250,'2'],['Cuisine','Fenêtre',1000,1250,'1']];
   VX.MEN.chabert=[['Séjour','Fenêtre',1200,1350,'2'],['Cuisine','Fenêtre',1000,1250,'1'],['Chambre 1','Fenêtre',1200,1350,'2'],['Chambre 2','Fenêtre',1000,1250,'2'],['Bureau','Fenêtre',800,1000,'1'],['Salle de bain','Fenêtre',600,800,'1']];
   /* délais habituels par fabricant (exemples, à remplacer par ceux d'ERAL) */
   VX.DELAIS={'Millet':'5 sem.','Minco':'6 sem.','K·LINE':'7 sem.','Tryba':'4 sem.','Bouvet':'6 sem.'};
@@ -78,5 +84,5 @@
   VX.CHIF={julien:{cours:14,dev:6,sig:3,ca:'28 400 €',tx:'38 %'},sarah:{cours:11,dev:5,sig:4,ca:'31 200 €',tx:'44 %'}};
   VX.dos=function(id){return VX.DOSSIERS.filter(function(d){return d.id===id})[0]};
   /* état partagé (étapes qui avancent, planning, fil d'activité) */
-  VX.etat0=function(){return {role:'com',et:{},pl:JSON.parse(JSON.stringify(VX.PLANNING0)),fil:[],cotes:{},arcOk:null,poseOk:{},relance:{},livOk:false,options:{}}};
+  VX.etat0=function(){return {role:'com',et:{},pl:JSON.parse(JSON.stringify(VX.PLANNING0)),fil:[],cotes:{},arcOk:null,poseOk:{},relance:{},livOk:false,options:{},lien:JSON.parse(JSON.stringify(VX.LIEN0))}};
 })();
