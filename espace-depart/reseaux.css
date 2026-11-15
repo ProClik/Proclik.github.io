@@ -1,0 +1,82 @@
+/* Réseaux sociaux de l'Espace : même matière « Relief doux » que les autres onglets, même dessin jour et nuit. */
+.rs{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0;max-width:640px}
+.rs>*{min-width:0;margin:0}
+.rs svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rs svg.rs-logo{fill:currentColor;stroke:none}
+.rs .exemple{font-size:12px;font-style:italic;color:var(--muted);font-weight:500}
+/* en-tête : retour en galet, titre, puis le bandeau de l'option */
+.rs-tete{display:flex;align-items:center;gap:12px}
+.rs-tete h2{margin:0}
+.rs-tete small{display:block;font-size:13px;color:var(--muted)}
+.rs-ret{flex:none;width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);cursor:pointer}
+.rs-ret svg{width:20px;height:20px}
+.rs-tag{padding:10px 14px!important}
+.rs-tag .opt-tag{margin:0}
+/* pastille d'un réseau : logo uni dans un petit relief */
+.rs-p{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up-s);color:var(--fg)}
+.rs-p svg{width:19px;height:19px}
+/* lignes « Messages reçus » et « Vos comptes » */
+.rs-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;cursor:pointer;color:var(--fg);font:inherit;padding:14px 16px!important}
+.rs-row .tx,.rs-ln .tx,.rs-post .tx,.rs-mh .tx{flex:1;min-width:0}
+.rs .tx b{display:block;font-size:15px;font-weight:700}
+.rs .tx small{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.rs-ri{flex:none;width:24px;height:24px;color:var(--muted)}
+.rs-ri svg,.rs-fl svg{width:22px;height:22px}
+.rs-fl{color:var(--muted)}
+.rs-bd{position:static!important;flex:none}
+/* la semaine */
+.rs-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.rs-h b{font-size:16px}
+.rs-post{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px dashed var(--line)}
+.rs-post:first-of-type{border-top:0}
+.rs-vi{flex:none;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:#fff;background:#7B8AA6;overflow:hidden}
+.rs-vi.v-a{background:var(--acc)}.rs-vi.v-i{background:var(--muted);opacity:.75}
+.rs-vi img{width:100%;height:100%;object-fit:cover}
+.rs-et{display:block;font-style:normal;font-size:12.5px;font-weight:700;margin-top:3px;color:var(--ok,#1F5E43)}
+.rs-et.br{color:var(--accx)}
+/* blocs du formulaire */
+.rs-bl{display:grid;gap:10px}
+.rs-l{font-weight:800;font-size:15px}
+.rs textarea{width:100%;box-sizing:border-box;font:500 15px/1.45 var(--f,inherit);padding:12px 14px;border-radius:14px;border:0;background:var(--cx);box-shadow:var(--in);color:var(--fg);resize:vertical;min-height:110px}
+.rs-2{display:flex;gap:8px;flex-wrap:wrap}
+.rs-2 .btn{flex:1 1 auto;white-space:nowrap;font-size:14.5px;padding-left:14px;padding-right:14px;display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px}
+.rs-2 .btn svg{width:18px;height:18px}
+.rs .rs-cl{color:var(--accx)!important;font-weight:700}
+.rs-ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rs-th{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;box-shadow:var(--up-s)}
+.rs-th img{width:100%;height:100%;object-fit:cover;display:block}
+.rs-th button{position:absolute;top:5px;right:5px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(20,26,46,.65);color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.rs-add{aspect-ratio:1;border-radius:14px;border:1.5px dashed var(--line);display:grid;place-content:center;justify-items:center;gap:4px;color:var(--muted);font-weight:700;font-size:13px;cursor:pointer}
+.rs-add svg{width:24px;height:24px}
+.rs-ln{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px dashed var(--line)}
+.rs-bl>.rs-l+.rs-ln,.rs-bl>.rs-ln:first-child{border-top:0}
+.rs-okc{color:var(--ok,#1F5E43)!important;font-weight:700}
+.rs-q{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rs-q button{border:1px solid transparent;border-radius:14px;padding:10px 4px;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font:inherit;cursor:pointer;line-height:1.2}
+.rs-q button b{display:block;font-size:14px}
+.rs-q button small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.rs-q button[aria-checked="true"]{background:var(--cx);box-shadow:var(--in);border-color:var(--acc)}
+.rs-q button[aria-checked="true"] b{color:var(--accx)}
+.rs-dt{display:grid;gap:6px;font-weight:700;font-size:14px}
+.rs-dt input{font:600 15px var(--f,inherit);padding:12px 14px;border-radius:14px;border:0;background:var(--cx);box-shadow:var(--in);color:var(--fg)}
+.rs-demo{font-size:12.5px;color:var(--muted);text-align:center}
+/* messages reçus */
+.rs-m{display:grid;gap:10px}
+.rs-mh{display:flex;align-items:center;gap:12px}
+.rs-mt{margin:0;font-size:15px;line-height:1.45}
+.rs-mf{font-size:12.5px;color:var(--muted)}
+.rs-rep{margin:0;padding:10px 12px;border-radius:12px;background:var(--cx);box-shadow:var(--in);font-size:14px}
+.rs-rep b{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+/* comptes */
+.rs-info{display:flex;gap:12px;align-items:flex-start;box-shadow:var(--in)!important;background:var(--cx)!important}
+.rs-info>svg{flex:none;width:22px;height:22px;color:var(--accx);margin-top:2px}
+.rs-info p{margin:0;font-size:14px;line-height:1.45;color:var(--muted)}
+.rs-info p b{color:var(--fg)}
+/* sans l'option */
+.rs-pitch{margin:0;font-size:16px;line-height:1.45}
+.rs-pts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rs-pts li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.4}
+.rs-pts svg{flex:none;width:20px;height:20px;color:var(--accx);margin-top:1px}
+.rs-logos{display:flex;gap:10px;justify-content:center;margin-top:4px}
+/* compteur de nouveaux messages sur l'onglet */
+.rs-nb{margin-left:6px}

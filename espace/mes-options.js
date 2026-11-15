@@ -34,14 +34,11 @@ var TXT={
  lien:{court:'Les chantiers de vos négoces arrivent ici',
   avec:['Le négoce qui vous confie des poses vous les envoie directement dans votre Espace : client, adresse, plan, cotes et date.','Elles arrivent dans un bouton à part, au nom du négoce. Ses clients ne se mélangent jamais aux vôtres, mais ses poses apparaissent dans votre planning, dans une autre couleur.','Vous acceptez la date, ou vous en proposez une autre, en un toucher.','Vous choisissez chantier par chantier ce que vous lui partagez : cotes, photos, réserves, PV signé. Vos propres clients restent chez vous.','Vos papiers (URSSAF, décennale, Kbis) sont mis à jour une seule fois : le négoce les voit à jour tout seul.'],
   sans:'Les poses du négoce arrivent par téléphone, SMS ou papier, comme aujourd\'hui.'},
- equipe:{court:'Toute votre équipe dans le même Espace',
-  avec:['Le planning de l\'équipe : qui est sur quel chantier, chaque jour, et s\'il manque du monde.','Chacun voit sa semaine sur son téléphone, avec son propre accès (chef, bureau, terrain).','Vous envoyez le planning en un geste, chacun le reçoit.'],
-  sans:'Votre Espace reste à votre nom seul : le planning montre vos chantiers et vos rendez-vous.'},
  reseaux:{court:'Vos réseaux sociaux gérés pour vous',
   avec:['ProClik s\'occupe de vos réseaux sociaux à votre place.','Vos plus beaux chantiers mis en avant, avec votre accord.'],
   sans:'Vous gérez vos réseaux sociaux vous-même, si vous en avez.'}
 };
-var ORDRE=['equipe','lien','cliky','reservation','sms','assistant','avis','reseaux','image'];
+var ORDRE=['lien','cliky','reservation','sms','assistant','avis','reseaux','image'];
 /* Options pas encore dans options.js : nom et icône ici (même style de trait) */
 var I=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'};
 var EN_PLUS={

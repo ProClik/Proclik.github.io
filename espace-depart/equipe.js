@@ -12,7 +12,7 @@ if(O&&O.actif('equipe')===false)return;
 
 /* ---------- données d'exemple ---------- */
 var JOURS=['Lun.','Mar.','Mer.','Jeu.','Ven.'],LUNDI=new Date(2026,9,12);
-var EQ=[{n:'Aurélien',r:'Chef'},{n:'Kevin',r:'Plaquiste'},{n:'Mathieu',r:'Plaquiste'},{n:'Lucas',r:'Apprenti'}];
+var EQ=[{n:'Thomas',r:'Chef'},{n:'Kevin',r:'Plaquiste'},{n:'Mathieu',r:'Plaquiste'},{n:'Lucas',r:'Apprenti'}];
 var COUL=['var(--k-run)','var(--k-visit)','var(--k-liv)','var(--k-autre)','var(--k-devis)','var(--k-plan)'];
 function chantiers(){var C=X.CH||{};return Object.keys(C).map(function(k){return C[k]}).filter(function(c){return c&&c.st!=='done'})}
 function couleur(id){var L=chantiers().map(function(c){return c.id});var i=L.indexOf(id);return COUL[(i<0?0:i)%COUL.length]}
@@ -23,7 +23,7 @@ function ecrit(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
 var S=lit();
 if(!S||!S.pl){var L=chantiers().map(function(c){return c.id}),a=L[0],b=L[1]||L[0];
   S={pl:{},bes:{},envoye:false};
-  S.pl['Aurélien']=[a,a,b,b,'bureau'];S.pl['Kevin']=[a,a,a,b,b];S.pl['Mathieu']=[b,b,a,a,a];S.pl['Lucas']=[a,a,'',b,b];
+  S.pl['Thomas']=[a,a,b,b,'bureau'];S.pl['Kevin']=[a,a,a,b,b];S.pl['Mathieu']=[b,b,a,a,a];S.pl['Lucas']=[a,a,'',b,b];
   L.forEach(function(id){S.bes[id]=[2,2,2,2,2]})}
 EQ.forEach(function(p){if(!S.pl[p.n])S.pl[p.n]=['','','','','']});
 function qui(id,j){return EQ.filter(function(p){return S.pl[p.n][j]===id})}
