@@ -2,10 +2,11 @@
 <title>Présentation ERAL</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
-<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="../kit/kit.css?v=1">
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="../kit/kit.css?v=2">
 </head><body>
 <script>
-/* Kit de présentation pour ERAL Matériaux (démo « Valcroix Matériaux »). Prix proposés le 15/11/2026, grille publique du site. */
+/* Kit de présentation pour ERAL Matériaux (démo « Valcroix Matériaux »). Prix proposés le 15/11/2026, grille publique du site.
+   15/11 midi (Cyril) : c'est le NÉGOCE qui paie le réseau (5 poseurs ou artisans compris, puis 9 € HT/mois chacun, proposé, à valider), gratuit pour le poseur et l'artisan. */
 window.KIT={
 id:'eral',client:'ERAL',demo:'Démo « Valcroix Matériaux »',masquable:false,
 retour:{href:'espace.html',t:'L\'Espace'},
@@ -15,7 +16,8 @@ essentiel:{pitch:'Tout le dossier menuiserie au même endroit, du métré à la 
  points:['<b>Leur quotidien</b> (à vérifier avec eux, rien de public trouvé) : cotes sur papier, chiffrage dans Pro Devis, ARC contrôlés à la main, poses calées par téléphone, suivi par mails et tableaux.',
   '<b>Ce qui change</b> : les cotes prises sur la tablette partent à l\'ADV, l\'écart entre les cotes et l\'ARC ressort en rouge, le planning des poseurs est le même pour tous, le client est prévenu par SMS.',
   '<b>Ce qu\'on ne touche pas</b> : Pro Devis reste leur outil de chiffrage menuiserie.',
-  '<b>L\'offre</b> : 290 € HT/mois pour l\'équipe menuiserie, poseurs gratuits, 1 mois d\'essai, mise en service offerte, prix bloqué 12 mois.']},
+  '<b>L\'offre</b> : 290 € HT/mois pour l\'équipe menuiserie, 5 poseurs ou artisans connectés compris puis 9 € HT/mois chacun, gratuit pour eux, 1 mois d\'essai, mise en service offerte, prix bloqué 12 mois.',
+  '<b>Le réseau</b> : c\'est ERAL qui paie, jamais le poseur ni l\'artisan. Leur accès est limité au travail confié par ERAL : son planning, ses poses, les cotes envoyées à ERAL. Leurs propres clients, devis et Cliky restent dans une offre ProClik à eux.']},
 avant:[['Remettre la démo à zéro','Le bouton juste en dessous.'],['Ouvrir la démo une fois sur l\'iPad','Commercial, puis la prise de cotes, pour qu\'elles soient chargées.'],
  ['Choisir le jour ou la nuit selon la pièce'],['iPad chargé, luminosité au maximum, mode Ne pas déranger'],['Relire les prix (onglet Prix)'],
  ['Préparer la proposition imprimée ou en PDF','Onglet Prix, « Imprimer ou PDF ».'],['Savoir dire que Pro Devis reste en place','Pour la menuiserie, l\'Espace est à côté, pas à la place.']],
@@ -27,7 +29,7 @@ deroule:[
  {t:'Ses clients et ses relances',min:2,faire:'Clients : ses dossiers classés par étape, de Métré à Terminé. « Relancer M. Blanc » : devis envoyé il y a 8 jours.',dire:'Chaque commercial voit où en sont ses clients, sans demander à personne.',liens:[['Ses clients','espace.html?r=com&o=cli']]},
  {t:'L\'ADV contrôle l\'ARC',min:4,fort:true,faire:'Accès ADV : un seul bouton « Traiter », une chose à la fois. Le contrôle de l\'ARC Martin montre en rouge les 2 écarts avec les cotes prises.',dire:'L\'erreur de l\'ARC se voit avant la fabrication, pas le jour de la pose.',liens:[['Ouvrir en ADV','espace.html?r=adv']]},
  {t:'Le responsable d\'agence cale les poses',min:4,faire:'Accès Agence : les dossiers par étape et les chiffres par commercial. Puis Planning : toucher « M. Bernard », puis un jour libre d\'un poseur. Le poseur et le client sont prévenus. Montrer Poseurs : un poseur dont l\'URSSAF a expiré ne peut pas être calé.',dire:'Un seul planning, le même pour tout le monde. Plus besoin d\'appeler trois poseurs pour trouver un jour.',liens:[['Ouvrir en Agence','espace.html?r=agence'],['Le planning','espace.html?r=agence&o=pp']]},
- {t:'Le poseur chez le client',min:3,faire:'Accès Poseur : sa pose étape par étape. SMS « J\'arrive », photos avant et après, menuiseries cochées, réserves, PV signé au doigt par le client. La fin de pose prévient le commercial et l\'ADV.',dire:'Le poseur sous-traitant a tout sur son téléphone, et il ne paie rien.',liens:[['Ouvrir en Poseur','espace.html?r=poseur']]},
+ {t:'Le poseur chez le client',min:3,faire:'Accès Poseur : le métré que l\'agence lui confie (onglet Cotes, Mme Tessier), puis sa pose étape par étape. SMS « J\'arrive », photos avant et après, menuiseries cochées, réserves, PV signé au doigt par le client. La fin de pose prévient le commercial et l\'ADV.',dire:'Le poseur sous-traitant a tout sur son téléphone, il peut même faire le métré pour vous, et il ne paie rien : c\'est votre réseau.',liens:[['Ouvrir en Poseur','espace.html?r=poseur']]},
  {t:'Les options, pour plus tard',min:2,faire:'Montrer les deux bandeaux : Option Cliky (ARC et bons de livraison lus, comparés aux cotes, relances) et Option Devis (comptoir et matériaux, à côté de Pro Devis). Les deux sont « non incluses ».',dire:'On commence par la menuiserie. Le reste, vous le prendrez quand vous en aurez envie.'}],
 fin:'Tout ce que vous venez de voir est fait pour votre rayon menuiserie. Si un écran ne colle pas à votre façon de travailler, on l\'adapte.',
 prix:{intro:'La proposition pour ERAL, à montrer telle quelle. Touchez « Montrer en grand » pour la présenter.',
@@ -35,18 +37,20 @@ prix:{intro:'La proposition pour ERAL, à montrer telle quelle. Touchez « Montr
  lignes:[
   {n:'Espace, l\'équipe menuiserie',d:'Commerciaux, ADV et responsables : équipe de 6 à 10 comptes (grille du site).',mois:290},
   {n:'Deuxième agence',d:'Lieu de retrait et de livraison dans l\'Espace.',txt:'Sans surcoût'},
-  {n:'Poseurs sous-traitants',d:'Leur planning, leurs poses et leurs papiers, sans les compter.',txt:'Gratuits'},
+  {k:'reseau',n:'Poseurs et artisans connectés',d:'Gratuit pour eux : planning, poses, cotes envoyées à ERAL, papiers.',par:9,inclus:5,qte:3,unite:'connecté'},
   {n:'Mise en service',d:'Comptes et accès, import des dossiers en cours, prise en main de l\'équipe.',txt:'Offerte'},
   {k:'cliky',n:'Cliky Entreprise',d:'Option, plus tard : ARC et bons de livraison lus et comparés aux cotes, relances des clients.',mois:199,opt:true,on:false},
   {k:'devis',n:'Devis comptoir et matériaux',d:'Option, plus tard : à côté de Pro Devis, qui reste pour la menuiserie.',txt:'À définir',txtS:'avec vous',opt:true,on:false,horsTotal:true}],
- conditions:['1 mois d\'essai avant de payer','Prix bloqué 12 mois','Au-delà de 10 comptes (poseurs non comptés) : sur devis, comme sur le site'],
- mention:'Prix HT. Espace au prix de la grille publique pour 6 à 10 personnes.',
- vous:[['Ce qu\'on peut demander en échange','flag',['Un engagement de 12 mois après l\'essai.','Un avis et le droit de dire qu\'ERAL utilise ProClik.','Un point par mois pendant les 3 premiers mois pour leurs retours.']],
+ conditions:['1 mois d\'essai avant de payer','Prix bloqué 12 mois','Poseurs et artisans : jamais facturés, leur accès suit le travail confié par ERAL','Au-delà de 10 comptes d\'équipe : sur devis, comme sur le site'],
+ mention:'Prix HT. Espace au prix de la grille publique pour 6 à 10 personnes. Prix par poseur ou artisan connecté proposé, à valider.',
+ vous:[['Le réseau, à dire simplement','chat',['Le poseur ne paie rien et n\'a pas besoin d\'un compte ProClik à lui : ERAL l\'invite.','Il ne voit que le travail d\'ERAL : ses jours, ses poses, les cotes qu\'il envoie à ERAL. Pas les autres poseurs, pas les prix.','S\'il veut gérer ses propres clients, ses devis ou Cliky, il prend son Espace ProClik (49 € HT/mois sans site). Son accès ERAL reste gratuit à côté.','Un artisan qui a déjà son Espace ProClik (comme BRS) se relie à ERAL : il choisit ce qu\'il partage, ses cotes par exemple.']],
+  ['Ce qu\'on peut demander en échange','flag',['Un engagement de 12 mois après l\'essai.','Un avis et le droit de dire qu\'ERAL utilise ProClik.','Un point par mois pendant les 3 premiers mois pour leurs retours.']],
   ['À éviter','eye',['Donner un prix pour l\'option Devis : rien n\'est fixé, elle n\'est pas encore construite.','Parler de remplacer Pro Devis pour la menuiserie.','Dire qu\'une option est « incluse » : elle est « active » quand ils la prennent.']]]},
 comparer:null,
 questions:['Combien de commerciaux, d\'ADV et de responsables travaillent sur la menuiserie ?','Comment les cotes arrivent-elles aujourd\'hui jusqu\'à Pro Devis ?','Comment contrôlez-vous les ARC des fabricants, et combien d\'erreurs passent jusqu\'à la pose ?','Combien de poseurs sous-traitants, et comment calez-vous leurs poses ?','Qui prévient le client à chaque étape (commande, livraison, pose) ?','Comment suivez-vous les attestations URSSAF et les décennales des poseurs ?'],
 objections:[['« On a déjà Pro Devis. »','On ne le touche pas. L\'Espace s\'occupe de tout ce qui se passe autour : les cotes, l\'ARC, le planning des poseurs, le client prévenu.'],
  ['« Les poseurs ne voudront pas d\'une appli de plus. »','Pour eux c\'est gratuit, et ils y gagnent : leurs poses, les cotes et le PV sur le téléphone, sans appels.'],
+ ['« Pourquoi payer pour les poseurs ? »','Les 5 premiers sont compris. Au-delà, chaque poseur ou artisan connecté vous envoie ses cotes et ses poses sans un appel : c\'est votre réseau qui grandit, et c\'est vous qui fidélisez vos artisans.'],
  ['« Nous avons deux agences. »','Les commerciaux menuiserie sont sur une seule : un seul abonnement. La deuxième agence est un lieu de retrait ou de livraison, sans surcoût.'],
  ['« On n\'a pas le temps de tout installer. »','C\'est nous qui installons, la mise en service est offerte, et le premier mois est un essai.'],
  ['« Et si ça ne nous convient pas ? »','Vous avez un mois d\'essai pour le voir, et ce qui ne colle pas, on l\'adapte.'],
@@ -54,8 +58,8 @@ objections:[['« On a déjà Pro Devis. »','On ne le touche pas. L\'Espace s\'o
 conclure:{intro:'Repartir avec une date de démarrage de l\'essai.',
  etapes:['Montrer la fiche de prix en grand, puis la laisser imprimée ou en PDF.','Proposer une date pour le début du mois d\'essai.','Demander la liste des comptes à créer (commerciaux, ADV, responsables) et des poseurs.','Demander qui sera le contact pour l\'installation.'],
  apres:['Envoyer la proposition écrite le jour même.','Noter ce qui les a fait réagir, et ce qu\'il faut adapter.','Faire un point à la fin du mois d\'essai.'],
- confirmer:['Le prix proposé le 15/11 : 290 € HT/mois, poseurs gratuits, 2e agence sans surcoût.','Cliky à 199 € HT/mois plus tard.','Une date limite pour la proposition (aucune n\'est fixée).']}
+ confirmer:['Le prix proposé le 15/11 : 290 € HT/mois, 2e agence sans surcoût.','Le réseau : 5 poseurs ou artisans compris, puis 9 € HT/mois chacun, payé par ERAL (proposé, à valider).','Cliky à 199 € HT/mois plus tard.','Une date limite pour la proposition (aucune n\'est fixée).']}
 };
 </script>
-<script src="../kit/kit.js?v=1"></script>
+<script src="../kit/kit.js?v=2"></script>
 </body></html>
