@@ -8,6 +8,9 @@
    Sans l'option (Espace connecté et option non prise) : l'écran dit ce qu'elle apporte et comment la demander. */
 (function(){
 "use strict";
+/* Réseaux est une option (Cyril, 15/11) : sans elle, l'onglet n'apparaît ni dans le menu ni dans l'éventail du téléphone */
+(function(){var on=window.PCOPT&&PCOPT.actif('reseaux')===true;
+ ['nb-reseaux','tt-reseaux'].forEach(function(id){var b=document.getElementById(id);if(b){b.hidden=!on;b.style.display=on?'':'none'}})})();
 var X=window.PCX;if(!X)return;
 var $=function(s,r){return (r||document).querySelector(s)};
 var esc=X.esc||function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};

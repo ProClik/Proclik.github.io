@@ -9,7 +9,10 @@
   if($("#pb")||!$("#nb-accueil"))return;
   var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
-  var TOUS=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
+  var TOUS0=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
+  /* un onglet caché (ex. Réseaux sans l'option, Cyril 15/11) ne va ni dans la barre ni dans l'éventail */
+  function dispo(v){if(v==="reglages")return true;var b=$("#nb-"+v);return !!b&&!b.hidden}
+  var TOUS=TOUS0.filter(dispo);
   var DEFAUT=["accueil","clients","planning","devis"];
   function lit(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}}
   function choisis(){
@@ -92,13 +95,62 @@
   function mesure(){
     W=pb.getBoundingClientRect().width;if(!W)return;
     svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine();
-    /* éventail : demi-cercle autour du galet central, adapté à la largeur du téléphone */
-    var rx=Math.min(168,(innerWidth-60)/2),ry=160,n=EVENTAIL.length;
-    $$(".pb-e",menu).forEach(function(b,i){
-      var a=(165-i*(150/(n-1)))*Math.PI/180;
-      b.style.setProperty("--x",(Math.cos(a)*rx).toFixed(1)+"px");
-      b.style.setProperty("--y",(-Math.sin(a)*ry).toFixed(1)+"px");
+    /* éventail : arcs autour du galet central. Avec 9 boutons, les bulles et les noms se chevauchaient (Cyril, 15/11) :
+       on cherche maintenant la disposition (un arc, sinon deux arcs l'un au-dessus de l'autre) où aucune bulle,
+       aucun nom et aucune pastille ne se touchent, en mesurant la vraie largeur de chaque nom. */
+    var bs=$$(".pb-e",menu),P=arcs(bs.map(function(b){var n=$(".pb-n",b);return n?n.offsetWidth:60}));
+    bs.forEach(function(b,i){
+      b.style.setProperty("--x",P[i][0].toFixed(1)+"px");
+      b.style.setProperty("--y",P[i][1].toFixed(1)+"px");
     });
+  }
+  /* boîtes à ne pas toucher : bulle 46 px (centre = x,y) avec sa pastille en haut à droite, nom dessous */
+  var ECART=8,GR=23,LH=15;
+  function boites(x,y,lw){var h=Math.max(lw,GR*2)/2;return [[x-GR,y-GR-4,x+GR+6,y+GR],[x-h,y+GR+5,x+h,y+GR+5+LH]]}
+  function touche(a,b,m){return a[0]<b[2]+m&&b[0]<a[2]+m&&a[1]<b[3]+m&&b[1]<a[3]+m}
+  function arcs(L){
+    var n=L.length,lim=innerWidth/2-8,haut=Math.max(220,innerHeight-93-70),
+      fixes=[[-36,-104,36,-32],[-40,-40,40,40]]; /* micro (58 px + son anneau) et galet × */
+    var cle=n+"|"+innerWidth+"|"+innerHeight+"|"+L.join(",");if(arcs.c&&arcs.c.k===cle)return arcs.c.p;
+    function pose(rings){ /* rings : [{n,rx,ry,a}] du plus bas au plus haut */
+      var P=[],B=[],k=0;
+      for(var r=0;r<rings.length;r++){var R=rings[r],Q=surArc(R);
+        for(var j=0;j<R.n;j++,k++){
+          var x=Q[j][0],y=Q[j][1],h=Math.max(L[k],GR*2)/2;
+          if(Math.abs(x)+h>lim||y+GR+5+LH>14||y-GR<-haut)return null;
+          var bb=boites(x,y,L[k]);
+          for(var f=0;f<fixes.length;f++)if(touche(bb[0],fixes[f],ECART)||touche(bb[1],fixes[f],ECART))return null;
+          for(var q=0;q<B.length;q++)if(touche(bb[0],B[q][0],ECART)||touche(bb[0],B[q][1],ECART)||touche(bb[1],B[q][0],ECART)||touche(bb[1],B[q][1],ECART))return null;
+          B.push(bb);P.push([x,y]);
+        }
+      }
+      return P;
+    }
+    /* n points régulièrement espacés LE LONG de l'arc (pas en angle) : même écart entre toutes les bulles */
+    function surArc(R){
+      if(R.n===1)return [[0,-R.ry]];
+      var N=60,a0=(180-R.a)*Math.PI/180,a1=R.a*Math.PI/180,X=[],Y=[],C=[0],i,j,Q=[];
+      for(i=0;i<=N;i++){var a=a0+(a1-a0)*i/N;X.push(Math.cos(a)*R.rx);Y.push(-Math.sin(a)*R.ry);if(i)C.push(C[i-1]+Math.hypot(X[i]-X[i-1],Y[i]-Y[i-1]))}
+      for(j=0,i=0;j<R.n;j++){var c=C[N]*j/(R.n-1);while(i<N-1&&C[i+1]<c)i++;var f=(c-C[i])/((C[i+1]-C[i])||1);Q.push([X[i]+(X[i+1]-X[i])*f,Y[i]+(Y[i+1]-Y[i])*f])}
+      return Q;
+    }
+    function score(P){var m=0;P.forEach(function(p){m=Math.max(m,-p[1])});return m}
+    var best=null,bs=1e9,rxm=Math.min(175,lim-30),A,A2,ry,rx,ni,P,s;
+    /* 1) un seul arc, le plus bas possible */
+    for(ry=110;ry<=haut-GR;ry+=6)for(A=0;A<=30;A+=3)for(rx=rxm;rx>=rxm-40;rx-=10){
+      P=pose([{n:n,rx:rx,ry:ry,a:A}]);if(P&&(s=score(P))<bs){bs=s;best=P}
+    }
+    /* 2) deux arcs de même forme, l'un dans l'autre : les premiers boutons sur l'arc intérieur (plus près du pouce),
+          les suivants sur l'arc extérieur, chacun lu de gauche à droite */
+    if(!best)for(ni=Math.max(2,Math.floor(n/2)-1);ni<=Math.ceil(n/2);ni++)
+      for(ry=170;ry<=290;ry+=10)for(var k=1.6;k<=2.2;k+=.1)for(A=0;A<=40;A+=10)for(A2=0;A2<=30;A2+=10)for(rx=rxm;rx>=rxm-30;rx-=15){
+        P=pose([{n:ni,rx:rx/k,ry:ry/k,a:A},{n:n-ni,rx:rx,ry:ry,a:A2}]);if(P&&(s=score(P))<bs){bs=s;best=P}
+      }
+    if(!best){ /* tout petit écran avec beaucoup de boutons : rangées bien espacées au-dessus du micro */
+      var lw=Math.max.apply(null,L.concat([GR*2]))+ECART+4,c=Math.max(1,Math.floor(2*lim/lw)),rg=Math.ceil(n/c);
+      best=L.map(function(_,i){var r=Math.floor(i/c),m=r<rg-1?c:n-r*c,j=i-r*c;return [(j-(m-1)/2)*lw,-104-ECART-GR-5-LH-r*(GR*2+5+LH+ECART+4)]});
+    }
+    arcs.c={k:cle,p:best};return best;
   }
   function vers(cible,duree){
     cancelAnimationFrame(anim);
@@ -161,7 +213,7 @@
     TOUS:TOUS,DEFAUT:DEFAUT,info:info,
     bas:function(){return BAS.slice()},style:function(){return STYLE},
     applique:function(){
-      ferme();BAS=choisis();EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+      ferme();TOUS=TOUS0.filter(dispo);this.TOUS=TOUS;BAS=choisis();EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
       pb.classList.toggle("pb-ronde",STYLE==="ronde");
       remplit();suit();mesure();
     }
