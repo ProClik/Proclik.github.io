@@ -35,13 +35,16 @@
     var c=$("#fam-c"),bc=c&&$(".badge",c);
     if(c){c.classList.toggle("on",!!cur&&bas.indexOf(cur)<0);bc.textContent=tot;bc.hidden=!tot}
   }
-  /* le panneau s'ouvre à droite du galet : le micro à hauteur du galet, les bulles au-dessus */
+  /* le panneau s'ouvre à droite du galet */
   function place(){
     var m=$("#pb-menu"),c=$("#fam-c");if(!m)return;
     if(!large.matches||!c){m.style.left="";m.style.bottom="";return}
-    var r=c.getBoundingClientRect(),pan=$(".pb-pan",m),w=pan&&pan.style.width?parseFloat(pan.style.width):380;
+    /* panneau centré en hauteur sur le galet (Cyril, 15/11) ; il reste dans l'écran ; le micro dessous, comme sur téléphone */
+    var r=c.getBoundingClientRect(),q=B.panneau()||[-190,-300,190,0],w=q[2]-q[0],mil=(q[1]+q[3])/2,
+      cy=r.top+r.height/2,ay=cy-mil,haut=ay+q[1],bas=ay+68+40;
+    if(haut<12)ay+=12-haut;if(bas>innerHeight-12)ay-=bas-(innerHeight-12);
     m.style.left=(r.right+28+w/2)+"px";
-    m.style.bottom=(innerHeight-(r.top+r.height/2)-68)+"px";
+    m.style.bottom=(innerHeight-ay)+"px";
   }
   fam.addEventListener("click",function(e){
     if(e.target.closest("#fam-c")){if(B.ouvert())B.ferme();else{B.remesure();place();B.ouvre()}return}
