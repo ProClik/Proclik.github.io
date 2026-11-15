@@ -229,6 +229,16 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .tu>small{font-size:12px;color:var(--muted);font-weight:600}
 .tu.tplan .mplan{max-height:66px;margin-top:4px}
 @media(max-height:700px){.tu{min-height:88px;padding:9px 10px}.tu b{font-size:22px}.cc{padding:9px 11px 10px}}
+
+.lst{background:var(--bg);border-radius:18px;box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.08));overflow:hidden}
+.lst.w{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--warn) 55%,transparent)}
+.cl1{display:flex;align-items:center;gap:10px;width:100%;padding:14px 12px 14px 16px;text-align:left;background:none;border:0;color:var(--fg);min-height:52px}
+.cl1+.cl1{border-top:1px solid var(--line)}
+.cl1 b{flex:1;min-width:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl1 .mot{font-size:13.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.cl1 .mot.w{color:#fff;background:var(--warn);padding:4px 10px;border-radius:99px;font-weight:800}
+.cl1 svg.i{width:16px;height:16px;color:var(--muted);flex:none}
+.gh2{margin:6px 4px 0}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -304,12 +314,16 @@ V.com_jour=function(){var d=VX.dos('durand'),cot=S.cotes.durand,fait=cot&&cot.en
 /* liste des clients : 3 groupes clairs, une carte = un client, sa prochaine chose à faire, sa barre d'avancement */
 function aFaire(d){var e=et(d);return e===6?(d.sav&&!S.poseOk.petit):(d.relance&&e===1&&!S.relance[d.id])||(d.arc&&S.arcOk==='ecart')||(d.arc&&!S.arcOk&&role()!=='com')||(acaler(d)&&!place(d.id))||(et(d)===2&&role()!=='com')||(d.id==='durand'&&e===0&&role()==='com')}
 function barre(e){return '<span class="bar7" aria-label="Étape '+(e+1)+' sur 7">'+VX.ETAPES.map(function(_,i){return '<i class="'+(i<e?'f':i===e?'c':'')+'"></i>'}).join('')+'</span>'}
-function carteCli(d,pale){var e=et(d),w=aFaire(d);
-  return '<button class="cc pk'+(w?'':' cpt')+'" onclick="ouvrir(\''+d.id+'\')"><span class="cc1"><b>'+d.cl+'<small> · '+d.v+(role()!=='com'?' · '+VX.COMS[d.com].n:'')+'</small></b><span class="cce'+(w?' w':'')+'">'+VX.ETAPES[e]+'</span></span>'+(w?'<span class="cc3 w">'+ic('alert')+suite(d)+'</span>':'')+barre(e)+'</button>'}
-function listeCli(L){var G=[['À faire','alert',L.filter(aFaire)],['En cours','clock',L.filter(function(d){return !aFaire(d)&&et(d)<6})],['Terminés','check',L.filter(function(d){return !aFaire(d)&&et(d)===6})]];
-  return G.filter(function(g){return g[2].length}).map(function(g){return '<section class="grp"><h2 class="gh2'+(g[0]==='À faire'?' w':'')+'">'+g[0]+'<span class="nb">'+g[2].length+'</span></h2>'+g[2].map(function(d){return carteCli(d)}).join('')+'</section>'}).join('')}
+/* une ligne = un client : son nom, et un seul mot à droite (orange s'il faut agir) */
+function motCourt(d){var e=et(d),id=d.id;
+  if(id==='durand'&&e===0)return 'Métré 10 h';if(d.relance&&e===1&&!S.relance[id])return 'À relancer';if(d.sav&&e===6)return 'Réserve';
+  if(d.arc&&S.arcOk==='ecart')return 'Écart ARC';if(d.arc&&!S.arcOk)return 'ARC à voir';if(acaler(d)&&!place(id))return 'Pose à caler';if(e===2)return 'À commander';
+  return VX.ETAPES[e]}
+function carteCli(d){var w=aFaire(d);return '<button class="cl1" onclick="ouvrir(\''+d.id+'\')"><b>'+d.cl+'</b><span class="mot'+(w?' w':'')+'">'+motCourt(d)+'</span>'+ic('right')+'</button>'}
+function listeCli(L){var G=[['À faire',L.filter(aFaire)],['En cours',L.filter(function(d){return !aFaire(d)&&et(d)<6})],['Terminés',L.filter(function(d){return !aFaire(d)&&et(d)===6})]];
+  return G.filter(function(g){return g[1].length}).map(function(g,i){return '<section class="grp"><h2 class="gh2'+(g[0]==='À faire'?' w':'')+'">'+g[0]+' · '+g[1].length+'</h2><div class="lst'+(g[0]==='À faire'?' w':'')+'">'+g[1].map(carteCli).join('')+'</div></section>'}).join('')}
 V.com_cli=function(){var L=mesDos(),n=L.filter(aFaire).length;
-  return hi('Mes clients',n?n+' à faire, '+(L.length-n)+' qui avancent seuls':L.length+' dossiers, rien à faire')+'<div class="pile lc">'+listeCli(L)+'</div>'};
+  return hi('Mes clients',L.length+' clients')+'<div class="pile lc">'+listeCli(L)+'</div>'};
 function dosLn(d,court){var e=et(d),c=aFaire(d)?'warn':e===6?'ok':'la';
   return '<button class="ln pk" onclick="ouvrir(\''+d.id+'\')"><span class="pt '+c+'"></span><span class="tx"><b>'+d.cl+' · '+d.v+'</b>'+(court?'':'<small>'+suite(d)+'</small>')+'</span><span class="etq">'+VX.ETAPES[e]+'</span></button>'}
 function suite(d){var e=et(d);
