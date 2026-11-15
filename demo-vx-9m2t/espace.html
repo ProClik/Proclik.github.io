@@ -201,6 +201,34 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 /* petits écrans (iPhone SE) : on resserre */
 @media(max-height:700px){.hi h1{font-size:20px}.now{padding:12px;gap:8px}.now b.t{font-size:17px}.ln{padding:7px 9px}.cel{min-height:50px}.blk{padding:10px}}
 @media(max-width:360px){.roles button{font-size:11.5px}}
+
+/* refonte lisible : cartes clients, fiche en 4 tuiles */
+.lc{gap:10px}
+.grp{display:grid;gap:8px}
+.gh2{display:flex;align-items:center;gap:8px;margin:4px 2px 0;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.gh2 .nb{font-size:12px;letter-spacing:0;min-width:22px;height:22px;padding:0 6px;border-radius:99px;display:inline-grid;place-items:center;background:var(--teinte);color:var(--nuit)}
+.gh2.w{color:var(--warn)}.gh2.w .nb{background:var(--warn);color:#fff}
+.cc{display:grid;gap:3px;width:100%;text-align:left;padding:11px 13px 12px;border-radius:16px}
+.cc.pale{opacity:.5}
+.cc1{display:flex;align-items:center;gap:8px}.cc1 b small{font-size:12.5px;font-weight:600;color:var(--muted)}.cc.cpt{padding:9px 13px 10px;gap:0}.cc.cpt .bar7{margin-top:7px}.cc.cpt .bar7 i{height:4px}
+.cc1 b{flex:1;min-width:0;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cce{font-size:11px;font-weight:800;color:var(--nuit);white-space:nowrap}.cce.w{color:var(--warn)}
+.cc2{font-size:12.5px;color:var(--muted);font-weight:600}
+.cc3{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}.cc3.w{color:var(--warn)}.cc3 svg.i{width:15px;height:15px;flex:none}
+.bar7{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+.bar7 i{height:5px;border-radius:3px;background:var(--line)}.bar7 i.f{background:var(--nuit)}.bar7 i.c{background:var(--laiton)}
+.now .bar7 i{background:color-mix(in srgb,var(--nuit-fg) 22%,transparent)}.now .bar7 i.f{background:var(--nuit-fg)}.now .bar7 i.c{background:var(--laiton)}
+.fc{gap:10px}.fc h3,.fc .sous{margin-bottom:0}
+.fc-ct{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fc-ct button{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;border-radius:14px;font-weight:700;font-size:13.5px}
+.fc-now .gw{border:0;cursor:pointer}
+.tuiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tu{display:grid;align-content:start;gap:2px;text-align:left;padding:11px 12px;border-radius:16px;min-height:104px;color:var(--fg);text-decoration:none;min-width:0}
+.tu .tt{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--muted)}.tu .tt svg.i{width:16px;height:16px}
+.tu b{font-size:26px;line-height:1.1;margin-top:4px}.tu b small{font-size:13px;color:var(--muted)}.tu b.s{font-size:14.5px;line-height:1.25}
+.tu>small{font-size:12px;color:var(--muted);font-weight:600}
+.tu.tplan .mplan{max-height:66px;margin-top:4px}
+@media(max-height:700px){.tu{min-height:88px;padding:9px 10px}.tu b{font-size:22px}.cc{padding:9px 11px 10px}}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -273,13 +301,16 @@ V.com_jour=function(){var d=VX.dos('durand'),cot=S.cotes.durand,fait=cot&&cot.en
   h+=blk('Aujourd\'hui','list',A.join(''),'<small>'+A.length+'</small>');
   h+=optB('cliky','Les relances partent toutes seules','Cliky relance vos devis à J+7 et J+15 avec vos mots');
   return h+'</div>'};
-V.com_cli=function(){var L=mesDos(),f=S.fcli;
-  var cnt=VX.ETAPES.map(function(_,i){return L.filter(function(d){return et(d)===i}).length});
-  var h=hi('Mes clients',L.length+' dossiers, du plus récent au plus avancé');
-  h+='<div class="pile"><div class="pipe">'+VX.ETAPES.map(function(e,i){return '<span class="pk'+(cnt[i]?'':' z')+'"><b>'+cnt[i]+'</b><small>'+e+'</small></span>'}).join('')+'</div>';
-  var M=L.slice().sort(function(a,b){return et(a)-et(b)});
-  h+='<section class="blk">'+(M.length?M.map(dosLn).join(''):'<p class="mini">Aucun dossier à cette étape.</p>')+'</section></div>';return h};
-function dosLn(d,court){var e=et(d),c=e===6?(d.sav&&!S.poseOk.petit?'warn':'ok'):(d.relance&&e===1&&!S.relance[d.id])||(d.arc&&S.arcOk==='ecart')||(acaler(d)&&!place(d.id))?'warn':'la';
+/* liste des clients : 3 groupes clairs, une carte = un client, sa prochaine chose à faire, sa barre d'avancement */
+function aFaire(d){var e=et(d);return e===6?(d.sav&&!S.poseOk.petit):(d.relance&&e===1&&!S.relance[d.id])||(d.arc&&S.arcOk==='ecart')||(d.arc&&!S.arcOk&&role()!=='com')||(acaler(d)&&!place(d.id))||(et(d)===2&&role()!=='com')||(d.id==='durand'&&e===0&&role()==='com')}
+function barre(e){return '<span class="bar7" aria-label="Étape '+(e+1)+' sur 7">'+VX.ETAPES.map(function(_,i){return '<i class="'+(i<e?'f':i===e?'c':'')+'"></i>'}).join('')+'</span>'}
+function carteCli(d,pale){var e=et(d),w=aFaire(d);
+  return '<button class="cc pk'+(w?'':' cpt')+'" onclick="ouvrir(\''+d.id+'\')"><span class="cc1"><b>'+d.cl+'<small> · '+d.v+(role()!=='com'?' · '+VX.COMS[d.com].n:'')+'</small></b><span class="cce'+(w?' w':'')+'">'+VX.ETAPES[e]+'</span></span>'+(w?'<span class="cc3 w">'+ic('alert')+suite(d)+'</span>':'')+barre(e)+'</button>'}
+function listeCli(L){var G=[['À faire','alert',L.filter(aFaire)],['En cours','clock',L.filter(function(d){return !aFaire(d)&&et(d)<6})],['Terminés','check',L.filter(function(d){return !aFaire(d)&&et(d)===6})]];
+  return G.filter(function(g){return g[2].length}).map(function(g){return '<section class="grp"><h2 class="gh2'+(g[0]==='À faire'?' w':'')+'">'+g[0]+'<span class="nb">'+g[2].length+'</span></h2>'+g[2].map(function(d){return carteCli(d)}).join('')+'</section>'}).join('')}
+V.com_cli=function(){var L=mesDos(),n=L.filter(aFaire).length;
+  return hi('Mes clients',n?n+' à faire, '+(L.length-n)+' qui avancent seuls':L.length+' dossiers, rien à faire')+'<div class="pile lc">'+listeCli(L)+'</div>'};
+function dosLn(d,court){var e=et(d),c=aFaire(d)?'warn':e===6?'ok':'la';
   return '<button class="ln pk" onclick="ouvrir(\''+d.id+'\')"><span class="pt '+c+'"></span><span class="tx"><b>'+d.cl+' · '+d.v+'</b>'+(court?'':'<small>'+suite(d)+'</small>')+'</span><span class="etq">'+VX.ETAPES[e]+'</span></button>'}
 function suite(d){var e=et(d);
   if(d.id==='durand'){var c=S.cotes.durand;if(e>=1)return 'Cotes reçues par l\'ADV · devis Pro Devis en cours';if(c)return c.n+' sur '+c.tot+' menuiseries mesurées';}
@@ -309,22 +340,30 @@ function relancer(id){var d=VX.dos(id);fen('<h3>Relancer '+d.cl+'</h3><p class="
 function acaler(d){return d.acaler||(d.id==='chabert'&&arrive('chabert'))}
 function place(id){for(var p in S.pl)for(var j=0;j<5;j++)if(S.pl[p][j]===id&&acaler(VX.dos(id)))return{p:p,j:VX.JL[j]};return null}
 function poseTxt(d){if(acaler(d))return place(d.id)?place(d.id).j+' · '+VX.POSEURS[place(d.id).p].n:'Pas encore calée';var j=[];for(var p in S.pl)S.pl[p].forEach(function(x,i){if(x===d.id)j.push(VX.JOURS[i]+' · '+VX.POSEURS[p].n)});return j.length?j.join(', '):et(d)>=6?'Faite':'Après la livraison'}
-function ouvrir(id){var d=VX.dos(id),e=et(d),r=role(),men=id==='durand'?(S.cotes.durand?S.cotes.durand.tot:d.nbm):d.nbm;
-  var h='<h3>'+d.cl+'</h3><p class="sous">'+d.v+' · '+VX.COMS[d.com].n+' · '+d.fab+'</p><div class="pile">';
-  h+='<div class="row" style="flex-wrap:nowrap">'+(r!=='poseur'||true?'<button class="btn2 pk" style="flex:1" onclick="toast(\'Appel de '+q(d.cl)+' (démo)\',\'phone\')">'+ic('phone')+'Appeler</button><button class="btn2 pk" style="flex:1" onclick="toast(\'SMS ouvert (démo)\',\'chat\')">'+ic('chat')+'SMS</button><button class="btn2 pk" style="flex:1" onclick="toast(\'Itinéraire ouvert (démo)\',\'map\')">'+ic('map')+'Y aller</button>':'')+'</div>';
-  h+='<section class="blk"><div class="steps">'+VX.ETAPES.map(function(x,i){return '<span class="'+(i<e?'f':i===e?'c':'')+'"><i></i>'+x+'</span>'}).join('')+'</div><p style="margin:8px 0 0;font-size:13.5px;font-weight:700">'+suite(d)+'</p></section>';
-  h+='<section class="blk"><h2>'+ic('ruler')+men+' menuiseries<span class="sp"></span><small>'+d.fab+'</small></h2><p class="mini" style="margin:0 0 8px">'+d.quoi+'</p>'+
-    '<a class="btn2 pk" style="text-decoration:none;width:100%" href="cotes.html?d='+id+(e===0&&r==='com'?'':'&lect=1')+'">'+ic('doc')+(e===0&&r==='com'?'Prendre les cotes':'Voir la fiche de cotes')+'</a></section>';
-  h+='<section class="blk"><h2>'+ic('plan')+'Plan du logement<span class="sp"></span><small>'+(aPlan(id)?'avec les repères':'pas encore fait')+'</small></h2>'+(aPlan(id)?miniPlan(d):'<p class="mini" style="margin:0 0 8px">Le même plan que celui du formulaire client : 2 minutes pendant le métré, et chaque menuiserie se pose à sa place.</p>')+'<button class="btn2 pk" style="width:100%;margin-top:8px" onclick="planOuvrir(\''+id+'\')">'+ic('plan')+(aPlan(id)?'Ouvrir le plan':'Faire le plan')+'</button></section>';
-  var docs=[['Fiche de cotes',e>=1||(id==='durand'&&S.cotes.durand&&S.cotes.durand.envoye)],['Devis Pro Devis',e>=1&&!(id==='durand'&&e===1)],['Bon de commande',e>=3],['ARC fabricant',e>=4||(id==='martin'&&S.arcOk==='ok')||(id==='martin'?'la':false)],['Bon de livraison',e>=5],['PV de réception',e>=6||S.poseOk[id]]];
-  if(r!=='poseur')h+='<section class="blk"><h2>'+ic('folder')+'Documents</h2><div class="docs">'+docs.map(function(x){return '<span class="'+(x[1]==='la'?'la':x[1]?'ok':'')+'">'+x[0]+'</span>'}).join('')+'</div></section>';
-  h+='<section class="blk"><h2>'+ic('hammer')+'Pose<span class="sp"></span><small>'+poseTxt(d)+'</small></h2>'+(acaler(d)&&!place(id)&&r!=='com'&&r!=='poseur'?'<button class="go" style="width:100%" onclick="fermer();PL.v=\'poses\';PL.sel=\''+id+'\';go(\'pp\')">'+ic('cal')+'Caler la pose</button>':'<p class="mini" style="margin:0">'+(r==='com'?'Le poseur et le client sont prévenus par SMS. Vous voyez la fin de pose ici.':'Matériel à retirer à l\'agence, quai 2.')+'</p>')+'</section>';
-  /* actions qui font avancer le dossier */
-  if(r==='com'&&e===1&&id==='blanc')h+='<button class="go" onclick="signe(\'blanc\')">'+ic('sign')+'Le client a signé</button>';
-  if(r==='com'&&d.relance&&e===1&&!S.relance[id])h+='<button class="btn2 pk" onclick="relancer(\''+id+'\')">'+ic('send')+'Relancer</button>';
+/* fiche d'un client : qui, où il en est, LA chose à faire, puis 4 tuiles */
+function action(d){var id=d.id,e=et(d),r=role();
+  if(id==='durand'&&e===0&&r==='com')return ['Prendre les cotes','ruler',"location.href='cotes.html?d=durand'"];
+  if(r==='com'&&id==='blanc'&&e===1)return S.relance.blanc?['Le client a signé','sign',"signe('blanc')"]:['Relancer','send',"relancer('blanc')"];
+  if(r!=='com'&&r!=='poseur'&&acaler(d)&&!place(id))return ['Caler la pose','cal',"fermer();PL.v='poses';PL.sel='"+id+"';go('pp')"];
+  if(r==='adv'&&id==='martin'&&!S.arcOk)return ['Contrôler l\'ARC','doc','fermer();arc()'];
+  if(r==='adv'&&e===2)return ['Passer la commande','send',"fermer();traiter('cmd','"+id+"')"];
+  return null}
+function ouvrir(id){var d=VX.dos(id),e=et(d),r=role(),men=id==='durand'?(S.cotes.durand?S.cotes.durand.tot:d.nbm):d.nbm,A=action(d),w=aFaire(d);
+  var docs=[['Fiche de cotes',e>=1||(id==='durand'&&S.cotes.durand&&S.cotes.durand.envoye)],['Devis Pro Devis',e>=1&&!(id==='durand'&&e===1)],['Bon de commande',e>=3],['ARC fabricant',e>=4||(id==='martin'&&S.arcOk==='ok')],['Bon de livraison',e>=5],['PV de réception',e>=6||S.poseOk[id]]],nd=docs.filter(function(x){return x[1]}).length;
+  var h='<h3>'+d.cl+'</h3><p class="sous">'+d.v+' · '+VX.COMS[d.com].n+' · '+d.fab+'</p>';
+  h+='<div class="fc-ct"><button class="pk" onclick="toast(\'Appel de '+q(d.cl)+' (démo)\',\'phone\')">'+ic('phone')+'Appeler</button><button class="pk" onclick="toast(\'SMS ouvert (démo)\',\'chat\')">'+ic('chat')+'SMS</button><button class="pk" onclick="toast(\'Itinéraire ouvert (démo)\',\'map\')">'+ic('map')+'Y aller</button></div>';
+  h+='<section class="now fc-now"><span class="k">Étape '+(e+1)+' sur 7 · '+VX.ETAPES[e]+'</span>'+barre(e)+'<b class="t">'+suite(d)+'</b>'+(A?'<button class="gw" onclick="'+A[2]+'">'+ic(A[1])+A[0]+'</button>':'<p>'+(w?'À suivre par '+(r==='com'?'l\'agence':VX.COMS[d.com].n):'Rien à faire pour vous : ça avance.')+'</p>')+'</section>';
+  h+='<div class="tuiles">';
+  h+='<a class="tu pk" href="cotes.html?d='+id+(e===0&&r==='com'?'':'&lect=1')+'"><span class="tt">'+ic('ruler')+'Cotes</span><b>'+men+'</b><small>menuiseries '+d.fab+'</small></a>';
+  h+='<button class="tu pk tplan" onclick="planOuvrir(\''+id+'\')"><span class="tt">'+ic('plan')+'Plan</span>'+(aPlan(id)?miniPlan(d):'<b>+</b><small>à faire au métré</small>')+'</button>';
+  h+='<button class="tu pk" onclick="'+(acaler(d)&&!place(id)&&r!=='com'&&r!=='poseur'?"fermer();PL.v='poses';PL.sel='"+id+"';go('pp')":"toast('"+q(poseTxt(d))+"','hammer')")+'"><span class="tt">'+ic('hammer')+'Pose</span><b class="s">'+poseTxt(d)+'</b></button>';
+  h+=r!=='poseur'?'<button class="tu pk" onclick="docsDe(\''+id+'\')"><span class="tt">'+ic('folder')+'Documents</span><b>'+nd+'<small> sur 6</small></b><small>'+(docs[nd]?'Prochain : '+docs[nd][0]:'Tout est là')+'</small></button>':'<a class="tu pk" href="cotes.html?d='+id+'&lect=1"><span class="tt">'+ic('doc')+'Matériel</span><b class="s">Quai 2</b><small>à retirer à l\'agence</small></a>';
+  h+='</div>';
   if(r!=='poseur'&&e<=2)h+=optB('devis','Il lui faut aussi des matériaux ?','Isolant, mousse, appuis : devis comptoir en 2 minutes');
-  if(r!=='poseur'&&e>=3&&e<=4)h+=optB('cliky','Cliky lit l\'ARC et le compare','Il prévient s\'il voit un écart avec vos cotes');
-  fen(h+'</div>')}
+  else if(r!=='poseur'&&e>=3&&e<=4)h+=optB('cliky','Cliky lit l\'ARC et le compare','Il prévient s\'il voit un écart avec vos cotes');
+  fen('<div class="pile fc">'+h+'</div>')}
+function docsDe(id){var d=VX.dos(id),e=et(d);var docs=[['Fiche de cotes',e>=1||(id==='durand'&&S.cotes.durand&&S.cotes.durand.envoye)],['Devis Pro Devis',e>=1&&!(id==='durand'&&e===1)],['Bon de commande',e>=3],['ARC fabricant',e>=4||(id==='martin'&&S.arcOk==='ok')],['Bon de livraison',e>=5],['PV de réception',e>=6||S.poseOk[id]]];
+  fen('<h3>Documents · '+d.cl+'</h3><p class="sous">Tout est rangé ici, dans l\'ordre du chantier.</p><div class="pile">'+docs.map(function(x){return '<div class="ln'+(x[1]?'':' pale')+'"><span class="ico">'+ic(x[1]?'doc':'clock')+'</span><span class="tx"><b>'+x[0]+'</b><small>'+(x[1]?'Rangé dans le dossier':'Pas encore')+'</small></span>'+(x[1]?'<span class="etq ok">✓</span>':'')+'</div>'}).join('')+'<button class="btn2 pk" onclick="ouvrir(\''+id+'\')">'+ic('back')+'Retour au dossier</button></div>')}
 function signe(id){S.et[id]=2;evt(['adv','agence'],'M. Blanc a signé (Julien) : commande Minco à passer','sign');save();fermer();re();toast('Bravo ! Nadia est prévenue pour la commande','sign')}
 
 /* ======================= ADV (Nadia) ======================= */
@@ -342,7 +381,7 @@ V.adv_jour=function(){var L=file(),h=hi('Bonjour Nadia',L.length?L.length+' chos
     h+=blk('Ensuite','list',L.slice(1,4).map(function(x){return '<div class="ln" style="background:var(--bg)"><span class="ico">'+ic(x.i)+'</span><span class="tx"><b>'+x.t+'</b><small>'+x.s+'</small></span></div>'}).join('')||'<p class="mini">Plus rien après.</p>','<small>'+(L.length-1)+'</small>')}
   else h+='<section class="now"><span class="k">Bravo</span><b class="t">Tout est à jour</b><p>Les commerciaux et les poseurs ont été prévenus à chaque étape.</p></section>';
   h+=optB('cliky','Les ARC et les BL se lisent tout seuls','Cliky ouvre les e-mails des fabricants et range chaque document')+'</div>';return h};
-function traiter(){var a=file()[0];if(!a)return;
+function traiter(k,id){var a=k?file().filter(function(x){return x.k===k&&(!id||x.d===id)})[0]:file()[0];if(!a)return;
   if(a.k==='arc')return arc();
   if(a.k==='cot')return fen('<h3>Cotes Durand</h3><p class="sous">6 menuiseries Millet, prises par Julien ce matin.</p><div class="pile"><a class="btn2 pk" style="text-decoration:none" href="cotes.html?d=durand&lect=1">'+ic('doc')+'Ouvrir la fiche de cotes (ordre Pro Devis)</a><p class="mini" style="margin:0">Saisissez-les dans Pro Devis comme d\'habitude, puis déposez le devis ici : Julien le retrouve dans son dossier.</p><button class="go" onclick="S.et.durand=1;evt([\'com\'],\'Nadia a déposé le devis Durand (Pro Devis) : à envoyer au client\',\'doc\');save();fermer();re();toast(\'Devis déposé, Julien est prévenu\',\'doc\')">'+ic('clip')+'Déposer le devis Pro Devis</button>'+'</div>');
   if(a.k==='cmd'){var d=VX.dos(a.d);return fen('<h3>Commande '+d.cl+'</h3><p class="sous">'+d.fab+' · '+d.quoi+'</p><div class="pile"><section class="blk"><p style="margin:0;font-size:13.5px">Le bon de commande reprend la fiche de cotes, dans l\'ordre Pro Devis. Le fabricant renvoie son ARC : il arrivera dans votre liste.</p></section><button class="go" onclick="S.et[\''+a.d+'\']=3;evt([\'com\',\'agence\'],\'Commande '+q(d.cl)+' passée chez '+d.fab+' (Nadia)\',\'send\');save();fermer();re();toast(\'Commande passée, le commercial est prévenu\',\'send\')">'+ic('send')+'Commande passée</button></div>')}
@@ -356,8 +395,8 @@ V.adv_cmd=function(){var h=hi('Commandes','Chez les fabricants, par date de livr
   h+='<section class="blk">'+L.map(function(d){var e=et(d),t=e===2?['À passer','la']:d.id==='martin'&&!S.arcOk?['ARC à voir','alert']:d.id==='martin'&&S.arcOk==='ecart'?['Écart signalé','alert']:e===3?[d.liv||'Fabrication','']:['Livré','ok'];
     return '<button class="ln pk" onclick="ouvrir(\''+d.id+'\')"><span class="ico">'+ic('box')+'</span><span class="tx"><b>'+d.cl+' · '+d.fab+'</b><small>'+d.quoi+'</small></span>'+etq(t[0],t[1])+'</button>'}).join('')+'</section>';
   h+='<p class="mini">Chaque ARC et chaque bon de livraison est rangé dans le dossier du client.</p>';return h};
-V.cli=function(){var L=D,f=S.fcom||'tous',h=hi('Dossiers',L.length+' dossiers de l\'agence');
-  h+='<div class="pile"><div class="chips">'+[['tous','Tous'],['julien','Julien'],['sarah','Sarah']].map(function(c){return '<button class="pk" aria-pressed="'+(f===c[0])+'" onclick="S.fcom=\''+c[0]+'\';re()">'+c[1]+'</button>'}).join('')+'</div><section class="blk dense">'+L.filter(function(d){return f==='tous'||d.com===f}).map(function(d){return dosLn(d,1)}).join('')+'</section></div>';return h};
+V.cli=function(){var f=S.fcom||'tous',L=D.filter(function(d){return f==='tous'||d.com===f}),n=L.filter(aFaire).length;
+  return hi('Dossiers',(n?n+' à faire · ':'')+L.length+' dossiers')+'<div class="pile lc"><div class="chips full">'+[['tous','Tous'],['julien','Julien'],['sarah','Sarah']].map(function(c){return '<button class="pk" aria-pressed="'+(f===c[0])+'" onclick="S.fcom=\''+c[0]+'\';re()">'+c[1]+'</button>'}).join('')+'</div>'+listeCli(L)+'</div>'};
 
 /* ======================= planning des poseurs (agence + ADV) ======================= */
 var PL={sel:null};
