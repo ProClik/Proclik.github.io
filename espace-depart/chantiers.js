@@ -314,7 +314,7 @@ function action(c,a){var o=dos(c);if(!o)return;var tel=String(o.tel||'').replace
 /* ---------- les gestes de la page ---------- */
 /* ---------- Planning du chantier (Cyril 12/11) : ses jours, visites et livraisons, et un bouton pour en ajouter ---------- */
 var JC=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],MC=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-var TYC={run:'Chantier',plan:'Chantier prévu',done:'Chantier fait',visit:'Visite',liv:'Livraison',autre:'Rendez-vous',pc:'Point ProClik'};
+var TYC={run:'Chantier',plan:'Chantier prévu',done:'Chantier fait',visit:'Visite',liv:'Livraison',autre:'Rendez-vous',pc:'Point ProClik',st:'Sous-traitant'};
 function evsCh(c){var L=(X.EV||[]).filter(function(e){if(e.k==='free'||e.k==='pc')return false;var x=e.x||{};
   return x.ch===c.id||(c.id==='alpes'&&x.ch===1)||(c.n&&String(e.t||'').indexOf(c.n)>-1)});
  return L.sort(function(a,b){return (a.d+a.s)<(b.d+b.s)?-1:1})}
@@ -326,13 +326,26 @@ function agenda(c){var T=X.iso?X.iso(X.TODAY||new Date()):'',L=evsCh(c),av=L.fil
   (av.length?'<div class="lst cf-l" style="padding:0!important">'+av.map(ligne).join('')+'</div>':'<p class="hint" style="margin:4px 0 0">Aucun jour ni rendez-vous prévu pour ce chantier.</p>')+
   (c.st!=='done'?'<button type="button" class="btn go cf-go" id="ch-agadd" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter au planning</span></span></button>':'')+
   '<button type="button" class="btn" id="ch-agvoir" style="width:100%;margin-top:10px">Voir dans le planning</button></div>';
+ h+=sousTraitants(c,av);
  if(pa.length)h+='<div class="card"><details><summary style="cursor:pointer;font-weight:700">Déjà passés ('+pa.length+')</summary><div class="lst cf-l" style="padding:0!important;margin-top:8px">'+pa.slice().reverse().map(ligne).join('')+'</div></details></div>';
  return h}
+/* Les sous-traitants qui viennent sur ce chantier (15/11) : leurs jours, et un bouton pour les leur envoyer par SMS */
+function sousTraitants(c,av){var P=window.PCPLAN&&PCPLAN.st;if(!P)return '';var ids=[];
+ av.forEach(function(e){if(e.k==='st'&&e.x&&e.x.st&&ids.indexOf(e.x.st)<0)ids.push(e.x.st)});
+ var h='<div class="card" id="ch-st"><div class="row" style="margin-bottom:8px"><b>Sous-traitants</b><span style="font-size:12px;color:var(--muted)">'+(ids.length?ids.length+(ids.length>1?' viennent':' vient'):'personne de prévu')+'</span></div>';
+ if(!ids.length)h+='<p class="hint" style="margin:4px 0 0">Un électricien, un plombier qui vient ? Ajoutez ses jours : il les reçoit par SMS, sans appli.</p>';
+ ids.forEach(function(id){var t=P.de(id),J=P.jours(id,c.id);if(!t)return;
+  h+='<div style="padding:10px 0;border-bottom:1px solid var(--line,rgba(127,127,127,.18))"><div style="display:flex;gap:10px;align-items:flex-start"><i style="flex:none;width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--k-st)"></i><span style="min-width:0"><b>'+esc(t.n)+'</b><br><small style="color:var(--muted)">'+esc(t.m)+' · '+J.map(function(e){var d=new Date(e.d+'T12:00:00');return JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]}).join(', ')+'</small></span></div>'+
+   '<button type="button" class="btn" data-stsms="'+esc(id)+'" style="width:100%;margin-top:8px">Lui envoyer ses jours par SMS</button></div>'});
+ if(c.st!=='done')h+='<button type="button" class="btn" id="ch-stadd" style="width:100%;margin-top:12px">Faire venir un sous-traitant</button>';
+ return h+'</div>'}
 function voirPlanning(d){X.go('planning');try{if(X.calWeek)X.calWeek(new Date((d||X.iso(X.TODAY))+'T12:00:00'));var s=document.getElementById('seg-semaine');if(s)s.click();if(X.renderCalWeek)X.renderCalWeek()}catch(_){}}
 
 function lier(c){var id=c.id;
  /* planning du chantier */
  var aga=$('#ch-agadd');if(aga)aga.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'chantier',ch:id,d:X.iso(X.TODAY)})});
+ var sta=$('#ch-stadd');if(sta)sta.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'st',ch:id,d:X.iso(X.TODAY)})});
+ $$('#chx [data-stsms]').forEach(function(b){b.addEventListener('click',function(){PCPLAN.st.sms(b.dataset.stsms,id)})});
  var agv=$('#ch-agvoir');if(agv)agv.addEventListener('click',function(){var L=evsCh(c),T=X.iso(X.TODAY),n=L.filter(function(e){return e.d>=T})[0];voirPlanning(n?n.d:null)});
  $$('#chx [data-agd]').forEach(function(b){b.addEventListener('click',function(){voirPlanning(b.dataset.agd)})});
  $$('#chx [data-aller]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,b.dataset.aller)})});
