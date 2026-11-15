@@ -9,7 +9,10 @@
   if($("#pb")||!$("#nb-accueil"))return;
   var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
-  var TOUS=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
+  var TOUS0=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
+  /* un onglet caché (ex. Réseaux sans l'option, Cyril 15/11) ne va ni dans la barre ni dans l'éventail */
+  function dispo(v){if(v==="reglages")return true;var b=$("#nb-"+v);return !!b&&!b.hidden}
+  var TOUS=TOUS0.filter(dispo);
   var DEFAUT=["accueil","clients","planning","devis"];
   function lit(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}}
   function choisis(){
@@ -17,7 +20,17 @@
     if(!b||b.length!==4||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||(v!=="reglages"&&!$("#nb-"+v))})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
     return b;
   }
-  var BAS=choisis(),EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+  /* menu de côté (iPad, ordinateur) : son propre choix, 1 à 6 boutons, sans toucher à celui du téléphone (Cyril, 15/11) */
+  var COTE_MAX=6;
+  function choisisCote(){
+    var b=lit("pc-cote",null);
+    if(!b||!b.length||b.length>COTE_MAX||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||!$("#nb-"+v)})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
+    return b;
+  }
+  var large=matchMedia("(min-width:900px)");
+  function horsPanneau(){return large.matches?COTE:BAS}
+  function calcule(){EVENTAIL=TOUS.filter(function(v){return horsPanneau().indexOf(v)<0})}
+  var BAS=choisis(),COTE=choisisCote(),EVENTAIL;calcule();
   var STYLE="encoche";
   /* côtés (Cyril, 2/11) : bord du haut droit avec petits arrondis, bas arrondi comme les coins de l'écran du téléphone */
   var COINS=lit("pc-barre-coins","telephone")==="pilule"?"pilule":"telephone",RH=8,RB=42;
@@ -49,11 +62,29 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="l1" d="M5 7h14"/><path class="l2" d="M5 12h14"/><path class="l3" d="M5 17h14"/></svg>'+
       '<span class="badge pb-bc" hidden></span></button>';
   var scrim=d.createElement("div");scrim.className="pb-scrim";scrim.id="pb-scrim";
-  var menu=d.createElement("div");menu.className="pb-menu";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
+  var menu=d.createElement("div");menu.className="pb-menu pan-c";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
+  /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
+  var FAMILLES=[
+    {t:"Devis et factures",v:["devis","factures"]},
+    {t:"Chantiers",v:["chantiers","planning","cotes"]},
+    {t:"Achats",v:["prix","produits","depenses"]},
+    {t:"Et aussi",v:["accueil","clients","reseaux","reglages"]}
+  ];
+  var GROUPES=[];
+  function range(){
+    GROUPES=FAMILLES.map(function(f){return {t:f.t,v:f.v.filter(function(v){return EVENTAIL.indexOf(v)>=0})}}).filter(function(g){return g.v.length});
+    var vus=[].concat.apply([],GROUPES.map(function(g){return g.v})),reste=EVENTAIL.filter(function(v){return vus.indexOf(v)<0});
+    if(reste.length){var a=GROUPES.filter(function(g){return g.t==="Et aussi"})[0];if(a)a.v=a.v.concat(reste);else GROUPES.push({t:"Et aussi",v:reste})}
+  }
   function remplit(){
     $(".pb-l",pb).innerHTML=bouton(BAS[0],"pb-i")+bouton(BAS[1],"pb-i")+'<span class="pb-trou"></span>'+bouton(BAS[2],"pb-i")+bouton(BAS[3],"pb-i");
+    range();var i=0,h="";
+    GROUPES.forEach(function(g,k){
+      h+='<span class="pb-gt" aria-hidden="true" style="--i:'+i+'">'+g.t+'</span>';
+      g.v.forEach(function(v){h+=bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+(i++)+'"')});
+    });
     menu.innerHTML='<button type="button" class="pb-mic" data-pb="micro" aria-label="Parler à ProClik (dictée)" tabindex="-1"><span class="pb-g" aria-hidden="true">'+ICO_MIC+'</span></button>'+
-      EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("");
+      h+'<div class="pb-pan" aria-hidden="true"></div>';
   }
   remplit();
   d.body.appendChild(scrim);d.body.appendChild(menu);d.body.appendChild(pb);
@@ -90,15 +121,46 @@
   }
   function dessine(){path.setAttribute("d",STYLE==="ronde"?ronde(t):forme(t))}
   function mesure(){
-    W=pb.getBoundingClientRect().width;if(!W)return;
-    svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine();
-    /* éventail : demi-cercle autour du galet central, adapté à la largeur du téléphone */
-    var rx=Math.min(168,(innerWidth-60)/2),ry=160,n=EVENTAIL.length;
-    $$(".pb-e",menu).forEach(function(b,i){
-      var a=(165-i*(150/(n-1)))*Math.PI/180;
-      b.style.setProperty("--x",(Math.cos(a)*rx).toFixed(1)+"px");
-      b.style.setProperty("--y",(-Math.sin(a)*ry).toFixed(1)+"px");
+    W=pb.getBoundingClientRect().width;
+    if(W){svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine()}
+    /* menu du galet = PANNEAU (choix de Cyril, 15/11) : les bulles rangées dans une carte en relief au-dessus du micro,
+       4 par ligne, une ligne de plus si l'artisan a plus d'options. L'ancien éventail en arc se chevauchait à partir de 8 boutons. */
+    var bs=$$(".pb-e",menu),ts=$$(".pb-gt",menu),P=panneau(GROUPES);
+    bs.forEach(function(b,i){
+      b.style.setProperty("--x",P[i][0].toFixed(1)+"px");
+      b.style.setProperty("--y",P[i][1].toFixed(1)+"px");
     });
+    ts.forEach(function(t,k){var q=P.titres[k];if(!q)return;t.style.setProperty("--x",q[0].toFixed(1)+"px");t.style.setProperty("--y",q[1].toFixed(1)+"px")});
+    $$(".pb-tr,.pb-fc",menu).forEach(function(x){x.remove()});
+    (P.cartes||[]).forEach(function(r){var e=d.createElement("i");e.className="pb-fc";e.setAttribute("aria-hidden","true");
+      e.style.cssText="left:"+r[0].toFixed(1)+"px;top:"+r[1].toFixed(1)+"px;width:"+(r[2]-r[0]).toFixed(1)+"px;height:"+(r[3]-r[1]).toFixed(1)+"px";menu.appendChild(e)});
+    P.traits.forEach(function(x){var e=d.createElement("i");e.className="pb-tr";e.setAttribute("aria-hidden","true");
+      e.style.cssText="left:"+x.toFixed(1)+"px;top:"+(P.haut[0]+4).toFixed(1)+"px;height:"+(P.haut[1]-P.haut[0]-8).toFixed(1)+"px";menu.appendChild(e)});
+    var pan=$(".pb-pan",menu),q=P.pan;
+    if(pan)pan.style.cssText="left:"+q[0]+"px;top:"+q[1]+"px;width:"+(q[2]-q[0])+"px;height:"+(q[3]-q[1])+"px";
+  }
+  /* bulle 46 px (centre = x,y), nom dessous ; le micro (58 px + son anneau) est centré 68 px au-dessus du galet */
+  var GR=23,LH=15;
+  /* une COLONNE par famille (Cyril, 15/11 : « sur la hauteur ») : le titre en haut, ses bulles les unes sous les autres ;
+     un fin trait sépare les colonnes. Plus de 4 bulles dans une famille : deuxième colonne pour la suite. */
+  var DERNIER=null;
+  function panneau(G){
+    var lim=innerWidth/2-8,per=4,cols=[];
+    G.forEach(function(g,k){for(var i=0;i<g.v.length;i+=per)cols.push({k:k,n:Math.min(per,g.v.length-i),t:i===0})});
+    var nc=Math.max(1,cols.length),lw=Math.min(96,(2*lim-24)/nc),rh=GR*2+5+LH+14,TH=40,
+      rows=Math.max.apply(null,cols.map(function(c){return c.n}).concat([1])),
+      bas=-104-8-14,h=TH+rows*rh,x0=-(nc*lw)/2,y0=bas-10-h,P=[],T=[],S=[];
+    cols.forEach(function(c,ci){
+      var cx=x0+(ci+.5)*lw;
+      if(c.t)T.push([cx,y0]);
+      if(ci>0&&cols[ci-1].k!==c.k)S.push(x0+ci*lw);
+      for(var r=0;r<c.n;r++)P.push([cx,y0+TH+r*rh+GR+4]);
+    });
+    P.titres=T;P.traits=[];P.haut=[y0,y0+h];P.pan=[x0-8,y0-14,x0+nc*lw+8,bas+6];
+    /* style « bandes teintées » choisi par Cyril (15/11) : chaque famille posée sur une bande de fond teinté */
+    {var C=[];cols.forEach(function(c,ci){var l=x0+ci*lw+3,r=x0+(ci+1)*lw-3;
+      if(c.t)C.push([l,y0-8,r,y0+h-2]);else C[C.length-1][2]=r});P.cartes=C}
+    DERNIER=P;return P;
   }
   function vers(cible,duree){
     cancelAnimationFrame(anim);
@@ -153,15 +215,19 @@
   mesure();addEventListener("resize",remesure);addEventListener("orientationchange",remesure);
   if(window.visualViewport)visualViewport.addEventListener("resize",remesure);
   if(window.ResizeObserver)new ResizeObserver(function(){mesure()}).observe(pb);
-  if(mq.addEventListener)mq.addEventListener("change",function(){ferme();mesure()});
+  if(mq.addEventListener)mq.addEventListener("change",function(){ferme();calcule();remplit();suit();mesure()});
   if(d.fonts&&d.fonts.ready)d.fonts.ready.then(mesure);
 
   /* ---------- pour les Réglages (reglages.js) : changer la disposition ou le style sans recharger ---------- */
   window.PCBarre={
     TOUS:TOUS,DEFAUT:DEFAUT,info:info,
     bas:function(){return BAS.slice()},style:function(){return STYLE},
+    cote:function(){return COTE.slice()},COTE_MAX:COTE_MAX,
+    cote:function(){return COTE.slice()},COTE_MAX:COTE_MAX,
+    /* galet du menu de côté (familles.js) : ouvre le même panneau */
+    ouvre:ouvre,ferme:ferme,ouvert:function(){return ouvert},remesure:mesure,panneau:function(){return DERNIER&&DERNIER.pan},
     applique:function(){
-      ferme();BAS=choisis();EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+      ferme();TOUS=TOUS0.filter(dispo);this.TOUS=TOUS;BAS=choisis();COTE=choisisCote();calcule();
       pb.classList.toggle("pb-ronde",STYLE==="ronde");
       remplit();suit();mesure();
     }
