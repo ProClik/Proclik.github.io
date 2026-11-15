@@ -63,8 +63,8 @@ html body .tdb .ag-d.auj{background:var(--n1-nuit)!important;color:var(--n1-nuit
 
 /* 8. Couleurs du Planning, comme l'iPhone (Cyril 12/11) : une couleur par type, palette douce accordée au bleu nuit.
    L'artisan peut changer chaque couleur en touchant la légende (couleurs.js). Chaque rendez-vous a un fond teinté de sa couleur. */
-:root,:root[data-theme]{--k-run:#3E6FB0;--k-plan:#7C9CCB;--k-done:#9AA1AE;--k-visit:#3E8E6A;--k-liv:#C27C2C;--k-autre:#7B5CB3;--k-pc:#A8823F;--k-devis:#B9577A}
-:root[data-theme="dark"]{--k-run:#7FA6E0;--k-plan:#5C7598;--k-done:#6E7686;--k-visit:#6FC39B;--k-liv:#E3A65E;--k-autre:#AE93E0;--k-pc:#D4B483;--k-devis:#E08AAA}
+:root,:root[data-theme]{--k-run:#3E6FB0;--k-plan:#7C9CCB;--k-done:#9AA1AE;--k-visit:#3E8E6A;--k-liv:#C27C2C;--k-autre:#7B5CB3;--k-pc:#A8823F;--k-devis:#B9577A;--k-st:#2E8584}
+:root[data-theme="dark"]{--k-run:#7FA6E0;--k-plan:#5C7598;--k-done:#6E7686;--k-visit:#6FC39B;--k-liv:#E3A65E;--k-autre:#AE93E0;--k-pc:#D4B483;--k-devis:#E08AAA;--k-st:#6CC2BF}
 html body .ev:not(.free):not(.tent){background:color-mix(in srgb,var(--c) 16%,var(--bg))}
 html body .ev.tent{background:color-mix(in srgb,var(--c) 7%,var(--bg))}
 html body .ev:not(.free) b{color:color-mix(in srgb,var(--c) 55%,var(--fg))}
