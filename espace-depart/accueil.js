@@ -178,8 +178,8 @@
       '<div class="tdb-g">'+etat.L.map(function(x){return bloc(x,D)}).join("")+"</div>"+
       '<div class="tdb-pied">'+(D.total?'<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+(D.demo?"":D.total+" ")+"›</span></button>":"")+
       '<button type="button" class="tdb-perso" data-tdbperso>'+IC.grille+"<span>Personnaliser l'accueil</span></button></div>";
-    if(acc._h===h)return;acc._h=h;acc.innerHTML=h;acc.classList.toggle("edite",edition);
-    var ib=$("#instb"),co=$("#vco");if(co)acc.appendChild(co);if(ib)acc.appendChild(ib)}
+    if(acc._h===h)return;acc._h=h;var ib=$("#instb"),co=$("#vco");acc.innerHTML=h;acc.classList.toggle("edite",edition);
+    if(co)acc.insertBefore(co,acc.firstChild);if(ib)acc.appendChild(ib)}
   function plusTard(){clearTimeout(rendre._t);rendre._t=setTimeout(rendre,60)}
 
   /* ---------- mode « personnaliser » ---------- */
