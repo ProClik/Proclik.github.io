@@ -181,6 +181,7 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 <header class="top">
   <span class="logo" id="logo"></span>
   <div class="roles" id="roles" role="group" aria-label="Voir l'Espace en tant que"></div>
+  <a class="rb pk" href="presentation.html" aria-label="Présentation" title="Présentation" style="color:inherit"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18M5 4v10h14V4M12 14v3M8 21l4-4 4 4"/></svg></a>
   <button class="rb pk" id="cloche" aria-label="Du nouveau"></button>
 </header>
 <main id="m"></main>
@@ -418,6 +419,7 @@ function option(k){var O={devis:['Option Devis','devis','Les devis du comptoir e
 
 /* ---------- départ ---------- */
 var p=new URLSearchParams(location.search);if(p.get('r')&&VX.ROLES[p.get('r')]){S.role=p.get('r');save()}
+if(p.get('o')&&NAV[role()].some(function(n){return n[0]===p.get('o')}))ong[role()]=p.get('o');
 rRoles();go(ong[role()]);
 /* retour depuis la prise de cotes : on relit l'état */
 addEventListener('pageshow',function(){charger();rRoles();re()});

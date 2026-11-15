@@ -1,0 +1,67 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Présentation BRS</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="../kit/kit.css?v=1">
+</head><body>
+<script>
+/* Kit de présentation pour BRS (Aurélien). Page cachée : le bouton n'apparaît dans l'Espace que sur un appareil
+   où le lien …/espace/?presentation=1 a été ouvert une fois. Prix = grille publique du site, rien d'autre. */
+window.KIT={
+id:'brs',client:'BRS',demo:'Espace ProClik de l\'artisan',masquable:true,
+retour:{href:'index.html',t:'L\'Espace'},
+reset:['proclik-demo-'],
+sousTitre:'Rénovation intérieure : isolation, cloisons, plafonds, menuiseries, sols. Son site, son formulaire avec plan et son Espace tournent déjà.',
+essentiel:{pitch:'Votre client décrit ses travaux et dessine son plan, le pré-devis se calcule tout seul, vous vérifiez le soir, et le devis, l\'acompte et la facture finale se créent d\'eux-mêmes.',
+ points:['<b>Ce qui est déjà en place</b> : son formulaire avec plan sur son site, ses vraies demandes dans l\'Espace, les devis partent par son logiciel de facturation.',
+  '<b>Ce qui change pour lui</b> : moins de soirées sur les devis, rien d\'oublié chez le fournisseur, un planning et une carte de ses chantiers, ses chiffres d\'un coup d\'œil.',
+  '<b>Le principe</b> : un gros bouton par étape. Le micro est toujours là : il parle, l\'Espace écrit.']},
+avant:[['Ouvrir l\'Espace une fois sur l\'iPad','En démo (clients fictifs) ou sur son vrai compte, selon ce que vous voulez montrer.'],
+ ['Remettre la démo à zéro','Le bouton juste en dessous. Ne touche pas à son vrai compte.'],['Choisir le jour ou la nuit selon la pièce'],
+ ['iPad chargé, luminosité au maximum, mode Ne pas déranger'],['Choisir sa formule et la taille de son équipe','Onglet Prix : les boutons au-dessus de la fiche.'],
+ ['Préparer la proposition imprimée ou en PDF','Onglet Prix, « Imprimer ou PDF ».']],
+liens:[['L\'Espace','index.html'],['Son formulaire client','../devis/'],['Le site ProClik (tarifs)','../#tarifs']],
+liensNote:'Le bouton « Présentation » n\'apparaît que sur les appareils où vous l\'avez activé. Aurélien ne le voit pas.',
+deroulePhrase:'On suit une demande, du client qui dessine son plan jusqu\'à la facture. Touchez le numéro d\'une étape pour la marquer faite.',
+deroule:[
+ {t:'La demande du client',min:3,faire:'Ouvrir son formulaire : le client choisit ses travaux, répond question par question, dessine son plan (murs, fenêtres, portes) et joint ses photos.',dire:'Votre client fait le métré à votre place, et vous recevez une demande complète, pas juste un numéro de téléphone.',liens:[['Le formulaire','../devis/']]},
+ {t:'L\'accueil de l\'Espace',min:2,faire:'L\'accueil en blocs : ce qui est urgent, la semaine, les chiffres. Toucher un bloc pour y aller.',dire:'En ouvrant l\'appli, vous savez tout de suite ce qui vous attend.',liens:[['Ouvrir l\'accueil','index.html?ouvrir=accueil']]},
+ {t:'Le pré-devis calculé',min:4,fort:true,faire:'Devis : le pré-devis de la demande est déjà calculé depuis le plan. Montrer « Comment ce total est fait », puis « Vérifier un par un » : C\'est bon, Modifier la ligne, Plus tard.',dire:'Le soir, vous vérifiez au lieu de tout recompter. Une ligne fausse se corrige d\'un geste.',liens:[['Ouvrir les devis','index.html?ouvrir=devis']]},
+ {t:'Du devis à la facture',min:3,faire:'Le devis part au client. Accepté : la facture d\'acompte se crée toute seule. Fin de chantier validée : la facture finale aussi. Montrer l\'onglet Factures.',dire:'Vous ne tapez plus deux fois la même chose, et vos factures sont prêtes pour la facture électronique.',liens:[['Ouvrir les factures','index.html?ouvrir=factures']]},
+ {t:'Le planning et la carte',min:3,faire:'Planning : la semaine d\'un coup d\'œil, synchronisée avec l\'agenda de son téléphone. Puis la carte de ses chantiers.',liens:[['Ouvrir le planning','index.html?ouvrir=planning']]},
+ {t:'Chantiers, achats et dépenses',min:3,faire:'Chantiers : l\'avancement et les documents. Achats : la demande de prix fournisseur préparée avec les dimensions. Dépenses : ce qu\'il a payé, par chantier.',dire:'Plus rien d\'oublié chez le fournisseur, et vous voyez ce que chaque chantier vous rapporte vraiment.',liens:[['Les chantiers','index.html?ouvrir=chantiers'],['Les achats','index.html?ouvrir=prix']]},
+ {t:'Parler, ProClik écrit',min:1,faire:'Toucher le micro et dicter : « Ajoute une porte au devis ».',dire:'Pas besoin de taper : vous parlez normalement.'},
+ {t:'Les options',min:1,faire:'Réglages › Mes options : ce qui est actif, ce qu\'on peut ajouter. Cliky est une option, jamais « inclus ».'}],
+fin:'Tout ce que vous venez de voir est fait pour votre métier. Si un écran ne colle pas à votre façon de travailler, on l\'adapte.',
+prix:{intro:'La grille publique du site. Choisissez la formule et la taille de l\'équipe, puis les options avec les interrupteurs.',
+ titre:'Proposition pour BRS',sous:'Espace ProClik · rénovation intérieure',
+ choix:{formules:[['Espace',[49,149,290,null],'avec sa petite page de demande'],['Site + Espace',[69,169,310,null],'avec son site']],
+  tailles:[['1 personne','pour 1 personne'],['2 à 5','pour une équipe de 2 à 5'],['6 à 10','pour une équipe de 6 à 10'],['Plus de 10','pour plus de 10 personnes']],f:1,t:0},
+ lignes:[
+  {k:'cliky',n:'Cliky',d:'Option : pré-devis calculé depuis le plan, demande de prix fournisseur, devis et factures créés tout seuls.',mois:99,opt:true,on:true},
+  {k:'clikyms',n:'Mise en service de Cliky',d:'Ses prix et ses règles de chiffrage réglés avec lui.',depart:490,opt:true,on:true},
+  {k:'resa',n:'Réservation',d:'Option : prise de rendez-vous en ligne avec acompte.',mois:19,opt:true,on:false},
+  {k:'sms',n:'SMS',d:'Option : rappels et messages aux clients par SMS.',mois:9,opt:true,on:false},
+  {k:'assist',n:'Assistant du site',d:'Option : répond aux visiteurs de son site.',mois:39,opt:true,on:false},
+  {k:'avis',n:'Avis Google',d:'Option : demande d\'avis aux clients contents.',mois:9,opt:true,on:false},
+  {k:'reseaux',n:'Réseaux sociaux',d:'Option : publications préparées et programmées.',mois:39,opt:true,on:false},
+  {k:'image',n:'Votre image',d:'Option : logo et identité, 490 € avec un site, 590 € sans.',departF:[590,490],opt:true,on:false}],
+ conditions:['Devis et factures, fiches clients, planning et carte, chiffres','Agenda synchronisé avec Google, Outlook ou l\'iPhone'],
+ mention:'Prix HT, grille du site. Prix des options provisoires.',
+ vous:[['À décider avant le rendez-vous','flag',['La taille de son équipe (elle fixe le prix de l\'abonnement).','Un geste pour lui, client de la première heure : rien n\'est affiché tant que vous ne l\'avez pas décidé.']],
+  ['À éviter','eye',['Dire que Cliky est « inclus » : c\'est une option, « active » quand il la prend.','Annoncer un prix d\'option comme définitif : ils sont encore provisoires.']]]},
+comparer:null,
+questions:['Combien de temps passez-vous sur un devis aujourd\'hui, le soir ?','Combien de demandes recevez-vous par mois, et combien deviennent des chantiers ?','Travaillez-vous seul, ou avec des salariés ou des sous-traitants ?','Comment préparez-vous vos commandes chez le fournisseur ?','Qu\'est-ce qui vous a manqué depuis que vous utilisez l\'Espace ?'],
+objections:[['« Je ne suis pas à l\'aise avec les applis. »','C\'est fait pour ça : un gros bouton par étape, et le micro pour ne rien taper. On vous montre tout sur votre téléphone.'],
+ ['« Je fais déjà mes devis autrement. »','Le pré-devis se calcule tout seul depuis le plan du client : vous vérifiez au lieu de recompter. Et vos factures partent de vos devis, sans retaper.'],
+ ['« C\'est cher. »','Une soirée gagnée par devis, et un oubli de moins chez le fournisseur. Et Cliky est une option : l\'Espace seul suit la grille du site.'],
+ ['« Mes factures doivent être conformes. »','Elles sont faites avec un logiciel de facturation, prêt pour la facture électronique 2026.'],
+ ['« Mes données ? »','Votre Espace est séparé des autres entreprises, on y entre avec un code personnel, et rien n\'est revendu ni partagé.']],
+conclure:{intro:'Repartir avec sa formule choisie.',
+ etapes:['Montrer la fiche de prix en grand avec sa formule et ses options.','La laisser imprimée ou en PDF.','Noter ce qu\'il veut voir changer dans l\'Espace.'],
+ apres:['Envoyer la proposition écrite.','Faire les retouches qu\'il a demandées.'],
+ confirmer:['La taille de son équipe.','Le geste commercial éventuel (par exemple la même offre que RT2O : mise en service offerte, prix garanti 12 mois).','Les prix des options, encore provisoires.']}
+};
+</script>
+<script src="../kit/kit.js?v=1"></script>
+</body></html>
