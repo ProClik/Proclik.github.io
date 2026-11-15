@@ -57,7 +57,7 @@
     $(".pb-l",pb).innerHTML=bouton(BAS[0],"pb-i")+bouton(BAS[1],"pb-i")+'<span class="pb-trou"></span>'+bouton(BAS[2],"pb-i")+bouton(BAS[3],"pb-i");
     menu.innerHTML='<button type="button" class="pb-mic" data-pb="micro" aria-label="Parler à ProClik (dictée)" tabindex="-1"><span class="pb-g" aria-hidden="true">'+ICO_MIC+'</span></button>'+
       EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("")+
-      '<div class="pb-pan" hidden aria-hidden="true"></div><div class="pb-pts" hidden aria-hidden="true"><i class="on"></i><i></i></div>';
+      '<div class="pb-pan" aria-hidden="true"></div>';
   }
   remplit();
   d.body.appendChild(scrim);d.body.appendChild(menu);d.body.appendChild(pb);
@@ -96,88 +96,24 @@
   function mesure(){
     W=pb.getBoundingClientRect().width;if(!W)return;
     svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine();
-    /* éventail : arcs autour du galet central. Avec 9 boutons, les bulles et les noms se chevauchaient (Cyril, 15/11) :
-       on cherche maintenant la disposition (un arc, sinon deux arcs l'un au-dessus de l'autre) où aucune bulle,
-       aucun nom et aucune pastille ne se touchent, en mesurant la vraie largeur de chaque nom. */
-    var bs=$$(".pb-e",menu),L=bs.map(function(b){var n=$(".pb-n",b);return n?n.offsetWidth:60}),
-      MODE=lit("pc-eventail","b"),P=MODE==="b"?panneau(L):MODE==="c"?cadran(L):MODE==="z"?arcs(L):nid(L);
+    /* menu du galet = PANNEAU (choix de Cyril, 15/11) : les bulles rangées dans une carte en relief au-dessus du micro,
+       4 par ligne, une ligne de plus si l'artisan a plus d'options. L'ancien éventail en arc se chevauchait à partir de 8 boutons. */
+    var bs=$$(".pb-e",menu),P=panneau(bs.length);
     bs.forEach(function(b,i){
       b.style.setProperty("--x",P[i][0].toFixed(1)+"px");
       b.style.setProperty("--y",P[i][1].toFixed(1)+"px");
-      b.style.visibility=P[i][2]?"hidden":"";
     });
-    var pan=$(".pb-pan",menu);
-    if(pan){pan.hidden=MODE!=="b";if(MODE==="b"&&P.pan){var q=P.pan;pan.style.cssText="left:"+q[0]+"px;top:"+q[1]+"px;width:"+(q[2]-q[0])+"px;height:"+(q[3]-q[1])+"px"}}
-    var pts=$(".pb-pts",menu);if(pts){pts.hidden=MODE!=="c";if(P.pts)pts.style.top=P.pts+"px"}
+    var pan=$(".pb-pan",menu),q=P.pan;
+    if(pan)pan.style.cssText="left:"+q[0]+"px;top:"+q[1]+"px;width:"+(q[2]-q[0])+"px;height:"+(q[3]-q[1])+"px";
   }
-  /* A « rangées en arc » : les bulles en 2 rangées de 4, chaque rangée légèrement courbée comme un sourire, sans fond */
-  function nid(L){
-    var P=panneau(L),lim=innerWidth/2-8;
-    P.forEach(function(p){var u=p[0]/(lim-40);p[1]+=u*u*34});
-    delete P.pan;return P;
-  }
-  /* B « panneau » : une carte en relief au-dessus du micro, bulles rangées en grille (4 par ligne) */
-  function panneau(L){
-    var n=L.length,lim=innerWidth/2-8,c=Math.min(4,n),lw=Math.min(88,(2*lim-16)/c),rg=Math.ceil(n/c),rh=GR*2+5+LH+16,
-      bas=-104-ECART-14,P=[];
+  /* bulle 46 px (centre = x,y), nom dessous ; le micro (58 px + son anneau) est centré 68 px au-dessus du galet */
+  var GR=23,LH=15;
+  function panneau(n){
+    var lim=innerWidth/2-8,c=Math.max(1,Math.min(4,n)),lw=Math.min(88,(2*lim-16)/c),rg=Math.ceil(n/c),rh=GR*2+5+LH+16,
+      bas=-104-8-14,P=[];
     for(var i=0;i<n;i++){var r=Math.floor(i/c),j=i%c,m=Math.min(c,n-r*c);
       P.push([(j-(m-1)/2)*lw,bas-GR-5-LH-((rg-1-r)*rh)-4])}
-    var x0=-(c*lw)/2-8,x1=(c*lw)/2+8,y1=bas+6,y0=bas-rg*rh-14;
-    P.pan=[x0,y0,x1,y1];return P;
-  }
-  /* C « cadran » : 5 bulles sur un arc rond, on fait tourner du doigt pour voir les autres (maquette : position de départ) */
-  function cadran(L){
-    var n=L.length,v=Math.min(5,n),R=Math.min(168,innerWidth/2-38),P=[];
-    for(var i=0;i<n;i++){var a=(170-i*(160/(v-1)))*Math.PI/180;P.push([Math.cos(a)*R,-Math.sin(a)*170,i>=v])}
-    P.pts=-170-48;return P;
-  }
-  /* boîtes à ne pas toucher : bulle 46 px (centre = x,y) avec sa pastille en haut à droite, nom dessous */
-  var ECART=8,GR=23,LH=15;
-  function boites(x,y,lw){var h=Math.max(lw,GR*2)/2;return [[x-GR,y-GR-4,x+GR+6,y+GR],[x-h,y+GR+5,x+h,y+GR+5+LH]]}
-  function touche(a,b,m){return a[0]<b[2]+m&&b[0]<a[2]+m&&a[1]<b[3]+m&&b[1]<a[3]+m}
-  function arcs(L){
-    var n=L.length,lim=innerWidth/2-8,haut=Math.max(220,innerHeight-93-70),
-      fixes=[[-36,-104,36,-32],[-40,-40,40,40]]; /* micro (58 px + son anneau) et galet × */
-    var cle=n+"|"+innerWidth+"|"+innerHeight+"|"+L.join(",");if(arcs.c&&arcs.c.k===cle)return arcs.c.p;
-    function pose(rings){ /* rings : [{n,rx,ry,a}] du plus bas au plus haut */
-      var P=[],B=[],k=0;
-      for(var r=0;r<rings.length;r++){var R=rings[r],Q=surArc(R);
-        for(var j=0;j<R.n;j++,k++){
-          var x=Q[j][0],y=Q[j][1],h=Math.max(L[k],GR*2)/2;
-          if(Math.abs(x)+h>lim||y+GR+5+LH>14||y-GR<-haut)return null;
-          var bb=boites(x,y,L[k]);
-          for(var f=0;f<fixes.length;f++)if(touche(bb[0],fixes[f],ECART)||touche(bb[1],fixes[f],ECART))return null;
-          for(var q=0;q<B.length;q++)if(touche(bb[0],B[q][0],ECART)||touche(bb[0],B[q][1],ECART)||touche(bb[1],B[q][0],ECART)||touche(bb[1],B[q][1],ECART))return null;
-          B.push(bb);P.push([x,y]);
-        }
-      }
-      return P;
-    }
-    /* n points régulièrement espacés LE LONG de l'arc (pas en angle) : même écart entre toutes les bulles */
-    function surArc(R){
-      if(R.n===1)return [[0,-R.ry]];
-      var N=60,a0=(180-R.a)*Math.PI/180,a1=R.a*Math.PI/180,X=[],Y=[],C=[0],i,j,Q=[];
-      for(i=0;i<=N;i++){var a=a0+(a1-a0)*i/N;X.push(Math.cos(a)*R.rx);Y.push(-Math.sin(a)*R.ry);if(i)C.push(C[i-1]+Math.hypot(X[i]-X[i-1],Y[i]-Y[i-1]))}
-      for(j=0,i=0;j<R.n;j++){var c=C[N]*j/(R.n-1);while(i<N-1&&C[i+1]<c)i++;var f=(c-C[i])/((C[i+1]-C[i])||1);Q.push([X[i]+(X[i+1]-X[i])*f,Y[i]+(Y[i+1]-Y[i])*f])}
-      return Q;
-    }
-    function score(P){var m=0;P.forEach(function(p){m=Math.max(m,-p[1])});return m}
-    var best=null,bs=1e9,rxm=Math.min(175,lim-30),A,A2,ry,rx,ni,P,s;
-    /* 1) un seul arc, le plus bas possible */
-    for(ry=110;ry<=haut-GR;ry+=6)for(A=0;A<=30;A+=3)for(rx=rxm;rx>=rxm-40;rx-=10){
-      P=pose([{n:n,rx:rx,ry:ry,a:A}]);if(P&&(s=score(P))<bs){bs=s;best=P}
-    }
-    /* 2) deux arcs de même forme, l'un dans l'autre : les premiers boutons sur l'arc intérieur (plus près du pouce),
-          les suivants sur l'arc extérieur, chacun lu de gauche à droite */
-    if(!best)for(ni=Math.max(2,Math.floor(n/2)-1);ni<=Math.ceil(n/2);ni++)
-      for(ry=170;ry<=290;ry+=10)for(var k=1.6;k<=2.2;k+=.1)for(A=0;A<=40;A+=10)for(A2=0;A2<=30;A2+=10)for(rx=rxm;rx>=rxm-30;rx-=15){
-        P=pose([{n:ni,rx:rx/k,ry:ry/k,a:A},{n:n-ni,rx:rx,ry:ry,a:A2}]);if(P&&(s=score(P))<bs){bs=s;best=P}
-      }
-    if(!best){ /* tout petit écran avec beaucoup de boutons : rangées bien espacées au-dessus du micro */
-      var lw=Math.max.apply(null,L.concat([GR*2]))+ECART+4,c=Math.max(1,Math.floor(2*lim/lw)),rg=Math.ceil(n/c);
-      best=L.map(function(_,i){var r=Math.floor(i/c),m=r<rg-1?c:n-r*c,j=i-r*c;return [(j-(m-1)/2)*lw,-104-ECART-GR-5-LH-r*(GR*2+5+LH+ECART+4)]});
-    }
-    arcs.c={k:cle,p:best};return best;
+    P.pan=[-(c*lw)/2-8,bas-rg*rh-14,(c*lw)/2+8,bas+6];return P;
   }
   function vers(cible,duree){
     cancelAnimationFrame(anim);

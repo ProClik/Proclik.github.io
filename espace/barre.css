@@ -60,10 +60,6 @@
     transition:transform .6s var(--doux) calc(.14s + var(--i)*.045s),opacity .35s calc(.14s + var(--i)*.045s)}
   .pb-menu>.pb-pan{position:absolute;z-index:-1;border-radius:30px;background:var(--bg);box-shadow:var(--n1-pk,var(--up));opacity:0;transform:translateY(14px) scale(.96);transition:opacity .2s,transform .3s var(--doux)}
   .pb-ouvert .pb-menu>.pb-pan{opacity:1;transform:none;transition:opacity .35s .06s,transform .5s var(--doux) .06s}
-  .pb-menu>.pb-pts{position:absolute;left:0;display:flex;gap:6px;transform:translateX(-50%)}
-  .pb-pts i{width:6px;height:6px;border-radius:50%;background:var(--line,#ccc)}
-  .pb-pts i.on{background:var(--fg)}
-  .pb-pan[hidden],.pb-pts[hidden]{display:none}
   @media (prefers-reduced-motion:reduce){.pb-c,.pb-c svg path,.pb-mic,.pb-e,.pb-scrim{transition:none!important}}
 }
 
