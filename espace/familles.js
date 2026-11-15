@@ -20,7 +20,7 @@
   var dernier={};
 
   var fam=d.createElement("nav");fam.className="nav fam";fam.id="fam";fam.setAttribute("aria-label","Menu");
-  var sous=d.createElement("div");sous.className="chips fam-sous";sous.id="fam-sous";sous.setAttribute("role","tablist");sous.setAttribute("aria-label","Dans cette famille");sous.hidden=true;
+  var sous=d.createElement("div");sous.className="fam-sous";sous.id="fam-sous";sous.setAttribute("role","tablist");sous.setAttribute("aria-label","Dans cette famille");sous.hidden=true;
   function construit(){
     fam.innerHTML=FAM.map(function(f){
       var vs=f.v.filter(dispo);if(!vs.length)return "";
@@ -42,7 +42,8 @@
     var vs=f?f.v.filter(dispo):[];
     if(vs.length>1){
       sous.innerHTML=vs.map(function(v){var s=$(".badge",vrai(v)),n=s&&!s.hidden?+(s.textContent||0)||0:0;
-        return '<button type="button" role="tab" data-sous="'+v+'" aria-pressed="'+(v===cur)+'" aria-selected="'+(v===cur)+'">'+nom(v)+(n?' <span class="fam-n">'+n+'</span>':'')+'</button>'}).join("");
+        var ico=$(".ico",vrai(v));
+        return '<button type="button" role="tab" data-sous="'+v+'" aria-selected="'+(v===cur)+'"'+(v===cur?' class="on" aria-current="page"':'')+'><span class="fam-g" aria-hidden="true">'+(ico?ico.innerHTML:"")+'</span><span class="fam-t">'+nom(v)+'</span>'+(n?'<span class="badge fam-n">'+n+'</span>':'')+'</button>'}).join("");
       sous.hidden=false;
     }else{sous.hidden=true;sous.innerHTML=""}
   }
@@ -62,9 +63,16 @@
       "html body nav.nav:not(.fam){display:none!important}"+
       "html body #fam{display:flex!important}"+
       "html body #fam button{text-align:center;line-height:1.2}"+
-      "html body #fam-sous:not([hidden]){display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px}"+
-      "html body #fam-sous button{font-size:15px;font-weight:700;padding:11px 20px}"+
-      "html body #fam-sous .fam-n{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--alert,#C0476A);color:#fff;font-size:12px}"+
+      /* onglets d'une famille = même panneau que sur téléphone : carte en relief, bulles rondes, celle qui est ouverte cerclée de laiton */
+      "html body #fam-sous:not([hidden]){display:inline-flex;gap:6px;margin:0 0 20px;padding:12px 14px 10px;border-radius:26px;background:var(--bg);box-shadow:var(--n1-pk,var(--up))}"+
+      "html body #fam-sous button{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;width:92px;padding:0;background:none;border:0;box-shadow:none;color:var(--muted);font:600 12.5px/1.15 Manrope,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}"+
+      "html body #fam-sous .fam-g{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--bg);box-shadow:var(--n1-pk,var(--up-s));transition:box-shadow .3s,color .3s}"+
+      "html body #fam-sous .fam-g svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}"+
+      "html body #fam-sous button.on{color:var(--fg);font-weight:800}"+
+      "html body #fam-sous button.on .fam-g{color:var(--n1-nuit,var(--accx));box-shadow:var(--n1-pk,var(--in)),0 0 0 2px var(--n1-laiton,#A8823F)}"+
+      "html body #fam-sous button:not(.on):hover .fam-g{color:var(--fg)}"+
+      "html body #fam-sous button:active .fam-g{box-shadow:var(--in)}"+
+      "html body #fam-sous .fam-n{position:absolute;top:-4px;right:calc(50% - 30px)}"+
     "}";
   d.head.appendChild(st);
   construit();
