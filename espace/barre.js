@@ -7,7 +7,7 @@
   "use strict";
   var d=document,$=function(s,r){return (r||d).querySelector(s)},$$=function(s,r){return [].slice.call((r||d).querySelectorAll(s))};
   if($("#pb")||!$("#nb-accueil"))return;
-  var mq=matchMedia("(max-width:899px), (pointer:coarse) and (max-width:1400px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
+  var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
   var TOUS0=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
   /* un onglet caché (ex. Réseaux sans l'option, Cyril 15/11) ne va ni dans la barre ni dans l'éventail */
@@ -20,7 +20,17 @@
     if(!b||b.length!==4||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||(v!=="reglages"&&!$("#nb-"+v))})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
     return b;
   }
-  var BAS=choisis(),EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+  /* menu de côté (iPad, ordinateur) : son propre choix, 1 à 6 boutons, sans toucher à celui du téléphone (Cyril, 15/11) */
+  var COTE_MAX=6;
+  function choisisCote(){
+    var b=lit("pc-cote",null);
+    if(!b||!b.length||b.length>COTE_MAX||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||!$("#nb-"+v)})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
+    return b;
+  }
+  var large=matchMedia("(min-width:900px)");
+  function horsPanneau(){return large.matches?COTE:BAS}
+  function calcule(){EVENTAIL=TOUS.filter(function(v){return horsPanneau().indexOf(v)<0})}
+  var BAS=choisis(),COTE=choisisCote(),EVENTAIL;calcule();
   var STYLE="encoche";
   /* côtés (Cyril, 2/11) : bord du haut droit avec petits arrondis, bas arrondi comme les coins de l'écran du téléphone */
   var COINS=lit("pc-barre-coins","telephone")==="pilule"?"pilule":"telephone",RH=8,RB=42;
@@ -94,8 +104,8 @@
   }
   function dessine(){path.setAttribute("d",STYLE==="ronde"?ronde(t):forme(t))}
   function mesure(){
-    W=pb.getBoundingClientRect().width;if(!W)return;
-    svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine();
+    W=pb.getBoundingClientRect().width;
+    if(W){svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine()}
     /* menu du galet = PANNEAU (choix de Cyril, 15/11) : les bulles rangées dans une carte en relief au-dessus du micro,
        4 par ligne, une ligne de plus si l'artisan a plus d'options. L'ancien éventail en arc se chevauchait à partir de 8 boutons. */
     var bs=$$(".pb-e",menu),P=panneau(bs.length);
@@ -168,15 +178,19 @@
   mesure();addEventListener("resize",remesure);addEventListener("orientationchange",remesure);
   if(window.visualViewport)visualViewport.addEventListener("resize",remesure);
   if(window.ResizeObserver)new ResizeObserver(function(){mesure()}).observe(pb);
-  if(mq.addEventListener)mq.addEventListener("change",function(){ferme();mesure()});
+  if(mq.addEventListener)mq.addEventListener("change",function(){ferme();calcule();remplit();suit();mesure()});
   if(d.fonts&&d.fonts.ready)d.fonts.ready.then(mesure);
 
   /* ---------- pour les Réglages (reglages.js) : changer la disposition ou le style sans recharger ---------- */
   window.PCBarre={
     TOUS:TOUS,DEFAUT:DEFAUT,info:info,
     bas:function(){return BAS.slice()},style:function(){return STYLE},
+    cote:function(){return COTE.slice()},COTE_MAX:COTE_MAX,
+    cote:function(){return COTE.slice()},COTE_MAX:COTE_MAX,
+    /* galet du menu de côté (familles.js) : ouvre le même panneau */
+    ouvre:ouvre,ferme:ferme,ouvert:function(){return ouvert},remesure:mesure,
     applique:function(){
-      ferme();TOUS=TOUS0.filter(dispo);this.TOUS=TOUS;BAS=choisis();EVENTAIL=TOUS.filter(function(v){return BAS.indexOf(v)<0});
+      ferme();TOUS=TOUS0.filter(dispo);this.TOUS=TOUS;BAS=choisis();COTE=choisisCote();calcule();
       pb.classList.toggle("pb-ronde",STYLE==="ronde");
       remplit();suit();mesure();
     }

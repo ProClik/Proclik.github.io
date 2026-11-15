@@ -1,30 +1,21 @@
 /* Menu du bas sur téléphone : barre en relief à encoche + galet central qui ouvre l'éventail (voir barre.js). */
-.pb,.pb-menu,.pb-scrim{display:none}
-@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
+/* La barre du bas n'existe que sur téléphone. Le panneau (micro + bulles), lui, sert aussi au galet du menu de côté
+   (iPad, ordinateur : familles.js, Cyril 15/11) : ses règles valent partout, seul son point d'ancrage change. */
+.pb{display:none}
+@media (max-width:899px){
   /* l'ancienne rangée de 7 boutons et les ronds micro / menu de l'en-tête passent dans le nouveau menu */
   html body nav.nav{display:none!important}
-  /* iPad (même couché) : comme le téléphone, barre du bas + panneau (Cyril, 15/11) ; plus de menu de côté */
-  html body{padding-left:0!important}
-  html body nav#fam.fam,html body #fam-sous{display:none!important}
   html body header.head #speak,html body header.head #menu{display:none!important}
   html body .app{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
 
   .pb{--pb-bas:5px;display:block;position:fixed;z-index:25;left:5px;right:5px;bottom:var(--pb-bas);height:68px}
-  /* iPad couché : la barre garde une largeur de téléphone agrandi, centrée, pour que les boutons restent sous le pouce */
-  .pb{left:max(5px,calc(50% - 300px));right:max(5px,calc(50% - 300px))}
   .pb-fond{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
   .pb-fond .pb-of{flood-color:var(--lo)}
   .pb-fond path{fill:var(--rs);stroke:var(--hi);stroke-width:1}
   .pb-l{position:relative;display:grid;grid-template-columns:1fr 1fr 92px 1fr 1fr;height:100%;align-items:center;padding:0 6px}
   .pb-i{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding:6px 0;color:var(--muted);font:600 10.5px/1 Manrope,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-  .pb .pb-g,.pb-menu .pb-g{display:grid;place-items:center;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);transition:box-shadow .3s var(--doux),color .3s,transform .3s var(--doux)}
   .pb-i .pb-g{width:38px;height:38px}
-  .pb-g svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .pb-g svg g path,.pb-g svg g rect{vector-effect:non-scaling-stroke}
-  .pb-n{white-space:nowrap}
   .pb-i.on{color:var(--fg);font-weight:700}
-  .pb-i.on .pb-g,.pb-e.on .pb-g{box-shadow:var(--in);color:var(--accx)}
-  .pb-i:active .pb-g,.pb-e:active .pb-g{box-shadow:var(--in)}
   .pb .badge{top:0;right:calc(50% - 26px)}
 
   /* galet central posé dans l'encoche */
@@ -41,7 +32,13 @@
   .pb-ouvert .pb-c .l2{opacity:0;transform:scaleX(.2)}
   .pb-ouvert .pb-c .l3{transform:rotate(-45deg) translateY(-5px)}
   .pb-ouvert .pb-c .badge{opacity:0}
-
+}
+  .pb .pb-g,.pb-menu .pb-g{display:grid;place-items:center;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);transition:box-shadow .3s var(--doux),color .3s,transform .3s var(--doux)}
+  .pb-g svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .pb-g svg g path,.pb-g svg g rect{vector-effect:non-scaling-stroke}
+  .pb-n{white-space:nowrap}
+  .pb-i.on .pb-g,.pb-e.on .pb-g{box-shadow:var(--in);color:var(--accx)}
+  .pb-i:active .pb-g,.pb-e:active .pb-g{box-shadow:var(--in)}
   /* voile sur la page quand le menu est ouvert */
   .pb-scrim{display:block;position:fixed;inset:0;z-index:24;background:color-mix(in srgb,var(--bg) 78%,transparent);
     -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .4s var(--doux),visibility 0s .4s}
@@ -66,7 +63,6 @@
   .pb-menu>.pb-pan{position:absolute;z-index:-1;border-radius:30px;background:var(--bg);box-shadow:var(--n1-pk,var(--up));opacity:0;transform:translateY(14px) scale(.96);transition:opacity .2s,transform .3s var(--doux)}
   .pb-ouvert .pb-menu>.pb-pan{opacity:1;transform:none;transition:opacity .35s .06s,transform .5s var(--doux) .06s}
   @media (prefers-reduced-motion:reduce){.pb-c,.pb-c svg path,.pb-mic,.pb-e,.pb-scrim{transition:none!important}}
-}
 
 /* ---------- Produits (nouveau, vide pour l'instant) ---------- */
 .prod-lead{margin:0 0 14px}
@@ -80,7 +76,7 @@ html body .prod-c{display:flex;gap:14px;align-items:flex-start;margin:0}
 html body .prod-add{width:100%;justify-content:center;gap:10px;opacity:.75}
 
 /* Forme « encoche ronde » (image de Cyril, 2/11) : le galet central est posé dans une encoche ronde, avec un anneau de vide autour */
-@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
+@media (max-width:899px){
   .pb.pb-ronde .pb-c{top:-21px}
   .pb.pb-ronde::before{content:"";position:absolute;left:50%;top:-30px;width:80px;height:80px;margin-left:-40px;border-radius:50%;background:var(--bg);clip-path:inset(30px 0 0 0);box-shadow:inset 0 3px 6px var(--ilo)}
   .pb.pb-ronde .pb-l{grid-template-columns:1fr 1fr 104px 1fr 1fr}
@@ -88,7 +84,7 @@ html body .prod-add{width:100%;justify-content:center;gap:10px;opacity:.75}
 }
 
 /* Retouches du 2/11 au soir (Cyril) */
-@media (max-width:899px), (pointer:coarse) and (max-width:1400px){
+@media (max-width:899px){
   /* la page s'efface en douceur derrière la barre : plus de contenu qui passe dans l'encoche */
   .pb::after{content:"";position:absolute;z-index:-1;left:-5px;right:-5px;bottom:calc(-1 * var(--pb-bas));height:150px;pointer-events:none;
     background:linear-gradient(to top,var(--bg) 0,var(--bg) 55%,color-mix(in srgb,var(--bg) 0%,transparent) 100%)}
