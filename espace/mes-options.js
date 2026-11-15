@@ -31,14 +31,18 @@ var TXT={
  image:{court:'Votre logo et vos couleurs',
   avec:['Votre logo et vos couleurs, créés avec vous.','Un site, des cartes et des documents qui vous ressemblent.'],
   sans:'Votre site et vos documents gardent une présentation sobre, avec le nom de votre entreprise.'},
+ lien:{court:'Les chantiers de vos négoces arrivent ici',
+  avec:['Le négoce qui vous confie des poses vous les envoie directement dans votre Espace : client, adresse, plan, cotes et date.','Elles arrivent dans un bouton à part, au nom du négoce. Ses clients ne se mélangent jamais aux vôtres, mais ses poses apparaissent dans votre planning, dans une autre couleur.','Vous acceptez la date, ou vous en proposez une autre, en un toucher.','Vous choisissez chantier par chantier ce que vous lui partagez : cotes, photos, réserves, PV signé. Vos propres clients restent chez vous.','Vos papiers (URSSAF, décennale, Kbis) sont mis à jour une seule fois : le négoce les voit à jour tout seul.'],
+  sans:'Les poses du négoce arrivent par téléphone, SMS ou papier, comme aujourd\'hui.'},
  reseaux:{court:'Vos réseaux sociaux gérés pour vous',
   avec:['ProClik s\'occupe de vos réseaux sociaux à votre place.','Vos plus beaux chantiers mis en avant, avec votre accord.'],
   sans:'Vous gérez vos réseaux sociaux vous-même, si vous en avez.'}
 };
-var ORDRE=['cliky','reservation','sms','assistant','avis','reseaux','image'];
+var ORDRE=['lien','cliky','reservation','sms','assistant','avis','reseaux','image'];
 /* Options pas encore dans options.js : nom et icône ici (même style de trait) */
 var I=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'};
 var EN_PLUS={
+ lien:{n:'Lien négoce',i:I('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>')},
  assistant:{n:'Assistant du site',i:I('<path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/>')},
  image:{n:'Votre image',i:I('<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="9.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="14.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="16" cy="13" r="1.3" fill="currentColor" stroke="none"/><path d="M12 20.5c-1.5 0-2-1.2-1.3-2.3.8-1.2 0-2.7-1.6-2.7H7.5"/>')},
  reseaux:{n:'Réseaux sociaux',i:I('<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>')}
@@ -49,12 +53,13 @@ function etat(k){return O.actif(k)}
 function liste(){return ORDRE.filter(function(k){return info(k)&&TXT[k]})}
 function nbOn(){return liste().filter(function(k){return etat(k)===true}).length}
 /* geste propre à chaque option, rejoué toutes les 4 à 5 s (comme les icônes du site vitrine) */
-var GESTE={cliky:'mo-salut',reservation:'mo-coche',sms:'mo-parle',assistant:'mo-parle',avis:'mo-monte',reseaux:'mo-salut',image:'mo-tourne'};
+var GESTE={lien:'mo-coche',cliky:'mo-salut',reservation:'mo-coche',sms:'mo-parle',assistant:'mo-parle',avis:'mo-monte',reseaux:'mo-salut',image:'mo-tourne'};
 var IC_OPT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2.2"/><rect x="13" y="4" width="7" height="7" rx="2.2"/><rect x="4" y="13" width="7" height="7" rx="2.2"/><path d="M16.5 13.5v6M13.5 16.5h6"/></svg>';
 
 /* ---------- le bouton « Options » en haut de l'Espace, avec le nombre d'options branchées (sans couleur d'alerte) ---------- */
 var bt=d.createElement('button');bt.type='button';bt.className='icon-b mo-bt';bt.id='mo-bt';
-function majBt(){var n=nbOn();bt.innerHTML=IC_OPT+(n?'<span class="mo-n">'+n+'</span>':'');
+function vuLien(){try{return !!localStorage.getItem('pc-mo-lien-vu')}catch(e){return true}}
+function majBt(){var n=nbOn();bt.innerHTML=IC_OPT+(n?'<span class="mo-n">'+n+'</span>':'')+(vuLien()?'':'<i class="mo-nv" aria-hidden="true"></i>');
  bt.setAttribute('aria-label','Mes options'+(n?' : '+n+' branchée'+(n>1?'s':''):''));bt.title='Mes options'}
 var th=$('#theme');if(th)th.parentNode.insertBefore(bt,th);else{var hr=$('.head-r');if(hr)hr.appendChild(bt)}
 majBt();bt.addEventListener('click',function(){ouvrir()});
@@ -67,9 +72,9 @@ function ouvrir(){
  pan=d.createElement('div');pan.className='mo-pan';pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Mes options');
  pan.innerHTML='<div class="mo-voile" data-mofer></div><div class="mo-boite"><div class="mo-tt"><b>Mes options</b><span>'+(nbOn()?nbOn()+' branchée'+(nbOn()>1?'s':''):'Aucune branchée pour l\'instant')+'</span></div><div class="mo-grille">'+
   L.map(function(k,j){var o=info(k),on=etat(k)===true;
-   return '<button type="button" class="mo-g'+(on?' on':'')+'" data-mo="'+k+'" style="--j:'+j+'"><span class="mo-r"><span class="mo-ic" data-g="'+(GESTE[k]||'mo-salut')+'">'+o.i+'</span>'+(on?'':'<i class="mo-plus" aria-hidden="true">+</i>')+'</span><b>'+esc(o.n)+'</b><small>'+(on?'Branchée':'À découvrir')+'</small></button>'}).join('')+
+   return '<button type="button" class="mo-g'+(on?' on':'')+'" data-mo="'+k+'" style="--j:'+j+'"><span class="mo-r"><span class="mo-ic" data-g="'+(GESTE[k]||'mo-salut')+'">'+o.i+'</span>'+(on?'':'<i class="mo-plus" aria-hidden="true">+</i>')+'</span><b>'+esc(o.n)+'</b><small>'+(on?'Branchée':k==='lien'?'Nouveau · bientôt':'À découvrir')+'</small></button>'}).join('')+
   '</div></div>';
- d.body.appendChild(pan);bt.setAttribute('aria-pressed','true');
+ d.body.appendChild(pan);bt.setAttribute('aria-pressed','true');try{localStorage.setItem('pc-mo-lien-vu','1')}catch(e){}majBt();
  requestAnimationFrame(function(){pan.classList.add('on')});
  /* toutes les 4,5 s, une icône à la fois fait son petit geste */
  var n=0;tic=setInterval(function(){if(!pan)return;var I=pan.querySelectorAll('.mo-ic');if(!I.length)return;var x=I[n++%I.length];
@@ -94,11 +99,11 @@ if(menu)menu.addEventListener('click',function(){setTimeout(poser,0)});
 
 /* ---------- la fiche d'une option : elle seule, avec son explication ---------- */
 function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===true;fermer();
- var titre=on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
+ var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
  var h='<div class="card mo-tete'+(on?' on':'')+'"><span class="mo-gal">'+o.i+'</span><div><b>'+esc(titre)+'</b><small>'+esc(t.court)+'</small></div></div>'+
   '<div class="xsec"><h3>'+(on?'Ce qu\'elle fait pour vous':'Avec '+esc(o.n))+'</h3><div class="card"><ul class="mo-ul">'+t.avec.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>'+
   (on?'':'<div class="xsec"><h3>Sans cette option</h3><div class="card"><p class="mo-p">'+esc(t.sans)+'</p></div></div>'+
-   '<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>');
+   (k==='lien'?'<p class="mo-p mo-cy"><a class="btn" style="display:inline-flex;text-decoration:none" href="/demo-vx-9m2t/espace.html?r=relie" target="_blank" rel="noopener">Voir comment ça marche ›</a></p><p class="mo-p mo-cy">Exemple avec un négoce fictif. <b>Ça vous intéresse ? Dites-le à Cyril.</b></p>':'<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>'));
  X.xopen(o.n,on?'Option branchée':'Option à découvrir',h,
   '<button class="btn" id="mo-ret">‹ Mes options</button>'+(on?'':'<button class="btn go" id="mo-dem">Demander à Cyril</button>'),function(){
    $('#mo-ret').addEventListener('click',function(){X.xclose();ouvrir()});
@@ -115,6 +120,7 @@ var st=d.createElement('style');
 st.textContent=
  /* bouton du haut : chiffre discret, gris, pour ne pas le confondre avec les choses à faire */
  'html body .head .mo-bt{position:relative;display:grid;place-items:center;color:var(--accx,#A8823F)}html body .head .mo-bt svg{width:20px;height:20px}'+
+ '.mo-bt .mo-nv{position:absolute;left:-2px;top:-2px;width:9px;height:9px;border-radius:50%;background:var(--n1-nuit,#1B2440);box-shadow:0 0 0 2px var(--bg)}'+
  '.mo-bt .mo-n{position:absolute;right:-3px;top:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;display:grid;place-items:center;font-size:11px;font-weight:800;line-height:1;color:var(--muted);background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.18));font-variant-numeric:tabular-nums}'+
  /* panneau */
  '.mo-pan{position:fixed;inset:0;z-index:60;pointer-events:none}.mo-pan.on{pointer-events:auto}'+
