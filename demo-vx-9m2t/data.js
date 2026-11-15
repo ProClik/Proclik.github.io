@@ -29,6 +29,7 @@
     {id:'garcia',cl:'M. Garcia',v:'Saint-Jean-de-Moirans',com:'julien',e:4,fab:'Millet',nbm:5,quoi:'5 fenêtres PVC + volets roulants',mt:'8 760 €',suite:'Livré à l\'agence · pose jeudi et vendredi par KB Pose',pose:'kb',tel:'06 00 00 01 06',x:98,y:112},
     {id:'bernard',cl:'M. Bernard',v:'Grenoble',com:'sarah',e:4,fab:'Tryba',nbm:4,quoi:'4 fenêtres PVC',mt:'5 980 €',suite:'Livré à l\'agence · pose à caler',acaler:true,tel:'06 00 00 01 07',x:250,y:196},
     {id:'roux',cl:'Famille Roux',v:'Voreppe',com:'julien',e:5,fab:'Tryba',nbm:3,quoi:'1 porte d\'entrée alu + 2 baies',mt:'11 240 €',suite:'Pose en cours (lundi et mardi) · Pose Alpes',pose:'duval',tel:'06 00 00 01 08',x:170,y:130},
+    {id:'chabert',cl:'Mme Chabert',v:'Voiron',com:'sarah',e:3,fab:'Millet',nbm:6,quoi:'6 fenêtres PVC + 2 volets roulants',mt:'9 870 €',suite:'ARC confirmé : arrivée jeudi 19 à l\'agence',tel:'06 00 00 01 10',x:120,y:100},
     {id:'petit',cl:'M. Petit',v:'Rives',com:'julien',e:6,fab:'Millet',nbm:4,quoi:'4 fenêtres PVC',mt:'5 120 €',suite:'Posé · 1 réserve : volet de la chambre à régler lundi',sav:true,pose:'kb',tel:'06 00 00 01 09',x:60,y:70}
   ];
   /* menuiseries de chaque dossier pour la fiche de cotes (le dossier Durand garde l'exemple complet de la prise de cotes) */
@@ -43,6 +44,9 @@
     petit:[['Séjour','Fenêtre',1200,1350,'2'],['Cuisine','Fenêtre',1000,1250,'1'],['Chambre','Fenêtre',1200,1350,'2'],['Salle de bain','Fenêtre',600,800,'1']]
   };
   /* ARC Martin : cotes prises / ARC du fabricant (l'écart ressort) */
+  VX.MEN.chabert=[['Séjour','Fenêtre',1200,1350,'2'],['Cuisine','Fenêtre',1000,1250,'1'],['Chambre 1','Fenêtre',1200,1350,'2'],['Chambre 2','Fenêtre',1000,1250,'2'],['Bureau','Fenêtre',800,1000,'1'],['Salle de bain','Fenêtre',600,800,'1']];
+  /* délais habituels par fabricant (exemples, à remplacer par ceux d'ERAL) */
+  VX.DELAIS={'Millet':'5 sem.','Minco':'6 sem.','K·LINE':'7 sem.','Tryba':'4 sem.','Bouvet':'6 sem.'};
   VX.ARC=[
     {no:1,t:'Fenêtre 2 vantaux',l:[['Haut × Larg','1350 × 1180','1350 × 1180'],['Ouverture','Oscillo-battant','Oscillo-battant'],['Teinte ext.','Gris 7016','Gris 7016']]},
     {no:2,t:'Porte-fenêtre 2 vantaux',l:[['Haut × Larg','2150 × 1400','2150 × 1400'],['Vantail de service','Droite (vue int.)','Gauche (vue int.)'],['Seuil','Seuil PMR','Seuil PMR']]},
