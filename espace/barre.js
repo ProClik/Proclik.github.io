@@ -6,25 +6,33 @@
 (function(){
   "use strict";
   var d=document,$=function(s,r){return (r||d).querySelector(s)},$$=function(s,r){return [].slice.call((r||d).querySelectorAll(s))};
-  if($("#pb")||!$("#nb-accueil"))return;
+  /* Même menu dans tous les Espaces (Cyril, 15/11 : « la marque de fabrique de ProClik ») : BRS garde ses valeurs,
+     les autres Espaces (démos RT2O, ERAL…) donnent leurs onglets par window.PC_MENU avant de charger ce fichier :
+     tous (liste ou fonction), defaut (4 de la barre), familles (titres du panneau), cle (préfixe des réglages, false = aucun),
+     reglages (true/false/fonction), micro() et ouvreReglages() (sinon : boutons #speak et #menu de la page). */
+  var C=window.PC_MENU||{};
+  function val(x){return typeof x==="function"?x():x}
+  if($("#pb")||!$("nav.nav [id^='nb-']"))return;
   var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
-  var TOUS0=["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux","reglages"];
+  function tous0(){var t=val(C.tous)||["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux"];return t.concat(["reglages"])}
+  var TOUS0=tous0();
   /* un onglet caché (ex. Réseaux sans l'option, Cyril 15/11) ne va ni dans la barre ni dans l'éventail */
-  function dispo(v){if(v==="reglages")return true;var b=$("#nb-"+v);return !!b&&!b.hidden}
+  function dispo(v){if(v==="reglages")return C.reglages===undefined?true:!!val(C.reglages);var b=$("#nb-"+v);return !!b&&!b.hidden}
   var TOUS=TOUS0.filter(dispo);
-  var DEFAUT=["accueil","clients","planning","devis"];
-  function lit(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}}
+  function defaut(){return (val(C.defaut)||["accueil","clients","planning","devis"]).filter(dispo).slice(0,4)}
+  var DEFAUT=defaut();
+  function lit(k,d){if(C.cle===false)return d;k=(C.cle||"")+k;try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(_){return d}}
   function choisis(){
     var b=lit("pc-barre",null);
-    if(!b||b.length!==4||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||(v!=="reglages"&&!$("#nb-"+v))})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
+    if(!b||b.length!==Math.min(4,TOUS.filter(function(v){return v!=="reglages"}).length)||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||(v!=="reglages"&&!$("#nb-"+v))})||b.some(function(v,i){return b.indexOf(v)!==i}))b=defaut();
     return b;
   }
   /* menu de côté (iPad, ordinateur) : son propre choix, 1 à 6 boutons, sans toucher à celui du téléphone (Cyril, 15/11) */
   var COTE_MAX=6;
   function choisisCote(){
     var b=lit("pc-cote",null);
-    if(!b||!b.length||b.length>COTE_MAX||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||!$("#nb-"+v)})||b.some(function(v,i){return b.indexOf(v)!==i}))b=DEFAUT.slice();
+    if(!b||!b.length||b.length>COTE_MAX||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||!$("#nb-"+v)})||b.some(function(v,i){return b.indexOf(v)!==i}))b=defaut();
     return b;
   }
   var large=matchMedia("(min-width:900px)");
@@ -46,7 +54,7 @@
   function bouton(v,cls){
     var i=info(v);if(!i)return "";
     return '<button type="button" class="'+cls+'" data-pb="'+v+'"><span class="pb-g" aria-hidden="true">'+i.ico+'</span><span class="pb-n">'+i.nom+'</span>'+
-      (v==="devis"?'<span class="badge pb-b" data-src="#badge" hidden></span>':v==="factures"?'<span class="badge pb-b" data-src="#badge-f" hidden></span>':v==="depenses"?'<span class="badge pb-b" data-src="#badge-d" hidden></span>':"")+'</button>';
+      ($("#nb-"+v+" .badge")?'<span class="badge pb-b" data-src="#nb-'+v+' .badge" hidden></span>':"")+'</button>';
   }
 
   /* ---------- construction ---------- */
@@ -64,7 +72,7 @@
   var scrim=d.createElement("div");scrim.className="pb-scrim";scrim.id="pb-scrim";
   var menu=d.createElement("div");menu.className="pb-menu pan-c";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
   /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
-  var FAMILLES=[
+  var FAMILLES=val(C.familles)||[
     {t:"Devis et factures",v:["devis","factures"]},
     {t:"Chantiers",v:["chantiers","planning","cotes"]},
     {t:"Achats",v:["prix","produits","depenses"]},
@@ -126,6 +134,8 @@
     /* menu du galet = PANNEAU (choix de Cyril, 15/11) : les bulles rangées dans une carte en relief au-dessus du micro,
        4 par ligne, une ligne de plus si l'artisan a plus d'options. L'ancien éventail en arc se chevauchait à partir de 8 boutons. */
     var bs=$$(".pb-e",menu),ts=$$(".pb-gt",menu),P=panneau(GROUPES);
+    /* rien d'autre à ranger (ex. démo, accès client) : le galet n'ouvre que le micro, sans carte vide */
+    menu.classList.toggle("pb-vide",!bs.length);
     bs.forEach(function(b,i){
       b.style.setProperty("--x",P[i][0].toFixed(1)+"px");
       b.style.setProperty("--y",P[i][1].toFixed(1)+"px");
@@ -190,8 +200,8 @@
   scrim.addEventListener("click",ferme);
   d.addEventListener("keydown",function(e){if(e.key==="Escape"&&ouvert){ferme();centre.focus()}});
   function agit(v){
-    if(v==="micro"){var m=$("#speak");if(m)m.click();return}
-    if(v==="reglages"){var r=$("#menu");if(r)r.click();return}
+    if(v==="micro"){if(C.micro)return C.micro();var m=$("#speak");if(m)m.click();return}
+    if(v==="reglages"){if(C.ouvreReglages)return C.ouvreReglages();var r=$("#menu");if(r)r.click();return}
     var b=$("#nb-"+v);if(b)b.click();
   }
   pb.addEventListener("click",function(e){var b=e.target.closest("[data-pb]");if(!b)return;ferme();agit(b.dataset.pb)});
@@ -227,7 +237,7 @@
     /* galet du menu de côté (familles.js) : ouvre le même panneau */
     ouvre:ouvre,ferme:ferme,ouvert:function(){return ouvert},remesure:mesure,panneau:function(){return DERNIER&&DERNIER.pan},
     applique:function(){
-      ferme();TOUS=TOUS0.filter(dispo);this.TOUS=TOUS;BAS=choisis();COTE=choisisCote();calcule();
+      ferme();TOUS0=tous0();TOUS=TOUS0.filter(dispo);this.TOUS=TOUS;DEFAUT=defaut();this.DEFAUT=DEFAUT;FAMILLES=val(C.familles)||FAMILLES;BAS=choisis();COTE=choisisCote();calcule();
       pb.classList.toggle("pb-ronde",STYLE==="ronde");
       remplit();suit();mesure();
     }

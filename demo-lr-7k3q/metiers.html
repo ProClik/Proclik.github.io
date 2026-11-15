@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../fonts/fonts.css">
 <link rel="stylesheet" href="demo.css">
-<script src="demo.js"></script><script src="data.js"></script>
+<script src="demo.js?v=2"></script><script src="data.js"></script>
 <style>
 body{min-height:100dvh}
 .top{display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) 16px 8px;max-width:1100px;margin:0 auto}
@@ -61,7 +61,7 @@ function rend(){
   $('pres').innerHTML=PRES.map(function(p,i){var on=RT.ORDRE.every(function(k){return !!sel[k]===(p[1].indexOf(k)>=0)});return '<button class="pk" style="'+(on?'box-shadow:inset 0 0 0 1.5px var(--nuit)':'')+'" onclick="preset('+i+')">'+p[0]+'</button>'}).join('');
   $('mt').innerHTML=RT.ORDRE.map(function(k){var on=!!sel[k];return '<button class="pk" aria-pressed="'+on+'" onclick="bas(\''+k+'\')"><span class="cb">'+(on?ic('check'):'')+'</span>'+M[k].n+'</button>'}).join('');
   var on=RT.ORDRE.filter(function(k){return sel[k]}),eq=taille!=='Seul';
-  var nav=[['home','Accueil'],['box','Chantiers'],['cal','Planning'],['chat','Cliky'],['gear','Réglages']];
+  var nav=[['home','Accueil'],['chantier','Chantiers'],['cal','Planning'],['chat','Cliky'],['gear','Réglages']];
   var h='<h2>'+ic('eye')+'Ce que l\'artisan verra</h2><div class="nav">'+nav.map(function(n){return '<span>'+ic(n[0])+n[1]+'</span>'}).join('')+'</div>';
   if(!on.length){$('ap').innerHTML=h+'<p class="muted">Cochez au moins un métier.</p>';return}
   h+='<div class="sec"><h3>SUR LE PLAN, EN TOUCHANT UN MUR</h3>'+on.map(function(k){return '<div class="q"><b>'+M[k].n+'</b><span>'+M[k].vue+'</span></div>'}).join('')+'</div>';

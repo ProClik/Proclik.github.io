@@ -75,7 +75,48 @@
     idea:'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z',
     clip:'M21 11l-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7'
   };
-  PCD.ic=function(n){return '<svg class="i" viewBox="0 0 24 24"><path d="'+(P[n]||P.box)+'"/></svg>'};
+  /* Mêmes dessins que l'Espace BRS (Cyril 15/11 : « vérifie le moindre icône ») : pour une même chose, la même icône partout.
+     Un dessin qui commence par « < » est repris tel quel de l'Espace (espace/index.html, accueil.js, chantiers.js…). */
+  var BRS={
+    home:'<path d="M4 11l8-6 8 6v8H4z"/>',
+    users:'<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.6a6 6 0 0 1 3 5.4"/>',
+    cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+    devis:'<path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/>',
+    facture:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    depense:'<path d="M4 7.5h15a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 19 20H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M4 7.5V6a2 2 0 0 1 2-2h10.5v3.5"/><path d="M16 13.8h1.5"/>',
+    chantier:'<path d="M3 20h7M6 20V10l6-4 5 3.4"/><g transform="translate(10.6 10.4) scale(.56)"><path vector-effect="non-scaling-stroke" d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path vector-effect="non-scaling-stroke" d="M14 6a6 6 0 0 1 6 6v3"/><path vector-effect="non-scaling-stroke" d="M4 15v-3a6 6 0 0 1 6-6"/><rect vector-effect="non-scaling-stroke" x="2" y="15" width="20" height="4" rx="1"/></g>',
+    achat:'<path d="M4 6h2l2 10h10l2-7H7"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/>',
+    box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+    cotes:'<circle cx="10" cy="12" r="7"/><circle cx="10" cy="12" r="2"/><path d="M17 15h4v3h-11"/>',
+    reglages:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+    mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+    moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    truck:'<path d="M3 16V6h11v10M14 9h4l3 3.5V16h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+    clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
+    chart:'<path d="M4 20V10M10 20V5M16 20v-7M21 20H3"/>',
+    euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10h9M4 14h9"/>',
+    plan:'<path d="M4 4h16v16H4z"/><path d="M4 12h7V4M11 16v4M15 12h5"/>',
+    doc:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h5"/>',
+    cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+    phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+    pin:'<circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/>',
+    send:'<path d="M3 11l18-8-8 18-2-8z"/><path d="M11 13l10-10"/>',
+    check:'<path d="M5 12l5 5 9-10"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    lock:'<rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/>',
+    search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+    idea:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+    sign:'<path d="M4 17c2.5 0 3-6 5-6s1.5 5 3.5 5 2-3 3.5-3 1.5 2 4 2"/><path d="M4 21h16"/>',
+    user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    menu:'<path d="M5 7h14M5 12h14M5 17h14"/>',
+    route:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a4 4 0 0 0 0-8h-4a4 4 0 0 1 0-8h6"/>'
+  };
+  BRS.ruler=BRS.cotes;BRS.team=BRS.users;BRS.gear=BRS.reglages;BRS.euro2=BRS.euro;BRS.stock=BRS.box;
+  for(var k in BRS)P[k]=BRS[k];
+  PCD.ic=function(n){var v=P[n]||P.box;return '<svg class="i" viewBox="0 0 24 24">'+(v.charAt(0)==='<'?v:'<path d="'+v+'"/>')+'</svg>'};
   /* mémoire partagée de la démo (formulaire → Espace, salarié → encadrant) : tout reste dans ce navigateur */
   var SK='pcd-lzr-v1';
   PCD.load=function(){try{return JSON.parse(localStorage.getItem(SK)||'null')}catch(e){return null}};
