@@ -52,6 +52,23 @@
     {no:2,t:'Porte-fenêtre 2 vantaux',l:[['Haut × Larg','2150 × 1400','2150 × 1400'],['Vantail de service','Droite (vue int.)','Gauche (vue int.)'],['Seuil','Seuil PMR','Seuil PMR']]},
     {no:3,t:'Fenêtre 1 vantail',l:[['Haut × Larg','1000 × 800','1100 × 800'],['Ouverture','Oscillo-battant','Oscillo-battant'],['Vitrage','Dépoli','Dépoli']]}
   ];
+  /* plans du logement (même format que le plan du formulaire) : pièces en rectangles [nom,x,y,larg,prof] en mètres,
+     ouvertures [pièce, mur (0 haut,1 droite,2 bas,3 gauche), type, larg, haut, matériau] posées au milieu du mur */
+  VX.PLANS={
+    durand:{p:[['Entrée',0,0,2,4],['Séjour',2,0,5,4],['Cuisine',7,0,3,4],['Chambre 1',2,4,4,3.5],['Chambre 2',6,4,4,3.5]],o:[[0,3,'porte',.9,2.15],[1,0,'fenetre',1.2,1.35,1.2],[1,0,'fenetre',1.2,1.35,3],[2,1,'fenetre',1,1.25],[3,2,'fenetre',1.2,1.35],[4,2,'fenetre',1,1.25]],m:'PVC'},
+    garcia:{p:[['Séjour',0,0,5,4.5],['Cuisine',5,0,3.5,4.5],['Chambre 1',0,4.5,3.5,3.5],['Chambre 2',3.5,4.5,3,3.5],['Salle de bain',6.5,4.5,2,3.5]],o:[[0,0,'fenetre',1.2,1.35],[1,0,'fenetre',1,1.25],[2,2,'fenetre',1.2,1.35],[3,2,'fenetre',1,1.25],[4,1,'fenetre',.6,.8]],m:'PVC'},
+    martin:{p:[['Séjour',0,0,6,4],['Bureau',6,0,3,4],['Cuisine',0,4,4,3]],o:[[0,0,'fenetre',1.18,1.35],[0,2,'pf',1.4,2.15,1],[1,1,'fenetre',.8,1]],m:'Aluminium'},
+    roux:{p:[['Entrée',0,0,2,5],['Séjour',2,0,6,5],['Chambre',8,0,3.5,5]],o:[[0,3,'porte',.9,2.15],[1,2,'pf',2.4,2.15,0,1],[2,2,'pf',1.8,2.15,0,1]],m:'Aluminium'},
+    petit:{p:[['Séjour',0,0,5,4],['Cuisine',5,0,3,4],['Chambre',0,4,4,3.5],['Salle de bain',4,4,2.5,3.5]],o:[[0,0,'fenetre',1.2,1.35],[1,0,'fenetre',1,1.25],[2,2,'fenetre',1.2,1.35],[3,2,'fenetre',.6,.8]],m:'PVC'},
+    chabert:{p:[['Séjour',0,0,5,4.5],['Cuisine',5,0,3.5,4.5],['Bureau',8.5,0,3,4.5],['Chambre 1',0,4.5,3.5,3.5],['Chambre 2',3.5,4.5,3,3.5],['Salle de bain',6.5,4.5,2,3.5]],o:[[0,0,'fenetre',1.2,1.35],[1,0,'fenetre',1,1.25],[2,1,'fenetre',.8,1],[3,2,'fenetre',1.2,1.35],[4,2,'fenetre',1,1.25],[5,2,'fenetre',.6,.8]],m:'PVC'}
+  };
+  /* plan au format du formulaire (proclik-plan-load) */
+  VX.planJSON=function(id){var P=VX.PLANS[id];if(!P)return null;
+    var pieces=P.p.map(function(r,ri){var x=r[1],y=r[2],w=r[3],h=r[4],pts=[[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
+      return {nom:r[0],points:pts,murs:pts.map(function(a,i){var b=pts[(i+1)%4],L=Math.abs(b[0]-a[0])+Math.abs(b[1]-a[1]);
+        return {ouvertures:P.o.filter(function(o){return o[0]===ri&&o[1]===i}).map(function(o){var pf=o[2]!=='fenetre';
+          return {k:o[2],w:o[3],h:o[4],p:o[5]!=null&&o[5]>0?o[5]:+((L-o[3])/2).toFixed(2),al:pf?0:(o[4]<1?1.2:.9),a_changer:'Oui, à changer',materiau:o[2]==='porte'?null:P.m,ouv:o[6]?'Coulissant':null}})}})}});
+    return {floors:[{nom:'Rez-de-chaussée',hauteur_m:2.5,pieces:pieces}]}};
   VX.CHIF={julien:{cours:14,dev:6,sig:3,ca:'28 400 €',tx:'38 %'},sarah:{cours:11,dev:5,sig:4,ca:'31 200 €',tx:'44 %'}};
   VX.dos=function(id){return VX.DOSSIERS.filter(function(d){return d.id===id})[0]};
   /* état partagé (étapes qui avancent, planning, fil d'activité) */

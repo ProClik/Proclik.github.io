@@ -213,7 +213,7 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 <nav class="nav" id="nav"></nav>
 <div class="voile" id="voile"><div class="fen" id="fen" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status"></div>
-<div class="planf" id="planf"><div class="pfh"><b>Plan</b><button class="go" onclick="planFermer(1)">J'ai terminé</button><button class="ferme pk" onclick="planFermer(0)" aria-label="Fermer">''</button></div><iframe title="Plan du logement" allow="microphone"></iframe></div>
+<div class="planf" id="planf"><div class="pfh"><b>Plan</b><button class="go" onclick="planFini()">J'ai terminé</button><button class="ferme pk" onclick="planFermer(0)" aria-label="Fermer">''</button></div><iframe title="Plan du logement" allow="microphone"></iframe></div>
 <script>
 var $=function(i){return document.getElementById(i)},ic=PCD.ic,S,D=VX.DOSSIERS,N=VX.NOMS;
 function charger(){var s=PCD.load();S=s&&s.v===3?s:Object.assign(VX.etat0(),{v:3});}
@@ -461,16 +461,29 @@ function finPose(){var d=VX.dos(PZ.id);S.poseOk[PZ.id]=1;S.et[PZ.id]=6;
   evt(['com','agence','adv'],(PZ.id==='petit'?'SAV ':'Pose ')+d.cl+' terminée par KB Pose · PV signé, photos dans le dossier','check');save();fermer();re();toast('Terminé ! Le commercial et l\'agence sont prévenus','check')}
 
 /* ---------- plan du logement : le vrai plan du formulaire, dans une fenêtre ---------- */
-function aPlan(id){return (S.plans&&S.plans[id])||['durand','garcia','roux','martin','petit','chabert'].indexOf(id)>=0}
-function miniPlan(d){var n=Math.min(d.nbm,7),P=[[14,10,96,62],[110,10,96,62],[14,72,70,52],[84,72,64,52],[148,72,58,52]],s='<svg viewBox="0 0 220 136" class="mplan" role="img" aria-label="Plan avec les menuiseries numérotées">';
-  P.forEach(function(r){s+='<rect x="'+r[0]+'" y="'+r[1]+'" width="'+r[2]+'" height="'+r[3]+'" fill="var(--bg)" stroke="var(--nuit)" stroke-width="2.2"/>'});
-  var W=[[40,10,'h'],[150,10,'h'],[206,40,'v'],[206,98,'v'],[110,124,'h'],[40,124,'h'],[14,98,'v']];
-  for(var i=0;i<n;i++){var w=W[i];s+=(w[2]==='h'?'<rect x="'+(w[0]-12)+'" y="'+(w[1]-2.5)+'" width="24" height="5" fill="var(--laiton)"/>':'<rect x="'+(w[0]-2.5)+'" y="'+(w[1]-12)+'" width="5" height="24" fill="var(--laiton)"/>')+'<circle cx="'+(w[2]==='h'?w[0]:w[0]+(w[0]>100?-12:12))+'" cy="'+(w[2]==='h'?w[1]+(w[1]>60?-11:11):w[1])+'" r="7.5" fill="var(--nuit)"/><text x="'+(w[2]==='h'?w[0]:w[0]+(w[0]>100?-12:12))+'" y="'+((w[2]==='h'?w[1]+(w[1]>60?-11:11):w[1])+3.5)+'" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--nuit-fg)">'+(i+1)+'</text>'}
+function planDe(id){var x=S.plans&&S.plans[id];return x&&x.floors?x:VX.planJSON(id)}
+function aPlan(id){return !!planDe(id)}
+/* miniature dessinée depuis le vrai plan (mêmes pièces, mêmes ouvertures) */
+function miniPlan(d){var P=planDe(d.id),f=P&&P.floors&&P.floors[0];if(!f)return '';var X=[],Y=[];
+  f.pieces.forEach(function(r){r.points.forEach(function(q){X.push(q[0]);Y.push(q[1])})});
+  var x0=Math.min.apply(0,X),y0=Math.min.apply(0,Y),W=Math.max.apply(0,X)-x0,H=Math.max.apply(0,Y)-y0,m=.5,k=function(v){return +v.toFixed(3)};
+  var s='<svg viewBox="'+k(x0-m)+' '+k(y0-m)+' '+k(W+2*m)+' '+k(H+2*m)+'" class="mplan" role="img" aria-label="Plan du logement, '+f.pieces.length+' pièces">',fs=Math.max(.38,Math.min(.55,W/19));
+  f.pieces.forEach(function(r){s+='<polygon points="'+r.points.map(function(q){return q.join(',')}).join(' ')+'" fill="var(--calme)" stroke="var(--nuit)" stroke-width=".16" stroke-linejoin="round"/>'});
+  f.pieces.forEach(function(r){var n=r.points.length;r.murs.forEach(function(mu,i){var a=r.points[i],b=r.points[(i+1)%n],L=Math.hypot(b[0]-a[0],b[1]-a[1]),ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;
+    (mu.ouvertures||[]).forEach(function(o){var P1=[a[0]+ux*o.p,a[1]+uy*o.p],P2=[a[0]+ux*(o.p+o.w),a[1]+uy*(o.p+o.w)],c=o.k==='porte'?'var(--nuit)':'#6E8FC4';
+      s+='<line x1="'+k(P1[0])+'" y1="'+k(P1[1])+'" x2="'+k(P2[0])+'" y2="'+k(P2[1])+'" stroke="var(--calme)" stroke-width=".3"/><line x1="'+k(P1[0])+'" y1="'+k(P1[1])+'" x2="'+k(P2[0])+'" y2="'+k(P2[1])+'" stroke="'+c+'" stroke-width=".22" stroke-linecap="round" opacity="'+(o.k==='porte'?.55:1)+'"/>'})})});
+  f.pieces.forEach(function(r){var cx=0,cy=0;r.points.forEach(function(q){cx+=q[0];cy+=q[1]});cx/=r.points.length;cy/=r.points.length;
+    s+='<text x="'+k(cx)+'" y="'+k(cy+fs/3)+'" text-anchor="middle" font-size="'+k(fs)+'" font-weight="700" fill="var(--nuit)">'+q(r.nom)+'</text>'});
   return s+'</svg>'}
 var PLID=null;
 function planOuvrir(id){PLID=id;fermer();var f=$('planf');f.querySelector('iframe').src='../devis/plan.html?client&embed'+(aPlan(id)?'':'&new');f.querySelector('b').textContent='Plan · '+VX.dos(id).cl;f.classList.add('on')}
-function planFermer(fini){$('planf').classList.remove('on');$('planf').querySelector('iframe').src='about:blank';if(fini&&PLID){S.plans=S.plans||{};S.plans[PLID]=1;evt(['com','adv','agence','poseur'].filter(function(r){return r!==role()}),'Plan du logement '+VX.dos(PLID).cl+' rangé dans le dossier','plan');save();toast('Plan rangé dans le dossier','plan')}var id=PLID;PLID=null;if(id)ouvrir(id)}
-addEventListener('message',function(e){var t=e.data&&e.data.type;if(PLID&&(t==='proclik-plan-finish'))planFermer(1)});
+function planFini(){var w=$('planf').querySelector('iframe').contentWindow;try{w.postMessage({type:'proclik-plan-check'},'*')}catch(e){planFermer(1)}}
+function planFermer(fini){$('planf').classList.remove('on');$('planf').querySelector('iframe').src='about:blank';if(fini&&PLID){S.plans=S.plans||{};if(!(S.plans[PLID]&&S.plans[PLID].floors))S.plans[PLID]=VX.planJSON(PLID)||1;evt(['com','adv','agence','poseur'].filter(function(r){return r!==role()}),'Plan du logement '+VX.dos(PLID).cl+' rangé dans le dossier','plan');save();toast('Plan rangé dans le dossier','plan')}var id=PLID;PLID=null;if(id)ouvrir(id)}
+/* même échange que le formulaire client : le plan se dit prêt, on lui donne le plan du dossier ; chaque changement revient ici */
+addEventListener('message',function(e){var t=e.data&&e.data.type,w=$('planf').querySelector('iframe').contentWindow;if(!PLID||e.source!==w)return;
+  if(t==='proclik-plan-ready')w.postMessage({type:'proclik-plan-load',plan:planDe(PLID),travaux:['fenetres']},'*');
+  else if(t==='proclik-plan'&&e.data.plan&&e.data.plan.floors&&e.data.plan.floors.some(function(f){return f.pieces&&f.pieces.length})){S.plans=S.plans||{};S.plans[PLID]=e.data.plan;save()}
+  else if(t==='proclik-plan-finish')planFermer(1)});
 /* ======================= options (jamais incluses) ======================= */
 function option(k){var O={devis:['Option Devis','devis','Les devis du comptoir et des matériaux, à côté de la menuiserie (qui reste dans Pro Devis).',['Devis comptoir en 2 minutes : on cherche l\'article, on tape la quantité, c\'est fait','Vos prix et vos remises par client pro, le PDF à votre nom, signé en ligne','Le même dossier client que la menuiserie : tout ce qu\'il achète au même endroit']],
   cliky:['Option Cliky','robot','L\'assistant qui fait le suivi à votre place.',['Il lit les ARC et les bons de livraison reçus par e-mail et les range dans le bon dossier','Il compare l\'ARC à vos cotes et vous prévient au moindre écart','Il relance les devis sans réponse et prévient les clients à chaque étape']]}[k];
