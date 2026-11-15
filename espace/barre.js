@@ -56,7 +56,8 @@
   function remplit(){
     $(".pb-l",pb).innerHTML=bouton(BAS[0],"pb-i")+bouton(BAS[1],"pb-i")+'<span class="pb-trou"></span>'+bouton(BAS[2],"pb-i")+bouton(BAS[3],"pb-i");
     menu.innerHTML='<button type="button" class="pb-mic" data-pb="micro" aria-label="Parler à ProClik (dictée)" tabindex="-1"><span class="pb-g" aria-hidden="true">'+ICO_MIC+'</span></button>'+
-      EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("");
+      EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("")+
+      '<div class="pb-pan" hidden aria-hidden="true"></div><div class="pb-pts" hidden aria-hidden="true"><i class="on"></i><i></i></div>';
   }
   remplit();
   d.body.appendChild(scrim);d.body.appendChild(menu);d.body.appendChild(pb);
@@ -98,11 +99,37 @@
     /* éventail : arcs autour du galet central. Avec 9 boutons, les bulles et les noms se chevauchaient (Cyril, 15/11) :
        on cherche maintenant la disposition (un arc, sinon deux arcs l'un au-dessus de l'autre) où aucune bulle,
        aucun nom et aucune pastille ne se touchent, en mesurant la vraie largeur de chaque nom. */
-    var bs=$$(".pb-e",menu),P=arcs(bs.map(function(b){var n=$(".pb-n",b);return n?n.offsetWidth:60}));
+    var bs=$$(".pb-e",menu),L=bs.map(function(b){var n=$(".pb-n",b);return n?n.offsetWidth:60}),
+      MODE=lit("pc-eventail","b"),P=MODE==="b"?panneau(L):MODE==="c"?cadran(L):MODE==="z"?arcs(L):nid(L);
     bs.forEach(function(b,i){
       b.style.setProperty("--x",P[i][0].toFixed(1)+"px");
       b.style.setProperty("--y",P[i][1].toFixed(1)+"px");
+      b.style.visibility=P[i][2]?"hidden":"";
     });
+    var pan=$(".pb-pan",menu);
+    if(pan){pan.hidden=MODE!=="b";if(MODE==="b"&&P.pan){var q=P.pan;pan.style.cssText="left:"+q[0]+"px;top:"+q[1]+"px;width:"+(q[2]-q[0])+"px;height:"+(q[3]-q[1])+"px"}}
+    var pts=$(".pb-pts",menu);if(pts){pts.hidden=MODE!=="c";if(P.pts)pts.style.top=P.pts+"px"}
+  }
+  /* A « rangées en arc » : les bulles en 2 rangées de 4, chaque rangée légèrement courbée comme un sourire, sans fond */
+  function nid(L){
+    var P=panneau(L),lim=innerWidth/2-8;
+    P.forEach(function(p){var u=p[0]/(lim-40);p[1]+=u*u*34});
+    delete P.pan;return P;
+  }
+  /* B « panneau » : une carte en relief au-dessus du micro, bulles rangées en grille (4 par ligne) */
+  function panneau(L){
+    var n=L.length,lim=innerWidth/2-8,c=Math.min(4,n),lw=Math.min(88,(2*lim-16)/c),rg=Math.ceil(n/c),rh=GR*2+5+LH+16,
+      bas=-104-ECART-14,P=[];
+    for(var i=0;i<n;i++){var r=Math.floor(i/c),j=i%c,m=Math.min(c,n-r*c);
+      P.push([(j-(m-1)/2)*lw,bas-GR-5-LH-((rg-1-r)*rh)-4])}
+    var x0=-(c*lw)/2-8,x1=(c*lw)/2+8,y1=bas+6,y0=bas-rg*rh-14;
+    P.pan=[x0,y0,x1,y1];return P;
+  }
+  /* C « cadran » : 5 bulles sur un arc rond, on fait tourner du doigt pour voir les autres (maquette : position de départ) */
+  function cadran(L){
+    var n=L.length,v=Math.min(5,n),R=Math.min(168,innerWidth/2-38),P=[];
+    for(var i=0;i<n;i++){var a=(170-i*(160/(v-1)))*Math.PI/180;P.push([Math.cos(a)*R,-Math.sin(a)*170,i>=v])}
+    P.pts=-170-48;return P;
   }
   /* boîtes à ne pas toucher : bulle 46 px (centre = x,y) avec sa pastille en haut à droite, nom dessous */
   var ECART=8,GR=23,LH=15;
