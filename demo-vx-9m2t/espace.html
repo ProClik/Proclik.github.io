@@ -96,6 +96,10 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .cel.b{background:color-mix(in srgb,#3E8E6A 18%,var(--calme));color:var(--fg)}
 .cel.c{background:color-mix(in srgb,#B9577A 16%,var(--calme));color:var(--fg)}
 .cel.nw{box-shadow:inset 0 0 0 2px var(--laiton)}
+.cel.me{background:color-mix(in srgb,var(--laiton) 16%,var(--calme));color:var(--fg);font-size:9.5px}
+.cel.vide{min-height:0}
+.cel.autre{opacity:.4}
+.grille .p.moi{box-shadow:inset 0 0 0 1.5px var(--nuit);padding-left:5px}
 .acaler{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .acaler button{padding:9px 12px;border-radius:13px;font-weight:700;font-size:13px;display:flex;gap:8px;align-items:center}
 .acaler button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--laiton);background:color-mix(in srgb,var(--laiton) 10%,var(--bg))}
@@ -209,15 +213,15 @@ function mesDos(){var r=role();return r==='com'?D.filter(function(d){return d.co
 
 /* ---------- rôles et navigation ---------- */
 var NAV={
-  com:[['jour','home','Journée'],['cli','users','Clients'],['+'],['pl','cal','Planning'],['moi','chart','Mes chiffres']],
-  adv:[['jour','home','À traiter'],['cmd','truck','Commandes'],['pp','cal','Poseurs'],['cli','users','Dossiers']],
+  com:[['jour','home','Journée'],['cli','users','Clients'],['+'],['pp','cal','Planning'],['moi','chart','Mes chiffres']],
+  adv:[['jour','home','À traiter'],['cmd','truck','Commandes'],['pp','cal','Planning'],['cli','users','Dossiers']],
   agence:[['jour','chart','Tableau'],['pp','cal','Planning'],['pos','helmet','Poseurs'],['cli','users','Dossiers']],
-  poseur:[['jour','hammer','Mes poses'],['sem','cal','Semaine'],['pap','shield','Papiers']]};
+  poseur:[['jour','hammer','Mes poses'],['pp','cal','Planning'],['pap','shield','Papiers']]};
 var ong={com:'jour',adv:'jour',agence:'jour',poseur:'jour'};
 $('logo').innerHTML=PCD.logo;
 function rRoles(){$('roles').innerHTML=Object.keys(VX.ROLES).map(function(k){return '<button data-r="'+k+'" aria-pressed="'+(role()===k)+'">'+VX.ROLES[k]+'</button>'}).join('')}
 $('roles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.role=b.dataset.r;save();rRoles();go(ong[role()])});
-function nb(o){var r=role();if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return D.filter(function(d){return d.acaler&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
+function nb(o){var r=role();if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return (r!=='agence'&&r!=='adv')?0:D.filter(function(d){return d.acaler&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
 function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){if(n[0]==='+')return '<button class="plus" onclick="nouveau()" aria-label="Nouveau rendez-vous ou prise de cotes"><span class="g">'+ic('plus')+'</span></button>';var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="g">'+ic(n[1])+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
 $('nav').addEventListener('click',function(e){var b=e.target.closest('button[data-o]');if(b)go(b.dataset.o)});
 function rCloche(){var n=nonLus();$('cloche').innerHTML=ic('bell')+(n?'<span class="bd">'+n+'</span>':'')}
@@ -260,15 +264,6 @@ function suite(d){var e=et(d);
   if(d.acaler&&place(d.id))return 'Pose '+place(d.id).j+' · '+VX.POSEURS[place(d.id).p].n;
   if(S.poseOk[d.id])return 'Posé · PV signé par le client';
   return d.suite}
-V.com_pl=function(){var h=hi('Mon planning','Mes rendez-vous et les poses de mes clients'),J=[
-  [['ruler','10 h · Métré Durand','durand'],['hammer','Pose Roux · Pose Alpes','roux'],['wrench','SAV Petit · KB Pose','petit']],
-  [['hammer','Pose Roux · Pose Alpes','roux']],
-  [['ruler','9 h · Métré M. Simon, Voreppe',''],['phone','11 h · Rappeler Mme Martin','martin']],
-  [['hammer','Pose Garcia · KB Pose','garcia']],
-  [['hammer','Pose Garcia · KB Pose','garcia'],['home','16 h · Showroom M. Lambert','']]];
-  (S.rdv||[]).forEach(function(r){J[r.j].push(['ruler',r.h+' · Métré '+r.cl,''])});
-  h+='<section class="blk">'+J.map(function(L,i){return '<div class="jr"><b class="'+(i===0?'auj':'')+'">'+VX.JL[i].replace(' ','<br>')+'</b><div class="ev">'+L.map(function(e){return '<button class="e pk" onclick="'+(e[2]?'ouvrir(\''+e[2]+'\')':'toast(\'Rendez-vous dans votre agenda (démo)\',\'cal\')')+'">'+ic(e[0])+'<span>'+e[1]+'</span></button>'}).join('')+'</div></div>'}).join('')+'</section>';
-  h+='<p class="mini">Votre agenda se synchronise avec celui de votre téléphone (Google, Outlook ou iPhone).</p>';return h};
 V.com_moi=function(){var c=VX.CHIF.julien,h=hi('Mes chiffres','Novembre · chiffres d\'exemple');
   h+='<div class="pile"><section class="blk"><div class="chif"><div><b>'+c.cours+'</b><small>en cours</small></div><div><b>'+c.dev+'</b><small>devis envoyés</small></div><div><b>'+c.sig+'</b><small>signés</small></div><div><b>'+c.tx+'</b><small>transformés</small></div></div><p class="mini" style="margin-top:10px">Signé ce mois : <b>'+c.ca+' HT</b>. Délai moyen entre le métré et la signature : 9 jours.</p></section>';
   h+=blk('Où ça bloque','alert',ln('send','2 devis sans nouvelles','Plus de 7 jours','S.fcli=1;go(\'cli\')')+ln('clock','1 commande en retard','Fabricant, semaine annoncée dépassée','ouvrir(\'moreau\')'));
@@ -279,7 +274,7 @@ function nouveau(){fen('<h3>Nouveau</h3><p class="sous">Qu\'est-ce que vous voul
   ln('home','Un client au showroom','Noter son projet en 3 questions','toast(\'Fiche client créée (démo)\',\'user\');fermer()')+'</div>')}
 var NR={j:1,h:'9 h'};
 function nvRdv(){fen('<h3>Rendez-vous de métré</h3><p class="sous">Le client reçoit un SMS de confirmation, puis un rappel la veille.</p><div class="pile"><input class="champ" id="nrc" placeholder="Nom du client" value="Mme Girard, Voiron"><div class="chips">'+[1,2,3,4].map(function(i){return '<button class="pk" aria-pressed="'+(NR.j===i)+'" onclick="NR.j='+i+';nvRdv()">'+VX.JOURS[i]+'</button>'}).join('')+'</div><div class="chips">'+['9 h','11 h','14 h','16 h'].map(function(x){return '<button class="pk" aria-pressed="'+(NR.h===x)+'" onclick="NR.h=\''+x+'\';nvRdv()">'+x+'</button>'}).join('')+'</div><button class="go" onclick="okRdv()">'+ic('check')+'Créer le rendez-vous</button></div>')}
-function okRdv(){var c=($('nrc').value||'Nouveau client').trim();(S.rdv=S.rdv||[]).push({j:NR.j,h:NR.h,cl:c});evt(['agence'],'Julien a pris un rendez-vous de métré : '+c+', '+VX.JL[NR.j]+' à '+NR.h,'cal');save();fermer();go('pl');toast('Rendez-vous créé, SMS envoyé au client','send')}
+function okRdv(){var c=($('nrc').value||'Nouveau client').trim();(S.rdv=S.rdv||[]).push({j:NR.j,h:NR.h,cl:c});evt(['agence'],'Julien a pris un rendez-vous de métré : '+c+', '+VX.JL[NR.j]+' à '+NR.h,'cal');save();fermer();go('pp');toast('Rendez-vous créé, SMS envoyé au client','send')}
 function relancer(id){var d=VX.dos(id);fen('<h3>Relancer '+d.cl+'</h3><p class="sous">Message prêt, vous pouvez le changer.</p><div class="pile"><div class="sms">Bonjour Monsieur, avez-vous pu regarder notre devis pour vos '+d.quoi.replace(/^\d+ /,d.nbm+' ')+' ? Je reste disponible pour en parler ou passer vous voir. Julien, '+VX.NEGOCE+'.</div><div class="row"><button class="go" style="flex:1" onclick="S.relance[\''+id+'\']=1;save();fermer();re();toast(\'Relance envoyée par SMS\',\'send\')">'+ic('send')+'Envoyer le SMS</button><button class="btn2 pk" onclick="toast(\'Appel en cours (démo)\',\'phone\')">'+ic('phone')+'Appeler</button></div>'+optB('cliky','Plus jamais de relance oubliée','Cliky envoie celle-ci tout seul, avec vos mots')+'</div>')}
 
 /* ======================= fiche d'un dossier (tous les rôles) ======================= */
@@ -336,19 +331,27 @@ V.cli=function(){var L=D,f=S.fcom||'tous',h=hi('Dossiers',L.length+' dossiers de
 
 /* ======================= planning des poseurs (agence + ADV) ======================= */
 var PL={sel:null};
-V.pp=function(){var h=hi('Planning des poseurs','Semaine 47 · '+VX.AGENCE,'<span class="ex">Exemple</span>');
+/* LE planning : le même pour tout le monde (agence, ADV, commercial, poseur), seuls les droits changent */
+function metres(){var J=[['10 h Durand'],[],['9 h Simon'],[],['16 h Lambert']];(S.rdv||[]).forEach(function(r){J[r.j].push(r.h+' '+r.cl.split(',')[0].replace(/^(M\.|Mme) /,''))});return J}
+V.pp=function(){var r=role(),cal=r==='agence'||r==='adv',moi=r==='poseur'?'kb':null;
+  var h=hi('Planning','Semaine 47 · le même pour toute l\'agence');
   var C=D.filter(function(d){return d.acaler&&!place(d.id)});
   h+='<div class="pile"><section class="blk"><div class="grille"><span></span>'+VX.JOURS.map(function(j,i){return '<span class="h'+(i===0?' auj':'')+'">'+j+'</span>'}).join('');
-  Object.keys(VX.POSEURS).forEach(function(k){var p=VX.POSEURS[k],pap=papEtat(k);
-    h+='<button class="p" onclick="poseur(\''+k+'\')"><b><span class="pt '+pap+'"></span>'+p.n.replace('Menuiseries','Menuis.')+'</b><small>'+p.qui+'</small></button>';
-    S.pl[k].forEach(function(x,j){var d=VX.dos(x);
-      if(x==='libre')h+='<button class="cel libre'+(PL.sel&&pap!=='alert'?' cible':'')+'" onclick="caseLibre(\''+k+'\','+j+')">'+(PL.sel?'Ici ?':'libre')+'</button>';
+  if(r!=='poseur'){var M=metres();h+='<span class="p"><b><span class="pt la"></span>Métrés</b><small>'+(r==='com'?'Vous':'Julien')+'</small></span>'+M.map(function(L){return L.length?'<button class="cel me" onclick="toast(\'Métré : '+q(L.join(', '))+'\',\'ruler\')">'+L.join('<br>')+'</button>':'<span class="cel vide"></span>'}).join('')}
+  Object.keys(VX.POSEURS).forEach(function(k){var p=VX.POSEURS[k],pap=papEtat(k),lui=moi===k,cache=moi&&!lui;
+    h+='<button class="p'+(lui?' moi':'')+'" onclick="'+(cache?'':'poseur(\''+k+'\')')+'"><b><span class="pt '+pap+'"></span>'+p.n.replace('Menuiseries','Menuis.')+'</b><small>'+(lui?'Vous':p.qui)+'</small></button>';
+    S.pl[k].forEach(function(x,j){var d=VX.dos(x),nd=k==='kb'&&S.dispo&&S.dispo[j];
+      if(x==='libre'&&nd)h+='<button class="cel off" onclick="'+(lui?'dispo('+j+')':'')+'">Pas dispo</button>';
+      else if(x==='libre')h+=cal?'<button class="cel libre'+(PL.sel&&pap!=='alert'?' cible':'')+'" onclick="caseLibre(\''+k+'\','+j+')">'+(PL.sel?'Ici ?':'libre')+'</button>':'<button class="cel libre" onclick="'+(lui?'dispo('+j+')':'')+'">libre</button>';
       else if(x==='ail')h+='<span class="cel ail">Autre agence</span>';
-      else if(x==='off')h+='<button class="cel off" onclick="poseur(\''+k+'\')">Pause</button>';
-      else h+='<button class="cel '+p.c+(d.acaler?' nw':'')+'" onclick="ouvrir(\''+x+'\')">'+d.cl.replace(/^(M\.|Mme|M\. et Mme|Famille|SCI) /,'')+(x==='petit'?'<br>SAV':'')+'</button>'})});
-  h+='</div><div class="legende" style="margin-top:10px"><span><i style="background:color-mix(in srgb,#3D6BB3 18%,var(--calme))"></i>KB Pose</span><span><i style="background:color-mix(in srgb,#3E8E6A 18%,var(--calme))"></i>Pose Alpes</span><span><i style="background:repeating-linear-gradient(135deg,var(--teinte) 0 3px,transparent 3px 6px)"></i>Autre agence</span></div></section>';
-  h+=blk('À caler','box',C.length?'<div class="acaler">'+C.map(function(d){return '<button class="pk" aria-pressed="'+(PL.sel===d.id)+'" onclick="PL.sel=PL.sel===\''+d.id+'\'?null:\''+d.id+'\';re()">'+ic('box')+d.cl+' · '+d.nbm+' fen.</button>'}).join('')+'</div><p class="mini">'+(PL.sel?'Touchez maintenant un jour <b>libre</b> d\'un poseur.':'Touchez un chantier livré, puis un jour libre.')+'</p>':'<p class="mini" style="margin:0">Toutes les poses livrées sont calées.</p>');
+      else if(x==='off')h+='<span class="cel off">Pause</span>';
+      else if(cache)h+='<span class="cel '+p.c+'">Pris</span>';
+      else h+='<button class="cel '+p.c+(d.acaler?' nw':'')+(r==='com'&&d.com!=='julien'?' autre':'')+'" onclick="ouvrir(\''+x+'\')">'+d.cl.replace(/^(M\.|Mme|M\. et Mme|Famille|SCI) /,'')+(x==='petit'?'<br>SAV':'')+'</button>'})});
+  h+='</div><div class="legende" style="margin-top:10px">'+(r!=='poseur'?'<span><i style="background:color-mix(in srgb,var(--laiton) 16%,var(--calme))"></i>Métré</span>':'')+'<span><i style="background:color-mix(in srgb,#3D6BB3 18%,var(--calme))"></i>KB Pose</span><span><i style="background:color-mix(in srgb,#3E8E6A 18%,var(--calme))"></i>Pose Alpes</span><span><i style="background:repeating-linear-gradient(135deg,var(--teinte) 0 3px,transparent 3px 6px)"></i>Autre agence</span></div></section>';
+  if(cal)h+=blk('À caler','box',C.length?'<div class="acaler">'+C.map(function(d){return '<button class="pk" aria-pressed="'+(PL.sel===d.id)+'" onclick="PL.sel=PL.sel===\''+d.id+'\'?null:\''+d.id+'\';re()">'+ic('box')+d.cl+' · '+d.nbm+' fen.</button>'}).join('')+'</div><p class="mini">'+(PL.sel?'Touchez maintenant un jour <b>libre</b> d\'un poseur.':'Touchez un chantier livré, puis un jour libre.')+'</p>':'<p class="mini" style="margin:0">Toutes les poses livrées sont calées.</p>');
+  else h+='<p class="mini" style="margin:0">'+(r==='com'?'Vos clients sont en clair, ceux de Sarah en pâle. Nadia et Philippe calent les poses, vous êtes prévenu.':'Votre ligne est encadrée. Touchez un de vos jours libres pour dire que vous n\'êtes pas disponible : l\'agence le voit tout de suite.')+'</p>';
   return h+'</div>'};
+function dispo(j){S.dispo=S.dispo||{};S.dispo[j]=!S.dispo[j];if(S.dispo[j])evt(['agence','adv'],'KB Pose n\'est pas disponible '+VX.JL[j],'cal');save();re()}
 function papEtat(k){var P=VX.POSEURS[k].pap,e='ok';for(var x in P){if(P[x][0]==='alert')return 'alert';if(P[x][0]==='warn')e='warn'}return e}
 function caseLibre(k,j){if(!PL.sel){toast('Choisissez d\'abord un chantier à caler, en bas','box');return}
   if(papEtat(k)==='alert'){poseur(k);return}
@@ -383,12 +386,9 @@ V.poseur_jour=function(){var h=hi('Bonjour Karim','KB Pose · pour '+VX.NEGOCE),
   else h+='<section class="now"><span class="k">Bravo</span><b class="t">Poses de la semaine terminées</b><p>Le commercial, l\'agence et les clients ont été prévenus.</p></section>';
   var A=[ln('truck','Retirer le matériel Garcia','Mercredi 17 h · agence de Voiron, quai 2','toast(\'Le magasin prépare : 5 fenêtres + 5 volets\',\'box\')',gar?'<span class="etq ok">Fait</span>':'<span class="etq la">Mer.</span>')];
   if(b)A.push(ln('hammer','Nouvelle pose : M. Bernard','Grenoble · '+b.j+' · 4 fenêtres Tryba','ouvrir(\'bernard\')','<span class="etq la">Nouveau</span>'));
-  else A.push(ln('cal','Mes jours libres','Mardi et mercredi : l\'agence peut vous caler','go(\'sem\')'));
+  else A.push(ln('cal','Mes jours libres','Mardi et mercredi : l\'agence peut vous caler','go(\'pp\')'));
   h+=blk('À venir','list',A.join(''));
   h+='<p class="mini">Vos jours arrivent aussi par SMS. Une pose terminée prévient tout de suite le commercial et l\'agence.</p></div>';return h};
-V.poseur_sem=function(){var h=hi('Ma semaine','KB Pose · 2 personnes'),L=S.pl.kb;
-  h+='<section class="blk">'+L.map(function(x,i){var d=VX.dos(x);return '<div class="jr"><b class="'+(i===0?'auj':'')+'">'+VX.JL[i].replace(' ','<br>')+'</b><div class="ev">'+(d?'<button class="e pk" onclick="ouvrir(\''+x+'\')">'+ic(x==='petit'?'wrench':'hammer')+'<span>'+(x==='petit'?'SAV ':'Pose ')+d.cl+' · '+d.v+'</span></button>':'<button class="e pk" onclick="S.dispo=S.dispo||{};S.dispo['+i+']=!S.dispo['+i+'];save();re()">'+ic(S.dispo&&S.dispo[i]?'x':'check')+'<span>'+(S.dispo&&S.dispo[i]?'Pas disponible':'Libre · l\'agence peut me caler')+'</span></button>')+'</div></div>'}).join('')+'</section>';
-  h+='<p class="mini">Touchez un jour libre pour dire que vous n\'êtes pas disponible : l\'agence le voit tout de suite.</p>';return h};
 V.poseur_pap=function(){var p=VX.POSEURS.kb,L={urssaf:'Attestation URSSAF',dec:'Assurance décennale',kbis:'Extrait Kbis'},h=hi('Mes papiers','Demandés par '+VX.NEGOCE+' pour chaque sous-traitant');
   h+='<div class="pile"><section class="blk">'+Object.keys(L).map(function(x){return '<div class="ln" style="background:var(--bg)"><span class="pt '+p.pap[x][0]+'"></span><span class="tx"><b>'+L[x]+'</b><small>'+p.pap[x][1]+'</small></span></div>'}).join('')+'</section>'+
   ln('cam','Déposer un nouveau papier','Une photo suffit, on vous prévient avant l\'expiration','toast(\'Photo reçue, l\\\'agence est prévenue (démo)\',\'cam\')')+
