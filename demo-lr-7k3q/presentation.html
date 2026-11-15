@@ -1,0 +1,68 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Présentation RT2O</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="../kit/kit.css?v=1">
+</head><body>
+<script>
+/* Kit de présentation pour RT2O (démo « Lauzière Rénovation »). Prix convenus avec Cyril le 14/11/2026, grille publique du site. */
+window.KIT={
+id:'rt2o',client:'RT2O',demo:'Démo « Lauzière Rénovation »',masquable:false,
+retour:{href:'espace.html',t:'L\'Espace'},
+reset:['pcd-lzr-','lzr-dem-new'],
+sousTitre:'Rénovation clé en main tous corps d\'état, Le Versoud · 10 personnes : 2 gérants, 6 ouvriers, 2 au bureau.',
+essentiel:{pitch:'Une seule appli pour les 2 patrons, le bureau, les ouvriers, les sous-traitants et les clients. Chacun voit ce qui le concerne, et Cliky fait le suivi à leur place.',
+ points:['<b>Leur quotidien aujourd\'hui</b> (à vérifier avec eux) : devis dans un logiciel, planning sur un agenda ou un tableau, l\'équipe sur WhatsApp, les plans sur papier, un site avec un simple formulaire de contact.',
+  '<b>Ce qui change</b> : l\'ouvrier a le plan coté sans pouvoir rien casser, les patrons voient qui est où, le client suit son chantier et signe ses avenants.',
+  '<b>L\'offre</b> : 290 € HT/mois pour toute l\'équipe, mise en service offerte, prix garanti 12 mois. Cliky en option, 199 € HT/mois.']},
+avant:[['Remettre la démo à zéro','Le bouton juste en dessous, ou Réglages du patron.'],['Ouvrir la démo une fois sur l\'iPad, avec la vraie carte','Pour qu\'elle soit déjà chargée sur place.'],
+ ['Choisir le jour ou la nuit selon la pièce','Le jour passe mieux dans un bureau éclairé.'],['iPad chargé, luminosité au maximum, mode Ne pas déranger'],
+ ['Relire les prix et la date limite (14 décembre 2026)'],['Préparer la proposition imprimée ou en PDF','Onglet Prix, « Imprimer ou PDF ».'],['Noter le logiciel de devis qu\'ils utilisent','Question n°1 de l\'onglet Questions.']],
+liens:[['L\'Espace (Direction)','espace.html?r=chef'],['Le site de démo','index.html'],['La demande du client','demande.html'],['Le plan du chantier','plan.html'],['Les métiers à cocher','metiers.html']],
+liensNote:'Démo en ligne sur une page cachée, sous un nom fictif. Rien n\'est envoyé pour de vrai.',
+deroulePhrase:'On suit une journée de chantier, de la demande du client jusqu\'au soir. On change de rôle avec les boutons du haut de l\'Espace. Touchez le numéro d\'une étape pour la marquer faite.',
+deroule:[
+ {t:'Le site et la demande',min:2,faire:'Ouvrir le site et faire défiler : le plan de l\'appartement se dessine. Puis remplir la demande de rénovation.',dire:'Votre client décrit ses travaux et dessine son plan. Vous recevez une demande complète, pas juste un numéro de téléphone.',liens:[['Le site','index.html'],['La demande','demande.html']]},
+ {t:'Le bureau reçoit la demande',min:2,faire:'Rôle Bureau : la demande est là, on propose une visite. Montrer une facture et la relance écrite par Cliky.',liens:[['Ouvrir en Bureau','espace.html?r=bureau']]},
+ {t:'Le patron commence sa journée',min:3,faire:'Rôle Direction : l\'accueil résume ce qui est à décider (congés, avenants, alertes). Puis Gestion : devis, factures, clients, chiffres et marges par chantier.',dire:'Vous deux, vous voyez tout. Le bureau ne voit pas les marges, sauf si vous le décidez.',liens:[['Ouvrir en Direction','espace.html?r=chef']]},
+ {t:'Le planning',min:4,fort:true,faire:'Planning, vue Jour : chaque chantier avec son petit plan et chacun dans sa pièce. Vue Semaine : une ligne par personne et par sous-traitant, « Il manque +1 ». Puis la Carte en direct. Toucher « Oui » sur la proposition de Cliky, puis « Envoyer le planning à l\'équipe ».',dire:'En direct, vous voyez qui est sur quel chantier, sans passer un coup de fil.',liens:[['Ouvrir le planning','espace.html?r=chef&o=pl']]},
+ {t:'L\'ouvrier sur le chantier',min:4,faire:'Rôle Terrain : « Où je suis », ses tâches, la liste du chantier partagée. Ouvrir le plan : le cadenas. Toucher un mur pour le voir de face (prises, interrupteurs, cotes), puis Plafond et Sol. Prendre la photo du soir.',dire:'Il peut tout regarder, il ne peut rien casser.',liens:[['Ouvrir en Terrain','espace.html?r=ouvrier'],['Le plan','plan.html?r=ouvrier']]},
+ {t:'Le client',min:3,faire:'Rôle Client : il suit son chantier, met un pouce sur la photo du jour et signe l\'avenant. Revenir au plan : les 2 prises signées y sont déjà.',dire:'Plus de malentendu sur ce qui a été commandé.',liens:[['Ouvrir en Client','espace.html?r=client']]},
+ {t:'Cliky et l\'équipe',min:2,faire:'Poser une question à Cliky sur un chantier. Montrer le défi d\'équipe et la question du jour : 10 secondes, collectif, jamais de classement.',liens:[['Cliky (Direction)','espace.html?r=chef&o=ck']]}],
+bonus:{t:'S\'il reste 3 minutes',L:['<b>Plan, Chambre 2</b> : l\'appareil photo sur le mur. « Dans 5 ans, vous saurez où passent les gaines sans casser. »','<b>Accueil Direction, réception du Chalet Girard</b> : faire signer le PV. « Le DOE et la facture de solde partent tout seuls. »','<b>Gestion › Papiers</b> : « Plus aucun sous-traitant ne vient sans attestation à jour. »','<b>Gestion › Documents</b> : « Les bons des fournisseurs arrivent par e-mail, Cliky les range par chantier. »']},
+fin:'Tout ce que vous venez de voir est fait pour vous. Si un écran ne colle pas à votre façon de travailler, on l\'adapte.',
+prix:{intro:'La proposition faite à RT2O, à montrer telle quelle. Touchez « Montrer en grand » pour la présenter.',
+ titre:'Proposition pour RT2O',sous:'Espace ProClik · rénovation tous corps d\'état',
+ lignes:[
+  {n:'Espace, toute l\'équipe',d:'Équipe de 6 à 10 personnes (grille du site). Clients et sous-traitants en plus, sans les compter.',mois:290},
+  {n:'Mise en service de l\'Espace',d:'Comptes et accès, import des clients et chantiers, métiers, prise en main de l\'équipe.',txt:'Offerte'},
+  {k:'cliky',n:'Cliky Entreprise',d:'Option : relances, planning proposé, bons fournisseurs lus et rangés, réponses sur les chantiers.',mois:199,opt:true,on:true},
+  {k:'clikyms',n:'Mise en service de Cliky',d:'Cliky connaît leurs chantiers, clients et planning dès le premier jour.',txt:'Offerte',opt:true,on:true}],
+ conditions:['Proposition valable jusqu\'au 14 décembre 2026','Prix de lancement garanti 12 mois, même si la grille augmente','Site à leur nom seulement s\'ils le veulent, sur devis'],
+ mention:'Prix HT. Espace au prix de la grille publique pour 6 à 10 personnes.',
+ vous:[['Ce qu\'on peut demander en échange','flag',['Un engagement de 12 mois, pour que la mise en service offerte ait un sens.','Un avis et le droit de dire « RT2O utilise ProClik ».','Un point de 30 minutes par mois pendant 3 mois pour leurs retours.']],
+  ['À éviter','eye',['Baisser l\'abonnement en plus de la mise en service : le cadeau est déjà net.','Le prix de l\'Espace est celui du site pour leur taille d\'équipe : il ne se négocie pas, le cadeau est la mise en service.','Dire que Cliky est « inclus » : c\'est une option, « active » quand ils la prennent.']]]},
+comparer:{titre:'Comparer',intro:'Ce que coûtent les logiciels du bâtiment pour 10 personnes (4 au bureau, 6 sur le terrain), prix publiés au mois.',
+ tables:[{t:'Les prix',p:'Pour couvrir devis, factures, planning et appli terrain, il faut en général deux outils, soit environ 300 à 700 € HT par mois.',cols:['Solution','Calcul','HT / mois','Espace client','Plan coté'],num:2,
+  rows:[{c:['Extrabat Standard','69 € × 10','690 €','Non indiqué','Non']},{c:['Extrabat Éco + Kraaft','49 € × 4 + 20 € × 6','316 €','Non indiqué','Non']},{c:['Obat Booster + Kraaft','129 € + 3 × 20 € + 20 € × 6','309 €','Non indiqué','Non']},{c:['Batappli Artisan + Organilog','79 € + 3 × 19 € + 19 € × 10','326 €','Non indiqué','Non']},
+   {nous:true,c:['Espace ProClik','Toute l\'équipe, clients et sous-traitants','290 €','Oui','Oui (murs, plafond, sol)']},{nous:true,c:['Espace + Cliky','290 € + 199 €','489 €','Oui','Oui']}],
+  note:'« Non indiqué » : la fonction n\'apparaît pas sur les pages lues, pas qu\'elle n\'existe pas. Prix relevés de juillet à novembre 2026, les remises annuelles les baissent de 10 à 20 %.'},
+  {t:'Devis et factures',p:'Pour la facturation pure, Obat et Batappli sont plus complets aujourd\'hui. L\'Espace gagne avant le devis (demande et plan du client) et après (avenants signés, chantier, client) : on le présente comme un complément au début.',cols:['Fonction','Obat','Batappli','Espace ProClik'],
+  rows:[{c:['Bibliothèque de prix du bâtiment','Oui','Oui','Ouvrages maison (démo)']},{c:['Pré-devis depuis la demande et le plan','Non indiqué','Non indiqué','Oui, avec Cliky']},{c:['Situations de travaux','Oui','Oui','Dans la démo']},{c:['Retenue de garantie','Non indiqué','Oui','Dans la démo']},{c:['Avenants liés au plan','Non indiqué','Non indiqué','Oui']},{c:['Signature en ligne','Oui','Non indiqué','Dans la démo']},{c:['Facture électronique 2026-2027','Oui','Oui','Via VosFactures']}]}],
+ honnete:['S\'ils gardent leur logiciel de devis au début, l\'Espace s\'ajoute à ce qu\'ils paient. L\'argument est alors ce qu\'aucun autre ne fait : plan coté en lecture seule, espace client avec avenants signés, planning avec sous-traitants et carte en direct.','Cliky n\'a pas d\'équivalent dans ces logiciels : il se compare à du temps de bureau gagné.','« Dans la démo » veut dire : montré dans la démo, pas encore dans le vrai Espace.'],
+ sources:[['Batappli, tarifs','https://www.batappli.fr/tarifs'],['Obat, tarifs','https://www.obat.fr/tarifs/'],['Extrabat, tarifs','https://www.extrabat.com/tarifs/'],['Obat via MonLogicielPro','https://www.monlogicielpro.com/logiciel/obat/'],['Extrabat via La Fabrique du Net','https://www.lafabriquedunet.fr/logiciels/gestion/erp/erp-btp-batiment'],['Organilog, Kraaft via Comparoutil','https://comparoutil.com/prix-logiciel-btp/']]},
+questions:['Avec quoi faites-vous vos devis et vos factures aujourd\'hui ?','Comment l\'équipe sait-elle où aller demain matin ?','Combien de sous-traitants travaillent avec vous, et comment les prévenez-vous ?','Qu\'est-ce qui vous coûte le plus sur un chantier : les erreurs de cotes, les travaux en plus non facturés, les allers-retours ?','Vos clients vous appellent-ils souvent pour savoir où en est leur chantier ?'],
+objections:[['« On a déjà un logiciel de devis. »','On ne le remplace pas tout de suite : l\'Espace s\'ajoute à côté pour le terrain, le planning et les clients. On verra ensemble s\'il faut le remplacer à son échéance.'],
+ ['« Les gars ne vont pas l\'utiliser. »','L\'écran Terrain tient en gros boutons, et la prise en main se fait sur le chantier. Les sous-traitants n\'ont même pas besoin de l\'appli : leurs jours arrivent par SMS.'],
+ ['« On n\'a pas le temps de tout installer. »','C\'est nous qui installons, et la mise en service est offerte.'],
+ ['« Et si ça ne nous convient pas ? »','La mise en service ne vous a rien coûté, et ce qui ne colle pas, on l\'adapte.'],
+ ['« C\'est cher, 489 €. »','C\'est pour 10 personnes, plus les clients et les sous-traitants. Un seul travail en plus facturé grâce à un avenant signé peut payer plusieurs mois. Et Cliky est une option : l\'Espace seul, c\'est 290 €.'],
+ ['« Nos factures doivent être conformes. »','Les factures passent par VosFactures, prévu pour la facture électronique obligatoire.']],
+conclure:{intro:'Repartir avec une date, pas avec un « on vous rappelle ».',
+ etapes:['Montrer la fiche de prix en grand, puis la laisser imprimée ou en PDF.','Rappeler la date limite : 14 décembre 2026.','Proposer une date pour la mise en service (comptes, import des chantiers, prise en main de l\'équipe).','Demander qui sera le contact au bureau pour l\'installation.'],
+ apres:['Envoyer la proposition écrite le jour même.','Noter dans les notes ce qui les a fait réagir, et ce qu\'il faut adapter.','Un point de 30 minutes par mois les 3 premiers mois.'],
+ confirmer:['Cliky Entreprise à 199 € HT/mois.','Les contreparties : engagement 12 mois, avis, prix garanti 12 mois.','La valeur des mises en service à annoncer (le document du 14/11 parle de 1 490 € + 990 € HT, pas encore validés).']}
+};
+</script>
+<script src="../kit/kit.js?v=1"></script>
+</body></html>
