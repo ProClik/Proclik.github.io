@@ -1,0 +1,51 @@
+/* Menu commun des Espaces ProClik (Cyril, 15/11 : « le fonctionnement des menus doit être pareil sur n'importe quel Espace,
+   c'est la marque de fabrique de ProClik »). Modèle = l'Espace BRS : barre à encoche + galet + panneau sur téléphone (barre.js,
+   barre.css), menu de côté centré à gauche sur iPad et ordinateur (familles.js).
+   L'Espace BRS a déjà ces règles dans relief.css et style-n1.css. Ce fichier les regroupe pour les autres Espaces (démos RT2O,
+   ERAL…), qui chargent : /n1.css, espace/barre.css, ce fichier, puis espace/barre.js et espace/familles.js. Mêmes valeurs. */
+
+/* 1. Les noms de couleurs de l'Espace BRS, pointés sur les couleurs communes de /n1.css */
+:root,:root[data-theme]{
+  --rs:var(--n1-calme);--cx:var(--n1-bg);--acc:var(--n1-nuit);--accx:var(--n1-nuit);--cor:var(--n1-alert);
+  --teinte:color-mix(in srgb,var(--n1-nuit) 7%,var(--n1-calme));
+  --up:var(--n1-calme-sh);--up-s:inset 0 0 0 999px var(--teinte);
+  --hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
+  --doux:cubic-bezier(.22,1,.36,1)}
+
+/* 2. Pastilles (nombre en rose) */
+.pb .badge,.pb-menu .badge,nav.nav .badge{position:absolute;top:8px;right:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:var(--cor);color:#fff;font:700 10.5px/1 Manrope,system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
+.pb .badge[hidden],.pb-menu .badge[hidden],nav.nav .badge[hidden]{display:none!important}
+.pb-g svg,.pb-mic svg{flex:none}
+
+/* 3. Téléphone : barre posée comme un bloc calme, icônes à plat, onglet où l'on est = fond + anneau laiton (comme style-n1.css) */
+@media (max-width:899px){
+  html body nav.nav{display:none!important}
+  html body .pb-fond path{fill:var(--n1-calme);stroke:var(--n1-line)}
+  html body .pb-fond .pb-of{flood-color:rgba(14,19,34,.07)}
+  :root[data-theme="dark"] body .pb-fond .pb-of{flood-color:rgba(0,0,0,.35)}
+  html body .pb-i .pb-g{width:40px;height:32px;border-radius:14px;background:transparent;box-shadow:none}
+  html body .pb-i.on .pb-g{background:var(--bg);box-shadow:0 0 0 2px var(--n1-laiton);color:var(--n1-nuit)}
+  html body .pb-i:active .pb-g{background:var(--teinte);box-shadow:none}
+  html body .pb-c{background:var(--bg);box-shadow:var(--n1-pk),var(--n1-calme-sh)}
+  html body .pb .badge{top:-3px;right:calc(50% - 25px)}
+}
+/* panneau du galet (téléphone et menu de côté) */
+html body :is(.pb-e,.pb-mic) .pb-g{background:var(--bg);box-shadow:var(--n1-pk)}
+html body .pb-e.on .pb-g{box-shadow:var(--n1-pk),0 0 0 2px var(--n1-laiton)}
+html body .pb-mic .pb-g{box-shadow:var(--n1-pk),0 0 0 5px color-mix(in srgb,var(--n1-nuit) 12%,transparent)}
+
+/* 4. iPad et ordinateur : menu de ronds sur le côté gauche, centré en hauteur, comme l'Espace BRS */
+@media (min-width:900px){
+  html body{padding-left:108px}
+  html body nav.nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;position:fixed;top:0;bottom:0;left:0;right:auto;
+    width:108px;z-index:20;margin:0;padding:24px 0 calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg);box-shadow:none;border:0;border-radius:0;transform:none}
+  html body nav.nav button{width:100%;flex:none;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0;
+    border:0;border-radius:0;background:none;font:600 11px/1.2 Manrope,system-ui,sans-serif;color:var(--muted);position:relative;cursor:pointer;text-align:center}
+  html body nav.nav button[aria-selected="true"]{color:var(--fg);font-weight:700}
+  html body nav.nav .ico{width:44px;height:36px;border-radius:14px;display:grid;place-items:center;background:transparent;box-shadow:none;color:var(--muted)}
+  html body nav.nav .ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  html body nav.nav button[aria-selected="true"] .ico{background:var(--bg);box-shadow:0 0 0 2px var(--n1-laiton);color:var(--n1-nuit)}
+  html body nav.nav button:active .ico{background:var(--teinte);box-shadow:none}
+  html body nav.nav .badge{top:-3px;right:calc(50% - 27px)}
+}

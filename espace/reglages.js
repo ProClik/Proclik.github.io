@@ -156,6 +156,8 @@ function messages(){
 /* ---------- ma barre du bas ---------- */
 function barre(){
   var B=window.PCBarre;if(!B)return;
+  /* sur iPad et ordinateur, on règle le menu de côté (jusqu'à 6 boutons) ; le téléphone garde son propre choix (Cyril, 15/11) */
+  if(innerWidth>=900)return cote(B);
   var choix=B.bas();
   var dispo=B.TOUS.filter(function(v){return v!=='reglages'&&B.info(v)});
   function rend(){
@@ -178,6 +180,31 @@ function barre(){
   },true);
 }
 
+function cote(B){
+  var MAX=B.COTE_MAX||6,choix=B.cote();
+  var dispo=B.TOUS.filter(function(v){return v!=='reglages'&&B.info(v)});
+  function rend(){
+    var p=$('#rg-pos');if(!p)return;
+    var h=Math.ceil(choix.length/2),l=choix.slice(0,h).concat(['c']).concat(choix.slice(h));
+    p.innerHTML=l.map(function(v){if(v==='c')return '<span class="rg-c" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg></span>';
+      var x=B.info(v);return '<span class="rg-pos-i"><span class="rg-g">'+(x?x.ico:'')+'</span><small>'+esc(x?x.nom:v)+'</small></span>'}).join('');
+    p.style.gridTemplateColumns=l.map(function(v){return v==='c'?'54px':'minmax(0,1fr)'}).join(' ');
+    $$('[data-rgb]').forEach(function(b){var k=choix.indexOf(b.dataset.rgb);b.setAttribute('aria-pressed',String(k>=0));b.querySelector('.rg-n').textContent=k>=0?String(k+1):''});
+    $('#rg-ok').disabled=!choix.length;
+    $('#rg-reste').textContent=!choix.length?'Choisissez au moins un menu.':choix.length<MAX?'Encore '+(MAX-choix.length)+' place'+(MAX-choix.length>1?'s':'')+' possible'+(MAX-choix.length>1?'s':'')+'. Les autres menus restent dans le gros bouton rond.':'C\'est complet. Les autres menus restent dans le gros bouton rond.';
+  }
+  X.xopen('Mon menu de côté','Sur iPad et ordinateur, jusqu\'à '+MAX+' boutons toujours visibles',
+   '<p class="rg-lead">Touchez les menus dans l\'ordre où vous les voulez, de haut en bas. Touchez un menu choisi pour l\'enlever. Le téléphone garde sa propre barre.</p>'+
+   '<div class="rg-pos" id="rg-pos"></div><p class="rg-sous" id="rg-reste"></p>'+
+   '<div class="rg-grille">'+dispo.map(function(v){var x=B.info(v);return '<button type="button" data-rgb="'+v+'" aria-pressed="false"><span class="rg-g">'+x.ico+'<span class="rg-n"></span></span><b>'+esc(x.nom)+'</b></button>'}).join('')+'</div>',
+   '<button class="btn" id="rg-defaut">Par défaut</button><button class="btn go" id="rg-ok">Enregistrer</button>',function(){
+    $$('[data-rgb]').forEach(function(b){b.addEventListener('click',function(){var v=b.dataset.rgb,k=choix.indexOf(v);if(k>=0)choix.splice(k,1);else if(choix.length<MAX)choix.push(v);else{toast('Déjà '+MAX+' menus','Touchez un menu choisi pour l\'enlever d\'abord.');return}rend()})});
+    $('#rg-defaut').addEventListener('click',function(){choix=B.DEFAUT.slice();rend()});
+    $('#rg-ok').addEventListener('click',function(){if(!choix.length)return;lsS('pc-cote',choix);B.applique();X.xclose();toast('Menu enregistré','Votre menu de côté est à jour. Le téléphone n\'a pas changé.')});
+    rend();
+  },true);
+}
+
 /* Pour « Mes options » (mes-options.js) : écrire à Cyril avec un texte déjà prêt */
 window.PCREG={ecrire:function(txt){formulaire('message',txt)}};
 
@@ -193,7 +220,7 @@ if(menu&&X)menu.addEventListener('click',function(){
   /* aides + barre, juste après « Affichage simple » */
   var s=$('#m-simple',c),frag=d.createElement('div');
   frag.innerHTML='<button id="rg-aides"><span class="av">'+IC.aide+'</span><span class="tx"><b>Aides à l\'écran</b><small>Les explications de chaque menu. À couper quand vous êtes à l\'aise</small></span><span class="sw'+(sansAides?'':' on')+'" role="switch" aria-checked="'+(!sansAides)+'"></span></button>'+
-    (window.PCBarre?'<button id="rg-barre"><span class="av">'+IC.barre+'</span><span class="tx"><b>Ma barre du bas</b><small>Choisir les 4 boutons toujours à portée de pouce</small></span><span class="go">›</span></button>':'');
+    (window.PCBarre?'<button id="rg-barre"><span class="av">'+IC.barre+'</span><span class="tx">'+(innerWidth>=900?'<b>Mon menu de côté</b><small>Choisir jusqu\'à 6 boutons toujours visibles</small>':'<b>Ma barre du bas</b><small>Choisir les 4 boutons toujours à portée de pouce</small>')+'</span><span class="go">›</span></button>':'');
   var apres=s?s.nextSibling:c.firstChild;
   while(frag.firstChild)c.insertBefore(frag.firstChild,apres);
   $('#rg-aides').addEventListener('click',function(){

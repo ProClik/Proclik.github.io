@@ -270,7 +270,7 @@ a.ib{text-decoration:none;font-size:20px}
 
 </div>
 
-<script src="demo.js"></script><script src="data.js"></script>
+<script src="demo.js?v=2"></script><script src="data.js"></script>
 <script>
 (function(){
 "use strict";
@@ -355,12 +355,15 @@ const S0={lastFab:"Millet",plan:true,chantier:"M. et Mme Durand · Voiron",four:
  {no:6,piece:"Salle de bain",type:"Fenêtre",fromPlan:true,L:[],H:[],fini:false}
 ]};
 /* Démo Valcroix : la prise de cotes s'ouvre depuis un dossier de l'Espace (?d=…), lecture seule pour l'ADV et le poseur (&lect=1). */
-const QS=new URLSearchParams(location.search),DID=QS.get("d")||"durand",LECT=QS.get("lect")==="1",SK="pcd-vlx-v1",CK="pcd-vlx-cotes-"+DID;
+const QS=new URLSearchParams(location.search),DID=QS.get("d")||"durand",LECT=QS.get("lect")==="1",SK="pcd-vlx-v1",CK0="pcd-vlx-cotes-"+DID;
 const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const DOS=(window.VX&&VX.dos(DID))||null;
+/* &par=kb : les cotes sont prises par un poseur sous-traitant (métré confié par le négoce) */
+const PAR=QS.get("par"),POS=PAR&&window.VX&&VX.POSEURS[PAR],QUI=POS?POS.qui.split(" ")[0]+" ("+POS.n+")":DOS&&VX.COMS[DOS.com]?VX.COMS[DOS.com].n:"Julien",CK=POS&&DID==="nouveau"?CK0+"-"+PAR:CK0;
 function seed(){
  if(DID==="durand")return S0;
  if(DID==="nouveau")return {lastFab:"Millet",plan:false,chantier:"Nouveau client · à ranger",four:"l'ADV Valcroix",items:[]};
+ if(DOS&&DOS.metre)return {lastFab:DOS.fab,plan:false,chantier:DOS.cl+" · "+DOS.v,four:"l'ADV Valcroix",items:(VX.MEN[DID]||[]).map((m,i)=>({no:i+1,fab:DOS.fab,piece:m[0],type:m[1],L:[],H:[],fini:false}))};
  const tpl=t=>S0.items.find(x=>x.type===t)||S0.items[1],M=(VX.MEN[DID]||[]);
  return {lastFab:DOS.fab,plan:false,chantier:DOS.cl+" · "+DOS.v,four:"l'ADV Valcroix",items:M.map((m,i)=>Object.assign(JSON.parse(JSON.stringify(tpl(m[1]==="Baie coulissante"?"Porte-fenêtre":m[1]))),{no:i+1,fab:DOS.fab,piece:m[0],type:m[1],L:[m[2],m[2]+2,m[2]+1],H:[m[3],m[3]+1,m[3]+2],vant:m[4],vitr:/Salle de bain|WC|Sanitaires/.test(m[0])?"Dépoli":"Clair",mat:/bois-alu/i.test(DOS.quoi)?"Bois-alu":/alu/i.test(DOS.quoi)?"Aluminium":"PVC",fini:true}))}}
 const S=ld(CK)||seed();
@@ -672,7 +675,7 @@ function fiche(its){const st=steps;
  const cnt=f=>its.filter(f).length,fabs=[...new Set(its.map(i=>i.fab).filter(Boolean))];
  const ring=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="32" cy="32" r="5" fill="var(--laiton)"/></svg>`;
  const head=`<header class="fcov"><div class="fct">${ring}<div><b>Fiche de prise de cotes</b><small>Menuiseries${fabs.length?" · "+esc(fabs.join(", ")):""}</small></div><div class="fbig"><b>${its.length}</b><small>menuiserie${its.length>1?"s":""}</small></div></div>
-  <div class="fmeta"><div><span>Client</span><b>${esc(S.chantier.split(" · ")[0])}</b></div><div><span>Chantier</span><b>${esc(S.chantier.split(" · ")[1]||"")}</b></div><div><span>Pour</span><b>${esc(S.four)}</b></div><div><span>Relevé le</span><b>${DOS&&DOS.id!=="durand"?"12/11/2026":"16/11/2026"} · ${DOS&&VX.COMS[DOS.com]?VX.COMS[DOS.com].n:"Julien"}</b></div></div></header>
+  <div class="fmeta"><div><span>Client</span><b>${esc(S.chantier.split(" · ")[0])}</b></div><div><span>Chantier</span><b>${esc(S.chantier.split(" · ")[1]||"")}</b></div><div><span>Pour</span><b>${esc(S.four)}</b></div><div><span>Relevé le</span><b>${DOS&&DOS.metre?"17/11/2026":DOS&&DOS.id!=="durand"?"12/11/2026":"16/11/2026"} · ${esc(DOS&&DOS.metre&&!POS?VX.POSEURS[DOS.metre].qui.split(" ")[0]+" ("+VX.POSEURS[DOS.metre].n+")":QUI)}</b></div></div></header>
   <div class="ftiles"><div><b>${cnt(i=>/fenêtre|châssis|baie/i.test(i.type))}</b><span>Fenêtres et baies</span></div><div><b>${cnt(i=>isPorte(i))}</b><span>Portes</span></div><div><b>${cnt(i=>isVol(i))}</b><span>Volets seuls</span></div><div class="${nAsk?"warn":"ok"}"><b>${nAsk}</b><span>${nAsk?"Point"+(nAsk>1?"s":"")+" à vérifier":"Tout est vérifié"}</span></div></div>`;
  const sum=`<section class="fsec"><h4>Récapitulatif</h4><div class="tws"><table class="sum"><thead><tr><th></th><th>Rep.</th><th>Désignation</th><th>Pièce</th><th class="r">Haut × Larg (mm)</th></tr></thead><tbody>${its.map(it=>`<tr><td class="th">${thumb(it)}</td><td><i>${it.no}</i></td><td><b class="dn">${esc(design(it))}</b><small class="fb">${esc(it.fab||"")}</small></td><td>${esc(it.piece)}</td><td class="r"><b>${minOf(it.H)} × ${minOf(it.L)}</b></td></tr>`).join("")}</tbody></table></div></section>`;
  const plan=S.plan?`<section class="fsec fplan"><h4>Plan du logement</h4><div class="fpl">${planSvg(its)}<ul class="leg">${its.map(it=>`<li><i>${it.no}</i><span><b>${esc(it.piece)}</b> ${esc(it.type)}</span></li>`).join("")}</ul></div></section>`:`<section class="fsec noplan"><span>Pas encore de plan pour ce chantier.</span><button class="ghost" data-a="plan">Faire le plan</button></section>`;
@@ -794,7 +797,7 @@ P.addEventListener("click",e=>{
  if(a==="done"){it.fini=true;it.fromPlan=false;finTime(it);mode="list";cur=null;say("Menuiserie n°"+it.no+" prête"+dur(it)+" ✓");return}
  if(a==="bon"){mode="bon";render();return}
  if(a==="pdf"){say("Démo : en vrai, le PDF « Cotes "+S.chantier.split(" · ")[0]+".pdf » est rangé dans le dossier.");return}
- if(a==="send"){const st=ld(SK);if(st&&DID!=="nouveau"){st.cotes=st.cotes||{};st.cotes[DID]=Object.assign(st.cotes[DID]||{},{envoye:1,n:S.items.filter(i=>i.fini).length,tot:S.items.length});st.fil=st.fil||[];st.fil.unshift({to:["adv","agence"],t:"Julien a envoyé les cotes "+S.chantier.split(" · ")[0]+" ("+S.items.length+" menuiseries) : à chiffrer dans Pro Devis",i:"ruler",h:new Date().toTimeString().slice(0,5),lu:[]});sv(SK,st)}say("Envoyé à l'ADV. Retour à l'Espace…");setTimeout(()=>location.href=ESP,1300);return}
+ if(a==="send"){const st=ld(SK);if(st&&(DID!=="nouveau"||POS)){st.cotes=st.cotes||{};const kk=DID==="nouveau"?"nouveau_"+PAR:DID;st.cotes[kk]=Object.assign(st.cotes[kk]||{},{envoye:1,n:S.items.filter(i=>i.fini).length,tot:S.items.length});st.fil=st.fil||[];st.fil.unshift({to:POS?["adv","agence","com"]:["adv","agence"],t:QUI+" a envoyé les cotes "+(DID==="nouveau"?"d'un nouveau client":S.chantier.split(" · ")[0])+" ("+S.items.length+" menuiseries) : à chiffrer dans Pro Devis",i:"ruler",h:new Date().toTimeString().slice(0,5),lu:[]});sv(SK,st)}say("Envoyé à l'ADV. Retour à l'Espace…");setTimeout(()=>location.href=ESP,1300);return}
  if(a==="plan"){S.plan=true;say("Plan fait : les menuiseries sont posées sur les murs, il est ajouté au bon.");return}
  
  if(b.dataset.cam){camK=b.dataset.cam;let ok=false;try{CAM.click();ok=true}catch(x){}clearTimeout(window._phT);window._phT=setTimeout(()=>{if(document.hasFocus()&&!(it.ph||{})[camK]&&!CAM.files.length)savePh(camK,fakePh(camK))},1400);return}
