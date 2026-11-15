@@ -62,9 +62,7 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="l1" d="M5 7h14"/><path class="l2" d="M5 12h14"/><path class="l3" d="M5 17h14"/></svg>'+
       '<span class="badge pb-bc" hidden></span></button>';
   var scrim=d.createElement("div");scrim.className="pb-scrim";scrim.id="pb-scrim";
-  /* styles de panneau à l'essai (15/11, propositions pour Cyril) : "" colonnes, "a" cartes, "b" liste, "c" bandes teintées */
-  var STY=(function(){try{var v=localStorage.getItem("pc-pan");return /^[abc]$/.test(v)?v:""}catch(_){return ""}})();
-  var menu=d.createElement("div");menu.className="pb-menu"+(STY?" pan-"+STY:"");menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
+  var menu=d.createElement("div");menu.className="pb-menu pan-c";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
   /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
   var FAMILLES=[
     {t:"Devis et factures",v:["devis","factures"]},
@@ -147,7 +145,6 @@
      un fin trait sépare les colonnes. Plus de 4 bulles dans une famille : deuxième colonne pour la suite. */
   var DERNIER=null;
   function panneau(G){
-    if(STY==="b")return liste(G);
     var lim=innerWidth/2-8,per=4,cols=[];
     G.forEach(function(g,k){for(var i=0;i<g.v.length;i+=per)cols.push({k:k,n:Math.min(per,g.v.length-i),t:i===0})});
     var nc=Math.max(1,cols.length),lw=Math.min(96,(2*lim-24)/nc),rh=GR*2+5+LH+14,TH=40,
@@ -159,24 +156,11 @@
       if(ci>0&&cols[ci-1].k!==c.k)S.push(x0+ci*lw);
       for(var r=0;r<c.n;r++)P.push([cx,y0+TH+r*rh+GR+4]);
     });
-    P.titres=T;P.traits=STY?[]:S;P.haut=[y0,y0+h];P.pan=[x0-8,y0-14,x0+nc*lw+8,bas+6];
-    if(STY){var C=[];cols.forEach(function(c,ci){var l=x0+ci*lw+3,r=x0+(ci+1)*lw-3;
+    P.titres=T;P.traits=[];P.haut=[y0,y0+h];P.pan=[x0-8,y0-14,x0+nc*lw+8,bas+6];
+    /* style « bandes teintées » choisi par Cyril (15/11) : chaque famille posée sur une bande de fond teinté */
+    {var C=[];cols.forEach(function(c,ci){var l=x0+ci*lw+3,r=x0+(ci+1)*lw-3;
       if(c.t)C.push([l,y0-8,r,y0+h-2]);else C[C.length-1][2]=r});P.cartes=C}
     DERNIER=P;return P;
-  }
-  /* style « liste » : deux colonnes, chaque famille = un titre puis des lignes (bulle à gauche, nom en clair à droite) */
-  function liste(G){
-    var lim=innerWidth/2-8,W2=Math.min(400,2*lim-16),cw=W2/2,RH=50,TH=30,GAP=16,bas=-104-8-14,
-      hs=G.map(function(g){return TH+g.v.length*RH}),tot=hs.reduce(function(a,b){return a+b},0),acc=0,
-      col=G.map(function(g,k){var c=(k===0||acc+hs[k]/2<=tot/2)?0:1;if(!c)acc+=hs[k];return c}),hc=[-GAP,-GAP];
-    G.forEach(function(g,k){hc[col[k]]+=GAP+hs[k]});
-    var h=Math.max(hc[0],hc[1]),x0=-W2/2,y0=bas-10-h,yc=[y0-GAP,y0-GAP],P=[],T=[];
-    G.forEach(function(g,k){var c=col[k],cx=x0+c*cw+10,y=yc[c]+GAP;
-      T.push([cx+4,y+2]);
-      g.v.forEach(function(v,i){P.push([cx+22,y+TH+i*RH+RH/2])});
-      yc[c]=y+hs[k];
-    });
-    P.titres=T;P.traits=[x0+cw];P.haut=[y0,y0+h];P.pan=[x0-8,y0-14,x0+W2+8,bas+6];DERNIER=P;return P;
   }
   function vers(cible,duree){
     cancelAnimationFrame(anim);
