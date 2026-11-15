@@ -60,6 +60,10 @@
   .pb-e .badge{top:-4px;right:calc(50% - 30px)}
   .pb-ouvert .pb-e{transform:translate(calc(-50% + var(--x)),calc(-23px + var(--y))) scale(1);opacity:1;
     transition:transform .6s var(--doux) calc(.14s + var(--i)*.045s),opacity .35s calc(.14s + var(--i)*.045s)}
+  /* titres des familles dans le panneau */
+  .pb-menu>.pb-gt{position:absolute;left:0;top:0;width:72px;white-space:normal;font:700 12px/1.25 Manrope,system-ui,sans-serif;color:var(--n1-muted,var(--muted));
+    transform:translate(var(--x,0),var(--y,0));opacity:0;transition:opacity .18s;pointer-events:none}
+  .pb-ouvert .pb-menu>.pb-gt{opacity:1;transition:opacity .35s calc(.12s + var(--i)*.045s)}
   .pb-menu>.pb-pan{position:absolute;z-index:-1;border-radius:30px;background:var(--bg);box-shadow:var(--n1-pk,var(--up));opacity:0;transform:translateY(14px) scale(.96);transition:opacity .2s,transform .3s var(--doux)}
   .pb-ouvert .pb-menu>.pb-pan{opacity:1;transform:none;transition:opacity .35s .06s,transform .5s var(--doux) .06s}
   @media (prefers-reduced-motion:reduce){.pb-c,.pb-c svg path,.pb-mic,.pb-e,.pb-scrim{transition:none!important}}

@@ -63,11 +63,28 @@
       '<span class="badge pb-bc" hidden></span></button>';
   var scrim=d.createElement("div");scrim.className="pb-scrim";scrim.id="pb-scrim";
   var menu=d.createElement("div");menu.className="pb-menu";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
+  /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
+  var FAMILLES=[
+    {t:"Devis et factures",v:["devis","factures"]},
+    {t:"Chantiers",v:["chantiers","planning","cotes"]},
+    {t:"Achats",v:["prix","produits","depenses"]},
+    {t:"Et aussi",v:["accueil","clients","reseaux","reglages"]}
+  ];
+  var GROUPES=[];
+  function range(){
+    GROUPES=FAMILLES.map(function(f){return {t:f.t,v:f.v.filter(function(v){return EVENTAIL.indexOf(v)>=0})}}).filter(function(g){return g.v.length});
+    var vus=[].concat.apply([],GROUPES.map(function(g){return g.v})),reste=EVENTAIL.filter(function(v){return vus.indexOf(v)<0});
+    if(reste.length){var a=GROUPES.filter(function(g){return g.t==="Et aussi"})[0];if(a)a.v=a.v.concat(reste);else GROUPES.push({t:"Et aussi",v:reste})}
+  }
   function remplit(){
     $(".pb-l",pb).innerHTML=bouton(BAS[0],"pb-i")+bouton(BAS[1],"pb-i")+'<span class="pb-trou"></span>'+bouton(BAS[2],"pb-i")+bouton(BAS[3],"pb-i");
+    range();var i=0,h="";
+    GROUPES.forEach(function(g,k){
+      h+='<span class="pb-gt" aria-hidden="true" style="--i:'+i+'">'+g.t+'</span>';
+      g.v.forEach(function(v){h+=bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+(i++)+'"')});
+    });
     menu.innerHTML='<button type="button" class="pb-mic" data-pb="micro" aria-label="Parler à ProClik (dictée)" tabindex="-1"><span class="pb-g" aria-hidden="true">'+ICO_MIC+'</span></button>'+
-      EVENTAIL.map(function(v,i){return bouton(v,"pb-e").replace('class="pb-e"','class="pb-e" tabindex="-1" style="--i:'+i+'"')}).join("")+
-      '<div class="pb-pan" aria-hidden="true"></div>';
+      h+'<div class="pb-pan" aria-hidden="true"></div>';
   }
   remplit();
   d.body.appendChild(scrim);d.body.appendChild(menu);d.body.appendChild(pb);
@@ -108,22 +125,29 @@
     if(W){svg.setAttribute("width",W);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 "+W+" "+H);dessine()}
     /* menu du galet = PANNEAU (choix de Cyril, 15/11) : les bulles rangées dans une carte en relief au-dessus du micro,
        4 par ligne, une ligne de plus si l'artisan a plus d'options. L'ancien éventail en arc se chevauchait à partir de 8 boutons. */
-    var bs=$$(".pb-e",menu),P=panneau(bs.length);
+    var bs=$$(".pb-e",menu),ts=$$(".pb-gt",menu),P=panneau(GROUPES);
     bs.forEach(function(b,i){
       b.style.setProperty("--x",P[i][0].toFixed(1)+"px");
       b.style.setProperty("--y",P[i][1].toFixed(1)+"px");
     });
+    ts.forEach(function(t,k){var q=P.titres[k];if(!q)return;t.style.setProperty("--x",q[0].toFixed(1)+"px");t.style.setProperty("--y",q[1].toFixed(1)+"px")});
     var pan=$(".pb-pan",menu),q=P.pan;
     if(pan)pan.style.cssText="left:"+q[0]+"px;top:"+q[1]+"px;width:"+(q[2]-q[0])+"px;height:"+(q[3]-q[1])+"px";
   }
   /* bulle 46 px (centre = x,y), nom dessous ; le micro (58 px + son anneau) est centré 68 px au-dessus du galet */
   var GR=23,LH=15;
-  function panneau(n){
-    var lim=innerWidth/2-8,c=Math.max(1,Math.min(4,n)),lw=Math.min(88,(2*lim-16)/c),rg=Math.ceil(n/c),rh=GR*2+5+LH+16,
-      bas=-104-8-14,P=[];
-    for(var i=0;i<n;i++){var r=Math.floor(i/c),j=i%c,m=Math.min(c,n-r*c);
-      P.push([(j-(m-1)/2)*lw,bas-GR-5-LH-((rg-1-r)*rh)-4])}
-    P.pan=[-(c*lw)/2-8,bas-rg*rh-14,(c*lw)/2+8,bas+6];return P;
+  /* une ligne par famille : le titre à gauche, ses bulles à droite (3 par ligne, la suite dessous) */
+  function panneau(G){
+    var lim=innerWidth/2-8,W2=Math.min(420,2*lim-16),TW=84,c=3,lw=Math.min(84,(W2-TW-8)/c),rh=GR*2+5+LH+14,
+      bas=-104-8-14,P=[],T=[],x0=-W2/2,h=0;
+    G.forEach(function(g){h+=Math.ceil(g.v.length/c)*rh});
+    var y=bas-8-h;
+    G.forEach(function(g){
+      T.push([x0+14,y+GR+4-8]);
+      g.v.forEach(function(v,i){var r=Math.floor(i/c),j=i%c;P.push([x0+TW+(j+.5)*lw,y+r*rh+GR+6])});
+      y+=Math.ceil(g.v.length/c)*rh;
+    });
+    P.titres=T;P.pan=[x0-4,bas-8-h-10,x0+W2+4,bas+6];return P;
   }
   function vers(cible,duree){
     cancelAnimationFrame(anim);
