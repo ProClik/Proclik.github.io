@@ -12,13 +12,34 @@ var I=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg
 var IC={plus:I('<path d="M12 5v14M5 12h14"/>'),camion:I('<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>')};
 
 /* Une nouvelle couleur : les livraisons */
-CK.liv=['var(--k-liv)','Livraison fournisseur'];CK.autre=['var(--k-autre)','Rendez-vous'];
+CK.liv=['var(--k-liv)','Livraison fournisseur'];CK.autre=['var(--k-autre)','Rendez-vous'];CK.st=['var(--k-st)','Sous-traitant'];
 $$('.cal-key').forEach(function(x){x.innerHTML=X.calKey()});
 
 /* Les livraisons de la démo (fictives) */
 var DEMO=[{d:'2026-10-19',s:'07:30',e:'08:00',k:'liv',t:'Livraison Placo Dauphiné',w:'Meylan · 3 suspentes manquantes',x:{ch:'alpes',liv:'Placo Dauphiné'}},
  {d:'2026-10-27',s:'08:00',e:'09:00',k:'liv',t:'Livraison Placo Dauphiné',w:'Échirolles · plaques hydro et rails sur chantier',x:{ch:'lopez',liv:'Placo Dauphiné'}},
  {d:'2026-11-13',s:'10:00',e:'11:00',k:'liv',t:'Fenêtres M. Martin',w:'Menuiseries des Alpes · délai de 4 semaines après commande',x:{liv:'Menuiseries des Alpes',dv:'0043'}}];
+/* Sous-traitants (15/11, Cyril : Aurélien travaille seul et fait souvent appel à des sous-traitants).
+   Un petit carnet (nom, métier, téléphone) gardé sur l'appareil (pc-st1). Leurs jours vont dans le planning,
+   et on leur envoie par SMS depuis le téléphone, sans qu'ils aient besoin de l'appli. Exemples fictifs. */
+var STD=[{id:'st-elec',n:'Élec Belledonne',m:'Électricien',tel:'06 •• •• •• ••',demo:1},{id:'st-plomb',n:'Plomberie du Vercors',m:'Plombier',tel:'06 •• •• •• ••',demo:1}];
+var STA=X.lsGet('pc-st1',[]);
+function stTous(){return STD.concat(STA)}
+function stDe(id){return stTous().filter(function(t){return t.id===id})[0]}
+DEMO.push({d:'2026-10-29',s:'08:00',e:'17:00',k:'st',t:'Élec Belledonne · M. Lopez',w:'Échirolles · électricité de la salle de bain · toute la journée',x:{ch:'lopez',st:'st-elec',jour:1}},
+ {d:'2026-10-30',s:'08:00',e:'17:00',k:'st',t:'Plomberie du Vercors · M. Lopez',w:'Échirolles · raccords douche et lavabo · toute la journée',x:{ch:'lopez',st:'st-plomb',jour:1}});
+/* Les jours d'un sous-traitant (sur un chantier, ou partout), à partir d'aujourd'hui */
+function stJours(id,ch){var T=iso(X.TODAY);return EV.filter(function(e){return e.k==='st'&&e.x&&e.x.st===id&&(!ch||e.x.ch===ch)&&e.d>=T}).sort(function(a,b){return a.d<b.d?-1:1})}
+function stTexte(id,ch){var t=stDe(id),L=stJours(id,ch),c=ch&&CH[ch];if(!t||!L.length)return '';
+ var parM={};L.forEach(function(e){var d=new Date(e.d+'T12:00:00'),k=MOIS[d.getMonth()];(parM[k]=parM[k]||[]).push(JL[d.getDay()]+' '+d.getDate())});
+ var jours=Object.keys(parM).map(function(m){var a=parM[m];return (a.length>1?a.slice(0,-1).join(', ')+' et '+a[a.length-1]:a[0])+' '+m}).join(', ');
+ var e0=L[0],h=e0.x&&e0.x.jour?'à partir de 8 h':'de '+hh(e0.s)+' à '+hh(e0.e);
+ return 'Bonjour, voici '+(L.length>1?'vos jours':'votre jour')+(c?' sur le chantier '+c.n+' à '+c.v:'')+' : '+jours+', '+h+'. Merci de me confirmer.'}
+function stSms(id,ch){var t=stDe(id),txt=stTexte(id,ch);if(!t)return;
+ if(!txt){X.toast('Rien de prévu','Ajoutez d\'abord ses jours au planning.');return}
+ var tel=String(t.tel||'').replace(/[^\d+]/g,'');
+ if(t.demo||tel.length<10){X.toast('Numéro d\'exemple','Avec un vrai numéro, ce message s\'ouvre dans vos SMS : « '+txt+' »');return}
+ location.href='sms:'+tel+'?&body='+encodeURIComponent(txt)}
 var AJ=X.lsGet('pc-ev1',[]);
 DEMO.concat(AJ).forEach(function(e){EV.push(e)});
 function garder(e){AJ.push(e);X.lsSet('pc-ev1',AJ)}
@@ -28,12 +49,14 @@ function jolie(s){var d=new Date(s+'T12:00:00');return JL[d.getDay()]+' '+d.getD
 function hh(s){return s.replace(':00',' h').replace(':',' h ')}
 
 /* ---------- la fiche « Nouvel évènement » ---------- */
-var TY=[['chantier','Chantier','plan'],['visit','Visite','visit'],['liv','Livraison','liv'],['autre','Rendez-vous','autre']];
+var TY=[['chantier','Chantier','plan'],['visit','Visite','visit'],['liv','Livraison','liv'],['st','Sous-traitant','st'],['autre','Rendez-vous','autre']];
 var F=null;
-function fiche(p){F=Object.assign({ty:'visit',d:iso(X.TODAY),s:'09:00',e:'10:00',jour:false,ch:'',sup:'',t:'',w:''},p||{});
+function fiche(p){F=Object.assign({ty:'visit',d:iso(X.TODAY),s:'09:00',e:'10:00',jour:false,ch:'',sup:'',t:'',w:'',st:'',d2:'',nn:'',nm:'',nt:''},p||{});
+ if(F.ty==='st'){F.jour=true;if(!F.d2)F.d2=F.d}
  if(p&&p.s&&!p.e){var h=+F.s.slice(0,2)+1;F.e=('0'+Math.min(h,23)).slice(-2)+F.s.slice(2)}
  X.xopen('Nouvel évènement',F.ty==='liv'&&F.ch&&CH[F.ch]?'Livraison pour '+CH[F.ch].n:'Dans votre planning',corps(),'<button class="btn" data-xclose>Annuler</button><button class="btn go" id="ev-ok">Ajouter</button>',function(){lier();$('#ev-ok').addEventListener('click',valider)});}
 function corps(){var K=Object.keys(CH).filter(function(k){return CH[k].st!=='done'});
+ if(F.ty==='st')return corpsSt(K);
  return '<div class="ch-f">'+
   '<div class="ev-ty">'+TY.map(function(t){return '<button type="button" class="btn" data-evty="'+t[0]+'" aria-pressed="'+(F.ty===t[0])+'"><i style="--c:'+CK[t[2]][0]+'"></i>'+t[1]+'</button>'}).join('')+'</div>'+
   (F.ty==='liv'?'<label>Fournisseur<select id="ev-sup"><option value="">Choisir…</option>'+Object.keys(SUP).map(function(k){return '<option value="'+esc(SUP[k].n)+'"'+(F.sup===SUP[k].n?' selected':'')+'>'+esc(SUP[k].n)+'</option>'}).join('')+'<option value="Autre fournisseur"'+(F.sup==='Autre fournisseur'?' selected':'')+'>Autre fournisseur</option></select></label>':'')+
@@ -44,13 +67,43 @@ function corps(){var K=Object.keys(CH).filter(function(k){return CH[k].st!=='don
   (F.jour?'':'<div class="two"><label>Début<input type="time" id="ev-s" value="'+F.s+'" step="900"></label><label>Fin<input type="time" id="ev-e" value="'+F.e+'" step="900"></label></div>')+
   '<label>Lieu ou précision<input id="ev-w" value="'+esc(F.w)+'" placeholder="'+(F.ty==='liv'?'Par ex. livré sur chantier, commande DP-012':'Ville, adresse…')+'"></label>'+
   (F.ty==='liv'?'<p class="hint" style="margin:0">La livraison apparaît aussi dans les Fournitures du chantier.</p>':'')+'</div>';}
-function lire(){var v=function(s){var e=$(s);return e?e.value:null};['t','d','s','e','w','ch','sup'].forEach(function(k){var x=v('#ev-'+k);if(x!=null)F[k]=x})}
+function corpsSt(K){var S=stTous(),neuf=F.st==='+';
+ return '<div class="ch-f">'+
+  '<div class="ev-ty">'+TY.map(function(t){return '<button type="button" class="btn" data-evty="'+t[0]+'" aria-pressed="'+(F.ty===t[0])+'"><i style="--c:'+CK[t[2]][0]+'"></i>'+t[1]+'</button>'}).join('')+'</div>'+
+  '<label>Qui vient<select id="ev-st"><option value="">Choisir…</option>'+S.map(function(t){return '<option value="'+t.id+'"'+(F.st===t.id?' selected':'')+'>'+esc(t.n)+' · '+esc(t.m)+'</option>'}).join('')+'<option value="+"'+(neuf?' selected':'')+'>+ Nouveau sous-traitant</option></select></label>'+
+  (neuf?'<label>Son nom ou son entreprise<input id="ev-nn" value="'+esc(F.nn)+'" placeholder="Par ex. Élec Dupont"></label><div class="two"><label>Son métier<input id="ev-nm" value="'+esc(F.nm)+'" placeholder="Par ex. électricien"></label><label>Son portable<input id="ev-nt" type="tel" inputmode="tel" value="'+esc(F.nt)+'" placeholder="06 12 34 56 78"></label></div>':'')+
+  '<label>Pour quel chantier<select id="ev-ch"><option value="">Choisir…</option>'+K.map(function(k){return '<option value="'+k+'"'+(F.ch===k?' selected':'')+'>'+esc(CH[k].n)+' · '+esc(CH[k].v)+'</option>'}).join('')+'</select></label>'+
+  '<div class="two"><label>Premier jour<input type="date" id="ev-d" value="'+F.d+'"></label><label>Dernier jour<input type="date" id="ev-d2" value="'+(F.d2||F.d)+'"></label></div>'+
+  '<div class="ch-sw"><span>Toute la journée</span><button type="button" class="ch-tg" role="switch" aria-checked="'+F.jour+'" id="ev-j" aria-label="Toute la journée"></button></div>'+
+  (F.jour?'':'<div class="two"><label>Début<input type="time" id="ev-s" value="'+F.s+'" step="900"></label><label>Fin<input type="time" id="ev-e" value="'+F.e+'" step="900"></label></div>')+
+  '<label>Son travail<input id="ev-w" value="'+esc(F.w)+'" placeholder="Par ex. électricité de la salle de bain"></label>'+
+  '<p class="hint" style="margin:0">Le samedi et le dimanche ne sont pas comptés. Ensuite, touchez son créneau pour lui envoyer ses jours par SMS.</p></div>';}
+function lire(){var v=function(s){var e=$(s);return e?e.value:null};['t','d','s','e','w','ch','sup','st','d2','nn','nm','nt'].forEach(function(k){var x=v('#ev-'+k);if(x!=null)F[k]=x})}
 function lier(){
  $$('[data-evty]').forEach(function(b){b.addEventListener('click',function(){lire();F.ty=b.dataset.evty;$('#x-in').innerHTML=corps();lier()})});
+ var sts=$('#ev-st');if(sts)sts.addEventListener('change',function(){lire();$('#x-in').innerHTML=corps();lier()});
+ var d1=$('#ev-d'),d2=$('#ev-d2');if(d1&&d2)d1.addEventListener('change',function(){if(!d2.value||d2.value<d1.value)d2.value=d1.value});
  $('#ev-j').addEventListener('click',function(){lire();F.jour=!F.jour;$('#x-in').innerHTML=corps();lier()});
  var s=$('#ev-s');if(s)s.addEventListener('change',function(){var e=$('#ev-e');if(e&&e.value<=s.value){var h=+s.value.slice(0,2)+1;e.value=('0'+Math.min(h,23)).slice(-2)+s.value.slice(2)}});
 }
+function validerSt(){
+  var ch=F.ch&&CH[F.ch],t;
+  if(F.st==='+'){var n=F.nn.trim();if(!n){$('#ev-nn').focus();return}
+   t={id:'st'+Date.now().toString(36),n:n,m:F.nm.trim()||'Sous-traitant',tel:F.nt.trim()};STA.push(t);X.lsSet('pc-st1',STA);F.st=t.id}
+  else t=stDe(F.st);
+  if(!t){X.toast('Qui vient ?','Choisissez le sous-traitant, ou ajoutez-en un nouveau.');return}
+  if(!ch){X.toast('Pour quel chantier ?','Choisissez le chantier.');return}
+  if(!F.jour&&F.e<=F.s){X.toast('L\'heure de fin est avant le début','Changez l\'une des deux.');return}
+  var a=new Date(F.d+'T12:00:00'),b=new Date((F.d2&&F.d2>=F.d?F.d2:F.d)+'T12:00:00'),n=0;
+  for(var d=new Date(a);d<=b&&n<60;d.setDate(d.getDate()+1)){var w=d.getDay();if(!w||w===6)continue;
+   var e={d:iso(d),s:F.jour?'08:00':F.s,e:F.jour?'17:00':F.e,k:'st',t:t.n+' · '+ch.n,w:[ch.v,F.w.trim(),F.jour?'toute la journée':''].filter(Boolean).join(' · '),x:{ch:F.ch,st:t.id}};
+   if(F.jour)e.x.jour=1;EV.push(e);garder(e);n++}
+  if(!n){X.toast('Aucun jour de semaine','Choisissez au moins un jour du lundi au vendredi.');return}
+  X.xclose();X.calWeek(a);redessiner();
+  var cur=X.curCh&&X.curCh();if(window.PCCH&&cur===F.ch)PCCH.ouvrir(F.ch,'agenda');
+  X.toast(t.n+' ajouté au planning',n+(n>1?' jours':' jour')+' · '+ch.n+'. Touchez son créneau pour lui envoyer par SMS.');}
 function valider(){lire();
+  if(F.ty==='st'){validerSt();return}
   var t=F.t.trim();if(F.ty==='liv')t='Livraison'+(F.sup&&F.sup!=='Autre fournisseur'?' '+F.sup:'')+(t?' · '+t:'');
   if(!t){$('#ev-t').focus();return}
   if(F.ty==='chantier'&&F.ch&&CH[F.ch]&&t.indexOf(CH[F.ch].n)<0)t=CH[F.ch].n+' · '+t;
@@ -89,6 +142,6 @@ function chantier(c,d1,d2){var a=new Date(d1+'T12:00:00'),b=new Date((d2||d1)+'T
  for(var d=new Date(a);d<=b&&L.length<60;d.setDate(d.getDate()+1)){var w=d.getDay();if(w&&w!==6)L.push(iso(d))}
  L.forEach(function(x,i){var e={d:x,s:'08:00',e:'17:00',k:'plan',t:c.n+' · '+c.t,w:c.v+(L.length>1?' · jour '+(i+1)+' sur '+L.length:''),x:{ch:c.id}};EV.push(e);garder(e)});
  redessiner();}
-window.PCPLAN={fiche:fiche,livraisons:livraisons,livHTML:livHTML,lierLiv:lierLiv,chantier:chantier};
+window.PCPLAN={st:{tous:stTous,de:stDe,jours:stJours,texte:stTexte,sms:stSms},fiche:fiche,livraisons:livraisons,livHTML:livHTML,lierLiv:lierLiv,chantier:chantier};
 redessiner();
 })();
