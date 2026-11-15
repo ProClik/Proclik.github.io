@@ -69,6 +69,22 @@
   .pb-menu>.pb-tr{position:absolute;width:1px;background:var(--n1-line,rgba(14,19,34,.09));opacity:0;transition:opacity .18s;pointer-events:none}
   .pb-ouvert .pb-menu>.pb-tr{opacity:1;transition:opacity .35s .1s}
   .pb-ouvert .pb-menu>.pb-gt{opacity:1;transition:opacity .35s calc(.12s + var(--i)*.045s)}
+  /* styles à l'essai : cartes (a), liste (b), bandes teintées (c) */
+  .pb-menu>.pb-fc{position:absolute;z-index:-1;border-radius:20px;opacity:0;transition:opacity .18s;pointer-events:none}
+  .pb-ouvert .pb-menu>.pb-fc{opacity:1;transition:opacity .35s .1s}
+  .pb-menu.pan-a>.pb-pan{background:transparent;box-shadow:none}
+  .pan-a>.pb-fc{background:var(--bg);box-shadow:var(--n1-pk,var(--up));border-radius:22px}
+  .pan-a>.pb-gt::after{width:14px}
+  .pan-c>.pb-fc{background:var(--n1-teinte,var(--rs));border-radius:24px}
+  .pan-c>.pb-gt{font:800 10.5px/1.25 Manrope,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--n1-nuit,var(--fg))}
+  .pan-c>.pb-gt::after{display:none}
+  .pan-b>.pb-gt{width:160px;margin-left:0;text-align:left;font:800 11px/1.2 Manrope,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--n1-muted,var(--muted))}
+  .pan-b>.pb-gt::after{margin:5px 0 0}
+  .pan-b>.pb-e{flex-direction:row;width:auto;gap:11px;font:650 14.5px/1.1 Manrope,system-ui,sans-serif;transform:translate(-21px,-21px) scale(.3)}
+  .pan-b>.pb-e .pb-g{width:42px;height:42px}
+  .pan-b>.pb-e .pb-g svg{width:19px;height:19px}
+  .pan-b>.pb-e .badge{top:-4px;right:auto;left:28px}
+  .pb-ouvert .pan-b>.pb-e{transform:translate(calc(-21px + var(--x)),calc(-21px + var(--y))) scale(1)}
   .pb-menu>.pb-pan{position:absolute;z-index:-1;border-radius:30px;background:var(--bg);box-shadow:var(--n1-pk,var(--up));opacity:0;transform:translateY(14px) scale(.96);transition:opacity .2s,transform .3s var(--doux)}
   .pb-ouvert .pb-menu>.pb-pan{opacity:1;transform:none;transition:opacity .35s .06s,transform .5s var(--doux) .06s}
   @media (prefers-reduced-motion:reduce){.pb-c,.pb-c svg path,.pb-mic,.pb-e,.pb-scrim{transition:none!important}}
