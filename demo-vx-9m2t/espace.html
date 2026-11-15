@@ -259,6 +259,12 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .cl1 .pu{width:8px;height:8px;border-radius:50%;background:var(--alert);flex:none}
 .cl1 button.mot.act{margin-right:12px;border:0;cursor:pointer;padding:8px 11px;font-size:13px;font-weight:800;color:var(--nuit);background:var(--bg);border-radius:12px;white-space:nowrap}
 .lst.w{box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.08))}.gh2.w{color:var(--nuit)}
+
+.lcl .gh2{display:flex;align-items:center;gap:7px;margin:4px 4px 0;font-size:15px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--nuit)}
+.lcl .gh2 svg.i{width:17px;height:17px;flex:none;opacity:.75}
+.lcl .gh2.w{color:var(--nuit)}.lcl .gh2.w svg.i{color:var(--alert);opacity:1}
+.lcl .gh2 .nb{font-size:12px;min-width:22px;height:22px;padding:0 7px;border-radius:99px;display:inline-grid;place-items:center;background:color-mix(in srgb,var(--nuit) 9%,transparent);color:var(--nuit)}
+.lcl .gh2.w .nb{background:color-mix(in srgb,var(--alert) 13%,transparent);color:var(--alert)}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -348,7 +354,7 @@ function actMot(d){var m=motCourt(d),r=role(),id=d.id;
   if(m==='À commander'&&r==='adv')return "traiter('cmd','"+id+"')";
   return "ouvrir('"+id+"')"}
 var PRIO={'Métré 10 h':.5,'Écart ARC':1,'ARC à voir':2,'Pose à caler':3,'À commander':4,'Réserve':5,'À relancer':6};
-function court(d){var t=d.quoi;return t.length<=24?t:t.replace(/fenêtres?/g,'fen.').replace(/porte-fenêtre/,'porte-fen.').replace(' + volets roulants',' + volets').replace(', bureaux','')}
+function court(d){var t=d.quoi;return t.length<=24?t:t.replace(/ et 1 porte d'entrée/,' + 1 porte').replace(/fenêtres?/g,'fen.').replace(/porte-fenêtre/,'porte-fen.').replace(' + volets roulants',' + volets').replace(', bureaux','')}
 function court0(d){return d.quoi.replace(/^(\d+) fenêtres et 1 porte d'entrée, PVC$/,'$1 fen. + 1 porte, PVC').replace(' + volets roulants',' + volets').replace(', bureaux','').replace('porte-fenêtre','porte-fen.')}
 function depuis(d){var a=d.att;if(a==null)return '';return a===0?'aujourd\'hui':a===1?'depuis hier':'depuis '+a+' jours'}
 function urg(d){return d.att>=7||(d.arc&&S.arcOk==='ecart')}
@@ -362,9 +368,9 @@ function listeCli(L){var q=sans(LC.q);
     return '<section class="grp"><h2 class="gh2">'+R.length+' résultat'+(R.length>1?'s':'')+'</h2>'+(R.length?'<div class="lst">'+R.slice(0,30).map(carteCli).join('')+'</div>':'<p class="mini">Aucun client trouvé. Essayez la ville ou le téléphone.</p>')+'</section>'}
   var A=L.filter(aFaire).sort(function(x,y){return (urg(y)?1:0)-(urg(x)?1:0)||(PRIO[motCourt(x)]||9)-(PRIO[motCourt(y)]||9)}),C=L.filter(function(d){return !aFaire(d)&&et(d)<6}),T=L.filter(function(d){return !aFaire(d)&&et(d)===6});
   var h='';
-  if(A.length)h+='<section class="grp"><h2 class="gh2 w">À faire · '+A.length+'</h2><div class="lst w">'+A.map(carteCli).join('')+'</div></section>';
-  if(C.length)h+='<section class="grp"><h2 class="gh2">En cours · '+C.length+'</h2><div class="lst">'+C.map(carteCli).join('')+'</div></section>';
-  if(T.length)h+=LC.term?'<section class="grp"><h2 class="gh2">Terminés · '+T.length+'</h2><div class="lst">'+T.map(carteCli).join('')+'</div><button class="voir pk" onclick="LC.term=false;re()">Replier les terminés</button></section>':'<button class="voir pk" onclick="LC.term=true;re()">Voir les '+T.length+' terminés</button>';
+  if(A.length)h+='<section class="grp"><h2 class="gh2 w">'+ic('alert')+'À faire<span class="nb">'+A.length+'</span></h2><div class="lst w">'+A.map(carteCli).join('')+'</div></section>';
+  if(C.length)h+='<section class="grp"><h2 class="gh2">'+ic('clock')+'En cours<span class="nb">'+C.length+'</span></h2><div class="lst">'+C.map(carteCli).join('')+'</div></section>';
+  if(T.length)h+=LC.term?'<section class="grp"><h2 class="gh2">'+ic('check')+'Terminés<span class="nb">'+T.length+'</span></h2><div class="lst">'+T.map(carteCli).join('')+'</div><button class="voir pk" onclick="LC.term=false;re()">Replier les terminés</button></section>':'<button class="voir pk" onclick="LC.term=true;re()">Voir les '+T.length+' terminés</button>';
   return h}
 function cherche(){return '<div class="srch"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="lcq" type="search" placeholder="Chercher un client, une ville…" value="'+LC.q.replace(/"/g,'&quot;')+'" oninput="LC.q=this.value;$(\'lcl\').innerHTML=listeCli(LCL)" autocomplete="off" enterkeyhint="search"><button class="mic pk" onclick="dicte()" aria-label="Dire le nom">'+ic('mic')+'</button></div>'}
 var LCL=[];
