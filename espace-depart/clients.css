@@ -1,0 +1,175 @@
+/* Clients et Factures de l'Espace : même matière « Relief doux » (reliefs, creux, laiton en seule couleur d'action), même dessin jour et nuit. */
+.cf .cf-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cf .cf-top h2{margin:0}
+.cf .cf-n{font-size:13px;color:var(--muted)}
+.cf .grid2>.col{gap:14px}
+.cf .exemple{display:block;font-size:12px;font-style:italic;color:var(--muted)}
+
+/* Recherche : un creux, comme les champs */
+.cf-cherche{display:flex;align-items:center;gap:10px;padding:0 16px;border-radius:999px;background:var(--cx);box-shadow:var(--in);min-height:50px;color:var(--muted)}
+.cf-cherche svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.app .cf-cherche input,html body .cf-cherche input{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;font:600 15px var(--f,inherit);color:var(--fg);padding:12px 0;outline:none}
+
+/* Le gros bouton de l'écran : même dessin que celui de l'accueil */
+html body .cf .cf-go{width:100%;min-height:clamp(54px,15vw,62px);border-radius:999px;font-size:clamp(15px,4.2vw,17px);padding:0 clamp(58px,16vw,66px) 0 18px;display:flex;align-items:center}
+html body .cf .cf-go::after{width:clamp(38px,11vw,44px);height:clamp(38px,11vw,44px);margin-top:calc(clamp(38px,11vw,44px)/-2);right:8px}
+html body .cf .cf-go::before{right:calc(8px + (clamp(38px,11vw,44px) - 18px)/2)}
+.cf .cf-go .lab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+.cf .cf-go .lab>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf .cf-go .ic{display:grid;place-items:center;width:20px;height:20px;flex:none;color:var(--muted)}
+.cf .cf-go .ic svg,.cf-main svg,.cf-act svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* Listes : une ligne par client ou par document */
+.cf-l{padding:4px 16px!important}
+.cf-li{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:inherit;cursor:pointer}
+.cf-l>.cf-li:last-child{border-bottom:0}
+.cf-li .tx{flex:1;min-width:0}
+.cf-li .tx b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf-li .tx small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf-li .tx small.cf-et{margin-top:2px;font-weight:600}
+.cf-li .tx small.cf-et.on{color:var(--accx)}
+.cf-li .go{color:var(--muted);font-size:18px}
+.cf-av{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up-s);font-weight:800;font-size:14px;color:var(--fg);letter-spacing:.02em}
+.cf-av.cf-doc{color:var(--muted)}
+.cf-av svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cf-m{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.cf-m b{font-size:14.5px;font-weight:800;white-space:nowrap}
+.cf-m .pill{font-size:10.5px;padding:4px 9px}
+html body .cf .pill.ok{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+html body .cf .pill.warn,html body .cf .pill.todo{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+html body .cf .pill.grey{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+
+/* Badge de conformité : écusson au trait laiton, petit ruban tricolore */
+.cf-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 9px;border-radius:999px;border:0;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font:700 12.5px var(--f,inherit);cursor:pointer}
+.ecu{width:24px;height:24px;flex:none;fill:none;stroke:var(--accx);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cf-conf{display:flex;align-items:center;gap:14px}
+.cf-conf .ecu{width:44px;height:44px;stroke-width:1.3}
+.cf-conf b{display:block;font-size:15.5px}.cf-conf span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+/* À encaisser : le chiffre en avant */
+.cf-hero{display:grid;gap:4px}
+.cf-hero small{font-size:13px;color:var(--muted);font-weight:600}
+.cf-hero b{font-size:clamp(30px,8.5vw,38px);font-weight:800;letter-spacing:-.8px;line-height:1.1}
+.cf-hero b em{font-style:normal;font-size:14px;font-weight:700;color:var(--muted);letter-spacing:0}
+.cf-hero>span{font-size:13px;color:var(--muted)}
+.cf-pret .dem-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cf-pret .dem-h>div:first-child{min-width:0}
+.cf-pret .dem-h b{display:block;font-size:16px;font-weight:800}
+.cf-pret .dem-h small{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
+.cf-pret .prix{font-size:18px;font-weight:800;white-space:nowrap}.cf-pret .prix small{font-size:12px;color:var(--muted)}
+.cf-rien{display:grid;gap:6px}.cf-rien span{font-size:13.5px;color:var(--muted);line-height:1.45}
+.cf-main{display:flex;gap:10px;flex-wrap:wrap}
+.cf-main .btn,.cf-act .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1 1 0;text-decoration:none;color:var(--fg)}
+.cf-main svg,.cf-act svg{width:17px;height:17px;color:var(--accx)}
+.cf .cf-seg{display:flex;width:100%}.cf .cf-seg button{flex:1}
+
+/* Fiche client et formulaires (dans le panneau) */
+.cf-act{display:flex;gap:10px}
+.cf-ou{display:grid;gap:3px}.cf-ou small{font-size:12.5px;color:var(--muted);font-weight:600}.cf-ou b{font-size:15.5px}
+.xsec>h3 small{font-size:12px;color:var(--muted);font-weight:600}
+.cf-arg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cf-arg div{padding:10px 12px;border-radius:14px;background:var(--cx);box-shadow:var(--in)}
+.cf-arg span{display:block;font-size:12px;color:var(--muted)}.cf-arg b{display:block;font-size:16px;font-weight:800;margin-top:2px}
+.cf-arg .cor b{color:var(--accx)}
+.cf-tout{align-self:flex-start}
+.cf-aide{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}.cf-aide b{color:var(--fg)}
+.cf-form{display:grid;gap:14px}
+.cf-form label{display:grid;gap:6px;font-size:13.5px;font-weight:700}
+.cf-form label small{font-weight:600;color:var(--muted)}
+.cf-form input,.cf-form select,.cf-form textarea{width:100%;min-height:48px;padding:12px 14px;border-radius:14px;font:600 15.5px var(--f,inherit);color:var(--fg);border:0}
+.cf-form textarea{resize:vertical;min-height:84px}
+.cf-tva{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13.5px;font-weight:700}
+.cf-ttc{display:flex;justify-content:space-between;align-items:baseline}.cf-ttc span{color:var(--muted);font-size:13.5px}.cf-ttc b{font-size:20px}
+
+/* Menu : sur téléphone, six onglets (Achats passe dans le menu ☰) ; tablette, tout reste sur le côté */
+@media (max-width:899px){
+  html body .nav{grid-template-columns:repeat(6,1fr)!important}
+  html body .nav #nb-prix{display:none!important}
+  html body .nav button{font-size:10.5px}
+  html body .nav .ico,:root.simple body .nav .ico{width:40px;height:40px}
+}
+@media (min-width:900px){
+  .m-achats{display:none!important}
+  html body .nav{gap:12px!important}
+  html body .nav .ico,:root.simple body .nav .ico{width:42px;height:42px}
+}
+.xback[hidden]{display:none!important}
+
+/* Factures (Cyril, 2/11) : « À envoyer » mis en avant dans son menu, avec la même pastille rouge que le bouton du menu */
+.cf .rouge{display:inline-block;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#D9534F;color:#fff;font:800 11.5px/20px var(--f,inherit);font-style:normal;text-align:center;vertical-align:middle}
+html body .cf .dv-seg button i.rouge{position:absolute;top:4px;right:calc(50% - 26px);min-width:18px;height:18px;line-height:18px;font-size:10.5px}
+.cf .fa-env{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;border:1.5px solid rgba(217,83,79,.35)}
+.cf .fa-env.vide{border-color:transparent}
+.cf .fa-env-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.cf .fa-env-h h2{margin:0;font-size:17px;display:flex;align-items:center;gap:8px}.cf .fa-env-h span{font-size:12.5px;color:var(--muted)}
+.cf .fa-env .cf-l{padding:0!important}.cf .fa-env .hint{margin:4px 0 0}
+.cf .fa-aide{margin:-2px 4px 0;font-size:13px;line-height:1.45;text-align:center}
+
+/* ---------- Clients (2/11, demande de Cyril) : un menu à icônes au lieu des grandes listes ---------- */
+.cl{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;max-width:760px}
+.cl .cf-top{margin-bottom:0}
+html body .cf .cl-seg button{overflow:visible}
+.cl-nb{position:absolute;top:4px;right:calc(50% - 26px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);font:800 10.5px/18px var(--f,inherit);font-style:normal;text-align:center}
+.cl-nb.on{background:var(--cor,#E0603C);color:#fff;box-shadow:none}
+.cl .hint{margin:0}
+
+/* La fiche : d'abord qui c'est et comment le joindre */
+.cl-f{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.cl-form{grid-template-columns:minmax(0,1fr)}
+.cl-2>*,.cl-type>*,.cl-act>*{min-width:0}
+.cl-fiche{display:grid;grid-template-columns:auto 1fr;gap:12px 14px;align-items:center}
+.cl-fiche>.cf-av{width:52px;height:52px;font-size:17px}
+.cl-fiche>.cf-av svg{width:24px;height:24px}
+.cl-id{display:grid;gap:5px;justify-items:start;min-width:0}
+.cl-id b{font-size:17px;font-weight:800;line-height:1.2}
+.cl-id .pill{font-size:11px;padding:3px 9px;background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+.cl-fiche .kv{grid-column:1/-1}
+.cl-fiche .kv a{color:var(--accx);font-weight:700}
+.cl-act{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px!important}
+.cl-act .btn{flex-direction:column;gap:5px!important;padding:10px 4px!important;min-height:64px;font-size:12.5px;border-radius:18px}
+.cl-act .btn svg{width:20px!important;height:20px!important}
+.cl-act .btn[disabled]{opacity:.4}
+.cl-docs{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.cl-hist>summary{cursor:pointer;font-weight:800;font-size:15px;padding:4px 0;list-style:none}
+.cl-hist>summary::after{content:" ›";color:var(--accx)}
+.cl-hist[open]>summary::after{content:" ⌄"}
+.cl-err{margin:0;padding:10px 14px;border-radius:14px;background:var(--cx);box-shadow:var(--in);color:var(--cor-ink,#E0603C);font-size:13.5px;font-weight:700}
+.cl-err[hidden]{display:none}
+
+/* Le formulaire : Particulier ou Professionnel, comme deux grosses cases à cocher */
+.cl-type{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cl-type button{display:flex;align-items:center;gap:10px;padding:12px;border:0;border-radius:18px;background:var(--rs);box-shadow:var(--up-s);color:var(--fg);font:inherit;text-align:left;cursor:pointer;min-width:0}
+.cl-type button[aria-checked="true"]{background:var(--cx);box-shadow:var(--in)}
+.cl-type b{display:block;font-size:14.5px;font-weight:800}
+.cl-type small{display:block;font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.3}
+.cl-case{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--cx);box-shadow:var(--in);color:transparent}
+.cl-case svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.cl-type button[aria-checked="true"] .cl-case{background:var(--accx);box-shadow:none;color:#fff}
+.cl-civ{display:flex;gap:8px}
+.cl-civ button{min-width:64px;padding:9px 14px;border:0;border-radius:999px;background:var(--rs);box-shadow:var(--up-s);color:var(--muted);font:700 14px var(--f,inherit);cursor:pointer}
+.cl-civ button[aria-checked="true"]{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+.cl-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cl-cp{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+@media (max-width:380px){.cl-2:not(.cl-cp){grid-template-columns:1fr}}
+.cl-sous{margin:4px 0 -4px;font-size:13px;font-weight:800;color:var(--muted)}
+.cl-file{position:relative;display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border-radius:14px;background:var(--rs);box-shadow:var(--up-s);font-weight:700;font-size:14.5px;cursor:pointer}
+.cl-file svg{width:20px;height:20px;flex:none;fill:none;stroke:var(--accx);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cl-file input{position:absolute;inset:0;opacity:0;cursor:pointer;min-height:0!important}
+.cl-file #cf-kbis-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Le bouton d'action vit DANS le bloc qu'il concerne (Cyril, 3/11 : un galet séparé sous la carte prêtait à confusion) */
+.card>.btn.cf-in,.card>.cf-in{margin-top:14px}
+.cf-ou>.btn.cf-in{width:100%}
+.cf-hero>.btn.cf-in,.cf-rien>.btn.cf-in{margin-top:14px}
+
+/* Supprimer un client (3/11) : discret en bas de la fiche, la page suivante explique tout avant le bouton rouge */
+.cl-sup{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 4px;padding:10px 18px;min-height:44px;border-radius:999px;background:transparent;color:#C2413B;font:700 14px/1 var(--f,inherit);border:0}
+.cl-sup svg,.cl-sup-go svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cl-sup-p{display:flex;flex-direction:column;gap:12px}
+.cl-sup-c b{display:block;font-size:15.5px;margin-bottom:4px}
+.cl-sup-c p{margin:4px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+.cl-sup-err{border:1.5px solid #D9534F}
+.cl-sup-def{margin:2px 4px 0;font-weight:800;color:#C2413B;font-size:14px}
+.btn.cl-sup-go{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#D9534F;color:#fff}
+.btn.cl-sup-go[disabled]{opacity:.6}
+:root[data-theme="dark"] .cl-sup,:root[data-theme="dark"] .cl-sup-def{color:#FF8A80}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cl-sup,:root:not([data-theme="light"]) .cl-sup-def{color:#FF8A80}}

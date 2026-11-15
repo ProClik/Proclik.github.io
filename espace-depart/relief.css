@@ -1,0 +1,361 @@
+/* Style « Relief doux » de l'Espace (validé par Cyril le 28/10) : même matière que le fond, reliefs et creux, laiton en seule couleur d'action.
+   Chargé après les autres styles : il ne change que l'apparence, pas le fonctionnement. Même dessin le jour et la nuit, seules les couleurs changent. */
+:root{
+  --bg:#ECEEF2;--card:#ECEEF2;--soft:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.08);
+  --turq:#A8823F;--turq-ink:#7A5C26;--turq-bg:rgba(168,130,63,.12);--nuit:#0E1322;
+  --acc:#A8823F;--accx:#8A6A2F;--acc-g:rgba(168,130,63,.32);
+  --rs:#ECEEF2;--cx:#ECEEF2;--hi:#FFFFFF;--lo:rgba(26,34,64,.2);--ihi:rgba(255,255,255,.95);--ilo:rgba(26,34,64,.17);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
+  --up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo);
+  --up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi);
+  --doux:cubic-bezier(.22,1,.36,1)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E2433;--card:#1E2433;--soft:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
+  --turq:#D4B483;--turq-ink:#E3C99C;--turq-bg:rgba(212,180,131,.12);--nuit:#0E1322;
+  --acc:#D4B483;--accx:#D4B483;--acc-g:rgba(212,180,131,.4);
+  --rs:#1E2433;--cx:#1E2433;--hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}}
+:root[data-theme="dark"]{
+  --bg:#1E2433;--card:#1E2433;--soft:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.08);
+  --turq:#D4B483;--turq-ink:#E3C99C;--turq-bg:rgba(212,180,131,.12);--nuit:#0E1322;
+  --acc:#D4B483;--accx:#D4B483;--acc-g:rgba(212,180,131,.4);
+  --rs:#1E2433;--cx:#1E2433;--hi:rgba(255,255,255,.06);--lo:rgba(0,0,0,.5);--ihi:rgba(255,255,255,.055);--ilo:rgba(0,0,0,.45);
+  --shadow:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up:-5px -5px 12px var(--hi),6px 6px 14px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);--up-s:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 0 1px 0 rgba(255,255,255,.035);
+  --in:inset 4px 4px 9px var(--ilo),inset -4px -4px 9px var(--ihi)}
+
+html body{background:var(--bg)}
+html body button:focus-visible,html body [tabindex]:focus-visible{outline-color:var(--acc)}
+
+/* Blocs en relief : même matière que le fond */
+html body .card,html body .dcard,html body .vcard,html body .pcclient,html body .pcq button,html body .adds button,html body .week button,html body #sheet,html body .sheet .sheet-foot{
+  background:var(--rs);border:0;box-shadow:var(--up)}
+html body .card,html body .dcard,html body .vcard{border-radius:20px}
+html body .sheet-foot{box-shadow:none;border-top:1px solid var(--line)}
+html body .sheet{background:var(--bg)}
+html body .dcard.sel,html body .vcard.vav,html body .pcq button:first-child{box-shadow:var(--up),inset 0 0 0 1.5px color-mix(in srgb,var(--acc) 55%,transparent)}
+/* Le bandeau « aujourd'hui » n'est plus un bloc noir : même matière, chiffre en avant */
+html body .today{background:var(--rs);color:var(--fg);box-shadow:var(--up)}
+html body .today::after{display:none}
+html body .today small{color:var(--muted)}html body .today>span{color:var(--muted)}
+
+/* Creux : ce qu'on remplit ou ce qui est choisi */
+html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),html body select,html body textarea,
+html body .slot .b,html body .prog,html body .seg,html body .tabs-top,html body .pcstats div,html body .ln.verif,html body .qty b{
+  background:var(--cx);border-color:transparent;box-shadow:var(--in)}
+html body .slot .b.free{background:none;box-shadow:none;border:1.5px dashed var(--line)}
+html body .slot .b.on{background:var(--cx);color:var(--fg);box-shadow:var(--in),inset 3px 0 0 var(--acc)}
+html body .slot .b.on small{color:var(--muted)}
+html body .ln.verif{background:color-mix(in srgb,var(--warn-bg) 60%,var(--cx))}
+html body .prog i{background:var(--acc)}
+html body .chk input{accent-color:var(--acc)}
+html body .fil div::before,html body .colis div.on::before,html body .colis div.on::after{background:var(--acc)}
+html body .colis div.on::before{box-shadow:0 0 0 4px var(--turq-bg)}
+
+/* Petits boutons et puces : petits galets en relief */
+html body .btn,html body .vbtn,html body .chip,html body .chips button,html body .qty button,html body .shots button,html body .icon-b,html body .pcov-x{
+  background:var(--rs);color:var(--fg);border:0;box-shadow:var(--up-s)}
+html body .icon-b{border-radius:50%}
+html body .icon-b[aria-pressed="true"]{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+html body .chips button[aria-pressed="true"],html body .chips button[data-f="all"][aria-pressed="true"]{background:var(--cx);box-shadow:var(--in);color:var(--fg)}
+html body .chips button[aria-pressed="true"] i{background:var(--c);box-shadow:none}
+html body .seg button[aria-selected="true"],html body .tabs-top button[aria-selected="true"],html body .week button[aria-pressed="true"]{background:var(--rs);color:var(--fg);box-shadow:var(--up-s)}
+html body .week button[aria-pressed="true"] b{color:var(--accx)}
+html body .tabs-top .speak{background:transparent;color:var(--accx)}
+
+/* Bouton d'action : pilule en relief + galet laiton avec flèche fine à droite */
+html body .btn.go,html body .vbtn.go{position:relative;background:var(--rs)!important;color:var(--fg)!important;box-shadow:var(--up);font-weight:600;
+  padding-right:58px;text-align:center}
+html body .btn.go::after,html body .vbtn.go::after{content:"";position:absolute;right:6px;top:50%;width:36px;height:36px;margin-top:-18px;border-radius:50%;
+  background:var(--rs);box-shadow:var(--up-s)}
+html body .btn.go::before,html body .vbtn.go::before{content:"";position:absolute;z-index:1;right:15px;top:50%;width:18px;height:18px;margin-top:-9px;background:var(--accx);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:transform .6s var(--doux)}
+html body .btn.go.sm,html body .vbtn.go.sm{padding-right:48px}
+html body .btn.go.sm::after,html body .vbtn.go.sm::after{width:28px;height:28px;margin-top:-14px;right:5px}
+html body .btn.go.sm::before,html body .vbtn.go.sm::before{right:11px;width:15px;height:15px;margin-top:-7.5px}
+html body .btn[disabled]::before{opacity:.5}
+
+/* Menu du bas (téléphone) : chaque onglet est un rond en relief, l'actif est enfoncé avec son icône laiton */
+html body .nav{background:var(--bg);border-top:0;box-shadow:0 -10px 24px -14px var(--lo)}
+html body .nav button{gap:5px;padding-top:6px}
+html body .nav .ico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--rs);box-shadow:var(--up-s);color:var(--muted)}
+html body .nav .ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html body .nav button[aria-selected="true"]::before{display:none}
+html body .nav button[aria-selected="true"] .ico{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+html body .nav .badge{top:2px;right:calc(50% - 26px)}
+
+/* Effets au toucher : doux, lents, sans rebond */
+html body .card,html body .dcard,html body .btn,html body .vbtn,html body .vcard,html body .chip,html body .chips button,html body .icon-b,html body .nav .ico,
+html body .seg button,html body .tabs-top button,html body .week button,html body .qty button,html body .todo button,html body .pcq button,html body .adds button,html body .btn::before{
+  transition:box-shadow .8s var(--doux),transform 1.2s var(--doux),background .7s ease,color .6s ease}
+@media (hover:hover){
+  html body .btn:not([disabled]):hover,html body .vbtn:not([disabled]):hover,html body .icon-b:hover,html body .chips button:hover{transform:translateY(-1px)}
+  html body .btn.go:not([disabled]):hover::before,html body .vbtn.go:not([disabled]):hover::before{transform:translateX(3px)}
+  html body .nav button:not([aria-selected="true"]):hover .ico{color:var(--accx);transform:translateY(-1px)}}
+html body .btn:not([disabled]):active,html body .btn.appui,html body .vbtn:not([disabled]):active,html body .vbtn.appui{transform:scale(.99);box-shadow:var(--in);transition-duration:.45s,.55s}
+html body .icon-b:active,html body .icon-b.appui,html body .chips button.appui,html body .nav button.appui .ico,html body .nav button:active .ico,
+html body .seg button.appui,html body .tabs-top button.appui,html body .week button.appui,html body .qty button.appui{transform:scale(.965);box-shadow:var(--in);transition-duration:.6s,.7s}
+html body .dcard.appui,html body .vcard.appui,html body .pcq button.appui,html body .adds button.appui{transform:scale(.99);box-shadow:var(--in)}
+@keyframes rlx-file{0%{transform:translateX(0);opacity:1}45%{transform:translateX(10px);opacity:0}46%{transform:translateX(-10px);opacity:0}100%{transform:translateX(0);opacity:1}}
+@keyframes rlx-lueur{0%{box-shadow:var(--up-s),0 0 0 0 var(--acc-g)}40%{box-shadow:var(--up-s),0 0 12px var(--acc-g)}100%{box-shadow:var(--up-s),0 0 0 0 transparent}}
+html body .btn.go.parti::before,html body .vbtn.go.parti::before{animation:rlx-file 1.5s cubic-bezier(.5,0,.2,1)}
+html body .btn.go.parti::after,html body .vbtn.go.parti::after{animation:rlx-lueur 2s ease-out}
+@keyframes rlx-choisi{0%{transform:scale(.97)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+html body .nav button.vient .ico{animation:rlx-choisi 1.1s var(--doux)}
+@media (prefers-reduced-motion:reduce){html body .btn.go.parti::before,html body .btn.go.parti::after,html body .vbtn.go.parti::before,html body .vbtn.go.parti::after,html body .nav button.vient .ico{animation:none}}
+
+/* Écran d'accueil animé et petits détails turquoise passés au laiton */
+html body .splash{background:var(--bg)}
+html body .splash .ring{border-color:var(--acc)}
+html body .splash b{color:var(--fg)}
+html body .dwrap{background:var(--acc)}
+html body .wave i{background:var(--acc)}
+html body .voice-b,html body .mic-h{background:var(--rs);color:var(--accx);box-shadow:var(--up)}
+html body .toast{background:var(--rs);box-shadow:var(--up)}
+html body .install{background:var(--cx);box-shadow:var(--in)}
+html body .net.back{background:var(--turq-bg);color:var(--turq-ink)}
+
+/* ---------- Plus de machine à écrire : tout en Manrope, chiffres alignés ---------- */
+:root,html body{--mono:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif}
+html body .mono,html body .chip-demo,html body .today small,html body .soon,html body .pdf-k,html body .vex button small{letter-spacing:.02em;font-variant-numeric:tabular-nums}
+html body .chip-demo{font-weight:700;font-size:11px;background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+
+/* ---------- Icônes en trait fin à la place des emoji ---------- */
+html body .ri{display:inline-grid;place-items:center;width:1.15em;height:1.15em;vertical-align:-.2em}
+html body .ri svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .icon-b .ri{width:19px;height:19px;color:var(--muted)}
+html body .icon-b[aria-pressed="true"] .ri{color:var(--accx)}
+html body .pcq .e .ri,html body .adds span .ri{width:24px;height:24px;color:var(--muted)}
+
+/* ---------- En-tête : seulement l'essentiel sur téléphone ---------- */
+@media (max-width:899px){html body #net{display:none}}
+html body .head{background:var(--bg);border-bottom:0}
+
+/* ---------- Bandeaux d'installation : même matière, plus de cadre laiton ---------- */
+html body .instb{background:var(--rs);border:0;box-shadow:var(--up);border-radius:20px;padding:12px 14px}
+html body .instb .ic{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--cx);box-shadow:var(--in);color:var(--muted);font-size:0}
+html body .instb .ic .ri{width:20px;height:20px}
+html body .instb .x{color:var(--muted)}
+html body .vco{background:var(--rs);box-shadow:var(--up);border-radius:20px}
+
+/* ---------- Nouvel accueil (accueil.js) ---------- */
+html.pcacc #v-accueil>.grid2{display:none}
+.acc{display:grid;gap:16px;margin-top:16px}
+.acc-g,.acc-d{display:grid;gap:16px;align-content:start;min-width:0}
+@media (min-width:900px){.acc{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}}
+html body .acc .card{margin:0;padding:18px}
+.acc .stats-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.acc .stats-h small{display:block;color:var(--muted);font-size:13px;font-weight:600}
+.acc .stats-h b{display:block;font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+.acc .stats-h em{font-style:normal;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0}
+.acc .barres{width:120px;height:52px;flex:none}
+.acc .barres .b0{fill:color-mix(in srgb,var(--muted) 45%,transparent)}.acc .barres .b1{fill:var(--fg)}
+.acc .barres text{fill:var(--muted);font:600 8px var(--f);text-anchor:middle}
+.acc .flux{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;margin-top:16px;padding:16px;border-radius:16px;background:var(--cx);box-shadow:var(--in)}
+.acc .flux span{display:block;font-size:12.5px;font-weight:700;color:var(--fg)}
+.acc .flux b{display:block;font-size:17px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+.acc .flux small{display:block;font-size:12px;color:var(--muted)}
+.acc .flux .cor b{color:var(--cor-ink,#E0603C)}
+.acc .exemple{display:block;margin-top:12px;font-size:12px;font-style:italic;color:var(--muted)}
+.acc .tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:12px}
+.acc .tuile{padding:14px 12px;border-radius:18px;background:var(--rs);box-shadow:var(--up);min-width:0}
+.acc .tuile b{display:block;font-size:24px;font-weight:800;line-height:1.1}
+.acc .tuile span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted);line-height:1.35}
+.acc .tuile.chaud b{color:var(--accx)}
+.acc .dem{display:grid;gap:14px}
+.acc .dem-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.acc .dem-h b{display:block;font-size:16px;font-weight:800}
+.acc .dem-h small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.acc .prix{font-size:17px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}.acc .prix small{font-size:12px;color:var(--muted)}
+.acc .chaine{position:relative;display:flex;justify-content:space-between;align-items:center}
+.acc .chaine::before{content:"";position:absolute;left:14px;right:14px;top:50%;height:2px;margin-top:-1px;background:color-mix(in srgb,var(--muted) 30%,transparent)}
+.acc .chaine::after{content:"";position:absolute;left:14px;top:50%;height:2px;margin-top:-1px;width:calc((100% - 28px)*var(--fait));background:var(--acc)}
+.acc .pas{position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);font-size:12px;font-weight:700;color:var(--muted)}
+.acc .pas.ici{background:var(--cx);box-shadow:var(--in);color:var(--accx);font-weight:800}
+.acc .pas.fait{color:var(--accx)}
+.acc .pas svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.acc .etape-nom{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:10px}
+.acc .etape-nom b{font-size:14.5px;font-weight:800}.acc .etape-nom span{font-size:12.5px;color:var(--muted)}
+.acc .ligne{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--cx);box-shadow:var(--in),inset 0 0 0 1px color-mix(in srgb,var(--cor-ink,#E0603C) 45%,transparent);font-size:14px;font-weight:600}
+.acc .ligne .q{color:var(--cor-ink,#E0603C);font-size:13px;font-weight:700;white-space:nowrap}
+.acc .vide{margin:0;color:var(--muted);font-size:14px}
+/* Le gros bouton : icône d'étape grise + texte centré entre le bord gauche et le galet */
+html body .acc .acc-go{width:100%;min-height:clamp(54px,15vw,62px);border-radius:999px;font-size:clamp(15px,4.2vw,17px);padding:0 clamp(58px,16vw,66px) 0 18px;display:flex;align-items:center}
+html body .acc .acc-go::after{width:clamp(38px,11vw,44px);height:clamp(38px,11vw,44px);margin-top:calc(clamp(38px,11vw,44px)/-2);right:8px}
+html body .acc .acc-go::before{right:calc(8px + (clamp(38px,11vw,44px) - 18px)/2)}
+.acc .acc-go .lab{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+.acc .acc-go .lab>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc .acc-go .ic{display:grid;place-items:center;width:20px;height:20px;flex:none;color:var(--muted)}
+.acc .acc-go .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.acc .acc-tout{justify-self:center;padding:8px 14px;font-size:14px;font-weight:700;color:var(--muted);background:none;border:0}
+.acc .acc-tout span{color:var(--accx)}
+
+/* ---------- Retouches après essai sur iPhone ---------- */
+/* Jour/nuit : la lune la nuit, le soleil le jour (on montre où l'on va) */
+html body #theme{color:var(--muted)}
+html body #theme .sol{display:none}
+:root[data-theme="dark"] body #theme .lune{display:none}:root[data-theme="dark"] body #theme .sol{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body #theme .lune{display:none}:root:not([data-theme="light"]) body #theme .sol{display:block}}
+/* Téléphone : en-tête réduit à l'essentiel, comme la planche */
+@media (max-width:899px){html body #search{display:none}}
+html body #hello{font-size:clamp(26px,7.4vw,32px);letter-spacing:-.6px;margin-bottom:4px}
+html body #phrase{font-size:15px;color:var(--muted)}
+.acc .dem-h>div:first-child{min-width:0}
+/* Bandeau d'installation : une ligne discrète, tout en bas */
+html body .acc .instb{margin:0;padding:10px 12px;gap:10px;box-shadow:var(--up-s)}
+html body .acc .instb .tx b{font-size:14px}html body .acc .instb .tx small{display:none}
+html body .acc .instb .ic{width:34px;height:34px}html body .acc .instb .ic .ri{width:17px;height:17px}
+.acc .dem-h .prix small{display:inline;margin:0}
+
+/* ---------- Graphique « Voir l'évolution sur 6 mois » (comme la planche) ---------- */
+.acc .stats{--enc:var(--fg);--sig:color-mix(in srgb,var(--muted) 80%,transparent);--s:var(--bg);--tx:var(--fg);--tm:var(--muted)}
+.acc .graph{margin-top:14px}
+.acc .graph summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-radius:16px;font-size:14px;font-weight:700;color:var(--fg);cursor:pointer;background:var(--rs);box-shadow:var(--up-s);transition:box-shadow .8s var(--doux)}
+.acc .graph summary::-webkit-details-marker{display:none}
+.acc .graph summary .fl{color:var(--accx);font-size:18px;transition:transform .8s var(--doux)}
+.acc .graph[open] summary{background:var(--cx);box-shadow:var(--in)}
+.acc .graph[open] summary .fl{transform:rotate(90deg)}
+.acc .graph[open]{display:grid;gap:12px}
+.acc .leg{display:flex;gap:16px;font-size:12.5px;color:var(--muted);font-weight:600}
+.acc .leg span{display:flex;align-items:center;gap:6px}
+.acc .leg i{width:16px;height:0}
+.acc .leg i.l1{border-top:3px solid var(--enc)}.acc .leg i.l2{border-top:2px solid var(--sig)}
+.acc .courbe{width:100%;height:auto;display:block;overflow:visible}
+.acc .courbe .ax{font:600 11px var(--f);fill:var(--muted)}
+.acc .courbe .ax.on{fill:var(--fg);font-weight:800}
+.acc .courbe .val{font:800 13px var(--f);fill:var(--fg)}
+.acc .courbe .val.v2{fill:var(--muted);font-weight:700}
+.acc .courbe .grille{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+.acc .courbe .grille.base{stroke-dasharray:0}
+.acc .courbe .pt{cursor:pointer}
+.acc .courbe .pt .guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.acc .courbe .pt>:not(rect){opacity:0;transition:opacity .3s}
+.acc .courbe .pt:hover>*,.acc .courbe .pt:focus>*,.acc .courbe .pt.on>*{opacity:1}
+.acc .courbe .pt:focus{outline:none}
+.acc .courbe .bulle rect{fill:var(--fg)}
+.acc .courbe .bulle text{font:700 11px var(--f);fill:var(--bg)}
+.acc .courbe .bulle .bt{font-weight:800;font-size:12px}
+.acc .courbe:has(.pt:hover) .fin,.acc .courbe:has(.pt.on) .fin{opacity:.25;transition:opacity .3s}
+/* Le point du mois en cours : seule touche laiton */
+.acc .courbe .fin circle:last-of-type,.acc .courbe .pouls{fill:var(--acc)!important}
+@keyframes acc-trace{to{stroke-dashoffset:0}}
+@keyframes acc-monte{from{transform:scaleY(0);opacity:0}}
+@keyframes acc-pouls{0%{r:6;opacity:.6}100%{r:18;opacity:0}}
+.acc .courbe .aire{transform-box:view-box;transform-origin:50% 100%}
+.acc .anime .aire{animation:acc-monte 1.2s var(--doux) both}
+.acc .anime .a2{animation-delay:.25s}
+.acc .anime .trace.go{animation:acc-trace 1.6s cubic-bezier(.4,0,.2,1) forwards}
+.acc .anime .t2.go{animation-delay:.35s}
+.acc .anime .fin{animation:acc-monte .01s 1.7s both}
+.acc .courbe .pouls{animation:acc-pouls 2.4s ease-out 1.9s infinite;opacity:0}
+@media (prefers-reduced-motion:reduce){.acc .anime .aire,.acc .anime .trace.go,.acc .anime .fin,.acc .courbe .pouls{animation:none}.acc .courbe .pouls{display:none}}
+
+/* ---------- Menu du bas comme la planche : pas de barre, des galets posés sur le fond ---------- */
+html body .nav{background:linear-gradient(to top,var(--bg) 0,var(--bg) calc(100% - 14px),color-mix(in srgb,var(--bg) 0%,transparent) 100%);box-shadow:none;border:0;padding:12px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+html body .nav button,:root.simple body .nav button{min-height:0;gap:6px;padding:0;font-size:11px;font-weight:600;color:var(--muted)}
+html body .nav button[aria-selected="true"]{color:var(--fg);font-weight:700}
+html body .nav .ico,:root.simple body .nav .ico{width:42px;height:42px;font-size:0}
+html body .nav .badge{top:-3px;right:calc(50% - 25px)}
+@media (max-width:899px){html body .app{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}}
+/* Textes du graphique lisibles sur téléphone ; le détail d'un mois s'écrit sous la courbe */
+.acc .courbe .ax{font-size:19px}
+.acc .courbe .val{font-size:21px}
+.acc .courbe .bulle{display:none}
+.acc .graph .mois{margin:0;font-size:13px;color:var(--muted);text-align:center}
+.acc .graph .mois b{color:var(--fg)}
+
+/* ---------- Alignement fin sur la planche (essai iPhone du 28/10 au soir) ---------- */
+/* En-tête : logo de l'artisan posé dans un galet, boutons ronds de 40 px */
+html body .brand>svg,html body .brand>span:first-child{box-sizing:border-box;width:42px!important;height:42px!important;padding:6px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);flex:none}
+html body .brand>span:first-child>svg,html body .brand>span:first-child>img{width:30px!important;height:30px!important;border-radius:9px;display:block}
+html body .brand>svg rect:first-child{rx:22}
+html body .head .icon-b{width:42px;height:42px}
+html body .chip-demo{padding:6px 10px}
+/* Accueil : mêmes poids et tailles que la planche */
+html body #hello{font-size:clamp(26px,7vw,30px)}
+.acc{gap:18px}
+html body .acc .card{border-radius:22px;padding:18px}
+.acc .flux span{color:var(--muted);font-weight:600}
+.acc .tuile{border-radius:20px;padding:14px;display:grid;align-content:start;gap:2px}
+.acc .tuile b{font-size:24px}
+.acc .graph summary{font-weight:500}
+.acc .pas{width:26px;height:26px;font-size:11px}
+.acc .pas.ici{width:36px;height:36px;font-size:14px}
+.acc .chaine{padding:4px 0}
+.acc .chaine::before,.acc .chaine::after{left:13px;right:13px}
+.acc .chaine::after{width:calc((100% - 26px)*var(--fait));right:auto}
+.acc .ligne .cote{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
+/* La carte « Mode démo » passe tout en bas, en petit : l'accueil commence par les chiffres comme la planche */
+html body .acc .vco{margin:0;padding:12px 14px;box-shadow:var(--up-s)}
+html body .acc .vco span{font-size:13px}
+html body .brand>img.pc-logo{box-sizing:border-box;width:42px!important;height:42px!important;padding:6px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);object-fit:contain;flex:none}
+/* Résumé d'une vraie demande : deux lignes au plus, comme la planche */
+.acc .dem-h small.resume{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- Tablette et ordinateur : menu de ronds sur le côté gauche, comme la planche ---------- */
+@media (min-width:900px){
+  html body{padding-left:108px}
+  html body .tabs-top,html body #net{display:none!important}
+  html body .nav{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:18px;position:fixed;top:0;bottom:0;left:0;right:auto;width:108px;
+    padding:24px 0 calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg);box-shadow:none}
+  html body .nav button{width:100%;flex:none}
+  html body .nav .ico,:root.simple body .nav .ico{width:46px;height:46px}
+  html body .nav .badge{top:-3px;right:calc(50% - 27px)}
+  html body .app{padding-bottom:40px}
+}
+/* La dictée reste toujours à portée (Cyril : « très important dans notre processus ») : rond micro dans l'en-tête, téléphone comme tablette */
+html body .head #speak{display:grid!important;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--rs);box-shadow:var(--up-s);color:var(--accx)}
+html body .head #speak .ri{width:19px;height:19px;color:var(--accx)}
+/* Téléphone : la dictée flotte en bas à droite, au-dessus du menu, accessible à tout moment même en faisant défiler */
+@media (max-width:899px){
+  html body .head #speak{position:fixed;z-index:22;left:0;right:0;margin:0 auto;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:42px;height:42px;box-shadow:var(--up-s)}
+  html body .head #speak .ri{width:20px;height:20px}
+}
+@media (max-width:899px){html body .app{padding-bottom:calc(172px + env(safe-area-inset-bottom,0px))}}
+/* Relief plus marqué sur les gros boutons d'action */
+html body .btn.go,html body .vbtn.go{box-shadow:-6px -6px 14px var(--hi),8px 8px 18px var(--lo)}
+/* ===== Harmonisation de tout l'Espace (28/10) ===== */
+/* Encadrés d'aide : bloc en relief, plus de pointillés */
+html body .tip{background:var(--rs);border:0;box-shadow:var(--up-s);border-radius:18px;padding:12px 12px 12px 14px}
+html body .tip .q{background:var(--cx);box-shadow:var(--in);color:var(--accx)}
+/* Puces « Bientôt » : creusées */
+html body .soon{background:var(--cx);border:0;box-shadow:var(--in);font-family:inherit;letter-spacing:.04em}
+/* Cartes Devis : le relief est porté par l'enveloppe (sinon coupé) */
+html body .dwrap{box-shadow:var(--up);overflow:hidden;-webkit-mask-image:none;mask-image:none;isolation:isolate;background:var(--rs)}
+html body .dwrap .under{inset:2px;border-radius:18px;background:var(--acc)}
+html body .dwrap .dcard{box-shadow:none;background:var(--rs)}
+html body .dcard.sel{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--acc) 55%,transparent)!important}
+/* Interrupteurs : rail creusé, bouton en relief, laiton quand actif */
+html body .sw{background:var(--cx);box-shadow:var(--in)}
+html body .sw::after{background:var(--rs);box-shadow:var(--up-s)}
+html body .sw.on{background:color-mix(in srgb,var(--acc) 30%,var(--cx))}
+html body .sw.on::after{background:var(--accx)}
+/* Relances : petites puces creusées, icône sans pastille */
+html body .rel span{background:var(--cx);box-shadow:var(--in);color:var(--muted)}
+html body .rel span.done{background:var(--cx);color:var(--accx)}
+html body .rel span .ri,html body .rel span.ri{background:none;box-shadow:none;padding:0}
+/* Avatars / initiales (fournisseurs, menu) : galets */
+html body .av{background:var(--rs);box-shadow:var(--up-s);border-radius:50%;color:var(--fg)}
+/* Bouton Retour des fiches : galet sans contour */
+html body .xback{background:var(--rs)!important;color:var(--fg)!important;border:0!important;box-shadow:var(--up-s)}
+/* Notification : icône dans un galet laiton */
+html body .toast .ti{background:var(--rs);box-shadow:var(--up-s);border-radius:50%}
+html body .toast .ti rect,html body .toast .ti circle:first-of-type{fill:var(--accx)}
+html body .toast .ti circle:last-of-type{fill:var(--rs);stroke:var(--accx)}
+/* Bienvenue : icône dans un galet, plus de halo */
+html body .wicon{background:var(--rs);box-shadow:var(--up);color:var(--accx);border-radius:50%}
+html body .wdots i{background:var(--cx);box-shadow:var(--in)}
+html body .wdots i.on{background:var(--accx);box-shadow:none}
+/* Calendrier : aujourd'hui en laiton */
+html body .cal-top h3 span{color:var(--accx)}
+html body .wkc-h .tdy b,html body .mo-g .tdy .n,html body .mo-g .tdy.sel .n{background:var(--accx);color:var(--bg);box-shadow:none}
+html body .nowl{border-top-color:var(--accx)}html body .nowl::before{background:var(--accx)}
+html body .ev.free{border-color:color-mix(in srgb,var(--muted) 35%,transparent)}
+/* Anneaux d'avancement des chantiers */
+html body .ring{background:conic-gradient(var(--accx) calc(var(--p)*1%),var(--cx) 0)}
+html body .ring::before{background:var(--rs)}
+html body .prog{background:var(--cx);box-shadow:var(--in)}
+html body .prog i{background:var(--accx)}
