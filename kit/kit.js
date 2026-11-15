@@ -26,7 +26,7 @@ function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return
 function eur(v){return Math.round(v).toLocaleString('fr-FR').replace(/ | /g,' ')+' €'}
 /* état (sur l'appareil) */
 var SK='pc-kit-'+K.id,S={};try{S=JSON.parse(lsG(SK)||'{}')||{}}catch(e){S={}}
-S.ck=S.ck||{};S.et=S.et||{};S.on=S.on||{};
+S.ck=S.ck||{};S.et=S.et||{};S.on=S.on||{};S.q=S.q||{};
 function save(){lsS(SK,JSON.stringify(S))}
 function toast(t,i){var e=$('toast');e.innerHTML=ic(i||'check')+'<span>'+esc(t)+'</span>';e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2400)}
 
@@ -65,8 +65,10 @@ function vDer(){
 /* ---------- Prix ---------- */
 function base(){var C=K.prix.choix;if(!C)return null;var f=S.f!=null?S.f:C.f,t=S.t!=null?S.t:C.t,F=C.formules[f],p=F[1][t];
   return {n:F[0],d:'Prix '+C.tailles[t][1]+(p==null?' : sur devis, chiffré avec vous':'')+(F[2]?' · '+F[2]:''),mois:p,devis:p==null}}
-function lignes(){var C=K.prix.choix,f=C?(S.f!=null?S.f:C.f):0,L=K.prix.lignes.map(function(l){if(!l.departF)return l;var c=Object.assign({},l);c.depart=l.departF[f];return c}),b=base();if(b)L.unshift(b);
+function lignes(){var C=K.prix.choix,f=C?(S.f!=null?S.f:C.f):0,L=K.prix.lignes.map(function(l){if(!l.departF)return l;var c=Object.assign({},l);c.depart=l.departF[f];return c}).map(function(l){if(l.par==null)return l;var c=Object.assign({},l),q=qte(l),pay=Math.max(0,q-(l.inclus||0));c.mois=pay*l.par;c.q=q;c.d=(l.d?l.d+' ':'')+(l.inclus?'Les '+l.inclus+' premiers compris, puis ':'')+eur(l.par)+' HT / mois chacun.';if(!pay){c.txt='Compris';c.txtS=l.inclus+' premiers'}return c}),b=base();if(b)L.unshift(b);
   return L}
+/* ligne au nombre (ex. poseurs connectés) : par = prix par unité et par mois, inclus = nombre compris, qte = nombre par défaut */
+function qte(l){var k=l.k||l.n;return S.q[k]!=null?S.q[k]:(l.qte||0)}
 function estOn(l,i){if(!l.opt)return true;var k=l.k||l.n;return S.on[k]!=null?S.on[k]:!!l.on}
 function px(l){if(l.txt)return l.txt+(l.txtS?'<small>'+l.txtS+'</small>':'');var a=[];
   if(l.mois!=null)a.push(eur(l.mois)+'<small>HT / mois</small>');if(l.depart!=null)a.push(eur(l.depart)+'<small>HT une fois</small>');
@@ -80,7 +82,7 @@ function vPrix(){
       '<div class="choix" role="group" aria-label="Taille de l\'équipe">'+C.tailles.map(function(T,i){return '<button aria-pressed="'+(i===t)+'" data-t="'+i+'">'+T[0]+'</button>'}).join('')+'</div></div>'}
   h+='<div class="prop" id="prop"><div class="ent">'+LOGO+'<span><b>'+Pp.titre+'</b><small>'+Pp.sous+'</small></span></div>';
   L.forEach(function(l,i){var on=estOn(l,i);
-    h+='<div class="lg'+(on?'':' off')+'"><span class="tx"><b>'+l.n+'</b>'+(l.d?'<small>'+l.d+'</small>':'')+'</span><span class="px">'+px(l)+'</span>'+
+    h+='<div class="lg'+(on?'':' off')+'"><span class="tx"><b>'+l.n+'</b>'+(l.d?'<small>'+l.d+'</small>':'')+(l.par!=null?'<span class="qt"><button class="pk" data-qm="'+esc(l.k||l.n)+'" aria-label="Un de moins">−</button><b>'+l.q+'</b><button class="pk" data-qp="'+esc(l.k||l.n)+'" aria-label="Un de plus">+</button><small>'+l.unite+(l.q>1?'s':'')+'</small></span><small class="qp">'+l.q+' '+l.unite+(l.q>1?'s':'')+'</small>':'')+'</span><span class="px">'+px(l)+'</span>'+
       (l.opt?'<button class="sw" aria-pressed="'+on+'" aria-label="'+esc(l.n)+' : '+(on?'active':'pas prise')+'" data-sw="'+esc(l.k||l.n)+'"></button>':'')+'</div>'});
   h+='<div class="tot"><div><small>Chaque mois</small><b>'+(devis?'Sur devis':eur(m)+' <em>HT</em>')+'</b></div><div><small>Au départ</small><b>'+(dep?eur(dep)+' <em>HT</em>':'0 €')+'</b></div></div>';
   if(Pp.conditions&&Pp.conditions.length)h+='<ul class="cond">'+Pp.conditions.map(function(c){return '<li>'+ic('check')+'<span>'+c+'</span></li>'}).join('')+'</ul>';
@@ -137,6 +139,7 @@ d.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)re
   if(D.ck!=null){S.ck[D.ck]=!S.ck[D.ck];save();render();return}
   if(D.et!=null){S.et[D.et]=!S.et[D.et];save();render();return}
   if(D.sw!=null){var L=lignes(),l=L.filter(function(x){return (x.k||x.n)===D.sw})[0];S.on[D.sw]=!estOn(l);save();render();return}
+  if(D.qm!=null||D.qp!=null){var k=D.qm!=null?D.qm:D.qp,l0=K.prix.lignes.filter(function(x){return (x.k||x.n)===k})[0];S.q[k]=Math.max(0,qte(l0)+(D.qp!=null?1:-1));save();render();return}
   if(D.f!=null){S.f=+D.f;save();render();return}
   if(D.t!=null){S.t=+D.t;save();render();return}
   if(D.ob!=null){b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')!=='true');return}

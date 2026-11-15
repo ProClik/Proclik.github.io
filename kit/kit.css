@@ -100,6 +100,7 @@ h1{font-size:24px;letter-spacing:-.02em;margin:6px 0 2px;line-height:1.15}
 .lg .px small{display:block;font-weight:600;color:var(--muted);font-size:11.5px}
 .lg .px s{color:var(--muted);font-weight:600;font-size:12.5px;margin-right:6px}
 .lg.off .tx,.lg.off .px{opacity:.45}
+.qt{display:flex;align-items:center;gap:8px;margin-top:8px}.lg .tx .qt small{margin:0;font-size:13px}.qp{display:none!important}.qt button{width:30px;height:30px;border-radius:50%;font-weight:800;font-size:16px;line-height:1}.qt b{min-width:20px;text-align:center;font-size:15px}
 .sw{width:46px;height:28px;border-radius:99px;box-shadow:var(--in);position:relative;flex:none;transition:background .2s}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--calme);box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .25s var(--doux)}
 .sw[aria-pressed="true"]{background:var(--nuit)}
@@ -157,7 +158,7 @@ textarea.notes:focus{outline:2px solid color-mix(in srgb,var(--nuit) 40%,transpa
 /* Impression : seulement la proposition, en clair */
 @media print{
   :root{--bg:#fff;--calme:#fff;--fg:#0E1322;--muted:#565E73;--teinte:#F1F2F5;--nuit:#1B2440;--nuit-fg:#fff;--laiton:#A8823F;--calme-sh:none}
-  .top,.hors-prop,.actions,.toast,.sortir,.sw{display:none!important}
+  .top,.hors-prop,.actions,.toast,.sortir,.sw,.qt{display:none!important}.lg .tx small.qp{display:block!important}
   .sec{display:none!important}.sec.prix{display:block!important;animation:none}
   main{max-width:none;padding:0}
   .prop{box-shadow:none;border:1px solid #ddd}
