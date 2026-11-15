@@ -277,6 +277,15 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .sw i::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .2s}
 .sw[aria-checked="true"] i{background:var(--nuit)}.sw[aria-checked="true"] i::after{left:20px}
 .blk.lie h2 .etq{margin-left:auto}
+
+.negl{display:flex;align-items:center;gap:10px;width:100%;padding:13px 14px;border-radius:16px;text-align:left;color:var(--fg)}
+.negl b{flex:1;font-size:15px}.negl .vx{margin:0}.negl svg.i{width:18px;height:18px;color:var(--muted);flex:none}
+.jr2{display:grid;grid-template-columns:86px 1fr;gap:8px;padding:8px 0;align-items:start}.jr2+.jr2{border-top:1px solid var(--line)}
+.jr2>b{font-size:13px;padding-top:6px}.jr2>div{display:grid;gap:5px}
+.ev{display:block;padding:7px 10px;border-radius:10px;font-size:13px;font-weight:700;background:color-mix(in srgb,var(--nuit) 10%,var(--calme))}
+.ev.v{background:color-mix(in srgb,#8A63B8 15%,var(--calme))}.ev.v i{font-style:normal;font-size:10.5px;font-weight:800;color:#6E4D99;margin-right:6px;text-transform:uppercase;letter-spacing:.04em}
+.ev.l{background:none;color:var(--muted);font-weight:600;box-shadow:inset 0 0 0 1px var(--line)}
+.cl1>.mot{margin-right:16px;align-self:center}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -320,13 +329,13 @@ var NAV={
   adv:[['jour','home','À traiter'],['cmd','truck','Commandes'],['pp','cal','Planning'],['cli','users','Dossiers']],
   agence:[['jour','chart','Tableau'],['pp','cal','Planning'],['pos','helmet','Poseurs'],['cli','users','Dossiers']],
   poseur:[['jour','hammer','Mes poses'],['pp','cal','Planning'],['pap','shield','Papiers']],
-  relie:[['jour','home','Mon Espace'],['cli','users','Mes clients'],['lien','team','Valcroix']]};
+  relie:[['jour','home','Accueil'],['cli','users','Mes clients'],['pp','cal','Planning'],['neg','team','Valcroix']]};
 var ong={com:'jour',adv:'jour',agence:'jour',poseur:'jour',relie:'jour'};
 $('logo').innerHTML=PCD.logo;$('planf').querySelector('.ferme').innerHTML=ic('x');
 var RL={agence:'Responsable',com:'Commercial',adv:'ADV',poseur:'Poseur',relie:'Son Espace'};
 function rRoles(){$('roles').innerHTML=Object.keys(VX.ROLES).map(function(k){return '<button class="pers pk" data-r="'+k+'" aria-pressed="'+(role()===k)+'"><i>'+N[k][0]+'</i><span><b>'+N[k]+'</b><small>'+RL[k]+'</small></span></button>'}).join('')}
 $('roles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.role=b.dataset.r;save();rRoles();go(ong[role()])});
-function nb(o){var r=role();if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return (r!=='agence'&&r!=='adv')?0:D.filter(function(d){return acaler(d)&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
+function nb(o){var r=role();if(o==='neg')return negCount();if(o==='pp'&&r==='relie')return 0;if(o==='jour'&&r==='adv')return file().length;if(o==='cli'&&r==='com')return D.filter(function(d){return d.com==='julien'&&d.relance&&!S.relance[d.id]&&et(d)===1}).length;if(o==='pp')return (r!=='agence'&&r!=='adv')?0:D.filter(function(d){return acaler(d)&&!place(d.id)}).length;if(o==='pos'||o==='pap')return r==='poseur'?0:1;return 0}
 function rNav(){var r=role();$('nav').innerHTML=NAV[r].map(function(n){if(n[0]==='+')return '<button class="plus" onclick="nouveau()" aria-label="Nouveau rendez-vous ou prise de cotes"><span class="g">'+ic('plus')+'</span></button>';var c=nb(n[0]);return '<button data-o="'+n[0]+'" aria-selected="'+(ong[r]===n[0])+'"><span class="g">'+ic(n[1])+'</span>'+n[2]+(c?'<span class="bd">'+c+'</span>':'')+'</button>'}).join('')}
 $('nav').addEventListener('click',function(e){var b=e.target.closest('button[data-o]');if(b)go(b.dataset.o)});
 function rCloche(){var n=nonLus();$('cloche').innerHTML=ic('bell')+(n?'<span class="bd">'+n+'</span>':'')}
@@ -528,7 +537,7 @@ function caseLibre(k,j){if(!PL.sel){toast('Choisissez d\'abord un chantier à ca
   var d=VX.dos(PL.sel),p=VX.POSEURS[k];
   fen('<h3>Pose '+d.cl+'</h3><p class="sous">'+VX.JL[j]+' novembre · '+p.n+' ('+p.qui+')</p><div class="pile"><section class="blk"><p style="margin:0 0 6px;font-size:13.5px"><b>Le poseur reçoit :</b> l\'adresse, la fiche de cotes, le matériel à retirer (quai 2).</p><p style="margin:0;font-size:13.5px"><b>Le client reçoit :</b> « Votre pose est prévue le '+VX.JL[j].toLowerCase()+' novembre avec '+p.n+'. Rappel la veille. »</p></section><button class="go" onclick="caler(\''+k+'\','+j+')">'+ic('send')+'Caler et prévenir tout le monde</button></div>')}
 function caler(k,j){var id=PL.sel,d=VX.dos(id);S.pl[k][j]=id;PL.sel=null;
-  if(VX.POSEURS[k].propre){S.lien[id]={j:j,etat:'envoye',part:{}};evt(['relie'],'Valcroix vous confie une pose : '+d.cl+', '+d.v+' · '+VX.JL[j],'hammer');evt(['com','agence','adv'].filter(function(r){return r!==role()}),'Pose '+d.cl+' envoyée à BRS pour '+VX.JL[j]+' · en attente de sa réponse','send');save();fermer();re();toast('Envoyé dans l\'Espace de BRS','send');return}
+  if(VX.POSEURS[k].propre){S.lien[id]={j:j,etat:'envoye',part:{}};evt(['relie'],'Valcroix · nouvelle pose à accepter : '+d.cl+', '+d.v+' · '+VX.JL[j],'hammer');evt(['com','agence','adv'].filter(function(r){return r!==role()}),'Pose '+d.cl+' envoyée à BRS pour '+VX.JL[j]+' · en attente de sa réponse','send');save();fermer();re();toast('Envoyé dans l\'Espace de BRS','send');return}
   evt(['poseur'],'Nouvelle pose : '+d.cl+', '+d.v+' · '+VX.JL[j]+' novembre','hammer');evt(['com','agence','adv'].filter(function(r){return r!==role()}),'Pose '+d.cl+' calée '+VX.JL[j]+' avec '+VX.POSEURS[k].n,'cal');
   save();fermer();re();toast('Calé · SMS envoyés au poseur et au client','send')}
 function poseur(k){var p=VX.POSEURS[k],L={urssaf:'Attestation URSSAF',dec:'Assurance décennale',kbis:'Extrait Kbis'};
@@ -571,20 +580,28 @@ var PARTS=[['cotes','Mes cotes reprises sur place','ruler'],['photos','Photos av
 function partVu(id){var L=S.lien[id],P=PARTS.filter(function(x){return L.part[x[0]]});
   return '<section class="blk lie"><h2>'+ic('team')+'BRS<span class="sp"></span>'+etq(L.etat==='ok'?'Confirmé':'À confirmer',L.etat==='ok'?'ok':'')+'</h2><p class="mini" style="margin:0 0 6px">Il travaille dans son propre Espace ProClik. Il partage avec vous :</p>'+(P.length?'<div class="docs">'+P.map(function(x){return '<span class="ok">'+x[1]+'</span>'}).join('')+'</div>':'<p class="mini" style="margin:0">Rien pour l\'instant.</p>')+'</section>'}
 function lies(){return Object.keys(S.lien).map(function(id){return VX.dos(id)})}
-V.relie_jour=function(){var h=hi('Bonjour Aurélien','BRS · votre Espace ProClik','<span class="ex">'+ic('team')+'Relié à Valcroix</span>');h+='<div class="pile">';
-  var N=lies().filter(function(d){return S.lien[d.id].etat==='envoye'});
-  if(N.length){var d=N[0],L=S.lien[d.id];h+='<section class="now"><span class="k">Nouveau · confié par Valcroix Matériaux</span><b class="t">'+d.cl+', '+d.v+'</b><p>'+d.quoi+' '+d.fab+' · pose '+VX.JL[L.j].toLowerCase()+'</p><div class="row"><button class="gw" onclick="lieRep(\''+d.id+'\',1)">'+ic('check')+'J\'accepte '+VX.JL[L.j].split(' ')[0].toLowerCase()+'</button><button class="gh" onclick="lieRep(\''+d.id+'\',0)">Autre date</button></div></section>'}
-  else h+='<section class="now"><span class="k">Aujourd\'hui</span><b class="t">M. Vasseur, Meylan</b><p>Votre propre chantier : isolation des combles.</p><div class="row"><button class="gw" onclick="toast(\'Votre chantier (démo)\',\'hammer\')">'+ic('hammer')+'Ouvrir</button></div></section>';
-  var A=lies().map(function(d){var L=S.lien[d.id];return '<div class="cl1"><button class="nm" onclick="lieOuvrir(\''+d.id+'\')"><b>'+d.cl+'</b><small>'+d.quoi+' · '+VX.JL[L.j]+'</small></button><span class="vx">Valcroix</span></div>'}).concat(VX.PROPRES.slice(0,2).map(function(c){return '<div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>'+c.cl+'</b><small>'+c.quoi+' · '+c.e+'</small></button></div>'}));
-  h+='<section class="grp lcl"><h2 class="gh2">'+ic('list')+'Mes chantiers<span class="nb">'+A.length+'</span></h2><div class="lst">'+A.join('')+'</div></section>';
-  h+='<p class="mini">Vos clients restent chez vous. Valcroix ne voit que ce que vous choisissez de partager, chantier par chantier.</p></div>';return h};
-V.relie_cli=function(){var h=hi('Mes clients','Les vôtres et ceux confiés par Valcroix');
-  var A=VX.PROPRES.map(function(c){return '<div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>'+c.cl+'</b><small>'+c.quoi+' · '+c.v+'</small></button><span class="mot">'+c.e+'</span></div>'}),B=lies().map(function(d){return '<div class="cl1"><button class="nm" onclick="lieOuvrir(\''+d.id+'\')"><b>'+d.cl+'</b><small>'+d.quoi+' · '+d.v+'</small></button><span class="vx">Valcroix</span></div>'});
-  return h+'<div class="pile lcl"><section class="grp"><h2 class="gh2">'+ic('user')+'Mes propres clients<span class="nb">'+A.length+'</span></h2><div class="lst">'+A.join('')+'</div></section><section class="grp"><h2 class="gh2">'+ic('team')+'Confiés par Valcroix<span class="nb">'+B.length+'</span></h2><div class="lst">'+B.join('')+'</div></section></div>'};
-V.relie_lien=function(){var h=hi('Valcroix Matériaux','Relié depuis le 3 novembre','<span class="ex">'+ic('team')+'Relié</span>');
-  h+='<div class="pile">'+blk('Ce que Valcroix vous donne','box','<div class="docs"><span class="ok">Client et adresse</span><span class="ok">Plan du logement</span><span class="ok">Fiche de cotes</span><span class="ok">Date de pose</span><span class="ok">Matériel au quai</span></div><p class="mini" style="margin:8px 0 0">Jamais leurs prix de vente au client.</p>');
-  h+=blk('Ce que vous partagez, par défaut','eye',PARTS.map(function(x){var on=!!(S.defPart&&S.defPart[x[0]]);return '<button class="sw pk" role="switch" aria-checked="'+on+'" onclick="S.defPart=S.defPart||{};S.defPart[\''+x[0]+'\']='+!on+';save();re()">'+ic(x[2])+'<span>'+x[1]+'</span><i></i></button>'}).join('')+'<p class="mini" style="margin:8px 0 0">Vous pouvez changer pour chaque chantier. Vos photos et vos propres clients ne partent jamais sans votre accord.</p>');
-  h+=blk('Vos papiers','shield','<p class="mini" style="margin:0">URSSAF, décennale, Kbis : mis à jour une fois dans votre Espace, Valcroix les voit à jour tout seul.</p>');return h+'</div>'};
+/* Côté BRS : ses clients d'un côté, le négoce dans SON bouton à part ; un seul planning pour ne jamais se caler deux fois */
+function negCount(){return lies().filter(function(d){return S.lien[d.id].etat==='envoye'}).length}
+V.relie_jour=function(){var h=hi('Bonjour Aurélien','BRS · votre Espace ProClik');h+='<div class="pile">';
+  h+='<section class="now"><span class="k">Aujourd\'hui · votre chantier</span><b class="t">M. Vasseur, Meylan</b><p>Isolation des combles · 2e jour</p><div class="row"><button class="gw" onclick="toast(\'Votre chantier (démo)\',\'hammer\')">'+ic('hammer')+'Ouvrir</button></div></section>';
+  var n=negCount();h+='<button class="negl pk" onclick="go(\'neg\')"><span class="vx">Valcroix</span><b>'+(n?n+' pose à accepter':'Rien de nouveau')+'</b>'+ic('right')+'</button>';
+  h+='<section class="grp lcl"><h2 class="gh2">'+ic('list')+'À faire<span class="nb">2</span></h2><div class="lst"><div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>Mme Ollier</b><small>Cloisons + 2 portes · facture à envoyer</small></button></div><div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>Mme Roche</b><small>Salle de bain · devis envoyé il y a 6 jours</small></button></div></div></section>';
+  return h+'</div>'};
+V.relie_cli=function(){var A=VX.PROPRES.map(function(c){return '<div class="cl1"><button class="nm" onclick="toast(\'Votre client (démo)\',\'user\')"><b>'+c.cl+'</b><small>'+c.quoi+' · '+c.v+'</small></button><span class="mot">'+c.e+'</span></div>'});
+  return hi('Mes clients',A.length+' clients · les vôtres uniquement')+'<div class="pile lcl"><div class="lst">'+A.join('')+'</div><p class="mini">Les clients de Valcroix ne sont pas ici : ce ne sont pas les vôtres. Leurs poses sont dans le bouton Valcroix.</p></div>'};
+V.relie_pp=function(){var P=[[['Vasseur · combles','m']],[['Vasseur · combles','m']],[],[],[['Ollier · cloisons','m']]];
+  lies().forEach(function(d){var L=S.lien[d.id];P[L.j].push([d.cl.replace(/^(M\.|Mme) /,'')+' · pose'+(L.etat==='envoye'?' (à accepter)':''),'v'])});
+  var h=hi('Planning','Semaine 47 · vos chantiers et ceux de Valcroix');
+  h+='<div class="pile"><section class="blk">'+VX.JL.map(function(j,i){return '<div class="jr2"><b>'+j+'</b><div>'+(P[i].length?P[i].map(function(x){return '<span class="ev '+x[1]+'">'+(x[1]==='v'?'<i>Valcroix</i>':'')+x[0]+'</span>'}).join(''):'<span class="ev l">Libre</span>')+'</div></div>'}).join('')+'</section><div class="legende"><span><i style="background:var(--nuit)"></i>Vos chantiers</span><span><i style="background:#8A63B8"></i>Poses Valcroix</span></div></div>';return h};
+V.relie_neg=function(){var L=lies(),A=L.filter(function(d){return S.lien[d.id].etat==='envoye'}),C=L.filter(function(d){return S.lien[d.id].etat==='ok'});
+  var row=function(d){var x=S.lien[d.id];return '<div class="cl1"><button class="nm" onclick="lieOuvrir(\''+d.id+'\')"><b>'+d.cl+'</b><small>'+d.quoi+' · '+VX.JL[x.j]+'</small></button>'+(x.etat==='envoye'?'<button class="mot act pk" onclick="lieRep(\''+d.id+'\',1)">Accepter</button>':'<button class="nm2" onclick="lieOuvrir(\''+d.id+'\')">'+ic('right')+'</button>')+'</div>'};
+  var h=hi('Valcroix Matériaux','Les poses qu\'ils vous confient','<span class="ex">'+ic('team')+'Relié</span>')+'<div class="pile lcl">';
+  if(A.length)h+='<section class="grp"><h2 class="gh2 w">'+ic('alert')+'À accepter<span class="nb">'+A.length+'</span></h2><div class="lst">'+A.map(row).join('')+'</div></section>';
+  h+='<section class="grp"><h2 class="gh2">'+ic('cal')+'Calées<span class="nb">'+C.length+'</span></h2><div class="lst">'+C.map(row).join('')+'</div></section>';
+  h+='<button class="negl pk" onclick="toast(\'Novembre : '+C.length+' pose'+(C.length>1?'s':'')+' · facture préparée, à vérifier avant envoi (démo)\',\'doc\')">'+ic('doc')+'<b>Ma facture de pose à Valcroix</b>'+ic('right')+'</button>';
+  h+='<button class="negl pk" onclick="negReglages()">'+ic('eye')+'<b>Ce que je partage par défaut</b>'+ic('right')+'</button>';
+  return h+'</div>'};
+function negReglages(){fen('<h3>Partage avec Valcroix</h3><p class="sous">Par défaut, pour chaque nouvelle pose. Vous pouvez changer chantier par chantier.</p><div class="pile">'+blk('Ce que Valcroix vous donne','box','<div class="docs"><span class="ok">Client et adresse</span><span class="ok">Plan du logement</span><span class="ok">Fiche de cotes</span><span class="ok">Date de pose</span></div><p class="mini" style="margin:8px 0 0">Jamais leurs prix de vente.</p>')+'<section class="blk"><h2>'+ic('eye')+'Ce que vous partagez</h2>'+PARTS.map(function(x){var on=!!(S.defPart&&S.defPart[x[0]]);return '<button class="sw pk" role="switch" aria-checked="'+on+'" onclick="S.defPart=S.defPart||{};S.defPart[\''+x[0]+'\']='+!on+';save();negReglages()">'+ic(x[2])+'<span>'+x[1]+'</span><i></i></button>'}).join('')+'<p class="mini" style="margin:8px 0 0">Vos propres clients et vos chiffres ne sont jamais partagés.</p></section></div>')}
 function lieRep(id,ok){var d=VX.dos(id),L=S.lien[id];if(ok){L.etat='ok';if(S.defPart)Object.keys(S.defPart).forEach(function(k){if(S.defPart[k])L.part[k]=1});evt(['adv','agence','com'],'BRS confirme la pose '+d.cl+' '+VX.JL[L.j],'check');toast('Confirmé, Valcroix le voit dans son planning','check')}
   else{evt(['adv','agence'],'BRS propose une autre date pour '+d.cl,'cal');toast('Valcroix est prévenu, il vous propose une autre date','cal')}save();re()}
 function lieOuvrir(id){var d=VX.dos(id),L=S.lien[id];
