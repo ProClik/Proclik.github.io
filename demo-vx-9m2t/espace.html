@@ -239,6 +239,18 @@ h2 .sp{flex:1}h2 small{font-size:12px;color:var(--muted);font-weight:700}
 .cl1 .mot.w{color:#fff;background:var(--warn);padding:4px 10px;border-radius:99px;font-weight:800}
 .cl1 svg.i{width:16px;height:16px;color:var(--muted);flex:none}
 .gh2{margin:6px 4px 0}
+
+.cl1{padding:0}.cl1 .nm{flex:1;min-width:0;display:grid;text-align:left;padding:14px 4px 14px 16px;background:none;border:0;color:var(--fg)}
+.cl1 .nm small{font-size:12.5px;color:var(--muted);font-weight:600}
+.cl1 .nm2{display:flex;align-items:center;gap:8px;padding:14px 12px 14px 4px;background:none;border:0;color:var(--fg);align-self:stretch}
+.cl1 button.mot.w{margin-right:12px;border:0;cursor:pointer;padding:7px 12px;font-size:13.5px}
+.lcl{display:grid;gap:12px}
+.srch{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:16px;padding:4px 4px 4px 14px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08),inset 0 0 0 1px var(--line)}
+.srch>svg.i{width:18px;height:18px;color:var(--muted);flex:none}
+.srch input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;color:var(--fg);padding:10px 0;outline:none}
+.srch .mic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.voir{width:100%;padding:13px;border-radius:16px;font-weight:700;font-size:14px;color:var(--muted)}
+.grp .voir{margin-top:8px}
 </style></head><body>
 <header class="top">
   <span class="logo" id="logo"></span>
@@ -319,11 +331,32 @@ function motCourt(d){var e=et(d),id=d.id;
   if(id==='durand'&&e===0)return 'Métré 10 h';if(d.relance&&e===1&&!S.relance[id])return 'À relancer';if(d.sav&&e===6)return 'Réserve';
   if(d.arc&&S.arcOk==='ecart')return 'Écart ARC';if(d.arc&&!S.arcOk)return 'ARC à voir';if(acaler(d)&&!place(id))return 'Pose à caler';if(e===2)return 'À commander';
   return VX.ETAPES[e]}
-function carteCli(d){var w=aFaire(d);return '<button class="cl1" onclick="ouvrir(\''+d.id+'\')"><b>'+d.cl+'</b><span class="mot'+(w?' w':'')+'">'+motCourt(d)+'</span>'+ic('right')+'</button>'}
-function listeCli(L){var G=[['À faire',L.filter(aFaire)],['En cours',L.filter(function(d){return !aFaire(d)&&et(d)<6})],['Terminés',L.filter(function(d){return !aFaire(d)&&et(d)===6})]];
-  return G.filter(function(g){return g[1].length}).map(function(g,i){return '<section class="grp"><h2 class="gh2'+(g[0]==='À faire'?' w':'')+'">'+g[0]+' · '+g[1].length+'</h2><div class="lst'+(g[0]==='À faire'?' w':'')+'">'+g[1].map(carteCli).join('')+'</div></section>'}).join('')}
-V.com_cli=function(){var L=mesDos(),n=L.filter(aFaire).length;
-  return hi('Mes clients',L.length+' clients')+'<div class="pile lc">'+listeCli(L)+'</div>'};
+/* la pastille orange fait l'action tout de suite ; le nom ouvre la fiche */
+function actMot(d){var m=motCourt(d),r=role(),id=d.id;
+  if(m==='Métré 10 h'&&r==='com')return "location.href='cotes.html?d="+id+"'";
+  if(m==='À relancer')return "relancer('"+id+"')";
+  if((m==='ARC à voir'||m==='Écart ARC')&&r==='adv')return 'arc()';
+  if(m==='Pose à caler'&&(r==='adv'||r==='agence'))return "PL.v='poses';PL.sel='"+id+"';go('pp')";
+  if(m==='À commander'&&r==='adv')return "traiter('cmd','"+id+"')";
+  return "ouvrir('"+id+"')"}
+var PRIO={'Métré 10 h':.5,'Écart ARC':1,'ARC à voir':2,'Pose à caler':3,'À commander':4,'Réserve':5,'À relancer':6};
+function carteCli(d){var w=aFaire(d),m=motCourt(d);return '<div class="cl1"><button class="nm" onclick="ouvrir(\''+d.id+'\')"><b>'+d.cl+'</b>'+(LC.q?'<small>'+d.v+'</small>':'')+'</button>'+(w?'<button class="mot w pk" onclick="'+actMot(d)+'">'+m+'</button>':'<button class="nm2" onclick="ouvrir(\''+d.id+'\')"><span class="mot">'+(d.old?'Terminé':m)+'</span>'+ic('right')+'</button>')+'</div>'}
+var LC={q:'',term:false};
+function sans(t){return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s/g,'')}
+function listeCli(L){var q=sans(LC.q);
+  if(q){var R=L.filter(function(d){return sans(d.cl+' '+d.v+' '+d.tel+' '+d.fab).indexOf(q)>=0});
+    return '<section class="grp"><h2 class="gh2">'+R.length+' résultat'+(R.length>1?'s':'')+'</h2>'+(R.length?'<div class="lst">'+R.slice(0,30).map(carteCli).join('')+'</div>':'<p class="mini">Aucun client trouvé. Essayez la ville ou le téléphone.</p>')+'</section>'}
+  var A=L.filter(aFaire).sort(function(x,y){return (PRIO[motCourt(x)]||9)-(PRIO[motCourt(y)]||9)}),C=L.filter(function(d){return !aFaire(d)&&et(d)<6}),T=L.filter(function(d){return !aFaire(d)&&et(d)===6});
+  var h='';
+  if(A.length)h+='<section class="grp"><h2 class="gh2 w">À faire · '+A.length+'</h2><div class="lst w">'+A.map(carteCli).join('')+'</div></section>';
+  if(C.length)h+='<section class="grp"><h2 class="gh2">En cours · '+C.length+'</h2><div class="lst">'+C.map(carteCli).join('')+'</div></section>';
+  if(T.length)h+=LC.term?'<section class="grp"><h2 class="gh2">Terminés · '+T.length+'</h2><div class="lst">'+T.map(carteCli).join('')+'</div><button class="voir pk" onclick="LC.term=false;re()">Replier les terminés</button></section>':'<button class="voir pk" onclick="LC.term=true;re()">Voir les '+T.length+' terminés</button>';
+  return h}
+function cherche(){return '<div class="srch"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="lcq" type="search" placeholder="Chercher un client, une ville…" value="'+LC.q.replace(/"/g,'&quot;')+'" oninput="LC.q=this.value;$(\'lcl\').innerHTML=listeCli(LCL)" autocomplete="off" enterkeyhint="search"><button class="mic pk" onclick="dicte()" aria-label="Dire le nom">'+ic('mic')+'</button></div>'}
+var LCL=[];
+function dicte(){var R=window.SpeechRecognition||window.webkitSpeechRecognition,i=$('lcq');if(!R){i.focus();toast('Touchez le micro du clavier pour dicter','mic');return}
+  try{var r=new R();r.lang='fr-FR';r.onresult=function(e){LC.q=e.results[0][0].transcript;i.value=LC.q;$('lcl').innerHTML=listeCli(LCL)};r.onerror=function(){i.focus()};r.start();toast('Dites le nom ou la ville','mic')}catch(e){i.focus()}}
+V.com_cli=function(){var L=mesDos();LCL=L;return hi('Mes clients',L.length+' clients')+'<div class="pile lc">'+cherche()+'<div class="lcl" id="lcl">'+listeCli(L)+'</div></div>'};
 function dosLn(d,court){var e=et(d),c=aFaire(d)?'warn':e===6?'ok':'la';
   return '<button class="ln pk" onclick="ouvrir(\''+d.id+'\')"><span class="pt '+c+'"></span><span class="tx"><b>'+d.cl+' · '+d.v+'</b>'+(court?'':'<small>'+suite(d)+'</small>')+'</span><span class="etq">'+VX.ETAPES[e]+'</span></button>'}
 function suite(d){var e=et(d);
@@ -409,8 +442,8 @@ V.adv_cmd=function(){var h=hi('Commandes','Chez les fabricants, par date de livr
   h+='<section class="blk">'+L.map(function(d){var e=et(d),t=e===2?['À passer','la']:d.id==='martin'&&!S.arcOk?['ARC à voir','alert']:d.id==='martin'&&S.arcOk==='ecart'?['Écart signalé','alert']:e===3?[d.liv||'Fabrication','']:['Livré','ok'];
     return '<button class="ln pk" onclick="ouvrir(\''+d.id+'\')"><span class="ico">'+ic('box')+'</span><span class="tx"><b>'+d.cl+' · '+d.fab+'</b><small>'+d.quoi+'</small></span>'+etq(t[0],t[1])+'</button>'}).join('')+'</section>';
   h+='<p class="mini">Chaque ARC et chaque bon de livraison est rangé dans le dossier du client.</p>';return h};
-V.cli=function(){var f=S.fcom||'tous',L=D.filter(function(d){return f==='tous'||d.com===f}),n=L.filter(aFaire).length;
-  return hi('Dossiers',(n?n+' à faire · ':'')+L.length+' dossiers')+'<div class="pile lc"><div class="chips full">'+[['tous','Tous'],['julien','Julien'],['sarah','Sarah']].map(function(c){return '<button class="pk" aria-pressed="'+(f===c[0])+'" onclick="S.fcom=\''+c[0]+'\';re()">'+c[1]+'</button>'}).join('')+'</div>'+listeCli(L)+'</div>'};
+V.cli=function(){var f=S.fcom||'tous',L=D.filter(function(d){return f==='tous'||d.com===f});LCL=L;
+  return hi('Dossiers',L.length+' clients')+'<div class="pile lc">'+cherche()+'<div class="chips full">'+[['tous','Tous'],['julien','Julien'],['sarah','Sarah']].map(function(c){return '<button class="pk" aria-pressed="'+(f===c[0])+'" onclick="S.fcom=\''+c[0]+'\';re()">'+c[1]+'</button>'}).join('')+'</div><div class="lcl" id="lcl">'+listeCli(L)+'</div></div>'};
 
 /* ======================= planning des poseurs (agence + ADV) ======================= */
 var PL={sel:null};

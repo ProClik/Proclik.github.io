@@ -32,6 +32,12 @@
     {id:'chabert',cl:'Mme Chabert',v:'Voiron',com:'sarah',e:3,fab:'Millet',nbm:6,quoi:'6 fenêtres PVC + 2 volets roulants',mt:'9 870 €',suite:'ARC confirmé : arrivée jeudi 19 à l\'agence',tel:'06 00 00 01 10',x:120,y:100},
     {id:'petit',cl:'M. Petit',v:'Rives',com:'julien',e:6,fab:'Millet',nbm:4,quoi:'4 fenêtres PVC',mt:'5 120 €',suite:'Posé · 1 réserve : volet de la chambre à régler lundi',sav:true,pose:'kb',tel:'06 00 00 01 09',x:60,y:70}
   ];
+  /* anciens dossiers terminés (pour voir la liste tenir avec beaucoup de clients) : noms et villes fictifs */
+  (function(){var N=['M. Arnaud','Mme Barbier','M. Benoit','Mme Bertrand','M. Blanchard','Mme Bonnet','M. Boyer','Mme Brun','M. Carpentier','Mme Caron','M. Clément','Mme Colin','M. Dupuis','Mme Fabre','M. Faure','Mme Fleury','M. Fontaine','Mme Gauthier','M. Gérard','Mme Giraud','M. Guérin','Mme Henry','M. Joly','Mme Lacroix','M. Lambert','Mme Lefèvre','M. Lemaire','Mme Mallet','M. Masson','Mme Mercier','M. Meyer','Mme Michaud','M. Noël','Mme Perrin','M. Picard','Mme Renaud','M. Rolland','Mme Vidal'],
+    V=['Voiron','Moirans','Rives','Coublevie','Voreppe','Tullins','Saint-Égrève','Grenoble','Réaumont','La Buisse'],F=['Millet','Minco','K·LINE','Tryba','Bouvet'],
+    Q=['fenêtres PVC','fenêtres bois-alu','menuiseries alu','fenêtres PVC + volets roulants','porte d\'entrée alu'],M=['octobre','septembre','août','juillet','juin','mai'];
+    N.forEach(function(n,i){var nb=2+(i*7)%6;VX.DOSSIERS.push({id:'a'+i,old:1,cl:n,v:V[(i*3)%V.length],com:i%2?'sarah':'julien',e:6,fab:F[i%F.length],nbm:nb,quoi:nb+' '+Q[i%Q.length],
+      mt:(3+(i*13)%15)+' '+String(100+(i*37)%900)+' €',suite:'Posé en '+M[i%M.length]+' · PV signé',tel:'06 00 00 0'+(2+i%7)+' '+String(10+i).slice(-2)})})})();
   /* menuiseries de chaque dossier pour la fiche de cotes (le dossier Durand garde l'exemple complet de la prise de cotes) */
   VX.MEN={
     blanc:[['Séjour','Fenêtre',1180,1350,'2'],['Cuisine','Fenêtre',1000,1250,'1'],['Chambre','Fenêtre',1200,1350,'2'],['Salle de bain','Fenêtre',600,800,'1']],
