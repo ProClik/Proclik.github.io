@@ -12,6 +12,13 @@ var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var lsG=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 var lsS=function(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+/* Aperçu par l'Admin (#apercu=…) : lecture seule, 1 heure, gardé dans cet onglet seulement (ne touche pas à la connexion de l'appareil). */
+var AP=(function(){var m=/[#&]apercu=([A-Za-z0-9_.-]{20,})/.exec(location.hash);if(m){try{sessionStorage.setItem('pc-apercu','1');sessionStorage.setItem('ap:pc-vrai-jeton',JSON.stringify(m[1]));sessionStorage.removeItem('ap:pc-vrai-artisan');sessionStorage.removeItem('ap:pc-vrai-liste');history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+ try{return sessionStorage.getItem('pc-apercu')==='1'}catch(e){return false}})();
+if(AP){var AK={'pc-vrai-jeton':1,'pc-vrai-artisan':1,'pc-vrai-liste':1},g0=lsG,s0=lsS;
+ lsG=function(k){if(AK[k]){try{return JSON.parse(sessionStorage.getItem('ap:'+k)||'null')}catch(e){return null}}return g0(k)};
+ lsS=function(k,v){if(AK[k]){try{v==null?sessionStorage.removeItem('ap:'+k):sessionStorage.setItem('ap:'+k,JSON.stringify(v))}catch(e){}return}s0(k,v)}}
+function quitterApercu(){try{['pc-apercu','ap:pc-vrai-jeton','ap:pc-vrai-artisan','ap:pc-vrai-liste'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}location.reload()}
 var eur=function(n,d){return n==null?'—':Number(n).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:d||2})+' €'};
 var qte=function(n){return n==null?'':String(n).replace('.',',')};
 function quand(iso){if(!iso)return '';var d=new Date(iso);if(isNaN(d))return '';var now=new Date(),j=Math.round((new Date(now.toDateString())-new Date(d.toDateString()))/864e5),h=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':',' h ');
@@ -91,7 +98,7 @@ document.head.appendChild(css);
 /* ---------- appels au service ---------- */
 function api(chemin,opt){opt=opt||{};var j=lsG(KJ),h={};if(j)h.Authorization='Bearer '+j;if(opt.body)h['Content-Type']='application/json';
  return fetch(SERVICE+chemin,{method:opt.method||'GET',headers:h,body:opt.body?JSON.stringify(opt.body):undefined,cache:'no-store'})
-  .then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service ('+r.status+')'}}).then(function(x){if(r.status===401&&x&&x.reconnexion){deconnecter(true);}if(!x.ok)throw new Error(x.erreur||('Erreur '+r.status));return x})},
+  .then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service ('+r.status+')'}}).then(function(x){if(r.status===401&&x&&x.reconnexion){if(AP){quitterApercu();return x}deconnecter(true);}if(r.status===402&&x&&x.suspendu)enPause(x.erreur);if(!x.ok)throw new Error(x.erreur||('Erreur '+r.status));return x})},
    function(){throw new Error(navigator.onLine===false?'Pas de réseau pour l\'instant.':'Service ProClik injoignable. Réessayez dans un instant.')});}
 
 /* ---------- panneau plein écran (même style que le plan) ---------- */
@@ -167,6 +174,11 @@ function compte(){var art=lsG(KA)||{};
   b.innerHTML='<span class="av"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg></span><span class="tx"><b>Mon compte</b><small>Mot de passe, appareils connectés</small></span><span class="go">›</span>';
   b.addEventListener('click',function(){if(window.PCX&&window.PCX.xclose)window.PCX.xclose();compte()});
   var o=document.getElementById('mo-opt');c.insertBefore(b,o?o.nextSibling:c.firstChild)},10)})})();
+/* Espace en pause (abonnement) : rien n'est effacé, message poli, on peut écrire à Cyril. */
+function enPause(msg){if(enPause.vu)return;enPause.vu=1;
+ ouvrir('Votre Espace est en pause<small>Rien n\'est effacé</small>','<div class="card vlog"><p style="margin:0">'+esc(msg||'Votre Espace est en pause.')+'</p><p style="margin:0;color:var(--muted);font-size:13.5px">Vos clients, vos devis et vos factures sont gardés tels quels. Dès que c\'est réglé, tout se rouvre tout seul.</p>'+
+  (window.PCREG&&window.PCREG.ecrire?'<button class="vbtn go" type="button" id="vpause">Écrire à Cyril</button>':'')+'</div>');
+ var b=document.getElementById('vpause');if(b)b.addEventListener('click',function(){fermer();window.PCREG.ecrire('Bonjour Cyril, mon Espace est en pause. ')})}
 function deconnecter(expire){lsS(KJ,null);lsS(KL,null);document.documentElement.classList.remove('pcvrai');location.hash='';if(expire){setTimeout(function(){connexion('Votre connexion a expiré ou le mot de passe a changé : reconnectez-vous.')},50)}else location.reload()}
 
 /* ---------- liste des demandes ---------- */
@@ -543,6 +555,10 @@ function lienDirect(){var h=location.hash;try{h=decodeURIComponent(h)}catch(e){}
 if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore branché','<div class="card"><p style="margin:0">Ce lien ouvre une vraie demande, mais l\'adresse du service ProClik n\'est pas encore réglée dans l\'Espace. Prévenez Cyril : c\'est une ligne à ajouter.</p></div>','<button class="vbtn" type="button" data-vfermer>Fermer</button>')},1500);return}
 /* Pour l'onglet Clients (clients.js) : appels au service, ouverture d'une demande, PDF d'un document */
 window.PCV={api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc};
+if(AP){var bd=document.createElement('div');bd.id='vapercu';bd.setAttribute('role','status');bd.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);padding:8px 8px 8px 14px;border-radius:14px;font:600 13px var(--f);display:flex;gap:10px;align-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);max-width:calc(100% - 24px)';
+ bd.innerHTML='<span id="vapn" style="overflow:hidden;text-overflow:ellipsis">Aperçu (lecture seule)</span><button type="button" style="flex:none;border:0;border-radius:10px;padding:6px 10px;font:700 13px var(--f);background:rgba(255,255,255,.18);color:inherit;cursor:pointer">Quitter</button>';
+ document.body.appendChild(bd);bd.querySelector('button').addEventListener('click',quitterApercu);
+ api('/espace/moi').then(function(x){if(!x||!x.artisan)return;lsS(KA,x.artisan);document.getElementById('vapn').textContent='Aperçu : '+x.artisan.entreprise+' (lecture seule)';if(window.PCMenus)window.PCMenus.applique()}).catch(function(){})}
 if(lsG(KJ))demarrer();else proposer();
 (function(){var m=/[#&]invit=([A-Za-z0-9_-]{20,80})/.exec(location.hash);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
  setTimeout(function(){choisir({invit:m[1]})},lsG(KJ)?300:1200)})();

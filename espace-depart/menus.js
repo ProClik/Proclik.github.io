@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 var d=document;
-function art(){try{return JSON.parse(localStorage.getItem('pc-vrai-artisan'))||{}}catch(e){return {}}}
+function art(){try{if(sessionStorage.getItem('pc-apercu')==='1')return JSON.parse(sessionStorage.getItem('ap:pc-vrai-artisan'))||{};return JSON.parse(localStorage.getItem('pc-vrai-artisan'))||{}}catch(e){return {}}}
 function applique(){
   var m=art().menus||{};
   [].forEach.call(d.querySelectorAll("nav [id^='nb-'],nav [id^='tt-']"),function(b){
