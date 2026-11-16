@@ -141,6 +141,29 @@ footer .pc b{color:#1B2440;font-weight:700}
 .credit{font-size:12px;opacity:.7}
 #heures.flash{animation:flashH 1.2s ease 2}@keyframes flashH{0%,100%{box-shadow:0 0 0 0 transparent;border-radius:16px}40%{box-shadow:0 0 0 4px rgba(168,130,63,.55);border-radius:16px}}
 #ok[aria-disabled="true"]{cursor:pointer;pointer-events:auto!important}
+</style><style id="fenetre">
+.appel-resa{background:var(--surf);border-radius:28px;padding:22px 24px;display:flex;align-items:center;gap:18px;justify-content:space-between;flex-wrap:wrap;box-shadow:0 20px 50px -30px rgba(74,50,67,.4)}
+.appel-resa b{display:block;font-size:18px}.appel-resa span{color:var(--gris);font-size:15px}
+.voile-resa{position:fixed;inset:0;z-index:80;background:rgba(40,26,36,.38);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s}
+.voile-resa.on{opacity:1;pointer-events:auto}
+#fen-resa{position:fixed!important;z-index:90;left:50%;top:50%;width:min(880px,calc(100% - 32px));max-height:min(88dvh,820px);overflow-y:auto;overscroll-behavior:contain;
+ transform:translate(-50%,-46%) scale(.97);opacity:0;visibility:hidden;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s,visibility 0s .45s;box-shadow:0 40px 90px -30px rgba(40,26,36,.55);grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)!important}
+#fen-resa.on{transform:translate(-50%,-50%);opacity:1;visibility:visible;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+#fen-resa .fen-t{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:-6px}
+#fen-resa .fen-t b{flex:1;font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:24px}
+#fen-resa .fen-t button{all:unset;cursor:pointer;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(74,50,67,.08);font-size:16px}
+#fen-resa .poignee{display:none}
+#fen-resa .fen-t{position:sticky;top:calc(-1 * clamp(20px,4vw,40px));z-index:3;background:var(--surf);padding:8px 0}
+#fen-resa .recap{position:static!important}
+@media(max-width:760px){
+ #fen-resa{left:0;right:0;top:auto;bottom:0;width:100%;max-height:92dvh;border-radius:28px 28px 0 0!important;padding:14px 18px calc(18px + env(safe-area-inset-bottom))!important;grid-template-columns:1fr!important;transform:translateY(100%);}
+ #fen-resa.on{transform:none}
+ #fen-resa .fen-t{top:-14px}
+ #fen-resa .fen-t{padding-top:14px}#fen-resa .poignee{display:block;position:absolute;left:50%;top:2px;transform:translateX(-50%);width:44px;height:5px;border-radius:9px;background:rgba(0,0,0,.18)}
+}
+#fen-resa{translate:none!important;scale:none!important}
+body.resa-ouverte{overflow:hidden}
+body.resa-ouverte #bas{display:none!important}
 </style></head><body>
 <div class="ex">Maquette préparée par ProClik pour Chez Julie · démonstration, aucun paiement réel · <a href="espace.html">Voir l'Espace de Julie</a></div>
 <header class="nav"><div class="bar"><a class="marque" href="#haut">Chez Julie<b></b></a>
@@ -158,7 +181,9 @@ footer .pc b{color:#1B2440;font-weight:700}
 <div class="grille" id="grille"></div><p class="autres">Et toute la carte : balayages, colorations &amp; gloss, soin botox, coupes femmes &amp; brushing, mariages &amp; événements · consultation obligatoire avant un premier balayage</p></div></section>
 <section id="salon"><div class="in"><div class="tete reveal"><p class="k">Le salon</p><h2>Un moment rien<br>que pour vous.</h2></div><div class="gal"><figure class="reveal"><img src="https://images.unsplash.com/photo-1672788725446-c303ec2b318e?auto=format&fit=crop&w=1200&q=70" alt="Une cliente coiffée au salon" loading="lazy"><figcaption>Coupe et coiffage</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1734111719430-fe4a3973f8af?auto=format&fit=crop&w=1200&q=70" alt="Brushing sur cheveux longs blonds" loading="lazy"><figcaption>Brushing</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1774660810725-fb04e002003d?auto=format&fit=crop&w=1200&q=70" alt="Coiffeuse réalisant un chignon" loading="lazy"><figcaption>Mariages et événements</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1595475884562-073c30d45670?auto=format&fit=crop&w=1200&q=70" alt="Ciseaux, brosses et pinceau de coloration" loading="lazy"><figcaption>Couleur et balayage</figcaption></figure></div></div></section>
 <section id="reserver"><div class="in"><div class="tete reveal"><p class="k">Réservation</p><h2>Choisissez, réservez,<br>c'est confirmé.</h2><p>Un acompte de 30 % confirme votre rendez-vous. Le reste se règle au salon.</p></div>
-<div class="resa reveal"><div>
+<div class="appel-resa reveal"><div><b>Coupe, couleur, balayage…</b><span>Choisissez votre prestation, votre jour et votre heure. Ça prend une minute.</span></div><button class="btn" type="button" id="ouvre-resa">Choisir mon créneau</button></div>
+<div class="voile-resa" id="voile-resa"></div>
+<div class="resa" id="fen-resa" role="dialog" aria-modal="true" aria-label="Réserver chez Julie" aria-hidden="true"><div class="fen-t"><span class="poignee"></span><b>Réserver chez Julie</b><button type="button" id="ferme-resa" aria-label="Fermer">✕</button></div><div>
 <h4>Prestation</h4><div class="puces" id="presta"></div>
 <div class="opts" id="opts" hidden></div>
 <h4>Jour</h4><div class="jours" id="jours"></div>
@@ -198,9 +223,9 @@ function pris(j,h){return((jours[j].getDate()*7+h*5)%9)<3}
 // prochain créneau
 var nx=null;for(var j=0;j<jours.length&&!nx;j++)for(var h=0;h<H.length&&!nx;h++)if(!pris(j,h)&&!(j===0&&new Date().getHours()>=+H[h].split(':')[0]))nx=[j,h];
 if(nx){$('prochain').textContent='Prochain créneau · '+(nx[0]===0&&jours[0].toDateString()===new Date().toDateString()?'aujourd’hui':J[jours[nx[0]].getDay()]+' '+jours[nx[0]].getDate())+' à '+H[nx[1]]}
-$('hero-resa').onclick=function(){if(nx){et.j=nx[0];et.h=H[nx[1]];rend()}};
+$('hero-resa').onclick=function(e){e.preventDefault();if(nx){et.j=nx[0];et.h=H[nx[1]]}ouvreResa()};
 $('grille').innerHTML=P.slice(0,4).map(function(p,i){return '<button class="pre reveal" type="button" data-i="'+i+'"><svg viewBox="0 0 24 24">'+ICO[p[3]]+'</svg><h3>'+p[0]+'</h3><p>'+p[4]+'</p><div class="l"><span>'+p[1]+'</span><b>'+p[2]+' €</b></div></button>'}).join('');
-$('grille').onclick=function(e){var b=e.target.closest('.pre');if(!b)return;et.p=+b.dataset.i;et.h=null;et.o=[];rend();location.hash='#reserver'};
+$('grille').onclick=function(e){var b=e.target.closest('.pre');if(!b)return;et.p=+b.dataset.i;et.h=null;et.o=[];rend();ouvreResa()};
 function rend(){
  $('presta').innerHTML=P.map(function(p,i){return '<button type="button" data-i="'+i+'" aria-pressed="'+(i===et.p)+'">'+p[0]+' <span style="opacity:.55">'+p[2]+' €</span></button>'}).join('');
  $('opts').innerHTML=OPTS.filter(function(o){return !(o[0]==='Brushing'&&P[et.p][0]==='Brushing')}).map(function(o){return '<button type="button" data-o="'+o[0]+'" aria-pressed="'+(et.o.indexOf(o[0])>=0)+'"><i></i>'+o[0]+'<span>+'+o[1]+' €</span></button>'}).join('');
@@ -213,10 +238,17 @@ function rend(){
 $('presta').onclick=function(e){var b=e.target.closest('button');if(b){et.p=+b.dataset.i;rend()}};
 $('opts').onclick=function(e){var b=e.target.closest('button');if(b){var n=b.dataset.o;et.o=et.o.indexOf(n)>=0?et.o.filter(function(x){return x!==n}):et.o.concat(n);rend()}};
 $('jours').onclick=function(e){var b=e.target.closest('button');if(b){et.j=[].indexOf.call(b.parentNode.children,b);et.h=null;rend()}};
-$('heures').onclick=function(e){var b=e.target.closest('button');if(b&&!b.disabled){et.h=b.textContent;rend();if(innerWidth<900)setTimeout(function(){$('ok').scrollIntoView({behavior:'smooth',block:'center'})},150)}};
+$('heures').onclick=function(e){var b=e.target.closest('button');if(b&&!b.disabled){et.h=b.textContent;rend();setTimeout(function(){$('ok').scrollIntoView({behavior:'smooth',block:'nearest'})},150)}};
 $('ok').onclick=function(){if(!et.h){var hh=$('heures');hh.scrollIntoView({behavior:'smooth',block:'center'});hh.classList.remove('flash');void hh.offsetWidth;hh.classList.add('flash');$('ok').textContent='Touchez d’abord une heure ↑';return}var b=$('ok');b.textContent='Paiement sécurisé…';setTimeout(function(){$('bravo-p').textContent=P[et.p][0]+', '+J[jours[et.j].getDay()]+' '+jours[et.j].getDate()+' à '+et.h+'. Un SMS de rappel vous est envoyé la veille.';$('recap').classList.add('fini');$('bravo').classList.add('on');garde()},900)};
 function garde(){var d=jours[et.j],tt=P[et.p][2],L=[];try{L=JSON.parse(localStorage.getItem('pcd-cj-resa')||'[]')}catch(e){}L.push({id:'w'+Date.now(),p:P[et.p][0],d:d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),h:et.h,tot:tt,ac:Math.round(tt*.3)});try{localStorage.setItem('pcd-cj-resa',JSON.stringify(L))}catch(e){}}
 rend();
+function ouvreResa(){var f=$('fen-resa');rend();f.classList.add('on');$('voile-resa').classList.add('on');f.setAttribute('aria-hidden','false');document.body.classList.add('resa-ouverte');f.scrollTop=0}
+function fermeResa(){var f=$('fen-resa');f.classList.remove('on');$('voile-resa').classList.remove('on');f.setAttribute('aria-hidden','true');document.body.classList.remove('resa-ouverte');
+ if($('recap').classList.contains('fini')){$('recap').classList.remove('fini');$('bravo').classList.remove('on');et.h=null;rend()}}
+$('ouvre-resa').onclick=ouvreResa;$('ferme-resa').onclick=fermeResa;$('voile-resa').onclick=fermeResa;
+addEventListener('keydown',function(e){if(e.key==='Escape')fermeResa()});
+/* tous les boutons « Réserver » ouvrent la fenêtre */
+document.addEventListener('click',function(e){var a=e.target.closest('a[href="#reserver"]');if(!a)return;e.preventDefault();ouvreResa()});
 // barre « Réserver » sur téléphone
 (function(){var b=$('bas'),h=document.querySelector('.hero'),r=$('reserver'),vh=true,vr=false;if(!('IntersectionObserver' in window))return;function m(){b.classList.toggle('on',!vh&&!vr)}
  new IntersectionObserver(function(e){vh=e[0].isIntersecting;m()}).observe(h);
