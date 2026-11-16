@@ -363,11 +363,12 @@ section:nth-of-type(even){background:linear-gradient(180deg,#F3DFD9,#F8EBE6)}
 <style id="objetcss">
 .scene{background:none!important;box-shadow:none!important;height:auto!important;overflow:visible!important}.scene .carte{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;margin:-56px auto 0!important;max-width:560px}
 /* Un seul objet, sobre, qui monte et pivote doucement au scroll */
-.objet{position:relative;width:clamp(120px,22vw,230px);margin:clamp(30px,5vw,54px) auto 0;--p:0}
+.objet{position:relative;width:clamp(170px,26vw,290px);margin:clamp(30px,5vw,54px) auto 0;--p:0}
 .ob-flacon{transform:translate3d(0,calc(var(--p) * -46px),0) rotate(calc(var(--p) * -5deg)) scale(calc(1 + var(--p) * .05));transform-origin:50% 70%;will-change:transform;animation:obIn 1.2s cubic-bezier(.2,.8,.2,1) both}
 .ob-flacon svg{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 30px rgba(42,28,38,.22))}
 .ob-reflet{transform:translateX(calc(var(--p) * 74px));transition:none}
 .ob-ombre{height:18px;margin:-6px auto 0;width:70%;border-radius:50%;background:radial-gradient(closest-side,rgba(42,28,38,.28),transparent);transform:scale(calc(1 - var(--p) * .3));opacity:calc(1 - var(--p) * .45)}
+.objet.en3d .ob-flacon,.objet.en3d .ob-ombre{display:none}.ob-3d{display:block;width:100%!important;height:auto!important;opacity:0}
 @keyframes obIn{from{opacity:0;transform:translate3d(0,26px,0)}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.ob-flacon{animation:none}}
 .objet+.scene{margin-top:clamp(20px,4vw,40px)!important}
@@ -376,4 +377,5 @@ section:nth-of-type(even){background:linear-gradient(180deg,#F3DFD9,#F8EBE6)}
 if('IntersectionObserver' in window)new IntersectionObserver(function(e){v=e[0].isIntersecting},{rootMargin:'100px'}).observe(o);
 function m(){t=false;if(!v)return;var p=Math.max(0,Math.min(1,scrollY/(innerHeight*.75)));o.style.setProperty('--p',p.toFixed(3))}
 addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(m)}},{passive:true});m()})();</script>
+<script type="module" src="3d/flacon.js"></script>
 </body></html>
