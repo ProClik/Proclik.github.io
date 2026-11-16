@@ -60,6 +60,7 @@ css.textContent=[
 'details.vd>summary{cursor:pointer;font-weight:700}details.vd>.card{box-shadow:none;margin:10px 0 0;padding:0;background:none}',
 '.vtot{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:14px}.vtot .big{font-size:18px;font-weight:800}',
 '.vul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}',
+'.vlm summary{list-style:none;display:flex;align-items:baseline;gap:10px;cursor:pointer;font-weight:700;font-size:15.5px}.vlm summary::-webkit-details-marker{display:none}.vlm summary small{color:var(--muted);font-weight:600;font-size:12.5px}.vlm-i{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:baseline;padding:9px 2px;border-top:1px solid var(--line);font-size:14px;cursor:pointer}.vlm-i input{width:20px;height:20px;align-self:center;accent-color:var(--acc,#1B2440)}.vlm-i b{white-space:nowrap}.vlm-i.ok span,.vlm-i.ok b{text-decoration:line-through;color:var(--muted)}',
 '.vctl{margin-top:10px;border-radius:12px;background:color-mix(in srgb,#2E7D4F 12%,transparent);padding:8px 12px}.vctl-pb{background:color-mix(in srgb,#C2410C 12%,transparent)}.vctl summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer}.vctl summary::-webkit-details-marker{display:none}',
 '.vctl summary i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;color:#fff;background:#2E7D4F}.vctl-pb summary i{background:#C2410C}.vctl summary span{display:grid;font-weight:700;font-size:14.5px}.vctl summary small{font-weight:500;font-size:12.5px;color:var(--muted)}.vctl .vul{margin-top:8px;font-size:13px;list-style:none;padding-left:4px}',
 '.vbtns{display:flex;gap:8px;flex-wrap:wrap}',
@@ -219,6 +220,29 @@ function charger(){if(!lsG(KJ))return;charge=Date.now();
 
 /* ---------- une demande ---------- */
 function lignes(L,vide){return L&&L.length?L.map(function(l){return '<div class="vli'+(l.a_verifier?' vv':'')+'"><span>'+esc(l.libelle)+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small></div>'}).join(''):'<p class="vst">'+vide+'</p>'}
+/* ---------- liste du matériel du chantier (promesse du site, 17/11) : tirée du pré-devis, à cocher, à envoyer au fournisseur ---------- */
+function cleListe(){return 'pc-liste-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+function lignesListe(p){var M={},O=[];(ED&&ED.materiaux||p.materiaux||[]).forEach(function(l){if(!(+l.quantite>0))return;var k=(l.libelle+'|'+(l.unite||'')).toLowerCase();
+  if(!M[k]){M[k]={d:l.libelle,q:0,u:l.unite||''};O.push(M[k])}M[k].q+=+l.quantite});
+ var A=(p.attente||[]).map(function(a){return {d:a.libelle,q:+a.quantite||0,u:a.unite||'',att:1}});return O.map(function(x){x.q=Math.round(x.q*100)/100;return x}).concat(A)}
+function uL(x){return x.q>1&&/^(barre|boîte|plaque|rouleau|sac|pièce|paquet|lot|seau|sachet|carton|botte|cartouche|tube|unité)$/.test(x.u)?x.u.replace(/^(.*)$/,'$1s'):x.u}
+function texteListe(p){var k=COUR&&COUR.contact||{},L=lignesListe(p);
+ return 'Liste du matériel · chantier '+(k.nom||'')+(k.ville?' ('+k.ville+')':'')+'\n\n'+L.filter(function(x){return !x.att}).map(function(x){return '- '+qte(x.q)+' '+uL(x)+' · '+x.d}).join('\n')+
+  (L.some(function(x){return x.att})?'\n\nÀ chiffrer à part :\n'+L.filter(function(x){return x.att}).map(function(x){return '- '+(x.q?qte(x.q)+' '+uL(x)+' · ':'')+x.d}).join('\n'):'')}
+function listeMatHTML(p){var L=lignesListe(p);if(!L.length)return '';var C=lsG(cleListe())||{},n=L.filter(function(x){return C[x.d]}).length;
+ var li=function(x){return '<label class="vlm-i'+(C[x.d]?' ok':'')+'"><input type="checkbox" data-vlm="'+esc(x.d)+'"'+(C[x.d]?' checked':'')+'><b>'+(x.q?esc(qte(x.q)+' '+uL(x)):'')+'</b><span>'+esc(x.d)+'</span></label>'};
+ return '<details class="card vsec vlm"><summary><span>📋 Liste du matériel</span><small>'+L.length+' article'+(L.length>1?'s':'')+(n?' · '+n+' coché'+(n>1?'s':''):'')+'</small></summary>'+
+  '<p class="vst" style="padding:6px 0 4px">Tout ce qu\'il faut acheter pour ce chantier, en boîtes et rouleaux entiers. Cochez au fur et à mesure.</p>'+
+  L.filter(function(x){return !x.att}).map(li).join('')+
+  (L.some(function(x){return x.att})?'<p class="vst" style="padding:10px 0 2px"><b>À chiffrer à part</b> (prix demandé au fournisseur)</p>'+L.filter(function(x){return x.att}).map(li).join(''):'')+
+  '<div class="vbtns" style="margin-top:12px"><button class="vbtn sm" type="button" data-vlmenv>✉️ Envoyer</button><button class="vbtn sm" type="button" data-vlmcp>Copier</button><button class="vbtn sm" type="button" data-vlmimp>Imprimer</button></div></details>'}
+document.addEventListener('change',function(e){var c=e.target;if(!c||!c.hasAttribute||!c.hasAttribute('data-vlm'))return;var C=lsG(cleListe())||{},k=c.getAttribute('data-vlm');if(c.checked)C[k]=1;else delete C[k];lsS(cleListe(),C);var l=c.closest('.vlm-i');if(l)l.classList.toggle('ok',c.checked)});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vlmenv],[data-vlmcp],[data-vlmimp]');if(!b)return;e.preventDefault();var p=COUR&&COUR.pre_devis[0];if(!p)return;var t=texteListe(p);
+ if(b.hasAttribute('data-vlmcp')){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){toast2('Liste copiée','Collez-la dans un message ou un e-mail.')},function(){toast2('Copie impossible','Utilisez « Envoyer ».')})}
+ else if(b.hasAttribute('data-vlmenv')){if(navigator.share)navigator.share({title:'Liste du matériel',text:t}).catch(function(){});else location.href='mailto:?subject='+encodeURIComponent('Liste du matériel')+'&body='+encodeURIComponent(t)}
+ else{var w=window.open('','_blank');if(!w){toast2('Fenêtre bloquée','Autorisez les fenêtres pour imprimer.');return}
+  w.document.write('<!doctype html><meta charset="utf-8"><title>Liste du matériel</title><style>body{font:15px/1.5 system-ui,sans-serif;margin:32px;color:#111}h1{font-size:20px}li{margin:6px 0;list-style:none}li::before{content:"☐  "}</style><h1>'+esc(t.split('\n')[0])+'</h1><ul>'+t.split('\n').slice(2).map(function(x){return x.indexOf('- ')===0?'<li>'+esc(x.slice(2))+'</li>':x?'<h3>'+esc(x)+'</h3>':''}).join('')+'</ul>');
+  w.document.close();setTimeout(function(){w.print()},300)}});
 function liste(t,L,cl){return L&&L.length?'<div class="card vsec"><h3>'+t+'</h3><ul class="vul">'+L.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>':''}
 var LIB={delai:'Délai',msg:'Message',budget:'Budget',message:'Message',objectif:'Objectif',aides:'Aides',disponibilites:'Disponibilités',visite:'Visite'};
 var TRAV={cloison:'Cloison',doublage:'Doublage / isolation des murs',plafond:'Plafond',rampants:'Rampants',combles:'Combles',fenetres:'Fenêtres',portes:'Portes',sols:'Sols',autre:'Autre'};
@@ -367,7 +391,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
    recalcHTML(d)+verifHTML(p)+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
-  mat=lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;
+  mat=listeMatHTML(p)+lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;
   mo=lignesEd('main_oeuvre','Main-d\'œuvre · '+eur(t.main_oeuvre),'touchez « Modifier » pour changer une ligne','Ajouter de la main-d\'œuvre')+raz;
   calc=liste('Alertes',p.alertes)+liste('Hypothèses de Cliky',p.hypotheses)+(p.controles.length?'<div class="card vsec"><h3>Contrôles du calcul</h3><ul class="vul">'+p.controles.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>':'');
  }
