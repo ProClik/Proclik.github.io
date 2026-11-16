@@ -477,9 +477,10 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
  h+=blocMinis(DOCS);
  h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
  z.innerHTML=h;poserMinis();
- var ax=$('#vajx');if(ax)ax.onchange=function(){var v=parseFloat(String(ax.value||'0').replace(',','.').replace('−','-'));if(!isFinite(v))v=0;if(v<-50||v>50){toastV('Entre −50 % et +50 %','');return}lsS(cleAj(),Math.round(v*10)/10);rendreDocs()}}
+ var ax=$('#vajx');if(ax)ax.onchange=function(){var v=parseFloat(String(ax.value||'0').replace(',','.').replace('−','-'));if(!isFinite(v))v=0;if(v<-50||v>50){toastV('Entre −50 % et +50 %','');return}garderAj(Math.round(v*10)/10);rendreDocs()}}
 /* Prix pour ce client (BRS, 16/11) : un client fidèle n'a pas le prix d'un client « lambda ». Choisi à la fin, sur tout le devis ; gardé pour ce client. */
 function cleAj(){return 'pc-aj-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+function garderAj(v){lsS(cleAj(),v);var c=COUR&&COUR.contact&&COUR.contact.id;if(c)api('/espace/prix-client',{method:'POST',body:{contact:c,ajustement:v}}).catch(function(){toastV('Pas enregistré','Vérifiez la connexion.')})}
 function ajC(){var v=+lsG(cleAj());return isFinite(v)?v:0}
 function blocAj(p){var a=ajC(),t=p&&p.lue?(ED&&ED.touche?totauxEd(p).total_ht:(p.totaux||{}).total_ht):null,f=function(v){return (v>0?'+':v<0?'−':'')+String(Math.abs(v)).replace('.',',')+' %'};
  return '<div style="margin:0 0 10px"><p style="margin:0 0 6px;font-weight:700">Prix pour ce client</p><div style="display:flex;flex-wrap:wrap;gap:6px">'+
@@ -487,14 +488,14 @@ function blocAj(p){var a=ajC(),t=p&&p.lue?(ED&&ED.touche?totauxEd(p).total_ht:(p
   '<div class="vli" style="align-items:center;margin-top:6px"><span>Autre pourcentage<small style="display:block">− pour une remise, + pour un supplément</small></span><span class="x"><input id="vajx" type="text" inputmode="decimal" value="'+([-15,-10,-5,0,5,10].indexOf(a)<0?String(a).replace('.',','):'')+'" placeholder="0" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div>'+
   (t!=null?'<p class="vst" style="padding:4px 0 0">Total du devis : <b>'+eur(Math.round(t*(1+a/100)*100)/100)+' HT</b>'+(a?' (au lieu de '+eur(t)+')':'')+'</p>':'')+'</div>'}
 function chargerDocs(c){DOCC=c;DOCS=null;ARME='';ERRDOC='';var z=$('#vdocs');
- api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
+ api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];if(typeof x.prix_client==='number')lsS(cleAj(),x.prix_client);rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
 function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=lsG(KJ);
  fetch(SERVICE+'/espace/document/pdf?id='+encodeURIComponent(id),{headers:j?{Authorization:'Bearer '+j}:{}}).then(function(r){if(!r.ok)throw new Error('PDF indisponible ('+r.status+')');return r.blob()})
   .then(function(b){var u=URL.createObjectURL(b);if(w)w.location=u;else location.href=u},function(err){if(w)w.close();toastV('PDF non ouvert',err.message)})}
 function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  if(a==='annuler'){ARME='';return rendreDocs()}
  if(a==='pdf')return pdfDoc(id);
- if(a==='aj'){lsS(cleAj(),+id);if(ARME==='creer')ARME='';return rendreDocs()}
+ if(a==='aj'){garderAj(+id);if(ARME==='creer')ARME='';return rendreDocs()}
  if(a==='acompte'){ARME='acompte'+id;rendreDocs();var i=$('#vpct');if(i)i.focus();return}
  if((a==='envoyer'||a==='creer'||a==='accepted'||a==='rejected'||a==='paid'||a==='finale')&&ARME!==a+(id||'')){ARME=a+(id||'');return rendreDocs()}
  var p;
