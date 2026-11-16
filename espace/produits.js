@@ -84,7 +84,7 @@ var CLIKY=!!(window.PCOPT&&PCOPT.cliky); /* Option Cliky prise (PCOPT) */
 var IC={plus:I('<path d="M12 5v14M5 12h14"/>'),cherche:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),
  prod:I('<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>'),
  presta:I('<path d="M4 20h4l11-11-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
- cliky:'<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="24" y="14" width="18" height="72" rx="9" fill="currentColor" stroke="none"/><circle cx="54" cy="40" r="26" fill="currentColor" stroke="none"/><circle cx="56" cy="40" r="9" style="fill:var(--rs)" stroke="none"/></svg>',
+ cliky:'<svg viewBox="0 0 100 100" aria-hidden="true" viewBox="22 22 56 56"><path fill="currentColor" fill-rule="evenodd" stroke="none" d="M24.50 50.00A25.50 25.50 0 1 1 75.50 50.00A25.50 25.50 0 1 1 24.50 50.00ZM57.73 67.72A19.34 19.34 0 1 0 42.27 67.72A3.92 3.92 0 0 0 47.76 64.13L47.76 61.21A2.24 2.24 0 0 1 52.24 61.21L52.24 64.13A3.92 3.92 0 0 0 57.73 67.72Z"/><circle cx="50" cy="48.32" r="4.71" fill="#A8823F" stroke="none"/></svg>',
  cle:I('<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>')};
 var seg=lsG('pc-prod-seg','produit'),q='';
 function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="button" data-prod="'+esc(p.c)+'"><span class="cf-av pr-av'+(i?'':' vide')+'">'+(icone(i)||esc((p.d||'?').charAt(0).toUpperCase()))+'</span><span class="tx"><b>'+esc(p.d)+'</b><small>'+esc([p.x,famille(p)].filter(Boolean).join(' · '))+(p.ex?' · exemple':'')+'</small></span><span class="cf-m"><b>'+prix(p.p)+'</b><small>/ '+esc(p.u||'u')+'</small></span></button>'}

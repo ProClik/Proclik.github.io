@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Admin ProClik</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../n1.css?v=2">
+<script src="../espace-depart/config.js?v=2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<style>
+:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--mu:var(--n1-muted);--li:var(--n1-line);--nu:var(--n1-nuit);--nf:var(--n1-nuit-fg);--la:var(--n1-laiton);--ca:var(--n1-calme);
+ --f:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 var(--f);-webkit-text-size-adjust:100%}
+body{padding:max(16px,env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
+.wrap{max-width:860px;margin:0 auto}
+header{display:flex;align-items:center;gap:12px;margin:4px 0 18px}
+header svg{width:34px;height:34px;flex:none}
+header h1{font-size:20px;margin:0;letter-spacing:-.01em}
+header small{display:block;color:var(--mu);font-size:13px;font-weight:500}
+header .sp{flex:1}
+button,input,select{font:inherit;color:inherit}
+.btn{min-height:44px;padding:10px 16px;border:0;border-radius:14px;background:var(--ca);box-shadow:var(--n1-pk);font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+a.btn{text-decoration:none;color:inherit}
+.btn.go{background:var(--nu);color:var(--nf);box-shadow:var(--n1-go-sh)}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:13.5px;border-radius:12px}
+.btn.al{color:var(--n1-alert)}
+.btn:disabled{opacity:.55}
+.card{background:var(--ca);border-radius:20px;box-shadow:var(--n1-calme-sh);padding:16px;margin:0 0 14px}
+.card h2{font-size:16px;margin:0 0 4px}
+.mu{color:var(--mu);font-size:13.5px}
+label.f{display:block;margin:10px 0 0;font-size:13px;font-weight:700;color:var(--mu)}
+input.t,select.t,textarea.t{display:block;width:100%;margin-top:4px;min-height:46px;padding:10px 14px;border:0;border-radius:14px;background:var(--bg);box-shadow:var(--n1-in);font-size:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1 1 160px}
+.err{color:var(--n1-alert);font-size:13.5px;min-height:18px;margin:8px 0 0}
+.tabs{display:flex;gap:6px;margin:0 0 14px}
+.tabs button{flex:1;min-height:42px;border:0;border-radius:14px;background:transparent;font-weight:700;color:var(--mu);cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ca);color:var(--fg);box-shadow:var(--n1-pk)}
+.cl{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;border:0;background:transparent;padding:0;cursor:pointer}
+.cl .n{flex:1;min-width:0}
+.cl b{font-size:16px;display:block}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--n1-teinte);margin:4px 4px 0 0}
+.pill.ok{color:var(--n1-ok)}.pill.w{color:var(--n1-warn)}.pill.al{color:var(--n1-alert)}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:46px;padding:8px 12px;border-radius:14px;background:var(--bg);cursor:pointer;font-weight:600;font-size:14px}
+.sw input{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:99px;background:var(--li);box-shadow:var(--n1-in);position:relative;flex:none;cursor:pointer;margin:0;transition:background .2s}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.sw input:checked{background:var(--nu)}.sw input:checked::after{transform:translateX(18px)}
+.sec{font-family:var(--mono);font-size:12.5px;word-break:break-all}
+.res{margin-top:12px;padding:12px;border-radius:14px;background:var(--bg);box-shadow:var(--n1-in)}
+.res .big{font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:.04em;word-break:break-all}
+.jl{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--li);font-size:13.5px}
+.jl:first-child{border-top:0}.jl time{color:var(--mu);flex:none;width:118px}
+.mes{padding:10px 0;border-top:1px solid var(--li)}.mes:first-of-type{border-top:0}.mes-l{display:flex;gap:12px;align-items:flex-start;cursor:pointer}.mes-l input{width:22px;height:22px;margin:2px 0 0;flex:none;accent-color:var(--nu)}
+.sm{padding:12px 0;border-top:1px solid var(--li)}.sm:first-child{border-top:0}
+textarea.t{min-height:0;font:inherit;font-size:16px}
+.back{border:0;background:transparent;font-weight:700;color:var(--mu);padding:8px 0;cursor:pointer;min-height:44px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--nu);color:var(--nf);padding:10px 16px;border-radius:14px;font-weight:700;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.on{opacity:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="30" r="22" fill="none" stroke="var(--nu)" stroke-width="7"/><circle cx="32" cy="29" r="4" fill="var(--la)"/></svg>
+ <div><h1>Admin ProClik</h1><small>Vos clients, leurs accès et leurs options</small></div>
+ <span class="sp"></span>
+ <button class="btn sm" id="sortir" type="button" hidden>Sortir</button>
+</header>
+
+<!-- connexion -->
+<section id="v-login" class="card" hidden>
+ <h2>Accès Admin</h2>
+ <p class="mu" style="margin:0">Réservé à Cyril. Tapez votre code Admin (celui posé dans Cloudflare). Après 5 erreurs, l'accès se bloque 15 minutes.</p>
+ <input class="t" id="acode" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Code Admin" aria-label="Code Admin" style="margin-top:12px">
+ <div id="aotpw" hidden><label class="f" for="aotp">Code à 6 chiffres de votre appli d'authentification</label><input class="t" id="aotp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="123 456"></div>
+ <div class="err" id="aerr"></div>
+ <button class="btn go" id="ago" type="button" style="width:100%;margin-top:6px">Entrer</button>
+</section>
+
+<!-- liste -->
+<section id="v-liste" hidden>
+ <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="clients">Clients</button><button role="tab" aria-selected="false" data-tab="messages">Messages</button><button role="tab" aria-selected="false" data-tab="journal">Journal</button><button role="tab" aria-selected="false" data-tab="reglages">Réglages</button></div>
+ <div id="deuxfa-bandeau"></div>
+ <div id="p-clients">
+  <button class="btn go" id="nouveau" type="button" style="width:100%;margin-bottom:14px">+ Nouveau client</button>
+  <div id="liste"></div>
+  <button class="btn sm" id="voirarch" type="button" style="width:100%" hidden></button>
+ </div>
+ <div id="p-messages" hidden><div id="messages"></div></div>
+ <div id="p-journal" hidden><div class="card" id="journal"></div></div>
+ <div id="p-reglages" hidden><div id="reglages"></div></div>
+</section>
+
+<!-- fiche client -->
+<section id="v-fiche" hidden>
+ <button class="back" id="retour" type="button">‹ Tous les clients</button>
+ <div id="fiche"></div>
+</section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){'use strict';
+var S=String(window.PC_SERVICE||'').replace(/\/+$/,''),KJ='pc-admin-jeton';
+var $=function(s){return document.querySelector(s)},esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+function lj(){try{return sessionStorage.getItem(KJ)||''}catch(e){return ''}}
+function sj(v){try{v?sessionStorage.setItem(KJ,v):sessionStorage.removeItem(KJ)}catch(e){}}
+var NOMS={cliky:'Cliky',reservation:'Réservation',sms:'SMS',assistant:'Assistant du site',avis:'Avis Google',reseaux:'Réseaux sociaux',image:'Votre image',equipe:'Équipe'};
+var MENUS={clients:'Clients',devis:'Devis',factures:'Factures',depenses:'Dépenses',planning:'Planning',chantiers:'Chantiers',prix:'Achats',produits:'Produits',cotes:'Cotes',reseaux:'Réseaux'};
+var DATA={clients:[],options:Object.keys(NOMS),menus:Object.keys(MENUS)},COUR=null;
+function toast(t){var e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2400)}
+function api(ch,o){o=o||{};var h={};if(lj())h.Authorization='Bearer '+lj();if(o.body)h['Content-Type']='application/json';
+ return fetch(S+ch,{method:o.method||'GET',headers:h,body:o.body?JSON.stringify(o.body):undefined}).then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service'}}).then(function(j){
+  if(j&&j.reconnexion){sj('');vue('login');throw new Error('Connexion expirée, retapez votre code.')}
+  if(!r.ok||!j.ok){var er=new Error(j.erreur||('Erreur '+r.status));er.j=j;throw er}return j})},function(){throw new Error('Pas de réseau, ou service injoignable.')})}
+function vue(v){['login','liste','fiche'].forEach(function(k){$('#v-'+k).hidden=k!==v});$('#sortir').hidden=v==='login';window.scrollTo(0,0)}
+
+/* ---------- connexion ---------- */
+function entrer(){var c=$('#acode').value.trim(),o=$('#aotp').value.replace(/\D/g,''),b=$('#ago');if(!c){$('#aerr').textContent='Le code est vide.';return}
+ b.disabled=true;$('#aerr').textContent='';api('/admin/connexion',{method:'POST',body:o?{code:c,otp:o}:{code:c}}).then(function(j){sj(j.jeton);$('#acode').value='';$('#aotp').value='';$('#aotpw').hidden=true;charger()},
+  function(e){if(e.j&&e.j.otp){$('#aotpw').hidden=false;setTimeout(function(){$('#aotp').focus()},50);if(!o){$('#aerr').textContent='';return}}$('#aerr').textContent=e.message}).then(function(){b.disabled=false})}
+$('#aotp').addEventListener('keydown',function(e){if(e.key==='Enter')entrer()});
+$('#ago').addEventListener('click',entrer);$('#acode').addEventListener('keydown',function(e){if(e.key==='Enter')entrer()});
+$('#sortir').addEventListener('click',function(){sj('');vue('login')});
+
+/* ---------- liste ---------- */
+function etat(c){var p=[];
+ p.push(c.actif?'<span class="pill ok">Actif</span>':'<span class="pill al">Accès coupé</span>');
+ p.push('<span class="pill '+(c.acces==='mot de passe choisi'?'ok':c.acces==='pas encore d\'accès'?'w':'')+'">'+esc(c.acces)+'</span>');
+ if(!c.secrets.ghl.pose)p.push('<span class="pill w">Clé GHL à poser</span>');
+ if(!c.secrets.vf.pose)p.push('<span class="pill w">Clé VosFactures à poser</span>');
+ return p.join('')}
+var ARCH=false;
+function depuis(iso){if(!iso)return 'jamais';var m=Math.round((Date.now()-Date.parse(iso))/60000);if(m<2)return 'à l\'instant';if(m<60)return 'il y a '+m+' min';var h=Math.round(m/60);if(h<48)return 'il y a '+h+' h';return 'il y a '+Math.round(h/24)+' j'}
+function alerte(c){var a=[];if(c.sante&&c.sante.ghl&&!c.sante.ghl.ok&&c.secrets.ghl.pose)a.push('GHL ne répond pas');if(c.sante&&c.sante.vf&&!c.sante.vf.ok&&c.secrets.vf.pose)a.push('VosFactures ne répond pas');
+ if(c.abo&&c.abo.statut==='retard')a.push('Paiement en retard');if(c.abo&&c.abo.statut==='suspendu')a.push('Espace en pause');return a}
+function rendreListe(){var tous=DATA.clients.filter(function(c){return !!c.archive===ARCH}),na=DATA.clients.filter(function(c){return c.archive}).length;
+ var va=$('#voirarch');va.hidden=!na&&!ARCH;va.textContent=ARCH?'‹ Revenir aux clients':'Voir les archivés ('+na+')';
+ var L=tous.sort(function(a,b){return alerte(b).length-alerte(a).length||a.entreprise.localeCompare(b.entreprise)});
+ $('#liste').innerHTML=L.length?L.map(function(c){var on=Object.keys(c.options||{}).filter(function(k){return c.options[k]}).map(function(k){return NOMS[k]||k});
+  return '<div class="card"><button class="cl" type="button" data-id="'+esc(c.id)+'"><span class="n"><b>'+esc(c.entreprise||c.id)+'</b><span class="mu">'+(c.activite?esc(c.activite)+' · ':'')+esc(c.prenom||'')+(c.email?' · '+esc(c.email):'')+'</span><div>'+etat(c)+'</div>'+
+   '<div class="mu" style="margin-top:6px">'+(alerte(c).length?'<span class="pill al">● '+esc(alerte(c).join(' · '))+'</span><br>':'')+'Vu '+esc(depuis(c.suivi&&c.suivi.vu))+(c.suivi&&c.suivi.derniere_demande?' · dernière demande '+esc(depuis(c.suivi.derniere_demande)):'')+'<br>'+(c.effectif?c.effectif+' personne'+(c.effectif>1?'s':'')+' · ':'')+'Options : '+(on.length?esc(on.join(', ')):'aucune')+(function(){var off=Object.keys(c.menus||{}).filter(function(k){return c.menus[k]===false}).map(function(k){return MENUS[k]||k});return off.length?' · Menus masqués : '+esc(off.join(', ')):''})()+'</div></span><span aria-hidden="true" style="font-size:22px;color:var(--mu)">›</span></button></div>'}).join(''):'<div class="card mu">Aucun client pour l\'instant.</div>'}
+function charger(){return api('/admin/clients').then(function(j){DATA=j;bandeau2fa();vue(COUR?'fiche':'liste');rendreListe();if(COUR){var c=DATA.clients.filter(function(x){return x.id===COUR})[0];if(c)fiche(c)}},function(e){if(lj())toast(e.message)})}
+$('#liste').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(!b)return;var c=DATA.clients.filter(function(x){return x.id===b.dataset.id})[0];if(c){COUR=c.id;fiche(c);vue('fiche')}});
+$('#voirarch').addEventListener('click',function(){ARCH=!ARCH;rendreListe()});
+$('#retour').addEventListener('click',function(){COUR=null;vue('liste');rendreListe()});
+$('#nouveau').addEventListener('click',function(){COUR=null;fiche(null);vue('fiche')});
+document.querySelector('.tabs').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(!b)return;
+ [].forEach.call(document.querySelectorAll('[data-tab]'),function(x){x.setAttribute('aria-selected',x===b)});
+ ['clients','messages','journal','reglages'].forEach(function(t){$('#p-'+t).hidden=b.dataset.tab!==t});if(b.dataset.tab==='journal')journal();if(b.dataset.tab==='messages')messages();if(b.dataset.tab==='reglages')reglages()});
+
+/* ---------- fiche ---------- */
+function champ(id,lab,val,type,aide){return '<label class="f" for="'+id+'">'+lab+'</label><input class="t" id="'+id+'" type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'"'+(type==='email'?' autocapitalize="off" autocorrect="off"':'')+(type==='number'?' inputmode="decimal"':'')+'>'+(aide?'<div class="mu" style="margin-top:4px">'+aide+'</div>':'')}
+function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',locationId:'',vfCompte:'',tva:10,acomptePourcent:30,options:{},menus:{},effectif:1,actif:true,secrets:null};
+ var h='<div class="card"><h2>'+(n?'Nouveau client':esc(c.entreprise))+'</h2>'+(n?'<p class="mu" style="margin:0">Remplissez ce que vous avez. Tout se modifie ensuite.</p>':'<div>'+etat(c)+'</div>')+
+  champ('fe','Nom de l\'entreprise',c.entreprise)+champ('fp','Prénom du contact',c.prenom)+'<label class="f" for="fact">Activité</label><input class="t" id="fact" list="acts" value="'+esc(c.activite||'')+'" placeholder="Ex. Plaquiste, Négoce de matériaux, Restaurant…"><datalist id="acts">'+['Artisan du bâtiment','Plaquiste','Menuisier','Plombier','Électricien','Peintre','Négoce de matériaux','Commerce','Restaurant','Beauté, bien-être','Services','Autre'].map(function(x){return '<option value="'+x+'">'}).join('')+'</datalist>'+champ('fm','E-mail du contact (sert à se connecter)',c.email,'email')+
+  '<div class="row">'+'<div>'+champ('fl','Sous-compte GHL (identifiant)',c.locationId,'text','Paramètres du sous-compte › Infos entreprise › Location ID')+'</div><div>'+champ('fv','Compte VosFactures',c.vfCompte,'text','Ce qui est avant « .vosfactures.fr »')+'</div></div>'+
+  '<div class="row"><div>'+champ('ft','TVA par défaut (%)',c.tva,'number')+'</div><div>'+champ('fa','Acompte par défaut (%)',c.acomptePourcent,'number')+'</div></div>'+
+  '<label class="f" for="fn">Nombre de personnes dans l\'entreprise</label><input class="t" id="fn" type="number" inputmode="numeric" min="1" max="500" value="'+esc(c.effectif||'')+'" style="max-width:160px">'+
+  '<div class="mu" style="margin-top:4px" id="fnh"></div>'+
+  '<label class="f">Menus de son Espace</label><div class="mu" style="margin-top:2px">Décochez ce qui ne lui sert pas : le menu disparaît de son Espace. L\'Accueil et les Réglages restent toujours.</div><div class="opts">'+(DATA.menus||Object.keys(MENUS)).map(function(k){return '<label class="sw">'+esc(MENUS[k]||k)+'<input type="checkbox" data-menu="'+k+'"'+(!c.menus||c.menus[k]!==false?' checked':'')+'></label>'}).join('')+'</div>'+
+  '<label class="f">Options</label><div class="opts">'+DATA.options.map(function(k){return '<label class="sw">'+esc(NOMS[k]||k)+'<input type="checkbox" data-opt="'+k+'"'+(c.options&&c.options[k]?' checked':'')+'></label>'}).join('')+'</div>'+
+  '<div class="err" id="ferr"></div><button class="btn go" id="fsave" type="button" style="width:100%;margin-top:6px">'+(n?'Créer le client':'Enregistrer')+'</button></div>';
+ if(!n){
+  h+='<div class="card"><h2>Accès du client</h2><p class="mu" style="margin:0">Vous ne voyez jamais son mot de passe. Vous pouvez seulement lui donner un nouvel accès.</p>'+
+   '<div class="row" style="margin-top:12px"><button class="btn" type="button" data-act="invitation">Lien d\'invitation</button><button class="btn" type="button" data-act="provisoire">Code provisoire</button></div>'+
+   '<div id="ares"></div>'+
+   '<div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-act="apercu">Voir son Espace comme lui</button></div>'+
+   '<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-act="deconnecter">Déconnecter tous ses appareils</button><button class="btn sm al" type="button" data-act="actif">'+(c.actif?'Couper l\'accès':'Rendre l\'accès')+'</button></div></div>';
+  h+=sante(c)+abonnement(c)+cles(c);
+  h+=miseEnService(c)+surMesure(c)+'<div class="card"><h2>Notes</h2>'+champ('ftel','Téléphone du contact',c.telephone,'tel')+'<label class="f" for="fnote">Notes pour vous (jamais visibles par le client)</label><textarea class="t" id="fnote" rows="4" style="resize:vertical">'+esc(c.notes||'')+'</textarea><button class="btn sm" type="button" id="fnsave" style="margin-top:10px">Enregistrer les notes</button></div>';
+  h+=identite(c);
+  h+='<div class="card" id="fcliky" data-client="'+esc(c.id)+'"><h2>Cliky</h2><p class="mu" style="margin:0">Base de prix et réglages Cliky propres à ce client : bientôt ici.</p></div>';
+  h+='<div class="card"><h2>Archiver</h2><p class="mu" style="margin:0 0 10px">'+(c.archive?'Ce client est archivé : accès coupé, rien n\'est effacé.':'Le client part (ou fin de contrat) : accès coupé, fiche gardée. Rien n\'est effacé, vous pouvez le ressortir.')+'</p><button class="btn sm al" type="button" data-act="archiver">'+(c.archive?'Sortir des archives':'Archiver ce client')+'</button></div>';
+ }
+ $('#fiche').innerHTML=h;
+ if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
+ $('#fsave').addEventListener('click',function(){var b=this,o={};[].forEach.call(document.querySelectorAll('[data-opt]'),function(x){o[x.dataset.opt]=x.checked});
+  var body={entreprise:$('#fe').value,prenom:$('#fp').value,activite:$('#fact').value,email:$('#fm').value,locationId:$('#fl').value,vfCompte:$('#fv').value,tva:Number(String($('#ft').value).replace(',','.')),acomptePourcent:Number(String($('#fa').value).replace(',','.')),options:o};
+  var mn={};[].forEach.call(document.querySelectorAll('[data-menu]'),function(x){mn[x.dataset.menu]=x.checked});body.menus=mn;body.effectif=Number($('#fn').value)||null;
+  if(!n)body.id=c.id;if(!body.entreprise.trim()){$('#ferr').textContent='Le nom de l\'entreprise est vide.';return}
+  b.disabled=true;$('#ferr').textContent='';api('/admin/client',{method:'POST',body:body}).then(function(j){COUR=j.client.id;toast(n?'Client créé':'Enregistré');return charger()},function(e){$('#ferr').textContent=e.message}).then(function(){b.disabled=false})});
+ function aideEff(){var v=Number($('#fn').value)||0,eq=document.querySelector('[data-opt=equipe]');$('#fnh').textContent=v>1?'Plusieurs personnes : l\'option Équipe (qui travaille où, chaque jour) peut lui servir.':v===1?'Seul : l\'option Équipe ne lui sert pas.':'';if(n&&eq&&v)eq.checked=v>1}
+ $('#fn').addEventListener('input',aideEff);aideEff();
+ [].forEach.call(document.querySelectorAll('[data-act]'),function(b){b.addEventListener('click',function(){action(c,b.dataset.act,b)})});
+}
+function partager(t){if(navigator.share)navigator.share({text:t}).catch(function(){});else copier(t)}
+function copier(t){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){toast('Copié')},function(){toast('Copiez le texte à la main')})}
+function action(c,a,b){var R=$('#ares');
+ if(a==='deconnecter'&&!confirmer(b,'Touchez encore pour confirmer'))return;
+ if(a==='actif'&&!confirmer(b,c.actif?'Touchez encore : couper l\'accès':'Touchez encore : rendre l\'accès'))return;
+ if(a==='archiver'&&!confirmer(b,'Touchez encore pour confirmer'))return;
+ if(a==='apercu'){var w=window.open('about:blank','_blank');b.disabled=true;api('/admin/apercu',{method:'POST',body:{id:c.id}}).then(function(j){if(w)w.location=j.lien;else location.href=j.lien},function(e){if(w)w.close();toast(e.message)}).then(function(){b.disabled=false});return}
+ if(a==='archiver'){b.disabled=true;api('/admin/archiver',{method:'POST',body:{id:c.id,archive:!c.archive}}).then(function(){toast(c.archive?'Sorti des archives':'Client archivé');COUR=null;return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false});return}
+ b.disabled=true;
+ var p=a==='actif'?api('/admin/client',{method:'POST',body:{id:c.id,actif:!c.actif}}):api('/admin/'+a,{method:'POST',body:{id:c.id}});
+ p.then(function(j){
+  if(a==='invitation'){var msg='Bonjour '+(c.prenom||'')+', voici le lien pour créer votre mot de passe et ouvrir votre Espace ProClik (valable 7 jours, une seule fois) : '+j.lien;
+   R.innerHTML='<div class="res"><div class="mu">Lien valable 7 jours, une seule fois. Envoyez-le à '+esc(c.email)+' :</div><div class="sec" style="margin:8px 0">'+esc(j.lien)+'</div><div class="row">'+(DATA.envoiMail?'<button class="btn sm go" type="button" id="rm">Envoyer l\'e-mail</button>':'')+'<button class="btn sm'+(DATA.envoiMail?'':' go')+'" type="button" id="rp">Envoyer…</button><button class="btn sm" type="button" id="rc">Copier</button></div></div>';
+   if($('#rm'))$('#rm').onclick=function(){var bb=this;bb.disabled=true;api('/admin/invitation-mail',{method:'POST',body:{id:c.id,lien:j.lien}}).then(function(x){toast('E-mail envoyé à '+x.email)},function(e){toast(e.message)}).then(function(){bb.disabled=false})};
+   $('#rp').onclick=function(){partager(msg)};$('#rc').onclick=function(){copier(msg)}}
+  else if(a==='provisoire'){R.innerHTML='<div class="res"><div class="mu">À donner au client (valable 7 jours). Il se connecte avec son e-mail <b>'+esc(j.email)+'</b> et ce code, puis choisit son mot de passe.</div><div class="big" style="margin:8px 0">'+esc(j.code)+'</div><div class="mu">Ce code ne sera plus jamais affiché.</div></div>'}
+  else {toast(a==='deconnecter'?'Tous ses appareils sont déconnectés':'C\'est fait');charger()}
+ },function(e){R.innerHTML='<div class="err">'+esc(e.message)+'</div>'}).then(function(){b.disabled=false})}
+function confirmer(b,t){if(b.dataset.ok){delete b.dataset.ok;return true}var old=b.textContent;b.dataset.ok=1;b.textContent=t;setTimeout(function(){if(b.dataset.ok){delete b.dataset.ok;b.textContent=old}},4000);return false}
+
+/* ---------- santé ---------- */
+function sante(c){var s=c.sante,v=c.suivi||{};function l(x,nom){if(!x)return '';if(!x.ok&&x.msg==='pas encore branché')return '<span class="pill w">'+nom+' : pas encore branché</span> ';return '<span class="pill '+(x.ok?'ok':'al')+'">'+nom+' : '+esc(x.ok?'répond':'ne répond pas')+'</span>'+(x.ok?' ':'<div class="mu">'+esc(x.msg)+'</div>')}
+ return '<div class="card"><h2>Santé</h2><p class="mu" style="margin:0">Dernière connexion : <b>'+esc(depuis(v.vu))+'</b>'+(v.derniere_demande?' · dernière demande : <b>'+esc(depuis(v.derniere_demande))+'</b>':'')+(v.nb_demandes!=null?' · '+v.nb_demandes+' demande(s) ouvertes':'')+'</p>'+
+  '<div style="margin-top:8px">'+(s?l(s.ghl,'GHL')+' '+l(s.vf,'VosFactures')+'<div class="mu">Vérifié '+esc(depuis(s.t))+'</div>':'<span class="mu">Pas encore vérifié.</span>')+'</div>'+
+  '<button class="btn sm" type="button" id="svf" style="margin-top:10px">Vérifier maintenant</button></div>'}
+/* ---------- abonnement ---------- */
+var DELAIS=[[0,'Tout de suite'],[24,'24 heures'],[48,'48 heures'],[72,'3 jours'],[168,'7 jours'],[336,'14 jours']];
+function abonnement(c){var a=c.abo||{},d=a.delaiHeures==null?72:a.delaiHeures,fin=a.statut==='retard'&&a.retard_depuis?new Date(Date.parse(a.retard_depuis)+d*3600e3):null;
+ return '<div class="card"><h2>Abonnement</h2>'+
+  '<div class="row"><div>'+champ('abf','Forfait',a.forfait||'','text','Ex. Espace, Présence…')+'</div><div>'+champ('abp','Prix (€ HT / mois)',a.prix==null?'':a.prix,'number')+'</div></div>'+
+  '<div class="row"><div>'+champ('abd','Début',a.debut||'','date')+'</div><div><label class="f" for="abs">Paiement</label><select class="t" id="abs"><option value="a_jour"'+(a.statut!=='retard'&&a.statut!=='suspendu'?' selected':'')+'>À jour</option><option value="retard"'+(a.statut==='retard'?' selected':'')+'>En retard</option><option value="suspendu"'+(a.statut==='suspendu'?' selected':'')+'>En pause (à la main)</option></select></div></div>'+
+  '<label class="f" for="abl">Pause automatique après un retard de</label><select class="t" id="abl">'+DELAIS.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===d?' selected':'')+'>'+x[1]+'</option>'}).join('')+'</select>'+
+  (fin?'<div class="mu" style="margin-top:6px">'+(fin<new Date()?'<span class="pill al">Espace en pause depuis le '+esc(fin.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}))+'</span>':'Pause automatique le <b>'+esc(fin.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}))+'</b> si rien n\'est réglé.')+'</div>':'')+
+  champ('abn','Note',a.note||'')+'<p class="mu" style="margin:8px 0 0">En pause, le client voit un message poli ; rien n\'est effacé et il peut toujours vous écrire. Le paiement automatique se branchera ici.</p>'+
+  '<button class="btn sm go" type="button" id="absave" style="margin-top:10px">Enregistrer l\'abonnement</button></div>'}
+/* ---------- clés ---------- */
+function cles(c){return '<div class="card"><h2>Clés GHL et VosFactures</h2>'+
+  ['ghl','vf'].map(function(k){var s=c.secrets[k];return '<div style="margin-top:10px"><div class="row"><span><b>'+(k==='ghl'?'Clé GHL':'Clé VosFactures')+'</b><br><span class="sec">'+esc(s.nom)+'</span></span><span style="flex:0 0 auto" class="pill '+(s.pose?'ok':'w')+'">'+(s.pose?'Posée':'À poser')+'</span></div>'+
+   (DATA.posecles?'<div class="row" style="margin-top:6px"><input class="t" type="password" autocomplete="off" data-cle="'+k+'" placeholder="'+(s.pose?'Remplacer la clé…':'Collez la clé ici')+'" style="flex:1 1 200px"><button class="btn sm" type="button" data-poser="'+k+'" style="flex:0 0 auto">Tester et poser</button></div>':'')+'</div>'}).join('')+
+  (DATA.posecles?'<p class="mu" style="margin:10px 0 0">La clé est testée, puis posée dans Cloudflare. Elle n\'est gardée nulle part ailleurs et ne s\'affiche plus jamais.</p>':'<p class="mu" style="margin:10px 0 0">À poser dans Cloudflare › Workers › proclik-calcul › Paramètres › Variables et secrets (type Secret). Pour les poser d\'ici, voir l\'onglet Réglages.</p>')+'</div>'}
+/* ---------- identité ---------- */
+function identite(c){var i=c.identite||{};
+ return '<div class="card"><h2>Identité de l\'entreprise</h2><p class="mu" style="margin:0">Pour ses devis, sa page et ses messages.</p>'+champ('iraison','Raison sociale',i.raison)+champ('iadr','Adresse',i.adresse)+
+  '<div class="row"><div>'+champ('icp','Code postal',i.cp)+'</div><div>'+champ('iville','Ville',i.ville)+'</div></div><div class="row"><div>'+champ('isiret','SIRET',i.siret)+'</div><div>'+champ('itel','Téléphone pro',i.tel,'tel')+'</div></div>'+
+  '<div class="row"><div>'+champ('imail','E-mail pro',i.email,'email')+'</div><div>'+champ('isite','Site',i.site)+'</div></div><button class="btn sm go" type="button" id="isave" style="margin-top:10px">Enregistrer l\'identité</button></div>'}
+function brancheAutres(c){
+ function sauve(b,body,msg){b.disabled=true;body.id=c.id;api('/admin/client',{method:'POST',body:body}).then(function(){toast(msg);return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})}
+ $('#svf').addEventListener('click',function(){var b=this;b.disabled=true;b.textContent='Vérification…';api('/admin/sante',{method:'POST',body:{id:c.id}}).then(function(){return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false;b.textContent='Vérifier maintenant'})});
+ $('#absave').addEventListener('click',function(){sauve(this,{abo:{forfait:$('#abf').value,prix:$('#abp').value===''?null:Number(String($('#abp').value).replace(',','.')),debut:$('#abd').value,statut:$('#abs').value,delaiHeures:Number($('#abl').value),note:$('#abn').value}},'Abonnement enregistré')});
+ $('#isave').addEventListener('click',function(){sauve(this,{identite:{raison:$('#iraison').value,adresse:$('#iadr').value,cp:$('#icp').value,ville:$('#iville').value,siret:$('#isiret').value,tel:$('#itel').value,email:$('#imail').value,site:$('#isite').value}},'Identité enregistrée')});
+ [].forEach.call(document.querySelectorAll('[data-poser]'),function(b){b.addEventListener('click',function(){var k=b.dataset.poser,inp=document.querySelector('[data-cle="'+k+'"]'),v=inp.value.trim();if(!v){toast('Collez d\'abord la clé');return}
+  b.disabled=true;b.textContent='Test…';api('/admin/secret',{method:'POST',body:{id:c.id,type:k,valeur:v}}).then(function(x){inp.value='';toast('Clé posée : '+x.nom);return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false;b.textContent='Tester et poser'})})});
+}
+/* ---------- double sécurité ---------- */
+function bandeau2fa(){$('#deuxfa-bandeau').innerHTML=DATA.deuxfa?'':'<div class="card" style="border:1.5px solid var(--n1-warn)"><h2>Activez la double sécurité</h2><p class="mu" style="margin:0 0 10px">Cette page ouvre ou coupe tous vos clients. Avec la double sécurité, votre code seul ne suffit plus : il faut aussi votre téléphone.</p><button class="btn sm go" type="button" id="b2fa">Mettre en place (2 minutes)</button></div>';
+ if($('#b2fa'))$('#b2fa').onclick=function(){document.querySelector('[data-tab=reglages]').click()}}
+function reglages(){var R=$('#reglages');
+ R.innerHTML='<div class="card"><h2>Double sécurité</h2>'+(DATA.deuxfa?'<p class="mu" style="margin:0"><span class="pill ok">Activée</span> Chaque connexion demande votre code + le code à 6 chiffres de votre téléphone. Téléphone perdu : posez ADMIN_2FA_OFF = 1 dans Cloudflare, reconnectez-vous, remettez-la en place, puis retirez ADMIN_2FA_OFF.</p>':
+  '<p class="mu" style="margin:0 0 10px">1. Installez une appli d\'authentification (sur iPhone : l\'appli « Mots de passe » le fait déjà, ou Google Authenticator). 2. Scannez le carré ou touchez le lien. 3. Tapez le code à 6 chiffres.</p><button class="btn sm go" type="button" id="d2go">Commencer</button><div id="d2z"></div>')+'</div>'+
+  '<div class="card"><h2>Poser les clés depuis l\'Admin</h2><p class="mu" style="margin:0">'+(DATA.posecles?'<span class="pill ok">Branché</span> Les clés GHL et VosFactures se posent depuis la fiche du client.':'Pas encore branché. Une seule fois : créez dans Cloudflare un « jeton d\'API » avec le droit « Workers Scripts : Modifier », puis posez deux secrets sur proclik-calcul : CF_API_TOKEN (le jeton) et CF_ACCOUNT_ID (l\'identifiant du compte, visible à droite de la page Workers).')+'</p></div>'+
+  '<div class="card"><h2>E-mail d\'invitation automatique</h2><p class="mu" style="margin:0">'+(DATA.envoiMail?'<span class="pill ok">Branché</span> Le bouton « Envoyer l\'e-mail » part de votre GHL ProClik.':'Pas encore branché : il faut la clé GHL de votre sous-compte ProClik (GHL_PIT_PROCLIK, avec le droit « conversations ») et PROCLIK_LOCATION_ID dans Cloudflare. En attendant : « Envoyer… » ou « Copier ».')+'</p></div>'+
+  '<div class="card"><h2>Sauvegarde</h2><p class="mu" style="margin:0 0 10px">Le registre est gardé par Cloudflare. Pour une copie chez vous : toutes les fiches et le journal, sans aucun mot de passe.</p><button class="btn sm" type="button" id="exp">Télécharger la sauvegarde</button></div>';
+ if($('#exp'))$('#exp').onclick=function(){var b=this;b.disabled=true;api('/admin/export').then(function(j){var u=URL.createObjectURL(new Blob([JSON.stringify(j,null,1)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='proclik-admin-'+j.le.slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},function(e){toast(e.message)}).then(function(){b.disabled=false})};
+ if($('#d2go'))$('#d2go').onclick=function(){var b=this;b.disabled=true;api('/admin/2fa/debut',{method:'POST'}).then(function(j){
+  $('#d2z').innerHTML='<div class="res" style="text-align:center"><div id="d2qr" style="display:inline-block;background:#fff;padding:10px;border-radius:12px"></div><p style="margin:10px 0 4px"><a href="'+esc(j.uri)+'" class="btn sm">Ouvrir dans l\'appli</a></p><div class="mu">Ou tapez cette clé : <span class="sec">'+esc(j.secret.replace(/(.{4})/g,'$1 ').trim())+'</span></div></div>'+
+   '<label class="f" for="d2c">Code à 6 chiffres affiché par l\'appli</label><input class="t" id="d2c" inputmode="numeric" autocomplete="one-time-code" maxlength="7"><div class="err" id="d2e"></div><button class="btn sm go" type="button" id="d2v">Activer</button>';
+  try{if(window.QRCode)new QRCode($('#d2qr'),{text:j.uri,width:180,height:180,colorDark:'#0E1322',colorLight:'#ffffff'});else $('#d2qr').hidden=true}catch(e){$('#d2qr').hidden=true}
+  $('#d2v').onclick=function(){var v=this;v.disabled=true;api('/admin/2fa/valider',{method:'POST',body:{otp:$('#d2c').value.replace(/\D/g,'')}}).then(function(){toast('Double sécurité activée : reconnectez-vous');sj('');setTimeout(function(){vue('login')},1200)},function(e){$('#d2e').textContent=e.message}).then(function(){v.disabled=false})}
+ },function(e){toast(e.message)}).then(function(){b.disabled=false})};
+}
+/* ---------- messages des clients ---------- */
+function messages(){var M=$('#messages');M.innerHTML='<div class="card mu">Chargement…</div>';
+ api('/admin/messages').then(function(j){var par={};j.messages.forEach(function(m){(par[m.a]=par[m.a]||{e:m.entreprise,L:[]}).L.push(m)});
+  var ids=Object.keys(par);if(!ids.length){M.innerHTML='<div class="card mu">Aucun message pour l\'instant.</div>';return}
+  M.innerHTML=ids.map(function(id){var g=par[id];return '<div class="card"><h2>'+esc(g.e)+'</h2>'+g.L.map(function(m){return m.erreur?'<div class="err">'+esc(m.erreur)+'</div>':'<div class="jl"><time>'+(m.date?esc(new Date(m.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})):'')+'</time><span'+(m.reponse?' style="color:var(--mu)"':'')+'>'+(m.reponse?'<b>Vous :</b> ':'')+esc(m.texte.slice(0,400))+'</span></div>'}).join('')+
+   '<div class="row" style="margin-top:8px"><input class="t" data-rep="'+esc(id)+'" placeholder="Votre réponse (il la lit dans ses Réglages)" style="flex:1 1 200px"><button class="btn sm go" type="button" data-repgo="'+esc(id)+'" style="flex:0 0 auto">Répondre</button></div></div>'}).join('');
+  [].forEach.call(M.querySelectorAll('[data-repgo]'),function(b){b.onclick=function(){var id=b.dataset.repgo,inp=M.querySelector('[data-rep="'+id+'"]');b.disabled=true;api('/admin/repondre',{method:'POST',body:{id:id,texte:inp.value}}).then(function(){toast('Réponse envoyée');messages()},function(e){toast(e.message)}).then(function(){b.disabled=false})}})
+ },function(e){M.innerHTML='<div class="card err">'+esc(e.message)+'</div>'})}
+
+/* ---------- mise en service : toutes les étapes, dans l'ordre ---------- */
+var BLOC_STYLE='<style>\nhtml,body{margin:0!important;padding:0!important;overflow:hidden!important;height:100%!important;overscroll-behavior:none}\n#ID{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;border:0;display:block;z-index:2147483647;background:#ECEEF2}\n</style>\n';
+function blocEspace(){return BLOC_STYLE.replace('#ID','#pcespace')+'<iframe id="pcespace" title="Espace ProClik" allow="microphone; geolocation; camera; web-share; clipboard-write" src="https://proclik.github.io/espace-depart/?v=2"></iframe>'}
+function blocDevis(c){return BLOC_STYLE.replace('#ID','#clikdevis')+'<iframe id="clikdevis" title="Demande de devis" allow="web-share; clipboard-write; microphone" src="https://proclik.github.io/devis/?v=31#w=COLLEZ_ICI&a='+encodeURIComponent(c.id)+'&n='+encodeURIComponent(c.entreprise||'')+'&pr='+encodeURIComponent(c.prenom||'')+'"></iframe>\n'+
+ '<script>\n(function () {\n  var f = document.getElementById("clikdevis"), page = location.href.split("#")[0];\n  if (!f || !/^https?:/.test(page)) return;\n  var s = f.getAttribute("src"), i = s.indexOf("#");\n  var m = location.hash.match(/[#&]reprise=([A-Za-z0-9_-]+)/);\n  f.src = s.slice(0, i) + "&p=" + encodeURIComponent(page) + s.slice(i) + (m ? "&reprise=" + m[1] : "");\n  if (m && history.replaceState) history.replaceState(null, "", page);\n})();\n<\/script>'}
+function etapes(c){var m=c.mes||{};return [
+ {k:'fiche',t:'Fiche remplie',d:'Nom, prénom, e-mail et sous-compte GHL.',auto:!!(c.entreprise&&c.email&&c.locationId)},
+ {k:'ghl',t:'Clé GHL posée dans Cloudflare',d:'Clé privée du sous-compte (Paramètres › Clés privées), nommée '+c.secrets.ghl.nom+'.',auto:c.secrets.ghl.pose},
+ {k:'vf',t:'VosFactures branché',d:'Nom du compte rempli + clé posée, nommée '+c.secrets.vf.nom+'.',auto:!!(c.vfCompte&&c.secrets.vf.pose)},
+ {k:'snapshot',t:'Snapshot GHL poussé',d:'Pipelines « Devis & Chantiers », tags et workflows ProClik dans son sous-compte.'},
+ {k:'make',t:'Scénario Make branché',d:'Copie de « Clik\'Devis formulaire » avec sa clé GHL et son locationId.'},
+ {k:'pagedevis',t:'Page Devis dans son GHL',d:'Bouton ci-dessous : copiez le bloc et collez-le dans la page, avec l\'adresse Make (webhook) à la place de COLLEZ_ICI.',bloc:'devis'},
+ {k:'pageespace',t:'Page Espace dans son GHL',d:'Bouton ci-dessous : bloc à coller dans la page (le même pour tous).',bloc:'espace'},
+ {k:'acces',t:'Accès donné au client',d:'Lien d\'invitation ou code provisoire (carte « Accès » plus haut).',auto:c.acces!=='pas encore d\'accès'},
+ {k:'test',t:'Test de bout en bout',d:'Une demande d\'essai : alerte reçue, pré-devis visible dans son Espace.'}
+].map(function(e){e.fait=e.auto!==undefined?e.auto:!!m[e.k];return e})}
+function miseEnService(c){var E=etapes(c),f=E.filter(function(e){return e.fait}).length;
+ return '<div class="card"><h2>Mise en service <span class="pill '+(f===E.length?'ok':'w')+'">'+f+' / '+E.length+'</span></h2><p class="mu" style="margin:0 0 6px">Toutes les étapes pour qu\'il soit opérationnel. Celles marquées « auto » se cochent toutes seules.</p>'+
+  E.map(function(e,i){return '<div class="mes"><label class="mes-l"><input type="checkbox" data-mes="'+e.k+'"'+(e.fait?' checked':'')+(e.auto!==undefined?' disabled':'')+'><span><b>'+(i+1)+'. '+esc(e.t)+'</b>'+(e.auto!==undefined?' <span class="pill">auto</span>':'')+'<br><span class="mu">'+esc(e.d)+'</span></span></label>'+
+   (e.bloc?'<div class="row" style="margin:6px 0 0 34px"><button class="btn sm" type="button" data-bloc="'+e.bloc+'">Copier le bloc code</button></div>':'')+'</div>'}).join('')+'</div>'}
+function brancheMes(c){
+ [].forEach.call(document.querySelectorAll('[data-mes]'),function(x){if(x.disabled)return;x.addEventListener('change',function(){var m=Object.assign({},c.mes||{});m[x.dataset.mes]=x.checked;
+  api('/admin/client',{method:'POST',body:{id:c.id,mes:m}}).then(function(){toast(x.checked?'Étape cochée':'Étape décochée');return charger()},function(e){x.checked=!x.checked;toast(e.message)})})});
+ [].forEach.call(document.querySelectorAll('[data-bloc]'),function(b){b.addEventListener('click',function(){copier(b.dataset.bloc==='devis'?blocDevis(c):blocEspace())})});
+}
+/* ---------- sur mesure : ce qui n'existe pas encore, pour ce client seulement ---------- */
+var ETATS={demande:'Demandé',"en cours":'En cours',pret:'Prêt'};
+function surMesure(c){var L=c.surmesure||[];
+ return '<div class="card"><h2>Sur mesure</h2><p class="mu" style="margin:0">Une fonction spéciale pour ce client seulement. Notez la demande ; quand elle est construite (« Prêt »), l\'interrupteur l\'allume dans son Espace.</p><div id="smL">'+
+  L.map(function(x,i){return '<div class="sm" data-i="'+i+'"><div class="row"><input class="t" data-k="titre" value="'+esc(x.titre)+'" placeholder="Ex. Bons de livraison négoce" aria-label="Titre"><select class="t" data-k="etat" style="flex:0 0 130px" aria-label="État">'+Object.keys(ETATS).map(function(k){return '<option value="'+k+'"'+(x.etat===k?' selected':'')+'>'+ETATS[k]+'</option>'}).join('')+'</select></div>'+
+   '<textarea class="t" data-k="note" rows="2" placeholder="Ce qu\'il veut, en quelques mots" aria-label="Note" style="margin-top:6px;resize:vertical">'+esc(x.note)+'</textarea>'+
+   '<div class="row" style="margin-top:6px"><label class="sw" style="flex:1 1 auto">Allumé dans son Espace<input type="checkbox" data-k="actif"'+(x.actif?' checked':'')+(x.etat!=='pret'?' disabled':'')+'></label><button class="btn sm al" type="button" data-smx style="flex:0 0 auto">Retirer</button></div></div>'}).join('')+'</div>'+
+  '<div class="row" style="margin-top:10px"><button class="btn sm" type="button" id="smAdd">+ Ajouter une demande spéciale</button><button class="btn sm go" type="button" id="smSave">Enregistrer</button></div></div>'}
+function brancheSm(c){var L=JSON.parse(JSON.stringify(c.surmesure||[]));
+ function lire(){[].forEach.call(document.querySelectorAll('#smL .sm'),function(el){var x=L[+el.dataset.i];[].forEach.call(el.querySelectorAll('[data-k]'),function(f){x[f.dataset.k]=f.type==='checkbox'?f.checked:f.value})})}
+ $('#smAdd').addEventListener('click',function(){lire();L.push({titre:'',note:'',etat:'demande',actif:false});var tmp=Object.assign({},c,{surmesure:L});var div=document.createElement('div');div.innerHTML=surMesure(tmp);var old=$('#smL').closest('.card');old.parentNode.replaceChild(div.firstChild,old);brancheSm(tmp)});
+ [].forEach.call(document.querySelectorAll('[data-smx]'),function(b){b.addEventListener('click',function(){lire();L.splice(+b.closest('.sm').dataset.i,1);var tmp=Object.assign({},c,{surmesure:L});var div=document.createElement('div');div.innerHTML=surMesure(tmp);var old=$('#smL').closest('.card');old.parentNode.replaceChild(div.firstChild,old);brancheSm(tmp)})});
+ [].forEach.call(document.querySelectorAll('#smL [data-k=etat]'),function(sel){sel.addEventListener('change',function(){var a=sel.closest('.sm').querySelector('[data-k=actif]');a.disabled=sel.value!=='pret';if(a.disabled)a.checked=false})});
+ $('#smSave').addEventListener('click',function(){var b=this;lire();b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,surmesure:L.filter(function(x){return x.titre.trim()})}}).then(function(){toast('Enregistré');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})});
+}
+
+/* ---------- journal ---------- */
+function journal(){var J=$('#journal');J.innerHTML='<span class="mu">Chargement…</span>';
+ api('/admin/journal').then(function(j){var nom={};DATA.clients.forEach(function(c){nom[c.id]=c.entreprise});
+  J.innerHTML=j.journal.length?j.journal.map(function(l){var d=new Date(l.t);return '<div class="jl"><time>'+d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</time><span><b>'+esc(l.type)+'</b>'+(l.a?' · '+esc(nom[l.a]||l.a):'')+(l.email&&!l.a?' · '+esc(l.email):'')+'</span></div>'}).join(''):'<span class="mu">Rien pour l\'instant.</span>'},
+  function(e){J.innerHTML='<div class="err">'+esc(e.message)+'</div>'})}
+
+if(!S){vue('login');$('#aerr').textContent='Adresse du service ProClik absente.';}
+else if(lj())charger().then(function(){if(!lj())vue('login')});else vue('login');
+})();
+</script>
+</body>
+</html>

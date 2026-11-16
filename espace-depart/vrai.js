@@ -12,6 +12,13 @@ var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var lsG=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 var lsS=function(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+/* Aperçu par l'Admin (#apercu=…) : lecture seule, 1 heure, gardé dans cet onglet seulement (ne touche pas à la connexion de l'appareil). */
+var AP=(function(){var m=/[#&]apercu=([A-Za-z0-9_.-]{20,})/.exec(location.hash);if(m){try{sessionStorage.setItem('pc-apercu','1');sessionStorage.setItem('ap:pc-vrai-jeton',JSON.stringify(m[1]));sessionStorage.removeItem('ap:pc-vrai-artisan');sessionStorage.removeItem('ap:pc-vrai-liste');history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+ try{return sessionStorage.getItem('pc-apercu')==='1'}catch(e){return false}})();
+if(AP){var AK={'pc-vrai-jeton':1,'pc-vrai-artisan':1,'pc-vrai-liste':1},g0=lsG,s0=lsS;
+ lsG=function(k){if(AK[k]){try{return JSON.parse(sessionStorage.getItem('ap:'+k)||'null')}catch(e){return null}}return g0(k)};
+ lsS=function(k,v){if(AK[k]){try{v==null?sessionStorage.removeItem('ap:'+k):sessionStorage.setItem('ap:'+k,JSON.stringify(v))}catch(e){}return}s0(k,v)}}
+function quitterApercu(){try{['pc-apercu','ap:pc-vrai-jeton','ap:pc-vrai-artisan','ap:pc-vrai-liste'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}location.reload()}
 var eur=function(n,d){return n==null?'—':Number(n).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:d||2})+' €'};
 var qte=function(n){return n==null?'':String(n).replace('.',',')};
 function quand(iso){if(!iso)return '';var d=new Date(iso);if(isNaN(d))return '';var now=new Date(),j=Math.round((new Date(now.toDateString())-new Date(d.toDateString()))/864e5),h=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}).replace(':',' h ');
@@ -91,7 +98,7 @@ document.head.appendChild(css);
 /* ---------- appels au service ---------- */
 function api(chemin,opt){opt=opt||{};var j=lsG(KJ),h={};if(j)h.Authorization='Bearer '+j;if(opt.body)h['Content-Type']='application/json';
  return fetch(SERVICE+chemin,{method:opt.method||'GET',headers:h,body:opt.body?JSON.stringify(opt.body):undefined,cache:'no-store'})
-  .then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service ('+r.status+')'}}).then(function(x){if(r.status===401&&x&&x.reconnexion){deconnecter(true);}if(!x.ok)throw new Error(x.erreur||('Erreur '+r.status));return x})},
+  .then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service ('+r.status+')'}}).then(function(x){if(r.status===401&&x&&x.reconnexion){if(AP){quitterApercu();return x}deconnecter(true);}if(r.status===402&&x&&x.suspendu)enPause(x.erreur);if(!x.ok)throw new Error(x.erreur||('Erreur '+r.status));return x})},
    function(){throw new Error(navigator.onLine===false?'Pas de réseau pour l\'instant.':'Service ProClik injoignable. Réessayez dans un instant.')});}
 
 /* ---------- panneau plein écran (même style que le plan) ---------- */
@@ -103,24 +110,76 @@ function fermer(){ov.hidden=true;document.body.style.overflow='';if(/#c=/.test(l
 $('#vov-x').addEventListener('click',fermer);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)fermer()});
 
-/* ---------- connexion ---------- */
-var apres=null;
+/* ---------- connexion : e-mail + mot de passe (un seul Espace pour tous, Cyril 15/11) ----------
+   E-mail vide = ancien code d'accès (BRS, ProClik Test) tant que l'artisan n'a pas choisi de mot de passe.
+   Code provisoire donné par Cyril (PC-XXXX-XXXX) ou lien d'invitation (#invit=…) → « Choisissez votre mot de passe ». */
+var apres=null,KM='pc-vrai-email';
+function connecte(x){lsS(KJ,x.jeton);lsS(KA,x.artisan);if(window.PCMenus)window.PCMenus.applique();fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
+function oeil(id,inp){$(id).addEventListener('change',function(){[].concat(inp).forEach(function(i){i.type=this.checked?'text':'password'},this)})}
 function connexion(msg){
- ouvrir('🔒 Vos vraies demandes<small>Connexion à l\'Espace ProClik</small>',
-  '<div class="card vlog"><p style="margin:0">'+(msg?esc(msg):'Tapez le code d\'accès que Cyril vous a donné. Vous ne le retaperez pas à chaque fois : cet appareil s\'en souvient 90 jours.')+'</p>'+
-  '<input id="vcode" type="password" inputmode="text" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Code d\'accès" aria-label="Code d\'accès">'+
-  '<label style="font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center"><input type="checkbox" id="vvoir" style="width:auto"> Afficher le code</label>'+
-  '<div class="verr" id="verr"></div><button class="vbtn go" id="vgo" type="button">Se connecter</button></div>'+
-  '<p class="hint" style="margin:0;color:var(--muted);font-size:13px">Sans code, l\'Espace reste en démonstration (exemples fictifs). Vos données restent dans votre compte : rien n\'est envoyé à un client sans vous.</p>');
- var inp=$('#vcode');setTimeout(function(){try{inp.focus()}catch(e){}},200);
- $('#vvoir').addEventListener('change',function(){inp.type=this.checked?'text':'password'});
- function go(){var c=inp.value.trim(),b=$('#vgo');if(!c){$('#verr').textContent='Le code est vide.';return}
+ ouvrir('Votre Espace<small>Connexion à l\'Espace ProClik</small>',
+  '<div class="card vlog"><p style="margin:0">'+(msg?esc(msg):'Tapez votre e-mail et votre mot de passe. Cet appareil s\'en souvient 90 jours.')+'</p>'+
+  '<input id="vmail" type="email" inputmode="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Votre e-mail" aria-label="Votre e-mail" value="'+esc(lsG(KM)||'')+'">'+
+  '<input id="vcode" type="password" inputmode="text" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Mot de passe (ou code provisoire)" aria-label="Mot de passe">'+
+  '<label style="font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center"><input type="checkbox" id="vvoir" style="width:auto"> Afficher le mot de passe</label>'+
+  '<div class="verr" id="verr"></div><button class="vbtn go" id="vgo" type="button">Se connecter</button>'+
+  '<p style="margin:0;font-size:13px;color:var(--muted)">Mot de passe oublié ? Demandez à Cyril un nouveau lien : votre Espace et vos données ne bougent pas.</p></div>'+
+  '<p class="hint" style="margin:0;color:var(--muted);font-size:13px">Ancien code d\'accès ? Laissez l\'e-mail vide et tapez votre code. Sans connexion, l\'Espace reste en démonstration (exemples fictifs).</p>');
+ var inp=$('#vcode'),mail=$('#vmail');setTimeout(function(){try{(mail.value?inp:mail).focus()}catch(e){}},200);
+ oeil('#vvoir',inp);
+ function go(){var c=inp.value.trim(),m=mail.value.trim().toLowerCase(),b=$('#vgo');if(!c){$('#verr').textContent='Le mot de passe est vide.';return}
   b.disabled=true;b.textContent='Vérification…';$('#verr').textContent='';
-  api('/espace/connexion',{method:'POST',body:{code:c}}).then(function(x){lsS(KJ,x.jeton);lsS(KA,x.artisan);fermer();demarrer();if(apres){var a=apres;apres=null;a()}},
-   function(e){b.disabled=false;b.textContent='Se connecter';$('#verr').textContent=e.message==='Code d\'accès refusé'?'Code refusé. Vérifiez les majuscules et les espaces (la correction automatique de l\'iPad aime les changer).':e.message})}
- $('#vgo').addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+  api('/espace/connexion',{method:'POST',body:m?{email:m,mdp:c}:{code:c}}).then(function(x){if(m)lsS(KM,m);if(x.changer){choisir({ticket:x.ticket},x.entreprise);return}connecte(x)},
+   function(e){b.disabled=false;b.textContent='Se connecter';$('#verr').textContent=/refusé/.test(e.message)?(m?'E-mail ou mot de passe refusé. Vérifiez les majuscules (la correction automatique aime les changer).':'Code refusé. Vérifiez les majuscules et les espaces.'):e.message})}
+ $('#vgo').addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});mail.addEventListener('keydown',function(e){if(e.key==='Enter')inp.focus()});
 }
-function deconnecter(expire){lsS(KJ,null);lsS(KL,null);document.documentElement.classList.remove('pcvrai');location.hash='';if(expire){setTimeout(function(){connexion('Votre connexion a expiré ou le code a changé : retapez votre code d\'accès.')},50)}else location.reload()}
+var REGLE='10 caractères au minimum, avec au moins une lettre et un chiffre.';
+function choisir(o,ent){
+ ouvrir('Choisissez votre mot de passe<small>'+(ent?esc(ent):'Espace ProClik')+'</small>',
+  '<div class="card vlog"><p style="margin:0">C\'est vous seul qui le connaissez : ni Cyril ni personne d\'autre ne peut le lire. '+REGLE+'</p>'+
+  '<input id="vn1" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Nouveau mot de passe" aria-label="Nouveau mot de passe">'+
+  '<input id="vn2" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Retapez-le" aria-label="Retapez le mot de passe">'+
+  '<label style="font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center"><input type="checkbox" id="vvoir" style="width:auto"> Afficher</label>'+
+  '<div class="verr" id="verr"></div><button class="vbtn go" id="vgo" type="button">Valider et ouvrir mon Espace</button></div>');
+ var a=$('#vn1'),b2=$('#vn2');setTimeout(function(){try{a.focus()}catch(e){}},200);oeil('#vvoir',[a,b2]);
+ function go(){var v=a.value,b=$('#vgo');if(v!==b2.value){$('#verr').textContent='Les deux ne sont pas pareils.';return}
+  if(v.length<10||!/[A-Za-zÀ-ÿ]/.test(v)||!/\d/.test(v)){$('#verr').textContent=REGLE;return}
+  b.disabled=true;b.textContent='Un instant…';$('#verr').textContent='';
+  api('/espace/activer',{method:'POST',body:{ticket:o.ticket,invit:o.invit,mdp:v}}).then(function(x){connecte(x);toast2('Mot de passe enregistré','Bienvenue dans votre Espace.')},
+   function(e){b.disabled=false;b.textContent='Valider et ouvrir mon Espace';$('#verr').textContent=e.message})}
+ $('#vgo').addEventListener('click',go);b2.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+}
+function toast2(t,s){try{if(window.PCX&&window.PCX.toast)window.PCX.toast(t,s)}catch(e){}}
+/* Mon compte (menu ☰ « Votre espace », connecté) : mot de passe, autres appareils, se déconnecter */
+function compte(){var art=lsG(KA)||{};
+ ouvrir('Mon compte<small>'+esc(art.entreprise||'Espace ProClik')+'</small>',
+  '<div class="card vlog"><p style="margin:0"><b>Changer mon mot de passe</b></p>'+
+  '<input id="vo" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Mot de passe actuel" aria-label="Mot de passe actuel">'+
+  '<input id="vn1" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Nouveau mot de passe" aria-label="Nouveau mot de passe">'+
+  '<input id="vn2" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Retapez le nouveau" aria-label="Retapez le nouveau">'+
+  '<p style="margin:0;font-size:13px;color:var(--muted)">'+REGLE+' Vos autres appareils seront déconnectés.</p>'+
+  '<div class="verr" id="verr"></div><button class="vbtn go" id="vgo" type="button">Changer le mot de passe</button></div>'+
+  '<div class="card vlog"><p style="margin:0"><b>Un téléphone perdu ?</b> Déconnectez tous vos autres appareils. Celui-ci reste connecté.</p><button class="vbtn" id="vpart" type="button">Déconnecter mes autres appareils</button></div>'+
+  '<div class="card vlog"><button class="vbtn" type="button" id="vsort">Me déconnecter de cet appareil</button><p style="margin:0;font-size:13px;color:var(--muted)">Les demandes gardées sur cet appareil sont effacées.</p></div>');
+ $('#vgo').addEventListener('click',function(){var b=this,v=$('#vn1').value;if(v!==$('#vn2').value){$('#verr').textContent='Les deux nouveaux ne sont pas pareils.';return}
+  if(v.length<10||!/[A-Za-zÀ-ÿ]/.test(v)||!/\d/.test(v)){$('#verr').textContent=REGLE;return}
+  b.disabled=true;$('#verr').textContent='';api('/espace/mot-de-passe',{method:'POST',body:{ancien:$('#vo').value,nouveau:v}}).then(function(x){lsS(KJ,x.jeton);fermer();toast2('Mot de passe changé','Vos autres appareils sont déconnectés.')},function(e){b.disabled=false;$('#verr').textContent=e.message})});
+ $('#vpart').addEventListener('click',function(){var b=this;if(!b.dataset.ok){b.dataset.ok=1;b.textContent='Touchez encore pour confirmer';return}
+  b.disabled=true;api('/espace/deconnexion-partout',{method:'POST'}).then(function(x){lsS(KJ,x.jeton);fermer();toast2('C\'est fait','Vos autres appareils sont déconnectés.')},function(e){b.disabled=false;$('#verr').textContent=e.message})});
+ $('#vsort').addEventListener('click',function(){var b=this;if(!b.dataset.ok){b.dataset.ok=1;b.textContent='Touchez encore pour vous déconnecter';return}fermer();lsS(KA,null);deconnecter(false)});
+}
+(function(){var m=document.getElementById('menu');if(!m)return;
+ m.addEventListener('click',function(){setTimeout(function(){var t=document.getElementById('x-t');if(!t||t.textContent!=='Votre espace'||!lsG(KJ)||document.getElementById('v-compte'))return;
+  var c=document.querySelector('#x-in .card.menu');if(!c)return;var b=document.createElement('button');b.type='button';b.id='v-compte';
+  b.innerHTML='<span class="av"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg></span><span class="tx"><b>Mon compte</b><small>Mot de passe, appareils connectés</small></span><span class="go">›</span>';
+  b.addEventListener('click',function(){if(window.PCX&&window.PCX.xclose)window.PCX.xclose();compte()});
+  var o=document.getElementById('mo-opt');c.insertBefore(b,o?o.nextSibling:c.firstChild)},10)})})();
+/* Espace en pause (abonnement) : rien n'est effacé, message poli, on peut écrire à Cyril. */
+function enPause(msg){if(enPause.vu)return;enPause.vu=1;
+ ouvrir('Votre Espace est en pause<small>Rien n\'est effacé</small>','<div class="card vlog"><p style="margin:0">'+esc(msg||'Votre Espace est en pause.')+'</p><p style="margin:0;color:var(--muted);font-size:13.5px">Vos clients, vos devis et vos factures sont gardés tels quels. Dès que c\'est réglé, tout se rouvre tout seul.</p>'+
+  (window.PCREG&&window.PCREG.ecrire?'<button class="vbtn go" type="button" id="vpause">Écrire à Cyril</button>':'')+'</div>');
+ var b=document.getElementById('vpause');if(b)b.addEventListener('click',function(){fermer();window.PCREG.ecrire('Bonjour Cyril, mon Espace est en pause. ')})}
+function deconnecter(expire){lsS(KJ,null);lsS(KL,null);document.documentElement.classList.remove('pcvrai');location.hash='';if(expire){setTimeout(function(){connexion('Votre connexion a expiré ou le mot de passe a changé : reconnectez-vous.')},50)}else location.reload()}
 
 /* ---------- liste des demandes ---------- */
 var LISTE=null,ETAPES=[],charge=0;
@@ -153,7 +212,7 @@ function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){retur
  if(art.prenom){var hl=$('#hello');if(hl)hl.textContent='Bonjour '+art.prenom+'.';var ph=$('#phrase');if(ph)ph.textContent=a.length?(a.length===1?'Une demande attend votre validation. Le calcul est fait, il ne manque que votre œil.':a.length+' demandes attendent votre validation. Les calculs sont faits.'):'Aucune demande en attente : tout est à jour.'}
 }
 function charger(){if(!lsG(KJ))return;charge=Date.now();
- api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{};ka.options=x.artisan.options;lsS(KA,ka)}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
+ api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{},av=JSON.stringify(ka.menus||{});ka.options=x.artisan.options;if(x.artisan.menus)ka.menus=x.artisan.menus;if(x.artisan.effectif!==undefined)ka.effectif=x.artisan.effectif;lsS(KA,ka);if(av!==JSON.stringify(ka.menus)&&window.PCMenus)window.PCMenus.applique()}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
   function(e){var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();var vd=$('#vd');if(vd&&lsG(KJ))vd.insertAdjacentHTML('afterbegin','<div class="verr" style="margin-bottom:10px">'+esc(e.message)+'</div>')})}
 
 /* ---------- une demande ---------- */
@@ -282,7 +341,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  var O=ONG.filter(function(x){return Z[x[0]]});if(!Z[VTAB])VTAB='devis';
  var h='<div class="cf vmenu"><div class="seg cf-seg dv-seg" role="tablist" aria-label="La demande" style="grid-template-columns:repeat('+O.length+',minmax(0,1fr))">'+O.map(function(x){var n=x[0]==='devis'?manque(p).length:0;return '<button role="tab" type="button" data-vtabd="'+x[0]+'" aria-selected="'+(VTAB===x[0])+'">'+ICS[x[2]]+'<span>'+x[1]+'</span>'+(n?'<i class="r">'+n+'</i>':'')+'</button>'}).join('')+'</div></div>'+
   O.map(function(x){return '<div class="vpan" data-vpan="'+x[0]+'"'+(VTAB===x[0]?'':' hidden')+'>'+Z[x[0]]+'</div>'}).join('')+
-  '<p class="vst" style="font-size:12.5px">🔒 Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
+  '<p class="vst" style="font-size:12.5px">Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
  ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,'<button class="vbtn" type="button" data-vfermer>Fermer</button>');
  if(DOCC===k.id&&DOCS)rendreDocs();else chargerDocs(k.id);}
 function onglet(t){VTAB=t;$$('#vov-b [data-vtabd]').forEach(function(b){b.setAttribute('aria-selected',String(b.getAttribute('data-vtabd')===t))});$$('#vov-b [data-vpan]').forEach(function(z){z.hidden=z.getAttribute('data-vpan')!==t});$('#vov-b').scrollTop=0}
@@ -344,7 +403,7 @@ function rendreND(){MODE='nd';var C=clientsListe(),t=ND.main_oeuvre.reduce(funct
   '<div class="card vsec vtotc"><div class="vtot1"><span>Total HT</span><b>'+eur(Math.round(t*100)/100)+'</b></div><p class="vst" style="padding:4px 0 0">La TVA s\'ajoute dans le devis, à votre taux habituel.</p></div>'+
   '<div class="card vsec vpart"><div class="vpart-h"><h3>Les lignes</h3><small>prix de vente HT · touchez « Modifier » pour changer une ligne</small></div>'+(ND.main_oeuvre.length?ND.main_oeuvre.map(function(l,i){return '<div class="vli vedit"><span>'+esc(l.libelle)+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+'</small><button type="button" class="vmod" data-vlg="main_oeuvre|'+i+'">Modifier</button></div>'}).join(''):'<p class="vst">Pas encore de ligne : ajoutez la première, votre base vous propose vos produits.</p>')+
   '<button class="vbtn vadd" type="button" data-vlg="+main_oeuvre">＋ Ajouter une ligne</button></div>'+
-  '<p class="vst" style="font-size:12.5px">🔒 Le devis est créé dans vos documents. Il ne part pas chez le client tant que vous ne l\'envoyez pas.</p>';
+  '<p class="vst" style="font-size:12.5px">Le devis est créé dans vos documents. Il ne part pas chez le client tant que vous ne l\'envoyez pas.</p>';
  ouvrir('Nouveau devis<small>Fait par vous, sans pré-devis</small>',h,'<button class="vbtn" type="button" '+(ND.arme?'data-vnd>Annuler':'data-vfermer>Fermer')+'</button><button class="vbtn go'+(ND.arme?' varm':'')+'" type="button" data-vndok>'+(ND.arme?'Oui, créer le devis':'Créer le devis')+'</button>');
  var sc=$('#vnd-c'),ti=$('#vnd-t');sc.addEventListener('change',function(){ND.contact=sc.value});ti.addEventListener('input',function(){ND.titre=ti.value})}
 function ndOk(b){if(!ND)return;if(!ND.contact){toastV('Pour qui ?','Choisissez le client.');return}
@@ -489,14 +548,20 @@ function demarrer(){var art=lsG(KA)||{};document.documentElement.classList.add('
  setTimeout(function(){var t=$('#toast'),tt=$('#tt');if(t&&tt&&/Nouvelle demande de devis/.test(tt.textContent))t.classList.remove('on')},2200);
  var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();charger();}
 function proposer(){if(!SERVICE)return;var ph=$('#phrase');if(!ph||$('#vco'))return;var d=document.createElement('div');d.className='vco';d.id='vco';
- d.innerHTML='<span><b>Mode démo.</b> Vous êtes l\'artisan ? Connectez-vous pour voir vos vraies demandes.</span><button class="vbtn go sm" type="button" data-vlogin>Se connecter</button>';ph.parentNode.insertBefore(d,ph.nextSibling)}
+ d.innerHTML='<span><b>Mode démo.</b> C\'est votre Espace ? Connectez-vous pour voir vos vraies demandes.</span><button class="vbtn go sm" type="button" data-vlogin>Se connecter</button>';ph.parentNode.insertBefore(d,ph.nextSibling)}
 // Lien collé à la main : espaces, guillemets ou %20 autour de l'identifiant sont ignorés.
 function lienDirect(){var h=location.hash;try{h=decodeURIComponent(h)}catch(e){}var m=/[#&]c=[\s"'<>]*([A-Za-z0-9_-]{6,64})/.exec(h);return m?m[1]:null}
 
 if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore branché','<div class="card"><p style="margin:0">Ce lien ouvre une vraie demande, mais l\'adresse du service ProClik n\'est pas encore réglée dans l\'Espace. Prévenez Cyril : c\'est une ligne à ajouter.</p></div>','<button class="vbtn" type="button" data-vfermer>Fermer</button>')},1500);return}
 /* Pour l'onglet Clients (clients.js) : appels au service, ouverture d'une demande, PDF d'un document */
 window.PCV={api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc};
+if(AP){var bd=document.createElement('div');bd.id='vapercu';bd.setAttribute('role','status');bd.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);padding:8px 8px 8px 14px;border-radius:14px;font:600 13px var(--f);display:flex;gap:10px;align-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);max-width:calc(100% - 24px)';
+ bd.innerHTML='<span id="vapn" style="overflow:hidden;text-overflow:ellipsis">Aperçu (lecture seule)</span><button type="button" style="flex:none;border:0;border-radius:10px;padding:6px 10px;font:700 13px var(--f);background:rgba(255,255,255,.18);color:inherit;cursor:pointer">Quitter</button>';
+ document.body.appendChild(bd);bd.querySelector('button').addEventListener('click',quitterApercu);
+ api('/espace/moi').then(function(x){if(!x||!x.artisan)return;lsS(KA,x.artisan);document.getElementById('vapn').textContent='Aperçu : '+x.artisan.entreprise+' (lecture seule)';if(window.PCMenus)window.PCMenus.applique()}).catch(function(){})}
 if(lsG(KJ))demarrer();else proposer();
+(function(){var m=/[#&]invit=([A-Za-z0-9_-]{20,80})/.exec(location.hash);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+ setTimeout(function(){choisir({invit:m[1]})},lsG(KJ)?300:1200)})();
 var c0=lienDirect();if(c0)setTimeout(function(){ouvrirDemande(c0)},lsG(KJ)?300:1500);
 window.addEventListener('hashchange',function(){var c=lienDirect();if(c)ouvrirDemande(c)});
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="devis"]');if(t&&lsG(KJ)&&Date.now()-charge>30000)charger()});
