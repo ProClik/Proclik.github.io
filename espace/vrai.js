@@ -465,6 +465,7 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
   var C={creer:['Valider le pré-devis','Oui, créer le devis'],envoyer:['Envoyer au client','Oui, envoyer'],accepted:['Le client a accepté','Oui, accepté'],acompte:['Créer l\'acompte','Créer l\'acompte'],finale:['Créer la facture finale','Oui, la créer'],paid:['Marquer payée','Oui, payée']}[n.a]||[n.t,'Oui, '+n.t.charAt(0).toLowerCase()+n.t.slice(1)];
   var f=$('#vov-f');if(f){f.innerHTML='<button class="vbtn" type="button" '+(arm?'data-vdoc="annuler">Annuler':'data-vfermer>Fermer')+'</button><button class="vbtn go'+(arm?' varm':'')+'" type="button" data-vdoc="'+n.a+'" data-id="'+(n.id||'')+'">'+esc(arm?C[1]:C[0])+'</button>';f.hidden=false}
   if(ERRDOC)h+='<p class="vst" style="padding:8px 10px;margin:0 0 8px;border-radius:10px;background:var(--warn-bg);color:var(--warn)"><b>Pas fait :</b> '+esc(ERRDOC)+'</p>';
+  if(n.a==='creer')h+=blocAj(p);
   if(!arm&&n.a!=='creer')h+='<p style="margin:0 0 6px;font-weight:700">'+esc(n.t)+'</p>';
   if(arm)h+='<p class="vst" style="padding:0 0 6px"><b>Touchez encore le bouton du bas pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'.</b></p>';
   else if(n.s)h+='<p class="vst" style="padding:0 0 6px">'+esc(n.s)+'</p>';
@@ -475,7 +476,16 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
  }
  h+=blocMinis(DOCS);
  h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
- z.innerHTML=h;poserMinis()}
+ z.innerHTML=h;poserMinis();
+ var ax=$('#vajx');if(ax)ax.onchange=function(){var v=parseFloat(String(ax.value||'0').replace(',','.').replace('−','-'));if(!isFinite(v))v=0;if(v<-50||v>50){toastV('Entre −50 % et +50 %','');return}lsS(cleAj(),Math.round(v*10)/10);rendreDocs()}}
+/* Prix pour ce client (BRS, 16/11) : un client fidèle n'a pas le prix d'un client « lambda ». Choisi à la fin, sur tout le devis ; gardé pour ce client. */
+function cleAj(){return 'pc-aj-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+function ajC(){var v=+lsG(cleAj());return isFinite(v)?v:0}
+function blocAj(p){var a=ajC(),t=p&&p.lue?(ED&&ED.touche?totauxEd(p).total_ht:(p.totaux||{}).total_ht):null,f=function(v){return (v>0?'+':v<0?'−':'')+String(Math.abs(v)).replace('.',',')+' %'};
+ return '<div style="margin:0 0 10px"><p style="margin:0 0 6px;font-weight:700">Prix pour ce client</p><div style="display:flex;flex-wrap:wrap;gap:6px">'+
+  [-15,-10,-5,0,5,10].map(function(v){return '<button type="button" class="vbtn sm'+(v===a?' go':'')+'" style="flex:1 1 56px;min-width:56px" data-vdoc="aj" data-id="'+v+'">'+(v?f(v):'Normal')+'</button>'}).join('')+'</div>'+
+  '<div class="vli" style="align-items:center;margin-top:6px"><span>Autre pourcentage<small style="display:block">− pour une remise, + pour un supplément</small></span><span class="x"><input id="vajx" type="text" inputmode="decimal" value="'+([-15,-10,-5,0,5,10].indexOf(a)<0?String(a).replace('.',','):'')+'" placeholder="0" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div>'+
+  (t!=null?'<p class="vst" style="padding:4px 0 0">Total du devis : <b>'+eur(Math.round(t*(1+a/100)*100)/100)+' HT</b>'+(a?' (au lieu de '+eur(t)+')':'')+'</p>':'')+'</div>'}
 function chargerDocs(c){DOCC=c;DOCS=null;ARME='';ERRDOC='';var z=$('#vdocs');
  api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
 function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=lsG(KJ);
@@ -484,13 +494,14 @@ function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=ls
 function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  if(a==='annuler'){ARME='';return rendreDocs()}
  if(a==='pdf')return pdfDoc(id);
+ if(a==='aj'){lsS(cleAj(),+id);if(ARME==='creer')ARME='';return rendreDocs()}
  if(a==='acompte'){ARME='acompte'+id;rendreDocs();var i=$('#vpct');if(i)i.focus();return}
  if((a==='envoyer'||a==='creer'||a==='accepted'||a==='rejected'||a==='paid'||a==='finale')&&ARME!==a+(id||'')){ARME=a+(id||'');return rendreDocs()}
  var p;
  var lg=ED&&ED.touche?{materiaux:ED.materiaux,main_oeuvre:ED.main_oeuvre}:undefined;
  var pd=COUR&&COUR.pre_devis[0];
  if(a==='creer'&&manque(pd).length){toastV('Pas encore','Il manque le prix du fournisseur.');return rendreDocs()}
- if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c,lignes:lg,forcer:!!(pd&&pd.attente&&pd.attente.length)}});
+ if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c,lignes:lg,forcer:!!(pd&&pd.attente&&pd.attente.length),ajustement:ajC()||undefined}});
  else if(a==='envoyer')p=api('/espace/envoyer',{method:'POST',body:{id:+id}});
  else if(a==='finale')p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'finale'}});
  else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}lsS('pc-acompte',v);p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
