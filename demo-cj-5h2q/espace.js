@@ -3,8 +3,12 @@
    Prix des 3 prestations repris de sa page Booksy (16/11/2026). Acompte de 30 % (choix de Cyril pour la présentation).
    Les réservations faites sur le site de démo (index.html) arrivent ici (localStorage 'pcd-cj-resa'). */
 var $=function(i){return document.getElementById(i)},ic=PCD.ic,S;
-var PR=[['Coupe cheveux longs',60,70,'ciseaux'],['Coloration racines',105,85,'goutte'],['Coupe homme',30,30,'ciseaux']];
-var AUTRES=[['La consultation',1],['Balayage / éclaircissement',5],['Coloration & gloss',8],['Soin botox',1],['Coupes femmes & brushing',8],['Hommes',1],['Mariages & événements',2],['Prestations à la carte',2]];
+var ICS={'La consultation':'doc','Balayage / éclaircissement':'pinceau','Coloration & gloss':'goutte','Soin botox':'goutte','Coupes femmes & brushing':'ciseaux','Hommes':'ciseaux','Mariages & événements':'etoile','Prestations à la carte':'goutte'};
+/* carte complète (carte.js, reprise de sa page Booksy) : [nom, minutes, prix, icône, catégorie, « dès »] */
+function mnt(d){var h=/(\d+) h/.exec(d),m=/(\d+) ?min/.exec(d),m2=/h (\d+)$/.exec(d);return (h?+h[1]*60:0)+(m?+m[1]:0)+(m2?+m2[1]:0)}
+var PR=[];CARTE.forEach(function(g){g[1].forEach(function(s){PR.push([s[0],mnt(s[1]),s[2],ICS[g[0]]||'ciseaux',g[0],s[3]])})});
+function pidx(n){for(var i=0;i<PR.length;i++)if(PR[i][0]===n)return i;return 0}
+var SEED=[pidx('Coupe cheveux longs'),pidx('Coloration racines cheveux courts'),pidx('Coupe homme')];
 var H=['9:00','9:30','10:15','11:00','11:45','13:30','14:15','15:00','15:30'];
 var J=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],JL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],M=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 var CL=[
@@ -26,13 +30,13 @@ function jNom(d,long){var dm=new Date();dm.setHours(0,0,0,0);dm.setDate(dm.getDa
 function etat0(){var r=[],k=0,pl=[['camille',0,'10:15'],['ines',1,'9:00'],['thomas',2,'11:45'],['lea',0,'13:30'],['marion',1,'15:00'],
   ['sarah',0,'9:30'],['emma',2,'11:00'],['chloe',0,'14:15'],['camille',1,'15:30'],['thomas',2,'9:00'],['ines',0,'10:15'],['lea',0,'13:30'],['marion',1,'9:30'],['sarah',2,'14:15']];
   /* environ 3 rendez-vous par jour, répartis sur les jours ouverts */
-  JOURS.forEach(function(d,j){for(var i=0;i<3;i++){var p=pl[(j*3+i)%pl.length];r.push({id:'r'+(k++),c:p[0],p:p[1],d:cle(d),h:H[(j*2+i*3)%H.length],ac:true,etat:'prevu',paye:false})}});
-  return {v:1,rdv:r,acompte:30,web:[],abs:0,opts:{resa:true,sms:true,avis:true,reseaux:false}}}
-function charger(){var s=PCD.load();S=s&&s.v===1?s:etat0();
+  JOURS.forEach(function(d,j){for(var i=0;i<3;i++){var p=pl[(j*3+i)%pl.length];r.push({id:'r'+(k++),c:p[0],p:SEED[p[1]],d:cle(d),h:H[(j*2+i*3)%H.length],ac:true,etat:'prevu',paye:false})}});
+  return {v:2,rdv:r,acompte:30,web:[],abs:0,opts:{resa:true,sms:true,avis:true,reseaux:false}}}
+function charger(){var s=PCD.load();S=s&&s.v===2?s:etat0();
   /* réservations faites sur le site de démo */
   var w=[];try{w=JSON.parse(localStorage.getItem('pcd-cj-resa')||'[]')}catch(e){}
   var neuf=0;w.forEach(function(x){if(S.web.indexOf(x.id)>=0)return;S.web.push(x.id);neuf++;
-    var p=0;PR.forEach(function(q,i){if(q[0]===x.p)p=i});
+    var p=pidx(x.p);
     S.rdv.push({id:x.id,c:null,nom:'Nouvelle cliente',p:p,d:x.d,h:x.h,ac:true,etat:'prevu',paye:false,web:true,tot:x.tot,acm:x.ac})});
   save();return neuf}
 function save(){PCD.save(S)}
@@ -100,16 +104,15 @@ V.arg=function(){var ac=S.rdv.filter(function(r){return r.ac&&r.etat!=='fait'}),
    blk('Encaissé','check',fa.length?fa.map(function(r){return ln('doc',esc(nom(r))+' · '+tot(r)+' €',PR[r.p][0],'facture(\''+r.id+'\')','<span class="etq">Facture</span>')}).join(''):'<p class="mini" style="margin-top:0">Encaissez un rendez-vous : il arrive ici, avec sa facture en une touche.</p>')+
   '</div>'};
 /* ---------- Chiffres ---------- */
-V.chi=function(){var W=[1840,2110,1960,2380,2050,2260,2420,2190],mx=Math.max.apply(null,W),pp=[0,0,0];S.rdv.forEach(function(r){pp[r.p]++});
+V.chi=function(){var W=[1840,2110,1960,2380,2050,2260,2420,2190],mx=Math.max.apply(null,W),pp={};S.rdv.forEach(function(r){pp[r.p]=(pp[r.p]||0)+1});
   return hi('Mes chiffres','Chiffre d’affaires et prestations','<span class="etq">Chiffres d’exemple</span>')+'<div class="pile">'+
    blk('Chiffre d’affaires · 8 dernières semaines','chart','<div class="barres">'+W.map(function(v,i){return '<div><i style="height:'+Math.round(v/mx*100)+'%"></i><small>S'+(i+1)+'</small></div>'}).join('')+'</div><p class="mini">Cette semaine : '+W[7].toLocaleString('fr-FR')+' € (exemple)</p>')+
-   blk('Les plus demandées','ciseaux',PR.map(function(p,i){return ln(p[3],p[0],pp[i]+' rendez-vous à venir','go(\'reg\')','<span class="prix">'+p[2]+' €</span>')}).join(''))+
+   blk('Les plus demandées','ciseaux',SEED.map(function(i){var p=PR[i];return ln(p[3],p[0],(pp[i]||0)+' rendez-vous à venir','go(\'reg\')','<span class="prix">'+p[2]+' €</span>')}).join(''))+
    blk('Rendez-vous honorés','check','<div class="chif" style="grid-template-columns:1fr 1fr"><div><b>'+Math.round(100*(S.rdv.length-S.abs)/S.rdv.length)+' %</b><small>venues</small></div><div><b>'+S.abs+'</b><small>absente'+(S.abs>1?'s':'')+' · acompte gardé</small></div></div>')+
   '</div>'};
 /* ---------- Mon salon ---------- */
 V.reg=function(){return hi('Mon salon','Prestations, acompte, horaires et options.')+'<div class="pile">'+
-   blk('Mes prestations','ciseaux',PR.map(function(p){return ln(p[3],p[0],(p[1]>=60?Math.floor(p[1]/60)+' h'+(p[1]%60?' '+p[1]%60:''):p[1]+' min'),'toast(\'Prix et durée modifiables d’une touche (exemple)\',\'pinceau\')','<span class="prix">'+p[2]+' €</span>')}).join('')+
-     AUTRES.map(function(a){return ln('list',a[0],a[1]+' prestation'+(a[1]>1?'s':''),'toast(\'Repris de Booksy à la mise en service\',\'list\')','<span class="etq">À reprendre</span>')}).join('')+'<p class="mini">Prix des 3 premières : sa page Booksy. Le reste de la carte est repris à la mise en service.</p>')+
+   blk('Mes prestations','ciseaux','<p class="mini" style="margin-top:0">'+PR.length+' prestations, reprises de sa page Booksy. Prix et durée modifiables d’une touche.</p>'+CARTE.map(function(g){return '<h2 style="margin:12px 0 6px;font-size:13px;color:var(--muted)">'+g[0]+'</h2>'+g[1].map(function(s){var i=pidx(s[0]);return ln(PR[i][3],s[0],s[1]||'Durée à préciser','toast(\'Prix et durée modifiables d’une touche (exemple)\',\'pinceau\')','<span class="prix">'+(s[3]?'dès ':'')+s[2]+' €</span>')}).join('')}).join(''))+
    blk('Acompte à la réservation','euro','<div class="chips">'+[0,20,30,50].map(function(v){return '<button class="pk" aria-pressed="'+(S.acompte===v)+'" onclick="S.acompte='+v+';save();go(\'reg\');toast(\''+(v?'Acompte de '+v+' %':'Sans acompte')+'\',\'euro\')">'+(v?v+' %':'Aucun')+'</button>'}).join('')+'</div><p class="mini">Déduit le jour du rendez-vous. Gardé si la cliente ne vient pas.</p>',opt('resa'))+
    blk('Horaires','clock',ln('cal','Mardi au vendredi','Sur rendez-vous','toast(\'Horaires modifiables (exemple)\',\'clock\')')+ln('cal','Certains samedis','Ouverts un par un dans l’agenda','toast(\'Horaires modifiables (exemple)\',\'clock\')'))+
    blk('Mes options','sparks',
@@ -138,7 +141,7 @@ function facture(id){var r=trouve(id);fen('<h3>Facture</h3><p class="sous">Chez 
 function sms(id){var c=cl(id);fen('<h3>SMS à '+c.n.split(' ')[0]+'</h3>'+opt('sms')+'<div class="formule" style="font-weight:600;margin-top:10px">Bonjour '+c.n.split(' ')[0]+', c’est Julie. Une place s’est libérée demain à 14 h 15, elle vous intéresse ? Répondez OUI pour la réserver.</div>'+
   '<button class="go" style="width:100%;margin-top:12px" onclick="fermer();toast(\'SMS envoyé (exemple)\',\'send\')">'+ic('send')+'Envoyer</button>')}
 function ajout(d,h){fen('<h3>Nouveau rendez-vous</h3><p class="sous">'+h+' · touchez la cliente puis la prestation</p><div class="chips" id="aj-c">'+CL.map(function(c,i){return '<button class="pk" aria-pressed="'+(i===0)+'" data-c="'+c.id+'">'+c.n+'</button>'}).join('')+'</div>'+
-  '<h2 style="margin-top:12px">'+ic('ciseaux')+'Prestation</h2><div class="chips" id="aj-p">'+PR.map(function(p,i){return '<button class="pk" aria-pressed="'+(i===0)+'" data-p="'+i+'">'+p[0]+' · '+p[2]+' €</button>'}).join('')+'</div>'+
+  '<h2 style="margin-top:12px">'+ic('ciseaux')+'Prestation</h2><div class="chips" id="aj-p">'+PR.map(function(p,i){return '<button class="pk" aria-pressed="'+(i===SEED[0])+'" data-p="'+i+'">'+p[0]+' · '+p[2]+' €</button>'}).join('')+'</div>'+
   '<button class="go" style="width:100%;margin-top:14px" id="aj-ok">'+ic('check')+'Ajouter</button><p class="mini">Ajouté à la main : pas d’acompte, sauf si vous envoyez le lien de paiement par SMS.</p>');
   ['aj-c','aj-p'].forEach(function(g){$(g).onclick=function(e){var b=e.target.closest('button');if(!b)return;[].forEach.call(this.children,function(x){x.setAttribute('aria-pressed',x===b)})}});
   $('aj-ok').onclick=function(){var c=$('aj-c').querySelector('[aria-pressed="true"]').dataset.c,p=+$('aj-p').querySelector('[aria-pressed="true"]').dataset.p;

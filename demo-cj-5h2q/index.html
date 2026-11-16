@@ -59,7 +59,7 @@ footer .pc b{color:#1B2440;font-weight:700}
 .ouvert{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--f);color:#2F7A4F;background:#E6F3EB;padding:6px 10px;border-radius:999px}
 .ouvert::before{content:"";width:6px;height:6px;border-radius:50%;background:#2F7A4F}
 /* prestations */
-.grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 @media(max-width:900px){.grille{grid-template-columns:1fr}}
 .pre{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surf);border-radius:var(--r);padding:22px 20px 20px;display:flex;flex-direction:column;gap:6px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;min-height:210px}
 .pre:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(74,50,67,.4)}
@@ -164,6 +164,20 @@ footer .pc b{color:#1B2440;font-weight:700}
 #fen-resa{translate:none!important;scale:none!important}
 body.resa-ouverte{overflow:hidden}
 body.resa-ouverte #bas{display:none!important}
+</style><style id="carte-css">
+#presta .pcat{display:block;width:100%;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);margin:12px 0 2px}
+#presta .pcat:first-child{margin-top:0}
+.carte-tout{display:grid;gap:10px;margin-top:22px;max-width:820px;margin-left:auto;margin-right:auto}
+.carte-tout details{background:var(--surf);border-radius:22px;padding:4px 18px}
+.carte-tout summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:600;font-size:17px}
+.carte-tout summary::-webkit-details-marker{display:none}
+.carte-tout summary span{font-size:13px;color:var(--gris);background:rgba(74,50,67,.07);border-radius:99px;padding:3px 10px}
+.carte-tout summary::after{content:"+";font-size:22px;color:var(--gris);margin-left:10px}
+.carte-tout details[open] summary::after{content:"–"}
+.carte-tout .ligne{all:unset;box-sizing:border-box;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;padding:12px 0;border-top:1px solid rgba(74,50,67,.1)}
+.carte-tout .ligne b{display:block;font-weight:600;font-size:15px}.carte-tout .ligne small{display:block;color:var(--gris);font-size:13px;margin-top:2px}
+.carte-tout .ligne em{font-style:normal;font-weight:700;white-space:nowrap}
+#salon .gal{margin-top:0}
 </style></head><body>
 <div class="ex">Maquette préparée par ProClik pour Chez Julie · démonstration, aucun paiement réel · <a href="espace.html">Voir l'Espace de Julie</a></div>
 <header class="nav"><div class="bar"><a class="marque" href="#haut">Chez Julie<b></b></a>
@@ -178,14 +192,14 @@ body.resa-ouverte #bas{display:none!important}
 <div class="carte"><div><small><span class="ouvert">Ouvert</span></small><b id="prochain">Prochain créneau</b></div><a class="btn" href="#reserver" id="hero-resa">Réserver</a></div></div>
 </section>
 <section id="prestations"><div class="in"><div class="tete reveal"><p class="k">Prestations</p><h2>Ce que nous faisons<br>le mieux.</h2></div>
-<div class="grille" id="grille"></div><p class="autres">Et toute la carte : balayages, colorations &amp; gloss, soin botox, coupes femmes &amp; brushing, mariages &amp; événements · consultation obligatoire avant un premier balayage</p></div></section>
+<div class="grille" id="grille"></div><div class="carte-tout" id="carte-tout"></div><p class="autres">La consultation (15 €) est obligatoire avant toute première prestation de balayage. « dès » : le prix final dépend de la longueur et de l’épaisseur.</p></div></section>
 <section id="salon"><div class="in"><div class="tete reveal"><p class="k">Le salon</p><h2>Un moment rien<br>que pour vous.</h2></div><div class="gal"><figure class="reveal"><img src="https://images.unsplash.com/photo-1672788725446-c303ec2b318e?auto=format&fit=crop&w=1200&q=70" alt="Une cliente coiffée au salon" loading="lazy"><figcaption>Coupe et coiffage</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1734111719430-fe4a3973f8af?auto=format&fit=crop&w=1200&q=70" alt="Brushing sur cheveux longs blonds" loading="lazy"><figcaption>Brushing</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1774660810725-fb04e002003d?auto=format&fit=crop&w=1200&q=70" alt="Coiffeuse réalisant un chignon" loading="lazy"><figcaption>Mariages et événements</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1595475884562-073c30d45670?auto=format&fit=crop&w=1200&q=70" alt="Ciseaux, brosses et pinceau de coloration" loading="lazy"><figcaption>Couleur et balayage</figcaption></figure></div></div></section>
 <section id="reserver"><div class="in"><div class="tete reveal"><p class="k">Réservation</p><h2>Choisissez, réservez,<br>c'est confirmé.</h2><p>Un acompte de 30 % confirme votre rendez-vous. Le reste se règle au salon.</p></div>
 <div class="appel-resa reveal"><div><b>Coupe, couleur, balayage…</b><span>Choisissez votre prestation, votre jour et votre heure. Ça prend une minute.</span></div><button class="btn" type="button" id="ouvre-resa">Choisir mon créneau</button></div>
 <div class="voile-resa" id="voile-resa"></div>
 <div class="resa" id="fen-resa" role="dialog" aria-modal="true" aria-label="Réserver chez Julie" aria-hidden="true"><div class="fen-t"><span class="poignee"></span><b>Réserver chez Julie</b><button type="button" id="ferme-resa" aria-label="Fermer">✕</button></div><div>
 <h4>Prestation</h4><div class="puces" id="presta"></div>
-<div class="opts" id="opts" hidden></div>
+<h4>Soin en plus</h4><div class="opts" id="opts"></div>
 <h4>Jour</h4><div class="jours" id="jours"></div>
 <h4>Heure</h4><div class="heures" id="heures"></div></div>
 <aside class="recap" id="recap"><h3>Votre rendez-vous</h3>
@@ -208,31 +222,38 @@ body.resa-ouverte #bas{display:none!important}
 </main>
 <footer><div class="in"><span>Chez Julie · maquette de démonstration <span class="credit">· photos Unsplash, à remplacer par celles du salon</span></span><span class="pc"><svg viewBox="0 0 100 100" width="16" height="16" aria-hidden="true"><path d="M10 50A40 40 0 1 1 90 50A40 40 0 1 1 10 50ZM62.13 77.8A30.33 30.33 0 1 0 37.87 77.8A6.15 6.15 0 0 0 46.48 72.16L46.48 67.58A3.52 3.52 0 0 1 53.52 67.58L53.52 72.16A6.15 6.15 0 0 0 62.13 77.8Z" fill="#1B2440"/><circle cx="50" cy="47.36" r="7.38" fill="#A8823F"/></svg>Site et espace par <b>ProClik</b></span></div></footer>
 <div class="bas" id="bas"><a class="btn" href="#reserver">Réserver un créneau</a></div>
+<script src="carte.js"></script>
 <script>
 (function(){var r=[].slice.call(document.querySelectorAll('.reveal'));if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('on')});return}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});r.forEach(function(e){io.observe(e)})})();
 
 var ICO={c:'<path d="M6.5 15a2.5 2.5 0 1 0 .001 0M17.5 15a2.5 2.5 0 1 0 .001 0M8.3 15.7 16 4M15.7 15.7 8 4"/>',h:'<rect x="3.5" y="7" width="17" height="3.5" rx="1"/><path d="M6 10.5V17M9 10.5V17M12 10.5V17M15 10.5V17M18 10.5V17"/>',k:'<path d="M12 3.5c3 3.9 6 7 6 10.2a6 6 0 0 1-12 0C6 10.5 9 7.4 12 3.5z"/><path d="M9.2 14.2a2.8 2.8 0 0 0 2.8 2.8"/>',b:'<path d="M14.5 4.5 19.5 9.5 11 18l-5 1 1-5z"/><path d="M13 6l5 5M4 21h6"/>'};
-var P=[['Coupe cheveux longs','1 h',70,'c','Cheveux sous les épaules.'],['Coloration racines','1 h 45',85,'k','Cheveux courts : racines, nuque et contour des oreilles, coupe comprise.'],['Coupe homme','30 min',30,'h','Coupe classique (pas de dégradé barbier).']];
-var OPTS=[];
+var ICAT={'La consultation':'c','Balayage / éclaircissement':'b','Coloration & gloss':'k','Soin botox':'k','Coupes femmes & brushing':'c','Hommes':'h','Mariages & événements':'b','Prestations à la carte':'k'};
+var P=[],PCAT=[];CARTE.forEach(function(g){PCAT.push([g[0],P.length]);g[1].forEach(function(s){P.push([s[0],s[1],s[2],ICAT[g[0]]||'c',s[4],s[3],g[0]])})});
+function idx(n){for(var i=0;i<P.length;i++)if(P[i][0]===n)return i;return 0}
+function prix(p){return (p[5]?'dès ':'')+p[2]+' €'}
+var VITRINE=[idx('Balayage tendance'),idx('Coupe cheveux longs'),idx('Coloration racines cheveux courts'),idx('Essai coiffure mariée')];
+var OPTS=[['INCA Reset Ritual',25]];
 var J=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],H=['9:00','9:30','10:15','11:00','11:45','13:30','14:15','15:00','15:30'];
 var $=function(i){return document.getElementById(i)};
 var jours=[];for(var d=new Date(),n=d.getHours()>=17?1:0;jours.length<6&&n<14;n++){var x=new Date(d);x.setDate(d.getDate()+n);if(x.getDay()!==0&&x.getDay()!==1)jours.push(x)}
-var et={p:0,j:0,h:null,o:[]};
+var et={p:idx('Coupe cheveux longs'),j:0,h:null,o:[]};
 function pris(j,h){return((jours[j].getDate()*7+h*5)%9)<3}
 // prochain créneau
 var nx=null;for(var j=0;j<jours.length&&!nx;j++)for(var h=0;h<H.length&&!nx;h++)if(!pris(j,h)&&!(j===0&&new Date().getHours()>=+H[h].split(':')[0]))nx=[j,h];
 if(nx){$('prochain').textContent='Prochain créneau · '+(nx[0]===0&&jours[0].toDateString()===new Date().toDateString()?'aujourd’hui':J[jours[nx[0]].getDay()]+' '+jours[nx[0]].getDate())+' à '+H[nx[1]]}
 $('hero-resa').onclick=function(e){e.preventDefault();if(nx){et.j=nx[0];et.h=H[nx[1]]}ouvreResa()};
-$('grille').innerHTML=P.slice(0,4).map(function(p,i){return '<button class="pre reveal" type="button" data-i="'+i+'"><svg viewBox="0 0 24 24">'+ICO[p[3]]+'</svg><h3>'+p[0]+'</h3><p>'+p[4]+'</p><div class="l"><span>'+p[1]+'</span><b>'+p[2]+' €</b></div></button>'}).join('');
+$('grille').innerHTML=VITRINE.map(function(i){var p=P[i];return '<button class="pre reveal" type="button" data-i="'+i+'"><svg viewBox="0 0 24 24">'+ICO[p[3]]+'</svg><h3>'+p[0]+'</h3><p>'+p[4]+'</p><div class="l"><span>'+(p[1]||'')+'</span><b>'+prix(p)+'</b></div></button>'}).join('');
+$('carte-tout').innerHTML=CARTE.map(function(g){return '<details class="cat"><summary>'+g[0]+'<span>'+g[1].length+'</span></summary>'+g[1].map(function(s){return '<button type="button" class="ligne" data-i="'+idx(s[0])+'"><span><b>'+s[0]+'</b><small>'+(s[1]?s[1]+' · ':'')+s[4]+'</small></span><em>'+(s[3]?'dès ':'')+s[2]+' €</em></button>'}).join('')+'</details>'}).join('');
+$('carte-tout').onclick=function(e){var b=e.target.closest('.ligne');if(!b)return;et.p=+b.dataset.i;et.h=null;et.o=[];ouvreResa()};
 $('grille').onclick=function(e){var b=e.target.closest('.pre');if(!b)return;et.p=+b.dataset.i;et.h=null;et.o=[];rend();ouvreResa()};
 function rend(){
- $('presta').innerHTML=P.map(function(p,i){return '<button type="button" data-i="'+i+'" aria-pressed="'+(i===et.p)+'">'+p[0]+' <span style="opacity:.55">'+p[2]+' €</span></button>'}).join('');
- $('opts').innerHTML=OPTS.filter(function(o){return !(o[0]==='Brushing'&&P[et.p][0]==='Brushing')}).map(function(o){return '<button type="button" data-o="'+o[0]+'" aria-pressed="'+(et.o.indexOf(o[0])>=0)+'"><i></i>'+o[0]+'<span>+'+o[1]+' €</span></button>'}).join('');
+ $('presta').innerHTML=PCAT.map(function(c,k){var fin=k+1<PCAT.length?PCAT[k+1][1]:P.length,h='<small class="pcat">'+c[0]+'</small>';for(var i=c[1];i<fin;i++)h+='<button type="button" data-i="'+i+'" aria-pressed="'+(i===et.p)+'">'+P[i][0]+' <span style="opacity:.55">'+prix(P[i])+'</span></button>';return h}).join('');
+ $('opts').innerHTML=OPTS.filter(function(o){return P[et.p][0]!==o[0]}).map(function(o){return '<button type="button" data-o="'+o[0]+'" aria-pressed="'+(et.o.indexOf(o[0])>=0)+'"><i></i>'+o[0]+'<span>+'+o[1]+' €</span></button>'}).join('');
  $('jours').innerHTML=jours.map(function(d,i){return '<button type="button" aria-pressed="'+(i===et.j)+'">'+J[d.getDay()]+'<b>'+d.getDate()+'</b></button>'}).join('');
  $('heures').innerHTML=H.map(function(h,i){return '<button type="button" '+(pris(et.j,i)?'disabled':'')+' aria-pressed="'+(h===et.h)+'">'+h+'</button>'}).join('');
  var tot=P[et.p][2]+OPTS.filter(function(o){return et.o.indexOf(o[0])>=0}).reduce(function(a,o){return a+o[1]},0),ac=Math.round(tot*.3);
- $('r-p').textContent=P[et.p][0]+(et.o.length?' + '+et.o.length+' option'+(et.o.length>1?'s':''):'');$('tt').textContent=tot+' €';$('mt').textContent=ac+' €';$('rs').textContent=(tot-ac)+' €';
+ $('r-p').textContent=P[et.p][0]+(et.o.length?' + '+et.o.length+' option'+(et.o.length>1?'s':''):'');$('tt').textContent=(P[et.p][5]?'dès ':'')+tot+' €';$('mt').textContent=ac+' €';$('rs').textContent=(tot-ac)+' €';
  $('ok').setAttribute('aria-disabled',!et.h);$('ok').textContent=et.h?'Payer '+ac+' € d’acompte · '+J[jours[et.j].getDay()]+' '+jours[et.j].getDate()+' à '+et.h:'Choisissez une heure';
 }
 $('presta').onclick=function(e){var b=e.target.closest('button');if(b){et.p=+b.dataset.i;rend()}};
@@ -240,7 +261,7 @@ $('opts').onclick=function(e){var b=e.target.closest('button');if(b){var n=b.dat
 $('jours').onclick=function(e){var b=e.target.closest('button');if(b){et.j=[].indexOf.call(b.parentNode.children,b);et.h=null;rend()}};
 $('heures').onclick=function(e){var b=e.target.closest('button');if(b&&!b.disabled){et.h=b.textContent;rend();setTimeout(function(){$('ok').scrollIntoView({behavior:'smooth',block:'nearest'})},150)}};
 $('ok').onclick=function(){if(!et.h){var hh=$('heures');hh.scrollIntoView({behavior:'smooth',block:'center'});hh.classList.remove('flash');void hh.offsetWidth;hh.classList.add('flash');$('ok').textContent='Touchez d’abord une heure ↑';return}var b=$('ok');b.textContent='Paiement sécurisé…';setTimeout(function(){$('bravo-p').textContent=P[et.p][0]+', '+J[jours[et.j].getDay()]+' '+jours[et.j].getDate()+' à '+et.h+'. Un SMS de rappel vous est envoyé la veille.';$('recap').classList.add('fini');$('bravo').classList.add('on');garde()},900)};
-function garde(){var d=jours[et.j],tt=P[et.p][2],L=[];try{L=JSON.parse(localStorage.getItem('pcd-cj-resa')||'[]')}catch(e){}L.push({id:'w'+Date.now(),p:P[et.p][0],d:d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),h:et.h,tot:tt,ac:Math.round(tt*.3)});try{localStorage.setItem('pcd-cj-resa',JSON.stringify(L))}catch(e){}}
+function garde(){var d=jours[et.j],tt=P[et.p][2]+OPTS.filter(function(o){return et.o.indexOf(o[0])>=0}).reduce(function(a,o){return a+o[1]},0),L=[];try{L=JSON.parse(localStorage.getItem('pcd-cj-resa')||'[]')}catch(e){}L.push({id:'w'+Date.now(),p:P[et.p][0],d:d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),h:et.h,tot:tt,ac:Math.round(tt*.3)});try{localStorage.setItem('pcd-cj-resa',JSON.stringify(L))}catch(e){}}
 rend();
 function ouvreResa(){var f=$('fen-resa');rend();f.classList.add('on');$('voile-resa').classList.add('on');f.setAttribute('aria-hidden','false');document.body.classList.add('resa-ouverte');f.scrollTop=0}
 function fermeResa(){var f=$('fen-resa');f.classList.remove('on');$('voile-resa').classList.remove('on');f.setAttribute('aria-hidden','true');document.body.classList.remove('resa-ouverte');
