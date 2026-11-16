@@ -390,7 +390,11 @@ function suggestions(q,cle){var U=usage(),B=base().filter(function(b){return b&&
  /* les lignes déjà vues dans ce pré-devis comptent aussi : l'artisan retrouve ce qu'il vient de taper */
  if(T())T()[cle==='materiaux'?'materiaux':'main_oeuvre'].forEach(function(l){if(!B.some(function(b){return b.d.toLowerCase()===l.libelle.toLowerCase()}))B.push({d:l.libelle,u:l.unite,p:l.pu,t:'Dans ce pré-devis',n:U[l.libelle.toLowerCase()]||0})});
  q=(q||'').trim().toLowerCase();var m=function(b){return !q||(b.d+' '+(b.t||'')).toLowerCase().indexOf(q)>=0};
- return B.filter(m).sort(function(a,b){return b.n-a.n}).slice(0,q?8:5)}
+ var R=B.filter(m).sort(function(a,b){return b.n-a.n});
+ /* puis la base de Cliky (prix de son fournisseur, ou le sien s'il l'a changé dans Produits) */
+ if(q.length>1&&window.PCPROD&&PCPROD.cliky){var k=cle==='materiaux'?'produit':'prestation';
+  (PCPROD.cliky()||[]).forEach(function(a){if(a.k===k&&R.length<12&&!R.some(function(b){return b.d.toLowerCase()===a.d.toLowerCase()})){var b={d:a.d,u:PCPROD.parCond(a),p:a.pc,t:'Base Cliky · '+a.cond,n:0};if(m(b)||(a.c+' '+a.f).toLowerCase().indexOf(q)>=0)R.push(b)}})}
+ return R.slice(0,q?8:5)}
 function sugHTML(cle){var L=suggestions(($('#vl-l')||{}).value,cle),q=(($('#vl-l')||{}).value||'').trim();
  return (L.length?'<small class="vsug-t">'+(q?'Dans votre base':'Les plus utilisés')+'</small>'+L.map(function(b,i){return '<button type="button" class="vsug-i" data-vsug="'+i+'">'+((window.PCPROD&&window.PCPROD.icone&&b.i&&window.PCPROD.icone(b.i))||'')+'<span>'+esc(b.d)+'<small>'+esc(b.t||'')+(b.n?' · utilisé '+b.n+' fois':'')+'</small></span><b>'+eur(b.p)+' / '+esc(b.u||'u')+'</b></button>'}).join(''):'<small class="vsug-t">Rien de tel dans votre base.</small>')+
   '<button type="button" class="vbtn sm vsug-new" data-vsugnew>＋ Créer « '+(q?esc(q.length>40?q.slice(0,40)+'…':q):'un produit')+' » dans mes produits</button>'}

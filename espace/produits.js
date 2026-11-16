@@ -87,13 +87,79 @@ var IC={plus:I('<path d="M12 5v14M5 12h14"/>'),cherche:I('<circle cx="11" cy="11
  cliky:'<svg viewBox="0 0 100 100" aria-hidden="true" viewBox="22 22 56 56"><path fill="currentColor" fill-rule="evenodd" stroke="none" d="M24.50 50.00A25.50 25.50 0 1 1 75.50 50.00A25.50 25.50 0 1 1 24.50 50.00ZM57.73 67.72A19.34 19.34 0 1 0 42.27 67.72A3.92 3.92 0 0 0 47.76 64.13L47.76 61.21A2.24 2.24 0 0 1 52.24 61.21L52.24 64.13A3.92 3.92 0 0 0 57.73 67.72Z"/><circle cx="50" cy="48.32" r="4.71" fill="#A8823F" stroke="none"/></svg>',
  cle:I('<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>')};
 var seg=lsG('pc-prod-seg','produit'),q='';
+
+/* ---------- la base de Cliky en direct (17/11, Cyril) : les articles que Cliky utilise, prix modifiables ----------
+   GET /espace/base → articles {c, d, cond, pc (prix du conditionnement), pu, u, f (famille), k, modifie, ajoute, provisoire}.
+   Un prix changé ici est gardé par le service (à part de la base commune) : Cliky et « Recalculer » le prennent. */
+var BC0=lsG('pc-cliky-base',null),BC={etat:'',articles:BC0&&BC0.articles||null,source:BC0&&BC0.source||'',n:BC0&&BC0.n||0,ouv:{}},qc='',FB={};
+function enDirect(){return document.documentElement.classList.contains('pcvrai')&&!!(window.PCV&&PCV.api)}
+function majBC(x){BC.articles=x.articles||[];BC.source=x.source||'';BC.n=x.nb_modifies||0;lsS('pc-cliky-base',{articles:BC.articles,source:BC.source,n:BC.n})}
+function chargerBC(force){if(!enDirect()||BC.etat==='charge'||(BC.etat==='ok'&&!force))return;BC.etat='charge';
+ PCV.api('/espace/base').then(function(x){majBC(x);BC.etat='ok';if(seg==='cliky')vue()},function(e){BC.etat='err';BC.err=e.message;if(seg==='cliky')vue()})}
+function parCond(a){var c=String(a.cond||'').split(/ de | \(/)[0].trim();return c||a.u||'u'}
+function prixU(n){return (+n||0).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:4})+' €'}
+function sourceBC(){var s=BC.source||'',m=/—\s*([^(,]+)/.exec(s),d=/relevé du ([\d/]+)/.exec(s),t=m?m[1].trim().toLowerCase():'';
+ return t?'Prix de votre fournisseur ('+t.charAt(0).toUpperCase()+t.slice(1)+(d?', relevés le '+d[1]:'')+').':''}
+function ligneBC(a){return '<button class="cf-li pr-li bc-li" type="button" data-bc="'+esc(a.c)+'"><span class="tx"><b>'+esc(a.d)+'</b><small>'+esc(a.cond)+
+  (a.modifie?' · <em class="bc-m">votre prix</em>':a.ajoute?' · <em class="bc-m">ajouté par vous</em>':a.provisoire?' · <em class="bc-p">prix provisoire</em>':'')+'</small></span><span class="cf-m"><b>'+prix(a.pc)+'</b><small>/ '+esc(parCond(a))+'</small></span></button>'}
+function vueBC(){var A=BC.articles;
+ if(!A)return '<p class="hint">'+(BC.etat==='err'?esc(BC.err||'Base indisponible pour l\'instant.')+' <button class="lnk" type="button" data-bcre>Réessayer</button>':'Chargement de la base de Cliky…')+'</p>';
+ var t=sansAcc(qc).trim(),L=t?A.filter(function(a){return sansAcc(a.d+' '+a.f+' '+a.c+' '+a.cond).indexOf(t)>=0}):A;
+ var h='<div class="card pr-info"><span class="pr-ci">'+IC.cliky+'</span><div><b>'+A.length+' articles que Cliky utilise pour vos pré-devis</b><p>'+esc(sourceBC())+' Touchez un article pour mettre votre prix : Cliky le prend dès le prochain pré-devis, et « Recalculer » aussi.</p>'+
+  (BC.n?'<p class="bc-n">'+BC.n+' changement'+(BC.n>1?'s':'')+' de votre part</p>':'')+'</div></div>'+
+  '<label class="pr-q">'+IC.cherche+'<input id="pr-qc" type="search" autocomplete="off" placeholder="Chercher : BA13, vis, laine, porte…" value="'+esc(qc)+'"></label>'+
+  '<button class="btn sm bc-aj" type="button" data-bcnew>'+IC.plus+'<span>Ajouter un article à la base de Cliky</span></button>';
+ if(!L.length)return h+'<p class="hint">Rien pour « '+esc(qc)+' ». <button class="lnk" type="button" data-bcnew>L\'ajouter</button></p>';
+ var G=[],ix={};L.forEach(function(a){if(!(a.f in ix)){ix[a.f]=G.length;G.push({f:a.f,L:[]})}G[ix[a.f]].L.push(a)});
+ G.forEach(function(g){var o=t||BC.ouv[g.f];
+  h+='<details class="bc-fam" data-bcf="'+esc(g.f)+'"'+(o?' open':'')+'><summary><span>'+esc(g.f)+'</span><i>'+g.L.length+'</i></summary><div class="card lst cf-l">'+g.L.map(ligneBC).join('')+'</div></details>'});
+ return h+(BC.etat==='err'?'<p class="hint">Hors ligne : liste gardée sur l\'appareil.</p>':'')}
+function formBC(c){var a=(BC.articles||[]).filter(function(x){return x.c===c})[0];if(!a||!X)return;
+ var h='<div class="cf-form pr-form"><p class="bc-d"><b>'+esc(a.d)+'</b><small>'+esc(a.f)+' · vendu par '+esc(a.cond)+'</small></p>'+
+  '<div class="pr-pu"><label>Votre prix HT<input id="bc-p" inputmode="decimal" autocomplete="off" value="'+String(a.pc).replace('.',',')+'"></label><span class="pr-par">par '+esc(parCond(a))+'</span></div>'+
+  (a.pu&&Math.abs(a.pu-a.pc)>0.001&&a.u?'<p class="hint">Prix actuel : '+prixU(a.pu)+' par '+esc(a.u)+'. Le prix par '+esc(a.u)+' suivra le vôtre.</p>':'')+
+  (a.provisoire&&!a.modifie?'<p class="hint">Prix provisoire : mettez le vôtre, Cliky s\'en servira.</p>':'')+
+  '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'')+'Compte pour vos prochains pré-devis et pour « Recalculer ». Les devis déjà faits ne changent pas.</div></div>';
+ X.xopen('Votre prix',a.ajoute?'Article ajouté par vous':'Base de Cliky',h,
+  (a.modifie?'<button class="btn" data-bcori="'+esc(c)+'">Prix d\'origine</button>':a.ajoute?'<button class="btn" data-bcsup="'+esc(c)+'">Retirer</button>':'<button class="btn" data-xclose>Annuler</button>')+'<button class="btn go" data-bcok="'+esc(c)+'">Enregistrer</button>')}
+var CONDS=['unité','m²','ml','boîte de 100','paquet de 10','rouleau de 150 m','sac de 25 kg'];
+function corpsAjBC(){var f=[];(BC.articles||[]).forEach(function(a){if(f.indexOf(a.f)<0&&a.k==='produit')f.push(a.f)});if(f.indexOf('Ajoutés par vous')<0)f.push('Ajoutés par vous');
+ return '<div class="cf-form pr-form bc-form"><label>Nom de l\'article<input id="bc-d" autocomplete="off" placeholder="Ex. : Cornière d\'angle alu 3 m" value="'+esc(FB.d||'')+'"></label>'+
+  '<label>Vendu par<input id="bc-c" autocomplete="off" placeholder="Ex. : boîte de 100" value="'+esc(FB.c||'unité')+'"></label>'+
+  '<div class="pr-u" role="group" aria-label="Vendu par">'+CONDS.map(function(u){return '<button type="button" data-bccond="'+esc(u)+'" aria-pressed="'+(FB.c===u)+'">'+esc(u)+'</button>'}).join('')+'</div>'+
+  '<div class="pr-pu"><label>Prix HT<input id="bc-p" inputmode="decimal" autocomplete="off" placeholder="0,00" value="'+esc(FB.p||'')+'"></label><span class="pr-par">pour '+esc(FB.c&&FB.c!=='unité'?'1 '+parCond({cond:FB.c}):'1 unité')+'</span></div>'+
+  '<label>Famille<select id="bc-f">'+f.map(function(x){return '<option'+(x===(FB.f||'Ajoutés par vous')?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select></label>'+
+  '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'')+'Cliky le connaît dès le prochain pré-devis. ProClik le range ensuite dans votre base.</div></div>'}
+function lireAjBC(){var g=function(id){var e=$(id);return e?e.value:null};var d=g('#bc-d');if(d!=null)FB.d=d;var c=g('#bc-c');if(c!=null)FB.c=c;var p=g('#bc-p');if(p!=null)FB.p=p;var f=g('#bc-f');if(f!=null)FB.f=f}
+function ajBC(nom){FB={d:nom||'',c:'unité'};X.xopen('Ajouter un article','À la base de Cliky',corpsAjBC(),'<button class="btn" data-xclose>Annuler</button><button class="btn go" data-bcaok>Ajouter</button>')}
+function uniteDe(c){var m=/de\s+[\d.,]+\s*(m²|m³|ml|m|kg|l)\b/i.exec(c);if(m)return m[1];if(/\d/.test(c))return 'pièce';var w=parCond({cond:c});return w==='unité'?'u':w}
+function envoyerBC(corps,msg){var b=$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup]');$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup]').forEach(function(x){x.disabled=true});
+ return PCV.api('/espace/base',{method:'POST',body:corps}).then(function(x){majBC(x);BC.etat='ok';X.xclose();vue();X.toast(msg[0],msg[1])},
+  function(e){$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup]').forEach(function(x){x.disabled=false});X.toast('Pas enregistré',e.message)})}
+document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('bc-fam'))BC.ouv[d.getAttribute('data-bcf')]=d.open},true);
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bc],[data-bcnew],[data-bcok],[data-bcori],[data-bcsup],[data-bcaok],[data-bccond],[data-bcre]');if(!b||!X)return;
+ var a=function(n){return b.getAttribute(n)};
+ if(b.hasAttribute('data-bc'))formBC(a('data-bc'));
+ else if(b.hasAttribute('data-bcnew'))ajBC(qc);
+ else if(b.hasAttribute('data-bcre')){BC.etat='';chargerBC(true);vue()}
+ else if(b.hasAttribute('data-bccond')){lireAjBC();FB.c=a('data-bccond');var z=$('.bc-form');if(z)z.outerHTML=corpsAjBC();var p=$('#bc-p');if(p)p.focus()}
+ else if(b.hasAttribute('data-bcok')){var v=num(($('#bc-p')||{}).value);if(!(v>0)){X.toast('Il manque le prix','Le prix HT que vous payez, pour le conditionnement indiqué.');return}
+  envoyerBC({code:a('data-bcok'),prix:v},['Prix enregistré','Cliky le prend dès le prochain pré-devis.'])}
+ else if(b.hasAttribute('data-bcori'))envoyerBC({code:a('data-bcori'),origine:true},['Prix d\'origine remis','Celui de la base de votre fournisseur.']);
+ else if(b.hasAttribute('data-bcsup'))envoyerBC({code:a('data-bcsup'),supprimer:true},['Article retiré','Cliky ne l\'utilisera plus.']);
+ else if(b.hasAttribute('data-bcaok')){lireAjBC();var d=(FB.d||'').trim(),pv=num(FB.p),c=(FB.c||'unité').trim()||'unité';
+  if(!d){var e1=$('#bc-d');if(e1)e1.focus();X.toast('Il manque le nom','Tel qu\'il apparaîtra sur le devis.');return}
+  if(!(pv>0)){var e2=$('#bc-p');if(e2)e2.focus();X.toast('Il manque le prix','Le prix HT, pour '+(c==='unité'?'une unité':'1 '+parCond({cond:c}))+'.');return}
+  envoyerBC({ajout:{d:d,cond:c,u:uniteDe(c),prix:pv,f:FB.f||'Ajoutés par vous'}},['Article ajouté','Cliky le connaît dès le prochain pré-devis.'])}
+});
 function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="button" data-prod="'+esc(p.c)+'"><span class="cf-av pr-av'+(i?'':' vide')+'">'+(icone(i)||esc((p.d||'?').charAt(0).toUpperCase()))+'</span><span class="tx"><b>'+esc(p.d)+'</b><small>'+esc([p.x,famille(p)].filter(Boolean).join(' · '))+(p.ex?' · exemple':'')+'</small></span><span class="cf-m"><b>'+prix(p.p)+'</b><small>/ '+esc(p.u||'u')+'</small></span></button>'}
 function vue(){var v=$('#v-produits');if(!v)return;
  var L=chercher(q),P=L.filter(function(p){return genre(p)===(seg==='cliky'?'produit':seg)}),nP=liste().filter(function(p){return genre(p)==='produit'}).length,nS=liste().length-nP;
  var h='<div class="row cf-top"><h2>Produits</h2><span class="cf-n">'+liste().length+' dans votre base</span></div>'+
   '<button class="btn go cf-go pr-go" type="button" data-prodnew><span class="lab"><span class="ic">'+IC.plus+'</span><span>Créer un produit</span></span></button>'+
-  '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Produits">'+[['produit','Produits',IC.prod,nP],['prestation','Prestations',IC.presta,nS],['cliky','Base Cliky',IC.cliky,0]].map(function(s){return '<button role="tab" type="button" data-prodseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+s[2]+'<span>'+s[1]+'</span>'+(s[3]?'<i>'+s[3]+'</i>':'')+'</button>'}).join('')+'</div>';
- if(seg==='cliky'){
+  '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Produits">'+[['produit','Produits',IC.prod,nP],['prestation','Prestations',IC.presta,nS],['cliky','Base Cliky',IC.cliky,enDirect()&&BC.articles?BC.articles.length:0]].map(function(s){return '<button role="tab" type="button" data-prodseg="'+s[0]+'" aria-selected="'+(seg===s[0])+'">'+s[2]+'<span>'+s[1]+'</span>'+(s[3]?'<i>'+s[3]+'</i>':'')+'</button>'}).join('')+'</div>';
+ if(seg==='cliky'&&enDirect()){chargerBC();h+=vueBC()}
+ else if(seg==='cliky'){
   h+='<div class="card pr-info"><span class="pr-ci">'+IC.cliky+'</span><div><b>Avec Cliky, votre base est déjà remplie</b><p>Les prix de matériaux et de pose qu\'il utilise pour vos pré-devis sont là dès le départ. Un produit que vous créez vous-même rejoint aussi la base de Cliky, après vérification par ProClik.</p></div></div>'+
    '<div class="card pr-info"><div style="flex:1;min-width:0">'+(window.PCTAG?PCTAG('cliky','Mise en service'):'<b>Mise en service</b>')+'<p>On crée votre base complète avec vous, ou à partir de vos documents (tarifs fournisseurs, anciens devis). Vous arrivez sur un Espace prêt pour faire vos devis.</p><button class="btn sm" type="button" data-prodmes>Ça m\'intéresse</button></div></div>'+
    '<p class="hint">Un produit manque dans la base de Cliky ? Créez-le ici : il part tout seul chez ProClik pour être ajouté.</p>';
@@ -106,6 +172,7 @@ function vue(){var v=$('#v-produits');if(!v)return;
   if(seg==='prestation')h+='<p class="hint">Une prestation, c\'est un ouvrage tout compris à un prix : « Pose cloison simple peau, laine 45 mm, montant 48 accolé, hauteur 2,50 m · 50 €/m² ». Elle s\'ajoute d\'un appui au pré-devis.</p>';
   if(L.some(function(p){return p.ex}))h+='<span class="exemple">Lignes « exemple » : à garder, modifier ou supprimer</span>';}
  var c=v.querySelector(':scope>.cf');if(!c){v.innerHTML='';c=document.createElement('div');c.className='cf pr';v.appendChild(c)}c.innerHTML=h;
+ var ic=$('#pr-qc');if(ic)ic.addEventListener('input',function(){qc=ic.value;var s=ic.selectionStart;vue();var n=$('#pr-qc');if(n){n.focus();try{n.setSelectionRange(s,s)}catch(e){}}});
  var inp=$('#pr-q');if(inp)inp.addEventListener('input',function(){q=inp.value;var s=inp.selectionStart;vue();var n=$('#pr-q');if(n){n.focus();try{n.setSelectionRange(s,s)}catch(e){}}});}
 
 /* ---------- créer ou modifier ---------- */
@@ -165,7 +232,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="produits"]');if(t)vue()});
 
 /* ---------- pour les autres écrans ---------- */
-window.PCPROD={icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},
+window.PCPROD={cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},
  creer:function(nom,rappel){if(!X)return;RAPPEL=typeof rappel==='function'?rappel:null;form(null,nom||'')}};
 vue();
 })();
