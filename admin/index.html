@@ -119,6 +119,7 @@ function api(ch,o){o=o||{};var h={};if(lj())h.Authorization='Bearer '+lj();if(o.
  return fetch(S+ch,{method:o.method||'GET',headers:h,body:o.body?JSON.stringify(o.body):undefined}).then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service'}}).then(function(j){
   if(j&&j.reconnexion){sj('');vue('login');throw new Error('Connexion expirée, retapez votre code.')}
   if(!r.ok||!j.ok){var er=new Error(j.erreur||('Erreur '+r.status));er.j=j;throw er}return j})},function(){throw new Error('Pas de réseau, ou service injoignable.')})}
+window.PCADM={api:api,esc:esc,toast:toast};
 function vue(v){['login','liste','fiche'].forEach(function(k){$('#v-'+k).hidden=k!==v});$('#sortir').hidden=v==='login';window.scrollTo(0,0)}
 
 /* ---------- connexion ---------- */
@@ -176,11 +177,11 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
   h+=sante(c)+abonnement(c)+cles(c);
   h+=miseEnService(c)+surMesure(c)+'<div class="card"><h2>Notes</h2>'+champ('ftel','Téléphone du contact',c.telephone,'tel')+'<label class="f" for="fnote">Notes pour vous (jamais visibles par le client)</label><textarea class="t" id="fnote" rows="4" style="resize:vertical">'+esc(c.notes||'')+'</textarea><button class="btn sm" type="button" id="fnsave" style="margin-top:10px">Enregistrer les notes</button></div>';
   h+=identite(c);
-  h+='<div class="card" id="fcliky" data-client="'+esc(c.id)+'"><h2>Cliky</h2><p class="mu" style="margin:0">Base de prix et réglages Cliky propres à ce client : bientôt ici.</p></div>';
+  h+='<div class="card" id="fcliky" data-client="'+esc(c.id)+'"><h2>Cliky</h2><p class="mu" style="margin:0">Chargement…</p></div>';
   h+='<div class="card"><h2>Archiver</h2><p class="mu" style="margin:0 0 10px">'+(c.archive?'Ce client est archivé : accès coupé, rien n\'est effacé.':'Le client part (ou fin de contrat) : accès coupé, fiche gardée. Rien n\'est effacé, vous pouvez le ressortir.')+'</p><button class="btn sm al" type="button" data-act="archiver">'+(c.archive?'Sortir des archives':'Archiver ce client')+'</button></div>';
  }
  $('#fiche').innerHTML=h;
- if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
+ if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
  $('#fsave').addEventListener('click',function(){var b=this,o={};[].forEach.call(document.querySelectorAll('[data-opt]'),function(x){o[x.dataset.opt]=x.checked});
   var body={entreprise:$('#fe').value,prenom:$('#fp').value,activite:$('#fact').value,email:$('#fm').value,locationId:$('#fl').value,vfCompte:$('#fv').value,tva:Number(String($('#ft').value).replace(',','.')),acomptePourcent:Number(String($('#fa').value).replace(',','.')),options:o};
   var mn={};[].forEach.call(document.querySelectorAll('[data-menu]'),function(x){mn[x.dataset.menu]=x.checked});body.menus=mn;body.effectif=Number($('#fn').value)||null;
@@ -252,6 +253,7 @@ function reglages(){var R=$('#reglages');
   '<div class="card"><h2>Poser les clés depuis l\'Admin</h2><p class="mu" style="margin:0">'+(DATA.posecles?'<span class="pill ok">Branché</span> Les clés GHL et VosFactures se posent depuis la fiche du client.':'Pas encore branché. Une seule fois : créez dans Cloudflare un « jeton d\'API » avec le droit « Workers Scripts : Modifier », puis posez deux secrets sur proclik-calcul : CF_API_TOKEN (le jeton) et CF_ACCOUNT_ID (l\'identifiant du compte, visible à droite de la page Workers).')+'</p></div>'+
   '<div class="card"><h2>E-mail d\'invitation automatique</h2><p class="mu" style="margin:0">'+(DATA.envoiMail?'<span class="pill ok">Branché</span> Le bouton « Envoyer l\'e-mail » part de votre GHL ProClik.':'Pas encore branché : il faut la clé GHL de votre sous-compte ProClik (GHL_PIT_PROCLIK, avec le droit « conversations ») et PROCLIK_LOCATION_ID dans Cloudflare. En attendant : « Envoyer… » ou « Copier ».')+'</p></div>'+
   '<div class="card"><h2>Sauvegarde</h2><p class="mu" style="margin:0 0 10px">Le registre est gardé par Cloudflare. Pour une copie chez vous : toutes les fiches et le journal, sans aucun mot de passe.</p><button class="btn sm" type="button" id="exp">Télécharger la sauvegarde</button></div>';
+ var ckb=document.createElement('div');ckb.className='card';R.appendChild(ckb);if(window.PCCliky)PCCliky.base(ckb);
  if($('#exp'))$('#exp').onclick=function(){var b=this;b.disabled=true;api('/admin/export').then(function(j){var u=URL.createObjectURL(new Blob([JSON.stringify(j,null,1)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='proclik-admin-'+j.le.slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},function(e){toast(e.message)}).then(function(){b.disabled=false})};
  if($('#d2go'))$('#d2go').onclick=function(){var b=this;b.disabled=true;api('/admin/2fa/debut',{method:'POST'}).then(function(j){
   $('#d2z').innerHTML='<div class="res" style="text-align:center"><div id="d2qr" style="display:inline-block;background:#fff;padding:10px;border-radius:12px"></div><p style="margin:10px 0 4px"><a href="'+esc(j.uri)+'" class="btn sm">Ouvrir dans l\'appli</a></p><div class="mu">Ou tapez cette clé : <span class="sec">'+esc(j.secret.replace(/(.{4})/g,'$1 ').trim())+'</span></div></div>'+
@@ -320,5 +322,6 @@ if(!S){vue('login');$('#aerr').textContent='Adresse du service ProClik absente.'
 else if(lj())charger().then(function(){if(!lj())vue('login')});else vue('login');
 })();
 </script>
+<script src="cliky.js?v=1"></script>
 </body>
 </html>
