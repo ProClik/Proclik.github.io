@@ -188,7 +188,7 @@ body.resa-ouverte #bas{display:none!important}
 <h1>Vos cheveux méritent<br><span class="degr">un moment à eux.</span></h1>
 <p class="lead">Balayages, couleurs, coupes et coiffures de mariage, dans un salon chaleureux et lumineux au cœur du village. Réservez en trois touches, l'acompte se règle en ligne.</p>
 <div class="actions"><a class="btn" href="#reserver">Réserver un créneau</a><a class="btn sec" href="#" target="_blank" rel="noopener">Instagram</a></div></div>
-<div class="scene reveal" id="scene"><div class="ouv"><img class="ph-hero" src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&fit=crop&w=1200&q=70" alt="Un salon de coiffure lumineux, fauteuils et miroirs" loading="eager"></div>
+<div class="scene reveal"><img class="ph-hero" src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&fit=crop&w=1200&q=70" alt="Un salon de coiffure lumineux, fauteuils et miroirs" loading="eager">
 <div class="carte"><div><small><span class="ouvert">Ouvert</span></small><b id="prochain">Prochain créneau</b></div><a class="btn" href="#reserver" id="hero-resa">Réserver</a></div></div>
 </section>
 <section id="prestations"><div class="in"><div class="tete reveal"><p class="k">Prestations</p><h2>Ce que nous faisons<br>le mieux.</h2></div>
@@ -359,21 +359,68 @@ section:nth-of-type(even){background:linear-gradient(180deg,#F3DFD9,#F8EBE6)}
 .objet.en3d .ob-flacon,.objet.en3d .ob-ombre{display:none}.ob-3d{display:block;width:100%!important;height:auto!important;opacity:0}
 @keyframes obIn{from{opacity:0;transform:translate3d(0,26px,0)}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.ob-flacon{animation:none}}
-.objet+.scene{margin-top:clamp(20px,4vw,40px)!important}
+.hero .scene{margin-top:clamp(26px,5vw,48px)!important}
 </style>
 
 
-<style id="ouvcss">
-/* Épuré, façon Apple : pas d'objet, la photo du salon s'ouvre en arche puis s'élargit au défilement */
-#scene{--p:0}
-#scene .ouv{border-radius:var(--r);overflow:hidden;clip-path:inset(0 calc((1 - var(--p)) * 17%) round calc((1 - var(--p)) * 220px + var(--p) * 26px) calc((1 - var(--p)) * 220px + var(--p) * 26px) 26px 26px);will-change:clip-path;box-shadow:0 30px 60px -30px rgba(74,50,67,.45)}
-#scene .ph-hero{box-shadow:none;border-radius:0;transform:scale(calc(1.18 - var(--p) * .18));transform-origin:50% 40%;will-change:transform}
-@media(max-width:899px){#scene .ph-hero{aspect-ratio:4/4.4}}
-@media(prefers-reduced-motion:reduce){#scene{--p:1}}
+<canvas id="fond" aria-hidden="true"></canvas>
+<style id="fondcss">
+#fond{position:sticky;top:0;display:block;width:100%;height:100vh;height:100lvh;pointer-events:none}
+#fondwrap{position:absolute;left:0;top:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden;contain:strict}
+section.fz{background:transparent!important}
 </style>
-<script>(function(){var sc=document.getElementById('scene');if(!sc||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-var cur=0,tgt=0,run=false;function cible(){var r=sc.getBoundingClientRect(),vh=innerHeight;tgt=Math.max(0,Math.min(1,(vh*.95-r.top)/(vh*.75)))}
-function pas(){cur+=(tgt-cur)*.16;if(Math.abs(tgt-cur)<.001)cur=tgt;sc.style.setProperty('--p',cur.toFixed(4));if(cur!==tgt)requestAnimationFrame(pas);else run=false}
-function go(){cible();if(!run){run=true;requestAnimationFrame(pas)}}
-addEventListener('scroll',go,{passive:true});addEventListener('resize',go);addEventListener('load',go);go()})();</script>
+<script id="fondjs">
+/* Cheveux et ciseaux : fines mèches qui ondulent et se déploient au scroll, ciseaux en trait fin qui coupent quand on fait défiler */
+(function(){
+var LITE=matchMedia("(hover:none),(max-width:899px)").matches,R=matchMedia("(prefers-reduced-motion: reduce)").matches,
+c=document.getElementById("fond"),x=c.getContext("2d"),W=0,H=0,dpr=1,vis=true,run=false,t0=performance.now(),last=t0,now=0,dtS=.016,
+sv=0,lastY=scrollY,mx=.5,tx=.5,RH=2000,L=1400,ps=0,coupe=0,lastCut=0,BR=[],wrap;
+function cl(u,a,b){return u<a?a:u>b?b:u}function ease(u){u=cl(u,0,1);return u*u*(3-2*u)}
+function mkWrap(){wrap=document.createElement("div");wrap.id="fondwrap";wrap.style.background="linear-gradient(180deg,#F8EBE6 0%,#F4E2DC 70%,#F8EBE6 100%)";
+ wrap.style.webkitMaskImage=wrap.style.maskImage="linear-gradient(#000 calc(100% - 140px),transparent)";document.body.insertBefore(wrap,document.body.firstChild);wrap.appendChild(c)}
+function span(){try{var ss=document.querySelectorAll("section");[].forEach.call(ss,function(s,i){s.classList.toggle("fz",i<2)});var s2=ss[1]||ss[0],r=s2.getBoundingClientRect();
+ RH=Math.max(H*1.4,r.bottom+scrollY);wrap.style.height=RH+"px";L=Math.max(H*.6,(RH-H)*.85)}catch(e){RH=H*2;L=H}}
+function taille(){dpr=Math.min(LITE?2:1.5,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;span()}
+/* ciseaux en trait fin : lames effilées, anneaux laiton, vis */
+function ciseaux(cx,cy,rot,sz,a){x.save();x.translate(cx,cy);x.rotate(rot);x.lineJoin="round";x.lineCap="round";
+ function moitie(sg){x.save();x.rotate(-sg*a);
+  x.beginPath();x.moveTo(-sz*.02,-sz*.028*sg);x.bezierCurveTo(sz*.25,-sz*.06*sg,sz*.7,-sz*.035*sg,sz,0);x.bezierCurveTo(sz*.62,sz*.006*sg,sz*.25,sz*.016*sg,-sz*.02,sz*.022*sg);x.closePath();
+  x.fillStyle="rgba(255,255,255,.55)";x.fill();x.strokeStyle="rgba(74,50,67,.62)";x.lineWidth=1;x.stroke();
+  x.beginPath();x.moveTo(sz*.08,-sz*.004*sg);x.lineTo(sz*.86,-sz*.004*sg);x.strokeStyle="rgba(74,50,67,.18)";x.lineWidth=.7;x.stroke();
+  x.beginPath();x.moveTo(-sz*.02,0);x.quadraticCurveTo(-sz*.16,sg*sz*.02,-sz*.27,sg*sz*.075);x.strokeStyle="rgba(74,50,67,.6)";x.lineWidth=1.6;x.stroke();
+  x.beginPath();x.ellipse(-sz*.37,sg*sz*.13,sz*.115,sz*.08,sg*.5,0,6.3);x.strokeStyle="rgba(168,130,63,.9)";x.lineWidth=1.5;x.stroke();x.restore()}
+ moitie(1);moitie(-1);x.beginPath();x.arc(0,0,sz*.022,0,6.3);x.fillStyle="#A8823F";x.fill();x.restore()}
+function dessine(e){var N=LITE?26:46,SG=LITE?26:44,ext=.55+.45*e,sp=.72+.3*e;
+ /* deux voiles très doux */
+ [["205,120,135",.10,.16],["200,160,80",.09,.11]].forEach(function(r,i){var g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,"rgba("+r[0]+",0)");g.addColorStop(.5,"rgba("+r[0]+","+(r[1]*(.3+.7*e))+")");g.addColorStop(1,"rgba("+r[0]+",0)");
+  x.beginPath();for(var s=0;s<=30;s++){var u=s/30,yy=H*(1.02-(.14+i*.1)*e-(.18+i*.05)*u)+Math.sin(u*4+now/2400+i*1.3)*H*.03*(.4+e);s?x.lineTo(W*(-.05+u*1.1),yy):x.moveTo(W*(-.05+u*1.1),yy)}
+  for(var s=30;s>=0;s--){var u=s/30,yy=H*(1.02-(.14+i*.1)*e-(.18+i*.05)*u)+Math.sin(u*4+now/2400+i*1.3)*H*.03*(.4+e)+H*r[2]*.18*(.4+e);x.lineTo(W*(-.05+u*1.1),yy)}
+  x.closePath();x.fillStyle=g;x.fill()});
+ /* mèches : traits fins, plus serrés au centre, une sur huit en laiton */
+ var D=Math.max(W,620),sc=W<700?.8:1;
+ for(var i=0;i<N;i++){var k=i/(N-1),bell=Math.sin(k*Math.PI),x0=W*(.5+(k-.5)*1.1*sp),ph=now*.0003+i*.19;x.beginPath();
+  for(var s=0;s<=SG;s++){var u=s/SG*ext,y=-H*.05+u*H*1.1,on=Math.sin(u*3.1+ph)*D*.05*sc*(.4+u)*(1+.4*e)+Math.sin(u*7.3+ph*1.7+i)*D*.007,v=(mx-.5)*W*.05*u*u+cl(sv,-30,30)*.35*u,xx=x0-u*u*D*.32*(1-k*.3)+on+v;s?x.lineTo(xx,y):x.moveTo(xx,y)}
+  x.strokeStyle=i%8==3?"rgba(168,130,63,"+(.16+.2*bell)+")":"rgba(74,50,67,"+(.07+.17*bell)+")";x.lineWidth=.55+.6*bell;x.stroke()}
+ /* ciseaux : discrets, en haut à droite, ils coupent quand on fait défiler */
+ var sz=Math.min(W,H)*(W<700?.12:.085),cx=W*(W<700?.8:.84),cy=H*(.16+.42*e),
+  vit=Math.min(1,Math.abs(sv)/14);coupe+=((vit>.15?1:0)-coupe)*.12;
+ var clac=Math.pow(Math.max(0,Math.sin(now/(380-160*coupe))),3)*Math.max(coupe,.25+.15*Math.sin(now/3000)),an=.05+.3*clac;
+ if(clac>.9&&now-lastCut>(coupe>.5?160:600)){lastCut=now;for(var q=0;q<(coupe>.5?3:1);q++)BR.push({x:cx+Math.cos(-.75)*sz*.55,y:cy+Math.sin(-.75)*sz*.55,vx:-20+Math.random()*30,vy:5+Math.random()*25,a:1,r:Math.random()*6,l:4+Math.random()*4})}
+ ciseaux(cx,cy,-.75+.08*Math.sin(now/2200)+e*.25,sz,an);
+ for(var q=BR.length-1;q>=0;q--){var b=BR[q];b.x+=b.vx*dtS;b.y+=b.vy*dtS;b.vy+=45*dtS;b.vx*=.99;b.a-=dtS*.45;b.r+=dtS*2.4;if(b.a<=0||b.y>H+10){BR.splice(q,1);continue}
+  x.save();x.translate(b.x,b.y);x.rotate(b.r);x.strokeStyle="rgba(74,50,67,"+(b.a*.4)+")";x.lineWidth=.8;x.beginPath();x.moveTo(-b.l,0);x.quadraticCurveTo(0,-2.5,b.l,0);x.stroke();x.restore()}}
+function frame(ts){now=ts-t0;dtS=Math.min(.05,(ts-last)/1000);last=ts;var d=scrollY-lastY;lastY=scrollY;sv+=(d-sv)*.18;
+ ps+=(cl(scrollY/L,0,1)-ps)*.12;mx+=(tx-mx)*.03;
+ x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);dessine(ease(ps));
+ if(!R&&vis&&scrollY<RH+50)requestAnimationFrame(frame);else run=false}
+function kick(){if(run)return;run=true;last=performance.now();requestAnimationFrame(frame)}
+function un(){ps=cl(scrollY/L,0,1);frame(performance.now())}
+mkWrap();taille();addEventListener("resize",function(){taille();if(R)un()});addEventListener("load",span);setTimeout(span,1200);
+if(window.ResizeObserver)new ResizeObserver(span).observe(document.body);
+document.addEventListener("visibilitychange",function(){vis=!document.hidden;if(vis&&!R)kick()});
+addEventListener("pointermove",function(e){tx=e.clientX/W},{passive:true});
+addEventListener("scroll",function(){if(R)un();else kick()},{passive:true});
+if(R)un();else kick();
+})();
+</script>
 </body></html>
