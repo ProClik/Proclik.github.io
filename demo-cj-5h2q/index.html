@@ -129,21 +129,32 @@ footer .pc b{color:#1B2440;font-weight:700}
 .bas.on{transform:none}
 .bas .btn{width:100%;padding:16px;box-shadow:0 14px 34px -12px rgba(74,50,67,.6)}
 @media(max-width:760px){.bas{display:block}}
+</style><style id="photos">
+.scene .carte{transform:none!important;margin-top:-56px!important;z-index:2}
+.ph-hero{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r);background:#EADBD5;box-shadow:0 30px 60px -30px rgba(74,50,67,.5)}
+@media(min-width:900px){.ph-hero{aspect-ratio:16/10}}
+#salon .gal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+#salon figure{margin:0}
+#salon img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:22px;background:#EADBD5}
+#salon figcaption{font-size:14px;color:var(--gris);margin-top:8px;text-align:center}
+@media(max-width:900px){#salon .gal{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pre{min-height:0!important}.pre h3{margin-top:12px!important}}
+.credit{font-size:12px;opacity:.7}
 </style></head><body>
 <div class="ex">Maquette préparée par ProClik pour Chez Julie · démonstration, aucun paiement réel · <a href="espace.html">Voir l'Espace de Julie</a></div>
 <header class="nav"><div class="bar"><a class="marque" href="#haut">Chez Julie<b></b></a>
-<nav aria-label="Menu"><a href="#prestations">Prestations</a><a href="#reserver">Réserver</a><a href="#avis">Avis</a><a href="#venir">Venir</a></nav>
+<nav aria-label="Menu"><a href="#prestations">Prestations</a><a href="#salon">Le salon</a><a href="#reserver">Réserver</a><a href="#avis">Avis</a><a href="#venir">Venir</a></nav>
 <a class="btn" href="#reserver">Réserver</a></div></header>
 <main id="haut">
 <section class="hero in"><div class="reveal"><p class="k">Salon de coiffure · Le Versoud</p>
 <h1>Vos cheveux méritent<br><span class="degr">un moment à eux.</span></h1>
 <p class="lead">Balayages, couleurs, coupes et coiffures de mariage, dans un salon chaleureux et lumineux au cœur du Versoud. Réservez en trois touches, l'acompte se règle en ligne.</p>
 <div class="actions"><a class="btn" href="#reserver">Réserver un créneau</a><a class="btn sec" href="https://www.instagram.com/chezjulie_leversoud/" target="_blank" rel="noopener">Instagram</a></div></div>
-<div class="scene reveal"><canvas id="meches" aria-hidden="true"></canvas>
+<div class="scene reveal"><canvas id="meches" aria-hidden="true"></canvas><img class="ph-hero" src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&fit=crop&w=1200&q=70" alt="Un salon de coiffure lumineux, fauteuils et miroirs" loading="eager">
 <div class="carte"><div><small><span class="ouvert">Ouvert</span></small><b id="prochain">Prochain créneau</b></div><a class="btn" href="#reserver" id="hero-resa">Réserver</a></div></div>
 </section>
 <section id="prestations"><div class="in"><div class="tete reveal"><p class="k">Prestations</p><h2>Ce que nous faisons<br>le mieux.</h2></div>
 <div class="grille" id="grille"></div><p class="autres">Et toute la carte : balayages, colorations &amp; gloss, soin botox, coupes femmes &amp; brushing, mariages &amp; événements · consultation obligatoire avant un premier balayage</p></div></section>
+<section id="salon"><div class="in"><div class="tete reveal"><p class="k">Le salon</p><h2>Un moment rien<br>que pour vous.</h2></div><div class="gal"><figure class="reveal"><img src="https://images.unsplash.com/photo-1672788725446-c303ec2b318e?auto=format&fit=crop&w=1200&q=70" alt="Une cliente coiffée au salon" loading="lazy"><figcaption>Coupe et coiffage</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1734111719430-fe4a3973f8af?auto=format&fit=crop&w=1200&q=70" alt="Brushing sur cheveux longs blonds" loading="lazy"><figcaption>Brushing</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1774660810725-fb04e002003d?auto=format&fit=crop&w=1200&q=70" alt="Coiffeuse réalisant un chignon" loading="lazy"><figcaption>Mariages et événements</figcaption></figure><figure class="reveal"><img src="https://images.unsplash.com/photo-1595475884562-073c30d45670?auto=format&fit=crop&w=1200&q=70" alt="Ciseaux, brosses et pinceau de coloration" loading="lazy"><figcaption>Couleur et balayage</figcaption></figure></div></div></section>
 <section id="reserver"><div class="in"><div class="tete reveal"><p class="k">Réservation</p><h2>Choisissez, réservez,<br>c'est confirmé.</h2><p>Un acompte de 30 % confirme votre rendez-vous. Le reste se règle au salon.</p></div>
 <div class="resa reveal"><div>
 <h4>Prestation</h4><div class="puces" id="presta"></div>
@@ -168,7 +179,7 @@ footer .pc b{color:#1B2440;font-weight:700}
 <div class="btns"><a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=43+rue+Pierre+Mend%C3%A8s+France+38420+Le+Versoud" target="_blank" rel="noopener">Itinéraire</a><a class="btn sec" href="https://www.instagram.com/chezjulie_leversoud/" target="_blank" rel="noopener">Instagram</a></div></div>
 <div class="carte2"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="300" fill="#F1ECE8"/><g fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round"><path d="M-20 90C90 80 150 150 260 140S380 60 430 70"/><path d="M110 -20C120 80 90 170 140 320"/><path d="M300 -20C280 90 330 190 290 320"/></g><g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"><path d="M-20 220 430 200"/><path d="M200 -20 215 320"/><path d="M-20 30 430 20"/></g><rect x="150" y="165" width="90" height="42" rx="8" fill="#E5DDD7"/><rect x="30" y="110" width="60" height="70" rx="8" fill="#E5DDD7"/><rect x="310" y="215" width="70" height="60" rx="8" fill="#DCE4DB"/></svg><span class="pin"></span></div></div></div></section>
 </main>
-<footer><div class="in"><span>Chez Julie · maquette de démonstration</span><span class="pc"><svg viewBox="0 0 100 100" width="16" height="16" aria-hidden="true"><path d="M10 50A40 40 0 1 1 90 50A40 40 0 1 1 10 50ZM62.13 77.8A30.33 30.33 0 1 0 37.87 77.8A6.15 6.15 0 0 0 46.48 72.16L46.48 67.58A3.52 3.52 0 0 1 53.52 67.58L53.52 72.16A6.15 6.15 0 0 0 62.13 77.8Z" fill="#1B2440"/><circle cx="50" cy="47.36" r="7.38" fill="#A8823F"/></svg>Site et espace par <b>ProClik</b></span></div></footer>
+<footer><div class="in"><span>Chez Julie · maquette de démonstration <span class="credit">· photos Unsplash, à remplacer par celles du salon</span></span><span class="pc"><svg viewBox="0 0 100 100" width="16" height="16" aria-hidden="true"><path d="M10 50A40 40 0 1 1 90 50A40 40 0 1 1 10 50ZM62.13 77.8A30.33 30.33 0 1 0 37.87 77.8A6.15 6.15 0 0 0 46.48 72.16L46.48 67.58A3.52 3.52 0 0 1 53.52 67.58L53.52 72.16A6.15 6.15 0 0 0 62.13 77.8Z" fill="#1B2440"/><circle cx="50" cy="47.36" r="7.38" fill="#A8823F"/></svg>Site et espace par <b>ProClik</b></span></div></footer>
 <div class="bas" id="bas"><a class="btn" href="#reserver">Réserver un créneau</a></div>
 <script>
 (function(){var r=[].slice.call(document.querySelectorAll('.reveal'));if(!('IntersectionObserver' in window)){r.forEach(function(e){e.classList.add('on')});return}
