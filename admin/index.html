@@ -31,7 +31,7 @@ button,input,select{font:inherit;color:inherit}
 .card h2{font-size:16px;margin:0 0 4px}
 .mu{color:var(--mu);font-size:13.5px}
 label.f{display:block;margin:10px 0 0;font-size:13px;font-weight:700;color:var(--mu)}
-input.t,select.t{display:block;width:100%;margin-top:4px;min-height:46px;padding:10px 14px;border:0;border-radius:14px;background:var(--bg);box-shadow:var(--n1-in);font-size:16px}
+input.t,select.t,textarea.t{display:block;width:100%;margin-top:4px;min-height:46px;padding:10px 14px;border:0;border-radius:14px;background:var(--bg);box-shadow:var(--n1-in);font-size:16px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .row>*{flex:1 1 160px}
 .err{color:var(--n1-alert);font-size:13.5px;min-height:18px;margin:8px 0 0}
@@ -53,6 +53,9 @@ input.t,select.t{display:block;width:100%;margin-top:4px;min-height:46px;padding
 .res .big{font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:.04em;word-break:break-all}
 .jl{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--li);font-size:13.5px}
 .jl:first-child{border-top:0}.jl time{color:var(--mu);flex:none;width:118px}
+.mes{padding:10px 0;border-top:1px solid var(--li)}.mes:first-of-type{border-top:0}.mes-l{display:flex;gap:12px;align-items:flex-start;cursor:pointer}.mes-l input{width:22px;height:22px;margin:2px 0 0;flex:none;accent-color:var(--nu)}
+.sm{padding:12px 0;border-top:1px solid var(--li)}.sm:first-child{border-top:0}
+textarea.t{min-height:0;font:inherit;font-size:16px}
 .back{border:0;background:transparent;font-weight:700;color:var(--mu);padding:8px 0;cursor:pointer;min-height:44px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--nu);color:var(--nf);padding:10px 16px;border-radius:14px;font-weight:700;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px)}
 .toast.on{opacity:1}
@@ -102,7 +105,8 @@ var $=function(s){return document.querySelector(s)},esc=function(s){return Strin
 function lj(){try{return sessionStorage.getItem(KJ)||''}catch(e){return ''}}
 function sj(v){try{v?sessionStorage.setItem(KJ,v):sessionStorage.removeItem(KJ)}catch(e){}}
 var NOMS={cliky:'Cliky',reservation:'Réservation',sms:'SMS',assistant:'Assistant du site',avis:'Avis Google',reseaux:'Réseaux sociaux',image:'Votre image',equipe:'Équipe'};
-var DATA={clients:[],options:Object.keys(NOMS)},COUR=null;
+var MENUS={clients:'Clients',devis:'Devis',factures:'Factures',depenses:'Dépenses',planning:'Planning',chantiers:'Chantiers',prix:'Achats',produits:'Produits',cotes:'Cotes',reseaux:'Réseaux'};
+var DATA={clients:[],options:Object.keys(NOMS),menus:Object.keys(MENUS)},COUR=null;
 function toast(t){var e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2400)}
 function api(ch,o){o=o||{};var h={};if(lj())h.Authorization='Bearer '+lj();if(o.body)h['Content-Type']='application/json';
  return fetch(S+ch,{method:o.method||'GET',headers:h,body:o.body?JSON.stringify(o.body):undefined}).then(function(r){return r.json().catch(function(){return{ok:false,erreur:'Réponse illisible du service'}}).then(function(j){
@@ -126,7 +130,7 @@ function etat(c){var p=[];
 function rendreListe(){var L=DATA.clients.slice().sort(function(a,b){return a.entreprise.localeCompare(b.entreprise)});
  $('#liste').innerHTML=L.length?L.map(function(c){var on=Object.keys(c.options||{}).filter(function(k){return c.options[k]}).map(function(k){return NOMS[k]||k});
   return '<div class="card"><button class="cl" type="button" data-id="'+esc(c.id)+'"><span class="n"><b>'+esc(c.entreprise||c.id)+'</b><span class="mu">'+esc(c.prenom||'')+(c.email?' · '+esc(c.email):'')+'</span><div>'+etat(c)+'</div>'+
-   '<div class="mu" style="margin-top:6px">Options : '+(on.length?esc(on.join(', ')):'aucune')+'</div></span><span aria-hidden="true" style="font-size:22px;color:var(--mu)">›</span></button></div>'}).join(''):'<div class="card mu">Aucun client pour l\'instant.</div>'}
+   '<div class="mu" style="margin-top:6px">'+(c.effectif?c.effectif+' personne'+(c.effectif>1?'s':'')+' · ':'')+'Options : '+(on.length?esc(on.join(', ')):'aucune')+(function(){var off=Object.keys(c.menus||{}).filter(function(k){return c.menus[k]===false}).map(function(k){return MENUS[k]||k});return off.length?' · Menus masqués : '+esc(off.join(', ')):''})()+'</div></span><span aria-hidden="true" style="font-size:22px;color:var(--mu)">›</span></button></div>'}).join(''):'<div class="card mu">Aucun client pour l\'instant.</div>'}
 function charger(){return api('/admin/clients').then(function(j){DATA=j;vue(COUR?'fiche':'liste');rendreListe();if(COUR){var c=DATA.clients.filter(function(x){return x.id===COUR})[0];if(c)fiche(c)}},function(e){if(lj())toast(e.message)})}
 $('#liste').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(!b)return;var c=DATA.clients.filter(function(x){return x.id===b.dataset.id})[0];if(c){COUR=c.id;fiche(c);vue('fiche')}});
 $('#retour').addEventListener('click',function(){COUR=null;vue('liste');rendreListe()});
@@ -137,11 +141,14 @@ document.querySelector('.tabs').addEventListener('click',function(e){var b=e.tar
 
 /* ---------- fiche ---------- */
 function champ(id,lab,val,type,aide){return '<label class="f" for="'+id+'">'+lab+'</label><input class="t" id="'+id+'" type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'"'+(type==='email'?' autocapitalize="off" autocorrect="off"':'')+(type==='number'?' inputmode="decimal"':'')+'>'+(aide?'<div class="mu" style="margin-top:4px">'+aide+'</div>':'')}
-function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',locationId:'',vfCompte:'',tva:10,acomptePourcent:30,options:{},actif:true,secrets:null};
+function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',locationId:'',vfCompte:'',tva:10,acomptePourcent:30,options:{},menus:{},effectif:1,actif:true,secrets:null};
  var h='<div class="card"><h2>'+(n?'Nouveau client':esc(c.entreprise))+'</h2>'+(n?'<p class="mu" style="margin:0">Remplissez ce que vous avez. Tout se modifie ensuite.</p>':'<div>'+etat(c)+'</div>')+
   champ('fe','Nom de l\'entreprise',c.entreprise)+champ('fp','Prénom de l\'artisan',c.prenom)+champ('fm','E-mail de l\'artisan (sert à se connecter)',c.email,'email')+
   '<div class="row">'+'<div>'+champ('fl','Sous-compte GHL (identifiant)',c.locationId,'text','Paramètres du sous-compte › Infos entreprise › Location ID')+'</div><div>'+champ('fv','Compte VosFactures',c.vfCompte,'text','Ce qui est avant « .vosfactures.fr »')+'</div></div>'+
   '<div class="row"><div>'+champ('ft','TVA par défaut (%)',c.tva,'number')+'</div><div>'+champ('fa','Acompte par défaut (%)',c.acomptePourcent,'number')+'</div></div>'+
+  '<label class="f" for="fn">Nombre de personnes dans l\'entreprise</label><input class="t" id="fn" type="number" inputmode="numeric" min="1" max="500" value="'+esc(c.effectif||'')+'" style="max-width:160px">'+
+  '<div class="mu" style="margin-top:4px" id="fnh"></div>'+
+  '<label class="f">Menus de son Espace</label><div class="mu" style="margin-top:2px">Décochez ce qui ne lui sert pas : le menu disparaît de son Espace. L\'Accueil et les Réglages restent toujours.</div><div class="opts">'+(DATA.menus||Object.keys(MENUS)).map(function(k){return '<label class="sw">'+esc(MENUS[k]||k)+'<input type="checkbox" data-menu="'+k+'"'+(!c.menus||c.menus[k]!==false?' checked':'')+'></label>'}).join('')+'</div>'+
   '<label class="f">Options</label><div class="opts">'+DATA.options.map(function(k){return '<label class="sw">'+esc(NOMS[k]||k)+'<input type="checkbox" data-opt="'+k+'"'+(c.options&&c.options[k]?' checked':'')+'></label>'}).join('')+'</div>'+
   '<div class="err" id="ferr"></div><button class="btn go" id="fsave" type="button" style="width:100%;margin-top:6px">'+(n?'Créer le client':'Enregistrer')+'</button></div>';
  if(!n){
@@ -151,13 +158,18 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
    '<div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-act="deconnecter">Déconnecter tous ses appareils</button><button class="btn sm al" type="button" data-act="actif">'+(c.actif?'Couper l\'accès':'Rendre l\'accès')+'</button></div></div>';
   h+='<div class="card"><h2>Clés à poser dans Cloudflare</h2><p class="mu" style="margin:0 0 8px">Une seule fois par client, jamais par une page web. Cloudflare › Workers › proclik-calcul › Paramètres › Variables et secrets › Ajouter (type Secret).</p>'+
    ['ghl','vf'].map(function(k){var s=c.secrets[k];return '<div class="row" style="margin-top:6px"><span><b>'+(k==='ghl'?'Clé GHL':'Clé VosFactures')+'</b><br><span class="sec">'+esc(s.nom)+'</span></span><span style="flex:0 0 auto" class="pill '+(s.pose?'ok':'w')+'">'+(s.pose?'Posée':'À poser')+'</span></div>'}).join('')+'</div>';
+  h+=miseEnService(c)+surMesure(c)+'<div class="card"><h2>Notes</h2>'+champ('ftel','Téléphone de l\'artisan',c.telephone,'tel')+'<label class="f" for="fnote">Notes pour vous (jamais visibles par l\'artisan)</label><textarea class="t" id="fnote" rows="4" style="resize:vertical">'+esc(c.notes||'')+'</textarea><button class="btn sm" type="button" id="fnsave" style="margin-top:10px">Enregistrer les notes</button></div>';
   h+='<div class="card" id="fcliky" data-client="'+esc(c.id)+'"><h2>Cliky</h2><p class="mu" style="margin:0">Base de prix et réglages Cliky propres à ce client : bientôt ici.</p></div>';
  }
  $('#fiche').innerHTML=h;
+ if(!n){brancheMes(c);brancheSm(c);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
  $('#fsave').addEventListener('click',function(){var b=this,o={};[].forEach.call(document.querySelectorAll('[data-opt]'),function(x){o[x.dataset.opt]=x.checked});
   var body={entreprise:$('#fe').value,prenom:$('#fp').value,email:$('#fm').value,locationId:$('#fl').value,vfCompte:$('#fv').value,tva:Number(String($('#ft').value).replace(',','.')),acomptePourcent:Number(String($('#fa').value).replace(',','.')),options:o};
+  var mn={};[].forEach.call(document.querySelectorAll('[data-menu]'),function(x){mn[x.dataset.menu]=x.checked});body.menus=mn;body.effectif=Number($('#fn').value)||null;
   if(!n)body.id=c.id;if(!body.entreprise.trim()){$('#ferr').textContent='Le nom de l\'entreprise est vide.';return}
   b.disabled=true;$('#ferr').textContent='';api('/admin/client',{method:'POST',body:body}).then(function(j){COUR=j.client.id;toast(n?'Client créé':'Enregistré');return charger()},function(e){$('#ferr').textContent=e.message}).then(function(){b.disabled=false})});
+ function aideEff(){var v=Number($('#fn').value)||0,eq=document.querySelector('[data-opt=equipe]');$('#fnh').textContent=v>1?'Plusieurs personnes : l\'option Équipe (qui travaille où, chaque jour) peut lui servir.':v===1?'Seul : l\'option Équipe ne lui sert pas.':'';if(n&&eq&&v)eq.checked=v>1}
+ $('#fn').addEventListener('input',aideEff);aideEff();
  [].forEach.call(document.querySelectorAll('[data-act]'),function(b){b.addEventListener('click',function(){action(c,b.dataset.act,b)})});
 }
 function partager(t){if(navigator.share)navigator.share({text:t}).catch(function(){});else copier(t)}
@@ -175,6 +187,47 @@ function action(c,a,b){var R=$('#ares');
   else {toast(a==='deconnecter'?'Tous ses appareils sont déconnectés':'C\'est fait');charger()}
  },function(e){R.innerHTML='<div class="err">'+esc(e.message)+'</div>'}).then(function(){b.disabled=false})}
 function confirmer(b,t){if(b.dataset.ok){delete b.dataset.ok;return true}var old=b.textContent;b.dataset.ok=1;b.textContent=t;setTimeout(function(){if(b.dataset.ok){delete b.dataset.ok;b.textContent=old}},4000);return false}
+
+/* ---------- mise en service : toutes les étapes, dans l'ordre ---------- */
+var BLOC_STYLE='<style>\nhtml,body{margin:0!important;padding:0!important;overflow:hidden!important;height:100%!important;overscroll-behavior:none}\n#ID{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;border:0;display:block;z-index:2147483647;background:#ECEEF2}\n</style>\n';
+function blocEspace(){return BLOC_STYLE.replace('#ID','#pcespace')+'<iframe id="pcespace" title="Espace ProClik" allow="microphone; geolocation; camera; web-share; clipboard-write" src="https://proclik.github.io/espace-depart/?v=2"></iframe>'}
+function blocDevis(c){return BLOC_STYLE.replace('#ID','#clikdevis')+'<iframe id="clikdevis" title="Demande de devis" allow="web-share; clipboard-write; microphone" src="https://proclik.github.io/devis/?v=31#w=COLLEZ_ICI&a='+encodeURIComponent(c.id)+'&n='+encodeURIComponent(c.entreprise||'')+'&pr='+encodeURIComponent(c.prenom||'')+'"></iframe>\n'+
+ '<script>\n(function () {\n  var f = document.getElementById("clikdevis"), page = location.href.split("#")[0];\n  if (!f || !/^https?:/.test(page)) return;\n  var s = f.getAttribute("src"), i = s.indexOf("#");\n  var m = location.hash.match(/[#&]reprise=([A-Za-z0-9_-]+)/);\n  f.src = s.slice(0, i) + "&p=" + encodeURIComponent(page) + s.slice(i) + (m ? "&reprise=" + m[1] : "");\n  if (m && history.replaceState) history.replaceState(null, "", page);\n})();\n<\/script>'}
+function etapes(c){var m=c.mes||{};return [
+ {k:'fiche',t:'Fiche remplie',d:'Nom, prénom, e-mail et sous-compte GHL.',auto:!!(c.entreprise&&c.email&&c.locationId)},
+ {k:'ghl',t:'Clé GHL posée dans Cloudflare',d:'Clé privée du sous-compte (Paramètres › Clés privées), nommée '+c.secrets.ghl.nom+'.',auto:c.secrets.ghl.pose},
+ {k:'vf',t:'VosFactures branché',d:'Nom du compte rempli + clé posée, nommée '+c.secrets.vf.nom+'.',auto:!!(c.vfCompte&&c.secrets.vf.pose)},
+ {k:'snapshot',t:'Snapshot GHL poussé',d:'Pipelines « Devis & Chantiers », tags et workflows ProClik dans son sous-compte.'},
+ {k:'make',t:'Scénario Make branché',d:'Copie de « Clik\'Devis formulaire » avec sa clé GHL et son locationId.'},
+ {k:'pagedevis',t:'Page Devis dans son GHL',d:'Bouton ci-dessous : copiez le bloc et collez-le dans la page, avec l\'adresse Make (webhook) à la place de COLLEZ_ICI.',bloc:'devis'},
+ {k:'pageespace',t:'Page Espace dans son GHL',d:'Bouton ci-dessous : bloc à coller dans la page (le même pour tous).',bloc:'espace'},
+ {k:'acces',t:'Accès donné à l\'artisan',d:'Lien d\'invitation ou code provisoire (carte « Accès » plus haut).',auto:c.acces!=='pas encore d\'accès'},
+ {k:'test',t:'Test de bout en bout',d:'Une demande d\'essai : alerte reçue, pré-devis visible dans son Espace.'}
+].map(function(e){e.fait=e.auto!==undefined?e.auto:!!m[e.k];return e})}
+function miseEnService(c){var E=etapes(c),f=E.filter(function(e){return e.fait}).length;
+ return '<div class="card"><h2>Mise en service <span class="pill '+(f===E.length?'ok':'w')+'">'+f+' / '+E.length+'</span></h2><p class="mu" style="margin:0 0 6px">Toutes les étapes pour qu\'il soit opérationnel. Celles marquées « auto » se cochent toutes seules.</p>'+
+  E.map(function(e,i){return '<div class="mes"><label class="mes-l"><input type="checkbox" data-mes="'+e.k+'"'+(e.fait?' checked':'')+(e.auto!==undefined?' disabled':'')+'><span><b>'+(i+1)+'. '+esc(e.t)+'</b>'+(e.auto!==undefined?' <span class="pill">auto</span>':'')+'<br><span class="mu">'+esc(e.d)+'</span></span></label>'+
+   (e.bloc?'<div class="row" style="margin:6px 0 0 34px"><button class="btn sm" type="button" data-bloc="'+e.bloc+'">Copier le bloc code</button></div>':'')+'</div>'}).join('')+'</div>'}
+function brancheMes(c){
+ [].forEach.call(document.querySelectorAll('[data-mes]'),function(x){if(x.disabled)return;x.addEventListener('change',function(){var m=Object.assign({},c.mes||{});m[x.dataset.mes]=x.checked;
+  api('/admin/client',{method:'POST',body:{id:c.id,mes:m}}).then(function(){toast(x.checked?'Étape cochée':'Étape décochée');return charger()},function(e){x.checked=!x.checked;toast(e.message)})})});
+ [].forEach.call(document.querySelectorAll('[data-bloc]'),function(b){b.addEventListener('click',function(){copier(b.dataset.bloc==='devis'?blocDevis(c):blocEspace())})});
+}
+/* ---------- sur mesure : ce qui n'existe pas encore, pour ce client seulement ---------- */
+var ETATS={demande:'Demandé',"en cours":'En cours',pret:'Prêt'};
+function surMesure(c){var L=c.surmesure||[];
+ return '<div class="card"><h2>Sur mesure</h2><p class="mu" style="margin:0">Une fonction spéciale pour ce client seulement. Notez la demande ; quand elle est construite (« Prêt »), l\'interrupteur l\'allume dans son Espace.</p><div id="smL">'+
+  L.map(function(x,i){return '<div class="sm" data-i="'+i+'"><div class="row"><input class="t" data-k="titre" value="'+esc(x.titre)+'" placeholder="Ex. Bons de livraison négoce" aria-label="Titre"><select class="t" data-k="etat" style="flex:0 0 130px" aria-label="État">'+Object.keys(ETATS).map(function(k){return '<option value="'+k+'"'+(x.etat===k?' selected':'')+'>'+ETATS[k]+'</option>'}).join('')+'</select></div>'+
+   '<textarea class="t" data-k="note" rows="2" placeholder="Ce qu\'il veut, en quelques mots" aria-label="Note" style="margin-top:6px;resize:vertical">'+esc(x.note)+'</textarea>'+
+   '<div class="row" style="margin-top:6px"><label class="sw" style="flex:1 1 auto">Allumé dans son Espace<input type="checkbox" data-k="actif"'+(x.actif?' checked':'')+(x.etat!=='pret'?' disabled':'')+'></label><button class="btn sm al" type="button" data-smx style="flex:0 0 auto">Retirer</button></div></div>'}).join('')+'</div>'+
+  '<div class="row" style="margin-top:10px"><button class="btn sm" type="button" id="smAdd">+ Ajouter une demande spéciale</button><button class="btn sm go" type="button" id="smSave">Enregistrer</button></div></div>'}
+function brancheSm(c){var L=JSON.parse(JSON.stringify(c.surmesure||[]));
+ function lire(){[].forEach.call(document.querySelectorAll('#smL .sm'),function(el){var x=L[+el.dataset.i];[].forEach.call(el.querySelectorAll('[data-k]'),function(f){x[f.dataset.k]=f.type==='checkbox'?f.checked:f.value})})}
+ $('#smAdd').addEventListener('click',function(){lire();L.push({titre:'',note:'',etat:'demande',actif:false});var tmp=Object.assign({},c,{surmesure:L});var div=document.createElement('div');div.innerHTML=surMesure(tmp);var old=$('#smL').closest('.card');old.parentNode.replaceChild(div.firstChild,old);brancheSm(tmp)});
+ [].forEach.call(document.querySelectorAll('[data-smx]'),function(b){b.addEventListener('click',function(){lire();L.splice(+b.closest('.sm').dataset.i,1);var tmp=Object.assign({},c,{surmesure:L});var div=document.createElement('div');div.innerHTML=surMesure(tmp);var old=$('#smL').closest('.card');old.parentNode.replaceChild(div.firstChild,old);brancheSm(tmp)})});
+ [].forEach.call(document.querySelectorAll('#smL [data-k=etat]'),function(sel){sel.addEventListener('change',function(){var a=sel.closest('.sm').querySelector('[data-k=actif]');a.disabled=sel.value!=='pret';if(a.disabled)a.checked=false})});
+ $('#smSave').addEventListener('click',function(){var b=this;lire();b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,surmesure:L.filter(function(x){return x.titre.trim()})}}).then(function(){toast('Enregistré');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})});
+}
 
 /* ---------- journal ---------- */
 function journal(){var J=$('#journal');J.innerHTML='<span class="mu">Chargement…</span>';

@@ -343,8 +343,8 @@ html body .av{background:var(--rs);box-shadow:var(--up-s);border-radius:50%;colo
 html body .xback{background:var(--rs)!important;color:var(--fg)!important;border:0!important;box-shadow:var(--up-s)}
 /* Notification : icône dans un galet laiton */
 html body .toast .ti{background:var(--rs);box-shadow:var(--up-s);border-radius:50%}
-html body .toast .ti rect,html body .toast .ti circle:first-of-type{fill:var(--accx)}
-html body .toast .ti circle:last-of-type{fill:var(--rs);stroke:var(--accx)}
+html body .toast .ti path{fill:var(--accx)}
+html body .toast .ti circle{fill:var(--n1-laiton,#A8823F);stroke:none}
 /* Bienvenue : icône dans un galet, plus de halo */
 html body .wicon{background:var(--rs);box-shadow:var(--up);color:var(--accx);border-radius:50%}
 html body .wdots i{background:var(--cx);box-shadow:var(--in)}

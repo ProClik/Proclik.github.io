@@ -107,10 +107,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
    E-mail vide = ancien code d'accès (BRS, ProClik Test) tant que l'artisan n'a pas choisi de mot de passe.
    Code provisoire donné par Cyril (PC-XXXX-XXXX) ou lien d'invitation (#invit=…) → « Choisissez votre mot de passe ». */
 var apres=null,KM='pc-vrai-email';
-function connecte(x){lsS(KJ,x.jeton);lsS(KA,x.artisan);fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
+function connecte(x){lsS(KJ,x.jeton);lsS(KA,x.artisan);if(window.PCMenus)window.PCMenus.applique();fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
 function oeil(id,inp){$(id).addEventListener('change',function(){[].concat(inp).forEach(function(i){i.type=this.checked?'text':'password'},this)})}
 function connexion(msg){
- ouvrir('🔒 Votre Espace<small>Connexion à l\'Espace ProClik</small>',
+ ouvrir('Votre Espace<small>Connexion à l\'Espace ProClik</small>',
   '<div class="card vlog"><p style="margin:0">'+(msg?esc(msg):'Tapez votre e-mail et votre mot de passe. Cet appareil s\'en souvient 90 jours.')+'</p>'+
   '<input id="vmail" type="email" inputmode="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Votre e-mail" aria-label="Votre e-mail" value="'+esc(lsG(KM)||'')+'">'+
   '<input id="vcode" type="password" inputmode="text" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Mot de passe (ou code provisoire)" aria-label="Mot de passe">'+
@@ -128,7 +128,7 @@ function connexion(msg){
 }
 var REGLE='10 caractères au minimum, avec au moins une lettre et un chiffre.';
 function choisir(o,ent){
- ouvrir('🔑 Choisissez votre mot de passe<small>'+(ent?esc(ent):'Espace ProClik')+'</small>',
+ ouvrir('Choisissez votre mot de passe<small>'+(ent?esc(ent):'Espace ProClik')+'</small>',
   '<div class="card vlog"><p style="margin:0">C\'est vous seul qui le connaissez : ni Cyril ni personne d\'autre ne peut le lire. '+REGLE+'</p>'+
   '<input id="vn1" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Nouveau mot de passe" aria-label="Nouveau mot de passe">'+
   '<input id="vn2" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Retapez-le" aria-label="Retapez le mot de passe">'+
@@ -145,7 +145,7 @@ function choisir(o,ent){
 function toast2(t,s){try{if(window.PCX&&window.PCX.toast)window.PCX.toast(t,s)}catch(e){}}
 /* Mon compte (menu ☰ « Votre espace », connecté) : mot de passe, autres appareils, se déconnecter */
 function compte(){var art=lsG(KA)||{};
- ouvrir('👤 Mon compte<small>'+esc(art.entreprise||'Espace ProClik')+'</small>',
+ ouvrir('Mon compte<small>'+esc(art.entreprise||'Espace ProClik')+'</small>',
   '<div class="card vlog"><p style="margin:0"><b>Changer mon mot de passe</b></p>'+
   '<input id="vo" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Mot de passe actuel" aria-label="Mot de passe actuel">'+
   '<input id="vn1" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Nouveau mot de passe" aria-label="Nouveau mot de passe">'+
@@ -164,7 +164,7 @@ function compte(){var art=lsG(KA)||{};
 (function(){var m=document.getElementById('menu');if(!m)return;
  m.addEventListener('click',function(){setTimeout(function(){var t=document.getElementById('x-t');if(!t||t.textContent!=='Votre espace'||!lsG(KJ)||document.getElementById('v-compte'))return;
   var c=document.querySelector('#x-in .card.menu');if(!c)return;var b=document.createElement('button');b.type='button';b.id='v-compte';
-  b.innerHTML='<span class="av">👤</span><span class="tx"><b>Mon compte</b><small>Mot de passe, appareils connectés</small></span><span class="go">›</span>';
+  b.innerHTML='<span class="av"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg></span><span class="tx"><b>Mon compte</b><small>Mot de passe, appareils connectés</small></span><span class="go">›</span>';
   b.addEventListener('click',function(){if(window.PCX&&window.PCX.xclose)window.PCX.xclose();compte()});
   var o=document.getElementById('mo-opt');c.insertBefore(b,o?o.nextSibling:c.firstChild)},10)})})();
 function deconnecter(expire){lsS(KJ,null);lsS(KL,null);document.documentElement.classList.remove('pcvrai');location.hash='';if(expire){setTimeout(function(){connexion('Votre connexion a expiré ou le mot de passe a changé : reconnectez-vous.')},50)}else location.reload()}
@@ -200,7 +200,7 @@ function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){retur
  if(art.prenom){var hl=$('#hello');if(hl)hl.textContent='Bonjour '+art.prenom+'.';var ph=$('#phrase');if(ph)ph.textContent=a.length?(a.length===1?'Une demande attend votre validation. Le calcul est fait, il ne manque que votre œil.':a.length+' demandes attendent votre validation. Les calculs sont faits.'):'Aucune demande en attente : tout est à jour.'}
 }
 function charger(){if(!lsG(KJ))return;charge=Date.now();
- api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{};ka.options=x.artisan.options;lsS(KA,ka)}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
+ api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{},av=JSON.stringify(ka.menus||{});ka.options=x.artisan.options;if(x.artisan.menus)ka.menus=x.artisan.menus;if(x.artisan.effectif!==undefined)ka.effectif=x.artisan.effectif;lsS(KA,ka);if(av!==JSON.stringify(ka.menus)&&window.PCMenus)window.PCMenus.applique()}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
   function(e){var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();var vd=$('#vd');if(vd&&lsG(KJ))vd.insertAdjacentHTML('afterbegin','<div class="verr" style="margin-bottom:10px">'+esc(e.message)+'</div>')})}
 
 /* ---------- une demande ---------- */
@@ -329,7 +329,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  var O=ONG.filter(function(x){return Z[x[0]]});if(!Z[VTAB])VTAB='devis';
  var h='<div class="cf vmenu"><div class="seg cf-seg dv-seg" role="tablist" aria-label="La demande" style="grid-template-columns:repeat('+O.length+',minmax(0,1fr))">'+O.map(function(x){var n=x[0]==='devis'?manque(p).length:0;return '<button role="tab" type="button" data-vtabd="'+x[0]+'" aria-selected="'+(VTAB===x[0])+'">'+ICS[x[2]]+'<span>'+x[1]+'</span>'+(n?'<i class="r">'+n+'</i>':'')+'</button>'}).join('')+'</div></div>'+
   O.map(function(x){return '<div class="vpan" data-vpan="'+x[0]+'"'+(VTAB===x[0]?'':' hidden')+'>'+Z[x[0]]+'</div>'}).join('')+
-  '<p class="vst" style="font-size:12.5px">🔒 Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
+  '<p class="vst" style="font-size:12.5px">Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
  ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,'<button class="vbtn" type="button" data-vfermer>Fermer</button>');
  if(DOCC===k.id&&DOCS)rendreDocs();else chargerDocs(k.id);}
 function onglet(t){VTAB=t;$$('#vov-b [data-vtabd]').forEach(function(b){b.setAttribute('aria-selected',String(b.getAttribute('data-vtabd')===t))});$$('#vov-b [data-vpan]').forEach(function(z){z.hidden=z.getAttribute('data-vpan')!==t});$('#vov-b').scrollTop=0}
@@ -391,7 +391,7 @@ function rendreND(){MODE='nd';var C=clientsListe(),t=ND.main_oeuvre.reduce(funct
   '<div class="card vsec vtotc"><div class="vtot1"><span>Total HT</span><b>'+eur(Math.round(t*100)/100)+'</b></div><p class="vst" style="padding:4px 0 0">La TVA s\'ajoute dans le devis, à votre taux habituel.</p></div>'+
   '<div class="card vsec vpart"><div class="vpart-h"><h3>Les lignes</h3><small>prix de vente HT · touchez « Modifier » pour changer une ligne</small></div>'+(ND.main_oeuvre.length?ND.main_oeuvre.map(function(l,i){return '<div class="vli vedit"><span>'+esc(l.libelle)+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+'</small><button type="button" class="vmod" data-vlg="main_oeuvre|'+i+'">Modifier</button></div>'}).join(''):'<p class="vst">Pas encore de ligne : ajoutez la première, votre base vous propose vos produits.</p>')+
   '<button class="vbtn vadd" type="button" data-vlg="+main_oeuvre">＋ Ajouter une ligne</button></div>'+
-  '<p class="vst" style="font-size:12.5px">🔒 Le devis est créé dans vos documents. Il ne part pas chez le client tant que vous ne l\'envoyez pas.</p>';
+  '<p class="vst" style="font-size:12.5px">Le devis est créé dans vos documents. Il ne part pas chez le client tant que vous ne l\'envoyez pas.</p>';
  ouvrir('Nouveau devis<small>Fait par vous, sans pré-devis</small>',h,'<button class="vbtn" type="button" '+(ND.arme?'data-vnd>Annuler':'data-vfermer>Fermer')+'</button><button class="vbtn go'+(ND.arme?' varm':'')+'" type="button" data-vndok>'+(ND.arme?'Oui, créer le devis':'Créer le devis')+'</button>');
  var sc=$('#vnd-c'),ti=$('#vnd-t');sc.addEventListener('change',function(){ND.contact=sc.value});ti.addEventListener('input',function(){ND.titre=ti.value})}
 function ndOk(b){if(!ND)return;if(!ND.contact){toastV('Pour qui ?','Choisissez le client.');return}
