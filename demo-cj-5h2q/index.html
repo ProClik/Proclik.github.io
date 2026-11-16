@@ -188,23 +188,7 @@ body.resa-ouverte #bas{display:none!important}
 <h1>Vos cheveux méritent<br><span class="degr">un moment à eux.</span></h1>
 <p class="lead">Balayages, couleurs, coupes et coiffures de mariage, dans un salon chaleureux et lumineux au cœur du village. Réservez en trois touches, l'acompte se règle en ligne.</p>
 <div class="actions"><a class="btn" href="#reserver">Réserver un créneau</a><a class="btn sec" href="#" target="_blank" rel="noopener">Instagram</a></div></div>
-<div class="objet fl" id="objet" aria-hidden="true"><div class="fl-in"><svg viewBox="0 0 220 380" fill="none">
-<ellipse class="fl-orb" cx="110" cy="212" rx="100" ry="150" pathLength="1"/>
-<g class="fl-b">
-<path pathLength="1" d="M84 24 H128 a7 7 0 0 1 7 7 V44 H77 V31 a7 7 0 0 1 7 -7 Z"/>
-<path pathLength="1" d="M135 32 H166 a4.5 4.5 0 0 1 0 9 H135"/>
-<path pathLength="1" d="M96 44 V64 M124 44 V64"/>
-<path pathLength="1" d="M82 64 H138 V82 H82 Z"/>
-<path pathLength="1" d="M84 82 C84 98 52 102 48 128 V326 a26 26 0 0 0 26 26 H146 a26 26 0 0 0 26 -26 V128 C168 102 136 98 136 82"/>
-<path class="fl-niv" pathLength="1" d="M50 158 C80 150 140 166 170 156"/>
-<path pathLength="1" d="M66 206 H154 M66 270 H154"/>
-</g>
-<text class="fl-t" x="110" y="236" text-anchor="middle">MAISON AUBE</text>
-<text class="fl-s" x="110" y="254" text-anchor="middle">SOIN DES CHEVEUX</text>
-<path class="fl-reflet" d="M62 136 V312"/>
-<circle class="fl-pt" cx="166" cy="36.5" r="2.6"/>
-</svg></div><div class="fl-ombre"></div></div>
-<div class="scene reveal"><img class="ph-hero" src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&fit=crop&w=1200&q=70" alt="Un salon de coiffure lumineux, fauteuils et miroirs" loading="eager">
+<div class="scene reveal" id="scene"><div class="ouv"><img class="ph-hero" src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&fit=crop&w=1200&q=70" alt="Un salon de coiffure lumineux, fauteuils et miroirs" loading="eager"></div>
 <div class="carte"><div><small><span class="ouvert">Ouvert</span></small><b id="prochain">Prochain créneau</b></div><a class="btn" href="#reserver" id="hero-resa">Réserver</a></div></div>
 </section>
 <section id="prestations"><div class="in"><div class="tete reveal"><p class="k">Prestations</p><h2>Ce que nous faisons<br>le mieux.</h2></div>
@@ -379,28 +363,17 @@ section:nth-of-type(even){background:linear-gradient(180deg,#F3DFD9,#F8EBE6)}
 </style>
 
 
-<style id="flcss">
-/* Flacon en traits fins : il se dessine à l'ouverture puis monte, pivote et capte la lumière au défilement */
-.objet.fl{position:relative;width:clamp(150px,22vw,250px);margin:clamp(30px,5vw,54px) auto 0;--p:0}
-.fl-in{transform:translate3d(0,calc(var(--p) * -56px),0) rotate(calc(var(--p) * -7deg)) scale(calc(1 + var(--p) * .07));transform-origin:50% 75%;will-change:transform}
-.fl svg{display:block;width:100%;height:auto;overflow:visible}
-.fl-b path{stroke:#4A3243;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:flDraw 1.8s cubic-bezier(.45,.05,.2,1) forwards}
-.fl-b path:nth-child(2){animation-delay:.15s}.fl-b path:nth-child(3){animation-delay:.25s}.fl-b path:nth-child(4){animation-delay:.3s}.fl-b path:nth-child(5){animation-delay:.1s;animation-duration:2.2s}
-.fl-b .fl-niv{stroke:#A8823F;stroke-width:1;animation-delay:1.3s;transform:translateY(calc(var(--p) * 10px)) skewY(calc(var(--p) * -4deg));transform-box:fill-box;transform-origin:50% 50%}
-.fl-b path:last-child{stroke-opacity:.35;animation-delay:1.1s}
-.fl-orb{stroke:#A8823F;stroke-width:.8;opacity:.45;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:flDraw 2.4s .4s ease forwards;transform:rotate(calc(-14deg + var(--p) * 30deg));transform-origin:110px 212px}
-.fl-t{font:500 10.5px/1 Jost,Inter,system-ui,sans-serif;letter-spacing:.32em;fill:#4A3243;opacity:0;animation:flFade 1s 1.5s forwards}
-.fl-s{font:400 6.5px/1 Jost,Inter,system-ui,sans-serif;letter-spacing:.3em;fill:#8A7A82;opacity:0;animation:flFade 1s 1.7s forwards}
-.fl-reflet{stroke:#fff;stroke-width:2.2;stroke-linecap:round;opacity:.0;transform:translateX(calc(var(--p) * 92px));animation:flFade .8s 1.6s forwards;--o:.6}
-.fl-pt{fill:#A8823F;opacity:0;animation:flFade .6s 1.4s forwards}
-.fl-ombre{height:16px;margin:-4px auto 0;width:62%;border-radius:50%;background:radial-gradient(closest-side,rgba(42,28,38,.2),transparent);transform:scale(calc(1 - var(--p) * .35));opacity:calc(1 - var(--p) * .5)}
-@keyframes flDraw{to{stroke-dashoffset:0}}
-@keyframes flFade{to{opacity:var(--o,1)}}
-@media(prefers-reduced-motion:reduce){.fl-b path,.fl-orb{animation:none;stroke-dashoffset:0}.fl-t,.fl-s,.fl-pt,.fl-reflet{animation:none;opacity:1}.fl-in{transform:none}}
+<style id="ouvcss">
+/* Épuré, façon Apple : pas d'objet, la photo du salon s'ouvre en arche puis s'élargit au défilement */
+#scene{--p:0}
+#scene .ouv{border-radius:var(--r);overflow:hidden;clip-path:inset(0 calc((1 - var(--p)) * 17%) round calc((1 - var(--p)) * 220px + var(--p) * 26px) calc((1 - var(--p)) * 220px + var(--p) * 26px) 26px 26px);will-change:clip-path;box-shadow:0 30px 60px -30px rgba(74,50,67,.45)}
+#scene .ph-hero{box-shadow:none;border-radius:0;transform:scale(calc(1.18 - var(--p) * .18));transform-origin:50% 40%;will-change:transform}
+@media(max-width:899px){#scene .ph-hero{aspect-ratio:4/4.4}}
+@media(prefers-reduced-motion:reduce){#scene{--p:1}}
 </style>
-<script>(function(){var o=document.getElementById('objet');if(!o||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-var cur=0,tgt=0,run=false;function cible(){var vh=innerHeight;tgt=Math.max(0,Math.min(1,scrollY/(vh*.7)))}
-function pas(){cur+=(tgt-cur)*.14;if(Math.abs(tgt-cur)<.001)cur=tgt;o.style.setProperty('--p',cur.toFixed(4));if(cur!==tgt)requestAnimationFrame(pas);else run=false}
+<script>(function(){var sc=document.getElementById('scene');if(!sc||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var cur=0,tgt=0,run=false;function cible(){var r=sc.getBoundingClientRect(),vh=innerHeight;tgt=Math.max(0,Math.min(1,(vh*.95-r.top)/(vh*.75)))}
+function pas(){cur+=(tgt-cur)*.16;if(Math.abs(tgt-cur)<.001)cur=tgt;sc.style.setProperty('--p',cur.toFixed(4));if(cur!==tgt)requestAnimationFrame(pas);else run=false}
 function go(){cible();if(!run){run=true;requestAnimationFrame(pas)}}
-addEventListener('scroll',go,{passive:true});addEventListener('resize',go);go()})();</script>
+addEventListener('scroll',go,{passive:true});addEventListener('resize',go);addEventListener('load',go);go()})();</script>
 </body></html>
