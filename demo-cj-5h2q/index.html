@@ -139,6 +139,8 @@ footer .pc b{color:#1B2440;font-weight:700}
 #salon figcaption{font-size:14px;color:var(--gris);margin-top:8px;text-align:center}
 @media(max-width:900px){#salon .gal{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pre{min-height:0!important}.pre h3{margin-top:12px!important}}
 .credit{font-size:12px;opacity:.7}
+#heures.flash{animation:flashH 1.2s ease 2}@keyframes flashH{0%,100%{box-shadow:0 0 0 0 transparent;border-radius:16px}40%{box-shadow:0 0 0 4px rgba(168,130,63,.55);border-radius:16px}}
+#ok[aria-disabled="true"]{cursor:pointer;pointer-events:auto!important}
 </style></head><body>
 <div class="ex">Maquette préparée par ProClik pour Chez Julie · démonstration, aucun paiement réel · <a href="espace.html">Voir l'Espace de Julie</a></div>
 <header class="nav"><div class="bar"><a class="marque" href="#haut">Chez Julie<b></b></a>
@@ -211,12 +213,15 @@ function rend(){
 $('presta').onclick=function(e){var b=e.target.closest('button');if(b){et.p=+b.dataset.i;rend()}};
 $('opts').onclick=function(e){var b=e.target.closest('button');if(b){var n=b.dataset.o;et.o=et.o.indexOf(n)>=0?et.o.filter(function(x){return x!==n}):et.o.concat(n);rend()}};
 $('jours').onclick=function(e){var b=e.target.closest('button');if(b){et.j=[].indexOf.call(b.parentNode.children,b);et.h=null;rend()}};
-$('heures').onclick=function(e){var b=e.target.closest('button');if(b&&!b.disabled){et.h=b.textContent;rend()}};
-$('ok').onclick=function(){if(!et.h)return;var b=$('ok');b.textContent='Paiement sécurisé…';setTimeout(function(){$('bravo-p').textContent=P[et.p][0]+', '+J[jours[et.j].getDay()]+' '+jours[et.j].getDate()+' à '+et.h+'. Un SMS de rappel vous est envoyé la veille.';$('recap').classList.add('fini');$('bravo').classList.add('on');garde()},900)};
+$('heures').onclick=function(e){var b=e.target.closest('button');if(b&&!b.disabled){et.h=b.textContent;rend();if(innerWidth<900)setTimeout(function(){$('ok').scrollIntoView({behavior:'smooth',block:'center'})},150)}};
+$('ok').onclick=function(){if(!et.h){var hh=$('heures');hh.scrollIntoView({behavior:'smooth',block:'center'});hh.classList.remove('flash');void hh.offsetWidth;hh.classList.add('flash');$('ok').textContent='Touchez d’abord une heure ↑';return}var b=$('ok');b.textContent='Paiement sécurisé…';setTimeout(function(){$('bravo-p').textContent=P[et.p][0]+', '+J[jours[et.j].getDay()]+' '+jours[et.j].getDate()+' à '+et.h+'. Un SMS de rappel vous est envoyé la veille.';$('recap').classList.add('fini');$('bravo').classList.add('on');garde()},900)};
 function garde(){var d=jours[et.j],tt=P[et.p][2],L=[];try{L=JSON.parse(localStorage.getItem('pcd-cj-resa')||'[]')}catch(e){}L.push({id:'w'+Date.now(),p:P[et.p][0],d:d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),h:et.h,tot:tt,ac:Math.round(tt*.3)});try{localStorage.setItem('pcd-cj-resa',JSON.stringify(L))}catch(e){}}
 rend();
 // barre « Réserver » sur téléphone
-(function(){var b=$('bas'),h=document.querySelector('.hero');if(!('IntersectionObserver' in window))return;new IntersectionObserver(function(e){b.classList.toggle('on',!e[0].isIntersecting)}).observe(h)})();
+(function(){var b=$('bas'),h=document.querySelector('.hero'),r=$('reserver'),vh=true,vr=false;if(!('IntersectionObserver' in window))return;function m(){b.classList.toggle('on',!vh&&!vr)}
+ new IntersectionObserver(function(e){vh=e[0].isIntersecting;m()}).observe(h);
+ /* la barre se cache pendant la réservation : elle ne couvre plus le bouton Payer */
+ new IntersectionObserver(function(e){vr=e[0].isIntersecting;m()}).observe(r)})();
 // mèches : fines lignes qui ondulent, très lentement, en pause hors écran
 (function(){var c=$('meches'),x=c.getContext('2d'),R=matchMedia('(prefers-reduced-motion: reduce)').matches,W=0,H2=0,dpr=1,vis=true,px=.5,tx=.5;
  function t(){dpr=Math.min(1.5,devicePixelRatio||1);W=c.clientWidth;H2=c.clientHeight;c.width=W*dpr;c.height=H2*dpr}t();new ResizeObserver(t).observe(c);
