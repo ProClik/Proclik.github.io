@@ -60,6 +60,8 @@ css.textContent=[
 'details.vd>summary{cursor:pointer;font-weight:700}details.vd>.card{box-shadow:none;margin:10px 0 0;padding:0;background:none}',
 '.vtot{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:14px}.vtot .big{font-size:18px;font-weight:800}',
 '.vul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}',
+'.vctl{margin-top:10px;border-radius:12px;background:color-mix(in srgb,#2E7D4F 12%,transparent);padding:8px 12px}.vctl-pb{background:color-mix(in srgb,#C2410C 12%,transparent)}.vctl summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer}.vctl summary::-webkit-details-marker{display:none}',
+'.vctl summary i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;color:#fff;background:#2E7D4F}.vctl-pb summary i{background:#C2410C}.vctl summary span{display:grid;font-weight:700;font-size:14.5px}.vctl summary small{font-weight:500;font-size:12.5px;color:var(--muted)}.vctl .vul{margin-top:8px;font-size:13px;list-style:none;padding-left:4px}',
 '.vbtns{display:flex;gap:8px;flex-wrap:wrap}',
 '.vpre{white-space:pre-wrap;font:13px/1.5 var(--mono);margin:0}',
 '.vlog{display:grid;gap:10px}.vlog input{font:600 17px var(--f);padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);width:100%}',
@@ -240,10 +242,12 @@ var COUR=null;
 /* Plan dessiné par le client : le module Plan s'ouvre en mode artisan et reçoit le plan de la demande.
    Les retouches de l'artisan restent sur cet appareil (une sauvegarde par client). */
 function voirPlan(){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan;if(!P)return;var k=COUR.contact||{},nom=k.nom||'le client';
- ouvrir('📐 Plan de '+esc(nom)+'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>','<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=43&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
+ ouvrir('📐 Plan de '+esc(nom)+'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>','<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=44&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
- if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||''},'*')}});
+ if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||''},'*')}
+ /* Plan retouché par l'artisan : gardé ici jusqu'au recalcul (sauf s'il est identique au plan déjà recalculé) */
+ if(d.type==='proclik-plan-modifie'&&d.plan&&COUR&&COUR.contact){var D2=COUR.demande,P2=D2&&D2.plan_corrige_le&&D2.details&&D2.details.plan;if(P2&&JSON.stringify(P2)===JSON.stringify(d.plan))lsS(clePm(),null);else lsS(clePm(),{t:Date.now(),plan:d.plan})}});
 /* Le pré-devis à valider, comme un devis qu'on travaille (Cyril, 31/10) : le total, le plan, les lignes modifiables d'un appui,
    « + Ajouter une ligne », puis un seul gros bouton en bas, en deux appuis. Plus de « Changer d'étape » : l'étape suit les validations.
    Les retouches restent sur cet appareil jusqu'à la création du devis, qui les envoie (mêmes taux de marge et de frais généraux). */
@@ -252,13 +256,41 @@ function T(){return MODE==='nd'?ND:ED}
 function retour(){return MODE==='nd'?rendreND():afficher(COUR)}
 function cleLg(){return 'pc-lg-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
 function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){return {libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier}})};
- return {le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0,four:{}}}
+ var e={le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0,four:{}},R=lsG(cleRt());
+ /* Après un recalcul : les retouches de l'artisan sont remises par-dessus le nouveau calcul */
+ if(R&&R.avant!==p.le){e.materiaux=appliquerRt(e.materiaux,R.materiaux);e.main_oeuvre=appliquerRt(e.main_oeuvre,R.main_oeuvre);e.touche=1;if(R.att===JSON.stringify((p.attente||[]).map(function(a){return a.libelle})))e.four=R.four||{};lsS(cleRt(),null);lsS(cleLg(),e)}
+ return e}
+function cleRt(){return 'pc-rt-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+function clePm(){return 'pc-planmod-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+/* Retouches de l'artisan = ce qui diffère du calcul de Cliky (lignes changées ou ajoutées, lignes enlevées) */
+function retouches(p){if(!ED||!ED.touche||!p)return null;var R={n:0};['materiaux','main_oeuvre'].forEach(function(k){var o=(p[k]||[]).slice(),ch=[];(ED[k]||[]).forEach(function(l){var i=-1;for(var j=0;j<o.length;j++)if(o[j]&&o[j].libelle===l.libelle&&o[j].quantite===l.quantite&&o[j].pu===l.pu&&o[j].total===l.total){i=j;break}if(i>=0)o[i]=null;else ch.push(l)});
+  var sup=o.filter(Boolean).map(function(x){return x.libelle});R[k]={ch:ch,sup:sup};R.n+=ch.length+sup.filter(function(x){return !ch.some(function(l){return l.libelle===x})}).length});return R.n?R:null}
+function appliquerRt(L,r){if(!r)return L;L=L.slice();var fait={};r.ch.forEach(function(l){var i=-1;for(var j=0;j<L.length;j++)if(!fait[j]&&L[j].libelle===l.libelle){i=j;break}if(i>=0){L[i]=l;fait[i]=1}else{L.push(l);fait[L.length-1]=1}});
+ r.sup.forEach(function(x){for(var j=0;j<L.length;j++)if(L[j]&&!fait[j]&&L[j].libelle===x){L[j]=null;break}});return L.filter(Boolean)}
+/* Recalcul du pré-devis après une modification du plan (ou des prix) : fait par le programme, sans frais */
+var RC=null;
+function recalc(){var k=COUR&&COUR.contact;if(!k)return;var pm=lsG(clePm());ouvrir('↻ Recalcul<small>Un instant…</small>','<p class="vst">Le calcul est refait avec '+(pm?'le plan modifié':'vos prix à jour')+'…</p>');
+ api('/espace/recalcul',{method:'POST',body:{contact:k.id,plan:pm&&pm.plan||undefined}}).then(function(x){RC=x;RC.pm=!!pm;rendreRc()},function(e){ouvrir('↻ Recalcul<small>Impossible pour l\'instant</small>','<div class="verr">'+esc(e.message)+'</div>','<button class="vbtn" type="button" data-vretour>← Retour</button>')})}
+function rendreRc(){var x=RC,ch=x.changements||{},R=retouches(COUR.pre_devis[0]),np=x.pre_devis,
+ /* Avec des retouches : on compare ce que l'artisan voit (ses retouches comprises), avant et après */
+ av=R&&ED?totauxEd(COUR.pre_devis[0]).total_ht:x.avant.total_ht,ap=R&&np?totauxEd(np,{materiaux:appliquerRt(np.materiaux,R.materiaux),main_oeuvre:appliquerRt(np.main_oeuvre,R.main_oeuvre)}).total_ht:x.apres.total_ht,d=ap-av,q=function(n){return String(n).replace('.',',')};
+ var lg=function(t,L,f){return L&&L.length?'<div class="card vsec"><h3>'+t+'</h3><ul class="vul">'+L.map(f).join('')+'</ul></div>':''},f2=function(l){return '<li>'+esc(l.libelle)+' · '+eur(l.total)+'</li>'};
+ var h='<div class="card vsec vtotc"><div class="vtot1"><span>Avant'+(R?' (avec vos retouches)':'')+'</span><b style="font-size:18px">'+eur(av)+'</b></div><div class="vtot1"><span>Après le recalcul</span><b>'+eur(ap)+'</b></div><p class="vst" style="padding:4px 0 0">'+(Math.abs(d)<0.005?'Le total ne change pas.':(d>0?'+ ':'− ')+eur(Math.abs(d))+' HT')+'</p></div>'+
+  lg('Lignes qui changent',ch.modifiees,function(l){return '<li>'+esc(l.libelle)+' : '+q(l.avant.quantite)+' → '+q(l.apres.quantite)+' '+esc(l.unite||'')+' ('+eur(l.avant.total)+' → '+eur(l.apres.total)+')</li>'})+lg('Nouvelles lignes',ch.ajoutees,f2)+lg('Lignes retirées',ch.retirees,f2)+
+  '<p class="vst">'+(x.gardees?x.gardees+' ligne'+(x.gardees>1?'s':'')+' chiffrée'+(x.gardees>1?'s':'')+' par Cliky en dehors du plan (travaux « Autre »…) '+(x.gardees>1?'sont gardées':'est gardée')+' telle'+(x.gardees>1?'s':'')+' quelle'+(x.gardees>1?'s':'')+'. ':'')+(R?(R.n>1?'Vos '+R.n+' retouches à la main seront remises':'Votre retouche à la main sera remise')+' par-dessus. ':'')+'Fait par le programme, sans frais. L\'ancien pré-devis reste dans l\'historique.</p>';
+ ouvrir('↻ Recalcul du pré-devis<small>'+(x.pm?'Avec le plan modifié':'Avec vos prix à jour')+'</small>',h,'<button class="vbtn" type="button" data-vretour>← Annuler</button><button class="vbtn go" type="button" data-vrecalcok>Garder ce calcul</button>')}
+function recalcOk(b){var k=COUR&&COUR.contact;if(!k)return;var id=k.id,pm=lsG(clePm()),p=COUR.pre_devis[0],R=retouches(p);b.disabled=true;b.textContent='Enregistrement…';
+ api('/espace/recalcul',{method:'POST',body:{contact:id,plan:pm&&pm.plan||undefined,enregistrer:true}}).then(function(x){
+  if(R){R.avant=p.le;R.att=JSON.stringify((p.attente||[]).map(function(a){return a.libelle}));R.four=ED&&ED.four;lsS(cleRt(),R)}
+  lsS(clePm(),null);lsS(cleLg(),null);toastV('Pré-devis recalculé',eur(x.apres.total_ht)+' HT');
+  return api('/espace/demande?c='+encodeURIComponent(id)).then(function(y){if(COUR&&COUR.contact&&COUR.contact.id===id)afficher(y.demande)})
+ }).catch(function(e){b.disabled=false;b.textContent='Garder ce calcul';toastV('Pas enregistré',e.message)})}
 function garderEd(){ED.touche=1;lsS(cleLg(),ED)}
 /* Ce qui manque encore du fournisseur : on ne valide pas tant que tous les prix ne sont pas là (Cyril, 2/11) */
 function manque(p){p=p||(COUR&&COUR.pre_devis[0]);if(!p||!p.lue||!ED)return [];return (p.attente||[]).map(function(a,i){return [a,i]}).filter(function(x){return !ED.four[x[1]]})}
 /* Mêmes taux que le serveur (calcul/vosfactures.js, lignesDevis) : marge sur les matériaux, frais généraux sur tout */
-function totauxEd(p){var t=p.totaux||{},s=function(L){return L.reduce(function(a,l){return a+(+l.total||0)},0)},sm0=s(p.materiaux),so0=s(p.main_oeuvre),tm=sm0>0&&t.marge?t.marge/sm0:0,b0=sm0*(1+tm)+so0+(t.deplacement||0),tf=b0>0&&t.frais_generaux?t.frais_generaux/b0:0;
- var sm=s(ED.materiaux),so=s(ED.main_oeuvre),mg=sm*tm,b=sm+mg+so+(t.deplacement||0),fg=b*tf,r=function(x){return Math.round(x*100)/100};
+function totauxEd(p,E){E=E||ED;var t=p.totaux||{},s=function(L){return L.reduce(function(a,l){return a+(+l.total||0)},0)},sm0=s(p.materiaux),so0=s(p.main_oeuvre),tm=sm0>0&&t.marge?t.marge/sm0:0,b0=sm0*(1+tm)+so0+(t.deplacement||0),tf=b0>0&&t.frais_generaux?t.frais_generaux/b0:0;
+ var sm=s(E.materiaux),so=s(E.main_oeuvre),mg=sm*tm,b=sm+mg+so+(t.deplacement||0),fg=b*tf,r=function(x){return Math.round(x*100)/100};
  return {materiaux:r(sm),marge:r(mg),main_oeuvre:r(so),deplacement:t.deplacement||0,frais_generaux:r(fg),total_ht:r(b+fg)}}
 /* Une partie du pré-devis : on voit tout de suite que chaque ligne se modifie, et chaque partie a son « + Ajouter » */
 function lignesEd(cle,titre,aide,ajout){var L=ED[cle];
@@ -283,6 +315,9 @@ function vligne(x){if(!ED)return null;var C=[];['materiaux','main_oeuvre'].forEa
  A=C.filter(function(c){return suj.every(function(w){return c[2].indexOf(w)>=0})});if(A.length===1)return {lg:A[0][0]+'|'+A[0][1]};
  if(A.length>1&&A.every(function(c){return c[0]===A[0][0]}))return {tab:A[0][0]==='materiaux'?'mat':'mo'};return null}
 var VGR=[['cli','À demander au client','<path d="M4 5h16v11H9l-5 4z"/>'],['vis','À voir à la visite','<path d="M3 17 17 3l4 4L7 21H3z"/><path d="m12 8 2 2m-5 1 2 2m-5 1 2 2"/>'],['prix','À chiffrer','<circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3.5 0 1 0 0 5M7.5 11h5m-5 2h5"/>']];
+/* Contrôle n° 1 (fait par le programme avant l'arrivée du pré-devis) : badge vert, ou le nombre de points à regarder */
+function controleHTML(p){var v=p&&p.verification;if(!v)return '';var n=v.points||0;
+ return '<details class="vctl'+(n?' vctl-pb':'')+'"><summary><i>'+(n?'!':'✓')+'</i><span>'+(n?n+' point'+(n>1?'s':'')+' à regarder<small>relevé'+(n>1?'s':'')+' par la vérification, dans « À vérifier »</small>':'Vérifié par le programme<small>'+v.ok.length+' contrôle'+(v.ok.length>1?'s':'')+' passé'+(v.ok.length>1?'s':'')+'</small>')+'</span></summary><ul class="vul">'+v.ok.map(function(x){return '<li>✓ '+esc(x)+'</li>'}).join('')+'</ul></details>'}
 function verifHTML(p){var L=(p.a_verifier||[]);if(!L.length)return '';var tag=window.PCTAG?PCTAG('cliky','a relevé ces points'):'';
  if(window.PCOPT&&!PCOPT.cliky)return '<div class="card vsec">'+tag+'<p class="vst" style="padding:0">Avec l\'option Cliky, les points à vérifier de chaque demande sont rangés ici : à demander au client, à voir à la visite, à chiffrer.</p></div>';
  var ok=lsG(vokCle(p))||[],Q=L.map(vcourt),k=COUR&&COUR.contact||{};
@@ -314,8 +349,9 @@ function alerteFour(p){var M=manque(p);if(!M.length)return '';
  return '<div class="card valerte" role="alert"><b>⚠ Il manque le devis du fournisseur</b><span>Vous ne pouvez pas valider ce pré-devis avant d\'avoir ses prix. Dès que vous les avez, tapez-les ici : '+(M.length>1?M.length+' lignes':'une ligne')+'.</span>'+
   M.map(function(x){return '<div class="vli vedit"><span>'+esc(x[0].libelle)+'</span><span class="x">0,00 €</span><small>'+(x[0].quantite!=null?qte(x[0].quantite)+' '+esc(x[0].unite||'')+' · ':'')+'prix fournisseur pas encore reçu</small><button type="button" class="vmod" data-vlg="f|'+x[1]+'">Saisir le prix</button></div>'}).join('')+'</div>'}
 var ONG=[['devis','Résumé','lig'],['mat','Matériaux','mat'],['mo','Main-d\'œuvre','mo'],['client','Client','cli'],['docs','Docs','doc']];
+function recalcHTML(d){if(lsG(clePm()))return '<div class="card vsec vrc"><b>📐 Vous avez modifié le plan</b><p class="vst" style="padding:4px 0 10px">Le pré-devis n\'en tient pas encore compte.</p><button class="vbtn go" type="button" data-vrecalc style="width:100%">↻ Recalculer le pré-devis</button></div>';return ''}
 function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});
- var plan=aPlan?'<button class="vbtn" type="button" data-vplan style="width:100%">📐 Voir le plan dessiné par le client</button>':'';
+ var plan=aPlan?'<button class="vbtn" type="button" data-vplan style="width:100%">📐 '+(d.demande.plan_corrige_le?'Voir le plan (retouché par vous)':'Voir le plan dessiné par le client')+'</button>':'';
  /* Le client : ses coordonnées, ses réponses, ses photos, son plan */
  var cl='<div class="card"><div class="vkv">'+(k.telephone?'<span>Téléphone</span><b><a href="tel:'+esc(k.telephone)+'">'+esc(k.telephone)+'</a></b>':'')+(k.email?'<span>E-mail</span><b style="word-break:break-all"><a href="mailto:'+esc(k.email)+'">'+esc(k.email)+'</a></b>':'')+
   '<span>Commune</span><b>'+esc([k.cp,k.ville].filter(Boolean).join(' ')||'non renseignée')+'</b><span>Reçue</span><b>'+esc(quand(k.cree_le)||'—')+'</b>'+(o?'<span>Où on en est</span><b>'+esc(o.etape)+'</b>':'')+'</div>'+
@@ -326,9 +362,9 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  if(!p){ED=null;dv='<div class="card"><b>Pas encore de pré-devis Cliky</b><p class="vst" style="padding:4px 0 0">Si la demande vient d\'arriver, patientez une minute : il s\'affiche tout seul.</p></div>';}
  else if(!p.lue){ED=null;dv='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3><p class="vst" style="padding:0 0 8px">Ancienne présentation : affichée telle quelle.</p><pre class="vpre">'+esc(p.texte)+'</pre></div>';}
  else{ED=edition(p);var t=totauxEd(p);
-  dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+
+  dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+controleHTML(p)+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
-   verifHTML(p)+
+   recalcHTML(d)+verifHTML(p)+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
   mat=lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;
@@ -336,6 +372,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
   calc=liste('Alertes',p.alertes)+liste('Hypothèses de Cliky',p.hypotheses)+(p.controles.length?'<div class="card vsec"><h3>Contrôles du calcul</h3><ul class="vul">'+p.controles.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>':'');
  }
  if(d.pre_devis.length>1)calc+='<details class="card vd"><summary>'+(d.pre_devis.length-1)+' pré-devis plus ancien'+(d.pre_devis.length>2?'s':'')+'</summary>'+d.pre_devis.slice(1).map(function(x){return '<p class="vst">'+esc(quand(x.le))+(x.totaux&&x.totaux.total_ht!=null?' · '+eur(x.totaux.total_ht)+' HT':'')+'</p><pre class="vpre">'+esc(x.texte)+'</pre>'}).join('')+'</details>';
+ if(p&&p.lue)calc+='<p class="vst vrc"><a href="#" data-vrecalc>↻ Recalculer avec vos prix à jour</a> · sans frais</p>';
  if(calc)dv+='<details class="card vd"><summary>Le détail du calcul de Cliky</summary>'+calc+'</details>';
  var Z={devis:dv,mat:mat,mo:mo,client:cl,docs:'<div class="card vsec" id="vdocs"><h3>Devis et factures</h3><p class="vst" style="padding:0">Chargement…</p></div>'};
  var O=ONG.filter(function(x){return Z[x[0]]});if(!Z[VTAB])VTAB='devis';
@@ -456,7 +493,7 @@ function miniature(id){if(MINI[id])return MINI[id];var j=lsG(KJ);
 function poserMinis(){$$('#vdocs [data-vmini]').forEach(function(b){var id=b.getAttribute('data-id');miniature(id).then(function(u){var i=b.querySelector('img');if(i){i.src=u;b.classList.add('pret')}},function(){b.classList.add('rate')})})}
 function blocMinis(L){L=L.slice(0,4);if(!L.length)return '';return '<div class="vminis">'+L.map(function(d){return '<button type="button" class="vmini" data-vmini data-vdoc="pdf" data-id="'+d.id+'"><span class="vmp"><img alt=""><i>Aperçu…</i></span><b>'+esc(TYP[d.type]||d.type)+' n° '+esc(d.numero)+'</b><small>'+eur(d.ht)+' HT · toucher pour ouvrir</small></button>'}).join('')+'</div>'}
 function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre_devis[0],n=suite(DOCS,p&&p.lue),h='<h3>Devis et factures</h3>';
- if(DOCS.some(function(d){return d.type==='devis'&&d.statut!=='rejected'})){$$('#vov-b [data-vlg]').forEach(function(b){b.remove()});$$('#vov-b .vedit').forEach(function(b){b.classList.add('fige')});$$('#vov-b .vpart-h small').forEach(function(x){x.textContent='Le devis est créé : ces lignes ne se changent plus ici.'});var rt=$('#vov-b .vp.t');if(rt)rt.textContent='devis créé'}
+ if(DOCS.some(function(d){return d.type==='devis'&&d.statut!=='rejected'})){$$('#vov-b [data-vlg],#vov-b .vrc').forEach(function(b){b.remove()});$$('#vov-b .vedit').forEach(function(b){b.classList.add('fige')});$$('#vov-b .vpart-h small').forEach(function(x){x.textContent='Le devis est créé : ces lignes ne se changent plus ici.'});var rt=$('#vov-b .vp.t');if(rt)rt.textContent='devis créé'}
  if(!n){var f0=$('#vov-f');if(f0)f0.innerHTML='<button class="vbtn" type="button" data-vfermer>Fermer</button>'}
  var M=n&&n.a==='creer'?manque(p):[];
  if(M.length){var fz=$('#vov-f');if(fz){fz.innerHTML='<button class="vbtn" type="button" data-vfermer>Fermer</button><button class="vbtn go" type="button" disabled>⏳ En attente du devis fournisseur</button>';fz.hidden=false}
@@ -465,6 +502,7 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
   var C={creer:['Valider le pré-devis','Oui, créer le devis'],envoyer:['Envoyer au client','Oui, envoyer'],accepted:['Le client a accepté','Oui, accepté'],acompte:['Créer l\'acompte','Créer l\'acompte'],finale:['Créer la facture finale','Oui, la créer'],paid:['Marquer payée','Oui, payée']}[n.a]||[n.t,'Oui, '+n.t.charAt(0).toLowerCase()+n.t.slice(1)];
   var f=$('#vov-f');if(f){f.innerHTML='<button class="vbtn" type="button" '+(arm?'data-vdoc="annuler">Annuler':'data-vfermer>Fermer')+'</button><button class="vbtn go'+(arm?' varm':'')+'" type="button" data-vdoc="'+n.a+'" data-id="'+(n.id||'')+'">'+esc(arm?C[1]:C[0])+'</button>';f.hidden=false}
   if(ERRDOC)h+='<p class="vst" style="padding:8px 10px;margin:0 0 8px;border-radius:10px;background:var(--warn-bg);color:var(--warn)"><b>Pas fait :</b> '+esc(ERRDOC)+'</p>';
+  if(n.a==='creer')h+=blocAj(p);
   if(!arm&&n.a!=='creer')h+='<p style="margin:0 0 6px;font-weight:700">'+esc(n.t)+'</p>';
   if(arm)h+='<p class="vst" style="padding:0 0 6px"><b>Touchez encore le bouton du bas pour confirmer'+(n.a==='envoyer'?' l\'envoi au client':'')+'.</b></p>';
   else if(n.s)h+='<p class="vst" style="padding:0 0 6px">'+esc(n.s)+'</p>';
@@ -475,22 +513,33 @@ function rendreDocs(){var z=$('#vdocs');if(!z||!DOCS)return;var p=COUR&&COUR.pre
  }
  h+=blocMinis(DOCS);
  h+=DOCS.length?DOCS.map(ligneDoc).join(''):'<p class="vst" style="padding:0">Aucun devis ni facture pour ce client.</p>';
- z.innerHTML=h;poserMinis()}
+ z.innerHTML=h;poserMinis();
+ var ax=$('#vajx');if(ax)ax.onchange=function(){var v=parseFloat(String(ax.value||'0').replace(',','.').replace('−','-'));if(!isFinite(v))v=0;if(v<-50||v>50){toastV('Entre −50 % et +50 %','');return}garderAj(Math.round(v*10)/10);rendreDocs()}}
+/* Prix pour ce client (BRS, 16/11) : un client fidèle n'a pas le prix d'un client « lambda ». Choisi à la fin, sur tout le devis ; gardé pour ce client. */
+function cleAj(){return 'pc-aj-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
+function garderAj(v){lsS(cleAj(),v);var c=COUR&&COUR.contact&&COUR.contact.id;if(c)api('/espace/prix-client',{method:'POST',body:{contact:c,ajustement:v}}).catch(function(){toastV('Pas enregistré','Vérifiez la connexion.')})}
+function ajC(){var v=+lsG(cleAj());return isFinite(v)?v:0}
+function blocAj(p){var a=ajC(),t=p&&p.lue?(ED&&ED.touche?totauxEd(p).total_ht:(p.totaux||{}).total_ht):null,f=function(v){return (v>0?'+':v<0?'−':'')+String(Math.abs(v)).replace('.',',')+' %'};
+ return '<div style="margin:0 0 10px"><p style="margin:0 0 6px;font-weight:700">Prix pour ce client</p><div style="display:flex;flex-wrap:wrap;gap:6px">'+
+  [-15,-10,-5,0,5,10].map(function(v){return '<button type="button" class="vbtn sm'+(v===a?' go':'')+'" style="flex:1 1 56px;min-width:56px" data-vdoc="aj" data-id="'+v+'">'+(v?f(v):'Normal')+'</button>'}).join('')+'</div>'+
+  '<div class="vli" style="align-items:center;margin-top:6px"><span>Autre pourcentage<small style="display:block">− pour une remise, + pour un supplément</small></span><span class="x"><input id="vajx" type="text" inputmode="decimal" value="'+([-15,-10,-5,0,5,10].indexOf(a)<0?String(a).replace('.',','):'')+'" placeholder="0" style="width:70px;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)"> %</span></div>'+
+  (t!=null?'<p class="vst" style="padding:4px 0 0">Total du devis : <b>'+eur(Math.round(t*(1+a/100)*100)/100)+' HT</b>'+(a?' (au lieu de '+eur(t)+')':'')+'</p>':'')+'</div>'}
 function chargerDocs(c){DOCC=c;DOCS=null;ARME='';ERRDOC='';var z=$('#vdocs');
- api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
+ api('/espace/documents?c='+encodeURIComponent(c)).then(function(x){if(DOCC!==c)return;DOCS=x.documents||[];if(typeof x.prix_client==='number')lsS(cleAj(),x.prix_client);rendreDocs()},function(err){if(z)z.innerHTML='<h3>Devis et factures</h3><p class="vst" style="padding:0">'+esc(err.message)+'</p>'})}
 function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=lsG(KJ);
  fetch(SERVICE+'/espace/document/pdf?id='+encodeURIComponent(id),{headers:j?{Authorization:'Bearer '+j}:{}}).then(function(r){if(!r.ok)throw new Error('PDF indisponible ('+r.status+')');return r.blob()})
   .then(function(b){var u=URL.createObjectURL(b);if(w)w.location=u;else location.href=u},function(err){if(w)w.close();toastV('PDF non ouvert',err.message)})}
 function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  if(a==='annuler'){ARME='';return rendreDocs()}
  if(a==='pdf')return pdfDoc(id);
+ if(a==='aj'){garderAj(+id);if(ARME==='creer')ARME='';return rendreDocs()}
  if(a==='acompte'){ARME='acompte'+id;rendreDocs();var i=$('#vpct');if(i)i.focus();return}
  if((a==='envoyer'||a==='creer'||a==='accepted'||a==='rejected'||a==='paid'||a==='finale')&&ARME!==a+(id||'')){ARME=a+(id||'');return rendreDocs()}
  var p;
  var lg=ED&&ED.touche?{materiaux:ED.materiaux,main_oeuvre:ED.main_oeuvre}:undefined;
  var pd=COUR&&COUR.pre_devis[0];
  if(a==='creer'&&manque(pd).length){toastV('Pas encore','Il manque le prix du fournisseur.');return rendreDocs()}
- if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c,lignes:lg,forcer:!!(pd&&pd.attente&&pd.attente.length)}});
+ if(a==='creer')p=api('/espace/devis',{method:'POST',body:{contact:c,lignes:lg,forcer:!!(pd&&pd.attente&&pd.attente.length),ajustement:ajC()||undefined}});
  else if(a==='envoyer')p=api('/espace/envoyer',{method:'POST',body:{id:+id}});
  else if(a==='finale')p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'finale'}});
  else if(a==='acompte-ok'){var v=parseFloat(String(($('#vpct')||{}).value||'').replace(',','.'));if(!(v>0&&v<100)){toastV('Il manque le pourcentage','Par exemple celui écrit sur votre devis.');return}lsS('pc-acompte',v);p=api('/espace/facture',{method:'POST',body:{devis:+id,type:'acompte',pourcentage:v}})}
@@ -510,13 +559,15 @@ function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){
   function(err){z.innerHTML='<h3>Vos vraies factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vraies factures (branchement en cours).':err.message)+'</p>'})}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vc'))ouvrirDemande(b.getAttribute('data-vc'));
  else if(b.hasAttribute('data-vfermer'))fermer();
  else if(b.hasAttribute('data-vetapes'))etapes();
  else if(b.hasAttribute('data-vset'))changer(b.getAttribute('data-vset'));
  else if(b.hasAttribute('data-vretour'))retour();
  else if(b.hasAttribute('data-vplan'))voirPlan();
+ else if(b.hasAttribute('data-vrecalc'))recalc();
+ else if(b.hasAttribute('data-vrecalcok'))recalcOk(b);
  else if(b.hasAttribute('data-vrefresh'))charger();
  else if(b.hasAttribute('data-vout')){deconnecter(false)}
  else if(b.hasAttribute('data-vtab')){var t=$('#nb-devis')||$('#tt-devis');if(t)t.click()}

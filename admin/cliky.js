@@ -16,6 +16,7 @@ function fiche(id){var Z=$('#fcliky');if(!Z||!id)return;Z.innerHTML='<h2>Cliky</
 function rendre(Z,j){var e=j.espace,r=e.reglages||{},k=j.controle||{};
  var FA='<div><label class="f" for="ckfa">Frais généraux appliqués sur</label><select class="t" id="ckfa">'+[['tout','Tout'],['matériaux','Matériaux'],['main-d\'œuvre','Main-d\'œuvre'],['','À vérifier']].map(function(o){return '<option value="'+esc(o[0])+'"'+((r.fg_assiette||'')===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>';
  var h=CSS+'<h2>Cliky</h2><p class="mu" style="margin:0">Ce que Cliky sait pour ce client. Tout ce qui n\'est pas changé ici vient de la base ProClik (onglet Réglages › Base Cliky).</p>'+
+ '<div class="res" style="margin-top:10px"><b>Questionnaire de mise en service</b><div class="mu">'+nbRep(e)+'</div><button class="btn go" type="button" id="ckq" style="width:100%;margin-top:8px">'+(Object.keys(e.reponses||{}).length?'Reprendre le questionnaire':'Commencer le questionnaire')+'</button></div>'+
  '<label class="f" for="ckm">Métier</label><select class="t" id="ckm">'+j.metiers.map(function(m){return '<option value="'+esc(m.nom)+'"'+(m.nom===e.metier?' selected':'')+'>'+esc(m.libelle)+'</option>'}).join('')+'</select>'+
  '<label class="f">Base de prix</label><div class="res" style="margin-top:4px"><b>'+esc(e.fournisseur_nom||'Pas encore de base de prix')+'</b><div class="mu">'+(k.articles?k.articles+' articles lus'+(k.erreurs&&k.erreurs.length?' · '+k.erreurs.length+' problème(s)':' · aucun problème'):'Aucun article : Cliky met tout « à vérifier », sans inventer de prix.')+'</div>'+
   '<div class="ck-row"><button class="btn sm" type="button" id="ckcol">Coller une autre base</button>'+(e.fournisseur_colle?'<button class="btn sm" type="button" id="ckorig">Revenir à la base d\'origine</button>':'')+'</div>'+
@@ -28,6 +29,7 @@ function rendre(Z,j){var e=j.espace,r=e.reglages||{},k=j.controle||{};
  '<details class="ck" style="margin-top:10px"><summary>Voir ce que Cliky lit pour ce client</summary><div class="mu">Règles</div><div class="ck-pre">'+esc(j.apercu.regles)+'</div><div class="mu" style="margin-top:8px">Base de prix et réglages</div><div class="ck-pre">'+esc(j.apercu.prix)+'</div></details>'+
  (e.modifie&&e.modifie.length?'<div class="ck-row"><button class="btn sm al" type="button" id="ckret">Tout remettre comme la base ProClik</button></div>':'');
  Z.innerHTML=h;
+ $('#ckq',Z).onclick=function(){questionnaire(Z,j)};
  $('#ckcol',Z).onclick=function(){$('#ckz',Z).hidden=!$('#ckz',Z).hidden};
  if($('#ckorig',Z))$('#ckorig',Z).onclick=function(){if(!deux(this,'Sûr ? Toucher encore'))return;envoyer(Z,{id:j.id,fournisseur_texte:null},'Base d\'origine remise')};
  if($('#ckret',Z))$('#ckret',Z).onclick=function(){if(!deux(this,'Sûr ? Toucher encore'))return;envoyer(Z,{id:j.id,retablir:true},'Fiche Cliky remise à l\'origine')};
@@ -38,6 +40,42 @@ function rendre(Z,j){var e=j.espace,r=e.reglages||{},k=j.controle||{};
 }
 function envoyer(Z,body,ok,b){if(b)b.disabled=true;var E=$('#ckerr',Z);if(E)E.textContent='';
  api('/admin/cliky',{method:'POST',body:body}).then(function(j){toast(ok);rendre(Z,j)},function(e){if(E)E.textContent=e.message;else toast(e.message);if(b)b.disabled=false})}
+
+/* ---------- questionnaire de mise en service : une question à la fois ---------- */
+function nbRep(e){var Q=e.questionnaire||[],n=Q.filter(function(q){return q.id in (e.reponses||{})}).length;return n+' réponse'+(n>1?'s':'')+' sur '+Q.length+' · le programme de calcul applique ces choix'}
+function valeurActuelle(e,q){var r=e.reponses||{};if(q.id in r)return r[q.id];
+ if(q.cible==='reglage'&&e.reglages&&e.reglages[q.id]!=null)return q.type==='choix'?String(e.reglages[q.id]):e.reglages[q.id];
+ if(q.cible==='parametre'&&e.parametres&&e.parametres[q.id]!=null)return e.parametres[q.id];
+ if(q.cible==='habitude'&&e.habitudes_q)return e.habitudes_q.join('\n');return undefined}
+function lib(q,v){if(v===undefined||v===null||v==='')return '<span class="mu">passée</span>';if(q.type==='multi')return v.length?v.map(function(x){var c=(q.choix||[]).filter(function(y){return y[0]===x})[0];return esc(c?c[1]:x)}).join(', '):'Rien';
+ if(q.type==='choix'){var c=(q.choix||[]).filter(function(y){return y[0]===String(v)})[0];return esc(c?c[1]:v)}return esc(String(v).replace('.',','))+(q.unite?' '+esc(q.unite):'')}
+function questionnaire(Z,j){var e=j.espace,Q=e.questionnaire||[],R={},i=0;Q.forEach(function(q){var v=valeurActuelle(e,q);if(v!==undefined)R[q.id]=v});
+ var box=document.createElement('div');box.className='res';box.style.marginTop='10px';var ancre=$('#ckq',Z).parentNode;ancre.hidden=true;ancre.parentNode.insertBefore(box,ancre.nextSibling);
+ function fin(){box.remove();ancre.hidden=false}
+ function suivant(){i++;montre()}
+ function montre(){if(i>=Q.length)return recap();var q=Q[i],v=R[q.id],h='<div class="mu">Question '+(i+1)+' sur '+Q.length+'</div><div style="height:6px;border-radius:9px;background:var(--li);margin:6px 0 12px;overflow:hidden"><div style="height:100%;width:'+Math.round(i/Q.length*100)+'%;background:var(--nu)"></div></div>'+
+  '<div style="font-size:18px;font-weight:700;line-height:1.3">'+esc(q.q)+'</div>'+(q.aide?'<p class="mu" style="margin:6px 0 0">'+esc(q.aide)+'</p>':'')+'<div style="margin-top:12px">';
+  if(q.type==='choix')h+=q.choix.map(function(c){return '<button class="btn'+(String(v)===c[0]?' go':'')+'" type="button" data-v="'+esc(c[0])+'" style="width:100%;margin:0 0 8px;justify-content:flex-start">'+esc(c[1])+'</button>'}).join('');
+  else if(q.type==='multi')h+=q.choix.map(function(c){return '<label class="sw" style="margin:0 0 8px">'+esc(c[1])+'<input type="checkbox" data-m="'+esc(c[0])+'"'+((v||[]).indexOf(c[0])>=0?' checked':'')+'></label>'}).join('')+'<button class="btn go" type="button" id="ckqok" style="width:100%">Continuer</button>';
+  else if(q.type==='nombre')h+='<div class="row"><input class="t" id="ckqv" inputmode="decimal" value="'+esc(v==null?'':String(v).replace('.',','))+'" placeholder="'+esc(q.unite||'')+'"><span style="flex:0 0 auto;font-weight:700">'+esc(q.unite||'')+'</span></div><button class="btn go" type="button" id="ckqok" style="width:100%;margin-top:10px">Continuer</button>';
+  else h+='<textarea class="t" id="ckqv" rows="4">'+esc(v||'')+'</textarea><button class="btn go" type="button" id="ckqok" style="width:100%;margin-top:10px">Continuer</button>';
+  h+='</div><div class="ck-row" style="justify-content:space-between"><button class="btn sm" type="button" id="ckqp">'+(i?'‹ Précédente':'Fermer')+'</button><button class="btn sm" type="button" id="ckqs">Je ne sais pas, passer</button></div>';
+  box.innerHTML=h;
+  [].forEach.call(box.querySelectorAll('[data-v]'),function(b){b.onclick=function(){R[q.id]=b.dataset.v;[].forEach.call(box.querySelectorAll('[data-v]'),function(x){x.classList.toggle('go',x===b)});setTimeout(suivant,220)}});
+  if($('#ckqok',box))$('#ckqok',box).onclick=function(){if(q.type==='multi')R[q.id]=[].map.call(box.querySelectorAll('[data-m]:checked'),function(x){return x.dataset.m});
+   else{var t=$('#ckqv',box).value.trim();if(q.type==='nombre'){t=t.replace(',','.');if(t&&!isFinite(Number(t))){toast('Tapez un nombre');return}}if(t)R[q.id]=t;else delete R[q.id]}suivant()};
+  $('#ckqs',box).onclick=function(){delete R[q.id];suivant()};
+  $('#ckqp',box).onclick=function(){if(!i)return fin();i--;montre()};
+  box.scrollIntoView({block:'nearest'})}
+ function recap(){box.innerHTML='<div style="font-size:18px;font-weight:700">Vérifiez, puis enregistrez</div><p class="mu" style="margin:4px 0 8px">Touchez une ligne pour la changer.</p>'+
+  Q.map(function(q,k){return '<button type="button" data-k="'+k+'" style="display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--li);background:transparent;padding:10px 0;cursor:pointer"><span class="mu" style="display:block">'+esc(q.q)+'</span><b>'+lib(q,R[q.id])+'</b></button>'}).join('')+
+  '<div class="err" id="ckqe"></div><button class="btn go" type="button" id="ckqsave" style="width:100%">Enregistrer les réponses</button><div class="ck-row"><button class="btn sm" type="button" id="ckqx">Annuler</button></div>';
+  [].forEach.call(box.querySelectorAll('[data-k]'),function(b){b.onclick=function(){i=+b.dataset.k;montre()}});
+  $('#ckqx',box).onclick=fin;
+  $('#ckqsave',box).onclick=function(){var b=this,rep={};Q.forEach(function(q){rep[q.id]=q.id in R?R[q.id]:null});b.disabled=true;
+   api('/admin/cliky',{method:'POST',body:{id:j.id,reponses:rep}}).then(function(n){toast('Réponses enregistrées');rendre(Z,n)},function(er){$('#ckqe',box).textContent=er.message;b.disabled=false})};
+  box.scrollIntoView({block:'nearest'})}
+ montre()}
 
 /* ---------- base Cliky commune (onglet Réglages) ---------- */
 function base(Z){if(!Z)return;Z.innerHTML='<h2>Base Cliky ProClik</h2><p class="mu" style="margin:0">Chargement…</p>';
