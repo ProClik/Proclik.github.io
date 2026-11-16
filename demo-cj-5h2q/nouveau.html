@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="claude:viewport-fit-sides" content="cover"><title>Chez Julie · Coiffure au Versoud</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="claude:viewport-fit-sides" content="cover"><title>Maison Aube · Coiffure en Isère</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="../fonts/fonts.css"><style>
 :root{--acc:#4A3243;--acc2:#A8823F;--bg:#FFFFFF;--surf:#F6F2EF;--encre:#1D1D1F;--gris:#6E6E73;--trait:rgba(0,0,0,.09);--r:24px;--f:"Inter",system-ui,-apple-system,"SF Pro Text","Segoe UI",sans-serif;color-scheme:light}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:60px}
@@ -298,6 +298,20 @@ footer.sombre{padding:0!important;margin:0!important;border:0!important}
 .cat2 .ligne em{font-style:normal;font-weight:400;white-space:nowrap}
 .cat2 .ligne:hover b{color:var(--taupe)}
 .note2{color:var(--gris);font-size:13px;margin-top:30px;max-width:640px}
+.menu2{grid-template-columns:1fr!important;gap:0!important;border-top:1px solid rgba(20,20,20,.18);max-width:860px}
+.cat2 summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:22px 0;border-bottom:1px solid rgba(20,20,20,.18)}
+.cat2 summary::-webkit-details-marker{display:none}
+.cat2 .cn{flex:1;font:300 clamp(22px,2.6vw,30px)/1.1 var(--f)}
+.cat2 .cd{font:500 10.5px/1 var(--f);letter-spacing:.18em;text-transform:uppercase;color:var(--gris);white-space:nowrap}
+.cat2 summary i{width:14px;height:14px;position:relative;flex:none}
+.cat2 summary i::before,.cat2 summary i::after{content:"";position:absolute;left:0;top:6.5px;width:14px;height:1px;background:var(--noir);transition:transform .35s ease}
+.cat2 summary i::after{transform:rotate(90deg)}
+.cat2[open] summary i::after{transform:rotate(0)}
+.cat2[open] summary .cn{color:var(--taupe)}
+.cat2 .cc{padding:4px 0 18px;border-bottom:1px solid rgba(20,20,20,.18)}
+.cat2 .ligne{border-bottom:1px solid rgba(20,20,20,.07)!important}
+.cat2 .ligne:last-child{border-bottom:0!important}
+@media(max-width:560px){.cat2 .cd{display:none}}
 /* galerie */
 .gal2{display:grid;grid-template-columns:1.2fr .8fr 1fr;gap:clamp(12px,2vw,24px);align-items:end}
 .gal2 figure{margin:0}.gal2 .ph{overflow:hidden;background:#d7cfc5}.gal2 img{width:100%;height:100%;object-fit:cover;display:block;transform:translateY(var(--py,0px)) scale(1.08)}
@@ -336,36 +350,36 @@ footer.sombre{padding:0!important;margin:0!important;border:0!important}
 </style>
 </head>
 <body>
-<script>if(/apercu/.test(location.search))document.write('<style>.ex{display:none!important}</style>')</script><div class="ex">Maquette préparée par ProClik pour Chez Julie · démonstration, aucun paiement réel · <a href="espace.html">Voir l'Espace de Julie</a> · <a href="choix.html">Comparer les deux versions</a></div>
-<header class="h2b"><div class="bar"><a class="logo2" href="#haut"><b>Chez Julie</b><small>Coiffure · Le Versoud</small></a>
+<script>if(/apercu/.test(location.search))document.write('<style>.ex{display:none!important}</style>')</script><div class="ex">Maquette préparée par ProClik pour Maison Aube · démonstration, aucun paiement réel · <a href="espace.html">Voir l'Espace du salon</a> · <a href="choix.html">Comparer les deux versions</a></div>
+<header class="h2b"><div class="bar"><a class="logo2" href="#haut"><b>Maison Aube</b><small>Coiffure · Isère</small></a>
 <nav aria-label="Menu"><a href="#haut">Accueil</a><a href="#salon">Le salon</a><a href="#prestations">Prestations</a><a href="#avis">Avis</a><a href="#venir">Contact</a></nav>
 <a class="b2" href="#reserver">Prendre RDV<svg class="trait" viewBox="0 0 70 22"><path d="M2 16C20 12 40 9 66 3M14 20C30 16 46 13 62 10"/></svg></a><button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button></div></header>
 <div class="menu-tel" id="menu-tel"><button type="button" id="menu-x" aria-label="Fermer">✕</button><a href="#haut">Accueil</a><a href="#salon">Le salon</a><a href="#prestations">Prestations</a><a href="#avis">Avis</a><a href="#venir">Contact</a><a class="b2" href="#reserver" style="align-self:flex-start;margin-top:14px">Prendre RDV</a></div>
 <main id="haut">
-<section class="hero h-v2"><div class="vu2"><p class="lab2">Coiffure</p><p class="lab2" style="margin-top:6px">Sur rendez-vous · Le Versoud</p>
+<section class="hero h-v2"><div class="vu2"><p class="lab2">Coiffure</p><p class="lab2" style="margin-top:6px">Sur rendez-vous · Isère</p>
 <h1>Prenez<br>le temps<br><em>d'être vous</em><span class="pt">.</span></h1>
 <p class="lead2">Des balayages lumineux, des couleurs qui vous ressemblent, des coupes pensées pour vous. Un salon intime où l'on prend le temps de vous écouter.</p>
 <a class="b2" href="#reserver" id="hero-resa">Prendre RDV<svg class="trait" viewBox="0 0 70 22"><path d="M2 16C20 12 40 9 66 3M14 20C30 16 46 13 62 10"/></svg></a>
 <p style="margin:26px 0 0;font-size:13px;color:var(--gris)"><span id="prochain">Prochain créneau</span></p></div>
-<div class="blob-w vu2"><svg class="orbite" viewBox="0 0 100 100" preserveAspectRatio="none"><ellipse cx="50" cy="52" rx="47" ry="38" transform="rotate(-18 50 52)" vector-effect="non-scaling-stroke"/></svg><div class="blob"><img data-px src="https://images.unsplash.com/photo-1734111719430-fe4a3973f8af?auto=format&fit=crop&w=1100&q=72" alt="Cheveux longs blonds lumineux après un brushing"></div><div class="badge"><svg viewBox="0 0 100 100"><defs><path id="cer" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs><circle cx="50" cy="50" r="47" fill="none" stroke="#141414" stroke-width=".5"/><text><textPath href="#cer">Chez Julie · l'art de sublimer · </textPath></text></svg><span class="j">J</span></div></div>
+<div class="blob-w vu2"><svg class="orbite" viewBox="0 0 100 100" preserveAspectRatio="none"><ellipse cx="50" cy="52" rx="47" ry="38" transform="rotate(-18 50 52)" vector-effect="non-scaling-stroke"/></svg><div class="blob"><img data-px src="https://images.unsplash.com/photo-1734111719430-fe4a3973f8af?auto=format&fit=crop&w=1100&q=72" alt="Cheveux longs blonds lumineux après un brushing"></div><div class="badge"><svg viewBox="0 0 100 100"><defs><path id="cer" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs><circle cx="50" cy="50" r="47" fill="none" stroke="#141414" stroke-width=".5"/><text><textPath href="#cer">Maison Aube · l'art de sublimer · </textPath></text></svg><span class="j">A</span></div></div>
 <a class="decouvrir" href="#salon">Découvrir<i></i></a>
 </section>
 <div class="sombre"><svg class="vague" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v38C1220 92 1010 22 760 46S300 96 0 30z" fill="#EFEBE4"/></svg>
-<section id="salon" class="xp"><div class="vu2"><p class="lab2 t">Plus qu'un salon</p><h2>un moment<br>pour vous.</h2><p>Ici, Julie vous reçoit seule, sur rendez-vous. Pas de chaîne, pas de cadence : elle prend le temps de comprendre vos envies et de créer une coiffure qui vous ressemble vraiment.</p><a class="b2 cl" href="#prestations">Voir les prestations <span aria-hidden="true">→</span></a></div>
+<section id="salon" class="xp"><div class="vu2"><p class="lab2 t">Plus qu'un salon</p><h2>un moment<br>pour vous.</h2><p>Ici, Claire vous reçoit seule, sur rendez-vous. Pas de chaîne, pas de cadence : elle prend le temps de comprendre vos envies et de créer une coiffure qui vous ressemble vraiment.</p><a class="b2 cl" href="#prestations">Voir les prestations <span aria-hidden="true">→</span></a></div>
 <div class="blob-w vu2"><div class="blob"><img data-px src="https://images.unsplash.com/photo-1781450090585-1a511b7066d9?auto=format&fit=crop&w=1300&q=72" alt="Le salon : fauteuils, miroirs éclairés, bois clair"></div></div></section>
 <svg class="vague" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true" style="transform:scaleY(-1)"><path d="M0 0h1440v38C1220 92 1010 22 760 46S300 96 0 30z" fill="#EFEBE4"/></svg></div>
-<section id="prestations"><div class="sec"><p class="lab2">Prestations</p><h2>La carte<br><em>de Julie.</em></h2><p class="intro">Touchez une prestation pour réserver directement. Un acompte de 30 % confirme le rendez-vous, le reste se règle au salon.</p>
+<section id="prestations"><div class="sec"><p class="lab2">Prestations</p><h2>La carte<br><em>du salon.</em></h2><p class="intro">Touchez une prestation pour réserver directement. Un acompte de 30 % confirme le rendez-vous, le reste se règle au salon.</p>
 <div class="menu2" id="menu2"></div><p class="note2">La consultation (15 €) est obligatoire avant toute première prestation de balayage. « dès » : le prix final dépend de la longueur et de l'épaisseur.</p></div>
 <div id="grille" hidden></div><div id="carte-tout" hidden></div></section>
 <section><div class="sec" style="padding-top:0"><p class="lab2">Réalisations</p><h2 style="margin-bottom:40px">Lumière,<br><em>matière, mouvement.</em></h2>
 <div class="gal2"><figure class="vu2"><div class="ph"><img data-px src="https://images.unsplash.com/photo-1595475884562-073c30d45670?auto=format&fit=crop&w=1000&q=70" alt="Ciseaux, brosses et pinceau de coloration" loading="lazy"></div><figcaption>Couleur & balayage</figcaption></figure>
 <figure class="vu2"><div class="ph"><img data-px src="https://images.unsplash.com/photo-1672788725446-c303ec2b318e?auto=format&fit=crop&w=800&q=70" alt="Une cliente coiffée au salon" loading="lazy"></div><figcaption>Coupe & coiffage</figcaption></figure>
 <figure class="vu2"><div class="ph"><img data-px src="https://images.unsplash.com/photo-1774660810725-fb04e002003d?auto=format&fit=crop&w=900&q=70" alt="Coiffeuse réalisant un chignon" loading="lazy"></div><figcaption>Mariages & événements</figcaption></figure></div>
-<p class="note2">Photos d'illustration (Unsplash), à remplacer par les vraies réalisations de Julie.</p></div></section>
+<p class="note2">Photos d'illustration (Unsplash), à remplacer par les vraies réalisations du salon.</p></div></section>
 <section id="reserver" class="rdv2"><div class="sec"><div><p class="lab2">Réservation</p><h2>Votre prochain<br><em>rendez-vous.</em></h2><p class="intro" style="margin-bottom:0">Choisissez la prestation, le jour et l'heure. Ça prend une minute, l'acompte se règle en ligne.</p></div>
 <div class="slot2"><p class="lab2">Disponible</p><b id="prochain2">Bientôt</b><button class="b2" type="button" id="ouvre-resa">Choisir mon créneau<svg class="trait" viewBox="0 0 70 22"><path d="M2 16C20 12 40 9 66 3M14 20C30 16 46 13 62 10"/></svg></button></div></div>
 <div class="voile-resa" id="voile-resa"></div>
-<div class="resa" id="fen-resa" role="dialog" aria-modal="true" aria-label="Réserver chez Julie" aria-hidden="true"><div class="fen-t"><span class="poignee"></span><b>Réserver chez Julie</b><button type="button" id="ferme-resa" aria-label="Fermer">✕</button></div>
+<div class="resa" id="fen-resa" role="dialog" aria-modal="true" aria-label="Réserver chez Maison Aube" aria-hidden="true"><div class="fen-t"><span class="poignee"></span><b>Réserver chez Maison Aube</b><button type="button" id="ferme-resa" aria-label="Fermer">✕</button></div>
 <div class="corps" id="corps">
 <small class="lab">Prestation</small><div class="fams" id="fams"></div><div class="svc" id="presta"></div>
 <div id="bloc-opts"><small class="lab">Soin en plus</small><div class="opts" id="opts"></div></div>
@@ -374,15 +388,15 @@ footer.sombre{padding:0!important;margin:0!important;border:0!important}
 <div class="acompte" id="recap"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg><div class="tot"><div class="l"><span id="r-p">Prestation</span><b id="tt">0 €</b></div><div class="l"><span>Acompte à payer maintenant (30 %)</span><b id="mt">0 €</b></div><div class="l doux"><span>Reste à régler au salon</span><span id="rs">0 €</span></div><small>Plus de 10 minutes de retard : le rendez-vous peut être annulé. Démonstration : aucun paiement.</small></div></div>
 </div>
 <div class="pied"><button class="btn" id="ok" aria-disabled="true" type="button">Choisissez une heure</button></div>
-<div class="bravo" id="bravo"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28"/><path d="m20 33 8 8 16-17"/></svg><h3>C'est réservé</h3><p id="bravo-p"></p><a class="btn sec" href="espace.html" style="margin-top:14px">Voir côté Julie, dans son Espace</a></div></div>
+<div class="bravo" id="bravo"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28"/><path d="m20 33 8 8 16-17"/></svg><h3>C'est réservé</h3><p id="bravo-p"></p><a class="btn sec" href="espace.html" style="margin-top:14px">Voir côté salon, dans son Espace</a></div></div>
 </section>
-<section id="avis"><div class="sec"><div class="avis2 vu2"><div class="note">5,0</div><div><p class="et">★★★★★</p><h3 style="font-size:clamp(26px,3vw,36px);margin:10px 0 12px">131 avis de clientes</h3><p>Note relevée sur sa page Booksy en novembre 2026. Avec ProClik, après chaque rendez-vous, un SMS invite la cliente à laisser son avis sur Google, et ses avis s'affichent ici tout seuls.</p></div></div></div></section>
+<section id="avis"><div class="sec"><div class="avis2 vu2"><div class="note">5,0</div><div><p class="et">★★★★★</p><h3 style="font-size:clamp(26px,3vw,36px);margin:10px 0 12px">Ses clientes en parlent</h3><p>Note d’exemple, salon fictif. Avec ProClik, après chaque rendez-vous, un SMS invite la cliente à laisser son avis sur Google, et ses avis s'affichent ici tout seuls.</p></div></div></div></section>
 </main>
 <footer class="sombre" id="venir"><svg class="vague" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v38C1220 92 1010 22 760 46S300 96 0 30z" fill="#EFEBE4"/></svg>
-<div class="sec venir2" style="padding-top:30px"><div><p class="lab2 t">Nous trouver</p><h2 style="color:#EDE7DE">Au cœur<br><em>du Versoud.</em></h2><p style="color:#bfb7ad">43 rue Pierre Mendès France<br>38420 Le Versoud</p></div>
+<div class="sec venir2" style="padding-top:30px"><div><p class="lab2 t">Nous trouver</p><h2 style="color:#EDE7DE">Au cœur<br><em>du village.</em></h2><p style="color:#bfb7ad">12 place du Marché<br>Isère · adresse fictive</p></div>
 <div><table><tr><td>Mardi - vendredi</td><td>Sur rendez-vous</td></tr><tr><td>Certains samedis</td><td>Sur rendez-vous</td></tr><tr><td>Dimanche, lundi</td><td>Fermé</td></tr></table>
-<a class="b2 cl" href="https://www.google.com/maps/search/?api=1&amp;query=43+rue+Pierre+Mend%C3%A8s+France+38420+Le+Versoud" target="_blank" rel="noopener">Itinéraire →</a> <a class="b2 cl" href="https://www.instagram.com/chezjulie_leversoud/" target="_blank" rel="noopener" style="margin-left:8px">Instagram</a></div></div>
-<div class="pied2"><span>Chez Julie · Coiffure au Versoud</span><span>Site et réservation : ProClik · photos Unsplash, à remplacer</span></div></footer>
+<a class="b2 cl" href="#venir" target="_blank" rel="noopener">Itinéraire →</a> <a class="b2 cl" href="#" target="_blank" rel="noopener" style="margin-left:8px">Instagram</a></div></div>
+<div class="pied2"><span>Maison Aube · Coiffure en Isère</span><span>Site et réservation : ProClik · photos Unsplash, à remplacer</span></div></footer>
 <div class="bas" id="bas"><a class="btn" href="#reserver">Prendre RDV</a></div>
 <script src="carte.js"></script>
 <script>
@@ -452,7 +466,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href="#r
 <script>
 (function(){var $=function(i){return document.getElementById(i)};
  /* carte façon menu */
- $('menu2').innerHTML=CARTE.map(function(g){return '<div class="cat2 vu2"><h3>'+g[0]+'</h3>'+g[1].map(function(s){return '<button type="button" class="ligne" data-i="'+idx(s[0])+'"><span><b>'+s[0]+'</b>'+(s[1]?'<small>'+s[1]+'</small>':'')+'</span><em>'+(s[3]?'dès ':'')+s[2]+' €</em></button>'}).join('')+'</div>'}).join('');
+ $('menu2').innerHTML=CARTE.map(function(g){var mn=Math.min.apply(null,g[1].map(function(s){return s[2]}));return '<details class="cat2 vu2"><summary><span class="cn">'+g[0]+'</span><span class="cd">'+g[1].length+' prestation'+(g[1].length>1?'s':'')+' · dès '+mn+' €</span><i aria-hidden="true"></i></summary><div class="cc">'+g[1].map(function(s){return '<button type="button" class="ligne" data-i="'+idx(s[0])+'"><span><b>'+s[0]+'</b>'+(s[1]?'<small>'+s[1]+'</small>':'')+'</span><em>'+(s[3]?'dès ':'')+s[2]+' €</em></button>'}).join('')+'</div></details>'}).join('');
  $('menu2').onclick=function(e){var b=e.target.closest('.ligne');if(!b)return;et.p=+b.dataset.i;et.h=null;et.o=[];ouvreResa()};
  $('prochain2').textContent=$('prochain').textContent.replace('Prochain créneau · ','');
  /* menu téléphone */

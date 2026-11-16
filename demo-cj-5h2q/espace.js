@@ -1,10 +1,10 @@
-/* Démo « Espace salon » pour Chez Julie (Le Versoud).
-   Julie travaille seule : un seul accès, pas de rôles. Clientes, rendez-vous et chiffres = exemples fictifs.
-   Prix des 3 prestations repris de sa page Booksy (16/11/2026). Acompte de 30 % (choix de Cyril pour la présentation).
+/* Démo « Espace salon » pour Maison Aube (Isère).
+   Claire travaille seule : un seul accès, pas de rôles. Clientes, rendez-vous et chiffres = exemples fictifs.
+   Salon fictif « Maison Aube ». Acompte de 30 % (choix de Cyril pour la présentation).
    Les réservations faites sur le site de démo (index.html) arrivent ici (localStorage 'pcd-cj-resa'). */
 var $=function(i){return document.getElementById(i)},ic=PCD.ic,S;
 var ICS={'La consultation':'doc','Balayage / éclaircissement':'pinceau','Coloration & gloss':'goutte','Soin botox':'goutte','Coupes femmes & brushing':'ciseaux','Hommes':'ciseaux','Mariages & événements':'etoile','Prestations à la carte':'goutte'};
-/* carte complète (carte.js, reprise de sa page Booksy) : [nom, minutes, prix, icône, catégorie, « dès »] */
+/* carte complète (carte.js, salon fictif) : [nom, minutes, prix, icône, catégorie, « dès »] */
 function mnt(d){var h=/(\d+) h/.exec(d),m=/(\d+) ?min/.exec(d),m2=/h (\d+)$/.exec(d);return (h?+h[1]*60:0)+(m?+m[1]:0)+(m2?+m2[1]:0)}
 var PR=[];CARTE.forEach(function(g){g[1].forEach(function(s){PR.push([s[0],mnt(s[1]),s[2],ICS[g[0]]||'ciseaux',g[0],s[3]])})});
 function pidx(n){for(var i=0;i<PR.length;i++)if(PR[i][0]===n)return i;return 0}
@@ -65,13 +65,13 @@ var V={};
 V.jour=function(){var d=JOURS[0],L=duJour(cle(d)),pro=L.filter(function(r){return r.etat==='prevu'})[0],
   sem=S.rdv.filter(function(r){return r.etat!=='absente'}),acs=S.rdv.filter(function(r){return r.ac}).reduce(function(a,r){return a+acpt(r)},0),web=S.rdv.filter(function(r){return r.web});
   var ferme=!auj(d);
-  return hi('Bonjour Julie',ferme?'Aujourd’hui le salon est fermé. Voici '+jNom(d,true).toLowerCase()+'.':jNom(d,true))+'<div class="pile">'+
+  return hi('Bonjour Claire',ferme?'Aujourd’hui le salon est fermé. Voici '+jNom(d,true).toLowerCase()+'.':jNom(d,true))+'<div class="pile">'+
    (pro?'<div class="now"><span class="k">Prochain rendez-vous · '+jNom(d)+'</span><b class="t">'+pro.h+' · '+esc(nom(pro))+'</b><span>'+PR[pro.p][0]+' · acompte '+acpt(pro)+' € déjà payé, reste '+reste(pro)+' €</span>'+
      '<button class="go" style="background:var(--nuit-fg);color:var(--nuit)" onclick="encaisser(\''+pro.id+'\')">'+ic('euro')+'Encaisser '+reste(pro)+' €</button></div>'
     :'<div class="now"><span class="k">'+jNom(d)+'</span><b class="t">Tous les rendez-vous sont faits</b><span>Belle journée !</span></div>')+
    blk('La journée · '+jNom(d),'cal',L.length?L.map(ligneRdv).join(''):'<p class="mini">Aucun rendez-vous.</p>','<small>'+L.length+' rendez-vous</small>')+
    (web.length?blk('Réservé en ligne','cal',web.slice(-4).reverse().map(ligneRdv).join('')+'<p class="mini">Réservé et payé sur votre site, sans un appel.</p>',opt('resa')):
-     blk('Réservé en ligne','cal','<p class="mini" style="margin-top:0">Réservez un créneau sur <a href="index.html#reserver">le site de Chez Julie</a> : il arrive ici tout seul, avec son acompte.</p>',opt('resa')))+
+     blk('Réservé en ligne','cal','<p class="mini" style="margin-top:0">Réservez un créneau sur <a href="index.html#reserver">le site de Maison Aube</a> : il arrive ici tout seul, avec son acompte.</p>',opt('resa')))+
    blk('Cette semaine','chart','<div class="chif"><div><b>'+sem.length+'</b><small>rendez-vous</small></div><div><b>'+acs+' €</b><small>acomptes reçus</small></div><div><b>'+S.abs+'</b><small>absente'+(S.abs>1?'s':'')+'</small></div><div><b>'+S.rdv.filter(function(r){return r.etat==='fait'}).length+'</b><small>avis à demander</small></div></div>','<span class="etq">Exemple</span>')+
   '</div>'};
 /* ---------- Agenda ---------- */
@@ -112,7 +112,7 @@ V.chi=function(){var W=[1840,2110,1960,2380,2050,2260,2420,2190],mx=Math.max.app
   '</div>'};
 /* ---------- Mon salon ---------- */
 V.reg=function(){return hi('Mon salon','Prestations, acompte, horaires et options.')+'<div class="pile">'+
-   blk('Mes prestations','ciseaux','<p class="mini" style="margin-top:0">'+PR.length+' prestations, reprises de sa page Booksy. Prix et durée modifiables d’une touche.</p>'+CARTE.map(function(g){return '<h2 style="margin:12px 0 6px;font-size:13px;color:var(--muted)">'+g[0]+'</h2>'+g[1].map(function(s){var i=pidx(s[0]);return ln(PR[i][3],s[0],s[1]||'Durée à préciser','toast(\'Prix et durée modifiables d’une touche (exemple)\',\'pinceau\')','<span class="prix">'+(s[3]?'dès ':'')+s[2]+' €</span>')}).join('')}).join(''))+
+   blk('Mes prestations','ciseaux','<p class="mini" style="margin-top:0">'+PR.length+' prestations. Prix et durée modifiables d’une touche.</p>'+CARTE.map(function(g){return '<h2 style="margin:12px 0 6px;font-size:13px;color:var(--muted)">'+g[0]+'</h2>'+g[1].map(function(s){var i=pidx(s[0]);return ln(PR[i][3],s[0],s[1]||'Durée à préciser','toast(\'Prix et durée modifiables d’une touche (exemple)\',\'pinceau\')','<span class="prix">'+(s[3]?'dès ':'')+s[2]+' €</span>')}).join('')}).join(''))+
    blk('Acompte à la réservation','euro','<div class="chips">'+[0,20,30,50].map(function(v){return '<button class="pk" aria-pressed="'+(S.acompte===v)+'" onclick="S.acompte='+v+';save();go(\'reg\');toast(\''+(v?'Acompte de '+v+' %':'Sans acompte')+'\',\'euro\')">'+(v?v+' %':'Aucun')+'</button>'}).join('')+'</div><p class="mini">Déduit le jour du rendez-vous. Gardé si la cliente ne vient pas.</p>',opt('resa'))+
    blk('Horaires','clock',ln('cal','Mardi au vendredi','Sur rendez-vous','toast(\'Horaires modifiables (exemple)\',\'clock\')')+ln('cal','Certains samedis','Ouverts un par un dans l’agenda','toast(\'Horaires modifiables (exemple)\',\'clock\')'))+
    blk('Mes options','sparks',
@@ -135,10 +135,10 @@ function rdv(id){var r=trouve(id);
 function encaisser(id){var r=trouve(id);r.etat='fait';r.paye=true;save();fermer();go(cur);toast('Encaissé · '+reste(r)+' € · facture prête','euro');
   setTimeout(function(){toast('Demain, '+prenom(r)+' reçoit un SMS pour laisser un avis Google','etoile')},2800)}
 function absente(id){var r=trouve(id);r.etat='absente';S.abs++;save();fermer();go(cur);toast('Acompte de '+acpt(r)+' € gardé · créneau libéré','lapin')}
-function facture(id){var r=trouve(id);fen('<h3>Facture</h3><p class="sous">Chez Julie · 43 rue Pierre Mendès France, Le Versoud</p>'+
+function facture(id){var r=trouve(id);fen('<h3>Facture</h3><p class="sous">Maison Aube · 12 place du Marché, Isère (adresse fictive)</p>'+
   '<div class="formule" style="font-weight:600">'+esc(nom(r))+'<br>'+PR[r.p][0]+' : <b>'+tot(r)+' €</b><br>Acompte en ligne : '+(r.ac?acpt(r):0)+' €<br>Payé au salon : '+(tot(r)-(r.ac?acpt(r):0))+' €</div>'+
   '<div class="row" style="margin-top:12px"><button class="go" style="flex:1" onclick="fermer();toast(\'Facture envoyée par e-mail (exemple)\',\'send\')">'+ic('send')+'Envoyer</button></div><p class="mini">Exemple : aucune facture réelle n’est créée.</p>')}
-function sms(id){var c=cl(id);fen('<h3>SMS à '+c.n.split(' ')[0]+'</h3>'+opt('sms')+'<div class="formule" style="font-weight:600;margin-top:10px">Bonjour '+c.n.split(' ')[0]+', c’est Julie. Une place s’est libérée demain à 14 h 15, elle vous intéresse ? Répondez OUI pour la réserver.</div>'+
+function sms(id){var c=cl(id);fen('<h3>SMS à '+c.n.split(' ')[0]+'</h3>'+opt('sms')+'<div class="formule" style="font-weight:600;margin-top:10px">Bonjour '+c.n.split(' ')[0]+', c’est Claire. Une place s’est libérée demain à 14 h 15, elle vous intéresse ? Répondez OUI pour la réserver.</div>'+
   '<button class="go" style="width:100%;margin-top:12px" onclick="fermer();toast(\'SMS envoyé (exemple)\',\'send\')">'+ic('send')+'Envoyer</button>')}
 function ajout(d,h){fen('<h3>Nouveau rendez-vous</h3><p class="sous">'+h+' · touchez la cliente puis la prestation</p><div class="chips" id="aj-c">'+CL.map(function(c,i){return '<button class="pk" aria-pressed="'+(i===0)+'" data-c="'+c.id+'">'+c.n+'</button>'}).join('')+'</div>'+
   '<h2 style="margin-top:12px">'+ic('ciseaux')+'Prestation</h2><div class="chips" id="aj-p">'+PR.map(function(p,i){return '<button class="pk" aria-pressed="'+(i===SEED[0])+'" data-p="'+i+'">'+p[0]+' · '+p[2]+' €</button>'}).join('')+'</div>'+
