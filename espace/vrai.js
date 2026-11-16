@@ -60,6 +60,8 @@ css.textContent=[
 'details.vd>summary{cursor:pointer;font-weight:700}details.vd>.card{box-shadow:none;margin:10px 0 0;padding:0;background:none}',
 '.vtot{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:14px}.vtot .big{font-size:18px;font-weight:800}',
 '.vul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}',
+'.vctl{margin-top:10px;border-radius:12px;background:color-mix(in srgb,#2E7D4F 12%,transparent);padding:8px 12px}.vctl-pb{background:color-mix(in srgb,#C2410C 12%,transparent)}.vctl summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer}.vctl summary::-webkit-details-marker{display:none}',
+'.vctl summary i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;color:#fff;background:#2E7D4F}.vctl-pb summary i{background:#C2410C}.vctl summary span{display:grid;font-weight:700;font-size:14.5px}.vctl summary small{font-weight:500;font-size:12.5px;color:var(--muted)}.vctl .vul{margin-top:8px;font-size:13px;list-style:none;padding-left:4px}',
 '.vbtns{display:flex;gap:8px;flex-wrap:wrap}',
 '.vpre{white-space:pre-wrap;font:13px/1.5 var(--mono);margin:0}',
 '.vlog{display:grid;gap:10px}.vlog input{font:600 17px var(--f);padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);width:100%}',
@@ -313,6 +315,9 @@ function vligne(x){if(!ED)return null;var C=[];['materiaux','main_oeuvre'].forEa
  A=C.filter(function(c){return suj.every(function(w){return c[2].indexOf(w)>=0})});if(A.length===1)return {lg:A[0][0]+'|'+A[0][1]};
  if(A.length>1&&A.every(function(c){return c[0]===A[0][0]}))return {tab:A[0][0]==='materiaux'?'mat':'mo'};return null}
 var VGR=[['cli','À demander au client','<path d="M4 5h16v11H9l-5 4z"/>'],['vis','À voir à la visite','<path d="M3 17 17 3l4 4L7 21H3z"/><path d="m12 8 2 2m-5 1 2 2m-5 1 2 2"/>'],['prix','À chiffrer','<circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3.5 0 1 0 0 5M7.5 11h5m-5 2h5"/>']];
+/* Contrôle n° 1 (fait par le programme avant l'arrivée du pré-devis) : badge vert, ou le nombre de points à regarder */
+function controleHTML(p){var v=p&&p.verification;if(!v)return '';var n=v.points||0;
+ return '<details class="vctl'+(n?' vctl-pb':'')+'"><summary><i>'+(n?'!':'✓')+'</i><span>'+(n?n+' point'+(n>1?'s':'')+' à regarder<small>relevé'+(n>1?'s':'')+' par la vérification, dans « À vérifier »</small>':'Vérifié par le programme<small>'+v.ok.length+' contrôle'+(v.ok.length>1?'s':'')+' passé'+(v.ok.length>1?'s':'')+'</small>')+'</span></summary><ul class="vul">'+v.ok.map(function(x){return '<li>✓ '+esc(x)+'</li>'}).join('')+'</ul></details>'}
 function verifHTML(p){var L=(p.a_verifier||[]);if(!L.length)return '';var tag=window.PCTAG?PCTAG('cliky','a relevé ces points'):'';
  if(window.PCOPT&&!PCOPT.cliky)return '<div class="card vsec">'+tag+'<p class="vst" style="padding:0">Avec l\'option Cliky, les points à vérifier de chaque demande sont rangés ici : à demander au client, à voir à la visite, à chiffrer.</p></div>';
  var ok=lsG(vokCle(p))||[],Q=L.map(vcourt),k=COUR&&COUR.contact||{};
@@ -357,7 +362,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  if(!p){ED=null;dv='<div class="card"><b>Pas encore de pré-devis Cliky</b><p class="vst" style="padding:4px 0 0">Si la demande vient d\'arriver, patientez une minute : il s\'affiche tout seul.</p></div>';}
  else if(!p.lue){ED=null;dv='<div class="card vsec"><h3>Pré-devis Cliky · '+esc(quand(p.le))+'</h3><p class="vst" style="padding:0 0 8px">Ancienne présentation : affichée telle quelle.</p><pre class="vpre">'+esc(p.texte)+'</pre></div>';}
  else{ED=edition(p);var t=totauxEd(p);
-  dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+
+  dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+controleHTML(p)+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
    recalcHTML(d)+verifHTML(p)+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
