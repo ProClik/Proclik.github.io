@@ -542,7 +542,9 @@ const D={
   {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non",DK]},
   {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles",DK],sh:i=>i.type==="Maison"||!i.type||i.type===DK},
   {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK},
-  {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1}]},
+  {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1},
+  {k:"parking",t:"chips",l:"Où l'artisan peut-il se garer ?",o:["Place privée ou cour","Dans la rue, gratuit","Dans la rue, payant",DK]},
+  {k:"acces",t:"chips",l:"L'accès au chantier est…",h:"Difficile : escalier étroit, rue piétonne, longue distance à pied, portail étroit…",o:["Facile","Difficile",DK]}]},
  cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
   g:{n:"Cloison",cnt:"Combien de cloisons à créer ?",add:"+ Ajouter une autre cloison",f:[
    {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
@@ -635,7 +637,7 @@ const D={
  projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Pour le planning",f:[
    {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
-   {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
+   {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Meubles à déplacer, code du portail, contraintes de dates…"}]},
  contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
    {k:"prenom",t:"text",cap:1,l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
    {k:"nom",t:"text",cap:1,l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
@@ -776,7 +778,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
-const LQ=[["cp","commune"],["type"],["mur"],["age"],["occupe"],["ou","niveau","ascenseur"]];
+const LQ=[["cp","commune"],["type"],["mur"],["age"],["occupe"],["ou","niveau","ascenseur"],["parking"],["acces"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
