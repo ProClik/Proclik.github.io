@@ -22,6 +22,7 @@ const T={
  ef:{n:"Arrivée eau froide",h:55,f:"eau"},ec:{n:"Arrivée eau chaude",h:55,f:"eau"},ev:{n:"Évacuation",h:40,f:"eau"},mit:{n:"Mitigeur douche",h:110,f:"eau"},
  nour:{n:"Nourrice (départ de l'eau)",h:40,f:"eau"},cee:{n:"Chauffe-eau",h:150,f:"eau",w:50,hh:80},rad:{n:"Radiateur",h:45,f:"eau",w:80,hh:55},ss:{n:"Sèche-serviettes",h:110,f:"eau",w:50,hh:120},
  split:{n:"Unité intérieure (split mural)",h:230,f:"clim",w:90,hh:30},ge:{n:"Groupe extérieur (côté dehors)",h:50,f:"clim",w:80,hh:60},
+ gs:{n:"Grille de soufflage (gainable)",h:230,f:"clim",w:40,hh:14},grp:{n:"Grille de reprise (gainable)",h:225,f:"clim",w:50,hh:24},
  liai:{n:"Passage des liaisons",h:230,f:"clim"},cond:{n:"Évacuation des condensats",h:200,f:"clim"},cmd:{n:"Commande murale clim",h:150,f:"clim"}
 };
 /* Au plafond */
@@ -90,6 +91,7 @@ function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";const M=mods(e);
   case"ss":g=`<rect class="bx" x="${x-25}" y="${y-60}" width="50" height="120" rx="6"/>${[-48,-36,-24,-12,0,12,24,36,48].map(k=>`<line class="gl sep" x1="${x-19}" y1="${y+k}" x2="${x+19}" y2="${y+k}"/>`).join("")}`;break;
   case"split":g=`<rect class="bx cl" x="${x-45}" y="${y-15}" width="90" height="30" rx="7"/><line class="gl" x1="${x-36}" y1="${y+8}" x2="${x+36}" y2="${y+8}"/><line class="gl sep" x1="${x-36}" y1="${y+4}" x2="${x+36}" y2="${y+4}"/><circle class="clp" cx="${x+34}" cy="${y-6}" r="2"/>`;break;
   case"ge":g=`<rect class="bx cl ext" x="${x-40}" y="${y-30}" width="80" height="60" rx="6"/><rect class="gl" x="${x-32}" y="${y-22}" width="44" height="44" rx="5"/><circle class="gl" cx="${x-10}" cy="${y}" r="16"/><path class="gl" d="M${x-10} ${y-14}v28M${x-24} ${y}h28"/>${[-16,-8,0,8,16].map(k=>`<line class="gl sep" x1="${x+18}" y1="${y+k}" x2="${x+33}" y2="${y+k}"/>`).join("")}`;break;
+  case"gs":case"grp":{const w=T[e.t].w,hh=T[e.t].hh;g=`<rect class="bx cl" x="${x-w/2}" y="${y-hh/2}" width="${w}" height="${hh}" rx="4"/>${Array.from({length:Math.round(w/6)-1},(_,k)=>`<line class="gl sep" x1="${x-w/2+6*(k+1)}" y1="${y-hh/2+3}" x2="${x-w/2+6*(k+1)}" y2="${y+hh/2-3}"/>`).join("")}`;break}
   case"liai":g=`<rect class="bx cl" x="${x-9}" y="${y-9}" width="18" height="18" rx="4"/><circle class="clp" cx="${x-2.5}" cy="${y}" r="2.4"/><circle class="clp" cx="${x+3}" cy="${y}" r="1.6"/>`;break;
   case"cond":g=`<rect class="bx cl" x="${x-8}" y="${y-8}" width="16" height="16" rx="3.5"/><path class="gl" d="M${x} ${y-4.5} q4 5 0 8.5 q-4 -3.5 0 -8.5"/>`;break;
   case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-9}" width="18" height="18" rx="3.5"/><text class="tt" x="${x}" y="${y+3}" style="font-size:7px">°C</text>`;break;
@@ -97,8 +99,8 @@ function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";const M=mods(e);
  const k=(T[e.t]||{}).w?1:Math.max(1,fs/14),r=Math.max(20*k,((T[e.t]||{}).w||0)/2);
  return `<g class="sym st-${i<0?"ico":e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(r,(M?9*M.length:0)*k)}"/>${e.st==="faire"?(M&&M.length>1?`<rect class="halo" x="${x-(9*M.length+8)*k}" y="${y-17*k}" width="${2*(9*M.length+8)*k}" height="${34*k}" rx="${17*k}"/>`:`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`):""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
 /* Demi-largeur dessinée d'un élément (cm), pour qu'ils se collent sans se chevaucher */
-const HW={pc:9,pc2:18,pc3:27,pc4:36,p32:11,tv:9,rj:9,int:9,vv:9,app:9,iph:8,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,nour:14,cee:25,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
-const HH={cee:40,tab:40,rad:28,ss:60,split:15,ge:30};
+const HW={pc:9,pc2:18,pc3:27,pc4:36,p32:11,tv:9,rj:9,int:9,vv:9,app:9,iph:8,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,gs:20,grp:25,nour:14,cee:25,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
+const HH={gs:7,grp:12,cee:40,tab:40,rad:28,ss:60,split:15,ge:30};
 function hw(e,L){const t=typeof e==="string"?e:e.t,fs=Math.max(15,(L+160)/34),k=(T[t]||{}).w?1:Math.max(1,fs/14),M=typeof e==="string"?null:mods(e);return(M?9*M.length:(HW[t]||9))*k}
 const pill=(x,y,t,fs)=>{const w=t.length*fs*.58+fs*.9;return`<rect class="pill" x="${x-w/2}" y="${y-fs*.75}" width="${w}" height="${fs*1.5}" rx="${fs*.75}"/><text class="pillt" x="${x}" y="${y+fs*.32}" font-size="${fs*.85}">${t}</text>`};
 const dim=(x1,x2,y,t,fs)=>`<line class="cl" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line class="cl" x1="${x1}" y1="${y-fs*.4}" x2="${x1}" y2="${y+fs*.4}"/><line class="cl" x1="${x2}" y1="${y-fs*.4}" x2="${x2}" y2="${y+fs*.4}"/><text class="ck" x="${(x1+x2)/2}" y="${y-fs*.45}" font-size="${fs*.95}">${t}</text>`;
@@ -204,7 +206,7 @@ const RK="pk-regles";
 function RR(){const o={};RG.forEach(r=>o[r[0]]=r[2]);try{Object.assign(o,JSON.parse(localStorage.getItem(RK)||"{}"))}catch(e){}return o}
 function setRR(k,v){let o={};try{o=JSON.parse(localStorage.getItem(RK)||"{}")}catch(e){}if(v==null)delete o[k];else o[k]=v;try{localStorage.setItem(RK,JSON.stringify(o))}catch(e){}}
 /* hauteur par défaut d'un élément, d'après les règles */
-function hdef(t){const r=RR();return({pc:r.prise,pc2:r.prise,pc3:r.prise,pc4:r.prise,tv:r.rj,rj:r.rj,int:r.inter,vv:r.inter,p32:r.p32,cmd:r.cmd,split:H()-r.splitP-15,liai:H()-r.splitP-15})[t]??T[t].h}
+function hdef(t){const r=RR();return({gs:H()-20,grp:H()-25,pc:r.prise,pc2:r.prise,pc3:r.prise,pc4:r.prise,tv:r.rj,rj:r.rj,int:r.inter,vv:r.inter,p32:r.p32,cmd:r.cmd,split:H()-r.splitP-15,liai:H()-r.splitP-15})[t]??T[t].h}
 /* Type de pièce d'après son nom */
 function rtype(nom){const n=String(nom||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
  if(/cuisine/.test(n))return"cui";if(/bain|sdb|salle d.?eau|douche/.test(n))return"sdb";if(/\bwc\b|toilette/.test(n))return"wc";if(/chambre|parental/.test(n))return"ch";
@@ -333,6 +335,7 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .tiles.one{grid-template-columns:1fr}#fx .tiles.one svg.wide{width:min(100%,220px);height:64px}#fx .net{fill:none;stroke-linecap:round;pointer-events:none;opacity:.9}#fx .net.ex{opacity:.28}#fx .net.dash{stroke-dasharray:7 5}#fx .leg{display:flex;flex-wrap:wrap;gap:6px 12px;margin:8px 4px 0;font:700 12.5px var(--f)}#fx .leg span{display:flex;align-items:center;gap:5px}#fx .leg i{width:16px;height:4px;border-radius:2px}#fx .netb{display:inline-flex;align-items:center;gap:6px;margin-left:auto}#fx .netb svg{width:16px;height:16px}#fx .netb[aria-pressed="true"]{border-color:#B8924F!important;background:rgba(184,146,79,.14)!important;color:var(--fg)!important}
 #fx .tabsvg{display:block;width:100%;max-width:460px;margin:8px auto 10px}#fx .tabsvg .tf{fill:var(--surface);stroke:var(--line);stroke-width:1.2}#fx .tabsvg .tbd{fill:#1B2440}#fx .tabsvg .tdot{fill:#B8924F}#fx .tabsvg .ttl{font:800 11px var(--f);fill:#fff}#fx .tabsvg .rail{stroke:var(--line);stroke-width:5;stroke-linecap:round}#fx .tabsvg .g1{stop-color:#fff}#fx .tabsvg .g2{stop-color:#ECEEF3}#fx .tabsvg .dj .bd{fill:url(#tgm);stroke:#C9CDD8;stroke-width:1}#fx .tabsvg .dj .top{fill:#B8924F;opacity:.85}#fx .tabsvg .dj .lv{fill:#1B2440}#fx .tabsvg .dj .cal{font:800 8.5px var(--mono);text-anchor:middle;fill:#1B2440}#fx .tabsvg .id .bd{fill:#1B2440}#fx .tabsvg .id .lv{fill:#F2EEE4}#fx .tabsvg .id .cal{font:800 8.5px var(--mono);text-anchor:middle;fill:#F2EEE4}#fx .tabsvg .id .cal2{font:700 7px var(--f);text-anchor:middle;fill:#B8924F}#fx .tabsvg .nb{fill:none;stroke:#B8924F;stroke-width:1.4}#fx .tabsvg .nbt{font:800 8px var(--f);text-anchor:middle;fill:var(--fg)}#fx .clsvg .cz{font:800 9px var(--f);fill:var(--muted)}#fx .clsvg .mur{stroke:var(--fg);stroke-width:3;stroke-dasharray:2 4;stroke-linecap:round;opacity:.5}#fx .clsvg .ge rect{fill:var(--paper);stroke:#1B2440;stroke-width:1.6}#fx .clsvg .ge circle,#fx .clsvg .ge path,#fx .clsvg .ge line{fill:none;stroke:#1B2440;stroke-width:1.3}#fx .clsvg .kw{font:800 9.5px var(--mono);text-anchor:middle;fill:var(--fg)}#fx .clsvg .lg{fill:none;stroke:#1B2440;stroke-width:2.6;stroke-linejoin:round}#fx .clsvg .ll{fill:none;stroke:#B8924F;stroke-width:1.6;stroke-linejoin:round}#fx .clsvg .lt{font:700 7.5px var(--mono);text-anchor:end;fill:var(--muted)}#fx .clsvg .ui rect{fill:var(--paper);stroke:#1B2440;stroke-width:1.6}#fx .clsvg .ui .in{fill:none;stroke:var(--muted);stroke-width:1.2}#fx .clsvg .led{fill:#B8924F}#fx .clsvg .pln{fill:#1B2440}#fx .clsvg .gs{fill:none;stroke:#7048E8;stroke-width:5;opacity:.35;stroke-linecap:round}#fx .clsvg .bo rect{fill:var(--paper);stroke:#1B2440;stroke-width:1.4}#fx .clsvg .bo line{stroke:var(--fg);stroke-width:1}
 :root[data-theme="dark"] #fx .clsvg .ge rect,:root[data-theme="dark"] #fx .clsvg .ui rect,:root[data-theme="dark"] #fx .clsvg .bo rect{stroke:#F2EEE4}:root[data-theme="dark"] #fx .clsvg .ge circle,:root[data-theme="dark"] #fx .clsvg .ge path,:root[data-theme="dark"] #fx .clsvg .ge line,:root[data-theme="dark"] #fx .clsvg .lg{stroke:#F2EEE4}:root[data-theme="dark"] #fx .clsvg .pln{fill:#F2EEE4}
+#fx #fx-csvg{touch-action:none}#fx .pmur.ext{stroke-dasharray:none}#fx .csym polygon{fill:var(--surface);stroke:#2F7DE1;stroke-width:3}#fx .csym.ge polygon{stroke-dasharray:8 5}#fx .csym.gs polygon,#fx .csym.grp polygon{stroke:#7048E8}#fx .csym.on polygon{stroke:#B8924F;stroke-width:5}#fx .csym text{fill:var(--fg);font-weight:800;text-anchor:middle;pointer-events:none}#fx .csym .hit{fill:transparent;cursor:grab}#fx .stp{display:flex;align-items:center;gap:16px}#fx .stp b{font:800 22px var(--mono);min-width:28px;text-align:center}
 #fx .tabsvg .et{fill:var(--paper);stroke:var(--line);stroke-width:1}#fx .tabsvg .etid{font:800 8px var(--f);text-anchor:middle;fill:#1B2440}#fx .tabsvg .tst{fill:#B8924F}#fx .tabsvg .pc,#fx .tcirc .pc{fill:none;stroke:var(--fg);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}#fx .tabsvg .pc .f,#fx .tcirc .pc .f{fill:var(--fg);stroke:none}#fx .tcirc .pcs{width:16px;height:16px;flex:none}
 :root[data-theme="dark"] #fx .tabsvg .etid{fill:#F2EEE4}
 #fx .tabsvg .libre{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3;opacity:.45}
@@ -450,7 +453,7 @@ function calcHTML(){let r=null;try{r=PKRESEAUX.calc()}catch(e){}if(!r)return`<p 
   if(t.communication)h+=`<div class="muted" style="font-size:13px;margin:4px 2px">${esc(t.communication)}</div>`;
   h+=sec("Fils et câbles (m)",li(e.fils_m," m"))+sec("Gaines (m)",li(e.gaines_m," m"))+sec("Boîtes",li(e.boites))}
  if(F.includes("eau"))h+=sec("Alimentation (m)",li(r.plomberie.multicouche_m," m"))+sec("Évacuations (m)",li(r.plomberie.pvc_m," m"))+sec("Raccords et nourrices",li(r.plomberie.raccords));
- if(F.includes("clim"))h+=((r._cs||[]).length?`<h4>Climatisation</h4>`+r._cs.map(climSVG).join(""):"")+sec("Climatisation (m)",li(r.climatisation," m"))+sec("Raccords clim",li(r.climatisation_raccords||{}));
+ if(F.includes("clim"))h+=((r._cs||[]).length?`<h4>Climatisation</h4>`+r._cs.map(climSVG).join(""):"")+sec("Climatisation (m)",li(r.climatisation," m"))+sec("Fluide frigorigène",li(r.climatisation_fluide||{}))+sec("Raccords et fournitures clim",li(r.climatisation_raccords||{}));
  h+=`<details><summary>Comment c'est calculé</summary><ul class="hy">${r.hypotheses.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details><button class="bt go" data-a="calc" style="margin-top:10px">Fermer</button>`;return h}
 function mergeM(){const E=eqs(wall().s),a=E[V.merge.i],b=E[V.merge.j];if(!a||!b)return null;const[l,r]=a.x<=b.x?[a,b]:[b,a];return mods(l).concat(mods(r))}
 function mergeHTML(){const m=mergeM();if(!m){V.merge=null;return""}const n=m.length,allPc=m.every(t=>t==="pc");
@@ -497,17 +500,49 @@ function bb(rm){const xs=rm.pts.map(p=>p[0]*100),ys=rm.pts.map(p=>p[1]*100);retu
 
 /* Climatisation : une question à la fois, la suivante apparaît après la réponse. Aucun chiffre inventé. */
 const CLT=["Aucune","Réversible murale","Gainable","Cassette au plafond","Je ne sais pas"];
+/* Clim en vue du dessus (Cyril 17/11) : on choisit le modèle et le nombre de blocs ou de grilles, puis on touche le mur où les poser.
+   Ils se collent au mur (aimantés) et se glissent le long de ce mur ; la hauteur suit la règle (vue de face). */
+const CM=[["Réversible murale","Réversible (blocs muraux)"],["Gainable","Gainable (grilles)"],["Aucune","Pas de clim ici"]];
+function climCount(rm,t){return walls().reduce((a,w)=>a+(K().EQ.get(w.s.a)||[]).filter(x=>x.t===t).length,0)}
+function geCount(){const P=K();let n=0;P.ST.floors.forEach(f=>P.segs(f).forEach(sg=>{n+=(P.EQ.get(sg.a)||[]).filter(x=>x.t==="ge").length}));return n}
+function climTodo(){const rm=room(),c=rm.clim||{};if(c.type!=="Réversible murale"&&c.type!=="Gainable")return null;const n=Math.max(1,+c.n||1),gain=c.type==="Gainable",t=gain?"gs":"split",k=climCount(rm,t);
+ if(k<n)return{t,lab:(gain?"la grille de soufflage ":"le bloc ")+(k+1)+" sur "+n};if(gain&&!climCount(rm,"grp")&&!K().ST.floors.some(f=>f.rooms.some(r=>r!==rm&&(r.clim||{}).type==="Gainable"&&r.pts&&false)))return{t:"grp",lab:"la grille de reprise"};
+ if(!geCount())return{t:"ge",lab:"le groupe extérieur (sur un mur qui donne dehors)"};return null}
+function wPos(sg,xcm){const P=K(),la=leftIsA(sg),A=la?sg.a:sg.b,B=la?sg.b:sg.a,L=P.dist(A,B),u=[(B[0]-A[0])/L,(B[1]-A[1])/L],n=sg.kind==="mur"?P.inward(sg):[-u[1],u[0]];return{p:[A[0]+u[0]*xcm/100,A[1]+u[1]*xcm/100],u,n,L,A}}
+function svgClim(){const rm=room(),pts=rm.pts.map(p=>[p[0]*100,p[1]*100]),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)],w=b[2]-b[0],h=b[3]-b[1],M=Math.max(w,h),mg=M*.22,fs=M/24;
+ let s=`<svg id="fx-csvg" viewBox="${b[0]-mg} ${b[1]-mg} ${w+2*mg} ${h+2*mg}" font-size="${fs}" role="img" aria-label="Pièce vue du dessus"><polygon class="pfond" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+ walls().forEach((o,wi)=>{const a=o.s.a,c=o.s.b;s+=`<line class="pmur${o.s.kind==="mur"&&!o.s.sh?" ext":""}" x1="${a[0]*100}" y1="${a[1]*100}" x2="${c[0]*100}" y2="${c[1]*100}" stroke-width="${M/(o.s.kind==="mur"?60:110)}"/>`;
+  (K().EQ.get(o.s.a)||[]).forEach((e,i)=>{if(!["split","gs","grp","ge","cas"].includes(e.t))return;const q=wPos(o.s,e.x),Lw=(T[e.t].w||40),dp=e.t==="ge"?-50:e.t==="split"?20:10,u=q.u,n=q.n,P0=[q.p[0]*100-u[0]*Lw/2,q.p[1]*100-u[1]*Lw/2],P1=[q.p[0]*100+u[0]*Lw/2,q.p[1]*100+u[1]*Lw/2];
+   const off=k=>[n[0]*k,n[1]*k],o1=off(e.t==="ge"?-M/90:M/90),o2=off(dp+(e.t==="ge"?-M/90:M/90)),poly=[[P0[0]+o1[0],P0[1]+o1[1]],[P1[0]+o1[0],P1[1]+o1[1]],[P1[0]+o2[0],P1[1]+o2[1]],[P0[0]+o2[0],P0[1]+o2[1]]];
+   const cx=(poly[0][0]+poly[2][0])/2,cy=(poly[0][1]+poly[2][1])/2,sel=V.csel&&V.csel.a===o.s.a&&V.csel.i===i;
+   s+=`<g class="csym ${e.t}${sel?" on":""}" data-wa="${wi}" data-i="${i}"><polygon points="${poly.map(p=>p.join(",")).join(" ")}" stroke-linejoin="round"/><circle class="hit" cx="${cx}" cy="${cy}" r="${Math.max(M/14,Lw/2)}"/><text x="${cx}" y="${cy+fs*.35}" font-size="${fs*.8}">${e.t==="split"?"Clim":e.t==="gs"?"Souf.":e.t==="grp"?"Rep.":e.t==="ge"?"Groupe":""}</text></g>`})});
+ return s+"</svg>"}
 function climHTML(){const rm=room(),c=rm.clim||{},q=(k,lab,opts)=>`<div class="card"><p>${lab}</p><div class="qk2">${opts.map(v=>`<button data-cl="${k}" data-v="${esc(v)}" aria-pressed="${(c[k]||"")===v}">${esc(v)}</button>`).join("")}</div></div>`;
- let h=q("type","Quelle clim dans cette pièce ?",CLT);if(!c.type||c.type==="Aucune"||c.type==="Je ne sais pas")return h;
- const cnt=t=>walls().reduce((a,w)=>a+(K().EQ.get(w.s.a)||[]).filter(x=>x.t===t).length,0),cntP=t=>(rm.eqp||[]).filter(x=>x.t===t).length;
- if(c.type==="Réversible murale"){const n=cnt("split");h+=`<div class="card"><p>Unité intérieure</p>${n?`<div class="muted" style="margin-bottom:8px">✓ Placée sur le mur.</div>`:""}<button class="bt go big" data-a="putsplit">${n?"Voir sur le mur":"Placer sur un mur"}</button></div>`;if(!n)return h}
- if(c.type==="Gainable"){h+=q("ug","L'unité gainable sera dans…",["Les combles","Le faux plafond","Un placard technique","Je ne sais pas"]);if(!c.ug)return h;const s=cntP("souf"),r=cntP("rep");
-  h+=`<div class="card"><p>Bouches au plafond</p>${s+r?`<div class="muted" style="margin-bottom:8px">✓ ${s} de soufflage · ${r} de reprise</div>`:""}<button class="bt go big" data-a="putsouf">${s+r?"Voir au plafond":"Placer au plafond"}</button></div>`;if(!(s+r))return h}
- if(c.type==="Cassette au plafond"){const n=cntP("cas");h+=`<div class="card"><p>Cassette</p>${n?`<div class="muted" style="margin-bottom:8px">✓ Placée au plafond.</div>`:""}<button class="bt go big" data-a="putcas">${n?"Voir au plafond":"Placer au plafond"}</button></div>`;if(!n)return h}
- h+=q("ge","Groupe extérieur",["Au sol","Sur console au mur","Sur le toit","Déjà en place","Je ne sais pas"]);if(!c.ge)return h;
- h+=`<div class="card"><p>À relever sur place (facultatif)</p><div class="num"><label>Puissance <input data-cn="kw" inputmode="decimal" value="${esc(c.kw||"")}"> kW</label><label>Liaisons <input data-cn="liais" inputmode="decimal" value="${esc(c.liais||"")}"> m</label></div><div class="note">Vide = noté « à vérifier ».</div></div><div class="note" style="margin-top:10px">✓ C'est tout pour cette pièce.</div>`;try{const r=window.PKRESEAUX&&PKRESEAUX.calc();if(r&&r._cs&&r._cs.length)h+=`<div class="card calc" style="margin-top:12px"><p>Votre installation</p>${r._cs.map(climSVG).join("")}</div>`}catch(e){}
- return h}
-
+ let h=`<div class="card"><p>Quelle clim dans cette pièce ?</p><div class="qk2">${CM.map(([v,n])=>`<button data-cl="type" data-v="${esc(v)}" aria-pressed="${c.type===v}">${n}</button>`).join("")}</div></div>`;
+ if(c.type!=="Réversible murale"&&c.type!=="Gainable")return h;const gain=c.type==="Gainable",n=Math.max(1,+c.n||1);
+ h+=`<div class="card"><p>${gain?"Combien de grilles de soufflage ?":"Combien de blocs ?"}</p><div class="stp"><button class="rd" data-a="cn-" aria-label="Un de moins">−</button><b>${n}</b><button class="rd" data-a="cn+" aria-label="Un de plus">＋</button></div></div>`;
+ const td=climTodo();
+ h+=`<div class="grid2"><div><div class="elev">${svgClim()}</div><div class="cons"><i></i><span>${td?`<b>Touchez le mur où mettre ${esc(td.lab)}.</b>`:`<b>Tout est placé.</b> Glissez un bloc ou une grille le long de son mur pour l'ajuster ; la hauteur suit la règle (vue de face).`}</span></div>${V.csel?`<div class="bar0"><button class="bt del" data-a="cdel">Enlever</button><button class="bt" data-a="cface">Voir ce mur de face</button></div>`:""}</div><div>`;
+ if(gain)h+=q("ug","L'unité gainable sera dans…",["Les combles","Le faux plafond","Un placard technique","Je ne sais pas"]);
+ h+=q("ge","Groupe extérieur",["Au sol","Sur console au mur","Sur le toit","Déjà en place","Je ne sais pas"]);
+ h+=`<div class="card"><p>À relever sur place (facultatif)</p><div class="num"><label>Puissance <input data-cn="kw" inputmode="decimal" value="${esc(c.kw||"")}"> kW</label><label>Liaisons <input data-cn="liais" inputmode="decimal" value="${esc(c.liais||"")}"> m</label></div><div class="note">Vide = estimé par le calcul (100 W/m², à confirmer).</div></div>`;
+ try{const r=window.PKRESEAUX&&PKRESEAUX.calc();if(r&&r._cs&&r._cs.length)h+=`<div class="card calc" style="margin-top:12px"><p>Votre installation</p>${r._cs.map(climSVG).join("")}</div>`}catch(e){}
+ return h+`</div></div>`}
+/* toucher / glisser dans la vue du dessus */
+let CD=null;
+function nearWall(Pt,ext){let best=null;walls().forEach(o=>{if(ext&&(o.s.kind!=="mur"||o.s.sh))return;const a=[o.s.a[0]*100,o.s.a[1]*100],b=[o.s.b[0]*100,o.s.b[1]*100],dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy||1;let t=((Pt.x-a[0])*dx+(Pt.y-a[1])*dy)/L2;t=Math.max(0,Math.min(1,t));const d=Math.hypot(a[0]+dx*t-Pt.x,a[1]+dy*t-Pt.y);if(!best||d<best.d)best={o,d}});return best}
+function xOn(sg,Pt,e){const q=wPos(sg,0),L=q.L*100,v=((Pt.x-q.A[0]*100)*q.u[0]+(Pt.y-q.A[1]*100)*q.u[1]),hw2=(T[e.t].w||40)/2,lo=Math.min(L/2,RR().coin+hw2),hi=Math.max(L/2,L-RR().coin-hw2);return Math.round(Math.max(lo,Math.min(hi,R5(v))))}
+function cDown(ev){const svg=ev.target.closest("#fx-csvg");if(!svg)return false;const g=ev.target.closest(".csym"),Pt=svgPt(svg,ev);
+ if(g){const o=walls()[+g.dataset.wa];const E=K().EQ.get(o.s.a)||[],e=E[+g.dataset.i];if(!e)return true;V.csel={a:o.s.a,i:+g.dataset.i};CD={o,e,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(_){}ev.preventDefault();return true}
+ CD={tap:1,svg,id:ev.pointerId,x0:ev.clientX,y0:ev.clientY,Pt};return true}
+function cMove(ev){if(!CD||ev.pointerId!==CD.id||CD.tap)return;if(!CD.moved&&Math.hypot(ev.clientX-CD.x0,ev.clientY-CD.y0)<4)return;if(!CD.moved){CD.moved=true;snap()}const Pt=svgPt(CD.svg,ev);CD.e.x=xOn(CD.o.s,Pt,CD.e);
+ const el=$("fx").querySelector(".elev");el.innerHTML=svgClim();CD.svg=$("fx-csvg");try{CD.svg.setPointerCapture(CD.id)}catch(_){}const q=wPos(CD.o.s,CD.e.x);loupe(ev,{x:q.p[0]*100,y:q.p[1]*100,svg:CD.svg})}
+function cUp(ev){if(!CD||ev.pointerId!==CD.id)return;const D=CD;CD=null;loupe(null);
+ if(D.tap){if(Math.hypot(ev.clientX-D.x0,ev.clientY-D.y0)>10)return;const td=climTodo();if(!td){V.csel=null;return render()}
+  const nw=nearWall(D.Pt,td.t==="ge");if(!nw){toast("Le groupe extérieur va sur un mur qui donne dehors");return}snap();const e={t:td.t,n:T[td.t].n,x:0,h:Math.min(H()-10,td.t==="split"?H()-RR().splitP-15:hdef(td.t)),st:"faire",auto:0};e.x=xOn(nw.o.s,D.Pt,e);
+  let L=K().EQ.get(nw.o.s.a);if(!L){L=[];K().EQ.set(nw.o.s.a,L)}L.push(e);if(td.t==="split"){L.push({t:"liai",n:"Passage des liaisons",x:Math.max(5,e.x+55),h:e.h,st:"faire",auto:1});L.push({t:"cond",n:"Évacuation des condensats",x:Math.max(5,e.x-55),h:e.h-30,st:"faire",auto:1})}
+  V.csel=null;save();render();toast("Posé. Glissez-le le long du mur pour l'ajuster.");return}
+ save();render()}
 /* ---------- Actions ---------- */
 function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.contains("pick")){V.pick=null;return render()}const b=ev.target.closest("button,[data-w]");if(!b||!V)return;const d=b.dataset,P=K();
  if(d.st){const i=+d.i,it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(!it)return;snap();if(d.st==="non"){if(V.tab==="mur")eqs(wall().s).splice(i,1);else room().eqp.splice(i,1);V.sel=-1}else it.st=it.st===d.st?undefined:d.st;save();return render()}
@@ -526,6 +561,10 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
  if(a==="mergeok"&&V.merge){const E=eqs(wall().s),A=E[V.merge.i],B=E[V.merge.j],m=mergeM();if(A&&B&&m){snap();const na=mods(A).length,nb=mods(B).length,k=PC.indexOf(d.t);while(k>=0&&m.length<k+1)m.push("pc");B.x=Math.round((A.x*na+B.x*nb)/(na+nb));setMods(B,m);if(A.st==="faire")B.st="faire";E.splice(V.merge.i,1);V.sel=E.indexOf(B)}V.merge=null;save();render();toast(V.sel>=0?eqs(wall().s)[V.sel].n:"Une seule plaque");return}
  if(a==="askx"){V.ask=false;return render()}
  if(a==="allfaire"){snap();const L=V.tab==="mur"?(K().EQ.get(wall().s.a)||[]):(room().eqp||[]),all=L.filter(e=>vis(e.t)).every(e=>e.st==="faire");L.forEach(e=>{if(vis(e.t))e.st=all?undefined:"faire"});save();render();toast(all?"Tout remis « déjà en place »":"Tout est à faire ici");return}
+ if(a==="cn+"||a==="cn-"){const rm=room();snap();rm.clim={...(rm.clim||{})};const gain=rm.clim.type==="Gainable",t=gain?"gs":"split";let n=Math.max(1,+rm.clim.n||1)+(a==="cn+"?1:-1);n=Math.max(1,Math.min(8,n));rm.clim.n=n;
+  while(climCount(rm,t)>n){const w=walls().slice().reverse().find(w=>(K().EQ.get(w.s.a)||[]).some(x=>x.t===t));if(!w)break;const L=K().EQ.get(w.s.a);const k=L.map(x=>x.t).lastIndexOf(t);L.splice(k,1);if(t==="split"){["liai","cond"].forEach(z=>{const j=L.findIndex(x=>x.t===z&&x.auto);if(j>=0)L.splice(j,1)})}}save();return render()}
+ if(a==="cdel"&&V.csel){snap();const L=K().EQ.get(V.csel.a)||[],e=L[V.csel.i];if(e){L.splice(V.csel.i,1);if(e.t==="split")["liai","cond"].forEach(z=>{const j=L.findIndex(x=>x.t===z&&x.auto);if(j>=0)L.splice(j,1)})}V.csel=null;save();return render()}
+ if(a==="cface"&&V.csel){const k=walls().findIndex(w=>w.s.a===V.csel.a);V.tab="mur";V.wi=Math.max(0,k);V.sel=-1;V.csel=null;return render()}
  if(a==="mq"){PKRESEAUX.setMarque(d.v||"");return render()}
  if(a==="net"){V.net=!V.net;return render()}
  if(a==="calc"){V.calc=!V.calc;render();if(V.calc)setTimeout(()=>{const c=$("fx").querySelector(".calc");c&&c.scrollIntoView({behavior:"smooth",block:"start"})},30);return}
@@ -567,20 +606,20 @@ function onChange(ev){const i=ev.target;if(!V)return;
  save();render()}
 
 /* Loupe au-dessus du doigt pendant le glissement (le doigt cache ce qu'on touche) */
-function loupe(ev,c){let d=$("fx-loupe");if(!ev){if(d)d.hidden=true;return}if(ev.pointerType==="mouse")return;const svg=DR&&DR.svg;if(!svg)return;
+function loupe(ev,c){let d=$("fx-loupe");if(!ev){if(d)d.hidden=true;return}if(ev.pointerType==="mouse")return;const svg=(c&&c.svg)||(DR&&DR.svg);if(!svg)return;
  if(!d){d=document.createElement("div");d.id="fx-loupe";d.innerHTML='<svg></svg><i></i>';$("fx").appendChild(d)}const S=92,Z=2,vb=svg.viewBox.baseVal,sc=vb.width/svg.getBoundingClientRect().width,w=S*sc/Z;
  const ls=d.querySelector("svg");ls.setAttribute("viewBox",`${c.x-w/2} ${c.y-w/2} ${w} ${w}`);ls.setAttribute("font-size",svg.getAttribute("font-size")||"");ls.innerHTML=svg.innerHTML;
  let top=ev.clientY-S-26;if(top<8)top=ev.clientY+30;d.style.left=Math.max(8,Math.min(innerWidth-S-8,ev.clientX-S/2))+"px";d.style.top=top+"px";d.hidden=false}
 /* Doigt : sur un élément = le glisser (pas de 5 cm) ; sur le mur vide = toucher pour poser, glisser à gauche/droite = mur suivant. */
 let DR=null,BG=null;
 function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
-function onDown(ev){if(!V||ev.target.closest(".pick"))return;const g=ev.target.closest(".sym");if(!g){const svg=ev.target.closest("#fx-esvg,#fx-psvg");BG=svg?{svg,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId}:null;return}const svg=g.ownerSVGElement;const i=+g.dataset.i;V.sel=i;DR={i,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault();svg.querySelectorAll(".sym").forEach(s=>s.classList.toggle("on",+s.dataset.i===i))}
-function onMove(ev){if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
+function onDown(ev){if(!V||ev.target.closest(".pick"))return;if(V.tab==="clim"&&cDown(ev))return;const g=ev.target.closest(".sym");if(!g){const svg=ev.target.closest("#fx-esvg,#fx-psvg");BG=svg?{svg,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId}:null;return}const svg=g.ownerSVGElement;const i=+g.dataset.i;V.sel=i;DR={i,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault();svg.querySelectorAll(".sym").forEach(s=>s.classList.toggle("on",+s.dataset.i===i))}
+function onMove(ev){if(CD)return cMove(ev);if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
  if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);const r=RR(),E=eqs(w.s),a=hw(e,L),lo=Math.max(r.coin,a),hi=L-Math.max(r.coin,a);let x=Math.max(lo,Math.min(hi,R5(Pt.x)));
   /* collé à l'élément voisin, jamais l'un sur l'autre (Cyril 17/11) */for(let n=0;n<3;n++)E.forEach((o,j)=>{if(j===DR.i||Math.abs(o.h-e.h)>=Math.max(18,(HH[o.t]||8)+(HH[e.t]||8)))return;const d=a+hw(o,L);if(Math.abs(x-o.x)<d)x=x>=o.x?o.x+d:o.x-d});
   e.x=Math.round(Math.max(lo,Math.min(hi,x)));/* hauteur fixée par la règle : on glisse seulement à l'horizontale (Cyril) */const el=$("fx").querySelector(".elev");el.innerHTML=svgMur();DR.svg=$("fx-esvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x,y:H()-e.h})}
  else{const rm=room(),e=rm.eqp[DR.i],b=bb(rm);e.x=Math.max(b[0],Math.min(b[2],b[0]+R5(Pt.x-b[0])))/100;e.y=Math.max(b[1],Math.min(b[3],b[1]+R5(Pt.y-b[1])))/100;const el=$("fx").querySelector(".elev");el.innerHTML=svgPlaf();DR.svg=$("fx-psvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x*100,y:e.y*100})}}
-function onUp(ev){loupe(null);if(DR&&DR.moved&&V.tab==="mur"){const w=wall(),E=eqs(w.s),e=E[DR.i],L=Math.round(K().dist(w.s.a,w.s.b)*100);if(e&&mods(e)){const j=E.findIndex((o,j)=>j!==DR.i&&mods(o)&&Math.abs(o.h-e.h)<10&&Math.abs(o.x-e.x)<=hw(o,L)+hw(e,L)+1);if(j>=0&&mods(e).length+mods(E[j]).length<=4)V.merge={i:DR.i,j}}}
+function onUp(ev){if(CD)return cUp(ev);loupe(null);if(DR&&DR.moved&&V.tab==="mur"){const w=wall(),E=eqs(w.s),e=E[DR.i],L=Math.round(K().dist(w.s.a,w.s.b)*100);if(e&&mods(e)){const j=E.findIndex((o,j)=>j!==DR.i&&mods(o)&&Math.abs(o.h-e.h)<10&&Math.abs(o.x-e.x)<=hw(o,L)+hw(e,L)+1);if(j>=0&&mods(e).length+mods(E[j]).length<=4)V.merge={i:DR.i,j}}}
  if(DR){const m=DR.moved,i=DR.i;DR=null;if(!m){/* un toucher = à faire / déjà en place (Cyril 17/11) */const it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(it){snap();it.st=it.st==="faire"?undefined:"faire"}V.sel=i}save();render();return}
  if(!BG||ev.pointerId!==BG.id)return;const B=BG;BG=null;const dx=ev.clientX-B.x0,dy=ev.clientY-B.y0;
  if(V.tab==="mur"&&Math.abs(dx)>60&&Math.abs(dx)>2*Math.abs(dy))return go(dx<0?1:-1);

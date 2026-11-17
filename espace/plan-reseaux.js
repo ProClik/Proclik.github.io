@@ -21,7 +21,10 @@ const N={
  wm2:100,       /* usage : 100 W de froid par m² (hauteur 2,50 m) pour un premier dimensionnement, à confirmer par un bilan thermique */
  geH:.5,        /* usage : groupe extérieur posé à 50 cm du sol (console ou support) */
  trav:.3,       /* usage : traversée de mur */
- prech:5        /* usage : longueur souvent préchargée en usine (5 à 7,5 m selon la notice) */
+ prech:7.5,     /* usage : longueur couverte par la charge d'usine, souvent 5 à 7,5 m (parfois 15 m) : lire la plaque de l'appareil */
+ gpm:20,        /* notices R32 (ex. Atlantic Takao M2) : 20 g de R32 par mètre au-delà, liaison liquide 1/4" */
+ lmax:20,       /* notices : 15 à 25 m maxi selon le modèle ; 20 m retenu pour l'alerte */
+ dzmax:5        /* notices : dénivelé souvent limité à 5 m sur les petits modèles (jusqu'à 15 m sur certains) */
 };
 /* Marque de l'électricien (Cyril 17/11) : il choisit son fournisseur habituel ; « Autre » = sans marque */
 const MQ={schneider:{n:"Schneider Electric",coffret:"Resi9 13 modules",app:"Odace"},legrand:{n:"Legrand",coffret:"Drivia 13 modules",app:"Dooxie"},hager:{n:"Hager",coffret:"Gamma 13 modules",app:"Essensya"}};
@@ -62,10 +65,10 @@ function climSys(pts){const P=K(),sys=[],rooms=[];let z=0;
  if(!rooms.length)return sys;
  const ge=pts.find(p=>p.e.t==="ge"),hop=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y)+Math.abs(zab(a)-zab(b));
  const ind=rooms.filter(r=>r.c.type!=="Gainable");
- if(ind.length){const un=ind.map(r=>{const p=pts.find(q=>(q.e.t==="split"||q.e.t==="cas")&&q.rm===r.rm);const kw=r.kw||up(KW,r.need);
+ if(ind.length){const un=ind.flatMap(r=>{const Q=pts.filter(q=>(q.e.t==="split"||q.e.t==="cas")&&q.rm===r.rm),Ps=Q.length?Q:[null],nb=Ps.length;return Ps.map((p,ix)=>{const kw=r.kw?r.kw/nb:up(KW,r.need/nb);
    let L=null,est=false;if(p&&ge)L=hop(p,ge)+N.trav;else if(p){const li=pts.find(q=>q.e.t==="liai"&&q.rm===r.rm)||p;L=Math.abs(p.x-li.x)+Math.abs(p.y-li.y)+Math.max(0,zab(p)-N.geH)+N.trav;est=true}
    const lr=parseFloat(String(r.c.liais||"").replace(",","."));if(lr>0){L=lr;est=false}
-   return{piece:r.rm.nom,rm:r.rm,kw,besoin:r1(r.need),p,L,est,d:liD(kw),cas:r.c.type==="Cassette au plafond",sup:r.c.ge||""}});
+   return{piece:r.rm.nom+(nb>1?" ("+(ix+1)+"/"+nb+")":""),rm:r.rm,kw,besoin:r1(r.need/nb),p,L,est,d:liD(kw),cas:r.c.type==="Cassette au plafond"||(p&&p.e.t==="cas"),sup:r.c.ge||""}})});
   const tot=un.reduce((a,u)=>a+u.kw,0),multi=un.length>1,gkw=multi?up(KWM,tot):un[0].kw;
   sys.push({type:multi?"multi":"mono",titre:"Clim réversible · "+(multi?"multi-split "+un.length+" unités":"mono-split"),groupe:{kw:gkw,p:ge,sup:un[0].sup},unites:un})}
  const gr=rooms.filter(r=>r.c.type==="Gainable");
@@ -162,21 +165,30 @@ function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[
  if(evs.length)hyp.push("Évacuations : diamètres DTU (WC Ø100, lavabo/bidet Ø32, douche, baignoire, évier, lave-linge Ø40), pente de 2 cm par mètre (DTU 60.11 : entre 1 et 3 cm par mètre) vers la chute, branchée au WC, tuyaux le long des murs ; raccords à coller : 2 coudes par branchement (+1 s'il tourne), 1 manchon par barre de 4 m, 1 collier tous les 80 cm (estimation).");
  if(eau.length)hyp.push("Alimentation : multicouche 16 × 2 en pieuvre (une ligne par point d'eau froide ou chaude), passée dans les murs à l'horizontale, montée ou descente seulement là où il faut ; coudes à sertir : 1 au point d'eau, 1 par angle, 2 par changement de hauteur ; marge "+Math.round(N.marge*100)+" %.");
  /* ---- Clim ---- */
- const clim={},cr={},ad=(o,k,v)=>{o[k]=(o[k]||0)+v};
+ const clim={},cr={},fl={},ad=(o,k,v)=>{o[k]=(o[k]||0)+v};
  CS.forEach(S=>{const sup=/console/i.test(S.groupe.sup)?"Console murale du groupe extérieur":/toit/i.test(S.groupe.sup)?"Support toiture du groupe extérieur":"Support sol du groupe extérieur";
   if(!/Déjà/.test(S.groupe.sup)){ad(cr,sup,1);ad(cr,"Plots antivibratiles",4)}
-  const lia=(L,d)=>{if(L==null)return;const l=L*(1+N.marge);ad(clim,"Liaisons cuivre isolé "+d[0]+" + "+d[1],l);ad(clim,"Câble d'interconnexion 4G1,5",l);ad(cr,"Écrou flare "+d[0],2);ad(cr,"Écrou flare "+d[1],2);if(L>N.prech)S.charge=1};
-  if(S.unites)S.unites.forEach(u=>{lia(u.L,u.d);if(u.L!=null){ad(clim,"Tube de condensats Ø16",u.L*(1+N.marge));ad(clim,"Goulotte / cache-liaisons",u.L*(1+N.marge))}ad(cr,"Fourreau de traversée de mur",1);ad(cr,"Raccord de condensats + coude",1);if(u.p)hops.push({k:"clim",a:u.p,b:S.groupe.p||u.p,L:u.L||0});
+  const lia=(L,d,dz,nom)=>{if(L==null)return;const l=L*(1+N.marge);
+   if(d[0]==="1/4\""){const g=Math.max(0,Math.ceil((L-N.prech)*N.gpm));ad(fl,"Charge complémentaire R32 (g)",g);if(g)S.chg=(S.chg||0)+g}else S.chgNotice=1;
+   ad(cr,"Isolant de raccord (manchon, liaisons gaz + liquide)",2);ad(cr,"Huile frigorifique compatible R32 pour les flares (flacon)",0);
+   if(L>N.lmax)hyp.push("⚠ "+nom+" : "+String(r1(L)).replace(".",",")+" m de liaisons, au-delà des "+N.lmax+" m courants : vérifier la longueur maxi dans la notice.");
+   if(dz>N.dzmax)hyp.push("⚠ "+nom+" : "+String(r1(dz)).replace(".",",")+" m de dénivelé entre groupe et unité : vérifier le maxi de la notice (souvent 5 à 15 m).");ad(clim,"Liaisons cuivre isolé "+d[0]+" + "+d[1],l);ad(clim,"Câble d'interconnexion 4G1,5",l);ad(cr,"Écrou flare "+d[0],2);ad(cr,"Écrou flare "+d[1],2);if(L>N.prech)S.charge=1};
+  if(S.unites)S.unites.forEach(u=>{lia(u.L,u.d,u.p&&S.groupe.p?Math.abs(zab(u.p)-zab(S.groupe.p)):u.p?Math.max(0,zab(u.p)-N.geH):0,"Clim "+u.piece);if(u.L!=null){ad(clim,"Tube de condensats Ø16",u.L*(1+N.marge));ad(clim,"Goulotte / cache-liaisons",u.L*(1+N.marge))}ad(cr,"Fourreau de traversée de mur",1);ad(cr,"Raccord de condensats + coude",1);if(u.p)hops.push({k:"clim",a:u.p,b:S.groupe.p||u.p,L:u.L||0});
    if(u.L==null)hyp.push("Clim "+u.piece+" : placez l'unité et le passage des liaisons pour calculer les longueurs.");else if(u.est)hyp.push("Clim "+u.piece+" : groupe extérieur supposé dehors, juste derrière le passage des liaisons, à "+N.geH*100+" cm du sol.")});
-  if(S.unite){const u=S.unite;lia(u.L,u.d);ad(cr,"Fourreau de traversée de mur",1);ad(cr,"Unité intérieure gainable "+String(u.kw).replace(".",",")+" kW",1);ad(cr,"Plénum de soufflage "+S.bouches.length+" piquage"+(S.bouches.length>1?"s":""),1);ad(cr,"Plénum de reprise",1);ad(cr,"Grille de reprise",1);ad(cr,"Thermostat / commande filaire",1);ad(cr,"Évacuation des condensats (vers l'eau usée)",1);
+  if(S.unite){const u=S.unite;lia(u.L,u.d,S.groupe.p?Math.abs(zab(u.U)-zab(S.groupe.p)):0,"Clim gainable");ad(cr,"Fourreau de traversée de mur",1);ad(cr,"Unité intérieure gainable "+String(u.kw).replace(".",",")+" kW",1);ad(cr,"Plénum de soufflage "+S.bouches.length+" piquage"+(S.bouches.length>1?"s":""),1);ad(cr,"Plénum de reprise",1);ad(cr,"Grille de reprise",1);ad(cr,"Thermostat / commande filaire",1);ad(cr,"Évacuation des condensats (vers l'eau usée)",1);
    S.bouches.forEach(b=>{ad(clim,"Gaine souple isolée Ø"+b.d,b.L*(1+N.marge));ad(cr,"Bouche de soufflage Ø"+b.d,1);ad(cr,"Collier de serrage Ø"+b.d,2)});ad(cr,"Adhésif aluminium (rouleau)",1);
    if(u.L==null)hyp.push("Clim gainable : placez le groupe extérieur pour calculer les liaisons (sinon à mesurer).");if(u.U.est)hyp.push("Clim gainable : unité supposée au-dessus de "+S.bouches[0].piece+" ("+(u.ou||"combles ou faux plafond")+") ; posez la grille de reprise pour la placer.");
    hyp.push("Gainable : gaines souples isolées Ø160 jusqu'à 2 kW par bouche, Ø200 jusqu'à 3,5 kW, Ø250 au-delà (usage) ; + 50 cm par raccord au plénum ; pompe de relevage à prévoir si les condensats ne peuvent pas descendre en pente.")}
-  if(S.charge)hyp.push(S.titre+" : liaisons au-delà de la longueur préchargée (souvent 5 à 7,5 m, voir la notice) : prévoir une charge complémentaire de fluide.")});
+  ad(cr,"Interrupteur-sectionneur près du groupe extérieur (selon la notice)",1);ad(cr,"Mousse / mastic de rebouchage de la traversée",1);
+  if(S.chg)hyp.push(S.titre+" : charge complémentaire estimée à "+S.chg+" g de R32 ("+N.gpm+" g par mètre au-delà de "+String(N.prech).replace(".",",")+" m) ; la valeur exacte est sur la plaque de l'appareil. Charge à la balance, par un professionnel titulaire de l'attestation de capacité, avec fiche d'intervention.");
+  if(S.type==="multi")hyp.push(S.titre+" : sur un multi-split, la longueur couverte par la charge d'usine s'entend souvent pour l'ensemble des liaisons : vérifier la notice du groupe.");
+  if(S.chgNotice)hyp.push(S.titre+" : liaison liquide 3/8\" (gros modèle) : charge complémentaire à lire sur la plaque de l'appareil.")});
+ if(CS.length){ad(cr,"Azote pour l'essai de pression (selon la notice)",1);ad(cr,"Fiche d'intervention fluide (Cerfa 15497)",CS.length);
+  hyp.push("Mise en service clim : traversée de mur (Ø65 mm courant), flares serrés au couple, essai à l'azote et recherche de fuite, tirage au vide (sous 500 microns, ou selon la notice), charge à la balance, condensats en pente d'au moins 1 cm par mètre, contrôle d'étanchéité périodique obligatoire à partir de 5 t éq. CO2 (environ 7,4 kg de R32).")}
  if(CS.length)hyp.push("Clim : puissance estimée à "+N.wm2+" W par m² (pour 2,50 m sous plafond), arrondie au modèle courant ; à confirmer par un bilan thermique. Liaisons : 1/4\" + 3/8\" jusqu'à 3,5 kW, 1/4\" + 1/2\" jusqu'à 5 kW, 3/8\" + 5/8\" au-delà (selon la notice).");
  const R=o=>{const r={};Object.keys(o).forEach(k=>{if(o[k])r[k]=r1(o[k])});return r};
  const cour=o=>{const r={};Object.keys(o).forEach(k=>{if(/^(1\.5|2\.5) mm²/.test(k))r[k]=Math.ceil(o[k]/100)});return r};
- return{version:"2026-11-17",electricite:{tableau,fils_m:R(fil),fils_couronnes_100m:cour(fil),gaines_m:R(gaine),boites:boite},plomberie:{multicouche_m:R(mc),pvc_m:R(pvc),raccords:rac},climatisation:R(clim),climatisation_raccords:cr,climatisation_systemes:CS.map(S=>({titre:S.titre,type:S.type,groupe_kW:S.groupe.kw,support:S.groupe.sup||null,...(S.unites?{unites:S.unites.map(u=>({piece:u.piece,puissance_kW:u.kw,besoin_kW:u.besoin,liaisons:u.d.join(" + "),longueur_m:u.L==null?null:r1(u.L),estimee:!!u.est,cassette:u.cas}))}:{}),...(S.unite?{unite:{puissance_kW:S.unite.kw,emplacement:S.unite.ou,liaisons:S.unite.d.join(" + "),longueur_m:S.unite.L==null?null:r1(S.unite.L)},bouches:S.bouches.map(b=>({piece:b.piece,diametre:b.d,longueur_m:r1(b.L)}))}:{})})),_cs:CS,hypotheses:hyp,_hops:hops,_tab:tab,_nour:nour}}
+ return{version:"2026-11-17",electricite:{tableau,fils_m:R(fil),fils_couronnes_100m:cour(fil),gaines_m:R(gaine),boites:boite},plomberie:{multicouche_m:R(mc),pvc_m:R(pvc),raccords:rac},climatisation:R(clim),climatisation_raccords:Object.fromEntries(Object.entries(cr).filter(([k,v])=>v||/Huile/.test(k)).map(([k,v])=>[k,v||1])),climatisation_fluide:fl,climatisation_systemes:CS.map(S=>({titre:S.titre,type:S.type,groupe_kW:S.groupe.kw,support:S.groupe.sup||null,...(S.unites?{unites:S.unites.map(u=>({piece:u.piece,puissance_kW:u.kw,besoin_kW:u.besoin,liaisons:u.d.join(" + "),longueur_m:u.L==null?null:r1(u.L),estimee:!!u.est,cassette:u.cas}))}:{}),...(S.unite?{unite:{puissance_kW:S.unite.kw,emplacement:S.unite.ou,liaisons:S.unite.d.join(" + "),longueur_m:S.unite.L==null?null:r1(S.unite.L)},bouches:S.bouches.map(b=>({piece:b.piece,diametre:b.d,longueur_m:r1(b.L)}))}:{})})),_cs:CS,hypotheses:hyp,_hops:hops,_tab:tab,_nour:nour}}
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
 /* Résultat pour l'export (sans les objets internes) */
 function exporter(){const r=calc();if(!r)return null;const o={...r};delete o._hops;delete o._cs;delete o._tab;delete o._nour;return o}
