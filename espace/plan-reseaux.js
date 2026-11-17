@@ -17,7 +17,11 @@ const N={
  marge:.10,     /* usage : 10 % de marge sur les longueurs */
  lov:.3,        /* usage : 30 cm de réserve de fil dans chaque boîte */
  plancher:.2,   /* usage : épaisseur de plancher entre deux niveaux, en m */
- pente:.02      /* norme DTU 60.11 : pente des évacuations entre 1 et 3 cm par mètre ; 2 cm/m retenu */
+ pente:.02,     /* norme DTU 60.11 : pente des évacuations entre 1 et 3 cm par mètre ; 2 cm/m retenu */
+ wm2:100,       /* usage : 100 W de froid par m² (hauteur 2,50 m) pour un premier dimensionnement, à confirmer par un bilan thermique */
+ geH:.5,        /* usage : groupe extérieur posé à 50 cm du sol (console ou support) */
+ trav:.3,       /* usage : traversée de mur */
+ prech:5        /* usage : longueur souvent préchargée en usine (5 à 7,5 m selon la notice) */
 };
 /* Marque de l'électricien (Cyril 17/11) : il choisit son fournisseur habituel ; « Autre » = sans marque */
 const MQ={schneider:{n:"Schneider Electric",coffret:"Resi9 13 modules",app:"Odace"},legrand:{n:"Legrand",coffret:"Drivia 13 modules",app:"Dooxie"},hager:{n:"Hager",coffret:"Gamma 13 modules",app:"Essensya"}};
@@ -47,6 +51,31 @@ function chaine(dep,L,hop){const rest=L.slice(),seq=[];let cur=dep;while(rest.le
 const nm=e=>String(e.n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const faire=p=>p.e.st==="faire";
 
+/* ---------- Clim : réversible (mono ou multi-split, cassette) et gainable ---------- */
+const KW=[2,2.5,3.5,5,7],KWM=[4,5,6,7,8,10],KWG=[3.5,5,7,10,12.5,14];
+const up=(L,v)=>L.find(x=>x>=v-1e-9)||L[L.length-1];
+const liD=kw=>kw<=3.5?["1/4\"","3/8\""]:kw<=5?["1/4\"","1/2\""]:["3/8\"","5/8\""];
+const dGaine=kw=>kw<=2?160:kw<=3.5?200:250;
+function bbx(p){const xs=p.map(q=>q[0]),ys=p.map(q=>q[1]);return[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]}
+function climSys(pts){const P=K(),sys=[],rooms=[];let z=0;
+ P.ST.floors.forEach((f,fi)=>{const H=f.H||2.5,zf=z;z+=H+N.plancher;f.rooms.forEach(rm=>{const c=rm.clim;if(!c||!c.type||/Aucune|Je ne sais/.test(c.type))return;const m2=Math.abs(area(rm.pts));rooms.push({rm,f,fi,zf,H,c,m2,need:m2*N.wm2/1000*(H/2.5),kw:parseFloat(String(c.kw||"").replace(",","."))||0})})});
+ if(!rooms.length)return sys;
+ const ge=pts.find(p=>p.e.t==="ge"),hop=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y)+Math.abs(zab(a)-zab(b));
+ const ind=rooms.filter(r=>r.c.type!=="Gainable");
+ if(ind.length){const un=ind.map(r=>{const p=pts.find(q=>(q.e.t==="split"||q.e.t==="cas")&&q.rm===r.rm);const kw=r.kw||up(KW,r.need);
+   let L=null,est=false;if(p&&ge)L=hop(p,ge)+N.trav;else if(p){const li=pts.find(q=>q.e.t==="liai"&&q.rm===r.rm)||p;L=Math.abs(p.x-li.x)+Math.abs(p.y-li.y)+Math.max(0,zab(p)-N.geH)+N.trav;est=true}
+   const lr=parseFloat(String(r.c.liais||"").replace(",","."));if(lr>0){L=lr;est=false}
+   return{piece:r.rm.nom,rm:r.rm,kw,besoin:r1(r.need),p,L,est,d:liD(kw),cas:r.c.type==="Cassette au plafond",sup:r.c.ge||""}});
+  const tot=un.reduce((a,u)=>a+u.kw,0),multi=un.length>1,gkw=multi?up(KWM,tot):un[0].kw;
+  sys.push({type:multi?"multi":"mono",titre:"Clim réversible · "+(multi?"multi-split "+un.length+" unités":"mono-split"),groupe:{kw:gkw,p:ge,sup:un[0].sup},unites:un})}
+ const gr=rooms.filter(r=>r.c.type==="Gainable");
+ if(gr.length){const tot=gr.reduce((a,r)=>a+(r.kw||r.need),0),kw=up(KWG,tot),r0=gr[0];
+  const rep=pts.find(p=>p.e.t==="rep");let U;if(rep)U={...rep};else{const b=bbx(r0.rm.pts);U={x:(b[0]+b[2])/2,y:(b[1]+b[3])/2,zf:r0.zf,H:r0.H,h:r0.H,fi:r0.fi,rm:r0.rm,est:1}}
+  const bou=[];gr.forEach(r=>{const S=pts.filter(p=>p.e.t==="souf"&&p.rm===r.rm),rk=(r.kw||r.need);if(S.length)S.forEach(p=>bou.push({piece:r.rm.nom,p,kw:rk/S.length}));else{const b=bbx(r.rm.pts);bou.push({piece:r.rm.nom,p:{x:(b[0]+b[2])/2,y:(b[1]+b[3])/2,zf:r.zf,H:r.H,h:r.H,fi:r.fi},kw:rk,est:1})}});
+  bou.forEach(b=>{b.L=Math.abs(b.p.x-U.x)+Math.abs(b.p.y-U.y)+Math.abs(zab(b.p)-zab(U))+.5;b.d=dGaine(b.kw)});
+  let L=null;if(ge)L=hop(U,ge)+N.trav;const lr=parseFloat(String(r0.c.liais||"").replace(",","."));if(lr>0)L=lr;
+  sys.push({type:"gainable",titre:"Clim gainable · "+bou.length+" bouche"+(bou.length>1?"s":""),groupe:{kw,p:ge,sup:r0.c.ge||""},unite:{kw,ou:r0.c.ug||"",U,L,d:liD(kw)},bouches:bou,reprise:!!rep})}
+ return sys}
 function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[],T=F.T;
  const mods=F.mods,rtype=F.rtype,surf=P.ST.floors.reduce((a,f)=>a+(f.comb?0:f.rooms.reduce((s,rm)=>s+Math.abs(area(rm.pts)),0)),0);
  /* Tableau : celui posé sur le plan, sinon estimé dans l'entrée (ou la 1re pièce) du rez-de-chaussée */
@@ -64,7 +93,6 @@ function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[
  pts.forEach(p=>{const m=p.w&&mods(p.e);const t=p.e.t,n=nm(p.e);
   if(t==="p32")return spe.push({p,n:"Plaque de cuisson",sec:6,dj:"32 A",A:1,gaine:25});
   if(t==="cee")return spe.push({p,n:"Chauffe-eau",sec:2.5,dj:"20 A",hc:1,gaine:20});
-  if(t==="split")return spe.push({p,n:"Climatisation",sec:2.5,dj:"20 A",gaine:20,note:"selon la notice de l'appareil"});
   if(!m||!m.includes("pc"))return;
   if(t==="pc"&&/lave-linge|seche-linge/.test(n))return spe.push({p,n:/seche/.test(n)?"Sèche-linge":"Lave-linge",sec:2.5,dj:"20 A",A:/lave-linge/.test(n)?1:0,gaine:20});
   if(t==="pc"&&/lave-vaisselle/.test(n))return spe.push({p,n:"Lave-vaisselle",sec:2.5,dj:"20 A",gaine:20});
@@ -75,7 +103,7 @@ function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[
  pack(ptrav,N.ptravMax,{k:"pc",n:"Prises plan de travail",sec:2.5,dj:"20 A",gaine:20});
  spe.forEach(s=>add({k:"spe",n:s.n,sec:s.sec,dj:s.dj,A:s.A,hc:s.hc,gaine:s.gaine,note:s.note},[s.p]));
  if(pts.some(p=>p.e.t==="vmc"||p.e.t==="vmcm")){const v=pts.filter(p=>p.e.t==="vmc"||p.e.t==="vmcm");add({k:"spe",n:"VMC",sec:1.5,dj:"2 A",gaine:16},[v[0]]);hyp.push("VMC : groupe supposé près de la 1re bouche (à ajuster).")}
- if(pts.some(p=>p.e.t==="ge"))add({k:"spe",n:"Groupe extérieur clim",sec:2.5,dj:"20 A",gaine:20,note:"selon la notice"},[pts.find(p=>p.e.t==="ge")]);
+ const CS=climSys(pts);CS.forEach(S=>{const big=S.groupe.kw>5,anc=S.groupe.p||(S.unites&&S.unites[0].p)||null;add({k:"spe",n:"Clim (groupe "+String(S.groupe.kw).replace(".",",")+" kW)",sec:big?6:2.5,dj:big?"32 A":"20 A",gaine:big?25:20,note:"selon la notice"},anc?[anc]:[])});
  const elc=circ.slice();
  /* --- commandes : interrupteurs reliés au point lumineux de leur pièce --- */
  const cmd=[];pts.forEach(p=>{if(!p.w)return;const m=mods(p.e);if(!m)return;m.forEach(t=>{if(t==="int"||t==="vv")cmd.push({p,t})})});
@@ -134,16 +162,23 @@ function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[
  if(evs.length)hyp.push("Évacuations : diamètres DTU (WC Ø100, lavabo/bidet Ø32, douche, baignoire, évier, lave-linge Ø40), pente de 2 cm par mètre (DTU 60.11 : entre 1 et 3 cm par mètre) vers la chute, branchée au WC, tuyaux le long des murs ; raccords à coller : 2 coudes par branchement (+1 s'il tourne), 1 manchon par barre de 4 m, 1 collier tous les 80 cm (estimation).");
  if(eau.length)hyp.push("Alimentation : multicouche 16 × 2 en pieuvre (une ligne par point d'eau froide ou chaude), passée dans les murs à l'horizontale, montée ou descente seulement là où il faut ; coudes à sertir : 1 au point d'eau, 1 par angle, 2 par changement de hauteur ; marge "+Math.round(N.marge*100)+" %.");
  /* ---- Clim ---- */
- const clim={},cr={};pts.filter(p=>p.e.t==="split").forEach(s=>{const g=pts.find(q=>q.e.t==="ge"&&q.fi===s.fi)||pts.find(q=>q.e.t==="ge");const c=pts.find(q=>q.e.t==="cond"&&q.rm===s.rm);
-  if(g){const L=Math.abs(s.x-g.x)+Math.abs(s.y-g.y)+Math.abs(zab(s)-zab(g))+.3;hops.push({k:"clim",a:s,b:g,L});if(faire(s)){const l=r1(L*(1+N.marge));clim["Liaisons frigorifiques cuivre isolé 1/4\" + 3/8\" (jusqu'à environ 3,5 kW ; 1/4\" + 1/2\" au-delà, selon la notice)"]=(clim["Liaisons frigorifiques cuivre isolé 1/4\" + 3/8\" (jusqu'à environ 3,5 kW ; 1/4\" + 1/2\" au-delà, selon la notice)"]||0)+l;clim["Câble d'interconnexion 4G1,5"]=(clim["Câble d'interconnexion 4G1,5"]||0)+l;clim["Goulotte / cache-liaisons"]=(clim["Goulotte / cache-liaisons"]||0)+l}}
-  else if(faire(s))hyp.push("Clim : placez le groupe extérieur pour calculer les liaisons (sinon à mesurer).");
-  if(faire(s)){cr["Écrou flare 1/4\" (souvent fourni avec l'appareil)"]=(cr["Écrou flare 1/4\" (souvent fourni avec l'appareil)"]||0)+2;cr["Écrou flare 3/8\" (souvent fourni avec l'appareil)"]=(cr["Écrou flare 3/8\" (souvent fourni avec l'appareil)"]||0)+2;cr["Fourreau de traversée de mur"]=(cr["Fourreau de traversée de mur"]||0)+1;cr["Support mural du groupe extérieur"]=(cr["Support mural du groupe extérieur"]||0)+(g?1:0)}
-  if(c&&faire(s)){cr["Raccord de condensats + coude"]=(cr["Raccord de condensats + coude"]||0)+1;const L=g?Math.abs(c.x-g.x)+Math.abs(c.y-g.y)+Math.abs(zab(c)-zab(g)):0;if(g){hops.push({k:"cond",a:c,b:g,L});clim["Tube de condensats Ø16"]=(clim["Tube de condensats Ø16"]||0)+r1(L*(1+N.marge))}}});
+ const clim={},cr={},ad=(o,k,v)=>{o[k]=(o[k]||0)+v};
+ CS.forEach(S=>{const sup=/console/i.test(S.groupe.sup)?"Console murale du groupe extérieur":/toit/i.test(S.groupe.sup)?"Support toiture du groupe extérieur":"Support sol du groupe extérieur";
+  if(!/Déjà/.test(S.groupe.sup)){ad(cr,sup,1);ad(cr,"Plots antivibratiles",4)}
+  const lia=(L,d)=>{if(L==null)return;const l=L*(1+N.marge);ad(clim,"Liaisons cuivre isolé "+d[0]+" + "+d[1],l);ad(clim,"Câble d'interconnexion 4G1,5",l);ad(cr,"Écrou flare "+d[0],2);ad(cr,"Écrou flare "+d[1],2);if(L>N.prech)S.charge=1};
+  if(S.unites)S.unites.forEach(u=>{lia(u.L,u.d);if(u.L!=null){ad(clim,"Tube de condensats Ø16",u.L*(1+N.marge));ad(clim,"Goulotte / cache-liaisons",u.L*(1+N.marge))}ad(cr,"Fourreau de traversée de mur",1);ad(cr,"Raccord de condensats + coude",1);if(u.p)hops.push({k:"clim",a:u.p,b:S.groupe.p||u.p,L:u.L||0});
+   if(u.L==null)hyp.push("Clim "+u.piece+" : placez l'unité et le passage des liaisons pour calculer les longueurs.");else if(u.est)hyp.push("Clim "+u.piece+" : groupe extérieur supposé dehors, juste derrière le passage des liaisons, à "+N.geH*100+" cm du sol.")});
+  if(S.unite){const u=S.unite;lia(u.L,u.d);ad(cr,"Fourreau de traversée de mur",1);ad(cr,"Unité intérieure gainable "+String(u.kw).replace(".",",")+" kW",1);ad(cr,"Plénum de soufflage "+S.bouches.length+" piquage"+(S.bouches.length>1?"s":""),1);ad(cr,"Plénum de reprise",1);ad(cr,"Grille de reprise",1);ad(cr,"Thermostat / commande filaire",1);ad(cr,"Évacuation des condensats (vers l'eau usée)",1);
+   S.bouches.forEach(b=>{ad(clim,"Gaine souple isolée Ø"+b.d,b.L*(1+N.marge));ad(cr,"Bouche de soufflage Ø"+b.d,1);ad(cr,"Collier de serrage Ø"+b.d,2)});ad(cr,"Adhésif aluminium (rouleau)",1);
+   if(u.L==null)hyp.push("Clim gainable : placez le groupe extérieur pour calculer les liaisons (sinon à mesurer).");if(u.U.est)hyp.push("Clim gainable : unité supposée au-dessus de "+S.bouches[0].piece+" ("+(u.ou||"combles ou faux plafond")+") ; posez la grille de reprise pour la placer.");
+   hyp.push("Gainable : gaines souples isolées Ø160 jusqu'à 2 kW par bouche, Ø200 jusqu'à 3,5 kW, Ø250 au-delà (usage) ; + 50 cm par raccord au plénum ; pompe de relevage à prévoir si les condensats ne peuvent pas descendre en pente.")}
+  if(S.charge)hyp.push(S.titre+" : liaisons au-delà de la longueur préchargée (souvent 5 à 7,5 m, voir la notice) : prévoir une charge complémentaire de fluide.")});
+ if(CS.length)hyp.push("Clim : puissance estimée à "+N.wm2+" W par m² (pour 2,50 m sous plafond), arrondie au modèle courant ; à confirmer par un bilan thermique. Liaisons : 1/4\" + 3/8\" jusqu'à 3,5 kW, 1/4\" + 1/2\" jusqu'à 5 kW, 3/8\" + 5/8\" au-delà (selon la notice).");
  const R=o=>{const r={};Object.keys(o).forEach(k=>{if(o[k])r[k]=r1(o[k])});return r};
  const cour=o=>{const r={};Object.keys(o).forEach(k=>{if(/^(1\.5|2\.5) mm²/.test(k))r[k]=Math.ceil(o[k]/100)});return r};
- return{version:"2026-11-17",electricite:{tableau,fils_m:R(fil),fils_couronnes_100m:cour(fil),gaines_m:R(gaine),boites:boite},plomberie:{multicouche_m:R(mc),pvc_m:R(pvc),raccords:rac},climatisation:R(clim),climatisation_raccords:cr,hypotheses:hyp,_hops:hops,_tab:tab,_nour:nour}}
+ return{version:"2026-11-17",electricite:{tableau,fils_m:R(fil),fils_couronnes_100m:cour(fil),gaines_m:R(gaine),boites:boite},plomberie:{multicouche_m:R(mc),pvc_m:R(pvc),raccords:rac},climatisation:R(clim),climatisation_raccords:cr,climatisation_systemes:CS.map(S=>({titre:S.titre,type:S.type,groupe_kW:S.groupe.kw,support:S.groupe.sup||null,...(S.unites?{unites:S.unites.map(u=>({piece:u.piece,puissance_kW:u.kw,besoin_kW:u.besoin,liaisons:u.d.join(" + "),longueur_m:u.L==null?null:r1(u.L),estimee:!!u.est,cassette:u.cas}))}:{}),...(S.unite?{unite:{puissance_kW:S.unite.kw,emplacement:S.unite.ou,liaisons:S.unite.d.join(" + "),longueur_m:S.unite.L==null?null:r1(S.unite.L)},bouches:S.bouches.map(b=>({piece:b.piece,diametre:b.d,longueur_m:r1(b.L)}))}:{})})),_cs:CS,hypotheses:hyp,_hops:hops,_tab:tab,_nour:nour}}
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
 /* Résultat pour l'export (sans les objets internes) */
-function exporter(){const r=calc();if(!r)return null;const o={...r};delete o._hops;delete o._tab;delete o._nour;return o}
+function exporter(){const r=calc();if(!r)return null;const o={...r};delete o._hops;delete o._cs;delete o._tab;delete o._nour;return o}
 window.PKRESEAUX={calc,exporter,N,MQ,marque,setMarque};
 })();
