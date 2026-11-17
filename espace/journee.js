@@ -18,7 +18,7 @@ var X=window.PCX;if(!X)return;
 var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 var esc=X.esc,CH=X.CH;
 var lget=function(k,d){return X.lsGet(k,d)},lset=function(k,v){X.lsSet(k,v)};
-var JR=lget('pc-jr',{}),REG=Object.assign({marge:10,pause:60,jour:true,hs:true},lget('pc-jr-reg',{})),EQ=lget('pc-eq',null),HS=lget('pc-hs',[]);
+var JR=lget('pc-jr',{}),REG=Object.assign({marge:10,pause:60,jour:true,hs:true,cp:'',detour:0},lget('pc-jr-reg',{})),EQ=lget('pc-eq',null),HS=lget('pc-hs',[]);
 if(!EQ)EQ=[{id:'s1',p:'Kevin',h:35},{id:'s2',p:'Mathis',h:35}];
 /* En option dans Cliky (Cyril 17/11) : l'entreprise active ou non chaque partie. Cliky non pris = rien ne s'affiche. */
 var cliky=function(){return window.PCOPT&&PCOPT.cliky!=null?!!PCOPT.cliky:X.lsGet('pc-cliky',true)};
@@ -127,7 +127,7 @@ var RC=null;
 function recap(id){var c=CH[id];if(!c)return;var d=jourIso(0),j=journee(d,id,true);secoursCalendrier();
  if(j.dep==null&&j.four==null&&j.cal==null)j.cal=8*60;
  var a=arrivee(j,c),fi=finDe(j),O=c.ouv.map(function(o,i){return [i,o]}).filter(function(x){return x[1][2]<100||(j.fait&&j.fait[x[0]]!=null)});
- RC={id:id,k:0,arr:j.arr!=null?j.arr:a.m,arrSrc:j.arrSrc||a.src,det:a.det,fin:j.fin!=null?j.fin:fi.m,finSrc:j.finSrc||fi.src,pers:j.pers||REG.pers||1,pause:j.pause!=null?j.pause:REG.pause,
+ RC={carb:null,id:id,k:0,arr:j.arr!=null?j.arr:a.m,arrSrc:j.arrSrc||a.src,det:a.det,fin:j.fin!=null?j.fin:fi.m,finSrc:j.finSrc||fi.src,pers:j.pers||REG.pers||1,pause:j.pause!=null?j.pause:REG.pause,
   fait:Object.assign({},j.fait||{}),O:O,av:{}};O.forEach(function(x){RC.av[x[0]]=x[1][2];if(RC.fait[x[0]]==null)RC.fait[x[0]]=x[1][2]});
  if(j.ok)RC.k=4;rcRendre()}
 var ETAPES=['arr','fait','pers','fin','recap'];
@@ -152,7 +152,7 @@ function rcRendre(){var c=CH[RC.id],e=ETAPES[RC.k],h='<div class="jr-bar">'+ETAP
    '<button type="button" class="btn" data-jrk="0" style="justify-content:space-between;display:flex"><span>Arrivée</span><b>'+hmLong(RC.arr)+(RC.arrSrc==='modifiee'?'':' (estimée)')+'</b></button>'+
    '<button type="button" class="btn" data-jrk="1" style="justify-content:space-between;display:flex"><span>Avancement</span><b>'+(ch.length?ch.map(function(x){return esc(x[1][0])+' → '+RC.fait[x[0]]+' %'}).join(', '):'inchangé')+'</b></button>'+
    '<button type="button" class="btn" data-jrk="2" style="justify-content:space-between;display:flex"><span>Personnes</span><b>'+RC.pers+'</b></button>'+
-   '<button type="button" class="btn" data-jrk="3" style="justify-content:space-between;display:flex"><span>Fin · pause</span><b>'+hmLong(RC.fin)+' · '+(RC.pause?duree(RC.pause):'sans pause')+'</b></button></div>'+
+   '<button type="button" class="btn" data-jrk="3" style="justify-content:space-between;display:flex"><span>Fin · pause</span><b>'+hmLong(RC.fin)+' · '+(RC.pause?duree(RC.pause):'sans pause')+'</b></button>'+trajLigne()+'</div>'+
    '<div class="jr-big" style="font-size:24px;margin-top:14px">'+hFr(tot)+' h <small style="font-size:14px;color:var(--muted)">de main-d\'œuvre</small></div>'+
    '<p class="hint" style="text-align:center">'+duree(t)+(RC.pers>1?' × '+RC.pers+' personnes':'')+', ajoutées au coût réel de '+esc(c.n)+'.</p>'+
    '<div class="jr-ok"><button type="button" class="btn" data-jrb>← Retour</button><button type="button" class="btn go" data-jrv>Valider la journée</button></div>'}
@@ -168,13 +168,19 @@ function rcLier(){var b=$('#jr-rc');if(!b)return;
   if(s.jrn!=null){RC.k++;return rcRendre()}
   if(s.jrb!=null){RC.k=Math.max(0,RC.k-1);return rcRendre()}
   if(s.jrv!=null)return valider()})}
+function trajLigne(){var T=RC.carb;if(!T){var sync=true;coutTrajet(journee(jourIso(0),RC.id,true),CH[RC.id],function(x){RC.carb=x;if(!sync&&ETAPES[RC.k]==='recap'&&$('#jr-rc'))rcRendre()});sync=false;T=RC.carb;
+  if(!T)return '<div class="btn" style="justify-content:space-between;display:flex"><span>Trajets</span><b>calcul…</b></div>'}
+ if(T.err==='veh'||T.err==='prix')return '<button type="button" class="btn" data-jrvh style="justify-content:space-between;display:flex"><span>Trajets · '+T.km+' km</span><b>'+(T.err==='veh'?'Réglez votre véhicule ›':'Notez votre prix ›')+'</b></button>';
+ if(T.err)return '<div class="btn" style="justify-content:space-between;display:flex"><span>Trajets</span><b>'+esc(T.err)+'</b></div>';
+ return '<div class="btn jr-tr" style="justify-content:space-between;display:flex" title="'+esc(T.det)+'"><span style="display:flex!important;flex-direction:column;align-items:flex-start;text-align:left;flex:1;min-width:0">Trajets · '+T.km+' km<small style="display:block;color:var(--muted);font-size:12px;font-weight:600">'+fr2(T.q)+' '+T.u+' × '+fr2(T.prix,3)+' € ('+esc(T.src)+')</small></span><b style="flex:none">'+fr2(T.eur)+' €</b></div>'}
 function valider(){var c=CH[RC.id],d=jourIso(0),j=journee(d,RC.id,true),t=Math.max(0,RC.fin-RC.arr-RC.pause),tot=Math.round(t/60*RC.pers*4)/4;
  c.mo=c.mo||{prev:0,reel:0,taux:0};if(j.ok&&j.h)c.mo.reel=Math.max(0,Math.round((c.mo.reel-j.h)*100)/100);c.mo.reel=Math.round((c.mo.reel+tot)*100)/100;
  var cad=[];RC.O.forEach(function(x){var i=x[0],v=RC.fait[i];if(v!=null&&v!==c.ouv[i][2]){cad.push([x[1][0],c.ouv[i][2],v]);c.ouv[i][2]=v}});
  Object.assign(j,{arr:RC.arr,arrSrc:RC.arrSrc,fin:RC.fin,finSrc:RC.finSrc,pers:RC.pers,pause:RC.pause,fait:RC.fait,h:tot,ok:true,cad:cad});
+ c.trajets=(c.trajets||[]).filter(function(x){return x.d!==d});if(RC.carb&&RC.carb.eur!=null){var T=RC.carb;c.trajets.push({d:d,km:T.km,q:T.q,u:T.u,prix:T.prix,eur:T.eur,src:T.src});j.traj=c.trajets[c.trajets.length-1]}
  REG.pause=RC.pause;REG.pers=RC.pers;save();X.saveCH();X.xclose();
  if(X.updPin)try{X.updPin(c,X.avc(c))}catch(e){}
- X.toast('Journée enregistrée',hFr(tot)+' h ajoutées à '+c.n+'.');majPartout()}
+ X.toast('Journée enregistrée',hFr(tot)+' h'+(j.traj?' et '+fr2(j.traj.eur)+' € de trajet':'')+' ajoutés à '+c.n+'.');majPartout()}
 
 /* ---------- heures sup ---------- */
 function questionHS(){if(!EQ.length||!onH())return null;var now=maintenant(),d0=jourIso(0),d1=jourIso(-1),fait=lget('pc-hs-q',{});
@@ -227,14 +233,57 @@ function feuilleMois(){var m=jourIso(0).slice(0,7),R=moisHS(m);
    if(t.dataset.mimp!=null){var p=document.getElementById('jr-print')||document.createElement('pre');p.id='jr-print';p.style.cssText='white-space:pre-wrap;font:14px/1.5 system-ui;padding:20px';p.textContent=texteMois(m);document.body.appendChild(p);
     setTimeout(function(){window.print();setTimeout(function(){p.remove()},500)},50)}})})}
 
+/* ---------- étape B : véhicule et carburant (Cyril 17/11) ----------
+   Le véhicule est réglé une fois (carburant + consommation, que l'artisan lit sur son tableau de bord : rien d'inventé).
+   Prix du jour : service ProClik (/espace/carburant, données publiques des prix à la pompe, médiane du secteur du dépôt).
+   Sans service (démo) ou sans réponse : le prix que l'artisan a noté. Électrique : son prix du kWh.
+   Kilomètres du jour : dépôt → chantier, retour au dépôt, + son détour moyen chez le fournisseur s'il y est passé. */
+var CARB=[['gazole','Diesel'],['e10','Essence E10'],['sp95','SP95'],['sp98','SP98'],['e85','E85'],['gplc','GPL'],['elec','Électrique']];
+var carbNom=function(t){var x=CARB.filter(function(c){return c[0]===t})[0];return x?x[1]:t};
+var PJ=lget('pc-carb',null);
+function vehOk(){var v=REG.veh;return !!(v&&v.type&&v.conso>0)}
+var fr2=function(n,d){return Number(n).toLocaleString('fr-FR',{minimumFractionDigits:d==null?2:d,maximumFractionDigits:d==null?2:d})};
+function prixCarb(cb){var v=REG.veh;if(!vehOk())return cb(null);
+ if(v.type==='elec')return cb(v.prix>0?{prix:v.prix,src:'votre prix du kWh'}:null);
+ if(PJ&&PJ.type===v.type&&PJ.cp===REG.cp&&Date.now()-PJ.t<3*3600e3)return cb(PJ);
+ var P=window.PCV,vrai=document.documentElement.classList.contains('pcvrai');
+ var repli=function(){cb(v.prix>0?{prix:v.prix,src:'votre prix noté'}:null)};
+ if(!P||!P.api||!vrai||!/^\d{5}$/.test(REG.cp||''))return repli();
+ P.api('/espace/carburant?cp='+REG.cp+'&type='+v.type).then(function(x){if(!x||!(x.prix>0))return repli();
+  PJ={type:v.type,cp:REG.cp,prix:x.prix,src:'prix du jour, médiane de '+x.n+' station'+(x.n>1?'s':'')+(x.cp&&x.cp.length===2?' du département':' de votre secteur'),t:Date.now()};lset('pc-carb',PJ);cb(PJ)},repli)}
+function kmJour(j,c){var t=trajet(c);if(t.km==null)return null;return {km:t.km*2+(j.four!=null?(REG.detour||0):0),det:t.km+' km aller, '+t.km+' km retour'+(j.four!=null&&REG.detour?', '+REG.detour+' km de détour fournisseur':'')}}
+function coutTrajet(j,c,cb){var k=kmJour(j,c);if(!k)return cb({err:'Adresse du chantier sans position : kilomètres inconnus.'});if(!vehOk())return cb({err:'veh',km:k.km,det:k.det});
+ prixCarb(function(p){if(!p)return cb({err:'prix',km:k.km,det:k.det});var v=REG.veh,q=Math.round(k.km*v.conso/100*100)/100,e=Math.round(q*p.prix*100)/100;
+  cb({km:k.km,det:k.det,q:q,u:v.type==='elec'?'kWh':'L',prix:p.prix,src:p.src,eur:e})})}
+function vehicule(retour){var v=REG.veh||{},el=v.type==='elec',h='<div id="jr-veh"><p class="jr-sub">Réglé une fois. Sert seulement au coût des trajets de vos chantiers.</p>'+
+ '<p class="jr-q" style="font-size:16px">Carburant</p><div class="jr-row">'+CARB.map(function(c){return '<button type="button" class="btn" data-vht="'+c[0]+'" aria-pressed="'+(v.type===c[0])+'">'+c[1]+'</button>'}).join('')+'</div>'+
+ (v.type?'<p class="jr-q" style="font-size:16px;margin-top:14px">Consommation</p><p class="jr-sub">Celle de votre tableau de bord, en '+(el?'kWh':'litres')+' aux 100 km.</p>'+
+  '<div class="jr-s"><input id="jr-vc" inputmode="decimal" value="'+(v.conso?String(v.conso).replace('.',','):'')+'" placeholder="Par exemple, lisez-la sur votre tableau de bord" aria-label="Consommation"></div>'+
+  '<p class="jr-q" style="font-size:16px;margin-top:14px">'+(el?'Votre prix du kWh':'Votre prix au litre')+'</p><p class="jr-sub">'+(el?'Celui de votre recharge (maison ou borne).':'Utilisé seulement si le prix du jour n\'arrive pas.')+'</p>'+
+  '<div class="jr-s"><input id="jr-vp" inputmode="decimal" value="'+(v.prix?String(v.prix).replace('.',','):'')+'" placeholder="En euros" aria-label="Prix"></div>'+
+  (el?'':'<p class="jr-q" style="font-size:16px;margin-top:14px">Code postal de votre dépôt</p><p class="jr-sub">Pour le prix du jour des stations autour de chez vous.</p><div class="jr-s"><input id="jr-vcp" inputmode="numeric" maxlength="5" value="'+esc(REG.cp||'')+'" aria-label="Code postal du dépôt"></div>')+
+  '<p class="jr-q" style="font-size:16px;margin-top:14px">Détour pour passer chez le fournisseur</p><p class="jr-sub">Ajouté les jours où vous donnez la liste au comptoir.</p><div class="jr-row">'+[0,5,10,15,20].map(function(n){return '<button type="button" class="btn" data-vhd="'+n+'" aria-pressed="'+((REG.detour||0)===n)+'">'+(n?n+' km':'Aucun')+'</button>'}).join('')+'</div>':'')+
+ '<div class="jr-ok"><button type="button" class="btn go" data-vhok>Enregistrer</button></div></div>';
+ X.xopen('Mon véhicule','',h,'',function(){var b=$('#jr-veh');
+  var garder=function(){var n=function(id){var x=$(id);return x?parseFloat(x.value.replace(',','.').replace(/[^\d.]/g,'')):NaN};var c=n('#jr-vc'),p=n('#jr-vp'),cp=$('#jr-vcp');
+   REG.veh=REG.veh||{};if(isFinite(c)&&c>0&&c<60)REG.veh.conso=c;if(isFinite(p)&&p>0&&p<10)REG.veh.prix=p;if(cp&&/^\d{5}$/.test(cp.value.trim()))REG.cp=cp.value.trim()};
+  b.addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var s=t.dataset;
+   if(s.vht){garder();if(REG.veh.type!==s.vht){REG.veh={type:s.vht};PJ=null}save();return vehicule(retour)}
+   if(s.vhd!=null){garder();REG.detour=+s.vhd;save();return vehicule(retour)}
+   if(s.vhok!=null){garder();save();if(!vehOk()){X.toast('Il manque la consommation','Notez-la telle que l\'affiche votre tableau de bord.');return}
+    X.toast('Véhicule enregistré',carbNom(REG.veh.type)+' · '+fr2(REG.veh.conso,1)+(REG.veh.type==='elec'?' kWh':' L')+' aux 100 km');
+    if(retour)retour();else X.xclose()}})})}
+
 /* ---------- réglages dans la fiche Cliky (Mes options) ---------- */
 function sw(k,t,sub){return '<div class="ch-sw jr-sw"><span>'+t+'<small>'+sub+'</small></span><button type="button" class="sw'+(REG[k]!==false?' on':'')+'" role="switch" aria-checked="'+(REG[k]!==false)+'" data-jrsw="'+k+'" aria-label="'+t+'" style="border:0;padding:0"></button></div>'}
 function reglagesHTML(){return '<div class="xsec" id="jr-reg"><h3>À activer ou non pour votre entreprise</h3><div class="card jr-c">'+
  sw('jour','Journée de chantier','« J\'y vais », arrivée calculée, récap du soir à cocher. Les heures vont dans le coût du chantier.')+
  sw('hs','Heures sup de l\'équipe','Cliky vous demande le soir ou le lendemain. Récap du mois pour la paie.')+
+ (REG.jour!==false?'<button type="button" class="btn" data-jrvh>Mon véhicule ('+(vehOk()?carbNom(REG.veh.type)+' · '+fr2(REG.veh.conso,1)+(REG.veh.type==="elec"?' kWh':' L')+' aux 100 km':'à régler')+')</button>':'')+
  (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+'</div></div>'}
-document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-jrsw],[data-jreq]');if(!t)return;
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-jrsw],[data-jreq],[data-jrvh]');if(!t)return;
  if(t.dataset.jreq!=null){HQ=null;return equipe()}
+ if(t.dataset.jrvh!=null){if($('#jr-rc'))return vehicule(function(){RC.carb=null;rcRendre()});return vehicule(function(){X.xclose();if(window.PCMesOptions)PCMesOptions.ouvrir()})}
  var k=t.dataset.jrsw;REG[k]=REG[k]===false;save();var r=$('#jr-reg');if(r)r.outerHTML=reglagesHTML();
  X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':'Heures sup de l\'équipe');majPartout()});
 
@@ -259,5 +308,5 @@ function majPartout(){injecter();fil()}
 var chx=$('#chx');if(chx)new MutationObserver(function(){if(!$('#jr-ch',chx)&&$('.ch-res',chx)||!$('#jr-four',chx)&&$('#ch-four',chx))injecter()}).observe(chx,{childList:true,subtree:true});
 fil();setInterval(fil,60000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)majPartout()});
-window.PCJR={reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+window.PCJR={vehicule:vehicule,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
