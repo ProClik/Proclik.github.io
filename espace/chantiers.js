@@ -82,7 +82,7 @@ function dossierHTML(k){var x=VD[k];
  return '<div class="sec-h"><h2>Dossier du client</h2><span>formulaire, pré-devis, devis, factures</span></div>'+
   (vide?'<div class="card"><p class="hint" style="margin:0">'+(x.err?'Dossier pas chargé : '+esc(x.err):'Pas encore de demande du formulaire ni de devis pour ce client.')+'</p></div>':
   '<div class="card lst cf-l ch-docs">'+
-   (d?'<button class="cf-li" type="button" data-vc="'+esc(k)+'"><span class="cf-av cf-doc">'+IC.docs+'</span><span class="tx"><b>Sa demande du formulaire</b><small>réponses, photos'+(d.plan?', plan dessiné':'')+'</small></span><span class="go">›</span></button>':'')+
+   (d?'<button class="cf-li" type="button" data-vc="'+esc(k)+'"><span class="cf-av cf-doc">'+IC.docs+'</span><span class="tx"><b>Sa demande du formulaire</b><small>réponses, photos'+(planDemande(d)?', plan dessiné':'')+'</small></span><span class="go">›</span></button>':'')+
    pre+Dv.map(lv).join('')+Fa.map(lv).join('')+'</div>')+
   (x.err&&!vide?'<p class="hint">'+esc(x.err)+'</p>':'')}
 /* Espace réel : les boutons « Créer » du chantier passent par les vrais documents (VosFactures), pas par des brouillons d'exemple */
@@ -93,8 +93,32 @@ function actionVrai(c,t){var k=c.dos,x=VD[k],P=x&&x.dem&&x.dem.pre_devis||[],Dv=
  if(t==='pre'){if(P.length){PCV.ouvrirDemande(k);return}X.toast('Pas de pré-devis pour ce client','Il arrive quand le client remplit le formulaire. Sinon : bouton Devis, fait à la main.');return}
  if(!Dv.length){X.toast('Créez d\'abord le devis','La facture reprend les lignes du devis.');return}
  PCV.ouvrirDemande(k);X.toast(t==='ac'?'Facture d\'acompte':'Facture de fin','Dans « Devis et factures », touchez le devis puis '+(t==='ac'?'« Acompte ».':'« Facture finale ».'));}
+/* Plan d'un vrai client (Cyril 17/11 : « la capture du plan dans chantier ne correspond pas au vrai plan ») :
+   la miniature est dessinée à partir du VRAI plan, dans cet ordre : celui retouché ou dessiné par vous sur cet appareil,
+   sinon celui du client avec sa demande. Pas de plan : on propose de le créer. */
+function planDemande(d){var D=d&&d.demande,P=D&&D.details&&D.details.plan;return P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length})?P:null}
+function lsJ(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function planDe(k){var pm=lsJ('pc-planmod-'+k);if(pm&&pm.plan&&(pm.plan.floors||[]).some(function(f){return (f.pieces||[]).length}))return {plan:pm.plan,src:'modifié par vous',t:pm.t};
+ var x=VD[k],P=x&&planDemande(x.dem);return P?{plan:P,src:'dessiné par le client',t:x.dem.demande&&x.dem.demande.recue}:null}
+function planSVG(P){var F=(P.floors||[]).filter(function(f){return (f.pieces||[]).length}),f=F[0];if(!f)return '';
+ var R=[];f.pieces.forEach(function(p){if(p.zones&&p.zones.length)p.zones.forEach(function(z){R.push({n:z.nom,pts:z.points,l:z.label})});else R.push({n:p.nom,pts:p.points})});
+ R=R.filter(function(r){return r.pts&&r.pts.length>2});if(!R.length)return '';
+ var xs=[],ys=[];R.forEach(function(r){r.pts.forEach(function(q){xs.push(+q[0]);ys.push(+q[1])})});
+ var x0=Math.min.apply(null,xs),y0=Math.min.apply(null,ys),w=Math.max.apply(null,xs)-x0||1,h=Math.max.apply(null,ys)-y0||1,m=Math.max(w,h)*.06,fs=Math.max(w,h)*.045;
+ var cen=function(r){if(r.l&&r.l.length===2)return r.l;var a=0,cx=0,cy=0,P=r.pts;for(var i=0;i<P.length;i++){var p=P[i],q=P[(i+1)%P.length],c=p[0]*q[1]-q[0]*p[1];a+=c;cx+=(p[0]+q[0])*c;cy+=(p[1]+q[1])*c}a/=2;return a?[cx/(6*a),cy/(6*a)]:P[0]};
+ return '<svg class="ch-pmini" viewBox="'+(x0-m)+' '+(y0-m)+' '+(w+2*m)+' '+(h+2*m)+'" role="img" aria-label="Plan '+esc(f.nom||'')+'">'+
+  R.map(function(r){return '<polygon points="'+r.pts.map(function(q){return (+q[0])+','+(+q[1])}).join(' ')+'" fill="var(--soft,#EEF1F6)" stroke="var(--n1-nuit,#1B2440)" stroke-width="'+(Math.max(w,h)*.012)+'" stroke-linejoin="round"/>'}).join('')+
+  R.map(function(r){var c=cen(r);return '<text x="'+c[0]+'" y="'+c[1]+'" font-size="'+fs+'" font-weight="700" text-anchor="middle" dominant-baseline="middle" fill="var(--fg,#0E1322)">'+esc(r.n||'')+'</text>'}).join('')+'</svg>'}
+function planVraiHTML(k){var x=VD[k];if(!x&&!lsJ('pc-planmod-'+k))return '<div class="card"><p class="hint" style="margin:0">Chargement du plan…</p></div>';
+ var p=planDe(k);
+ if(!p)return '<div class="card"><b>📐 Pas encore de plan</b><p class="hint" style="margin:6px 0 12px">Le client n\'a pas dessiné de plan avec sa demande. Vous pouvez le dessiner, par exemple pendant la visite : le pré-devis le reprend quand vous recalculez.</p><button class="btn go" style="width:100%" type="button" data-chplan="'+esc(k)+'">📐 Créer le plan</button></div>';
+ var F=(p.plan.floors||[]).filter(function(f){return (f.pieces||[]).length}),n=0,s=0;F.forEach(function(f){f.pieces.forEach(function(q){n+=(q.zones&&q.zones.length)||1;s+=+q.surface_m2||0})});
+ return '<div class="card pcplan"><div class="row"><b>📐 Plan</b><span class="pill ok">'+esc(p.src)+'</span></div>'+planSVG(p.plan)+
+  '<div class="pcstats"><div><b>'+n+'</b><span>pièce'+(n>1?'s':'')+'</span></div><div><b>'+String(Math.round(s*10)/10).replace('.',',')+' m²</b><span>au sol</span></div><div><b>'+F.length+'</b><span>niveau'+(F.length>1?'x':'')+'</span></div></div>'+
+  (F.length>1?'<p class="hint" style="margin:0 0 8px">Aperçu : '+esc(F[0].nom||'1er niveau')+'. Les autres niveaux sont dans le plan.</p>':'')+
+  '<button class="btn go" style="width:100%" type="button" data-chplan="'+esc(k)+'">Ouvrir le plan</button></div>'}
 function chargerDossier(c){var o=dos(c);if(!o||!o.vrai||!enVrai())return;var k=c.dos,fini=0,x={dem:null,docs:[],err:''};
- var maj=function(){if(++fini<2)return;VD[k]=x;var b=document.getElementById('ch-vdos');if(b&&b.getAttribute('data-c')===k)b.innerHTML=dossierHTML(k)};
+ var maj=function(){if(++fini<2)return;VD[k]=x;var b=document.getElementById('ch-vdos');if(b&&b.getAttribute('data-c')===k)b.innerHTML=dossierHTML(k);var v=document.getElementById('ch-vplan');if(v&&v.getAttribute('data-c')===k)v.innerHTML=planVraiHTML(k)};
  PCV.api('/espace/demande?c='+encodeURIComponent(k)).then(function(r){x.dem=r.demande||null;maj()},function(e){if(!/introuvable|aucune|404/i.test(e.message))x.err=e.message;maj()});
  PCV.api('/espace/documents?c='+encodeURIComponent(k)).then(function(r){x.docs=r.documents||[];maj()},function(e){x.err=x.err||e.message;maj()});}
 function lignesDevis(c){if(c.L&&c.L.length)return c.L;var d=c.dv&&X.find(c.dv);if(d&&d.L)return d.L;return c.fin.ht?[{d:c.t,u:'forfait',q:1,p:c.fin.ht}]:[]}
@@ -131,7 +155,7 @@ function ouvrir(id,o){var c=CH[id];if(!c)return;if(cur!==id){edit=null;prevenir=
  $('#ch-back').addEventListener('click',function(){liste()});
  var rb=$('#ch-res');if(rb)rb.addEventListener('click',function(){ouvrir(id)});
  $$('#chx [data-ong]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,ong===b.dataset.ong?null:b.dataset.ong)})});
- lier(c);if(!ong||ong==='docs')chargerDossier(c);}
+ lier(c);if(!ong||ong==='docs'||ong==='plan')chargerDossier(c);}
 function recharger(o,sel){ouvrir(cur,o===undefined?ong:o);if(sel){var t=$(sel);if(t)t.scrollIntoView({block:'center'})}}
 
 /* Le résumé : l'essentiel, ce qu'il reste à faire, le client */
@@ -157,6 +181,7 @@ function partie(c,o){
  if(o==='trav')return travaux(c);
  if(o==='fin')return finances(c);
  if(o==='four')return (X.fourHTML?X.fourHTML(c)+achats(c)+'</div>':'')+(window.PCPLAN&&PCPLAN.livHTML?PCPLAN.livHTML(c):'');
+ if(o==='plan'&&dos(c)&&dos(c).vrai&&enVrai())return '<div id="ch-vplan" data-c="'+esc(c.dos)+'">'+planVraiHTML(c.dos)+'</div>';
  if(o==='plan')return window.pcPlanCard?window.pcPlanCard(c):'<div class="card"><p class="hint">Pas de plan pour ce chantier.</p></div>';
  if(o==='agenda')return agenda(c);
  if(o==='notes')return notes(c);
@@ -476,6 +501,9 @@ function clientSecours(cb){var ty='part';
    if(ty==='pro'&&pre)o.contact=pre+' '+nom;
    DOS[k]=o;var N=X.lsGet('pc-cl1',{});N[k]=o;X.lsSet('pc-cl1',N);cb(k);});});}
 
+(function(){var st=document.createElement('style');st.textContent='.ch-pmini{display:block;width:100%;max-height:260px;margin:10px 0}';document.head.appendChild(st)})();
+/* « Ouvrir le plan » / « Créer le plan » : la carte se redessine quand le plan arrive, d'où l'écoute sur la page */
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-chplan]');if(!b)return;e.preventDefault();var k=b.getAttribute('data-chplan'),p=planDe(k);if(window.PCPLANS&&PCPLANS.ouvrirPour)PCPLANS.ouvrirPour(k,p&&p.plan)});
 window.PCCH={dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
 if(X.setCurCh)liste();
 })();

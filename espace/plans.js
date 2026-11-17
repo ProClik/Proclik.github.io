@@ -83,5 +83,10 @@ function majBadge(){var g=$('#nb-plans .badge');if(!g)return;var n=lire().filter
 var css=d.createElement('style');css.textContent='.pl-new{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 14px}.pl-new svg,.pl-nc svg{width:20px;height:20px}.pl-nc{display:flex;align-items:center;gap:8px;width:100%;margin:10px 0}.pl-q{display:grid;gap:6px}.pl-q span{font-weight:700;font-size:14px}.pl-q input{width:100%}.pl-manque{display:inline-block;margin-top:3px;color:var(--n1-laiton,#A8823F)!important;font-weight:700}';
 d.head.appendChild(css);
 entree();
-window.PCPLANS={liste:liste,nouveau:function(){choisir('')}};
+/* depuis un chantier : le plan de ce client (le sien s'il existe, sinon une copie du plan de sa demande à retoucher) */
+function ouvrirPour(k,planDepart){var L=lire().filter(function(p){return p.cli===k});var p=L[0];
+ if(!p){p={id:'pl'+Date.now().toString(36),cree:Date.now(),cli:k,plan:planDepart||null};var c=client(k);if(c)p.nom=c.n;garder(p)}
+ else if(!p.plan&&planDepart){p.plan=planDepart;garder(p)}
+ ouvrirPlan(p.id)}
+window.PCPLANS={liste:liste,nouveau:function(){choisir('')},ouvrirPour:ouvrirPour};
 })();
