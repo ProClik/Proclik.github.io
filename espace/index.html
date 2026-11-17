@@ -1184,7 +1184,7 @@ function evDetail(sel,e){if(!e){$(sel).innerHTML='';return;}var c=CK[e.k],d=new 
   '<p class="hint" style="margin:6px 0 10px">'+JL[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' · '+e.s.replace(':','h')+' – '+e.e.replace(':','h')+(e.w?' · '+e.w:'')+'</p>'+
   '<div style="display:flex;gap:8px;flex-wrap:wrap">'+(e.k==='free'?'<button class="btn sm go" data-propose>Proposer à un client</button>':
   (town&&e.k!=='pc'?'<button type="button" class="btn sm go" data-gps="'+esc2(town+', Isère')+'">Itinéraire</button>':'')+
-  (e.x.st&&window.PCPLAN&&PCPLAN.st?'<button class="btn sm go" data-stsms>Lui envoyer ses jours</button>':'')+(e.x.ch?'<button class="btn sm" data-goch>Voir le chantier</button>':'')+(e.x.dv?'<button class="btn sm" data-godv="'+e.x.dv+'">Ouvrir le devis</button>':''))+'</div></div>';
+  (e.x.st&&window.PCPLAN&&PCPLAN.st?'<button class="btn sm go" data-stsms>Lui envoyer ses jours</button>':'')+(e.x.ch?'<button class="btn sm" data-goch>Voir le chantier</button>':'')+(e.x.dv?'<button class="btn sm" data-godv="'+e.x.dv+'">Ouvrir le devis</button>':'')+(e.x.ent?'<button class="btn sm" data-entf="'+e.x.ent+'">Voir le contrat</button>':''))+'</div></div>';
  var b=$(sel+' [data-goch]');if(b)b.addEventListener('click',function(){go('chantiers');showCh(e.x.ch===1?'alpes':e.x.ch)});
  b=$(sel+' [data-stsms]');if(b)b.addEventListener('click',function(){PCPLAN.st.sms(e.x.st,e.x.ch)});
  b=$(sel+' [data-godv]');if(b)b.addEventListener('click',function(){go('devis');open(this.dataset.godv)});
@@ -1695,16 +1695,16 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=13"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
-<script src="accueil.js?v=12"></script>
+<script src="accueil.js?v=13"></script>
 <link rel="stylesheet" href="clients.css?v=5">
 <script src="gps.js?v=1"></script>
-<script src="clients.js?v=9"></script>
+<script src="clients.js?v=10"></script>
 <link rel="stylesheet" href="devis.css?v=3">
 <script src="devis.js?v=7"></script>
 <script src="commandes.js?v=2"></script>
 <link rel="stylesheet" href="chantiers.css?v=3">
 <script src="chantiers.js?v=11"></script><script src="journee.js?v=11"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=11"></script>
-<script src="planning-ajout.js?v=3"></script>
+<script src="planning-ajout.js?v=3"></script><script src="entretiens.js?v=1"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
 <script src="depenses.js?v=3"></script>
 <link rel="stylesheet" href="produits.css?v=5">

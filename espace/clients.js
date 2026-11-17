@@ -92,8 +92,12 @@ function avatar(o){return '<span class="cf-av'+(estPro(o)?' cf-doc':'')+'">'+(es
 function ligneCli(k){var o=DOS[k],e=etat(k);
  return '<button class="cf-li" type="button" data-cli="'+k+'">'+avatar(o)+'<span class="tx"><b>'+esc(o.n)+'</b><small>'+esc(o.v||'')+(o.t?' · '+esc(o.t):'')+'</small><small class="cf-et'+(e[1]?' on':'')+'">'+esc(e[0])+'</small></span><span class="go">›</span></button>'}
 var filtre='',cseg='tous';
-function menuClients(n){return '<div class="seg cf-seg dv-seg cl-seg" role="tablist" aria-label="Clients">'+[['tous','Tous'],['suivre','À suivre'],['pro','Pros']].map(function(x){
-  return '<button role="tab" data-clseg="'+x[0]+'" aria-selected="'+(cseg===x[0])+'">'+ICP[x[0]]+'<span>'+x[1]+'</span>'+(n[x[0]]?'<i class="cl-nb'+(x[0]==='suivre'?' on':'')+'">'+n[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'}
+function entOn(){return !!(window.PCENT&&PCENT.on())}
+function menuClients(n){if(entOn())n.ent=PCENT.urgents().length;else if(cseg==='ent')cseg='tous';
+ return '<div class="seg cf-seg dv-seg cl-seg'+(entOn()?' cl-seg4':'')+'" role="tablist" aria-label="Clients">'+[['tous','Tous'],['suivre','À suivre'],['pro','Pros']].concat(entOn()?[['ent','Entretiens']]:[]).map(function(x){
+  return '<button role="tab" data-clseg="'+x[0]+'" aria-selected="'+(cseg===x[0])+'">'+(x[0]==='ent'?window.PCENT_IC:ICP[x[0]])+'<span>'+x[1]+'</span>'+(n[x[0]]?'<i class="cl-nb'+(x[0]==='suivre'||x[0]==='ent'?' on':'')+'">'+n[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'}
+/* Contrats d'entretien (entretiens.js, Cyril 17/11) : même en-tête et même menu, la liste des contrats à la place des clients */
+function vueEnt(n,txt){poser('#v-clients','<div class="cl"><div class="row cf-top"><h2>Clients</h2><span class="cf-n">'+txt+'</span></div>'+menuClients(n)+PCENT.vue()+'</div>')}
 function enTete(n,txt){return '<div class="row cf-top"><h2>Clients</h2><span class="cf-n">'+txt+'</span></div>'+
  '<button class="btn go cf-go" type="button" data-cadd><span class="lab"><span class="ic">'+IC.perso+'</span><span>Ajouter un client</span></span></button>'+
  menuClients(n)+'<label class="cf-cherche">'+IC.cherche+'<input type="search" id="cf-q" placeholder="Nom, ville ou travaux" autocomplete="off" value="'+esc(filtre)+'" aria-label="Chercher un client"></label>'}
@@ -102,6 +106,7 @@ function vueClients(){var vrai=document.documentElement.classList.contains('pcvr
  if(vrai)return clientsVrais();
  var tous=cles(),nom=function(x){return DOS[x].n.replace(/^(M\.|Mme)\s+/,'')};
  var n={tous:tous.length,suivre:tous.filter(function(k){return etat(k)[1]}).length,pro:tous.filter(function(k){return estPro(DOS[k])}).length};
+ if(cseg==='ent'&&entOn())return vueEnt(n,tous.length+' clients');
  var K=tous.filter(function(k){return cseg==='suivre'?etat(k)[1]:cseg==='pro'?estPro(DOS[k]):1}).filter(function(k){var o=DOS[k];return !filtre||(o.n+' '+(o.v||'')+' '+(o.t||'')).toLowerCase().indexOf(filtre)>=0});
  if(cseg!=='suivre')K.sort(function(x,y){return nom(x).localeCompare(nom(y),'fr')});
  var h='<div class="cl">'+enTete(n,tous.length+' clients')+
@@ -128,6 +133,7 @@ function ligneVC(c){var o={n:c.nom,type:c.type};
  return '<button class="cf-li" type="button" data-cvf="'+esc(c.contact)+'">'+avatar(o)+'<span class="tx"><b>'+esc(c.nom)+'</b><small>'+esc([c.ville,c.demande].filter(Boolean).join(' · '))+'</small>'+(c.etape?'<small class="cf-et on">'+esc(c.etape)+'</small>':'')+'</span><span class="go">›</span></button>'}
 function clientsVrais(){chargerVC();var R=vraisClients(),C=R.liste;
  var n={tous:C.length,suivre:C.filter(function(c){return c.suivre}).length,pro:C.filter(function(c){return c.type==='pro'}).length};
+ if(cseg==='ent'&&entOn())return vueEnt(n,R.charge?C.length+' client'+(C.length>1?'s':''):'Chargement…');
  var K=C.filter(function(c){return cseg==='suivre'?c.suivre:cseg==='pro'?c.type==='pro':1}).filter(function(c){return !filtre||((c.nom||'')+' '+(c.ville||'')+' '+(c.demande||'')).toLowerCase().indexOf(filtre)>=0})
   .sort(function(x,y){return String(x.nom||'').replace(/^(M\.|Mme)\s+/,'').localeCompare(String(y.nom||'').replace(/^(M\.|Mme)\s+/,''),'fr')});
  var h='<div class="cl">'+enTete(n,R.charge?C.length+' client'+(C.length>1?'s':''):'Chargement…')+
@@ -166,7 +172,7 @@ function ficheClient(k,keep){var o=DOS[k];if(!o)return;FK=k;var F=faDe(k),V=dvDe
  else if(o.ch&&CH[o.ch])go='<button class="btn go" data-ch="'+o.ch+'">Voir le chantier</button>';
  else if(o.k==='visite')go='<button class="btn go" data-dos="'+k+'">Préparer la visite</button>';
  else go='<button class="btn go" data-cnew="devis|'+k+'">Faire un devis</button>';
- var h='<div class="cf cl-f">'+coord(o)+'<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b>'+go.replace('class="btn go"','class="btn go cf-in"')+'</div>'+menuFiche({pre:P.length,dv:S.length,fa:F.length})+'<div class="cl-docs">'+corps+'</div>';
+ var h='<div class="cf cl-f">'+coord(o)+'<div class="card cf-ou"><small>Où on en est</small><b>'+esc(e[0])+'</b>'+go.replace('class="btn go"','class="btn go cf-in"')+'</div>'+(entOn()?PCENT.bloc({cle:k,nom:o.n,tel:o.tel,ville:o.v}):'')+menuFiche({pre:P.length,dv:S.length,fa:F.length})+'<div class="cl-docs">'+corps+'</div>';
  if(o.hist&&o.hist.length)h+='<details class="xsec cl-hist"><summary>Historique</summary><div class="card"><ul class="tl">'+o.hist.map(function(x,i,a){return '<li class="'+(i===a.length-1?'last':'')+'"><small>'+esc(x[0])+'</small>'+esc(x[1])+'</li>'}).join('')+'</ul></div></details>';
  if(o.chat&&(o.chat.length||o.ph.length))h+='<button type="button" class="btn sm cf-tout" data-dos="'+k+'">Sa demande complète : conversation, photos ›</button>';
  h+=supBouton('data-csup="'+k+'"')+'</div>';
@@ -192,7 +198,7 @@ function rendreVraie(maj){var c=VF.c,base=VC[c]||{nom:'Client'},d=VF.dem,k=(d&&d
  if(fs==='pre')corps=!P?att:P.length?'<div class="card lst cf-l">'+P.slice(0,4).map(function(p,i){return '<button class="cf-li" type="button" data-vc="'+esc(c)+'"><span class="cf-av cf-doc">'+I('<path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/>')+'</span><span class="tx"><b>'+(i?'Pré-devis plus ancien':'Pré-devis')+'</b><small>'+esc(jour(p.le)||'')+(p.resume?' · '+esc(p.resume):'')+'</small></span><span class="cf-m"><b>'+(p.totaux&&p.totaux.total_ht!=null?eur(+p.totaux.total_ht):'')+'</b><span class="pill '+(i?'grey':'todo')+'">'+(i?'Ancien':'Ouvrir')+'</span></span></button>'}).join('')+'</div>':'<div class="card cf-rien"><b>Aucun pré-devis</b><span>Quand ce client remplit le formulaire, Cliky prépare son pré-devis ici.</span></div>';
  else if(fs==='dv')corps=!Dv?att:Dv.length?'<div class="card lst cf-l">'+Dv.map(ligneVdoc).join('')+'</div>':'<div class="card cf-rien"><b>Aucun devis</b><span>Un pré-devis validé devient un devis VosFactures, il arrive ici.</span></div>';
  else corps=!Fa?att:Fa.length?'<div class="card lst cf-l">'+Fa.map(ligneVdoc).join('')+'</div><p class="hint">Les factures d\'acompte sont rangées ici aussi.</p>':'<div class="card cf-rien"><b>Aucune facture</b><span>La facture d\'acompte se crée à l\'acceptation du devis.</span></div>';
- var h='<div class="cf cl-f" data-c="'+esc(c)+'">'+coord(o)+(VF.err?'<p class="hint cl-err">'+esc(VF.err)+'</p>':'')+menuFiche({pre:P?P.length&&1:0,dv:Dv?Dv.length:0,fa:Fa?Fa.length:0},fs)+'<div class="cl-docs">'+corps+'</div>'+supBouton('data-csupv="'+esc(c)+'"')+'</div>';
+ var h='<div class="cf cl-f" data-c="'+esc(c)+'">'+coord(o)+(VF.err?'<p class="hint cl-err">'+esc(VF.err)+'</p>':'')+(entOn()?PCENT.bloc({cle:c,nom:o.n,tel:o.tel,ville:o.v}):'')+menuFiche({pre:P?P.length&&1:0,dv:Dv?Dv.length:0,fa:Fa?Fa.length:0},fs)+'<div class="cl-docs">'+corps+'</div>'+supBouton('data-csupv="'+esc(c)+'"')+'</div>';
  X.xopen(o.n||'Client',[o.v,base.demande].filter(Boolean).join(' · '),h,'<button class="btn" data-xclose>Fermer</button>'+(P&&P.length?'<button class="btn go" data-vc="'+esc(c)+'">Ouvrir le pré-devis</button>':''),null,false);}
 
 /* ---------- supprimer un client (demande de Cyril, 3/11) ----------
@@ -402,6 +408,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 document.addEventListener('change',function(e){if(e.target&&e.target.id==='cf-kbis'){var f=e.target.files[0],n=$('#cf-kbis-n');if(n)n.textContent=f?f.name:'Ajouter le Kbis'}});
 /* À chaque ouverture d'onglet, l'écran est à jour (les vraies demandes peuvent avoir changé) */
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v]');if(!t)return;if(t.dataset.v==='clients')vueClients();if(t.dataset.v==='factures')vueFactures();});
+document.addEventListener('pc-ent',function(){if($('#v-clients .cl'))vueClients()});
 new MutationObserver(function(){vueClients()}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 vueClients();vueFactures();
 })();
