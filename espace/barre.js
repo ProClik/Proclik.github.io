@@ -15,7 +15,9 @@
   if($("#pb")||!$("nav.nav [id^='nb-']"))return;
   var mq=matchMedia("(max-width:899px)"),reduit=matchMedia("(prefers-reduced-motion: reduce)");
   /* disposition choisie dans les Réglages (2/11) : 4 boutons dans la barre, le reste dans l'éventail */
-  function tous0(){var t=val(C.tous)||["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux"];return t.concat(["reglages"])}
+  function tous0(){var t=val(C.tous)||["accueil","clients","devis","factures","planning","chantiers","depenses","prix","produits","cotes","reseaux"];
+    /* entrées apportées par une option (Cyril 17/11 : Mes véhicules, Mon équipe, Mes cadences avec Cliky) : boutons [data-pbx] du menu */
+    var x=$$("nav.nav [data-pbx]").map(function(b){return b.id.slice(3)}).filter(function(v){return t.indexOf(v)<0});return t.concat(x,["reglages"])}
   var TOUS0=tous0();
   /* un onglet caché (ex. Réseaux sans l'option, Cyril 15/11) ne va ni dans la barre ni dans l'éventail */
   function dispo(v){if(v==="reglages")return C.reglages===undefined?true:!!val(C.reglages);var b=$("#nb-"+v);return !!b&&!b.hidden}
@@ -73,8 +75,8 @@
   var menu=d.createElement("div");menu.className="pb-menu pan-c";menu.id="pb-menu";menu.setAttribute("aria-hidden","true");
   /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
   var FAMILLES=val(C.familles)||[
-    {t:"Devis et factures",v:["devis","factures"]},
-    {t:"Chantiers",v:["chantiers","planning","cotes"]},
+    {t:"Devis et factures",v:["devis","factures","cadences"]},
+    {t:"Chantiers",v:["chantiers","planning","cotes","vehicules","monequipe"]},
     {t:"Achats",v:["prix","produits","depenses"]},
     {t:"Et aussi",v:["accueil","clients","reseaux","reglages"]}
   ];
