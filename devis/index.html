@@ -622,7 +622,7 @@ const D={
    {k:"rampe",t:"chips",l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
  autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
    {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
- finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Presque fini",f:[
+ finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Une question rapide",f:[
    {k:"fin",t:"chips",l:"Finition des plaques",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris."}]},
  photos:{t:"Quelques photos",s:"Ce sont elles qui rendent le pré-devis vraiment juste.",cheer:"Les photos, ça change tout",f:[
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
@@ -638,7 +638,7 @@ const D={
    {k:"pj",t:"note",l:"Pièces jointes : une photo de chaque pièce concernée, et votre plan si vous en avez un. Ce sont elles qui rendent le devis juste."},
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
    {k:"plan",t:"file",l:"Plan ou document (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan ou un document",small:"Plan, ancien devis, diagnostic… en photo ou en PDF"}]},
- projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Dernière ligne droite",f:[
+ projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Bien avancé",f:[
    {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
    {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
@@ -788,8 +788,7 @@ function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
 function SIMPLE(){return false}
 // 17/11 (Cyril) : tout ce que le plan ne dessine pas (combles, rampants, escalier, autre) est demandé AVANT le plan : le plan reprend ces réponses (hauteurs du toit, fenêtres de toit).
-function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k)),avPlan=pl&&S.mode==="plan";if(pl)a.push("mode");if(SIMPLE()){if(avPlan)a.push("plan");a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(avPlan&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});if(avPlan)a.push("plan");
- if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");a.push("photos","projet","contact","recap");return a}
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k)),avPlan=pl&&S.mode==="plan";if(pl)a.push("mode");if(SIMPLE()){if(avPlan)a.push("plan");a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(avPlan&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");if(avPlan)a.push("projet","plan","photos","contact","recap");else a.push("photos","projet","contact","recap");return a}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
 const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
