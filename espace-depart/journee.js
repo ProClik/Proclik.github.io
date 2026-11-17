@@ -116,7 +116,7 @@ var css='.jr-c{display:grid;gap:10px}.jr-c .jr-h{display:flex;align-items:center
  '.vh-d{display:flex!important;align-items:center;justify-content:space-between;gap:10px}.vh-d input{max-width:180px;min-height:44px}'+
  '.vh-ch{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}'+
  '.vh-o{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:16px;border:0;font:inherit;font-weight:700;font-size:13.5px;color:inherit;background:var(--n1-bg,var(--bg));box-shadow:var(--n1-pk,0 1px 3px rgba(0,0,0,.12))}'+
- '.vh-o span{display:grid;place-items:center;color:var(--muted)}.vh-o[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true] span{color:var(--n1-laiton,#A8823F)}'+
+ '.vh-o span{display:grid;place-items:center;color:var(--muted)}.jr-row .btn[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true] span{color:var(--n1-laiton,#A8823F)}'+
  '.vh-big{display:flex;align-items:baseline;gap:10px}.vh-big input{max-width:130px;font-size:30px!important;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}.vh-big span{color:var(--muted);font-weight:700}.vh-big.sm input{font-size:22px!important;max-width:110px}'+
  '.vh-bs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.vh-b{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--n1-bg,var(--soft,#EEF1F6));color:var(--muted)}.vh-b.wa{background:color-mix(in srgb,var(--n1-warn,#C98A1B) 18%,transparent);color:var(--n1-warn,#9A6A10)}.vh-b.al{background:color-mix(in srgb,var(--n1-alert,#B9577A) 18%,transparent);color:var(--n1-alert,#B9577A)}'+
  '.vh-hd{display:flex;gap:14px;align-items:center}.vh-hd b{font-size:19px}.vh-hd small{display:block;color:var(--muted);font-weight:600}'+
@@ -358,7 +358,7 @@ function mesVehicules(retour){MV.retour=retour||MV.retour;var V=VEHS();
   b.addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var s=t.dataset;
    if(s.vhs)return suiviVeh(s.vhs);
    if(s.vhn!=null)return ficheVeh(null);
-   if(s.vhd!=null){REG.detour=+s.vhd;save();return mesVehicules()}
+   if(s.vhd!=null){REG.detour=+s.vhd;save();[].forEach.call(b.querySelectorAll('[data-vhd]'),function(x){x.setAttribute('aria-pressed',String(x===t))});X.toast('Détour fournisseur',REG.detour?REG.detour+' km ajoutés les jours de passage au comptoir':'Aucun détour');return}
    if(s.vhfin!=null){var r=MV.retour;MV.retour=null;if(r)r();else X.xclose()}})})}
 var MV={retour:null};
 function ficheVeh(id){var v=id?Object.assign({},vehDe(id)):{id:'v'+Date.now(),nom:'',plaque:'',ass:['moi']},nv=!id;F=v;ficheRendre(nv)}
