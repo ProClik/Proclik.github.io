@@ -32,7 +32,7 @@ var FA0=[
 var FA=X.lsGet('pc-fa1',null)||FA0;
 var NEW=X.lsGet('pc-cl1',{});Object.keys(NEW).forEach(function(k){if(!DOS[k])DOS[k]=NEW[k]});
 var DVN=X.lsGet('pc-dvn1',[]);
-X.cf={FA:function(){return FA},RC:function(){return RC},ftot:function(f){return ftot(f)},nouveauClient:function(r){formClient(r)},ficheClient:function(k){fseg=null;if(DOS[k]&&!DOS[k].vrai)ficheClient(k);else ficheVraie(k)},DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
+X.cf={vrais:function(){return vraisClients().liste},chargerVrais:function(cb){chargerVC(cb)},ligneVdoc:function(d){return ligneVdoc(d)},FA:function(){return FA},RC:function(){return RC},ftot:function(f){return ftot(f)},nouveauClient:function(r){formClient(r)},ficheClient:function(k){fseg=null;if(DOS[k]&&!DOS[k].vrai)ficheClient(k);else ficheVraie(k)},DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
 function save(){X.lsSet('pc-fa1',FA);X.lsSet('pc-cl1',NEW);X.lsSet('pc-dvn1',DVN);}
 function fa(id){return FA.filter(function(f){return f.id===id})[0]}
 function ftot(f){var t=0;f.L.forEach(function(l){t+=l[1]});t=r2(t);var ht=r2(t-(f.ac||0)),tv=r2(ht*f.tva/100);return{total:t,ht:ht,tv:tv,ttc:r2(ht+tv)}}
@@ -120,10 +120,10 @@ function vraisClients(){var L=lsJ('pc-vrai-liste'),M={},out=[],sup=lsJ('pc-cl-su
  ((L&&L.demandes)||[]).forEach(function(d){var k=d.contact;if(!k)return;var c=M[k]||(M[k]={contact:k,nom:d.client});c.nom=c.nom||d.client;
   if(!c.demande){c.demande=d.resume||d.titre||'';c.etape=d.etape||'';c.suivre=1}});
  Object.keys(M).forEach(function(k){if(sup.indexOf(k)<0)out.push(M[k])});VC=M;return {liste:out,charge:!!L};}
-function chargerVC(){var V=window.PCV;if(!V||!V.api||Date.now()-vcCharge<60000)return;vcCharge=Date.now();
+function chargerVC(cb){var V=window.PCV;if(!V||!V.api||Date.now()-vcCharge<60000)return;vcCharge=Date.now();
  V.api('/espace/clients').then(function(x){var loc=(lsJ(KVC)||[]).filter(function(c){return c.ici}),M={};
   (x.clients||[]).forEach(function(c){if(c.contact)M[c.contact]=c});loc.forEach(function(c){if(!M[c.contact])M[c.contact]=c});
-  lsW(KVC,Object.keys(M).map(function(k){return M[k]}));if($('#v-clients .cl'))clientsVrais()},function(){});}
+  lsW(KVC,Object.keys(M).map(function(k){return M[k]}));if($('#v-clients .cl'))clientsVrais();if(cb)cb()},function(){});}
 function ligneVC(c){var o={n:c.nom,type:c.type};
  return '<button class="cf-li" type="button" data-cvf="'+esc(c.contact)+'">'+avatar(o)+'<span class="tx"><b>'+esc(c.nom)+'</b><small>'+esc([c.ville,c.demande].filter(Boolean).join(' · '))+'</small>'+(c.etape?'<small class="cf-et on">'+esc(c.etape)+'</small>':'')+'</span><span class="go">›</span></button>'}
 function clientsVrais(){chargerVC();var R=vraisClients(),C=R.liste;

@@ -30,8 +30,8 @@
     if(!b||b.length!==Math.min(4,TOUS.filter(function(v){return v!=="reglages"}).length)||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||(v!=="reglages"&&!$("#nb-"+v))})||b.some(function(v,i){return b.indexOf(v)!==i}))b=defaut();
     return b;
   }
-  /* menu de côté (iPad, ordinateur) : son propre choix, 1 à 6 boutons, sans toucher à celui du téléphone (Cyril, 15/11) */
-  var COTE_MAX=6;
+  /* menu de côté (iPad, ordinateur) : son propre choix, 1 à 10 boutons (6 avant le 17/11, Cyril : « la barre du côté peut accueillir plus de menus »), sans toucher à celui du téléphone (Cyril, 15/11) */
+  var COTE_MAX=10;
   function choisisCote(){
     var b=lit("pc-cote",null);
     if(!b||!b.length||b.length>COTE_MAX||b.some(function(v){return TOUS.indexOf(v)<0||v==="reglages"||!$("#nb-"+v)})||b.some(function(v,i){return b.indexOf(v)!==i}))b=defaut();
@@ -76,7 +76,7 @@
   /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
   var FAMILLES=val(C.familles)||[
     {t:"Devis et factures",v:["devis","factures","cadences"]},
-    {t:"Chantiers",v:["chantiers","planning","cotes","vehicules","monequipe"]},
+    {t:"Chantiers",v:["chantiers","planning","plans","cotes","vehicules","monequipe"]},
     {t:"Achats",v:["prix","produits","depenses"]},
     {t:"Et aussi",v:["accueil","clients","reseaux","reglages"]}
   ];

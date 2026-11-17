@@ -1,6 +1,6 @@
 /* Menu de côté (iPad, ordinateur) qui s'ouvre comme sur téléphone (Cyril, 15/11) : 11 entrées les unes sous les autres,
    c'était trop. Le côté garde seulement les boutons choisis dans Réglages > Mon menu de côté
-   (1 à 6, Accueil, Clients, Planning, Devis par défaut ; réglage à part de celui du téléphone) et, au milieu, le même galet : il ouvre le même panneau (micro + bulles),
+   (1 à 10, Accueil, Clients, Planning, Devis par défaut ; réglage à part de celui du téléphone) et, au milieu, le même galet : il ouvre le même panneau (micro + bulles),
    à droite du galet. Les vrais onglets (#nb-…) restent la seule source : ce menu ne fait qu'appuyer dessus et recopier
    l'onglet en cours et les pastilles. Téléphone : rien ne change (barre.js). */
 (function(){
@@ -18,7 +18,7 @@
   }
   function construit(){
     /* les boutons choisis dans Réglages > Mon menu de côté, le galet au milieu */
-    var b=B.cote(),h=Math.ceil(b.length/2);
+    var b=B.cote(),h=Math.ceil(b.length/2);fam.classList.toggle("fam-plein",b.length>7);
     fam.innerHTML=b.slice(0,h).map(bouton).join("")+
       '<button type="button" class="fam-c" id="fam-c" aria-expanded="false" aria-controls="pb-menu" aria-label="Ouvrir le menu">'+ICO_MENU+'<span class="badge" hidden></span></button>'+
       b.slice(h).map(bouton).join("");
@@ -77,6 +77,9 @@
       ".pb-ouvert body #fam .fam-c .l3{transform:rotate(-45deg) translateY(-5px)}"+
       ".pb-ouvert body #fam .fam-c .badge{opacity:0}"+
       "@media (prefers-reduced-motion:reduce){"+H+"#fam .fam-c svg path{transition:none}}"+
+      /* jusqu'à 10 boutons (Cyril 17/11) : sur un écran bas, le menu se resserre, et défile au pire au lieu de sortir de l'écran */
+      H+"#fam{max-height:100vh;max-height:100dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}"+H+"#fam::-webkit-scrollbar{display:none}"+
+      "@media (max-height:820px){"+H+"#fam.fam-plein{gap:2px!important;row-gap:2px!important;padding-top:6px!important;padding-bottom:6px!important}"+H+"#fam.fam-plein [data-cote]{padding-top:3px!important;padding-bottom:3px!important;min-height:0!important}"+H+"#fam.fam-plein [data-cote] .ico{width:30px!important;height:30px!important;min-height:0!important}"+H+"#fam.fam-plein .fam-c{width:54px!important;height:54px;margin:3px 0}}"+
     "}";
   d.head.appendChild(st);
   construit();
