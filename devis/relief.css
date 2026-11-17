@@ -54,7 +54,7 @@ html body .mcard.reco{border:0;box-shadow:var(--up)}
 html body .mcard[aria-pressed="true"]{box-shadow:var(--in),0 0 0 2px var(--acc)}
 html body .mcard[aria-pressed="true"]>b{padding-right:32px}
 html body .mcard[aria-pressed="true"]::after{content:"✓";position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font:800 15px/1 var(--f-body,sans-serif)}
-html body .mcard .rb{background:var(--acc);color:var(--ink)}
+html body .mcard .rb{background:var(--acc);color:var(--bg)}
 
 /* champs à remplir : en creux, avec un fin contour pour bien les repérer */
 html body input[type=text],html body input[type=tel],html body input[type=email],html body textarea,html body .numbox{background:var(--bg);border:1.5px solid var(--line);box-shadow:var(--in);border-radius:14px}
