@@ -87,6 +87,7 @@ textarea.t{min-height:0;font:inherit;font-size:16px}
 <section id="v-liste" hidden>
  <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="clients">Clients</button><button role="tab" aria-selected="false" data-tab="messages">Messages</button><button role="tab" aria-selected="false" data-tab="journal">Journal</button><button role="tab" aria-selected="false" data-tab="reglages">Réglages</button></div>
  <div id="deuxfa-bandeau"></div>
+ <div id="alertes-bandeau"></div>
  <div id="p-clients">
   <button class="btn go" id="nouveau" type="button" style="width:100%;margin-bottom:14px">+ Nouveau client</button>
   <div id="liste"></div>
@@ -147,7 +148,11 @@ function rendreListe(){var tous=DATA.clients.filter(function(c){return !!c.archi
  $('#liste').innerHTML=L.length?L.map(function(c){var on=Object.keys(c.options||{}).filter(function(k){return c.options[k]}).map(function(k){return NOMS[k]||k});
   return '<div class="card"><button class="cl" type="button" data-id="'+esc(c.id)+'"><span class="n"><b>'+esc(c.entreprise||c.id)+'</b><span class="mu">'+(c.activite?esc(c.activite)+' · ':'')+esc(c.prenom||'')+(c.email?' · '+esc(c.email):'')+'</span><div>'+etat(c)+'</div>'+
    '<div class="mu" style="margin-top:6px">'+(alerte(c).length?'<span class="pill al">● '+esc(alerte(c).join(' · '))+'</span><br>':'')+'Vu '+esc(depuis(c.suivi&&c.suivi.vu))+(c.suivi&&c.suivi.derniere_demande?' · dernière demande '+esc(depuis(c.suivi.derniere_demande)):'')+'<br>'+(c.effectif?c.effectif+' personne'+(c.effectif>1?'s':'')+' · ':'')+'Options : '+(on.length?esc(on.join(', ')):'aucune')+(function(){var off=Object.keys(c.menus||{}).filter(function(k){return c.menus[k]===false}).map(function(k){return MENUS[k]||k});return off.length?' · Menus masqués : '+esc(off.join(', ')):''})()+'</div></span><span aria-hidden="true" style="font-size:22px;color:var(--mu)">›</span></button></div>'}).join(''):'<div class="card mu">Aucun client pour l\'instant.</div>'}
-function charger(){return api('/admin/clients').then(function(j){DATA=j;bandeau2fa();vue(COUR?'fiche':'liste');rendreListe();if(COUR){var c=DATA.clients.filter(function(x){return x.id===COUR})[0];if(c)fiche(c)}},function(e){if(lj())toast(e.message)})}
+/* Alertes (17/11) : un service payant a lâché (crédit Claude, clé Google…). Seulement les nouvelles. */
+function alertes(){api('/admin/alertes').then(function(j){var n=j.nouvelles||0,L=(j.alertes||[]).slice(0,n);if(!n){$('#alertes-bandeau').innerHTML='';return}
+ $('#alertes-bandeau').innerHTML='<div class="card" style="border:1.5px solid var(--n1-alert)"><h2>⚠ '+(n>1?n+' alertes':'Une alerte')+' à regarder</h2>'+L.slice(0,5).map(function(a){return '<p style="margin:0 0 10px"><b>'+esc(a.titre)+'</b><br>'+esc(a.msg)+'.<br><span class="mu">'+esc(a.ou)+'</span><br><span class="pill w">'+esc(new Date(a.t).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}))+'</span>'+(a.mail==='envoyé'?'<span class="pill ok">e-mail envoyé</span>':'')+'</p>'}).join('')+(j.mail!=='branché'?'<p class="mu" style="margin:0 0 10px">E-mail d\'alerte pas encore branché (secret ALERTE_EMAIL).</p>':'')+'<button class="btn sm go" type="button" id="alok">C\'est réglé</button></div>';
+ $('#alok').addEventListener('click',function(){api('/admin/alertes',{method:'POST',body:{}}).then(function(){$('#alertes-bandeau').innerHTML='';toast('Alertes marquées comme vues')},function(){})})},function(){})}
+function charger(){return api('/admin/clients').then(function(j){DATA=j;bandeau2fa();alertes();vue(COUR?'fiche':'liste');rendreListe();if(COUR){var c=DATA.clients.filter(function(x){return x.id===COUR})[0];if(c)fiche(c)}},function(e){if(lj())toast(e.message)})}
 $('#liste').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(!b)return;var c=DATA.clients.filter(function(x){return x.id===b.dataset.id})[0];if(c){COUR=c.id;fiche(c);vue('fiche')}});
 $('#voirarch').addEventListener('click',function(){ARCH=!ARCH;rendreListe()});
 $('#retour').addEventListener('click',function(){COUR=null;vue('liste');rendreListe()});

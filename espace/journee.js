@@ -42,7 +42,17 @@ var cle=function(d,ch){return d+'|'+ch};
 /* ---------- trajet estimé ---------- */
 function km(a,b){var R=6371,r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lon-a.lon)*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
 function lieu(c){var P=(X.PINS||window.PINS||[]).filter(function(p){return p.name===c.n||p.dos===c.dos||p.ch===c.id})[0];return P&&P.lat?{lat:P.lat,lon:P.lon}:null}
-function trajet(c){var L=lieu(c);if(!L)return {km:null,min:20,txt:'environ 20 min de route (adresse sans position)'};
+/* Vrai trajet routier (17/11, Cyril « On y va ») : le service le calcule une fois par chantier (Google Routes API,
+   gardé 30 jours), on le garde dans le chantier (c.route). Sans réponse (clé pas encore posée, démo) : vol d'oiseau. */
+function depart(){return (REG.depot||'').trim()||(REG.cp?REG.cp+', France':DEPOT.lat+','+DEPOT.lon)}
+function adresseCh(c){var o=c.dos&&X.DOS&&X.DOS[c.dos];return (o&&o.adr&&!/\[/.test(o.adr)?o.adr:'')||(c.v?c.v+', France':'')}
+var enCours={};
+function chercherRoute(c){var de=depart(),a=adresseCh(c),k=c.id+'|'+de+'|'+a;if(!a||enCours[k]||!window.PCV||!document.documentElement.classList.contains('pcvrai'))return;enCours[k]=1;
+ PCV.api('/espace/trajet?de='+encodeURIComponent(de)+'&a='+encodeURIComponent(a)).then(function(x){if(x&&x.km>0&&x.min>0){c.route={km:x.km,min:x.min,de:de,a:a};X.saveCH();majPartout()}},function(){})}
+function trajet(c){var de=depart(),a=adresseCh(c),R=c.route;
+ if(R&&R.de===de&&R.a===a)return {km:Math.round(R.km),min:R.min,vrai:true,txt:duree(R.min)+' de route ('+Math.round(R.km)+' km, trajet calculé)'};
+ chercherRoute(c);
+ var L=lieu(c);if(!L)return {km:null,min:20,txt:'environ 20 min de route (adresse sans position)'};
  var d=Math.max(1,km(DEPOT,L)*1.3),m=Math.max(5,Math.round(d/VITESSE*60));return {km:Math.round(d),min:m,txt:'environ '+duree(m)+' de route ('+Math.round(d)+' km)'}}
 function arrivee(j,c){var t=trajet(c),marge=REG.marge||0;
  if(j.four!=null)return {m:j.four+t.min+marge,src:'fournisseur',det:'liste donnée au fournisseur à '+hmLong(j.four)+' + '+t.txt+' + '+marge+' min de marge'};
@@ -340,11 +350,11 @@ function carteVeh(v){var s=statsVeh(v.id,jourIso(0).slice(0,7)),E=echeances(v).f
 function mesVehicules(retour){MV.retour=retour||MV.retour;var V=VEHS();
  var h='<div id="jr-mv" class="vh"><p class="jr-sub">'+(V.length?'Touchez un véhicule pour voir son suivi.':'Ajoutez le véhicule qui va sur vos chantiers. Il sert au coût des trajets.')+'</p>'+
   '<div class="vh-l">'+V.map(carteVeh).join('')+'</div><button type="button" class="vh-add" data-vhn><span>+</span>Ajouter un véhicule</button>'+
-  '<div class="vh-g"><b>Pour tous les véhicules</b><label>Code postal du dépôt<small>Pour le prix du jour des stations autour de chez vous.</small><input id="jr-vcp" inputmode="numeric" maxlength="5" value="'+esc(REG.cp||'')+'"></label>'+
+  '<div class="vh-g"><b>Pour tous les véhicules</b><label>Adresse du dépôt<small>D\'où partent les camions le matin : sert à calculer le vrai trajet jusqu\'au chantier.</small><input id="jr-vdep" value="'+esc(REG.depot||'')+'" placeholder="N°, rue, code postal, commune" autocomplete="street-address"></label><label>Code postal du dépôt<small>Pour le prix du jour des stations autour de chez vous.</small><input id="jr-vcp" inputmode="numeric" maxlength="5" value="'+esc(REG.cp||'')+'"></label>'+
   '<div><span class="vh-lab">Détour pour passer chez le fournisseur<small>Ajouté les jours où la liste est donnée au comptoir.</small></span><div class="jr-row">'+[0,5,10,15,20].map(function(n){return '<button type="button" class="btn" data-vhd="'+n+'" aria-pressed="'+((REG.detour||0)===n)+'">'+(n?n+' km':'Aucun')+'</button>'}).join('')+'</div></div></div>'+
   (MV.retour?'<div class="jr-ok"><button type="button" class="btn go" data-vhfin>C\'est bon</button></div>':'')+'</div>';
  X.xopen('Mes véhicules',V.length?V.length+' véhicule'+(V.length>1?'s':''):'','<div>'+h+'</div>','',function(){var b=$('#jr-mv');
-  var cp=$('#jr-vcp');cp.addEventListener('change',function(){if(/^\d{5}$/.test(cp.value.trim())){REG.cp=cp.value.trim();save()}});
+  var dp=$('#jr-vdep');if(dp)dp.addEventListener('change',function(){REG.depot=dp.value.trim().slice(0,160);save()});var cp=$('#jr-vcp');cp.addEventListener('change',function(){if(/^\d{5}$/.test(cp.value.trim())){REG.cp=cp.value.trim();save()}});
   b.addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var s=t.dataset;
    if(s.vhs)return suiviVeh(s.vhs);
    if(s.vhn!=null)return ficheVeh(null);
