@@ -55,34 +55,37 @@ function opens(sg){const P=K(),L=P.dist(sg.a,sg.b),u=[(sg.b[0]-sg.a[0])/L,(sg.b[
 const vis=t=>fams().includes((T[t]||TP[t]||{}).f);
 
 /* ---------- Dessins ---------- */
+/* Plaques vues de face, carrées aux angles adoucis, comme les plaques posées en France (1, 2 ou 3 postes) */
+const pl=(x,y,n)=>`<rect class="bx" x="${x-9*n}" y="${y-9}" width="${18*n}" height="18" rx="4"/>${n>1?Array.from({length:n-1},(_,k)=>`<line class="gl sep" x1="${x-9*n+18*(k+1)}" y1="${y-6}" x2="${x-9*n+18*(k+1)}" y2="${y+6}"/>`).join(""):""}`;
+const sock=(x,y)=>`<circle class="gl" cx="${x}" cy="${y}" r="5.2"/><circle class="pt" cx="${x-2.3}" cy="${y+.8}" r="1.15"/><circle class="pt" cx="${x+2.3}" cy="${y+.8}" r="1.15"/><circle class="pt" cx="${x}" cy="${y-2.6}" r=".8"/>`;
 function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";
  switch(e.t){
-  case"pc":g=`<circle class="bx" cx="${x}" cy="${y}" r="8"/><circle class="pt" cx="${x-3}" cy="${y}" r="1.6"/><circle class="pt" cx="${x+3}" cy="${y}" r="1.6"/>`;break;
-  case"pc2":g=`<rect class="bx" x="${x-15}" y="${y-8}" width="30" height="16" rx="5"/>${[-10,-4,4,10].map(k=>`<circle class="pt" cx="${x+k}" cy="${y}" r="1.5"/>`).join("")}`;break;
-  case"pc3":g=`<rect class="bx" x="${x-22}" y="${y-8}" width="44" height="16" rx="5"/>${[-17,-11,-3,3,11,17].map(k=>`<circle class="pt" cx="${x+k}" cy="${y}" r="1.5"/>`).join("")}`;break;
-  case"p32":g=`<circle class="bx" cx="${x}" cy="${y}" r="9"/><circle class="pt" cx="${x-3.5}" cy="${y+2}" r="1.5"/><circle class="pt" cx="${x+3.5}" cy="${y+2}" r="1.5"/><circle class="pt" cx="${x}" cy="${y-3.5}" r="1.5"/>`;break;
-  case"tv":case"rj":g=`<rect class="bx" x="${x-9}" y="${y-8}" width="18" height="16" rx="4"/><text class="tt" x="${x}" y="${y+3.5}">${e.t==="tv"?"TV":"RJ"}</text>`;break;
-  case"int":g=`<rect class="bx" x="${x-8}" y="${y-8}" width="16" height="16" rx="3"/><line class="gl" x1="${x-3}" y1="${y+4}" x2="${x+3}" y2="${y-4}"/>`;break;
-  case"vv":g=`<rect class="bx" x="${x-8}" y="${y-8}" width="16" height="16" rx="3"/><line class="gl" x1="${x-4}" y1="${y+3}" x2="${x+1}" y2="${y-4}"/><line class="gl" x1="${x-1}" y1="${y+4}" x2="${x+4}" y2="${y-3}"/>`;break;
-  case"app":g=`<circle class="bx" cx="${x}" cy="${y}" r="9"/><line class="gl" x1="${x-5}" y1="${y-5}" x2="${x+5}" y2="${y+5}"/><line class="gl" x1="${x+5}" y1="${y-5}" x2="${x-5}" y2="${y+5}"/>`;break;
-  case"iph":g=`<rect class="bx" x="${x-7}" y="${y-11}" width="14" height="22" rx="3"/><circle class="gl" cx="${x}" cy="${y-3}" r="3"/><line class="gl" x1="${x-3}" y1="${y+5}" x2="${x+3}" y2="${y+5}"/>`;break;
-  case"tab":g=`<rect class="bx" x="${x-30}" y="${y-40}" width="60" height="80" rx="4"/>${[0,1,2].map(k=>`<line class="gl" x1="${x-22}" y1="${y-22+k*20}" x2="${x+22}" y2="${y-22+k*20}"/>`).join("")}`;break;
-  case"vmcm":g=`<circle class="bx" cx="${x}" cy="${y}" r="10"/><circle class="gl" cx="${x}" cy="${y}" r="5"/>`;break;
-  case"ef":case"ec":g=`<circle class="bx" cx="${x}" cy="${y}" r="7"/><circle class="${e.t}" cx="${x}" cy="${y}" r="4"/>`;break;
-  case"mit":g=`<circle class="bx" cx="${x}" cy="${y}" r="9"/><circle class="ec" cx="${x-3}" cy="${y}" r="3"/><circle class="ef" cx="${x+3}" cy="${y}" r="3"/>`;break;
-  case"ev":g=`<circle class="bx" cx="${x}" cy="${y}" r="8"/><circle class="gl" cx="${x}" cy="${y}" r="3.5"/>`;break;
-  case"rad":g=`<rect class="bx" x="${x-40}" y="${y-27}" width="80" height="55" rx="4"/>${[-24,-8,8,24].map(k=>`<line class="gl" x1="${x+k}" y1="${y-20}" x2="${x+k}" y2="${y+20}"/>`).join("")}`;break;
-  case"ss":g=`<rect class="bx" x="${x-25}" y="${y-60}" width="50" height="120" rx="4"/>${[-40,-20,0,20,40].map(k=>`<line class="gl" x1="${x-18}" y1="${y+k}" x2="${x+18}" y2="${y+k}"/>`).join("")}`;break;
-  case"split":g=`<rect class="bx cl" x="${x-45}" y="${y-15}" width="90" height="30" rx="9"/><line class="gl" x1="${x-34}" y1="${y+7}" x2="${x+34}" y2="${y+7}"/><circle class="clp" cx="${x+33}" cy="${y-6}" r="2.2"/>`;break;
-  case"ge":g=`<rect class="bx cl ext" x="${x-40}" y="${y-30}" width="80" height="60" rx="5"/><circle class="gl" cx="${x-10}" cy="${y}" r="20"/><line class="gl" x1="${x-24}" y1="${y}" x2="${x+4}" y2="${y}"/><line class="gl" x1="${x-10}" y1="${y-14}" x2="${x-10}" y2="${y+14}"/>`;break;
-  case"liai":g=`<circle class="bx cl" cx="${x}" cy="${y}" r="9"/><circle class="clp" cx="${x}" cy="${y}" r="3.5"/>`;break;
-  case"cond":g=`<circle class="bx cl" cx="${x}" cy="${y}" r="8"/><path class="gl" d="M${x} ${y-4} q4 5 0 8 q-4 -3 0 -8"/>`;break;
-  case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-7}" width="18" height="14" rx="3"/><text class="tt" x="${x}" y="${y+3.5}" style="font-size:7px">°C</text>`;break;
+  case"pc":g=pl(x,y,1)+sock(x,y);break;
+  case"pc2":g=pl(x,y,2)+sock(x-9,y)+sock(x+9,y);break;
+  case"pc3":g=pl(x,y,3)+sock(x-18,y)+sock(x,y)+sock(x+18,y);break;
+  case"p32":g=`<rect class="bx" x="${x-11}" y="${y-11}" width="22" height="22" rx="4.5"/><circle class="gl" cx="${x}" cy="${y}" r="7"/><circle class="pt" cx="${x-3.3}" cy="${y+2}" r="1.3"/><circle class="pt" cx="${x+3.3}" cy="${y+2}" r="1.3"/><circle class="pt" cx="${x}" cy="${y-3.4}" r="1.3"/>`;break;
+  case"tv":case"rj":g=pl(x,y,1)+(e.t==="tv"?`<circle class="gl" cx="${x}" cy="${y}" r="4.2"/><circle class="pt" cx="${x}" cy="${y}" r="1.4"/>`:`<path class="gl" d="M${x-4} ${y-3}h8v4h-2v2h-4v-2h-2z"/>`);break;
+  case"int":g=pl(x,y,1)+`<rect class="gl" x="${x-4.5}" y="${y-5.5}" width="9" height="11" rx="1.6"/><line class="gl" x1="${x-4.5}" y1="${y}" x2="${x+4.5}" y2="${y}"/>`;break;
+  case"vv":g=pl(x,y,1)+`<rect class="gl" x="${x-4.5}" y="${y-5.5}" width="9" height="11" rx="1.6"/><path class="gl" d="M${x-2} ${y-2.2}l2-1.6l2 1.6M${x-2} ${y+2.2}l2 1.6l2-1.6"/>`;break;
+  case"app":g=pl(x,y,1)+`<line class="gl" x1="${x-4}" y1="${y-4}" x2="${x+4}" y2="${y+4}"/><line class="gl" x1="${x+4}" y1="${y-4}" x2="${x-4}" y2="${y+4}"/>`;break;
+  case"iph":g=`<rect class="bx" x="${x-8}" y="${y-12}" width="16" height="24" rx="3.5"/>${[-6,-3.5,-1].map(k=>`<line class="gl" x1="${x-3.5}" y1="${y+k}" x2="${x+3.5}" y2="${y+k}"/>`).join("")}<rect class="gl" x="${x-3}" y="${y+4}" width="6" height="4" rx="1"/>`;break;
+  case"tab":g=`<rect class="bx" x="${x-30}" y="${y-40}" width="60" height="80" rx="5"/>${[-22,-2,18].map(k=>`<rect class="gl" x="${x-24}" y="${y+k}" width="48" height="10" rx="1.5"/>`).join("")}`;break;
+  case"vmcm":g=`<rect class="bx" x="${x-10}" y="${y-10}" width="20" height="20" rx="4"/><circle class="gl" cx="${x}" cy="${y}" r="6"/><circle class="gl" cx="${x}" cy="${y}" r="2.5"/>`;break;
+  case"ef":case"ec":g=`<rect class="bx" x="${x-8}" y="${y-8}" width="16" height="16" rx="3.5"/><circle class="${e.t}" cx="${x}" cy="${y}" r="4.2"/>`;break;
+  case"mit":g=`<rect class="bx" x="${x-12}" y="${y-8}" width="24" height="16" rx="3.5"/><circle class="ec" cx="${x-5.5}" cy="${y}" r="3.2"/><circle class="ef" cx="${x+5.5}" cy="${y}" r="3.2"/><line class="gl" x1="${x-2}" y1="${y}" x2="${x+2}" y2="${y}"/>`;break;
+  case"ev":g=`<rect class="bx" x="${x-9}" y="${y-9}" width="18" height="18" rx="4"/><circle class="gl" cx="${x}" cy="${y}" r="5.5"/><circle class="pt" cx="${x}" cy="${y}" r="1.8"/>`;break;
+  case"rad":g=`<rect class="bx" x="${x-40}" y="${y-27}" width="80" height="55" rx="6"/>${[-27,-18,-9,0,9,18,27].map(k=>`<line class="gl sep" x1="${x+k}" y1="${y-20}" x2="${x+k}" y2="${y+20}"/>`).join("")}`;break;
+  case"ss":g=`<rect class="bx" x="${x-25}" y="${y-60}" width="50" height="120" rx="6"/>${[-48,-36,-24,-12,0,12,24,36,48].map(k=>`<line class="gl sep" x1="${x-19}" y1="${y+k}" x2="${x+19}" y2="${y+k}"/>`).join("")}`;break;
+  case"split":g=`<rect class="bx cl" x="${x-45}" y="${y-15}" width="90" height="30" rx="7"/><line class="gl" x1="${x-36}" y1="${y+8}" x2="${x+36}" y2="${y+8}"/><line class="gl sep" x1="${x-36}" y1="${y+4}" x2="${x+36}" y2="${y+4}"/><circle class="clp" cx="${x+34}" cy="${y-6}" r="2"/>`;break;
+  case"ge":g=`<rect class="bx cl ext" x="${x-40}" y="${y-30}" width="80" height="60" rx="6"/><rect class="gl" x="${x-32}" y="${y-22}" width="44" height="44" rx="5"/><circle class="gl" cx="${x-10}" cy="${y}" r="16"/><path class="gl" d="M${x-10} ${y-14}v28M${x-24} ${y}h28"/>${[-16,-8,0,8,16].map(k=>`<line class="gl sep" x1="${x+18}" y1="${y+k}" x2="${x+33}" y2="${y+k}"/>`).join("")}`;break;
+  case"liai":g=`<rect class="bx cl" x="${x-9}" y="${y-9}" width="18" height="18" rx="4"/><circle class="clp" cx="${x-2.5}" cy="${y}" r="2.4"/><circle class="clp" cx="${x+3}" cy="${y}" r="1.6"/>`;break;
+  case"cond":g=`<rect class="bx cl" x="${x-8}" y="${y-8}" width="16" height="16" rx="3.5"/><path class="gl" d="M${x} ${y-4.5} q4 5 0 8.5 q-4 -3.5 0 -8.5"/>`;break;
+  case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-9}" width="18" height="18" rx="3.5"/><text class="tt" x="${x}" y="${y+3}" style="font-size:7px">°C</text>`;break;
  }
  const k=(T[e.t]||{}).w?1:Math.max(1,fs/14),r=Math.max(20*k,((T[e.t]||{}).w||0)/2);
  return `<g class="sym st-${i<0?"ico":e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${r}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`:""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
 /* Demi-largeur dessinée d'un élément (cm), pour qu'ils se collent sans se chevaucher */
-const HW={pc:8,pc2:15,pc3:22,p32:9,tv:9,rj:9,int:8,vv:8,app:9,iph:7,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
+const HW={pc:9,pc2:18,pc3:27,p32:11,tv:9,rj:9,int:9,vv:9,app:9,iph:8,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
 const HH={tab:40,rad:28,ss:60,split:15,ge:30};
 function hw(t,L){const fs=Math.max(15,(L+160)/34),k=(T[t]||{}).w?1:Math.max(1,fs/14);return(HW[t]||9)*k}
 const MOD={pc:1,pc2:2,pc3:3};
@@ -113,7 +116,7 @@ function svgMur(){const w=wall();if(!w)return"";const sg=w.s,P=K(),L=Math.round(
   if(xs.length){s+=`<line class="cl" x1="0" y1="${yb}" x2="${xs[xs.length-1]}" y2="${yb}"/><circle class="cd" cx="0" cy="${yb}" r="${fs*.22}"/>`;
    xs.forEach(x=>{s+=`<line class="cl" x1="${x}" y1="${yb-fs*.4}" x2="${x}" y2="${yb+fs*.4}"/><text class="ck" font-size="${fs*.78}" style="text-anchor:end" transform="translate(${x+fs*.28} ${yb+fs*.7}) rotate(-90)">${x}</text>`});
    s+=`<text class="txt" x="0" y="${Hh+fs*6.2}" font-size="${fs*.72}" style="text-anchor:start">Distances depuis l'angle gauche, en cm</text>`}
-  shown.forEach(o=>{if(shown.some(p=>p!==o&&p.e.x<o.e.x&&o.e.x-p.e.x<70&&p.e.h===o.e.h))return;const e=o.e,w=((T[e.t]||{}).w||(e.t==="pc2"?30:18)*Math.max(1,fs/14))/2,g=shown.some(p=>p!==o&&p.e.x>e.x&&p.e.x-e.x<fs*2.4&&Math.abs(p.e.h-e.h)<fs*1.2);
+  shown.forEach(o=>{if(shown.some(p=>p!==o&&p.e.x<o.e.x&&o.e.x-p.e.x<70&&p.e.h===o.e.h))return;const e=o.e,w=hw(e.t,L),g=shown.some(p=>p!==o&&p.e.x>e.x&&p.e.x-e.x<fs*2.4&&Math.abs(p.e.h-e.h)<fs*1.2);
    s+=`<text class="txt" font-size="${fs*.7}" x="${g?e.x-w-fs*.25:e.x+w+fs*.25}" y="${Hh-e.h+fs*.25}" style="text-anchor:${g?"end":"start"}">${Math.round(e.h)}</text>`})}
  return s+"</svg>"}
 
@@ -132,14 +135,14 @@ function svgPlaf(){const rm=room(),pts=rm.pts.map(p=>[p[0]*100,p[1]*100]),xs=pts
  s+=chain(X,b[0],b[2],b[1]-mg*.45,1,fs)+chain(Y,b[1],b[3],b[0]-mg*.45,0,fs);
  if(V.sel>=0&&rm.eqp&&rm.eqp[V.sel]){const e=rm.eqp[V.sel],x=e.x*100,y=e.y*100;s+=`<line class="cs" stroke-dasharray="6 5" x1="${b[0]}" y1="${y}" x2="${x}" y2="${y}"/><line class="cs" stroke-dasharray="6 5" x1="${x}" y1="${b[1]}" x2="${x}" y2="${y}"/>`+pill((b[0]+x)/2,y-fs*.9,Math.round(x-b[0])+" cm",fs)+pill(x+fs*2.6,(b[1]+y)/2,Math.round(y-b[1])+" cm",fs)}
  return s+"</svg>"}
-function symPlaf(t,x,y,k){
- if(t==="spot")return`<circle class="pf-spot" cx="${x}" cy="${y}" r="${13*k}"/><line class="pf-x" x1="${x-9*k}" y1="${y-9*k}" x2="${x+9*k}" y2="${y+9*k}"/><line class="pf-x" x1="${x+9*k}" y1="${y-9*k}" x2="${x-9*k}" y2="${y+9*k}"/>`;
- if(t==="pl")return`<circle class="pf-spot" cx="${x}" cy="${y}" r="${18*k}"/><circle class="pf-pl" cx="${x}" cy="${y}" r="${7*k}"/>`;
- if(t==="vmc")return`<rect class="pf-vmc" x="${x-14*k}" y="${y-14*k}" width="${28*k}" height="${28*k}" rx="4"/><circle class="pf-vmc" cx="${x}" cy="${y}" r="${7*k}"/>`;
- if(t==="df")return`<circle class="pf-df" cx="${x}" cy="${y}" r="${15*k}"/><text class="pf-dft" x="${x}" y="${y+5*k}" font-size="${13*k}">DF</text>`;
- if(t==="souf")return`<rect class="pf-cl" x="${x-30*k}" y="${y-9*k}" width="${60*k}" height="${18*k}" rx="3"/>${[-18,-6,6,18].map(d=>`<line class="pf-x" x1="${x+d*k}" y1="${y-5*k}" x2="${x+d*k}" y2="${y+5*k}"/>`).join("")}`;
- if(t==="rep")return`<rect class="pf-cl" x="${x-25*k}" y="${y-25*k}" width="${50*k}" height="${50*k}" rx="3"/>${[-12,0,12].map(d=>`<line class="pf-x" x1="${x-18*k}" y1="${y+d*k}" x2="${x+18*k}" y2="${y+d*k}"/>`).join("")}`;
- return`<rect class="pf-cl" x="${x-30*k}" y="${y-30*k}" width="${60*k}" height="${60*k}" rx="4"/><rect class="pf-x" x="${x-16*k}" y="${y-16*k}" width="${32*k}" height="${32*k}" fill="none"/>`}
+function symPlaf(t,x,y,k){const sq=(r,c,rx)=>`<rect class="${c}" x="${x-r*k}" y="${y-r*k}" width="${2*r*k}" height="${2*r*k}" rx="${(rx||5)*k}"/>`;
+ if(t==="spot")return sq(13,"pf-spot",5)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${7*k}" fill="none"/><path class="pf-x" d="M${x-4.5*k} ${y-4.5*k}l${9*k} ${9*k}M${x+4.5*k} ${y-4.5*k}l${-9*k} ${9*k}"/>`;
+ if(t==="pl")return sq(17,"pf-spot",6)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${10*k}" fill="none"/><circle class="pf-pl" cx="${x}" cy="${y}" r="${4.5*k}"/>`;
+ if(t==="vmc")return sq(15,"pf-vmc",5)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${9*k}" fill="none"/><circle class="pf-x" cx="${x}" cy="${y}" r="${4*k}" fill="none"/>`;
+ if(t==="df")return sq(15,"pf-df",5)+`<text class="pf-dft" x="${x}" y="${y+4.5*k}" font-size="${12*k}">DF</text>`;
+ if(t==="souf")return`<rect class="pf-cl" x="${x-30*k}" y="${y-10*k}" width="${60*k}" height="${20*k}" rx="${5*k}"/>${[-20,-12,-4,4,12,20].map(d=>`<line class="pf-x" x1="${x+d*k}" y1="${y-5*k}" x2="${x+d*k}" y2="${y+5*k}"/>`).join("")}`;
+ if(t==="rep")return sq(25,"pf-cl",6)+[-14,-7,0,7,14].map(d=>`<line class="pf-x" x1="${x-18*k}" y1="${y+d*k}" x2="${x+18*k}" y2="${y+d*k}"/>`).join("");
+ return sq(30,"pf-cl",7)+`<rect class="pf-x" x="${x-17*k}" y="${y-17*k}" width="${34*k}" height="${34*k}" rx="${4*k}" fill="none"/>`+[[0,-23],[0,23],[-23,0],[23,0]].map(([a,b])=>`<rect class="pf-x" x="${x+(a?a-2:-10)*k}" y="${y+(b?b-2:-10)*k}" width="${(a?4:20)*k}" height="${(b?4:20)*k}" rx="${1*k}" fill="none"/>`).join("")}
 function chain(vals,a,b,pos,horiz,fs){const v=[a].concat(vals.filter((x,i,t)=>t.indexOf(x)===i).sort((x,y)=>x-y)).concat([b]);let s="";const t8=fs*.45;
  for(let i=0;i<v.length-1;i++){const m=(v[i]+v[i+1])/2,t=String(Math.round(v[i+1]-v[i]));if(v[i+1]-v[i]<1)continue;
   s+=horiz?`<line class="cl" x1="${v[i]}" y1="${pos}" x2="${v[i+1]}" y2="${pos}"/><line class="cl" x1="${v[i]}" y1="${pos-t8}" x2="${v[i]}" y2="${pos+t8}"/><text class="ck" font-size="${fs*.85}" x="${m}" y="${pos-t8}">${t}</text>`
@@ -263,7 +266,7 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .pill{fill:#1B2440}#fx .pillt{fill:#fff;text-anchor:middle;font-weight:800;font-family:var(--mono)}
 #fx .bx{fill:var(--surface);stroke:var(--fg);stroke-width:1.6}#fx .bx.cl{stroke:#2F7DE1}#fx .bx.ext{stroke-dasharray:5 3}#fx .clp{fill:#2F7DE1}
 #fx .pt{fill:var(--fg)}#fx .gl{stroke:var(--fg);stroke-width:1.6;fill:none;stroke-linecap:round}#fx .tt{fill:var(--fg);font-size:9px;font-weight:800;text-anchor:middle}
-#fx .ef{fill:#2F7DE1}#fx .ec{fill:#E8590C}
+#fx .gl.sep{stroke-width:1;opacity:.45}#fx .ef{fill:#2F7DE1}#fx .ec{fill:#E8590C}
 #fx .sym{cursor:grab}#fx .sym .hit{fill:transparent}#fx .sym.on .bx,#fx .sym.on .pf-spot,#fx .sym.on .pf-cl,#fx .sym.on .pf-vmc,#fx .sym.on .pf-df{stroke:#B8924F;stroke-width:3}
 #fx .pfond{fill:var(--paper)}#fx .pmur{stroke:var(--fg);stroke-linecap:round}
 #fx .pf-spot{fill:var(--surface);stroke:var(--fg);stroke-width:2}#fx .pf-x{stroke:var(--fg);stroke-width:1.6}#fx .pf-pl{fill:var(--fg)}#fx .pf-vmc{fill:var(--surface);stroke:var(--fg);stroke-width:2}
@@ -374,8 +377,8 @@ function murHTML(){const w=wall();if(!w)return`<p class="muted">Cette pièce n'a
  return h+`</div></div>`}
 
 /* Choix de l'élément : grandes tuiles avec le dessin, sans menus. */
-function icoMur(t){const d=T[t],m=Math.max(46,(d.w||0)+10,(d.hh||0)+10),hh=H();return`<svg viewBox="${-m/2} ${hh-d.h-m/2} ${m} ${m}" aria-hidden="true">${sym({t,x:0,h:d.h},-1,14,false)}</svg>`}
-function icoPlaf(t){return`<svg viewBox="-36 -36 72 72" aria-hidden="true">${symPlaf(t,0,0,1)}</svg>`}
+function icoMur(t){const d=T[t],m=Math.max(28,2*(HW[t]||9)+8,2*(HH[t]||9)+8,(d.w||0)+10,(d.hh||0)+10),hh=H();return`<svg viewBox="${-m/2} ${hh-d.h-m/2} ${m} ${m}" aria-hidden="true">${sym({t,x:0,h:d.h},-1,14,false)}</svg>`}
+function icoPlaf(t){const m=({spot:16,pl:20,vmc:18,df:18,souf:34,rep:28,cas:34})[t]||36;return`<svg viewBox="${-m} ${-m} ${2*m} ${2*m}" aria-hidden="true">${symPlaf(t,0,0,1)}</svg>`}
 function pickHTML(){const F=fams(),mur=V.tab==="mur",TT=mur?T:TP,keys=Object.keys(TT).filter(k=>F.includes(TT[k].f)&&!(mur&&k==="ge"&&wall()&&wall().s.sh));const g={};keys.forEach(k=>{(g[TT[k].f]=g[TT[k].f]||[]).push(k)});const G=Object.keys(g);
  return`<div class="pick" role="dialog" aria-label="Que posez-vous ?"><div class="pk-in"><div class="pk-h"><b>${V.pick.at?"Que posez-vous ici ?":"Que posez-vous ?"}</b><button class="rd" data-a="pickx" aria-label="Fermer">✕</button></div>${G.map(f=>`${G.length>1?`<p>${FAM[f]}</p>`:""}<div class="tiles">${g[f].map(k=>`<button class="tile" data-put="${k}">${mur?icoMur(k):icoPlaf(k)}<span>${esc(TT[k].n)}</span></button>`).join("")}</div>`).join("")}${!mur&&F.includes("el")?`<p>Spots : bien répartis d'un coup</p><div class="tiles">${SPOTS.map(([t,c,r])=>`<button class="tile sm" data-grid="${c} × ${r}">${spotIco(c,r)}<span>${t}</span></button>`).join("")}</div>`:""}</div></div>`}
 
