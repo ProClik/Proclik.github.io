@@ -74,3 +74,17 @@
 .pr-info p.bc-n{color:var(--accx);font-weight:700}
 .bc-d b{display:block;font-size:15.5px;line-height:1.35}
 .bc-d small{display:block;margin-top:4px;color:var(--muted);font-size:13px}
+
+/* Cliky lit une facture fournisseur (17/11) */
+.bc-acts{display:flex;flex-wrap:wrap;gap:10px}
+.bc-att{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:14px}
+.bc-sp{flex:none;width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accx);animation:bcsp 1s linear infinite}
+@keyframes bcsp{to{transform:rotate(360deg)}}
+.bc-lp{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:11px 2px;border-top:1px solid var(--line);cursor:pointer}
+.bc-lp input{width:20px;height:20px;margin-top:2px;accent-color:var(--acc,#1B2440)}
+.bc-lp span{min-width:0;display:grid;gap:2px}.bc-lp span b{font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+.bc-lp small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.bc-lp em{font-style:normal;font-size:12.5px;color:#C2410C;font-weight:600}
+.bc-lp i{font-style:normal;text-align:right;font-size:13px;white-space:nowrap;display:grid}
+.bc-hors{margin-top:12px;font-size:13.5px}.bc-hors summary{cursor:pointer;font-weight:700}.bc-hors p{margin:6px 0}
+.bc-luf{margin-top:14px;display:flex;justify-content:flex-end}

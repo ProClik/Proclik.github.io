@@ -86,6 +86,7 @@ var IC={plus:I('<path d="M12 5v14M5 12h14"/>'),cherche:I('<circle cx="11" cy="11
  presta:I('<path d="M4 20h4l11-11-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
  cliky:'<svg viewBox="0 0 100 100" aria-hidden="true" viewBox="22 22 56 56"><path fill="currentColor" fill-rule="evenodd" stroke="none" d="M24.50 50.00A25.50 25.50 0 1 1 75.50 50.00A25.50 25.50 0 1 1 24.50 50.00ZM57.73 67.72A19.34 19.34 0 1 0 42.27 67.72A3.92 3.92 0 0 0 47.76 64.13L47.76 61.21A2.24 2.24 0 0 1 52.24 61.21L52.24 64.13A3.92 3.92 0 0 0 57.73 67.72Z"/><circle cx="50" cy="48.32" r="4.71" fill="#A8823F" stroke="none"/></svg>',
  cle:I('<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>')};
+IC.doc=I('<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>');
 var seg=lsG('pc-prod-seg','produit'),q='';
 
 /* ---------- la base de Cliky en direct (17/11, Cyril) : les articles que Cliky utilise, prix modifiables ----------
@@ -108,7 +109,7 @@ function vueBC(){var A=BC.articles;
  var h='<div class="card pr-info"><span class="pr-ci">'+IC.cliky+'</span><div><b>'+A.length+' articles que Cliky utilise pour vos pré-devis</b><p>'+esc(sourceBC())+' Touchez un article pour mettre votre prix : Cliky le prend dès le prochain pré-devis, et « Recalculer » aussi.</p>'+
   (BC.n?'<p class="bc-n">'+BC.n+' changement'+(BC.n>1?'s':'')+' de votre part</p>':'')+'</div></div>'+
   '<label class="pr-q">'+IC.cherche+'<input id="pr-qc" type="search" autocomplete="off" placeholder="Chercher : BA13, vis, laine, porte…" value="'+esc(qc)+'"></label>'+
-  '<button class="btn sm bc-aj" type="button" data-bcnew>'+IC.plus+'<span>Ajouter un article à la base de Cliky</span></button>';
+  '<div class="bc-acts"><button class="btn sm bc-aj" type="button" data-bclire>'+IC.doc+'<span>Lire une facture fournisseur</span></button><button class="btn sm bc-aj" type="button" data-bcnew>'+IC.plus+'<span>Ajouter un article</span></button></div>';
  if(!L.length)return h+'<p class="hint">Rien pour « '+esc(qc)+' ». <button class="lnk" type="button" data-bcnew>L\'ajouter</button></p>';
  var G=[],ix={};L.forEach(function(a){if(!(a.f in ix)){ix[a.f]=G.length;G.push({f:a.f,L:[]})}G[ix[a.f]].L.push(a)});
  G.forEach(function(g){var o=t||BC.ouv[g.f];
@@ -133,9 +134,33 @@ function corpsAjBC(){var f=[];(BC.articles||[]).forEach(function(a){if(f.indexOf
 function lireAjBC(){var g=function(id){var e=$(id);return e?e.value:null};var d=g('#bc-d');if(d!=null)FB.d=d;var c=g('#bc-c');if(c!=null)FB.c=c;var p=g('#bc-p');if(p!=null)FB.p=p;var f=g('#bc-f');if(f!=null)FB.f=f}
 function ajBC(nom){FB={d:nom||'',c:'unité'};X.xopen('Ajouter un article','À la base de Cliky',corpsAjBC(),'<button class="btn" data-xclose>Annuler</button><button class="btn go" data-bcaok>Ajouter</button>')}
 function uniteDe(c){var m=/de\s+[\d.,]+\s*(m²|m³|ml|m|kg|l)\b/i.exec(c);if(m)return m[1];if(/\d/.test(c))return 'pièce';var w=parCond({cond:c});return w==='unité'?'u':w}
-function envoyerBC(corps,msg){var b=$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup]');$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup]').forEach(function(x){x.disabled=true});
+function envoyerBC(corps,msg){$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup],[data-bcluok]').forEach(function(x){x.disabled=true});
  return PCV.api('/espace/base',{method:'POST',body:corps}).then(function(x){majBC(x);BC.etat='ok';X.xclose();vue();X.toast(msg[0],msg[1])},
-  function(e){$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup]').forEach(function(x){x.disabled=false});X.toast('Pas enregistré',e.message)})}
+  function(e){$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup],[data-bcluok]').forEach(function(x){x.disabled=false});X.toast('Pas enregistré',e.message)})}
+/* ---------- Cliky lit une facture, un devis ou un bon de livraison du fournisseur (17/11) ---------- */
+var LU=null;
+function fichierB64(f){return new Promise(function(ok,ko){
+ if(f.type==='application/pdf'){if(f.size>3.5*1048576)return ko(new Error('PDF trop lourd (3,5 Mo au plus) : envoyez une photo de chaque page.'));var r=new FileReader();r.onload=function(){ok(String(r.result))};r.onerror=function(){ko(new Error('Fichier illisible'))};return r.readAsDataURL(f)}
+ var u=URL.createObjectURL(f),im=new Image();im.onload=function(){var k=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.85))};
+ im.onerror=function(){ko(new Error('Photo illisible : JPEG, PNG ou PDF'))};im.src=u})}
+function lireDoc(f){if(!f||!X)return;LU=null;
+ X.xopen('Cliky lit votre document','Facture, devis ou bon de livraison','<div class="bc-lu"><p class="bc-att"><span class="bc-sp"></span>Cliky lit chaque ligne et la retrouve dans votre base. Comptez une demi-minute.</p></div>','<button class="btn" data-xclose>Annuler</button>');
+ fichierB64(f).then(function(d){return PCV.api('/espace/lire-document',{method:'POST',body:{fichier:d,nom:f.name}})}).then(function(x){LU=x;afficherLu()},
+  function(e){var z=$('.bc-lu');if(z)z.innerHTML='<p class="hint">'+esc(e.message)+'</p>'})}
+function afficherLu(){var z=$('.bc-lu');if(!z||!LU)return;var d=LU.document||{},L=LU.lignes||[];
+ var ch=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)>=0.005}),pareil=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)<0.005}).length,hors=L.filter(function(l){return !l.code});
+ var h='<p class="bc-d"><b>'+esc((d.type||'Document').replace(/^./,function(c){return c.toUpperCase()})+(d.fournisseur?' '+d.fournisseur:''))+'</b><small>'+esc([d.numero?'n° '+d.numero:'',d.date].filter(Boolean).join(' · '))+' · '+L.length+' ligne'+(L.length>1?'s':'')+' lue'+(L.length>1?'s':'')+'</small></p>';
+ if(ch.length)h+='<p class="hint">Cochez les prix à mettre à jour. Ceux qui demandent un œil ne sont pas cochés.</p>'+ch.map(function(l,i){return '<label class="bc-lp'+(l.sur?'':' doute')+'"><input type="checkbox" data-bclp="'+i+'"'+(l.sur?' checked':'')+'><span><b>'+esc(l.article)+'</b><small>'+esc(l.conditionnement)+' · lu : « '+esc(l.designation)+' »</small>'+(l.note?'<em>'+esc(l.note)+'</em>':'')+'</span><i>'+prix(l.avant)+' → <b>'+prix(l.apres)+'</b><small>'+(l.ecart_pct>0?'+':'')+String(l.ecart_pct).replace('.',',')+' %</small></i></label>'}).join('');
+ else h+='<p class="hint">Aucun prix à changer'+(pareil?' : '+pareil+' prix déjà à jour.':'.')+'</p>';
+ if(ch.length&&pareil)h+='<p class="hint">'+pareil+' prix déjà à jour.</p>';
+ if(hors.length)h+='<details class="bc-hors"><summary>'+hors.length+' ligne'+(hors.length>1?'s':'')+' pas dans votre base</summary>'+hors.map(function(l){return '<p>'+esc(l.designation)+(l.prix_ht?' · '+prix(l.prix_ht):'')+'</p>'}).join('')+'<p class="hint">Ajoutez-les avec « Ajouter un article » si vous les reprenez souvent.</p></details>';
+ if(ch.length)h+='<div class="bc-luf"><button class="btn go" type="button" data-bcluok>Mettre à jour les prix cochés</button></div>';
+ z.innerHTML=h;LU.ch=ch}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bclire],[data-bcluok]');if(!b||!X)return;
+ if(b.hasAttribute('data-bclire')){var inp=document.createElement('input');inp.type='file';inp.accept='image/*,application/pdf';inp.onchange=function(){lireDoc(inp.files&&inp.files[0])};inp.click()}
+ else{var M=$$('[data-bclp]').filter(function(c){return c.checked}).map(function(c){var l=LU.ch[+c.getAttribute('data-bclp')];return {code:l.code,prix:l.apres}});
+  if(!M.length){X.toast('Rien de coché','Cochez les prix à mettre à jour.');return}var d=LU.document||{};
+  envoyerBC({modifs:M,source:[d.type,d.fournisseur,d.numero].filter(Boolean).join(' ')},[M.length+' prix mis à jour','Cliky les prend dès le prochain pré-devis.'])}});
 document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('bc-fam'))BC.ouv[d.getAttribute('data-bcf')]=d.open},true);
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bc],[data-bcnew],[data-bcok],[data-bcori],[data-bcsup],[data-bcaok],[data-bccond],[data-bcre]');if(!b||!X)return;
  var a=function(n){return b.getAttribute(n)};
