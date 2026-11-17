@@ -888,10 +888,10 @@ const IC7={
  devis:'<path d="M8 3.5h11l5 5v15"/><path d="M19 3.5v5h5"/><path d="M8 3.5v25h9"/><path d="M11.5 12h7M11.5 15.5h9M11.5 19h5"/><circle cx="22.5" cy="24.5" r="5"/><path d="m20.4 24.6 1.5 1.5 2.8-3"/>'};
 const ic7=k=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC7[k]}</svg>`;
 function introH(){const has=S.travaux.length>0,ok='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
- return`<section class="hero7"><h1>Votre devis, sans vous déplacer.</h1><p class="sub">Trois étapes simples. « Je ne sais pas » est toujours une bonne réponse, et vous pouvez finir plus tard.</p>
+ return`<section class="hero7"><h1>Votre projet, prêt avant la visite.</h1><p class="sub">Trois étapes simples. « Je ne sais pas » est toujours une bonne réponse, et vous pouvez finir plus tard.</p>
  <ol class="fil7"><li class="on"><div class="g7">${ic7("tel")}</div><span class="n7">Étape 1 · vous êtes ici</span><b>Vous décrivez<br>vos travaux</b><span class="pt7">10 à 15 min</span></li>
- <li><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2</span><b>${esc(CONFIG.artisan)} prépare<br>votre devis</b><span class="pt7">Il vérifie tout</span></li>
- <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Vous recevez<br>votre devis</b><span class="pt7">Sous ${esc(CONFIG.delai)}</span></li></ol>
+ <li><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2</span><b>${esc(CONFIG.artisan)} lit tout<br>et vous appelle</b><span class="pt7">Pour fixer une visite</span></li>
+ <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Votre devis se finit<br>chez vous</b><span class="pt7">Sans tout redire</span></li></ol>
  <div class="carte7"><div class="q" style="margin:0"><label class="lab" for="in-pre">${has?"Votre prénom":"Pour commencer, votre prénom"}</label><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
  <button class="btn go" type="button" data-start="1">${has?"Reprendre ma demande":"C'est parti"}</button>
  <div class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span><button class="lien7" type="button" data-example="1">Voir un exemple</button>${has?`<button class="lien7" type="button" data-reset="1">Recommencer</button>`:""}</div></div></section>`}
@@ -957,9 +957,9 @@ function doneH(){const p=lastPayload,pre=S.contact.prenom||"",ok='<svg viewBox="
  return`<section class="done9"><div class="ok9" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29"/><path d="M19 33.5l9 9L46 23"/></svg></div>
  <h1>Merci${pre?" "+esc(pre):""} !</h1><p class="sub">Votre demande est bien arrivée chez ${esc(CONFIG.entreprise)}. Vous n'avez plus rien à faire.</p>
  <ol class="fil7 fin9"><li class="fait"><div class="g7">${ok}</div><span class="n7">Étape 1 · fait</span><b>Vous avez décrit<br>vos travaux</b><span class="pt7">Bravo</span></li>
- <li class="on"><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2 · en cours</span><b>${esc(CONFIG.artisan)} prépare<br>votre devis</b><span class="pt7">Il vérifie tout</span></li>
- <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Vous recevez<br>votre devis</b><span class="pt7">Sous ${esc(CONFIG.delai)}</span></li></ol>
- <div class="carte9"><p><b>Et maintenant ?</b> ${esc(CONFIG.artisan)} relit votre demande et vos photos, ligne par ligne. Votre devis arrive par e-mail${S.contact.email?` à <b>${esc(S.contact.email)}</b>`:""}, à signer en ligne si tout vous convient.</p>
+ <li class="on"><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2 · en cours</span><b>${esc(CONFIG.artisan)} lit tout<br>et vous appelle</b><span class="pt7">Pour fixer une visite</span></li>
+ <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Votre devis se finit<br>chez vous</b><span class="pt7">Sans tout redire</span></li></ol>
+ <div class="carte9"><p><b>Et maintenant ?</b> ${esc(CONFIG.artisan)} a déjà vos réponses, votre plan et vos photos. Il vous contacte pour fixer une visite : votre devis se termine sur place, sans tout recommencer.</p>
  <p class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span></p></div>
  ${CONFIG.demo?`<p class="note">Mode démonstration : rien n'a été envoyé.</p><details><summary>Voir les données qui seront transmises à Cliky</summary><pre>${esc(JSON.stringify(p,null,2))}</pre></details>`:""}
  <button class="lien7" type="button" data-reset="1">Faire une nouvelle demande</button></section>`}
