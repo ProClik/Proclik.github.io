@@ -15,7 +15,7 @@ const R5=v=>Math.round(v/5)*5;
 /* Familles : el = électricité, eau = plomberie et chauffage, clim = climatisation. h = hauteur du milieu par défaut (cm), à ajuster. */
 const FAM={el:"Électricité",eau:"Plomberie et chauffage",clim:"Climatisation"};
 const T={
- pc:{n:"Prise 16 A",h:30,f:"el"},pc2:{n:"Prise double",h:30,f:"el"},pc3:{n:"Prise triple",h:30,f:"el"},p32:{n:"Prise 32 A (plaque)",h:15,f:"el"},
+ pc:{n:"Prise 16 A",h:30,f:"el"},pc2:{n:"Prise double",h:30,f:"el"},pc3:{n:"Prise triple",h:30,f:"el"},pc4:{n:"Prise quadruple",h:30,f:"el"},plq:{n:"Plaque composée",h:30,f:"el",hide:1},p32:{n:"Prise 32 A (plaque)",h:15,f:"el"},
  tv:{n:"Prise TV",h:30,f:"el"},rj:{n:"Prise internet (RJ45)",h:30,f:"el"},
  int:{n:"Interrupteur",h:110,f:"el"},vv:{n:"Va-et-vient",h:110,f:"el"},app:{n:"Applique",h:180,f:"el"},
  iph:{n:"Interphone",h:150,f:"el"},tab:{n:"Tableau électrique",h:160,f:"el",w:60,hh:80},vmcm:{n:"Bouche VMC (mur)",h:220,f:"el"},
@@ -58,15 +58,25 @@ const vis=t=>fams().includes((T[t]||TP[t]||{}).f);
 /* Plaques vues de face, carrées aux angles adoucis, comme les plaques posées en France (1, 2 ou 3 postes) */
 const pl=(x,y,n)=>`<rect class="bx" x="${x-9*n}" y="${y-9}" width="${18*n}" height="18" rx="4"/>${n>1?Array.from({length:n-1},(_,k)=>`<line class="gl sep" x1="${x-9*n+18*(k+1)}" y1="${y-6}" x2="${x-9*n+18*(k+1)}" y2="${y+6}"/>`).join(""):""}`;
 const sock=(x,y)=>`<circle class="gl" cx="${x}" cy="${y}" r="5.2"/><circle class="pt" cx="${x-2.3}" cy="${y+.8}" r="1.15"/><circle class="pt" cx="${x+2.3}" cy="${y+.8}" r="1.15"/><circle class="pt" cx="${x}" cy="${y-2.6}" r=".8"/>`;
-function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";
- switch(e.t){
-  case"pc":g=pl(x,y,1)+sock(x,y);break;
-  case"pc2":g=pl(x,y,2)+sock(x-9,y)+sock(x+9,y);break;
-  case"pc3":g=pl(x,y,3)+sock(x-18,y)+sock(x,y)+sock(x+18,y);break;
+/* Un poste d'une plaque (mécanisme vu de face) */
+const MG={pc:sock,
+ int:(x,y)=>`<rect class="gl" x="${x-4.5}" y="${y-5.5}" width="9" height="11" rx="1.6"/><line class="gl" x1="${x-4.5}" y1="${y}" x2="${x+4.5}" y2="${y}"/>`,
+ vv:(x,y)=>`<rect class="gl" x="${x-4.5}" y="${y-5.5}" width="9" height="11" rx="1.6"/><path class="gl" d="M${x-2} ${y-2.2}l2-1.6l2 1.6M${x-2} ${y+2.2}l2 1.6l2-1.6"/>`,
+ rj:(x,y)=>`<path class="gl" d="M${x-4} ${y-3}h8v4h-2v2h-4v-2h-2z"/>`,
+ tv:(x,y)=>`<circle class="gl" cx="${x}" cy="${y}" r="4.2"/><circle class="pt" cx="${x}" cy="${y}" r="1.4"/>`};
+/* Postes d'un élément « à plaque » (Cyril 17/11 : plaque + mécanismes pour le devis) ; null si ce n'est pas un élément à plaque */
+const PC=["pc","pc2","pc3","pc4"];
+function mods(e){if(!e)return null;const k=PC.indexOf(e.t);if(k>=0)return Array(k+1).fill("pc");if(e.t==="plq")return(e.m||["pc"]).slice();return MG[e.t]?[e.t]:null}
+const MN={pc:["prise","prises"],int:["interrupteur","interrupteurs"],vv:["va-et-vient","va-et-vient"],rj:["RJ45","RJ45"],tv:["prise TV","prises TV"]};
+function plqName(m){const c={};m.forEach(t=>c[t]=(c[t]||0)+1);return"Plaque "+m.length+" postes : "+Object.keys(c).map(t=>(c[t]>1?c[t]+" ":"")+MN[t][c[t]>1?1:0]).join(" + ")}
+function setMods(e,m){m=m.slice(0,4);if(m.every(t=>t==="pc"))e.t=PC[m.length-1];else if(m.length===1)e.t=m[0];else e.t="plq";if(e.t==="plq"){e.m=m;e.n=plqName(m)}else{delete e.m;e.n=T[e.t].n}return e}
+/* Pour le devis : la plaque de finition + un mécanisme par poste */
+const MECA={pc:"Prise 16 A 2P+T",int:"Interrupteur simple allumage",vv:"Interrupteur va-et-vient",rj:"Prise RJ45",tv:"Prise TV"};
+function compo(e){const m=mods(e);if(!m)return null;const c={};m.forEach(t=>c[MECA[t]]=(c[MECA[t]]||0)+1);return{plaque:"Plaque de finition "+m.length+" poste"+(m.length>1?"s":""),postes:m.length,mecanismes:Object.keys(c).map(n=>({n,q:c[n]}))}}
+function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";const M=mods(e);
+ if(M){g=pl(x,y,M.length)+M.map((t,k)=>MG[t](x-9*M.length+9+18*k,y)).join("")}
+ else switch(e.t){
   case"p32":g=`<rect class="bx" x="${x-11}" y="${y-11}" width="22" height="22" rx="4.5"/><circle class="gl" cx="${x}" cy="${y}" r="7"/><circle class="pt" cx="${x-3.3}" cy="${y+2}" r="1.3"/><circle class="pt" cx="${x+3.3}" cy="${y+2}" r="1.3"/><circle class="pt" cx="${x}" cy="${y-3.4}" r="1.3"/>`;break;
-  case"tv":case"rj":g=pl(x,y,1)+(e.t==="tv"?`<circle class="gl" cx="${x}" cy="${y}" r="4.2"/><circle class="pt" cx="${x}" cy="${y}" r="1.4"/>`:`<path class="gl" d="M${x-4} ${y-3}h8v4h-2v2h-4v-2h-2z"/>`);break;
-  case"int":g=pl(x,y,1)+`<rect class="gl" x="${x-4.5}" y="${y-5.5}" width="9" height="11" rx="1.6"/><line class="gl" x1="${x-4.5}" y1="${y}" x2="${x+4.5}" y2="${y}"/>`;break;
-  case"vv":g=pl(x,y,1)+`<rect class="gl" x="${x-4.5}" y="${y-5.5}" width="9" height="11" rx="1.6"/><path class="gl" d="M${x-2} ${y-2.2}l2-1.6l2 1.6M${x-2} ${y+2.2}l2 1.6l2-1.6"/>`;break;
   case"app":g=pl(x,y,1)+`<line class="gl" x1="${x-4}" y1="${y-4}" x2="${x+4}" y2="${y+4}"/><line class="gl" x1="${x+4}" y1="${y-4}" x2="${x-4}" y2="${y+4}"/>`;break;
   case"iph":g=`<rect class="bx" x="${x-8}" y="${y-12}" width="16" height="24" rx="3.5"/>${[-6,-3.5,-1].map(k=>`<line class="gl" x1="${x-3.5}" y1="${y+k}" x2="${x+3.5}" y2="${y+k}"/>`).join("")}<rect class="gl" x="${x-3}" y="${y+4}" width="6" height="4" rx="1"/>`;break;
   case"tab":g=`<rect class="bx" x="${x-30}" y="${y-40}" width="60" height="80" rx="5"/>${[-22,-2,18].map(k=>`<rect class="gl" x="${x-24}" y="${y+k}" width="48" height="10" rx="1.5"/>`).join("")}`;break;
@@ -83,12 +93,11 @@ function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";
   case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-9}" width="18" height="18" rx="3.5"/><text class="tt" x="${x}" y="${y+3}" style="font-size:7px">°C</text>`;break;
  }
  const k=(T[e.t]||{}).w?1:Math.max(1,fs/14),r=Math.max(20*k,((T[e.t]||{}).w||0)/2);
- return `<g class="sym st-${i<0?"ico":e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${r}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`:""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
+ return `<g class="sym st-${i<0?"ico":e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(r,(M?9*M.length:0)*k)}"/>${e.st==="faire"?(M&&M.length>1?`<rect class="halo" x="${x-(9*M.length+8)*k}" y="${y-17*k}" width="${2*(9*M.length+8)*k}" height="${34*k}" rx="${17*k}"/>`:`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`):""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
 /* Demi-largeur dessinée d'un élément (cm), pour qu'ils se collent sans se chevaucher */
-const HW={pc:9,pc2:18,pc3:27,p32:11,tv:9,rj:9,int:9,vv:9,app:9,iph:8,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
+const HW={pc:9,pc2:18,pc3:27,pc4:36,p32:11,tv:9,rj:9,int:9,vv:9,app:9,iph:8,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
 const HH={tab:40,rad:28,ss:60,split:15,ge:30};
-function hw(t,L){const fs=Math.max(15,(L+160)/34),k=(T[t]||{}).w?1:Math.max(1,fs/14);return(HW[t]||9)*k}
-const MOD={pc:1,pc2:2,pc3:3};
+function hw(e,L){const t=typeof e==="string"?e:e.t,fs=Math.max(15,(L+160)/34),k=(T[t]||{}).w?1:Math.max(1,fs/14),M=typeof e==="string"?null:mods(e);return(M?9*M.length:(HW[t]||9))*k}
 const pill=(x,y,t,fs)=>{const w=t.length*fs*.58+fs*.9;return`<rect class="pill" x="${x-w/2}" y="${y-fs*.75}" width="${w}" height="${fs*1.5}" rx="${fs*.75}"/><text class="pillt" x="${x}" y="${y+fs*.32}" font-size="${fs*.85}">${t}</text>`};
 const dim=(x1,x2,y,t,fs)=>`<line class="cl" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line class="cl" x1="${x1}" y1="${y-fs*.4}" x2="${x1}" y2="${y+fs*.4}"/><line class="cl" x1="${x2}" y1="${y-fs*.4}" x2="${x2}" y2="${y+fs*.4}"/><text class="ck" x="${(x1+x2)/2}" y="${y-fs*.45}" font-size="${fs*.95}">${t}</text>`;
 
@@ -116,7 +125,7 @@ function svgMur(){const w=wall();if(!w)return"";const sg=w.s,P=K(),L=Math.round(
   if(xs.length){s+=`<line class="cl" x1="0" y1="${yb}" x2="${xs[xs.length-1]}" y2="${yb}"/><circle class="cd" cx="0" cy="${yb}" r="${fs*.22}"/>`;
    xs.forEach(x=>{s+=`<line class="cl" x1="${x}" y1="${yb-fs*.4}" x2="${x}" y2="${yb+fs*.4}"/><text class="ck" font-size="${fs*.78}" style="text-anchor:end" transform="translate(${x+fs*.28} ${yb+fs*.7}) rotate(-90)">${x}</text>`});
    s+=`<text class="txt" x="0" y="${Hh+fs*6.2}" font-size="${fs*.72}" style="text-anchor:start">Distances depuis l'angle gauche, en cm</text>`}
-  shown.forEach(o=>{if(shown.some(p=>p!==o&&p.e.x<o.e.x&&o.e.x-p.e.x<70&&p.e.h===o.e.h))return;const e=o.e,w=hw(e.t,L),g=shown.some(p=>p!==o&&p.e.x>e.x&&p.e.x-e.x<fs*2.4&&Math.abs(p.e.h-e.h)<fs*1.2);
+  shown.forEach(o=>{if(shown.some(p=>p!==o&&p.e.x<o.e.x&&o.e.x-p.e.x<70&&p.e.h===o.e.h))return;const e=o.e,w=hw(e,L),g=shown.some(p=>p!==o&&p.e.x>e.x&&p.e.x-e.x<fs*2.4&&Math.abs(p.e.h-e.h)<fs*1.2);
    s+=`<text class="txt" font-size="${fs*.7}" x="${g?e.x-w-fs*.25:e.x+w+fs*.25}" y="${Hh-e.h+fs*.25}" style="text-anchor:${g?"end":"start"}">${Math.round(e.h)}</text>`})}
  return s+"</svg>"}
 
@@ -171,7 +180,7 @@ const RK="pk-regles";
 function RR(){const o={};RG.forEach(r=>o[r[0]]=r[2]);try{Object.assign(o,JSON.parse(localStorage.getItem(RK)||"{}"))}catch(e){}return o}
 function setRR(k,v){let o={};try{o=JSON.parse(localStorage.getItem(RK)||"{}")}catch(e){}if(v==null)delete o[k];else o[k]=v;try{localStorage.setItem(RK,JSON.stringify(o))}catch(e){}}
 /* hauteur par défaut d'un élément, d'après les règles */
-function hdef(t){const r=RR();return({pc:r.prise,pc2:r.prise,tv:r.rj,rj:r.rj,int:r.inter,vv:r.inter,p32:r.p32,cmd:r.cmd,split:H()-r.splitP-15,liai:H()-r.splitP-15})[t]??T[t].h}
+function hdef(t){const r=RR();return({pc:r.prise,pc2:r.prise,pc3:r.prise,pc4:r.prise,tv:r.rj,rj:r.rj,int:r.inter,vv:r.inter,p32:r.p32,cmd:r.cmd,split:H()-r.splitP-15,liai:H()-r.splitP-15})[t]??T[t].h}
 /* Type de pièce d'après son nom */
 function rtype(nom){const n=String(nom||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
  if(/cuisine/.test(n))return"cui";if(/bain|sdb|salle d.?eau|douche/.test(n))return"sdb";if(/\bwc\b|toilette/.test(n))return"wc";if(/chambre|parental/.test(n))return"ch";
@@ -237,7 +246,7 @@ function askHTML(){const w=wall(),L=(K().EQ.get(w.s.a)||[]).map((e,i)=>({e,i})).
  <button class="bt go big" data-a="allfaire" style="width:100%;justify-content:center;margin:4px 0 10px">Tout est à faire${last?"":" · mur suivant ›"}</button>
  <div class="liste">${L.map(({e,i})=>`<div class="it ro ask"><span class="dt ${T[e.t].f}"></span><span class="ak"><b>${esc(e.n||T[e.t].n)}</b><small>${Math.round(e.h)} cm du sol · ${Math.round(e.x)} cm de l'angle</small></span><span class="qk3">${ST3.map(([k,n])=>`<button data-st="${k}" data-i="${i}" aria-pressed="${e.st===k}">${n}</button>`).join("")}</span></div>`).join("")}</div>
  <button class="bt big" data-a="askok" style="width:100%;justify-content:center;margin-top:12px">${last?"C'est bon pour ce mur":"Mur suivant ›"}</button></div></div>`}
-function regHTML(){const r=RR();return`<p style="margin:2px 2px 4px;font-weight:800;font-size:16px">Mes règles de pose</p><div class="muted" style="font-size:13.5px;margin-bottom:8px">Utilisées pour pré-remplir chaque pièce. Changez-les une fois pour toutes.</div><div class="regs">${RG.map(([k,n,d,s])=>`<label><span>${esc(n)}<small>${esc(s)}${r[k]!==d?` · d'origine ${d}`:""}</small></span><input data-rg="${k}" inputmode="numeric" value="${r[k]}"> cm</label>`).join("")}</div><div class="note">Minimums de la norme NF C 15-100 appliqués : séjour 1 prise par tranche de 4 m² (au moins 5), chambre 3, cuisine 6 dont 4 au-dessus du plan de travail, 1 point lumineux par pièce, 1 RJ45 par pièce principale, 1 détecteur de fumée par logement.</div><button class="bt go" data-a="reg" style="margin-top:10px">C'est noté</button>`}
+function regHTML(){const r=RR();return`<p style="margin:2px 2px 4px;font-weight:800;font-size:16px">Mes règles de pose</p><div class="muted" style="font-size:13.5px;margin-bottom:8px">Utilisées pour pré-remplir chaque pièce. Changez-les une fois pour toutes.</div><div class="regs">${RG.map(([k,n,d,s])=>`<label><span>${esc(n)}<small>${esc(s)}${r[k]!==d?` · d'origine ${d}`:""}</small></span><input data-rg="${k}" inputmode="numeric" value="${r[k]}"> cm</label>`).join("")}</div><div class="note">Minimums de la norme NF C 15-100 appliqués : séjour 1 prise par tranche de 4 m² (au moins 5), chambre 3, cuisine 6 dont 4 au-dessus du plan de travail, 1 point lumineux par pièce, 1 RJ45 par pièce principale, 1 détecteur de fumée par logement.</div><div class="note"><b>Pour le devis, chaque plaque compte</b> : 1 plaque de finition + 1 mécanisme par poste. Prise simple = plaque 1 poste + 1 prise. Double = plaque 2 postes + 2 prises. Triple = plaque 3 postes + 3 prises. Quadruple = plaque 4 postes + 4 prises. Plaque mélangée (par exemple interrupteur + prise + RJ45) = plaque 3 postes + 1 interrupteur + 1 prise + 1 RJ45.</div><button class="bt go" data-a="reg" style="margin-top:10px">C'est noté</button>`}
 
 /* ---------- Écran ---------- */
 const CSS=`
@@ -297,6 +306,7 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .it .dt.faire{box-shadow:0 0 0 3px rgba(184,146,79,.35)}#fx .it .dt.exist{opacity:.4}
 #fx .ask{flex-wrap:wrap}#fx .ak{flex:1 1 150px}#fx .qk3{display:flex;gap:6px;flex-wrap:wrap}#fx .qk3 button{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 13.5px var(--f);padding:8px 12px;border-radius:999px;cursor:pointer;min-height:40px}
 #fx .qk3 button[aria-pressed="true"]{border-color:#B8924F;background:rgba(184,146,79,.14)}#fx .qk3 button[data-st="exist"][aria-pressed="true"]{border-color:var(--muted);background:var(--paper)}#fx .st1{flex:1 1 100%}
+#fx .tiles.one{grid-template-columns:1fr}#fx .tiles.one svg.wide{width:min(100%,220px);height:64px}#fx .postes{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}#fx .postes>span{font-weight:800;font-size:13.5px}#fx .postes small{display:block;color:var(--muted);font-weight:600;font-size:12px}#fx .pz{display:flex;gap:6px;flex-wrap:wrap}#fx .pz button{appearance:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:58px;min-height:52px;padding:5px 6px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);font:700 11.5px var(--f);cursor:pointer}#fx .pz svg{width:26px;height:26px}#fx .pz em{font-style:normal}#fx .pz .pz-a{min-width:44px;font-size:20px;justify-content:center}
 #fx .regs{display:grid;gap:6px}#fx .regs label{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-weight:700;font-size:14px}#fx .regs label span{flex:1}#fx .regs small{display:block;color:var(--muted);font-weight:600;font-size:12px}#fx .regs input{width:70px;font:800 16px var(--mono);border:1.5px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--surface);color:var(--fg)}
 #fx .tile.sm svg{width:54px;height:40px;color:var(--fg)}
 
@@ -353,7 +363,10 @@ function render(){const d=$("fx"),P=K(),rm=room();if(!rm)return close();const F=
  h+=V.met?`<div class="card" style="margin-top:14px">${metHTML(M)}</div>`:`<button class="lien" data-a="met">Mes métiers : ${M.length?esc(M.map(k=>(MET.find(m=>m[0]===k)||[,""])[1]).join(", ")):"aucun choisi"}</button>`;
  h+=V.reg?`<div class="card" style="margin-top:10px">${regHTML()}</div>`:(fams().length?`<button class="lien" data-a="reg">Mes règles de pose (hauteurs, distances)</button>`:"");
  d.innerHTML=h+`</div>`+(V.merge&&V.tab==="mur"&&wall()?mergeHTML():V.pick?pickHTML():"")}
-function mergeHTML(){const E=eqs(wall().s),a=E[V.merge.i],b=E[V.merge.j];if(!a||!b){V.merge=null;return""}const n=MOD[a.t]+MOD[b.t],opts=n===2?["pc2","pc3"]:["pc3"];return`<div class="pick" role="dialog" aria-label="Prises collées"><div class="pk-in mini"><div class="pk-h"><b>Ces prises se touchent : on en fait…</b><button class="rd" data-a="mergeno" aria-label="Fermer">✕</button></div><div class="tiles mg2">${opts.map(t=>`<button class="tile" data-a="mergeok" data-t="${t}">${icoMur(t)}<span>Une ${T[t].n.toLowerCase()}</span></button>`).join("")}</div><button class="bt big" data-a="mergeno" style="width:100%;justify-content:center;margin-top:10px">Non, garder ${n} prises séparées</button></div></div>`}
+function mergeM(){const E=eqs(wall().s),a=E[V.merge.i],b=E[V.merge.j];if(!a||!b)return null;const[l,r]=a.x<=b.x?[a,b]:[b,a];return mods(l).concat(mods(r))}
+function mergeHTML(){const m=mergeM();if(!m){V.merge=null;return""}const n=m.length,allPc=m.every(t=>t==="pc");
+ const opts=allPc?(n===2?["pc2","pc3"]:n===3?["pc3","pc4"]:["pc4"]).map(t=>({t,ico:icoMur(t),lab:"Une "+T[t].n.toLowerCase()})):[{t:"plq",ico:icoE(setMods({t:"plq",h:30},m)),lab:"Une "+plqName(m).replace(/^Plaque/,"plaque")}];
+ return`<div class="pick" role="dialog" aria-label="Éléments collés"><div class="pk-in mini"><div class="pk-h"><b>${allPc?"Ces prises se touchent : on en fait…":"Ils se touchent : on les met sur une seule plaque ?"}</b><button class="rd" data-a="mergeno" aria-label="Fermer">✕</button></div><div class="tiles${opts.length>1?" mg2":" one"}">${opts.map(o=>`<button class="tile" data-a="mergeok" data-t="${o.t}">${o.ico}<span>${esc(o.lab)}</span></button>`).join("")}</div><button class="bt big" data-a="mergeno" style="width:100%;justify-content:center;margin-top:10px">Non, garder ${allPc?n+" prises séparées":"séparé"}</button></div></div>`}
 function head(t,s,noBack){return`<div class="eh">${noBack?"":`<button class="bk" data-a="close" aria-label="Retour au plan">‹ Plan</button>`}<div class="tx"><b>${esc(t)}</b><small>${esc(s)}</small></div>${noBack?`<button class="rd" data-a="close" aria-label="Fermer">✕</button>`:""}</div>`}
 function area(p){let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1]}return a/2}
 function metHTML(M){return`<p style="margin:4px 2px 6px;font-weight:800;font-size:16px">Quels métiers faites-vous ?</p><div class="muted" style="font-size:14px">Touchez les vôtres. Les prises ne sont proposées qu'aux électriciens, l'eau aux plombiers, la clim aux climaticiens.</div><div class="met">${MET.map(([k,n])=>`<button class="bt${M.includes(k)?" on":""}" data-met="${k}" aria-pressed="${M.includes(k)}">${M.includes(k)?"✓ ":""}${n}</button>`).join("")}</div><button class="bt go big" data-a="metok">C'est noté</button>`}
@@ -361,9 +374,9 @@ function metHTML(M){return`<p style="margin:4px 2px 6px;font-weight:800;font-siz
 /* Une seule ligne sous le dessin : l'élément touché (ses 2 cotes à taper, « Encore un », Enlever), sinon le gros bouton Ajouter. */
 function barHTML(name,inputs,tp){const e=V.sel>=0;
  if(!fams().length)return`<div class="cons"><i></i><span>Les portes et fenêtres sont affichées. Les prises, l'eau et la clim s'ajoutent pour les électriciens, plombiers et climaticiens (« Mes métiers » en bas).</span></div>`;
- if(e){const it=V.tab==="mur"?eqs(wall().s)[V.sel]:(room().eqp||[])[V.sel];return`<div class="bar"><b class="nm">${esc(name)}</b>${inputs}<div class="qk3 st1"><button data-st="faire" data-i="${V.sel}" aria-pressed="${!!(it&&it.st==="faire")}">${it&&it.st==="faire"?"✓ À faire (dans le devis)":"Déjà en place · touchez pour « à faire »"}</button></div><div class="acts"><button class="bt" data-a="dup">＋ Encore ${esc(un(name))}</button><button class="bt del" data-a="del" aria-label="Enlever">Enlever</button><button class="bt ok" data-a="desel">OK</button></div></div>`}
+ if(e){const it=V.tab==="mur"?eqs(wall().s)[V.sel]:(room().eqp||[])[V.sel];const M=V.tab==="mur"&&mods(it);return`<div class="bar"><b class="nm">${esc(name)}</b>${inputs}${M?`<div class="postes"><span>Sur la plaque <small>touchez un poste pour le changer</small></span><div class="pz">${M.map((t,k)=>`<button data-a="poste" data-k="${k}" aria-label="Poste ${k+1} : ${esc(MECA[t])}"><svg viewBox="-10 -10 20 20" aria-hidden="true"><rect class="bx" x="-9" y="-9" width="18" height="18" rx="4"/>${MG[t](0,0)}</svg><em>${esc(MN[t][0])}</em></button>`).join("")}${M.length<4?`<button class="pz-a" data-a="posteplus" aria-label="Ajouter un poste">＋</button>`:""}${M.length>1?`<button class="pz-a" data-a="postemoins" aria-label="Retirer le dernier poste">−</button>`:""}</div></div>`:""}<div class="qk3 st1"><button data-st="faire" data-i="${V.sel}" aria-pressed="${!!(it&&it.st==="faire")}">${it&&it.st==="faire"?"✓ À faire (dans le devis)":"Déjà en place · touchez pour « à faire »"}</button></div><div class="acts"><button class="bt" data-a="dup">＋ Encore ${esc(un(name))}</button><button class="bt del" data-a="del" aria-label="Enlever">Enlever</button><button class="bt ok" data-a="desel">OK</button></div></div>`}
  return`<div class="cons"><i></i><span><b>Touchez ce qui est à faire</b> : il s'allume et part dans le devis. Ce qui reste pâle est déjà en place.</span></div><div class="bar0"><button class="bt go big" data-a="add">＋ Ajouter</button><button class="bt" data-a="allfaire">Tout est à faire ici</button></div><div class="note">Pour ajouter : touchez ${tp} à un endroit vide.${V.tab==="mur"?" Pour déplacer : glissez à gauche ou à droite.":" Pour déplacer : glissez."}</div>`}
-const un=n=>/^(Prise|Arrivée|Évacuation|Applique|Bouche|Grille|Cassette|Unité|Commande)/.test(n)?"une":"un";
+const un=n=>/^(Plaque|Prise|Arrivée|Évacuation|Applique|Bouche|Grille|Cassette|Unité|Commande)/.test(n)?"une":"un";
 function murHTML(){const w=wall();if(!w)return`<p class="muted">Cette pièce n'a pas encore de murs.</p>`;const sg=w.s,E=eqs(sg),O=opens(sg),e=V.sel>=0?E[V.sel]:null,W=walls();
  let h=`<div class="grid2"><div><div class="elev">${svgMur()}</div><div class="nav"><button class="rd" data-a="prev" aria-label="Mur précédent">‹</button><span>Mur ${V.wi+1} sur ${W.length}<small>glissez le doigt sur le mur pour changer</small></span><button class="rd" data-a="next" aria-label="Mur suivant">›</button></div>`;
  h+=barHTML(e?(e.n||T[e.t].n):"",e?`<label>du sol <input data-n="h" inputmode="numeric" value="${Math.round(e.h)}"> cm</label><label>de l'angle gauche <input data-n="x" inputmode="numeric" value="${Math.round(e.x)}"> cm</label>`:"","le mur");
@@ -372,14 +385,15 @@ function murHTML(){const w=wall();if(!w)return`<p class="muted">Cette pièce n'a
  E.forEach((x,i)=>{if(!vis(x.t))return;L.push({x:x.x,h:`<button class="it${i===V.sel?" on":""}" data-sel="${i}"><span class="dt ${T[x.t].f}${x.st?" "+x.st:""}"></span><span><b>${esc(x.n||T[x.t].n)}</b><small>${x.st==="faire"?"<b style=\"display:inline;color:#B8924F\">À faire</b>":"Déjà en place"} · ${Math.round(x.h)} cm du sol · ${Math.round(x.x)} cm de l'angle</small></span></button>`})});
  L.sort((a,b)=>a.x-b.x);
  h+=`<h3>Sur ce mur, de gauche à droite</h3><div class="liste">${L.length?L.map(o=>o.h).join(""):`<div class="muted" style="padding:6px 2px">Rien pour l'instant.</div>`}</div>`;
- const all=W.reduce((a,w)=>{(K().EQ.get(w.s.a)||[]).forEach(x=>{if(vis(x.t))a[x.t]=(a[x.t]||0)+1});return a},{});
- if(Object.keys(all).length)h+=`<div class="note">Dans toute la pièce : ${Object.keys(all).map(k=>`${all[k]} × ${esc(T[k].n.toLowerCase())}`).join(" · ")}</div>`;
+ const lc=n=>n.charAt(0).toLowerCase()+n.slice(1),all=W.reduce((a,w)=>{(K().EQ.get(w.s.a)||[]).forEach(x=>{if(vis(x.t)){const k=lc(x.t==="plq"?x.n:T[x.t].n);a[k]=(a[k]||0)+1}});return a},{});
+ if(Object.keys(all).length)h+=`<div class="note">Dans toute la pièce : ${Object.keys(all).map(k=>`${all[k]} × ${esc(k)}`).join(" · ")}</div>`;
  return h+`</div></div>`}
 
 /* Choix de l'élément : grandes tuiles avec le dessin, sans menus. */
+function icoE(e){const m=Math.max(28,18*(mods(e)||[1]).length+8),hh=H();return`<svg class="wide" viewBox="${-m/2} ${hh-e.h-14} ${m} 28" aria-hidden="true">${sym({...e,x:0},-1,14,false)}</svg>`}
 function icoMur(t){const d=T[t],m=Math.max(28,2*(HW[t]||9)+8,2*(HH[t]||9)+8,(d.w||0)+10,(d.hh||0)+10),hh=H();return`<svg viewBox="${-m/2} ${hh-d.h-m/2} ${m} ${m}" aria-hidden="true">${sym({t,x:0,h:d.h},-1,14,false)}</svg>`}
 function icoPlaf(t){const m=({spot:16,pl:20,vmc:18,df:18,souf:34,rep:28,cas:34})[t]||36;return`<svg viewBox="${-m} ${-m} ${2*m} ${2*m}" aria-hidden="true">${symPlaf(t,0,0,1)}</svg>`}
-function pickHTML(){const F=fams(),mur=V.tab==="mur",TT=mur?T:TP,keys=Object.keys(TT).filter(k=>F.includes(TT[k].f)&&!(mur&&k==="ge"&&wall()&&wall().s.sh));const g={};keys.forEach(k=>{(g[TT[k].f]=g[TT[k].f]||[]).push(k)});const G=Object.keys(g);
+function pickHTML(){const F=fams(),mur=V.tab==="mur",TT=mur?T:TP,keys=Object.keys(TT).filter(k=>F.includes(TT[k].f)&&!TT[k].hide&&!(mur&&k==="ge"&&wall()&&wall().s.sh));const g={};keys.forEach(k=>{(g[TT[k].f]=g[TT[k].f]||[]).push(k)});const G=Object.keys(g);
  return`<div class="pick" role="dialog" aria-label="Que posez-vous ?"><div class="pk-in"><div class="pk-h"><b>${V.pick.at?"Que posez-vous ici ?":"Que posez-vous ?"}</b><button class="rd" data-a="pickx" aria-label="Fermer">✕</button></div>${G.map(f=>`${G.length>1?`<p>${FAM[f]}</p>`:""}<div class="tiles">${g[f].map(k=>`<button class="tile" data-put="${k}">${mur?icoMur(k):icoPlaf(k)}<span>${esc(TT[k].n)}</span></button>`).join("")}</div>`).join("")}${!mur&&F.includes("el")?`<p>Spots : bien répartis d'un coup</p><div class="tiles">${SPOTS.map(([t,c,r])=>`<button class="tile sm" data-grid="${c} × ${r}">${spotIco(c,r)}<span>${t}</span></button>`).join("")}</div>`:""}</div></div>`}
 
 function plafHTML(){const rm=room(),E=rm.eqp||[],e=V.sel>=0?E[V.sel]:null,b=bb(rm);
@@ -420,7 +434,7 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
  if(a==="close")return close();
  if(a==="pickx"){V.pick=null;return render()}
  if(a==="mergeno"){V.merge=null;return render()}
- if(a==="mergeok"&&V.merge){const E=eqs(wall().s),A=E[V.merge.i],B=E[V.merge.j];if(A&&B){snap();const n=MOD[A.t]+MOD[B.t],t=d.t||(n===2?"pc2":"pc3");B.x=Math.round((A.x*MOD[A.t]+B.x*MOD[B.t])/n);B.t=t;B.n=T[t].n;if(A.st==="faire")B.st="faire";E.splice(V.merge.i,1);V.sel=E.indexOf(B)}V.merge=null;save();render();toast("Une seule "+(V.sel>=0?eqs(wall().s)[V.sel].n.toLowerCase():"prise"));return}
+ if(a==="mergeok"&&V.merge){const E=eqs(wall().s),A=E[V.merge.i],B=E[V.merge.j],m=mergeM();if(A&&B&&m){snap();const na=mods(A).length,nb=mods(B).length,k=PC.indexOf(d.t);while(k>=0&&m.length<k+1)m.push("pc");B.x=Math.round((A.x*na+B.x*nb)/(na+nb));setMods(B,m);if(A.st==="faire")B.st="faire";E.splice(V.merge.i,1);V.sel=E.indexOf(B)}V.merge=null;save();render();toast(V.sel>=0?eqs(wall().s)[V.sel].n:"Une seule plaque");return}
  if(a==="askx"){V.ask=false;return render()}
  if(a==="allfaire"){snap();const L=V.tab==="mur"?(K().EQ.get(wall().s.a)||[]):(room().eqp||[]),all=L.filter(e=>vis(e.t)).every(e=>e.st==="faire");L.forEach(e=>{if(vis(e.t))e.st=all?undefined:"faire"});save();render();toast(all?"Tout remis « déjà en place »":"Tout est à faire ici");return}
  if(a==="reg"){V.reg=!V.reg;render();if(V.reg)setTimeout(()=>{const c=$("fx").querySelector(".regs");c&&c.scrollIntoView({behavior:"smooth",block:"start"})},30);return}
@@ -432,7 +446,8 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
  if(a==="putsplit"){V.tab="mur";const k=walls().findIndex(w=>(P.EQ.get(w.s.a)||[]).some(x=>x.t==="split"));if(k>=0){V.wi=k;V.sel=(P.EQ.get(walls()[k].s.a)||[]).findIndex(x=>x.t==="split");return render()}autoSplit();render();toast("Split posé en haut d'un mur qui donne dehors, commande près de l'interrupteur");return}
  if(a==="putsouf"||a==="putcas"){V.tab="plaf";const t=a==="putsouf"?"souf":"cas";if((room().eqp||[]).some(x=>x.t===t||x.t==="rep")){V.sel=-1;return render()}put(t);return}
  if(V.tab==="mur"){const w=wall();if(!w)return;const E=eqs(w.s),e=E[V.sel];if(!e)return;snap();
-  if(a==="dup"){const L=Math.round(P.dist(w.s.a,w.s.b)*100),fs=Math.max(15,(L+160)/34),st=R5(Math.max(40,((T[e.t]||{}).w||(e.t==="pc2"?30:18)*Math.max(1,fs/14))+20));let x=e.x+st;if(x>L-5)x=e.x-st;E.push({...e,x:Math.max(5,Math.min(L-5,R5(x)))});V.sel=E.length-1}
+  if(a==="poste"||a==="posteplus"||a==="postemoins"){const m=mods(e),CY=["pc","int","vv","rj","tv"];if(a==="poste"){const k=+d.k;m[k]=CY[(CY.indexOf(m[k])+1)%CY.length]}else if(a==="posteplus")m.push("pc");else m.pop();setMods(e,m);save();render();focusBar();return}
+  if(a==="dup"){const L=Math.round(P.dist(w.s.a,w.s.b)*100),fs=Math.max(15,(L+160)/34),st=R5(Math.max(40,((T[e.t]||{}).w||2*hw(e,L))+20));let x=e.x+st;if(x>L-5)x=e.x-st;E.push({...e,...(e.m?{m:e.m.slice()}:{}),x:Math.max(5,Math.min(L-5,R5(x)))});V.sel=E.length-1}
   if(a==="del"){E.splice(V.sel,1);V.sel=-1;if(!E.length)P.EQ.delete(w.s.a)}
   save();return render()}
  if(V.tab==="plaf"){const rm=room(),E=rm.eqp||[],e=E[V.sel];if(!e)return;snap();const b=bb(rm);
@@ -469,11 +484,11 @@ let DR=null,BG=null;
 function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
 function onDown(ev){if(!V||ev.target.closest(".pick"))return;const g=ev.target.closest(".sym");if(!g){const svg=ev.target.closest("#fx-esvg,#fx-psvg");BG=svg?{svg,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId}:null;return}const svg=g.ownerSVGElement;const i=+g.dataset.i;V.sel=i;DR={i,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault();svg.querySelectorAll(".sym").forEach(s=>s.classList.toggle("on",+s.dataset.i===i))}
 function onMove(ev){if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
- if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);const r=RR(),E=eqs(w.s),a=hw(e.t,L),lo=Math.max(r.coin,a),hi=L-Math.max(r.coin,a);let x=Math.max(lo,Math.min(hi,R5(Pt.x)));
-  /* collé à l'élément voisin, jamais l'un sur l'autre (Cyril 17/11) */for(let n=0;n<3;n++)E.forEach((o,j)=>{if(j===DR.i||Math.abs(o.h-e.h)>=Math.max(18,(HH[o.t]||8)+(HH[e.t]||8)))return;const d=a+hw(o.t,L);if(Math.abs(x-o.x)<d)x=x>=o.x?o.x+d:o.x-d});
+ if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);const r=RR(),E=eqs(w.s),a=hw(e,L),lo=Math.max(r.coin,a),hi=L-Math.max(r.coin,a);let x=Math.max(lo,Math.min(hi,R5(Pt.x)));
+  /* collé à l'élément voisin, jamais l'un sur l'autre (Cyril 17/11) */for(let n=0;n<3;n++)E.forEach((o,j)=>{if(j===DR.i||Math.abs(o.h-e.h)>=Math.max(18,(HH[o.t]||8)+(HH[e.t]||8)))return;const d=a+hw(o,L);if(Math.abs(x-o.x)<d)x=x>=o.x?o.x+d:o.x-d});
   e.x=Math.round(Math.max(lo,Math.min(hi,x)));/* hauteur fixée par la règle : on glisse seulement à l'horizontale (Cyril) */const el=$("fx").querySelector(".elev");el.innerHTML=svgMur();DR.svg=$("fx-esvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x,y:H()-e.h})}
  else{const rm=room(),e=rm.eqp[DR.i],b=bb(rm);e.x=Math.max(b[0],Math.min(b[2],b[0]+R5(Pt.x-b[0])))/100;e.y=Math.max(b[1],Math.min(b[3],b[1]+R5(Pt.y-b[1])))/100;const el=$("fx").querySelector(".elev");el.innerHTML=svgPlaf();DR.svg=$("fx-psvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x*100,y:e.y*100})}}
-function onUp(ev){loupe(null);if(DR&&DR.moved&&V.tab==="mur"){const w=wall(),E=eqs(w.s),e=E[DR.i],L=Math.round(K().dist(w.s.a,w.s.b)*100);if(e&&MOD[e.t]){const j=E.findIndex((o,j)=>j!==DR.i&&MOD[o.t]&&Math.abs(o.h-e.h)<10&&Math.abs(o.x-e.x)<=hw(o.t,L)+hw(e.t,L)+1);if(j>=0&&MOD[e.t]+MOD[E[j].t]<=3)V.merge={i:DR.i,j}}}
+function onUp(ev){loupe(null);if(DR&&DR.moved&&V.tab==="mur"){const w=wall(),E=eqs(w.s),e=E[DR.i],L=Math.round(K().dist(w.s.a,w.s.b)*100);if(e&&mods(e)){const j=E.findIndex((o,j)=>j!==DR.i&&mods(o)&&Math.abs(o.h-e.h)<10&&Math.abs(o.x-e.x)<=hw(o,L)+hw(e,L)+1);if(j>=0&&mods(e).length+mods(E[j]).length<=4)V.merge={i:DR.i,j}}}
  if(DR){const m=DR.moved,i=DR.i;DR=null;if(!m){/* un toucher = à faire / déjà en place (Cyril 17/11) */const it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(it){snap();it.st=it.st==="faire"?undefined:"faire"}V.sel=i}save();render();return}
  if(!BG||ev.pointerId!==BG.id)return;const B=BG;BG=null;const dx=ev.clientX-B.x0,dy=ev.clientY-B.y0;
  if(V.tab==="mur"&&Math.abs(dx)>60&&Math.abs(dx)>2*Math.abs(dy))return go(dx<0?1:-1);
@@ -499,5 +514,5 @@ function inject(){const P=K(),SH=P&&P.SH,body=$("sh-body");if(!SH||!body||body.q
 addEventListener("keydown",e=>{if(e.key==="Escape"&&V)close()});
 function wait(n){if(K())return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
-window.PKFACES={open,close,metiers,setMetiers};
+window.PKFACES={open,close,metiers,setMetiers,compo};
 })();
