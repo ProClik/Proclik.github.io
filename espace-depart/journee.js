@@ -126,7 +126,7 @@ var css='.jr-c{display:grid;gap:10px}.jr-c .jr-h{display:flex;align-items:center
  '.vh-d{display:flex!important;align-items:center;justify-content:space-between;gap:10px}.vh-d input{max-width:180px;min-height:44px}'+
  '.vh-ch{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}'+
  '.vh-o{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:16px;border:0;font:inherit;font-weight:700;font-size:13.5px;color:inherit;background:var(--n1-bg,var(--bg));box-shadow:var(--n1-pk,0 1px 3px rgba(0,0,0,.12))}'+
- '.vh-o span{display:grid;place-items:center;color:var(--muted)}.jr-row .btn[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true] span{color:var(--n1-laiton,#A8823F)}'+
+ '.vh-o span{display:grid;place-items:center;color:var(--muted)}.pb-g,.nav .ico{position:relative}.pc-optm{position:absolute;top:-6px;right:-8px;width:18px;height:18px;border-radius:50%;background:var(--ca,#fff);box-shadow:0 1px 3px rgba(0,0,0,.28);display:grid;place-items:center;color:var(--n1-laiton,#A8823F);pointer-events:none}.pc-optm svg{width:12px!important;height:12px!important;stroke-width:2.2}.jr-row .btn[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true] span{color:var(--n1-laiton,#A8823F)}'+
  '.vh-big{display:flex;align-items:baseline;gap:10px}.vh-big input{max-width:130px;font-size:30px!important;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}.vh-big span{color:var(--muted);font-weight:700}.vh-big.sm input{font-size:22px!important;max-width:110px}'+
  '.vh-bs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.vh-b{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--n1-bg,var(--soft,#EEF1F6));color:var(--muted)}.vh-b.wa{background:color-mix(in srgb,var(--n1-warn,#C98A1B) 18%,transparent);color:var(--n1-warn,#9A6A10)}.vh-b.al{background:color-mix(in srgb,var(--n1-alert,#B9577A) 18%,transparent);color:var(--n1-alert,#B9577A)}'+
  '.vh-hd{display:flex;gap:14px;align-items:center}.vh-hd b{font-size:19px}.vh-hd small{display:block;color:var(--muted);font-weight:600}'+
@@ -431,7 +431,7 @@ document.addEventListener('click',function(e){var t=e.target.closest&&e.target.c
  if(t.dataset.jreq!=null){HQ=null;return equipe()}
  if(t.dataset.jrvh!=null){if($('#jr-rc'))return mesVehicules(function(){RC.carb=null;RC.vehs=RC.vehs.filter(vehDe);if(!RC.vehs.length)RC.vehs=vehDefaut(CH[RC.id]);rcRendre()});return mesVehicules(null)}
  var k=t.dataset.jrsw;REG[k]=REG[k]===false;save();var r=$('#jr-reg');if(r)r.outerHTML=reglagesHTML();
- X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':k==='cad'?'Mes cadences':'Heures sup de l\'équipe');majPartout()});
+ X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':k==='cad'?'Mes cadences':'Heures sup de l\'équipe');majPartout();majMenu()});
 
 /* ---------- Étape C : vos cadences (Cyril, 17/11 10 h 30) ----------
    Cliky compare, chantier terminé par chantier terminé, les heures prévues et les heures passées (récaps du soir).
@@ -507,5 +507,19 @@ function majPartout(){injecter();fil()}
 var chx=$('#chx');if(chx)new MutationObserver(function(){if(!$('#jr-ch',chx)&&$('.ch-res',chx)||!$('#jr-four',chx)&&$('#ch-four',chx))injecter()}).observe(chx,{childList:true,subtree:true});
 fil();setInterval(fil,60000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)majPartout()});
+/* ---------- dans le menu (Cyril 17/11) : Mes véhicules, Mon équipe, Mes cadences, comme les autres entrées ----------
+   Un bouton par entrée dans le menu (nav.nav, attribut data-pbx) : la barre du bas, le panneau du galet et le menu de côté
+   les reprennent, on peut les placer ou les déplacer dans Réglages comme les autres. La petite icône de l'option (Cliky)
+   est posée au-dessus de leur icône. Option ou interrupteur coupé : l'entrée disparaît. */
+function marqueOpt(k){var L=window.PCOPT&&PCOPT.liste,o=L&&L[k];return o&&o.i?'<span class="pc-optm" title="Option '+esc(o.n)+'">'+o.i+'</span>':''}
+var ENTREES=[['vehicules','Mes véhicules',IV.van,onJ,function(){mesVehicules(null)}],['monequipe','Mon équipe',IC.equipe,onH,function(){HQ=null;equipe()}],['cadences','Mes cadences',IC.rythme,onC,function(){mesCadences()}]];
+function entreesMenu(){var nav=$('nav.nav');if(!nav)return false;var ch=false;
+ ENTREES.forEach(function(e){var b=$('#nb-'+e[0]);
+  if(!b){b=document.createElement('button');b.type='button';b.id='nb-'+e[0];b.setAttribute('data-pbx','');b.setAttribute('data-opt','cliky');
+   b.innerHTML='<span class="ico" aria-hidden="true">'+e[2]+marqueOpt('cliky')+'</span>'+e[1];b.addEventListener('click',function(){e[4]()});nav.appendChild(b);ch=true}
+  var h=!e[3]();if(b.hidden!==h){b.hidden=h;ch=true}});
+ return ch}
+entreesMenu();
+function majMenu(){if(entreesMenu()&&window.PCBarre&&PCBarre.applique)PCBarre.applique()}
 window.PCJR={cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
