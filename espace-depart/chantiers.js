@@ -53,7 +53,42 @@ var saveCH=function(){X.saveCH()};
 function avc(c){return X.avc?X.avc(c):0}
 function cfin(c){return X.cfin(c)}
 function etat(c){return c.st==='run'?['En cours','ok']:c.st==='start'?['À démarrer','todo']:['Terminé','grey']}
-function dos(c){return c.dos&&DOS[c.dos]}
+function dos(c){return c.dos&&(DOS[c.dos]||vraiDos(c.dos))}
+/* Vrais clients (Cyril 17/11 : « je dois retrouver tout de A à Z ») : ceux du formulaire et ceux créés dans l'Espace.
+   Dans l'Espace réel, le chantier se crée pour eux, et retrouve leur demande, leur pré-devis, leurs devis et factures. */
+function enVrai(){return document.documentElement.classList.contains('pcvrai')&&window.PCV&&PCV.api}
+function vrais(){try{return X.cf&&X.cf.vrais?X.cf.vrais()||[]:[]}catch(e){return []}}
+function vraiDos(k){var c=vrais().filter(function(x){return x.contact===k})[0];if(!c)return null;
+ var o={n:c.nom||'Client',prenom:c.prenom||'',nom:c.nom||'',type:c.type==='pro'?'pro':'part',entreprise:c.entreprise||'',rue:c.adresse||'',cp:c.cp||'',v:c.ville||'',
+  adr:[c.adresse,[c.cp,c.ville].filter(Boolean).join(' ')].filter(Boolean).join(', '),tel:c.telephone||'',mail:c.email||'',t:c.demande||'',k:'nouveau',chat:[],ph:[],docs:[],hist:[],vrai:1};
+ DOS[k]=o;return o}
+function clientsChoix(){var R={},out=[];
+ if(enVrai()){vrais().forEach(function(c){if(c.contact)R[c.contact]={k:c.contact,n:c.nom||'Client',v:c.ville||''}});
+  Object.keys(DOS).forEach(function(k){var o=DOS[k];if(o&&o.vrai&&o.n&&!R[k])R[k]={k:k,n:o.n,v:o.v||''}})}
+ else Object.keys(DOS).forEach(function(k){if(DOS[k]&&DOS[k].n)R[k]={k:k,n:DOS[k].n,v:DOS[k].v||''}});
+ Object.keys(R).forEach(function(k){out.push(R[k])});
+ return out.sort(function(a,b){return a.n.replace(/^(M\.|Mme)\s+/,'').localeCompare(b.n.replace(/^(M\.|Mme)\s+/,''),'fr')})}
+var VD={};
+function dossierVrai(c){var o=dos(c);if(!o||!o.vrai||!enVrai())return '';
+ return '<div id="ch-vdos" data-c="'+esc(c.dos)+'">'+dossierHTML(c.dos)+'</div>'}
+function dossierHTML(k){var x=VD[k];
+ if(!x)return '<div class="sec-h"><h2>Dossier du client</h2><span>formulaire, pré-devis, devis, factures</span></div><div class="card"><p class="hint" style="margin:0">Chargement du dossier…</p></div>';
+ var d=x.dem,P=(d&&d.pre_devis)||[],D=x.docs||[],Dv=D.filter(function(y){return y.type==='devis'}),Fa=D.filter(function(y){return y.type!=='devis'&&y.type!=='avoir'});
+ var jr=function(s){var t=new Date(s);return s&&!isNaN(t)?t.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}):''};
+ var lv=X.cf&&X.cf.ligneVdoc?X.cf.ligneVdoc:function(){return ''};
+ var pre=P.slice(0,4).map(function(p,i){var nv=(p.a_verifier||[]).length,tot=p.totaux&&p.totaux.total_ht!=null?eur(+p.totaux.total_ht):'';
+  return '<button class="cf-li" type="button" data-vc="'+esc(k)+'"><span class="cf-av cf-doc">'+IC.devis+'</span><span class="tx"><b>'+(i?'Pré-devis plus ancien':'Pré-devis de la demande')+'</b><small>'+esc([jr(p.le),p.resume].filter(Boolean).join(' · '))+'</small></span><span class="cf-m"><b>'+tot+'</b><span class="pill '+(i?'grey':nv?'warn':'todo')+'">'+(i?'Ancien':nv?'À vérifier ('+nv+')':'Ouvrir')+'</span></span></button>'}).join('');
+ var vide=!P.length&&!D.length&&!d;
+ return '<div class="sec-h"><h2>Dossier du client</h2><span>formulaire, pré-devis, devis, factures</span></div>'+
+  (vide?'<div class="card"><p class="hint" style="margin:0">'+(x.err?'Dossier pas chargé : '+esc(x.err):'Pas encore de demande du formulaire ni de devis pour ce client.')+'</p></div>':
+  '<div class="card lst cf-l ch-docs">'+
+   (d?'<button class="cf-li" type="button" data-vc="'+esc(k)+'"><span class="cf-av cf-doc">'+IC.docs+'</span><span class="tx"><b>Sa demande du formulaire</b><small>réponses, photos'+(d.plan?', plan dessiné':'')+'</small></span><span class="go">›</span></button>':'')+
+   pre+Dv.map(lv).join('')+Fa.map(lv).join('')+'</div>')+
+  (x.err&&!vide?'<p class="hint">'+esc(x.err)+'</p>':'')}
+function chargerDossier(c){var o=dos(c);if(!o||!o.vrai||!enVrai())return;var k=c.dos,fini=0,x={dem:null,docs:[],err:''};
+ var maj=function(){if(++fini<2)return;VD[k]=x;var b=document.getElementById('ch-vdos');if(b&&b.getAttribute('data-c')===k)b.innerHTML=dossierHTML(k)};
+ PCV.api('/espace/demande?c='+encodeURIComponent(k)).then(function(r){x.dem=r.demande||null;maj()},function(e){if(!/introuvable|aucune|404/i.test(e.message))x.err=e.message;maj()});
+ PCV.api('/espace/documents?c='+encodeURIComponent(k)).then(function(r){x.docs=r.documents||[];maj()},function(e){x.err=x.err||e.message;maj()});}
 function lignesDevis(c){if(c.L&&c.L.length)return c.L;var d=c.dv&&X.find(c.dv);if(d&&d.L)return d.L;return c.fin.ht?[{d:c.t,u:'forfait',q:1,p:c.fin.ht}]:[]}
 var PIECES={alpes:['Salle d\'attente','Accueil','Couloir'],lopez:['Salle de bain','Couloir'],perrin:['Combles'],rey:['Fournil']};
 function pieces(c){var L=[];(PIECES[c.id]||[]).concat(c.pieces||[]).forEach(function(p){if(p&&L.indexOf(p)<0)L.push(p)});
@@ -88,7 +123,7 @@ function ouvrir(id,o){var c=CH[id];if(!c)return;if(cur!==id){edit=null;prevenir=
  $('#ch-back').addEventListener('click',function(){liste()});
  var rb=$('#ch-res');if(rb)rb.addEventListener('click',function(){ouvrir(id)});
  $$('#chx [data-ong]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,ong===b.dataset.ong?null:b.dataset.ong)})});
- lier(c);}
+ lier(c);if(!ong||ong==='docs')chargerDossier(c);}
 function recharger(o,sel){ouvrir(cur,o===undefined?ong:o);if(sel){var t=$(sel);if(t)t.scrollIntoView({block:'center'})}}
 
 /* Le résumé : l'essentiel, ce qu'il reste à faire, le client */
@@ -103,7 +138,7 @@ function resume(c){var a=avc(c),f=cfin(c),o=dos(c),reel=(c.reel||[]).reduce(func
  return '<div class="card ch-res"><span class="ring" style="--p:'+a+'"><span>'+a+'%</span></span><span class="tx"><b>Avancement</b><small>'+(typeof suite==='string'?suite:'En ce moment : '+esc(suite[0]).toLowerCase()+' ('+suite[2]+'\u00a0%)')+'</small></span></div>'+
   (c.fin.ht?'<div class="card"><div class="bar2"><span>Encaissé</span><div class="prog f"><i style="width:'+(f.ttc?Math.round((f.ttc-f.rest)/f.ttc*100):0)+'%"></i></div><b>'+eur(f.ttc-f.rest)+'</b><span>Achats</span><div class="prog f"><i style="width:'+(c.prev?Math.min(100,Math.round(reel/c.prev*100)):0)+'%"></i></div><b>'+eur(reel)+(c.prev?' / '+eur(c.prev):'')+'</b></div></div>':'')+
   (T.length?'<div><div class="sec-h"><h2>À faire</h2><span>touchez pour y aller</span></div><div class="ch-afaire">'+T.map(function(t){return '<button type="button" data-aller="'+t[0]+'"><span class="n">'+t[1]+'</span><span class="tx">'+esc(t[2])+'</span><span class="go">›</span></button>'}).join('')+'</div></div>':'')+
-  cliCard(c,o,true);}
+  dossierVrai(c)+cliCard(c,o,true);}
 function cliCard(c,o,court){if(!o)return '<div class="card"><b>Client</b><p class="hint" style="margin-top:6px">Chantier importé avant ProClik : pas de fiche client.</p></div>';
  var adr=o.adr||o.v||'';
  return '<div class="card"><div class="ch-cli"><b>'+esc(o.prenom?o.prenom+' '+(o.nom||o.n):o.contact||o.n)+'</b>'+(o.contact&&!o.prenom?'<span>'+esc(o.n)+'</span>':'')+'<span>'+esc(adr)+'</span>'+(court?'':'<span>'+esc(o.tel||'')+(o.mail?' · '+esc(o.mail):'')+'</span>')+'</div>'+
@@ -262,15 +297,15 @@ function photoSheet(c){PH={img:null,pc:pieces(c)[0]||'Tout le chantier'};
 function reduire(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=640,s=Math.min(1,m/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);try{cb(cv.toDataURL('image/jpeg',.72))}catch(e){cb(r.result)}};im.onerror=function(){X.toast('Photo illisible','Essayez avec une autre.')};im.src=r.result};r.readAsDataURL(f);}
 
 /* ---------- Documents : pré-devis, devis, factures d'acompte, factures ---------- */
-function documents(c){var o=dos(c),L=[];
+function documents(c){var o=dos(c),L=[],vd=dossierVrai(c);
  (c.docs||[]).forEach(function(d){L.push({ic:d.ty==='pre'||d.ty==='devis'?IC.devis:d.ty==='ac'?IC.acompte:IC.fact,t:TYD[d.ty],s:(d.st==='brouillon'?'brouillon, à finir · ':'créé'+(d.ty==='devis'?'':'e')+' '+d.d+' · ')+eur(d.ttc)+' TTC',a:'data-cdoc="'+d.id+'"'})});
  if(o)(o.docs||[]).forEach(function(x){if(X.DOCS&&X.DOCS[x])L.push({ic:x==='devis'?IC.devis:x==='acompte'?IC.acompte:x==='plan'?IC.plan:IC.docs,t:X.DOCS[x][0]+(x==='devis'&&c.dv?' '+c.dv:''),s:X.DOCS[x][1],a:'data-odoc="'+c.dos+'|'+x+'"'})});
  var G={devis:[],fact:[],autre:[]};L.forEach(function(x){(/Devis|Pré-devis/.test(x.t)?G.devis:/Facture|acompte/i.test(x.t)?G.fact:G.autre).push(x)});
  var li=function(x){return '<button class="cf-li" type="button" '+x.a+'><span class="cf-av cf-doc">'+x.ic+'</span><span class="tx"><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="go">›</span></button>'};
- return '<div class="card"><b style="font-size:14px">Créer</b><div class="ch-new" style="margin-top:10px">'+[['pre','Pré-devis',IC.devis],['devis','Devis',IC.devis],['ac','Facture d\'acompte',IC.acompte],['fact','Facture',IC.fact]].map(function(x){return '<button type="button" class="btn" data-chnew="'+x[0]+'">'+x[2]+x[1]+'</button>'}).join('')+'</div>'+
+ return vd+'<div class="card"><b style="font-size:14px">Créer</b><div class="ch-new" style="margin-top:10px">'+[['pre','Pré-devis',IC.devis],['devis','Devis',IC.devis],['ac','Facture d\'acompte',IC.acompte],['fact','Facture',IC.fact]].map(function(x){return '<button type="button" class="btn" data-chnew="'+x[0]+'">'+x[2]+x[1]+'</button>'}).join('')+'</div>'+
   '<p class="hint" style="margin-top:8px">Tout passe d\'abord par un brouillon que vous vérifiez. Factures et devis partent ensuite dans VosFactures.</p></div>'+
   [['Devis',G.devis],['Factures',G.fact],['Autres documents',G.autre]].map(function(g){return g[1].length?'<div><div class="sec-h"><h2>'+g[0]+'</h2><span>'+g[1].length+'</span></div><div class="card lst cf-l ch-docs">'+g[1].map(li).join('')+'</div></div>':''}).join('')+
-  (L.length?'':'<p class="hint">Aucun document pour ce chantier.</p>');}
+  (L.length||vd?'':'<p class="hint">Aucun document pour ce chantier.</p>');}
 function pdf(c,d){var o=dos(c),t={ht:d.ht,ttc:d.ttc,tv:r2(d.ttc-d.ht)};
  return '<div class="pdf" role="document"><span class="stamp s-'+(d.st==='brouillon'?'draft':'sent')+'">'+(d.st==='brouillon'?'Brouillon':'Créé'+(d.ty==='devis'?'':'e'))+'</span><div class="pdf-h"><div><b>Dupont Rénovation</b><span>[Adresse] · SIRET [numéro]</span></div><div class="r"><span class="pdf-t">'+esc(TYD[d.ty].toUpperCase())+'</span><span>N° '+(d.st==='brouillon'?'non numéroté':'[numéro VosFactures]')+'</span><span>'+esc(d.d)+'</span></div></div>'+
   '<div class="pdf-c"><span class="pdf-k">Client</span><b>'+esc(o?o.n:c.n)+'</b><span>'+esc(o?o.adr:c.v)+'</span><span class="pdf-k" style="margin-top:6px">Chantier</span><span>'+esc(c.t)+'</span></div>'+
@@ -391,23 +426,25 @@ function lier(c){var id=c.id;
 
 /* ---------- créer un chantier ---------- */
 var NC=null;
-function nouveau(){var K=Object.keys(DOS).filter(function(k){return DOS[k]&&DOS[k].n}).sort(function(a,b){return DOS[a].n.localeCompare(DOS[b].n,'fr')});NC=NC||{cli:K[0]||''};
+function nouveau(){var CC=clientsChoix(),K=CC.map(function(x){return x.k}),CI={};CC.forEach(function(x){CI[x.k]=x});NC=NC||{cli:K[0]||''};if(K.indexOf(NC.cli)<0)NC.cli=K[0]||'';
  var d0=new Date(),d1=new Date(d0.getTime()+86400000);var iso=function(d){return d.toISOString().slice(0,10)};
  X.xopen('Créer un chantier','Choisissez le client, puis les travaux','<div class="ch-f">'+
-  '<label>Pour quel client<select id="nc-c">'+K.map(function(k){return '<option value="'+k+'"'+(NC.cli===k?' selected':'')+'>'+esc(DOS[k].n)+' · '+esc(DOS[k].v||'')+'</option>'}).join('')+'</select></label>'+
+  '<label>Pour quel client<select id="nc-c">'+K.map(function(k){return '<option value="'+esc(k)+'"'+(NC.cli===k?' selected':'')+'>'+esc(CI[k].n)+(CI[k].v?' · '+esc(CI[k].v):'')+'</option>'}).join('')+'</select></label>'+
   '<button type="button" class="lnk" id="nc-nc">+ Nouveau client</button>'+
   '<label>Les travaux<input id="nc-t" placeholder="Par ex. cloison du séjour avec une porte" value="'+esc(NC.t||'')+'"></label>'+
-  '<label>Ville du chantier<input id="nc-v" placeholder="Ville" value="'+esc(NC.v||(DOS[NC.cli]&&DOS[NC.cli].v)||'')+'"></label>'+
+  '<label>Ville du chantier<input id="nc-v" placeholder="Ville" value="'+esc(NC.v||(CI[NC.cli]&&CI[NC.cli].v)||'')+'"></label>'+
   '<div class="two"><label>Début<input type="date" id="nc-d1" value="'+(NC.d1||iso(d0))+'"></label><label>Fin<input type="date" id="nc-d2" value="'+(NC.d2||iso(d1))+'"></label></div>'+
   '<p class="hint" style="margin:0">Ensuite, dans le chantier : créez le pré-devis, le devis, les factures d\'acompte et les factures.</p></div>',
   '<button class="btn" data-xclose>Annuler</button><button class="btn go" id="nc-ok">Créer le chantier</button>',function(){
   var garder=function(){NC.cli=$('#nc-c').value;NC.t=$('#nc-t').value;NC.v=$('#nc-v').value;NC.d1=$('#nc-d1').value;NC.d2=$('#nc-d2').value};
-  $('#nc-c').addEventListener('change',function(){var o=DOS[this.value];if(o)$('#nc-v').value=o.v||''});
-  $('#nc-nc').addEventListener('click',function(){garder();var retour=function(k){if(k&&DOS[k]){NC.cli=k;NC.v=DOS[k].v||NC.v}nouveau()};
+  /* la liste complète des clients de l'Espace arrive du service : on la remet à jour si elle a bougé */
+  if(enVrai()&&X.cf&&X.cf.chargerVrais)X.cf.chargerVrais(function(){var s=$('#nc-c');if(!s||!document.body.contains(s))return;garder();if(clientsChoix().length!==K.length)nouveau()});
+  $('#nc-c').addEventListener('change',function(){var o=CI[this.value];if(o)$('#nc-v').value=o.v||''});
+  $('#nc-nc').addEventListener('click',function(){garder();var retour=function(k){var o=k&&dos({dos:k});if(o){NC.cli=k;NC.v=o.v||NC.v}nouveau()};
    if(X.cf&&X.cf.nouveauClient)X.cf.nouveauClient(retour);else clientSecours(retour);});
   $('#nc-ok').addEventListener('click',function(){garder();if(!NC.t.trim()){$('#nc-t').focus();return}creer(NC);NC=null;});});}
 function dt(s){var d=new Date(s+'T12:00:00');return isNaN(d)?'':d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'numeric'})}
-function creer(n){var o=DOS[n.cli],id='c'+Date.now().toString(36);
+function creer(n){var o=dos({dos:n.cli}),id='c'+Date.now().toString(36);
  CH[id]={id:id,dos:n.cli,n:o?o.n:'Client',v:n.v||(o&&o.v)||'',t:n.t.trim(),st:'start',dv:'',dates:(n.d1?dt(n.d1)+(n.d2&&n.d2!==n.d1?' → '+dt(n.d2):''):'dates à fixer'),
   ouv:[['Travaux',100,0]],fin:{ht:0,tva:10,ac:0},four:[],fst:{},prev:0,reel:[],notes:[],ph:[],docs:[],avis:{on:true,quand:'lendemain'}};
  if(o){o.k='chantier';o.ch=id}saveCH();
