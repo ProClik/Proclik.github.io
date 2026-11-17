@@ -79,6 +79,26 @@ var css='.jr-c{display:grid;gap:10px}.jr-c .jr-h{display:flex;align-items:center
  '.jr-s input{width:100%;min-height:42px;border-radius:12px;border:0;padding:8px 12px;font:inherit;background:var(--card,#fff);color:inherit}'+
  '.jr-m{display:grid;gap:10px}.jr-m .jr-s span{display:flex;justify-content:space-between;gap:10px;font-size:13.5px}'+
  '.jr-sw .sw:not(.on){background:var(--line,rgba(0,0,0,.15))!important;box-shadow:inset 0 0 0 1px var(--line,rgba(0,0,0,.15))}.jr-sw{display:flex;align-items:center;justify-content:space-between;gap:12px}.jr-sw span{font-weight:700}.jr-sw small{display:block;color:var(--muted);font-size:12.5px;font-weight:600;margin-top:2px}'+
+ '.vh{display:grid;gap:14px}.vh-l{display:grid;gap:10px}'+
+ '.vh-c{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:18px;border:0;font:inherit;color:inherit;background:var(--n1-calme,var(--card,#fff));box-shadow:var(--n1-pk,0 1px 3px rgba(0,0,0,.12))}'+
+ '.vh-c .go{margin-left:auto;color:var(--muted);font-size:20px}.vh-t{display:grid;gap:2px;min-width:0;flex:1}.vh-t b{font-size:16px}.vh-t em,.vh-hd em{font-style:normal;font-size:12px;font-weight:800;padding:1px 7px;border-radius:6px;border:1.5px solid var(--line,rgba(0,0,0,.15));margin-left:6px;letter-spacing:.04em;vertical-align:2px}'+
+ '.vh-t small{color:var(--muted);font-size:13px;font-weight:600}.vh-t .vh-m{color:var(--fg)}'+
+ '.vh-i{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--n1-bg,var(--soft,#EEF1F6));color:var(--n1-nuit,#1B2440)}.vh-i svg,.vh-o span svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.vh-i.lg{width:60px;height:60px;border-radius:18px}.vh-i.lg svg{width:32px;height:32px}'+
+ '.vh-add{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:18px;border:2px dashed var(--line,rgba(0,0,0,.18));background:none;font:inherit;font-weight:800;color:inherit}.vh-add span{font-size:22px;line-height:1}'+
+ '.vh-g,.vh-f{display:grid;gap:12px;padding:14px;border-radius:18px;background:var(--n1-calme,var(--card,#fff))}.vh-g>b{font-size:15px}'+
+ '.vh label,.vh-lab{display:grid;gap:6px;font-weight:800;font-size:14.5px}.vh label small,.vh-lab small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}'+
+ '.vh input:not([type=date]),.vh-d input{width:100%;min-height:48px;border-radius:14px;border:0;padding:10px 14px;font:inherit;font-size:16px;background:var(--n1-bg,var(--bg));color:inherit;box-shadow:var(--n1-in,inset 0 1px 3px rgba(0,0,0,.12))}'+
+ '.vh-d{display:flex!important;align-items:center;justify-content:space-between;gap:10px}.vh-d input{max-width:180px;min-height:44px}'+
+ '.vh-ch{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}'+
+ '.vh-o{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:16px;border:0;font:inherit;font-weight:700;font-size:13.5px;color:inherit;background:var(--n1-bg,var(--bg));box-shadow:var(--n1-pk,0 1px 3px rgba(0,0,0,.12))}'+
+ '.vh-o span{display:grid;place-items:center;color:var(--muted)}.vh-o[aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-o[aria-pressed=true] span{color:var(--n1-laiton,#A8823F)}'+
+ '.vh-big{display:flex;align-items:baseline;gap:10px}.vh-big input{max-width:130px;font-size:30px!important;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}.vh-big span{color:var(--muted);font-weight:700}.vh-big.sm input{font-size:22px!important;max-width:110px}'+
+ '.vh-bs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.vh-b{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--n1-bg,var(--soft,#EEF1F6));color:var(--muted)}.vh-b.wa{background:color-mix(in srgb,var(--n1-warn,#C98A1B) 18%,transparent);color:var(--n1-warn,#9A6A10)}.vh-b.al{background:color-mix(in srgb,var(--n1-alert,#B9577A) 18%,transparent);color:var(--n1-alert,#B9577A)}'+
+ '.vh-hd{display:flex;gap:14px;align-items:center}.vh-hd b{font-size:19px}.vh-hd small{display:block;color:var(--muted);font-weight:600}'+
+ '.vh-k{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.vh-k div{padding:12px 8px;border-radius:16px;background:var(--n1-calme,var(--card,#fff));text-align:center}.vh-k b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.vh-k small{color:var(--muted);font-weight:600;font-size:12px}'+
+ '.vh-sec{display:grid;gap:6px;padding:14px;border-radius:18px;background:var(--n1-calme,var(--card,#fff))}.vh-r{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;border-top:1px solid var(--line,rgba(0,0,0,.08));padding-top:6px}.vh-r em{font-style:normal;color:var(--muted)}.vh-r b{white-space:nowrap}'+
+ '.vh-pick{display:grid;gap:8px}.vh-pick .vh-tick{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--n1-in,inset 0 1px 3px rgba(0,0,0,.12));color:transparent}.vh-pick .vh-tick svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4}'+
+ '.vh-pick.on .vh-c{box-shadow:0 0 0 2px var(--n1-nuit,#1B2440)}.vh-pick.on .vh-tick{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-qui{padding:0 6px}.vh-qui small{color:var(--muted);font-weight:700}'+
  '.jr-four{margin-top:12px;padding:12px;border-radius:16px;background:var(--soft,#EEF1F6);display:grid;gap:8px}.jr-four b{font-size:14.5px}'+
  '@media print{body>*:not(#jr-print){display:none!important}}';
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
@@ -117,6 +137,7 @@ function fil(){var v=$('#v-accueil');if(!v)return;var f=$('#jr-fil');
    (soir||fi.src==='auto'?'<button type="button" class="btn go jr-go" data-jrrecap="'+esc(c.id)+'">Faire le récap du jour</button>':'')+'</div>'});
  if(onJ()&&!aujourdhui().length){var e=evJour(d).map(chDeEv).filter(function(c){return c&&c.st!=='done'})[0];
   if(e)h+='<div class="card jr-c"><div class="jr-h"><span class="jr-ic">'+IC.route+'</span><span><b>Aujourd\'hui : '+esc(e.n)+'</b><small>'+esc(e.v)+' · touchez en partant, Cliky s\'occupe de l\'heure.</small></span></div><button type="button" class="btn go jr-go" data-jrgo="'+esc(e.id)+'">J\'y vais</button></div>'}
+ if(onJ())h+=filEcheances();
  var q=questionHS();if(q)h+='<div class="card jr-c"><div class="jr-h"><span class="jr-ic">'+IC.equipe+'</span><span><b>Des heures en plus '+(q===d?'aujourd\'hui':'hier')+' ?</b><small>Pour votre équipe. Vous seul décidez.</small></span></div>'+
   '<div class="jr-row"><button type="button" class="btn" data-jrhsrien="'+q+'">Rien</button><button type="button" class="btn go" data-jrhs="'+q+'">Ouvrir mon équipe</button></div></div>';
  var m=moisHS(d.slice(0,7));if(m.total&&onH())h+='<button type="button" class="card jr-c" data-jrmois style="text-align:left;width:100%"><div class="jr-h"><span class="jr-ic">'+IC.equipe+'</span><span><b>Heures sup de '+moisNom(d)+' : '+hmLong(m.total*60)+'</b><small>Récap par salarié, à imprimer ou à envoyer au comptable ›</small></span></div></button>';
@@ -129,9 +150,10 @@ function recap(id){var c=CH[id];if(!c)return;var d=jourIso(0),j=journee(d,id,tru
  var a=arrivee(j,c),fi=finDe(j),O=c.ouv.map(function(o,i){return [i,o]}).filter(function(x){return x[1][2]<100||(j.fait&&j.fait[x[0]]!=null)});
  RC={carb:null,id:id,k:0,arr:j.arr!=null?j.arr:a.m,arrSrc:j.arrSrc||a.src,det:a.det,fin:j.fin!=null?j.fin:fi.m,finSrc:j.finSrc||fi.src,pers:j.pers||REG.pers||1,pause:j.pause!=null?j.pause:REG.pause,
   fait:Object.assign({},j.fait||{}),O:O,av:{}};O.forEach(function(x){RC.av[x[0]]=x[1][2];if(RC.fait[x[0]]==null)RC.fait[x[0]]=x[1][2]});
- if(j.ok)RC.k=4;rcRendre()}
-var ETAPES=['arr','fait','pers','fin','recap'];
-function rcRendre(){var c=CH[RC.id],e=ETAPES[RC.k],h='<div class="jr-bar">'+ETAPES.map(function(_,i){return '<i class="'+(i<RC.k?'ok':i===RC.k?'cur':'')+'"></i>'}).join('')+'</div>';
+ RC.vehs=(j.vehs||vehDefaut(c)).filter(vehDe);RC.cond=Object.assign({},j.cond||{});RC.vehs.forEach(function(id){var v=vehDe(id);if(!RC.cond[id]&&v&&(v.ass||[]).length===1)RC.cond[id]=v.ass[0]});
+ if(j.ok)RC.k=99;rcRendre()}
+function etapes(){return ['arr','fait','pers','fin'].concat(VEHS().length>1?['veh']:[],['recap'])}
+function rcRendre(){var ETAPES=RC.E=etapes();if(RC.k>=ETAPES.length)RC.k=ETAPES.length-1;var c=CH[RC.id],e=ETAPES[RC.k],h='<div class="jr-bar">'+ETAPES.map(function(_,i){return '<i class="'+(i<RC.k?'ok':i===RC.k?'cur':'')+'"></i>'}).join('')+'</div>';
  if(e==='arr')h+='<p class="jr-q">Vous êtes arrivé vers '+hmLong(RC.arr)+' ?</p><p class="jr-sub">'+(RC.arrSrc==='modifiee'?'Heure corrigée par vous.':'Estimée : '+esc(RC.det)+'.')+'</p>'+
   '<div class="jr-big">'+hm(RC.arr)+'</div><div class="jr-row"><button type="button" class="btn" data-jra="-15">− 15 min</button><button type="button" class="btn" data-jra="15">+ 15 min</button></div>'+
   '<div class="jr-ok"><button type="button" class="btn go" data-jrn>C\'est bon</button></div>';
@@ -146,6 +168,10 @@ function rcRendre(){var c=CH[RC.id],e=ETAPES[RC.k],h='<div class="jr-bar">'+ETAP
  if(e==='fin')h+='<p class="jr-q">'+(RC.finSrc==='auto'?'Arrêté d\'office à 18 h. Vous avez fini vers quelle heure ?':'Vous finissez à '+hmLong(RC.fin)+' ?')+'</p><p class="jr-sub">Et la pause de midi, retirée des heures.</p>'+
   '<div class="jr-big">'+hm(RC.fin)+'</div><div class="jr-row"><button type="button" class="btn" data-jre="-15">− 15 min</button><button type="button" class="btn" data-jre="15">+ 15 min</button></div>'+
   '<p class="jr-sub" style="margin:14px 0 6px">Pause de midi</p><div class="jr-row">'+[[0,'Aucune'],[30,'30 min'],[60,'1 h'],[90,'1 h 30']].map(function(p){return '<button type="button" class="btn" data-jrz="'+p[0]+'" aria-pressed="'+(RC.pause===p[0])+'">'+p[1]+'</button>'}).join('')+'</div>'+
+  '<div class="jr-ok"><button type="button" class="btn" data-jrb>← Retour</button><button type="button" class="btn go" data-jrn>C\'est bon</button></div>';
+ if(e==='veh')h+='<p class="jr-q">Quel véhicule aujourd\'hui ?</p><p class="jr-sub">Un ou plusieurs. Les kilomètres comptent pour chacun.</p><div class="vh-l">'+VEHS().map(function(v){var on=RC.vehs.indexOf(v.id)>=0,A=v.ass||[];
+   return '<div class="vh-pick'+(on?' on':'')+'"><button type="button" class="vh-c" data-rcv="'+v.id+'" aria-pressed="'+on+'"><span class="vh-i">'+IV.van+'</span><span class="vh-t"><b>'+esc(v.nom)+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b><small>'+(A.length?A.map(nomP).join(', '):'Personne d\'attribué')+'</small></span><span class="vh-tick">'+IC.coche+'</span></button>'+
+    (on&&A.length>1?'<div class="vh-qui"><small>Qui conduisait ?</small><div class="jr-row">'+A.map(function(a){return '<button type="button" class="btn" data-rcc="'+v.id+'" data-p="'+a+'" aria-pressed="'+(RC.cond[v.id]===a)+'">'+esc(nomP(a))+'</button>'}).join('')+'</div></div>':'')+'</div>'}).join('')+'</div>'+
   '<div class="jr-ok"><button type="button" class="btn" data-jrb>← Retour</button><button type="button" class="btn go" data-jrn>C\'est bon</button></div>';
  if(e==='recap'){var t=Math.max(0,RC.fin-RC.arr-RC.pause),tot=Math.round(t/60*RC.pers*4)/4,ch=RC.O.filter(function(x){return RC.fait[x[0]]!==RC.av[x[0]]});
   h+='<p class="jr-q">Tout est bon ?</p><p class="jr-sub">Touchez une ligne pour la changer.</p><div class="jr-l">'+
@@ -165,19 +191,27 @@ function rcLier(){var b=$('#jr-rc');if(!b)return;
   if(s.jrf!=null){RC.fait[+s.jrf]=+s.v;return rcRendre()}
   if(s.jrp){RC.pers=+s.jrp;RC.k++;return rcRendre()}
   if(s.jrk!=null){RC.k=+s.jrk;return rcRendre()}
-  if(s.jrn!=null){RC.k++;return rcRendre()}
+  if(s.jrn!=null){if(RC.E[RC.k]==='veh')RC.carb=null;RC.k++;return rcRendre()}
   if(s.jrb!=null){RC.k=Math.max(0,RC.k-1);return rcRendre()}
+  if(s.rcv){var i=RC.vehs.indexOf(s.rcv);if(i<0){RC.vehs.push(s.rcv);var v=vehDe(s.rcv);if(v&&(v.ass||[]).length===1)RC.cond[s.rcv]=v.ass[0]}else RC.vehs.splice(i,1);RC.carb=null;return rcRendre()}
+  if(s.rcc){RC.cond[s.rcc]=s.p;return rcRendre()}
   if(s.jrv!=null)return valider()})}
-function trajLigne(){var T=RC.carb;if(!T){var sync=true;coutTrajet(journee(jourIso(0),RC.id,true),CH[RC.id],function(x){RC.carb=x;if(!sync&&ETAPES[RC.k]==='recap'&&$('#jr-rc'))rcRendre()});sync=false;T=RC.carb;
+function trajLigne(){var T=RC.carb;if(!T){var sync=true;coutTrajet(journee(jourIso(0),RC.id,true),CH[RC.id],RC.vehs,function(x){RC.carb=x;if(!sync&&RC.E[RC.k]==='recap'&&$('#jr-rc'))rcRendre()});sync=false;T=RC.carb;
   if(!T)return '<div class="btn" style="justify-content:space-between;display:flex"><span>Trajets</span><b>calcul…</b></div>'}
- if(T.err==='veh'||T.err==='prix')return '<button type="button" class="btn" data-jrvh style="justify-content:space-between;display:flex"><span>Trajets · '+T.km+' km</span><b>'+(T.err==='veh'?'Réglez votre véhicule ›':'Notez votre prix ›')+'</b></button>';
- if(T.err)return '<div class="btn" style="justify-content:space-between;display:flex"><span>Trajets</span><b>'+esc(T.err)+'</b></div>';
- return '<div class="btn jr-tr" style="justify-content:space-between;display:flex" title="'+esc(T.det)+'"><span style="display:flex!important;flex-direction:column;align-items:flex-start;text-align:left;flex:1;min-width:0">Trajets · '+T.km+' km<small style="display:block;color:var(--muted);font-size:12px;font-weight:600">'+fr2(T.q)+' '+T.u+' × '+fr2(T.prix,3)+' € ('+esc(T.src)+')</small></span><b style="flex:none">'+fr2(T.eur)+' €</b></div>'}
+ var lig=function(g,d,attr){return '<'+(attr?'button type="button" '+attr:'div')+' class="btn jr-tr" style="justify-content:space-between;display:flex"><span style="display:flex!important;flex-direction:column;align-items:flex-start;text-align:left;flex:1;min-width:0">'+g+'</span><b style="flex:none">'+d+'</b></'+(attr?'button':'div')+'>'};
+ if(T.err==='veh')return lig('Trajets · '+T.km+' km','Ajoutez votre véhicule ›','data-jrvh');
+ if(T.err==='choix')return lig('Trajets · '+T.km+' km','Aucun véhicule choisi');
+ if(T.L==null)return lig('Trajets',esc(T.err));
+ return T.L.map(function(x){var v=vehDe(x.veh)||{nom:'Véhicule'},n=VEHS().length>1?esc(v.nom)+' · ':'';
+  if(x.err)return lig(n+'Trajets · '+T.km+' km',x.err==='prix'?'Notez son prix ›':'À régler ›','data-jrvh');
+  return lig(n+'Trajets · '+x.km+' km<small style="display:block;color:var(--muted);font-size:12px;font-weight:600">'+fr2(x.q)+' '+x.u+' × '+fr2(x.prix,3)+' € ('+esc(x.src)+')'+(RC.cond[x.veh]?' · '+esc(nomP(RC.cond[x.veh])):'')+'</small>',fr2(x.eur)+' €')}).join('')}
 function valider(){var c=CH[RC.id],d=jourIso(0),j=journee(d,RC.id,true),t=Math.max(0,RC.fin-RC.arr-RC.pause),tot=Math.round(t/60*RC.pers*4)/4;
  c.mo=c.mo||{prev:0,reel:0,taux:0};if(j.ok&&j.h)c.mo.reel=Math.max(0,Math.round((c.mo.reel-j.h)*100)/100);c.mo.reel=Math.round((c.mo.reel+tot)*100)/100;
  var cad=[];RC.O.forEach(function(x){var i=x[0],v=RC.fait[i];if(v!=null&&v!==c.ouv[i][2]){cad.push([x[1][0],c.ouv[i][2],v]);c.ouv[i][2]=v}});
  Object.assign(j,{arr:RC.arr,arrSrc:RC.arrSrc,fin:RC.fin,finSrc:RC.finSrc,pers:RC.pers,pause:RC.pause,fait:RC.fait,h:tot,ok:true,cad:cad});
- c.trajets=(c.trajets||[]).filter(function(x){return x.d!==d});if(RC.carb&&RC.carb.eur!=null){var T=RC.carb;c.trajets.push({d:d,km:T.km,q:T.q,u:T.u,prix:T.prix,eur:T.eur,src:T.src});j.traj=c.trajets[c.trajets.length-1]}
+ c.trajets=(c.trajets||[]).filter(function(x){return x.d!==d});j.traj=null;j.vehs=RC.vehs.slice();j.cond=Object.assign({},RC.cond);
+ if(RC.carb&&RC.carb.L){var V=RC.carb.L.filter(function(x){return x.eur!=null}).map(function(x){return Object.assign({cond:RC.cond[x.veh]||null},x)});
+  if(V.length){c.trajets.push({d:d,km:RC.carb.km,eur:Math.round(V.reduce(function(a,x){return a+x.eur},0)*100)/100,vehs:V});j.traj=c.trajets[c.trajets.length-1]}}
  REG.pause=RC.pause;REG.pers=RC.pers;save();X.saveCH();X.xclose();
  if(X.updPin)try{X.updPin(c,X.avc(c))}catch(e){}
  X.toast('Journée enregistrée',hFr(tot)+' h'+(j.traj?' et '+fr2(j.traj.eur)+' € de trajet':'')+' ajoutés à '+c.n+'.');majPartout()}
@@ -233,57 +267,123 @@ function feuilleMois(){var m=jourIso(0).slice(0,7),R=moisHS(m);
    if(t.dataset.mimp!=null){var p=document.getElementById('jr-print')||document.createElement('pre');p.id='jr-print';p.style.cssText='white-space:pre-wrap;font:14px/1.5 system-ui;padding:20px';p.textContent=texteMois(m);document.body.appendChild(p);
     setTimeout(function(){window.print();setTimeout(function(){p.remove()},500)},50)}})})}
 
-/* ---------- étape B : véhicule et carburant (Cyril 17/11) ----------
-   Le véhicule est réglé une fois (carburant + consommation, que l'artisan lit sur son tableau de bord : rien d'inventé).
+/* ---------- étape B : véhicules et carburant (Cyril 17/11) ----------
+   « Mes véhicules » : un ou plusieurs véhicules, chacun attribué à des personnes de l'équipe (ou à vous),
+   avec son carburant et sa consommation (lue sur le tableau de bord : rien d'inventé).
    Prix du jour : service ProClik (/espace/carburant, données publiques des prix à la pompe, médiane du secteur du dépôt).
-   Sans service (démo) ou sans réponse : le prix que l'artisan a noté. Électrique : son prix du kWh.
-   Kilomètres du jour : dépôt → chantier, retour au dépôt, + son détour moyen chez le fournisseur s'il y est passé. */
+   Sans service (démo) ou sans réponse : le prix noté pour ce véhicule. Électrique : son prix du kWh.
+   Kilomètres du jour, par véhicule : dépôt → chantier → dépôt, + le détour fournisseur s'il y est passé.
+   Suivi complet d'un véhicule : km, carburant et € du mois, par chantier et par conducteur, historique, échéances
+   (contrôle technique, entretien, assurance) rappelées dans le fil 30 jours avant. */
 var CARB=[['gazole','Diesel'],['e10','Essence E10'],['sp95','SP95'],['sp98','SP98'],['e85','E85'],['gplc','GPL'],['elec','Électrique']];
 var carbNom=function(t){var x=CARB.filter(function(c){return c[0]===t})[0];return x?x[1]:t};
-var PJ=lget('pc-carb',null);
-function vehOk(){var v=REG.veh;return !!(v&&v.type&&v.conso>0)}
+var uniteV=function(v){return v.type==='elec'?'kWh':'L'};
+var PJ=lget('pc-carb',{});if(PJ&&PJ.type)PJ={};
 var fr2=function(n,d){return Number(n).toLocaleString('fr-FR',{minimumFractionDigits:d==null?2:d,maximumFractionDigits:d==null?2:d})};
-function prixCarb(cb){var v=REG.veh;if(!vehOk())return cb(null);
+/* anciens réglages (un seul véhicule) → liste */
+if(!REG.vehs){REG.vehs=REG.veh&&REG.veh.type?[Object.assign({id:'v1',nom:'Mon véhicule',plaque:'',ass:['moi']},REG.veh)]:[]}delete REG.veh;
+var VEHS=function(){return REG.vehs||(REG.vehs=[])};
+var vehDe=function(id){return VEHS().filter(function(v){return v.id===id})[0]||null};
+var vehPret=function(v){return !!(v&&v.type&&v.conso>0)};
+var IV={van:I('<path d="M2.5 16.5V8a2 2 0 0 1 2-2h9.5v10.5"/><path d="M14 9h4.2l3.3 3.6v3.9h-2"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/><path d="M9 17.5h6M2.5 16.5H5"/>'),
+ goutte:I('<path d="M12 3.5s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/>'),prise:I('<path d="M13 3L6 13h5l-1 8 7-10h-5z"/>'),
+ cal:I('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),route:IC.route,gens:IC.equipe};
+function personnes(){return [{id:'moi',p:'Vous'}].concat(EQ)}
+function nomP(id){var x=personnes().filter(function(s){return s.id===id})[0];return x?x.p:'(retiré)'}
+function prixCarb(v,cb){if(!vehPret(v))return cb(null);
  if(v.type==='elec')return cb(v.prix>0?{prix:v.prix,src:'votre prix du kWh'}:null);
- if(PJ&&PJ.type===v.type&&PJ.cp===REG.cp&&Date.now()-PJ.t<3*3600e3)return cb(PJ);
+ var k=v.type+'|'+REG.cp,m=PJ[k];if(m&&Date.now()-m.t<3*3600e3)return cb(m);
  var P=window.PCV,vrai=document.documentElement.classList.contains('pcvrai');
- var repli=function(){cb(v.prix>0?{prix:v.prix,src:'votre prix noté'}:null)};
+ var repli=function(){cb(v.prix>0?{prix:v.prix,src:'prix noté'}:null)};
  if(!P||!P.api||!vrai||!/^\d{5}$/.test(REG.cp||''))return repli();
  P.api('/espace/carburant?cp='+REG.cp+'&type='+v.type).then(function(x){if(!x||!(x.prix>0))return repli();
-  PJ={type:v.type,cp:REG.cp,prix:x.prix,src:'prix du jour, médiane de '+x.n+' station'+(x.n>1?'s':'')+(x.cp&&x.cp.length===2?' du département':' de votre secteur'),t:Date.now()};lset('pc-carb',PJ);cb(PJ)},repli)}
+  PJ[k]={prix:x.prix,src:'prix du jour, '+x.n+' station'+(x.n>1?'s':'')+(x.cp&&x.cp.length===2?' du département':' du secteur'),t:Date.now()};lset('pc-carb',PJ);cb(PJ[k])},repli)}
 function kmJour(j,c){var t=trajet(c);if(t.km==null)return null;return {km:t.km*2+(j.four!=null?(REG.detour||0):0),det:t.km+' km aller, '+t.km+' km retour'+(j.four!=null&&REG.detour?', '+REG.detour+' km de détour fournisseur':'')}}
-function coutTrajet(j,c,cb){var k=kmJour(j,c);if(!k)return cb({err:'Adresse du chantier sans position : kilomètres inconnus.'});if(!vehOk())return cb({err:'veh',km:k.km,det:k.det});
- prixCarb(function(p){if(!p)return cb({err:'prix',km:k.km,det:k.det});var v=REG.veh,q=Math.round(k.km*v.conso/100*100)/100,e=Math.round(q*p.prix*100)/100;
-  cb({km:k.km,det:k.det,q:q,u:v.type==='elec'?'kWh':'L',prix:p.prix,src:p.src,eur:e})})}
-function vehicule(retour){var v=REG.veh||{},el=v.type==='elec',h='<div id="jr-veh"><p class="jr-sub">Réglé une fois. Sert seulement au coût des trajets de vos chantiers.</p>'+
- '<p class="jr-q" style="font-size:16px">Carburant</p><div class="jr-row">'+CARB.map(function(c){return '<button type="button" class="btn" data-vht="'+c[0]+'" aria-pressed="'+(v.type===c[0])+'">'+c[1]+'</button>'}).join('')+'</div>'+
- (v.type?'<p class="jr-q" style="font-size:16px;margin-top:14px">Consommation</p><p class="jr-sub">Celle de votre tableau de bord, en '+(el?'kWh':'litres')+' aux 100 km.</p>'+
-  '<div class="jr-s"><input id="jr-vc" inputmode="decimal" value="'+(v.conso?String(v.conso).replace('.',','):'')+'" placeholder="Par exemple, lisez-la sur votre tableau de bord" aria-label="Consommation"></div>'+
-  '<p class="jr-q" style="font-size:16px;margin-top:14px">'+(el?'Votre prix du kWh':'Votre prix au litre')+'</p><p class="jr-sub">'+(el?'Celui de votre recharge (maison ou borne).':'Utilisé seulement si le prix du jour n\'arrive pas.')+'</p>'+
-  '<div class="jr-s"><input id="jr-vp" inputmode="decimal" value="'+(v.prix?String(v.prix).replace('.',','):'')+'" placeholder="En euros" aria-label="Prix"></div>'+
-  (el?'':'<p class="jr-q" style="font-size:16px;margin-top:14px">Code postal de votre dépôt</p><p class="jr-sub">Pour le prix du jour des stations autour de chez vous.</p><div class="jr-s"><input id="jr-vcp" inputmode="numeric" maxlength="5" value="'+esc(REG.cp||'')+'" aria-label="Code postal du dépôt"></div>')+
-  '<p class="jr-q" style="font-size:16px;margin-top:14px">Détour pour passer chez le fournisseur</p><p class="jr-sub">Ajouté les jours où vous donnez la liste au comptoir.</p><div class="jr-row">'+[0,5,10,15,20].map(function(n){return '<button type="button" class="btn" data-vhd="'+n+'" aria-pressed="'+((REG.detour||0)===n)+'">'+(n?n+' km':'Aucun')+'</button>'}).join('')+'</div>':'')+
- '<div class="jr-ok"><button type="button" class="btn go" data-vhok>Enregistrer</button></div></div>';
- X.xopen('Mon véhicule','',h,'',function(){var b=$('#jr-veh');
-  var garder=function(){var n=function(id){var x=$(id);return x?parseFloat(x.value.replace(',','.').replace(/[^\d.]/g,'')):NaN};var c=n('#jr-vc'),p=n('#jr-vp'),cp=$('#jr-vcp');
-   REG.veh=REG.veh||{};if(isFinite(c)&&c>0&&c<60)REG.veh.conso=c;if(isFinite(p)&&p>0&&p<10)REG.veh.prix=p;if(cp&&/^\d{5}$/.test(cp.value.trim()))REG.cp=cp.value.trim()};
+/* coût des trajets du jour pour les véhicules choisis : [{veh, cond, km, q, u, prix, eur, src} | {veh, err}] */
+function coutTrajet(j,c,ids,cb){var k=kmJour(j,c);if(!k)return cb({err:'Adresse du chantier sans position : kilomètres inconnus.'});
+ if(!VEHS().length)return cb({err:'veh',km:k.km,det:k.det});
+ var L=[],n=ids.length;if(!n)return cb({err:'choix',km:k.km});
+ ids.forEach(function(id,i){var v=vehDe(id);if(!vehPret(v)){L[i]={veh:id,err:'veh'};if(!--n)fin();return}
+  prixCarb(v,function(p){if(!p)L[i]={veh:id,err:'prix'};else{var q=Math.round(k.km*v.conso/100*100)/100;L[i]={veh:id,km:k.km,q:q,u:uniteV(v),prix:p.prix,src:p.src,eur:Math.round(q*p.prix*100)/100}}if(!--n)fin()})});
+ function fin(){cb({km:k.km,det:k.det,L:L,eur:Math.round(L.reduce(function(a,x){return a+(x.eur||0)},0)*100)/100,err:L.some(function(x){return x.err})?'partiel':null})}}
+/* véhicules proposés pour la journée : ceux du jour précédent sur ce chantier, sinon ceux attribués à vous, sinon le premier */
+function vehDefaut(c){var dern=(c.trajets||[]).slice(-1)[0];if(dern&&dern.vehs)return dern.vehs.map(function(x){return x.veh}).filter(vehDe);
+ var a=VEHS().filter(function(v){return (v.ass||[]).indexOf('moi')>=0});return (a.length?[a[0]]:VEHS().slice(0,1)).map(function(v){return v.id})}
+
+/* --- écran « Mes véhicules » --- */
+function trajetsTous(){var L=[];Object.keys(CH).forEach(function(k){(CH[k].trajets||[]).forEach(function(t){(t.vehs||[]).forEach(function(x){L.push(Object.assign({d:t.d,ch:k},x))})})});return L.sort(function(a,b){return a.d<b.d?1:-1})}
+function statsVeh(id,mois){var L=trajetsTous().filter(function(x){return x.veh===id&&(!mois||x.d.slice(0,7)===mois)});
+ return {L:L,km:L.reduce(function(a,x){return a+(x.km||0)},0),q:Math.round(L.reduce(function(a,x){return a+(x.q||0)},0)*10)/10,eur:Math.round(L.reduce(function(a,x){return a+(x.eur||0)},0)*100)/100,j:L.length}}
+function echeances(v){var t=new Date(X.TODAY||new Date());return [['ct','Contrôle technique'],['ent','Entretien'],['assu','Assurance']].filter(function(e){return v[e[0]]}).map(function(e){
+ var d=new Date(v[e[0]]+'T12:00:00'),n=Math.round((d-t)/864e5);return {k:e[0],nom:e[1],d:v[e[0]],n:n}})}
+function badgeEch(e){return '<span class="vh-b'+(e.n<0?' al':e.n<=30?' wa':'')+'">'+esc(e.nom)+' · '+(e.n<0?'dépassé':e.n===0?'aujourd\'hui':e.n<=30?'dans '+e.n+' j':new Date(e.d+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}))+'</span>'}
+function carteVeh(v){var s=statsVeh(v.id,jourIso(0).slice(0,7)),E=echeances(v).filter(function(e){return e.n<=30});
+ return '<button type="button" class="vh-c" data-vhs="'+v.id+'"><span class="vh-i">'+IV.van+'</span><span class="vh-t"><b>'+esc(v.nom||'Véhicule')+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b>'+
+  '<small>'+(vehPret(v)?carbNom(v.type)+' · '+fr2(v.conso,1)+' '+uniteV(v)+'/100 km':'À régler')+' · '+((v.ass||[]).length?(v.ass||[]).map(nomP).join(', '):'personne d\'attribué')+'</small>'+
+  (s.j?'<small class="vh-m">Ce mois : '+fr2(s.km,0)+' km · '+fr2(s.eur)+' €</small>':'')+(E.length?'<span class="vh-bs">'+E.map(badgeEch).join('')+'</span>':'')+'</span><span class="go">›</span></button>'}
+function mesVehicules(retour){MV.retour=retour||MV.retour;var V=VEHS();
+ var h='<div id="jr-mv" class="vh"><p class="jr-sub">'+(V.length?'Touchez un véhicule pour voir son suivi.':'Ajoutez le véhicule qui va sur vos chantiers. Il sert au coût des trajets.')+'</p>'+
+  '<div class="vh-l">'+V.map(carteVeh).join('')+'</div><button type="button" class="vh-add" data-vhn><span>+</span>Ajouter un véhicule</button>'+
+  '<div class="vh-g"><b>Pour tous les véhicules</b><label>Code postal du dépôt<small>Pour le prix du jour des stations autour de chez vous.</small><input id="jr-vcp" inputmode="numeric" maxlength="5" value="'+esc(REG.cp||'')+'"></label>'+
+  '<div><span class="vh-lab">Détour pour passer chez le fournisseur<small>Ajouté les jours où la liste est donnée au comptoir.</small></span><div class="jr-row">'+[0,5,10,15,20].map(function(n){return '<button type="button" class="btn" data-vhd="'+n+'" aria-pressed="'+((REG.detour||0)===n)+'">'+(n?n+' km':'Aucun')+'</button>'}).join('')+'</div></div></div>'+
+  (MV.retour?'<div class="jr-ok"><button type="button" class="btn go" data-vhfin>C\'est bon</button></div>':'')+'</div>';
+ X.xopen('Mes véhicules',V.length?V.length+' véhicule'+(V.length>1?'s':''):'','<div>'+h+'</div>','',function(){var b=$('#jr-mv');
+  var cp=$('#jr-vcp');cp.addEventListener('change',function(){if(/^\d{5}$/.test(cp.value.trim())){REG.cp=cp.value.trim();save()}});
   b.addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var s=t.dataset;
-   if(s.vht){garder();if(REG.veh.type!==s.vht){REG.veh={type:s.vht};PJ=null}save();return vehicule(retour)}
-   if(s.vhd!=null){garder();REG.detour=+s.vhd;save();return vehicule(retour)}
-   if(s.vhok!=null){garder();save();if(!vehOk()){X.toast('Il manque la consommation','Notez-la telle que l\'affiche votre tableau de bord.');return}
-    X.toast('Véhicule enregistré',carbNom(REG.veh.type)+' · '+fr2(REG.veh.conso,1)+(REG.veh.type==='elec'?' kWh':' L')+' aux 100 km');
-    if(retour)retour();else X.xclose()}})})}
+   if(s.vhs)return suiviVeh(s.vhs);
+   if(s.vhn!=null)return ficheVeh(null);
+   if(s.vhd!=null){REG.detour=+s.vhd;save();return mesVehicules()}
+   if(s.vhfin!=null){var r=MV.retour;MV.retour=null;if(r)r();else X.xclose()}})})}
+var MV={retour:null};
+function ficheVeh(id){var v=id?Object.assign({},vehDe(id)):{id:'v'+Date.now(),nom:'',plaque:'',ass:['moi']},nv=!id;F=v;ficheRendre(nv)}
+var F=null;
+function ficheRendre(nv){var v=F,el=v.type==='elec',P=personnes();
+ var h='<div id="jr-fv" class="vh">'+
+  '<div class="vh-f"><label>Nom<small>Comme vous l\'appelez : « le Trafic », « camion blanc »…</small><input id="fv-n" value="'+esc(v.nom)+'" placeholder="Nom du véhicule" autocapitalize="sentences"></label>'+
+  '<label>Plaque <small>(facultatif)</small><input id="fv-p" value="'+esc(v.plaque)+'" placeholder="AB-123-CD" autocapitalize="characters"></label></div>'+
+  '<div class="vh-f"><span class="vh-lab">Carburant</span><div class="vh-ch">'+CARB.map(function(c){return '<button type="button" class="vh-o" data-fvt="'+c[0]+'" aria-pressed="'+(v.type===c[0])+'"><span>'+(c[0]==='elec'?IV.prise:IV.goutte)+'</span>'+c[1]+'</button>'}).join('')+'</div></div>'+
+  (v.type?'<div class="vh-f"><span class="vh-lab">Consommation<small>Celle de votre tableau de bord.</small></span><div class="vh-big"><input id="fv-c" inputmode="decimal" value="'+(v.conso?String(v.conso).replace('.',','):'')+'" placeholder="—" aria-label="Consommation"><span>'+(el?'kWh':'L')+' / 100 km</span></div>'+
+   '<span class="vh-lab">'+(el?'Votre prix du kWh':'Prix au litre de secours')+'<small>'+(el?'Celui de votre recharge (maison ou borne).':'Utilisé seulement si le prix du jour n\'arrive pas.')+'</small></span><div class="vh-big sm"><input id="fv-x" inputmode="decimal" value="'+(v.prix?String(v.prix).replace('.',','):'')+'" placeholder="—" aria-label="Prix"><span>€ / '+(el?'kWh':'L')+'</span></div></div>':'')+
+  '<div class="vh-f"><span class="vh-lab">Qui l\'utilise ?<small>Touchez pour attribuer. Plusieurs personnes possibles.</small></span><div class="vh-ch">'+P.map(function(s){return '<button type="button" class="vh-o" data-fva="'+s.id+'" aria-pressed="'+((v.ass||[]).indexOf(s.id)>=0)+'"><span>'+IV.gens+'</span>'+esc(s.p)+'</button>'}).join('')+'</div></div>'+
+  '<div class="vh-f"><span class="vh-lab">Échéances <small>(facultatif) Cliky vous prévient 30 jours avant.</small></span>'+[['ct','Contrôle technique'],['ent','Prochain entretien'],['assu','Assurance']].map(function(e){return '<label class="vh-d">'+e[1]+'<input type="date" data-fvd="'+e[0]+'" value="'+esc(v[e[0]]||'')+'"></label>'}).join('')+'</div>'+
+  '<div class="jr-ok">'+(nv?'<button type="button" class="btn" data-fvx>Annuler</button>':'<button type="button" class="btn" data-fvdel>Retirer</button>')+'<button type="button" class="btn go" data-fvok>Enregistrer</button></div></div>';
+ X.xopen(nv?'Nouveau véhicule':(v.nom||'Véhicule'),'Réglé une fois','<div>'+h+'</div>','',function(){var b=$('#jr-fv');
+  var garder=function(){var n=function(id){var x=$(id);return x?parseFloat(x.value.replace(',','.').replace(/[^\d.]/g,'')):NaN};F.nom=$('#fv-n').value.trim();F.plaque=$('#fv-p').value.trim().toUpperCase();
+   var c=n('#fv-c'),p=n('#fv-x');if(isFinite(c)&&c>0&&c<60)F.conso=c;if(isFinite(p)&&p>0&&p<10)F.prix=p;$$('#jr-fv [data-fvd]').forEach(function(x){F[x.dataset.fvd]=x.value||''})};
+  b.addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var s=t.dataset;
+   if(s.fvt){garder();if(F.type!==s.fvt){F.type=s.fvt;delete F.conso;delete F.prix}return ficheRendre(nv)}
+   if(s.fva){garder();F.ass=F.ass||[];var i=F.ass.indexOf(s.fva);if(i<0)F.ass.push(s.fva);else F.ass.splice(i,1);return ficheRendre(nv)}
+   if(s.fvx!=null)return mesVehicules();
+   if(s.fvdel!=null){if(t.dataset.arm){REG.vehs=VEHS().filter(function(x){return x.id!==F.id});save();X.toast('Véhicule retiré','Ses trajets passés restent dans les chantiers.');return mesVehicules()}t.dataset.arm=1;t.textContent='Touchez encore pour retirer';return}
+   if(s.fvok!=null){garder();if(!F.nom){X.toast('Donnez-lui un nom','Par exemple « le Trafic ».');$('#fv-n').focus();return}if(!vehPret(F)){X.toast('Il manque le carburant ou la consommation','La consommation est sur votre tableau de bord.');return}
+    var i=VEHS().map(function(x){return x.id}).indexOf(F.id);if(i<0)VEHS().push(F);else VEHS()[i]=F;save();X.toast('Véhicule enregistré',F.nom+' · '+carbNom(F.type)+' · '+fr2(F.conso,1)+' '+uniteV(F)+'/100 km');return mesVehicules()}})})}
+function suiviVeh(id){var v=vehDe(id);if(!v)return mesVehicules();var m=jourIso(0).slice(0,7),s=statsVeh(id,m),T=statsVeh(id,null),E=echeances(v);
+ var parCh={},parC={};s.L.forEach(function(x){var a=parCh[x.ch]=parCh[x.ch]||{km:0,eur:0,j:0};a.km+=x.km||0;a.eur+=x.eur||0;a.j++;var c=x.cond||'?',b=parC[c]=parC[c]||{km:0,j:0};b.km+=x.km||0;b.j++});
+ var h='<div id="jr-sv" class="vh"><div class="vh-hd"><span class="vh-i lg">'+IV.van+'</span><div><b>'+esc(v.nom)+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b><small>'+carbNom(v.type)+' · '+fr2(v.conso,1)+' '+uniteV(v)+'/100 km</small>'+
+  '<span class="vh-bs">'+((v.ass||[]).length?(v.ass||[]).map(function(a){return '<span class="vh-b">'+esc(nomP(a))+'</span>'}).join(''):'<span class="vh-b">Personne d\'attribué</span>')+'</span></div></div>'+
+  '<div class="vh-k"><div><b>'+fr2(s.km,0)+'</b><small>km en '+moisNom(m+'-01')+'</small></div><div><b>'+fr2(s.q,1)+'</b><small>'+uniteV(v)+'</small></div><div><b>'+fr2(s.eur)+' €</b><small>de carburant</small></div></div>'+
+  (E.length?'<div class="vh-sec"><b>Échéances</b><span class="vh-bs">'+E.map(badgeEch).join('')+'</span></div>':'')+
+  (s.j?'<div class="vh-sec"><b>Par chantier ce mois</b>'+Object.keys(parCh).map(function(k){var a=parCh[k];return '<span class="vh-r"><em>'+esc(CH[k]?CH[k].n:k)+' · '+a.j+' jour'+(a.j>1?'s':'')+'</em><b>'+fr2(a.km,0)+' km · '+fr2(a.eur)+' €</b></span>'}).join('')+'</div>'+
+   '<div class="vh-sec"><b>Par conducteur ce mois</b>'+Object.keys(parC).map(function(k){var a=parC[k];return '<span class="vh-r"><em>'+esc(k==='?'?'Non précisé':nomP(k))+' · '+a.j+' jour'+(a.j>1?'s':'')+'</em><b>'+fr2(a.km,0)+' km</b></span>'}).join('')+'</div>':'<p class="hint">Pas encore de trajet ce mois-ci. Ils arrivent avec le récap du soir.</p>')+
+  (T.L.length?'<div class="vh-sec"><b>Historique</b>'+T.L.slice(0,12).map(function(x){return '<span class="vh-r"><em>'+esc(new Date(x.d+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'numeric'}))+' · '+esc(CH[x.ch]?CH[x.ch].n:x.ch)+(x.cond?' · '+esc(nomP(x.cond)):'')+'</em><b>'+fr2(x.km,0)+' km · '+fr2(x.eur)+' €</b></span>'}).join('')+'</div>':'')+
+  '<div class="jr-ok"><button type="button" class="btn" data-svb>‹ Mes véhicules</button><button type="button" class="btn go" data-sve>Modifier</button></div></div>';
+ X.xopen(v.nom,'Suivi du véhicule','<div>'+h+'</div>','',function(){$('#jr-sv').addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;
+  if(t.dataset.svb!=null)return mesVehicules();if(t.dataset.sve!=null)return ficheVeh(id)})})}
+/* échéances proches dans le fil */
+function filEcheances(){var h='';VEHS().forEach(function(v){echeances(v).filter(function(e){return e.n<=30}).forEach(function(e){
+ h+='<button type="button" class="card jr-c" data-vhs2="'+v.id+'" style="text-align:left;width:100%"><div class="jr-h"><span class="jr-ic">'+IV.cal+'</span><span><b>'+esc(e.nom)+' · '+esc(v.nom)+'</b><small>'+(e.n<0?'Date dépassée':e.n===0?'C\'est aujourd\'hui':'Dans '+e.n+' jour'+(e.n>1?'s':''))+' ('+new Date(e.d+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+') ›</small></span></div></button>'})});return h}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-vhs2]');if(t)suiviVeh(t.dataset.vhs2)});
 
 /* ---------- réglages dans la fiche Cliky (Mes options) ---------- */
 function sw(k,t,sub){return '<div class="ch-sw jr-sw"><span>'+t+'<small>'+sub+'</small></span><button type="button" class="sw'+(REG[k]!==false?' on':'')+'" role="switch" aria-checked="'+(REG[k]!==false)+'" data-jrsw="'+k+'" aria-label="'+t+'" style="border:0;padding:0"></button></div>'}
 function reglagesHTML(){return '<div class="xsec" id="jr-reg"><h3>À activer ou non pour votre entreprise</h3><div class="card jr-c">'+
  sw('jour','Journée de chantier','« J\'y vais », arrivée calculée, récap du soir à cocher. Les heures vont dans le coût du chantier.')+
  sw('hs','Heures sup de l\'équipe','Cliky vous demande le soir ou le lendemain. Récap du mois pour la paie.')+
- (REG.jour!==false?'<button type="button" class="btn" data-jrvh>Mon véhicule ('+(vehOk()?carbNom(REG.veh.type)+' · '+fr2(REG.veh.conso,1)+(REG.veh.type==="elec"?' kWh':' L')+' aux 100 km':'à régler')+')</button>':'')+
+ (REG.jour!==false?'<button type="button" class="btn" data-jrvh>Mes véhicules ('+(VEHS().length?VEHS().length+' · '+VEHS().map(function(v){return v.nom}).join(', '):'à ajouter')+')</button>':'')+
  (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+'</div></div>'}
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-jrsw],[data-jreq],[data-jrvh]');if(!t)return;
  if(t.dataset.jreq!=null){HQ=null;return equipe()}
- if(t.dataset.jrvh!=null){if($('#jr-rc'))return vehicule(function(){RC.carb=null;rcRendre()});return vehicule(function(){X.xclose();if(window.PCMesOptions)PCMesOptions.ouvrir()})}
+ if(t.dataset.jrvh!=null){if($('#jr-rc'))return mesVehicules(function(){RC.carb=null;RC.vehs=RC.vehs.filter(vehDe);if(!RC.vehs.length)RC.vehs=vehDefaut(CH[RC.id]);rcRendre()});return mesVehicules(null)}
  var k=t.dataset.jrsw;REG[k]=REG[k]===false;save();var r=$('#jr-reg');if(r)r.outerHTML=reglagesHTML();
  X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':'Heures sup de l\'équipe');majPartout()});
 
@@ -308,5 +408,5 @@ function majPartout(){injecter();fil()}
 var chx=$('#chx');if(chx)new MutationObserver(function(){if(!$('#jr-ch',chx)&&$('.ch-res',chx)||!$('#jr-four',chx)&&$('#ch-four',chx))injecter()}).observe(chx,{childList:true,subtree:true});
 fil();setInterval(fil,60000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)majPartout()});
-window.PCJR={vehicule:vehicule,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+window.PCJR={vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
