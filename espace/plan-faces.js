@@ -110,9 +110,9 @@ const NOFF={ecl:0,pc:5,spe:-5,cmd:-9,com:9,ef:-4,ec:4,ev:0,clim:0,cond:6};
 function netHops(){try{const r=window.PKRESEAUX&&PKRESEAUX.calc();return r?r._hops:[]}catch(e){return[]}}
 function kOK(k){const F=fams();return(["ecl","pc","spe","cmd","com"].includes(k)&&F.includes("el"))||(["ef","ec","ev"].includes(k)&&F.includes("eau"))||(["clim","cond"].includes(k)&&F.includes("clim"))}
 const nst=(k,w)=>`style="stroke:${NC[k]};stroke-width:${w}"`;
-function netMur(sg,Hh){let s="";const seen=new Set();V.netK=new Set();netHops().forEach(hp=>{if(!kOK(hp.k))return;[[hp.b,hp.a],[hp.a,hp.b]].forEach(([p,q])=>{if(!p||!p.w||p.sg.a!==sg.a)return;const o=NOFF[hp.k],y=Hh-p.h*100,f=p.e.st==="faire"||(q&&q.e&&q.e.st==="faire")?"":" ex",sw=hp.k==="ev"?Math.max(4,(hp.d||40)/12):3,same=q&&q.w&&q.sg.a===sg.a;
+function netMur(sg,Hh){let s="";const seen=new Set();V.netK=new Set();V.netSpe=new Set();netHops().forEach(hp=>{if(!kOK(hp.k))return;[[hp.b,hp.a],[hp.a,hp.b]].forEach(([p,q])=>{if(!p||!p.w||p.sg.a!==sg.a)return;const o=NOFF[hp.k],y=Hh-p.h*100,f=p.e.st==="faire"||(q&&q.e&&q.e.st==="faire")?"":" ex",sw=hp.k==="ev"?Math.max(4,(hp.d||40)/12):3,same=q&&q.w&&q.sg.a===sg.a;
   if(hp.k==="clim"||hp.k==="cond"){if(!same)return;const key=hp.k+[p.s,q.s].sort().join();if(seen.has(key))return;seen.add(key);V.netK.add(hp.k);s+=`<line class="net${f}${hp.k==="cond"?" dash":""}" ${nst(hp.k,sw)} x1="${p.s*100}" y1="${y}" x2="${q.s*100}" y2="${Hh-q.h*100}"/>`;return}
-  V.netK.add(hp.k);
+  V.netK.add(hp.k);if(hp.k==="spe"&&hp.c)V.netSpe.add(hp.c.n+" "+hp.c.dj);
   if(same&&Math.abs(q.h-p.h)<.15){const key=hp.k+[p.s,q.s].sort().join();if(seen.has(key))return;seen.add(key);s+=`<line class="net${f}" ${nst(hp.k,sw)} x1="${p.s*100}" y1="${y+o}" x2="${q.s*100}" y2="${y+o}"/>`;return}
   if(hp.via==="mur"&&q){const dA=Math.hypot(q.x-p.A[0],q.y-p.A[1]),dB=Math.hypot(q.x-p.B[0],q.y-p.B[1]),xe=dA<dB?0:p.lw*100,key=hp.k+"m"+p.s+"|"+xe;if(seen.has(key))return;seen.add(key);s+=`<line class="net${f}${hp.k==="cmd"?" dash":""}" ${nst(hp.k,sw)} x1="${p.s*100}" y1="${y+o}" x2="${xe}" y2="${y+o}"/>`;return}
   if((hp.k==="ef"||hp.k==="ec"||hp.k==="ev")&&q){/* eau : à l'horizontale dans le mur vers la nourrice / la chute ; évacuation en pente */
@@ -122,9 +122,9 @@ function netMur(sg,Hh){let s="";const seen=new Set();V.netK=new Set();netHops().
    const yo=y+(hp.k==="ec"?6:0);if(same)ye=Hh-q.h*100;s+=`<path class="net${f}" ${nst(hp.k,sw)} d="M${x0} ${y}V${yo}H${xe}V${ye}"/>`;return}
   const eau=["ef","ec","ev"].includes(hp.k),x=p.s*100+o,key=hp.k+"|"+p.s+"|"+p.h;if(seen.has(key))return;seen.add(key);
   s+=`<line class="net${f}${hp.k==="cmd"?" dash":""}" ${nst(hp.k,sw)} x1="${x}" y1="${eau?Hh:0}" x2="${x}" y2="${y}"/>`})});return s}
-function netPlaf(rm,M){let s="";const fi=K().ST.fi;V.netK=new Set();netHops().forEach(hp=>{if(!kOK(hp.k)||["ef","ec","ev","clim","cond"].includes(hp.k)||hp.via==="mur"||hp.via==="ligne")return;const a=hp.a,b=hp.b;if(!a||!b||a.fi!==fi||b.fi!==fi||(a.rm!==rm&&b.rm!==rm))return;const f=b.e&&b.e.st==="faire"?"":" ex";V.netK.add(hp.k);
+function netPlaf(rm,M){let s="";const fi=K().ST.fi;V.netK=new Set();V.netSpe=new Set();netHops().forEach(hp=>{if(!kOK(hp.k)||["ef","ec","ev","clim","cond"].includes(hp.k)||hp.via==="mur"||hp.via==="ligne")return;if(hp.k==="spe"&&hp.c)V.netSpe.add(hp.c.n+" "+hp.c.dj);const a=hp.a,b=hp.b;if(!a||!b||a.fi!==fi||b.fi!==fi||(a.rm!==rm&&b.rm!==rm))return;const f=b.e&&b.e.st==="faire"?"":" ex";V.netK.add(hp.k);
   s+=`<path class="net${f}${hp.k==="cmd"?" dash":""}" ${nst(hp.k,M/200)} d="M${a.x*100+NOFF[hp.k]} ${a.y*100}H${b.x*100+NOFF[hp.k]}V${b.y*100}"/>`});return s}
-function netLeg(){const K2=[...(V.netK||[])];return`<div class="leg">${K2.length?K2.map(k=>`<span><i style="background:${NC[k]}"></i>${NL[k]}</span>`).join(""):`<span class="muted">Rien à faire passer ici.</span>`}<span class="muted">Pâle : déjà en place</span></div>`}
+function netLeg(){const K2=[...(V.netK||[])];return`<div class="leg">${K2.length?K2.map(k=>`<span><i style="background:${NC[k]}"></i>${k==="spe"&&V.netSpe&&V.netSpe.size?"Circuit spécialisé (un seul appareil) : "+esc([...V.netSpe].join(", ")):NL[k]}</span>`).join(""):`<span class="muted">Rien à faire passer ici.</span>`}<span class="muted">Pâle : déjà en place</span></div>`}
 function svgMur(){const w=wall();if(!w)return"";const sg=w.s,P=K(),L=Math.round(P.dist(sg.a,sg.b)*100),Hh=H(),E=eqs(sg),O=opens(sg),sel=V.sel;
  const fs=Math.max(15,(L+160)/34),ml=fs*2.6,mr=fs*1.2,mt=fs*4.4,mb=fs*(sel>=0?2.2:6.6);
  let s=`<svg id="fx-esvg" viewBox="${-ml} ${-mt} ${L+ml+mr} ${Hh+mt+mb}" font-size="${fs}" role="img" aria-label="Mur vu de face">`;
