@@ -104,7 +104,7 @@ function sourceBC(){var s=BC.source||'',m=/—\s*([^(,]+)/.exec(s),d=/relevé du
 function ligneBC(a){return '<button class="cf-li pr-li bc-li" type="button" data-bc="'+esc(a.c)+'"><span class="tx"><b>'+esc(a.d)+'</b><small>'+esc(a.cond)+
   (a.modifie?' · <em class="bc-m">votre prix</em>':a.ajoute?' · <em class="bc-m">ajouté par vous</em>':a.provisoire?' · <em class="bc-p">prix provisoire</em>':'')+'</small></span><span class="cf-m"><b>'+prix(a.pc)+'</b><small>/ '+esc(parCond(a))+'</small></span></button>'}
 /* ---------- Mes fournisseurs (17/11, Cyril) : une carte par fournisseur, on y glisse ses documents ---------- */
-var FO=lsG('pc-cliky-four',null),FOe='',LF='';
+var FO=lsG('pc-cliky-four',null),FOe='',LF='',LC='';
 function chargerFO(force){if(!enDirect()||FOe==='charge'||(FOe==='ok'&&!force))return;FOe='charge';
  PCV.api('/espace/fournisseurs').then(function(x){FO=x.fournisseurs||[];lsS('pc-cliky-four',FO);FOe='ok';if(seg==='cliky')vue()},function(){FOe='err'})}
 function fourDe(id){return (FO||[]).filter(function(f){return f.id===id})[0]}
@@ -175,6 +175,7 @@ function fichierB64(f){return new Promise(function(ok,ko){
  if(f.type==='application/pdf'){if(f.size>3.5*1048576)return ko(new Error('PDF trop lourd (3,5 Mo au plus) : envoyez une photo de chaque page.'));var r=new FileReader();r.onload=function(){ok(String(r.result))};r.onerror=function(){ko(new Error('Fichier illisible'))};return r.readAsDataURL(f)}
  var u=URL.createObjectURL(f),im=new Image();im.onload=function(){var k=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.85))};
  im.onerror=function(){ko(new Error('Photo illisible : JPEG, PNG ou PDF'))};im.src=u})}
+function deposer(four,contact){LF=four||'';LC=contact||'';var inp=document.createElement('input');inp.type='file';inp.accept='image/*,application/pdf';inp.onchange=function(){lireDoc(inp.files&&inp.files[0])};inp.click()}
 function lireDoc(f){if(!f||!X)return;LU=null;var fo=fourDe(LF);
  X.xopen('Cliky lit votre document',fo?fo.nom:'Tarif, devis, facture ou bon de livraison','<div class="bc-lu"><p class="bc-att"><span class="bc-sp"></span>Cliky lit chaque ligne et la retrouve dans votre base. Comptez une demi-minute.</p></div>','<button class="btn" data-xclose>Annuler</button>');
  fichierB64(f).then(function(d){return PCV.api('/espace/lire-document',{method:'POST',body:{fichier:d,nom:f.name,fournisseur:LF}})}).then(function(x){LU=x;afficherLu()},
@@ -185,6 +186,7 @@ function afficherLu(){var z=$('.bc-lu');if(!z||!LU)return;var d=LU.document||{},
  if(LU.fournisseur){L=L.filter(function(l){var a=art(l.code);if(l.code&&l.apres&&a.four&&a.four!==LU.fournisseur){var f0=fourDe(a.four);ailleurs.push({designation:l.article,cond_lu:l.conditionnement,famille:a.f,reference:l.reference,prix_ht:l.apres,compare:l.avant,chez:f0?f0.nom:'',sur:l.sur,note:l.note,u:a.u,pu:a.pu&&a.pc?Math.round(a.pu*l.apres/a.pc*1e6)/1e6:0});return false}return true})}
  var ch=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)>=0.005}),pareil=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)<0.005}).length,hors=L.filter(function(l){return !l.code});
  var h='<p class="bc-d"><b>'+esc((d.type||'Document').replace(/^./,function(c){return c.toUpperCase()})+(d.fournisseur?' '+d.fournisseur:''))+'</b><small>'+esc([d.numero?'n° '+d.numero:'',d.date].filter(Boolean).join(' · '))+' · '+L.length+' ligne'+(L.length>1?'s':'')+' lue'+(L.length>1?'s':'')+'</small></p>';
+ h+=chantierLu();
  if(ch.length)h+='<p class="hint">Cochez les prix à mettre à jour. Ceux qui demandent un œil ne sont pas cochés.</p>'+ch.map(function(l,i){return '<label class="bc-lp'+(l.sur?'':' doute')+'"><input type="checkbox" data-bclp="'+i+'"'+(l.sur?' checked':'')+'><span><b>'+esc(l.article)+'</b><small>'+esc(l.conditionnement)+' · lu : « '+esc(l.designation)+' »</small>'+(l.note?'<em>'+esc(l.note)+'</em>':'')+'</span><i>'+prix(l.avant)+' → <b>'+prix(l.apres)+'</b><small>'+(l.ecart_pct>0?'+':'')+String(l.ecart_pct).replace('.',',')+' %</small></i></label>'}).join('');
  else h+='<p class="hint">Aucun prix à changer'+(pareil?' : '+pareil+' prix déjà à jour.':'.')+'</p>';
  if(ch.length&&pareil)h+='<p class="hint">'+pareil+' prix déjà à jour.</p>';
@@ -192,16 +194,28 @@ function afficherLu(){var z=$('.bc-lu');if(!z||!LU)return;var d=LU.document||{},
  if(nv.length)h+='<p class="bc-lab">'+nv.length+' produit'+(nv.length>1?'s':'')+' pas encore dans votre base</p><p class="hint">'+(fo?'Cochés : ils seront rangés chez '+esc(fo.nom)+'.':'Cochez ceux que vous reprenez souvent.')+'</p>'+
   nv.map(function(l,i){return '<label class="bc-lp"><input type="checkbox" data-bcln="'+i+'"'+(fo&&l.sur!==false?' checked':'')+'><span><b>'+esc(l.designation)+'</b><small>'+esc([l.cond_lu,l.famille,l.reference?'réf. '+l.reference:''].filter(Boolean).join(' · '))+'</small>'+(l.compare?'<em class="bc-cmp">'+(l.prix_ht<l.compare?'Moins cher':'Plus cher')+' que chez '+esc(l.chez||'votre autre fournisseur')+' ('+prix(l.compare)+')</em>':'')+'</span><i><b>'+prix(l.prix_ht)+'</b><small>'+esc(l.cond_lu||'')+'</small></i></label>'}).join('');
  if(autres.length)h+='<details class="bc-hors"><summary>'+autres.length+' ligne'+(autres.length>1?'s':'')+' non reprise'+(autres.length>1?'s':'')+' (frais, lignes sans prix)</summary>'+autres.map(function(l){return '<p>'+esc(l.designation)+'</p>'}).join('')+'</details>';
- if(ch.length||nv.length)h+='<div class="bc-luf"><button class="btn go" type="button" data-bcluok>Enregistrer ce qui est coché</button></div>';
+ h+='<div class="bc-luf"><button class="btn go" type="button" data-bcluok>'+(ch.length||nv.length?'Enregistrer ce qui est coché':'Enregistrer')+'</button></div>';
  z.innerHTML=h;LU.ch=ch;LU.nv=nv}
+/* Marge réelle (17/11) : la facture est rangée dans le chantier choisi, pour comparer le matériel prévu au matériel payé */
+function montantLu(){var d=LU&&LU.document||{};if(+d.total_ht>0)return +d.total_ht;return Math.round((LU&&LU.lignes||[]).reduce(function(s,l){return s+((+l.quantite>0&&+l.prix_ht>0)?l.quantite*l.prix_ht:0)},0)*100)/100}
+function chantierLu(){var D=(window.PCV&&PCV.demandes&&PCV.demandes())||[],t=(LU&&LU.document||{}).type||'';if(!D.length&&!LC)return '';
+ if(!LC&&/devis|tarif|autre/i.test(t))return '';
+ var L=D.slice(0,8),m=montantLu();if(LC&&!L.some(function(d){return d.contact===LC}))L.unshift({contact:LC,client:'Ce chantier'});
+ return '<p class="bc-lab">Pour quel chantier ?</p><p class="hint">'+(m>0?'Montant HT lu : <b>'+prix(m)+'</b>. ':'')+'Cliky le compte dans les achats du chantier, pour voir votre marge réelle.</p><div class="pr-u bc-chs" role="group" aria-label="Chantier">'+
+  '<button type="button" data-bclc="" aria-pressed="'+(!LC)+'">Aucun</button>'+L.map(function(d){return '<button type="button" data-bclc="'+esc(d.contact)+'" aria-pressed="'+(LC===d.contact)+'">'+esc(d.client||'Client')+'</button>'}).join('')+'</div>'}
+function rangerAchat(){if(!LC||!LU)return Promise.resolve(null);var d=LU.document||{},c=LC;
+ return PCV.api('/espace/achats',{method:'POST',body:{contact:c,document:{type:d.type,fournisseur:d.fournisseur,numero:d.numero,date:d.date,total_ht:montantLu()},lignes:(LU.lignes||[]).map(function(l){return {d:l.designation,q:l.quantite,pu:l.prix_ht}})}}).then(function(x){try{document.dispatchEvent(new CustomEvent('pc-achats',{detail:{contact:c,achats:x}}))}catch(e){}return x})}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bclc]');if(!b)return;LC=b.getAttribute('data-bclc')||'';$$('[data-bclc]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bclire],[data-bcluok]');if(!b||!X)return;
- if(b.hasAttribute('data-bclire')){LF=b.getAttribute('data-bclire')||'';var inp=document.createElement('input');inp.type='file';inp.accept='image/*,application/pdf';inp.onchange=function(){lireDoc(inp.files&&inp.files[0])};inp.click()}
+ if(b.hasAttribute('data-bclire')){deposer(b.getAttribute('data-bclire')||'','')}
  else{var M=$$('[data-bclp]').filter(function(c){return c.checked}).map(function(c){var l=LU.ch[+c.getAttribute('data-bclp')];return {code:l.code,prix:l.apres}});
   var N=$$('[data-bcln]').filter(function(c){return c.checked}).map(function(c){var l=LU.nv[+c.getAttribute('data-bcln')],cd=l.cond_lu||'unité';return {d:l.designation,cond:cd,u:l.u||uniteDe(cd),pu:l.pu||undefined,prix:l.prix_ht,f:l.famille||'Ajoutés par vous'}});
-  if(!M.length&&!N.length){X.toast('Rien de coché','Cochez les prix ou les produits à garder.');return}var d=LU.document||{},src=[d.type,d.fournisseur,d.numero].filter(Boolean).join(' ');
+  if(!M.length&&!N.length&&!LC){X.toast('Rien de coché','Cochez les prix ou les produits à garder, ou choisissez un chantier.');return}var d=LU.document||{},src=[d.type,d.fournisseur,d.numero].filter(Boolean).join(' ');
+  if(LC){b.disabled=true;rangerAchat().then(function(){b.disabled=false;LC='';if(!M.length&&!N.length){X.xclose();X.toast('Rangé dans le chantier',prix(montantLu())+' HT de matériel payé')}else suite()},function(e){b.disabled=false;X.toast('Pas rangé dans le chantier',e.message)});return}
+  suite();function suite(){
   var fin=function(){var t=[M.length?M.length+' prix mis à jour':'',N.length?N.length+' produit'+(N.length>1?'s':'')+' ajouté'+(N.length>1?'s':''):''].filter(Boolean).join(', ');setTimeout(function(){FOe='';chargerFO(true)},1200);return [t.charAt(0).toUpperCase()+t.slice(1),'Cliky les prend dès le prochain pré-devis.']};
   if(M.length&&N.length)PCV.api('/espace/base',{method:'POST',body:{modifs:M,source:src}}).then(function(){envoyerBC({ajouts:N,four:LU.fournisseur},fin())},function(e){X.toast('Pas enregistré',e.message)});
-  else if(M.length)envoyerBC({modifs:M,source:src},fin());else envoyerBC({ajouts:N,four:LU.fournisseur},fin())}});
+  else if(M.length)envoyerBC({modifs:M,source:src},fin());else envoyerBC({ajouts:N,four:LU.fournisseur},fin())}}});
 document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('bc-fam'))BC.ouv[d.getAttribute('data-bcf')]=d.open},true);
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bc],[data-bcnew],[data-bcok],[data-bcori],[data-bcsup],[data-bcaok],[data-bccond],[data-bcre]');if(!b||!X)return;
  var a=function(n){return b.getAttribute(n)};
@@ -298,7 +312,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="produits"]');if(t)vue()});
 
 /* ---------- pour les autres écrans ---------- */
-window.PCPROD={cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},
+window.PCPROD={deposer:function(contact){if(!X)return;chargerBC();deposer('',contact)},cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},
  creer:function(nom,rappel){if(!X)return;RAPPEL=typeof rappel==='function'?rappel:null;form(null,nom||'')}};
 vue();
 })();

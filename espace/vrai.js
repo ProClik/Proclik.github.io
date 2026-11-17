@@ -388,7 +388,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  else{ED=edition(p);var t=totauxEd(p);
   dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+controleHTML(p)+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
-   recalcHTML(d)+verifHTML(p)+
+   recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
   mat=listeMatHTML(p)+lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;
@@ -404,7 +404,8 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
   O.map(function(x){return '<div class="vpan" data-vpan="'+x[0]+'"'+(VTAB===x[0]?'':' hidden')+'>'+Z[x[0]]+'</div>'}).join('')+
   '<p class="vst" style="font-size:12.5px">Rien n\'est envoyé au client sans votre confirmation. Les montants viennent de votre base de prix.</p>';
  ouvrir(esc(k.nom)+'<small>'+esc([o&&o.titre,k.ville].filter(Boolean).join(' · '))+'</small>',h,'<button class="vbtn" type="button" data-vfermer>Fermer</button>');
- if(DOCC===k.id&&DOCS)rendreDocs();else chargerDocs(k.id);}
+ if(DOCC===k.id&&DOCS)rendreDocs();else chargerDocs(k.id);
+ try{document.dispatchEvent(new CustomEvent('pcv-afficher',{detail:{d:d,p:p&&p.lue?p:null,t:p&&p.lue?totauxEd(p):null,etape:o&&o.etape||''}}))}catch(e){}}
 function onglet(t){VTAB=t;$$('#vov-b [data-vtabd]').forEach(function(b){b.setAttribute('aria-selected',String(b.getAttribute('data-vtabd')===t))});$$('#vov-b [data-vpan]').forEach(function(z){z.hidden=z.getAttribute('data-vpan')!==t});$('#vov-b').scrollTop=0}
 
 /* ---------- ajouter ou modifier une ligne : le libellé propose votre base (les plus utilisés d'abord) ---------- */
@@ -451,11 +452,13 @@ function ligneVok(ref){var lib=$('#vl-l').value.trim(),q=nb($('#vl-q').value),pu
  var l={libelle:lib,quantite:q,unite:$('#vl-u').value.trim(),pu:pu,total:Math.round(q*pu*100)/100};
  if(/^f\|/.test(ref)){var fo=+ref.slice(2);l.four=fo;ED.four[fo]=1;ED.materiaux.push(l)}
  else if(ref.charAt(0)==='+')T()[ref.slice(1)==='materiaux'?'materiaux':'main_oeuvre'].push(l);
- else{var c=ref.split('|')[0],i=+ref.split('|')[1];if(T()[c][i]&&T()[c][i].four!=null)l.four=T()[c][i].four;T()[c][i]=l}
+ else{var c=ref.split('|')[0],i=+ref.split('|')[1],av=T()[c][i];if(av&&av.four!=null)l.four=av.four;T()[c][i]=l}
  var U=usage(),kk=lib.toLowerCase();U[kk]=(U[kk]||0)+1;lsS('pc-base-usage',U);
  if(NOUVP)try{var np={d:lib,u:l.unite||'u',p:pu,t:'Ajouté par vous',k:c==='materiaux'?'produit':'prestation'};if(c==='materiaux')np.ach=pu;if(window.PCPROD&&window.PCPROD.ajouter)window.PCPROD.ajouter(np);else if(window.PCX&&window.PCX.ajoutBase)window.PCX.ajoutBase(np)}catch(e){}
  if(MODE!=='nd')garderEd();var m=MODE==='nd'?0:manque().length;retour();
- toastV(/^f\|/.test(ref)?(m?'Prix reçu, il en manque '+m:'Tous les prix du fournisseur sont là'):ref.charAt(0)==='+'?'Ligne ajoutée':'Ligne modifiée',/^f\|/.test(ref)&&!m?'Vous pouvez valider le pré-devis.':lib+(NOUVP?' · rangé dans vos produits':''))}
+ toastV(/^f\|/.test(ref)?(m?'Prix reçu, il en manque '+m:'Tous les prix du fournisseur sont là'):ref.charAt(0)==='+'?'Ligne ajoutée':'Ligne modifiée',/^f\|/.test(ref)&&!m?'Vous pouvez valider le pré-devis.':lib+(NOUVP?' · rangé dans vos produits':''));
+ /* « Je retiens ? » (suivi.js) : un prix changé à la main peut devenir le prix de la base */
+ if(av&&MODE!=='nd')try{document.dispatchEvent(new CustomEvent('pcv-ligne',{detail:{avant:av,apres:l,cle:c}}))}catch(e){}}
 function ligneVsup(b){if(!b.classList.contains('arme')){b.classList.add('arme');b.textContent='Oui, l\'enlever';return}
  var r=b.getAttribute('data-vlsup').split('|'),x=T()[r[0]].splice(+r[1],1)[0];if(x&&x.four!=null)delete ED.four[x.four];if(MODE!=='nd')garderEd();retour();toastV('Ligne enlevée',x&&x.libelle)}
 /* ---------- créer un devis directement (sans pré-devis) : le client, les lignes au prix de vente, un gros bouton en deux appuis ---------- */
@@ -633,7 +636,10 @@ function lienDirect(){var h=location.hash;try{h=decodeURIComponent(h)}catch(e){}
 
 if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore branché','<div class="card"><p style="margin:0">Ce lien ouvre une vraie demande, mais l\'adresse du service ProClik n\'est pas encore réglée dans l\'Espace. Prévenez Cyril : c\'est une ligne à ajouter.</p></div>','<button class="vbtn" type="button" data-vfermer>Fermer</button>')},1500);return}
 /* Pour l'onglet Clients (clients.js) : appels au service, ouverture d'une demande, PDF d'un document */
-window.PCV={api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc};
+window.PCV={api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc,
+ demandes:function(){return (LISTE&&LISTE.demandes)||[]},cour:function(){return COUR},recalc:function(){recalc()},toast:function(a,b){toastV(a,b)},
+ questionsClient:function(p){var ok=lsG(vokCle(p))||[];return (p.a_verifier||[]).map(vcourt).map(function(x,i){return [x,i]}).filter(function(z){return z[0].g==='cli'&&ok.indexOf(z[1])<0}).map(function(z){return z[0].q})},artisan:function(){return lsG(KA)||{}},
+ prendre:function(np){if(!ED||!COUR||!np)return;var c=function(L){return (L||[]).map(function(l){return {libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier}})};ED.materiaux=c(np.materiaux);ED.main_oeuvre=c(np.main_oeuvre);garderEd();afficher(COUR)}};
 if(AP){var bd=document.createElement('div');bd.id='vapercu';bd.setAttribute('role','status');bd.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);padding:8px 8px 8px 14px;border-radius:14px;font:600 13px var(--f);display:flex;gap:10px;align-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);max-width:calc(100% - 24px)';
  bd.innerHTML='<span id="vapn" style="overflow:hidden;text-overflow:ellipsis">Aperçu (lecture seule)</span><button type="button" style="flex:none;border:0;border-radius:10px;padding:6px 10px;font:700 13px var(--f);background:rgba(255,255,255,.18);color:inherit;cursor:pointer">Quitter</button>';
  document.body.appendChild(bd);bd.querySelector('button').addEventListener('click',quitterApercu);

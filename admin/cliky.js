@@ -3,7 +3,7 @@
 (function(){'use strict';
 var A=window.PCADM;if(!A)return;
 var api=A.api,esc=A.esc,toast=A.toast,$=function(s,r){return (r||document).querySelector(s)};
-var REG=[['marge_pct','Marge sur matériaux','%'],['fg_pct','Frais généraux','%'],['taux_horaire','Taux horaire','€/h'],['taux_m2','Main-d\'œuvre au m²','€/m²'],['zone_km','Zone sans frais de déplacement','km'],['deplacement','Forfait déplacement au-delà','€'],['tva','TVA travaux','%']];
+var REG=[['marge_pct','Marge sur matériaux','%'],['fg_pct','Frais généraux','%'],['taux_horaire','Taux horaire','€/h'],['taux_m2','Main-d\'œuvre au m²','€/m²'],['zone_km','Zone sans frais de déplacement','km'],['deplacement','Forfait déplacement au-delà','€'],['tva','TVA travaux','%'],['deplacement_km','Déplacement par km au-delà de la zone (facultatif)','€/km'],['minimum','Minimum par chantier (facultatif)','€ HT']];
 var CH={regles:'Règles du métier',ouvrages:'Ouvrages calculés par le programme',prix:'Prix moyens (main-d\'œuvre, dépose…)',reperes:'Repères de contrôle (prix posés habituels)'};
 function nb(v){return v==null?'':String(v).replace('.',',')}
 function deux(b,t){if(b.dataset.ok){delete b.dataset.ok;return true}var o=b.textContent;b.dataset.ok=1;b.textContent=t;setTimeout(function(){if(b.dataset.ok){delete b.dataset.ok;b.textContent=o}},3500);return false}
@@ -21,7 +21,7 @@ function rendre(Z,j){var e=j.espace,r=e.reglages||{},k=j.controle||{};
  '<label class="f">Base de prix</label><div class="res" style="margin-top:4px"><b>'+esc(e.fournisseur_nom||'Pas encore de base de prix')+'</b><div class="mu">'+(k.articles?k.articles+' articles lus'+(k.erreurs&&k.erreurs.length?' · '+k.erreurs.length+' problème(s)':' · aucun problème'):'Aucun article : Cliky met tout « à vérifier », sans inventer de prix.')+'</div>'+
   '<div class="ck-row"><button class="btn sm" type="button" id="ckcol">Coller une autre base</button>'+(e.fournisseur_colle?'<button class="btn sm" type="button" id="ckorig">Revenir à la base d\'origine</button>':'')+'</div>'+
   '<div id="ckz" hidden><label class="f" for="ckfn">Nom de cette base</label><input class="t" id="ckfn" placeholder="Ex. Tarif Point P 2027"><label class="f" for="ckft">Articles (une ligne par article : - [PLQ-01] Désignation | conditionnement | prix | prix par unité)</label><textarea class="t ck-ta" id="ckft" rows="8"></textarea></div></div>'+
- '<label class="f">Réglages</label><div class="ck-g">'+REG.map(function(x,i){return '<div><label class="f" for="ckr-'+x[0]+'">'+x[1]+' ('+x[2]+')</label><input class="t" id="ckr-'+x[0]+'" inputmode="decimal" value="'+esc(nb(r[x[0]]))+'" placeholder="à vérifier"></div>'+(i===1?FA:'')}).join('')+'</div>'+
+ '<label class="f">Réglages</label><div class="ck-g">'+REG.map(function(x,i){return '<div><label class="f" for="ckr-'+x[0]+'">'+x[1]+' ('+x[2]+')</label><input class="t" id="ckr-'+x[0]+'" inputmode="decimal" value="'+esc(nb(r[x[0]]))+'" placeholder="à vérifier"></div>'+(i===1?FA:'')}).join('')+'<div><label class="f" for="ckr-commune">Commune de l\'entreprise (facultatif, pour la distance)</label><input class="t" id="ckr-commune" autocomplete="off" value="'+esc(r.commune||'')+'" placeholder="38920 Crolles"></div></div>'+
  '<label class="sw" style="margin-top:10px">Réglages confirmés avec le client<input type="checkbox" id="ckok"'+(r.confirmes?' checked':'')+'></label>'+
  '<label class="f" for="ckh">Ses règles à lui (une par ligne, elles passent avant celles du métier)</label><textarea class="t" id="ckh" rows="4" placeholder="Ex. Toujours 2 plaques par face dans les chambres">'+esc((e.habitudes||[]).join('\n'))+'</textarea>'+
  '<label class="f" for="ckn">Ce qu\'il ne fait pas (une par ligne)</label><textarea class="t" id="ckn" rows="3" placeholder="Ex. Carrelage mural">'+esc((e.non_faits||[]).join('\n'))+'</textarea>'+
@@ -33,7 +33,7 @@ function rendre(Z,j){var e=j.espace,r=e.reglages||{},k=j.controle||{};
  $('#ckcol',Z).onclick=function(){$('#ckz',Z).hidden=!$('#ckz',Z).hidden};
  if($('#ckorig',Z))$('#ckorig',Z).onclick=function(){if(!deux(this,'Sûr ? Toucher encore'))return;envoyer(Z,{id:j.id,fournisseur_texte:null},'Base d\'origine remise')};
  if($('#ckret',Z))$('#ckret',Z).onclick=function(){if(!deux(this,'Sûr ? Toucher encore'))return;envoyer(Z,{id:j.id,retablir:true},'Fiche Cliky remise à l\'origine')};
- $('#cksave',Z).onclick=function(){var reg={confirmes:$('#ckok',Z).checked,fg_assiette:$('#ckfa',Z).value};REG.forEach(function(x){reg[x[0]]=$('#ckr-'+x[0],Z).value.trim()});
+ $('#cksave',Z).onclick=function(){var reg={confirmes:$('#ckok',Z).checked,fg_assiette:$('#ckfa',Z).value};REG.forEach(function(x){reg[x[0]]=$('#ckr-'+x[0],Z).value.trim()});var cm=$('#ckr-commune',Z);if(cm)reg.commune=cm.value.trim();
   var body={id:j.id,metier:$('#ckm',Z).value,reglages:reg,habitudes:$('#ckh',Z).value.split('\n'),non_faits:$('#ckn',Z).value.split('\n')};
   var t=$('#ckft',Z).value.trim();if(t){body.fournisseur_texte=t;body.fournisseur_nom=$('#ckfn',Z).value}
   envoyer(Z,body,'Cliky enregistré',this)};

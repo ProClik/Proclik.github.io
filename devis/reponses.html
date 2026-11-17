@@ -1,0 +1,75 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>Vos réponses pour le devis</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../n1.css?v=2">
+<script src="../espace/theme.js?v=1"></script>
+<script src="config.js"></script>
+<style>
+/* Page envoyée au client par son artisan (17/11) : une question à la fois, de gros boutons, rien à installer.
+   Réponses envoyées au service ProClik (lien à jeton, 30 jours), qui les range dans l'Espace de l'artisan. */
+:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--line:var(--n1-line);--card:var(--n1-calme);--nuit:var(--n1-nuit);--laiton:var(--n1-laiton);--ok:var(--n1-ok);
+  --f:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1528;--fg:#EEF1F7;--muted:#A3ACC0;--line:rgba(255,255,255,.1);--card:#171F36;--nuit:#E9E4D6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1528;--fg:#EEF1F7;--muted:#A3ACC0;--line:rgba(255,255,255,.1);--card:#171F36;--nuit:#E9E4D6;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--f);min-height:100dvh;padding:0 max(16px,env(safe-area-inset-left)) calc(24px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-right))}
+.w{max-width:560px;margin:0 auto;display:grid;gap:16px;padding-top:22px}
+.hd{display:flex;align-items:center;gap:12px}
+.hd svg{width:34px;height:34px;flex:none}
+.hd b{display:block;font-size:17px}.hd small{color:var(--muted);font-size:13.5px}
+.bar{display:flex;gap:5px}.bar i{flex:1;height:5px;border-radius:9px;background:var(--line)}.bar i.ok{background:var(--nuit)}.bar i.cur{background:var(--laiton)}
+.card{background:var(--card);border-radius:20px;padding:20px 18px;box-shadow:var(--n1-calme-sh);display:grid;gap:14px;animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.card.bk{animation-name:bk}@keyframes bk{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+h1{font-size:21px;line-height:1.3;margin:0}
+p{margin:0}.mu{color:var(--muted);font-size:14.5px}
+.ch{display:grid;gap:10px}
+button,.in{font:inherit}
+.b{appearance:none;border:0;border-radius:14px;min-height:54px;padding:12px 16px;font-weight:800;font-size:16px;background:var(--card);color:var(--fg);box-shadow:var(--n1-pk);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.b[aria-pressed="true"]{background:var(--nuit);color:var(--bg)}
+.b.go{background:var(--nuit);color:var(--bg);justify-content:center;text-align:center}
+.b.lt{box-shadow:none;background:none;color:var(--muted);font-weight:700;min-height:44px;justify-content:center}
+.b[disabled]{opacity:.5}
+.in{width:100%;min-height:96px;border:0;border-radius:14px;padding:12px 14px;background:var(--bg);color:var(--fg);box-shadow:var(--n1-in);resize:vertical;font-size:16px}
+.ft{display:flex;gap:10px}.ft .b{flex:1}
+.ok{width:64px;height:64px;border-radius:50%;background:var(--nuit);color:var(--bg);display:grid;place-items:center;font-size:32px;margin:6px auto 0}
+.err{color:#B9577A;font-weight:700}
+.rec{display:grid;gap:8px;font-size:14.5px}.rec div{border-top:1px solid var(--line);padding-top:8px}.rec b{display:block}.rec span{color:var(--muted)}
+</style></head><body>
+<main class="w" id="app" aria-live="polite"><p class="mu">Chargement…</p></main>
+<script>
+(function(){
+var SERVICE=(window.CLIKDEVIS_CONFIG&&window.CLIKDEVIS_CONFIG.service)||"https://proclik-calcul.proclik-test.workers.dev";
+var J=(location.hash.match(/[a-f0-9]{24}/)||[])[0],A=document.getElementById('app'),D=null,R=[],K=0,dir=1;
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var LOGO='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#A8823F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="#A8823F" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="#A8823F" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="#A8823F" stroke="none"/></svg>';
+function tete(){return '<div class="hd">'+LOGO+'<span><b>'+esc(D.entreprise||'Votre artisan')+'</b><small>'+(D.prenom_artisan?esc(D.prenom_artisan)+' a besoin de quelques précisions':'Quelques précisions pour votre devis')+'</small></span></div>'}
+function court(q){return String(q).replace(/^([^:]{1,60}) : (.*)$/,function(_,a,b){return b.charAt(0).toUpperCase()+b.slice(1)+'|'+a}).split('|')}
+function rendre(){var Q=D.questions,n=Q.length;
+ if(K>=n){A.innerHTML=tete()+'<div class="card"><h1>Tout est bon ?</h1><p class="mu">Touchez une réponse pour la changer.</p><div class="rec">'+Q.map(function(q,i){var c=court(q.q);return '<div data-k="'+i+'"><b>'+esc(c[0])+'</b><span>'+esc(R[i]||'pas de réponse')+'</span></div>'}).join('')+'</div><div class="ft"><button class="b lt" data-bk>← Retour</button><button class="b go" data-send>Envoyer mes réponses</button></div></div>';return}
+ var q=Q[K],c=court(q.q),v=R[K]||'',ch=q.choix||[];
+ A.innerHTML=tete()+'<div class="bar" aria-label="Question '+(K+1)+' sur '+n+'">'+Q.map(function(_,i){return '<i class="'+(i<K?'ok':i===K?'cur':'')+'"></i>'}).join('')+'</div>'+
+  '<div class="card'+(dir<0?' bk':'')+'"><p class="mu">Question '+(K+1)+' sur '+n+(c[1]?' · '+esc(c[1]):'')+'</p><h1>'+esc(c[0])+'</h1>'+
+  '<div class="ch">'+ch.map(function(x){return '<button class="b" data-c="'+esc(x)+'" aria-pressed="'+(v===x)+'">'+esc(x)+'<span aria-hidden="true">›</span></button>'}).join('')+
+  '<textarea class="in" id="t" placeholder="'+(ch.length?'Ou écrivez ici…':'Votre réponse, en quelques mots')+'" aria-label="Votre réponse">'+esc(ch.indexOf(v)<0&&v!=='Je ne sais pas'?v:'')+'</textarea>'+
+  '<button class="b" data-c="Je ne sais pas" aria-pressed="'+(v==='Je ne sais pas')+'">Je ne sais pas<span aria-hidden="true">›</span></button></div>'+
+  '<div class="ft">'+(K?'<button class="b lt" data-bk>← Retour</button>':'')+'<button class="b go" data-nx>Continuer</button></div></div>'}
+function garder(){var t=document.getElementById('t');if(t&&t.value.trim())R[K]=t.value.trim()}
+A.addEventListener('click',function(e){var b=e.target.closest('button,[data-k]');if(!b)return;
+ if(b.hasAttribute('data-c')){R[K]=b.getAttribute('data-c');dir=1;K++;rendre()}
+ else if(b.hasAttribute('data-nx')){garder();dir=1;K++;rendre()}
+ else if(b.hasAttribute('data-bk')){garder();dir=-1;K=Math.max(0,K-1);rendre()}
+ else if(b.hasAttribute('data-k')){dir=-1;K=+b.getAttribute('data-k');rendre()}
+ else if(b.hasAttribute('data-send')){b.disabled=true;b.textContent='Envoi…';
+  fetch(SERVICE+'/espace/reponses/'+J,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reponses:R})}).then(function(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.erreur||'Envoi impossible');return x})}).then(function(){
+   A.innerHTML=tete()+'<div class="card" style="text-align:center"><div class="ok">✓</div><h1>Merci, c\'est envoyé</h1><p class="mu">'+esc(D.prenom_artisan||'Votre artisan')+' a vos réponses et finalise votre devis. Vous pouvez fermer cette page.</p></div>'},
+   function(e){b.disabled=false;b.textContent='Envoyer mes réponses';var p=document.createElement('p');p.className='err';p.textContent=e.message+'. Vérifiez la connexion et réessayez.';b.parentNode.after(p)})}});
+if(!J){A.innerHTML='<div class="card"><h1>Lien incomplet</h1><p class="mu">Ouvrez le lien tel que votre artisan vous l\'a envoyé.</p></div>';return}
+fetch(SERVICE+'/espace/reponses/'+J).then(function(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.erreur||'Lien introuvable');return x})}).then(function(x){D=x;R=(x.reponses||[]).slice();
+ A.innerHTML=tete()+'<div class="card"><h1>Bonjour'+(x.prenom?' '+esc(x.prenom):'')+' !</h1><p>'+x.questions.length+' question'+(x.questions.length>1?'s':'')+' pour finaliser votre devis. Une minute suffit.</p><p class="mu">Si vous ne savez pas, touchez « Je ne sais pas » : on en parlera ensemble.</p><button class="b go" data-go>Commencer</button></div>';
+ A.querySelector('[data-go]').onclick=function(){K=0;rendre()}},
+ function(e){A.innerHTML='<div class="card"><h1>Lien plus valable</h1><p class="mu">'+esc(e.message)+'</p></div>'});
+})();
+</script>
+</body></html>
