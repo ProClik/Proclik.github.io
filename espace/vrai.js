@@ -310,6 +310,31 @@ function recalcOk(b){var k=COUR&&COUR.contact;if(!k)return;var id=k.id,pm=lsG(cl
   return api('/espace/demande?c='+encodeURIComponent(id)).then(function(y){if(COUR&&COUR.contact&&COUR.contact.id===id)afficher(y.demande)})
  }).catch(function(e){b.disabled=false;b.textContent='Garder ce calcul';toastV('Pas enregistré',e.message)})}
 function garderEd(){ED.touche=1;lsS(cleLg(),ED)}
+/* Étape C (Cyril, 17/11) : le calcul normal, puis le même avec la vraie cadence de l'artisan (espace/journee.js, « Mes cadences »).
+   Il compare les deux totaux et applique, ou non. Rien ne change sans son geste. */
+function cadR(){return window.PCJR&&PCJR.cadences?PCJR.cadences():{}}
+function cadLigne(l,r){var q=+l.quantite||0,pu=+l.pu||0,n={},k;for(k in l)n[k]=l[k];if(/^h/.test(l.unite||'')){n.quantite=Math.round(q*r*100)/100}else{n.pu=Math.round(pu*r*100)/100}n.total=Math.round((+n.quantite||0)*(+n.pu||0)*100)/100;n.cad=r;n.q0=l.quantite;n.pu0=l.pu;n.t0=l.total;return n}
+function cadInv(l){var n={},k;for(k in l)if(!/^(cad|q0|pu0|t0)$/.test(k))n[k]=l[k];n.quantite=l.q0;n.pu=l.pu0;n.total=l.t0;return n}
+function cadLignes(){var C=cadR(),o=[];if(!ED||!window.PCJR)return o;ED.main_oeuvre.forEach(function(l,i){if(l.cad)return;var t=PCJR.typeLigne(l.libelle);if(t&&C[t])o.push({i:i,t:t,c:C[t]})});return o}
+function cadCle(p){return 'pc-cadx-'+(COUR&&COUR.contact&&COUR.contact.id||'')+'-'+(p&&p.le||'')}
+function cadPct(r){var x=Math.round((r-1)*100);return (x>0?'+':x<0?'−':'')+Math.abs(x)+' %'}
+function cadHTML(p){if(!ED||!window.PCJR)return '';var tag=window.PCTAG?PCTAG('cliky','connaît votre cadence'):'';
+ var faite=ED.main_oeuvre.filter(function(l){return l.cad});
+ if(faite.length){var t0=totauxEd(p,{materiaux:ED.materiaux,main_oeuvre:ED.main_oeuvre.map(function(l){if(!l.cad)return l;return cadInv(l)})});
+  return '<div class="card vsec vcad ok">'+tag+'<b>✓ Votre cadence est appliquée</b><p class="vst" style="padding:4px 0 0">'+faite.length+' ligne'+(faite.length>1?'s':'')+' de main-d\'œuvre. Calcul normal : '+eur(t0.total_ht)+' HT. <a href="#" data-vcad="raz">Revenir au calcul normal</a></p></div>'}
+ var L=cadLignes();if(!L.length||lsG(cadCle(p)))return '';var k=cadCle(p);if(CADSEL.k!==k)CADSEL={k:k,non:{}};var oui=function(i){return !CADSEL.non[i]},nOui=L.filter(function(x){return oui(x.i)}).length;
+ var E2={materiaux:ED.materiaux,main_oeuvre:ED.main_oeuvre.map(function(l,i){var x=L.filter(function(y){return y.i===i})[0];return x&&oui(i)?cadLigne(l,x.c.r):l})},t1=totauxEd(p),t2=totauxEd(p,E2),d=t2.total_ht-t1.total_ht;
+ return '<div class="card vsec vcad">'+tag+'<h3>Avec votre cadence</h3><p class="vst" style="padding:0 0 10px">Cliky a fait son calcul normal. Le voici refait avec votre vrai rythme, appris sur vos chantiers.</p>'+
+  '<div class="vcad-2"><div><span>Calcul normal</span><b>'+eur(t1.total_ht)+'</b><small>HT</small></div><div class="on"><span>Avec votre cadence</span><b>'+eur(t2.total_ht)+'</b><small>HT · '+(d>=0?'+':'−')+eur(Math.abs(d))+'</small></div></div>'+
+  '<p class="vcad-q">Ligne par ligne : ma cadence ?</p><ul class="vcad-l">'+L.map(function(x){var l=ED.main_oeuvre[x.i],n=cadLigne(l,x.c.r),o=oui(x.i);return '<li class="'+(o?'':'non')+'"><span>'+esc(l.libelle)+'<small>'+esc(PCJR.nomType(x.t))+' '+cadPct(x.c.r)+' · appris sur '+x.c.n+' chantiers</small><b>'+(o?'<s>'+eur(l.total)+'</s> '+eur(n.total):eur(l.total)+' <s>'+eur(n.total)+'</s>')+'</b></span>'+
+   '<span class="vcad-on" role="group" aria-label="Ma cadence sur cette ligne"><button type="button" data-vcadl="'+x.i+'|0" aria-pressed="'+!o+'">Non</button><button type="button" data-vcadl="'+x.i+'|1" aria-pressed="'+o+'">Oui</button></span></li>'}).join('')+'</ul>'+
+  '<div class="vbtns vcad-b"><button type="button" class="vbtn" data-vcad="non">Garder le calcul normal</button>'+(nOui?'<button type="button" class="vbtn go" data-vcad="ok">Appliquer sur '+(nOui===L.length?(L.length>1?'les '+L.length+' lignes':'cette ligne'):nOui+' ligne'+(nOui>1?'s':''))+'</button>':'')+'</div></div>'}
+var CADSEL={k:null,non:{}};
+function cadLigneChoix(v){var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0],a=v.split('|'),c=document.querySelector('.vcad');if(!p||!c)return;if(a[1]==='1')delete CADSEL.non[a[0]];else CADSEL.non[a[0]]=1;var h=cadHTML(p);if(h)c.outerHTML=h}
+function cadAction(a){var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];if(!p||!ED)return;
+ if(a==='non'){lsS(cadCle(p),1);toastV('Calcul normal gardé','Vous pourrez toujours modifier une ligne à la main.');return retour()}
+ if(a==='ok'){var L=cadLignes().filter(function(x){return !CADSEL.non[x.i]});L.forEach(function(x){ED.main_oeuvre[x.i]=cadLigne(ED.main_oeuvre[x.i],x.c.r)});garderEd();toastV('Votre cadence est appliquée',L.length+' ligne'+(L.length>1?'s':'')+' de main-d\'œuvre recalculée'+(L.length>1?'s':'')+'.');return retour()}
+ if(a==='raz'){ED.main_oeuvre=ED.main_oeuvre.map(function(l){if(!l.cad)return l;return cadInv(l)});lsS(cadCle(p),1);garderEd();toastV('Calcul normal remis','Pour la main-d\'œuvre de votre cadence.');return retour()}}
 /* Ce qui manque encore du fournisseur : on ne valide pas tant que tous les prix ne sont pas là (Cyril, 2/11) */
 function manque(p){p=p||(COUR&&COUR.pre_devis[0]);if(!p||!p.lue||!ED)return [];return (p.attente||[]).map(function(a,i){return [a,i]}).filter(function(x){return !ED.four[x[1]]})}
 /* Mêmes taux que le serveur (calcul/vosfactures.js, lignesDevis) : marge sur les matériaux, frais généraux sur tout */
@@ -388,7 +413,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  else{ED=edition(p);var t=totauxEd(p);
   dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+controleHTML(p)+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
-   recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+
+   cadHTML(p)+recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
   mat=listeMatHTML(p)+lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;
@@ -590,7 +615,7 @@ function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){
   function(err){z.innerHTML='<h3>Vos vraies factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vraies factures (branchement en cours).':err.message)+'</p>'})}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok],[data-vcad],[data-vcadl]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vc'))ouvrirDemande(b.getAttribute('data-vc'));
  else if(b.hasAttribute('data-vfermer'))fermer();
  else if(b.hasAttribute('data-vetapes'))etapes();
@@ -598,6 +623,8 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-vretour'))retour();
  else if(b.hasAttribute('data-vplan'))voirPlan();
  else if(b.hasAttribute('data-vrecalc'))recalc();
+ else if(b.hasAttribute('data-vcadl'))cadLigneChoix(b.getAttribute('data-vcadl'));
+ else if(b.hasAttribute('data-vcad'))cadAction(b.getAttribute('data-vcad'));
  else if(b.hasAttribute('data-vrecalcok'))recalcOk(b);
  else if(b.hasAttribute('data-vrefresh'))charger();
  else if(b.hasAttribute('data-vout')){deconnecter(false)}
@@ -636,6 +663,7 @@ function lienDirect(){var h=location.hash;try{h=decodeURIComponent(h)}catch(e){}
 
 if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore branché','<div class="card"><p style="margin:0">Ce lien ouvre une vraie demande, mais l\'adresse du service ProClik n\'est pas encore réglée dans l\'Espace. Prévenez Cyril : c\'est une ligne à ajouter.</p></div>','<button class="vbtn" type="button" data-vfermer>Fermer</button>')},1500);return}
 /* Pour l'onglet Clients (clients.js) : appels au service, ouverture d'une demande, PDF d'un document */
+(function(){var c=document.createElement('style');c.textContent='.vcad h3{margin:0 0 4px}.vcad-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vcad-2>div{border-radius:14px;padding:10px 12px;background:var(--soft,#EEF1F6);display:grid;gap:2px}.vcad-2 span{font-size:12.5px;font-weight:700;color:var(--muted)}.vcad-2 b{font-size:20px}.vcad-2 small{font-size:12.5px;color:var(--muted);font-weight:600}.vcad-2 .on{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vcad-2 .on span,.vcad-2 .on small{color:inherit;opacity:.8}.vcad-l{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}.vcad-q{margin:12px 0 0;font-size:13px;font-weight:800;color:var(--muted)}.vcad-l li{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px;border-top:1px solid var(--line);padding-top:8px}.vcad-l small{display:block;color:var(--muted);font-size:12.5px}.vcad-l li>span:first-child b{display:block;margin-top:2px}.vcad-l s{color:var(--muted);font-weight:600}.vcad-l li.non>span:first-child{opacity:.75}.vcad-on{flex:none;display:inline-flex;padding:3px;border-radius:999px;background:var(--soft,#EEF1F6)}.vcad-on button{appearance:none;border:0;background:none;font:800 13.5px var(--f,inherit);color:var(--muted);min-width:48px;min-height:38px;border-radius:999px;cursor:pointer}.vcad-on button[aria-pressed=true]{background:var(--card,#fff);color:var(--fg);box-shadow:0 1px 3px rgba(14,19,34,.18)}.vcad-on button[data-vcadl$="|1"][aria-pressed=true]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vcad-b{margin-top:12px}.vcad-b .vbtn{flex:1 1 150px}.vcad.ok{border-left:4px solid var(--n1-laiton,#A8823F)}';document.head.appendChild(c)})();
 window.PCV={api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc,
  demandes:function(){return (LISTE&&LISTE.demandes)||[]},cour:function(){return COUR},recalc:function(){recalc()},toast:function(a,b){toastV(a,b)},
  questionsClient:function(p){var ok=lsG(vokCle(p))||[];return (p.a_verifier||[]).map(vcourt).map(function(x,i){return [x,i]}).filter(function(z){return z[0].g==='cli'&&ok.indexOf(z[1])<0}).map(function(z){return z[0].q})},artisan:function(){return lsG(KA)||{}},

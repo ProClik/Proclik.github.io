@@ -114,12 +114,12 @@ var css='.jr-c{display:grid;gap:10px}.jr-c .jr-h{display:flex;align-items:center
  '.vh-sec{display:grid;gap:6px;padding:14px;border-radius:18px;background:var(--n1-calme,var(--card,#fff))}.vh-r{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;border-top:1px solid var(--line,rgba(0,0,0,.08));padding-top:6px}.vh-r em{font-style:normal;color:var(--muted)}.vh-r b{white-space:nowrap}'+
  '.vh-pick{display:grid;gap:8px}.vh-pick .vh-tick{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--n1-in,inset 0 1px 3px rgba(0,0,0,.12));color:transparent}.vh-pick .vh-tick svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4}'+
  '.vh-pick.on .vh-c{box-shadow:0 0 0 2px var(--n1-nuit,#1B2440)}.vh-pick.on .vh-tick{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-qui{padding:0 6px}.vh-qui small{color:var(--muted);font-weight:700}'+
- VCSS+'.vh-i .vk{width:40px;height:27px}.vh-i.lg .vk{width:50px;height:33px}.vh-i svg.vk,.vh-o span svg.vk{fill:none;stroke:none}.vh-m .vh-o span svg.vk{width:58px;height:38px}.vk .vk-h{stroke:none}'+'.vh-m{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}.vh-m .vh-o{padding:10px 6px 9px;gap:4px;font-size:12.5px}.vh-m .vh-o span{width:62px;height:40px;color:var(--n1-nuit,#1B2440)}.vh-m .vh-o[aria-pressed=true] span{color:var(--n1-nuit-fg,#fff)}.vh-m .vh-o[aria-pressed=true] .vk-h{fill:#D4B483}'+'.jr-four{margin-top:12px;padding:12px;border-radius:16px;background:var(--soft,#EEF1F6);display:grid;gap:8px}.jr-four b{font-size:14.5px}'+
+ VCSS+'.vh-i .vk{width:40px;height:27px}.vh-i.lg .vk{width:50px;height:33px}.vh-i svg.vk,.vh-o span svg.vk{fill:none;stroke:none}.vh-m .vh-o span svg.vk{width:58px;height:38px}.vk .vk-h{stroke:none}'+'.vh-m{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}.vh-m .vh-o{padding:10px 6px 9px;gap:4px;font-size:12.5px}.vh-m .vh-o span{width:62px;height:40px;color:var(--n1-nuit,#1B2440)}.vh-m .vh-o[aria-pressed=true] span{color:var(--n1-nuit-fg,#fff)}.vh-m .vh-o[aria-pressed=true] .vk-h{fill:#D4B483}'+'.cad-big{margin:0;font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.1}.cad-big small{display:block;font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0;margin-top:4px}'+'.cad-t{display:grid;gap:0}.cad-t>div{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.cad-t b{display:block;font-size:14.5px}.cad-t small{display:block;color:var(--muted);font-size:12.5px;font-weight:600}.cad-t>div>span:nth-child(2){text-align:right;font-size:13.5px;font-weight:700}'+'.cad-t em{font-style:normal;font-weight:800;font-size:13px;padding:4px 8px;border-radius:999px;background:var(--soft,#EEF1F6)}.cad-n{color:var(--muted);font-size:13.5px;line-height:1.45}'+'.cad-r{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)}.cad-r:first-of-type{border-top:0}.cad-r b{display:block}.cad-r small{display:block;color:var(--muted);font-size:13px;font-weight:600}.cad-r .btn{flex:none}'+'.jr-four{margin-top:12px;padding:12px;border-radius:16px;background:var(--soft,#EEF1F6);display:grid;gap:8px}.jr-four b{font-size:14.5px}'+
  '@media print{body>*:not(#jr-print){display:none!important}}';
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 
 var I=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'};
-var IC={route:I('<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a4 4 0 0 0 0-8h-4a4 4 0 0 1 0-8h6"/>'),
+var IC={rythme:I('<path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1.2"/>'),route:I('<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a4 4 0 0 0 0-8h-4a4 4 0 0 1 0-8h6"/>'),
  horloge:I('<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>'),
  equipe:I('<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>'),
  coche:I('<path d="M4 12.5l5 5L20 6.5"/>')};
@@ -153,6 +153,7 @@ function fil(){var v=$('#v-accueil');if(!v)return;var f=$('#jr-fil');
  if(onJ()&&!aujourdhui().length){var e=evJour(d).map(chDeEv).filter(function(c){return c&&c.st!=='done'})[0];
   if(e)h+='<div class="card jr-c"><div class="jr-h"><span class="jr-ic">'+IC.route+'</span><span><b>Aujourd\'hui : '+esc(e.n)+'</b><small>'+esc(e.v)+' · touchez en partant, Cliky s\'occupe de l\'heure.</small></span></div><button type="button" class="btn go jr-go" data-jrgo="'+esc(e.id)+'">J\'y vais</button></div>'}
  if(onJ())h+=filEcheances();
+ h+=filCadences();
  var q=questionHS();if(q)h+='<div class="card jr-c"><div class="jr-h"><span class="jr-ic">'+IC.equipe+'</span><span><b>Des heures en plus '+(q===d?'aujourd\'hui':'hier')+' ?</b><small>Pour votre équipe. Vous seul décidez.</small></span></div>'+
   '<div class="jr-row"><button type="button" class="btn" data-jrhsrien="'+q+'">Rien</button><button type="button" class="btn go" data-jrhs="'+q+'">Ouvrir mon équipe</button></div></div>';
  var m=moisHS(d.slice(0,7));if(m.total&&onH())h+='<button type="button" class="card jr-c" data-jrmois style="text-align:left;width:100%"><div class="jr-h"><span class="jr-ic">'+IC.equipe+'</span><span><b>Heures sup de '+moisNom(d)+' : '+hmLong(m.total*60)+'</b><small>Récap par salarié, à imprimer ou à envoyer au comptable ›</small></span></div></button>';
@@ -396,13 +397,66 @@ function sw(k,t,sub){return '<div class="ch-sw jr-sw"><span>'+t+'<small>'+sub+'<
 function reglagesHTML(){return '<div class="xsec" id="jr-reg"><h3>À activer ou non pour votre entreprise</h3><div class="card jr-c">'+
  sw('jour','Journée de chantier','« J\'y vais », arrivée calculée, récap du soir à cocher. Les heures vont dans le coût du chantier.')+
  sw('hs','Heures sup de l\'équipe','Cliky vous demande le soir ou le lendemain. Récap du mois pour la paie.')+
+ sw('cad','Mes cadences','Cliky apprend votre vrai rythme sur vos chantiers terminés et vous le propose dans les pré-devis. Vous choisissez à chaque fois.')+
  (REG.jour!==false?'<button type="button" class="btn" data-jrvh>Mes véhicules ('+(VEHS().length?VEHS().length+' · '+VEHS().map(function(v){return v.nom}).join(', '):'à ajouter')+')</button>':'')+
- (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+'</div></div>'}
+ (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+(REG.cad!==false?'<button type="button" class="btn" data-jrcad>Mes cadences ('+(Object.keys(CAD.ret).length?Object.keys(CAD.ret).map(nomType).join(', '):'en apprentissage')+')</button>':'')+'</div></div>'}
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-jrsw],[data-jreq],[data-jrvh]');if(!t)return;
  if(t.dataset.jreq!=null){HQ=null;return equipe()}
  if(t.dataset.jrvh!=null){if($('#jr-rc'))return mesVehicules(function(){RC.carb=null;RC.vehs=RC.vehs.filter(vehDe);if(!RC.vehs.length)RC.vehs=vehDefaut(CH[RC.id]);rcRendre()});return mesVehicules(null)}
  var k=t.dataset.jrsw;REG[k]=REG[k]===false;save();var r=$('#jr-reg');if(r)r.outerHTML=reglagesHTML();
- X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':'Heures sup de l\'équipe');majPartout()});
+ X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':k==='cad'?'Mes cadences':'Heures sup de l\'équipe');majPartout()});
+
+/* ---------- Étape C : vos cadences (Cyril, 17/11 10 h 30) ----------
+   Cliky compare, chantier terminé par chantier terminé, les heures prévues et les heures passées (récaps du soir).
+   Quand plusieurs chantiers du même type montrent le même écart, il propose : « Je retiens votre cadence ? ».
+   Retenue, elle ne remplace rien : dans chaque pré-devis, Cliky montre le calcul normal ET le calcul avec votre cadence,
+   et c'est vous qui appliquez ou non (espace/vrai.js, cadHTML).
+   Seuils PROVISOIRES : 3 chantiers d'un même type, écart d'au moins 8 %. Un chantier qui mélange plusieurs types ne compte pas. */
+var TYPES=[['cloison','Cloisons',/cloison/i],['doublage','Doublages',/doublage/i],['plafond','Plafonds',/plafond/i],['rampants','Rampants',/rampant/i],
+ ['combles','Combles',/comble|soufflage|souffl[ée]/i],['sol','Sols',/carrelage|parquet|\bsols?\b/i],['porte','Portes',/\bportes?\b|bloc-porte/i],['fenetre','Fenêtres',/fen[êe]tre|baie/i]];
+var CAD_MIN=3,CAD_ECART=0.08,CAD_PROCHE=0.05;
+var CAD=Object.assign({ret:{},non:{}},lget('pc-cad',{}));
+var saveCad=function(){lset('pc-cad',CAD)};
+var onC=function(){return cliky()&&REG.cad!==false};
+var nomType=function(t){var x=TYPES.filter(function(y){return y[0]===t})[0];return x?x[1]:t};
+function typesDe(s){return TYPES.filter(function(t){return t[2].test(String(s||''))}).map(function(t){return t[0]})}
+/* une ligne de main-d'œuvre du pré-devis : son type, si on le reconnaît (le nettoyage, le déplacement… n'en ont pas) */
+function typeLigne(lib){if(/nettoyage|d[ée]placement|protection|d[ée]pose/i.test(lib||''))return null;var T=typesDe(lib);return T.length===1?T[0]:null}
+/* chantiers d'exemple : seulement en démo, marqués comme tels */
+var EXC=[{n:'M. Garnier',t:'Faux plafond de cuisine',d:'2026-09-18',prev:14,reel:16},{n:'Mme Roux',t:'Faux plafond du salon',d:'2026-09-30',prev:20,reel:22.5},{n:'SARL Vidal',t:'Faux plafond de bureau',d:'2026-10-02',prev:12,reel:13}];
+var demo=function(){return !document.documentElement.classList.contains('pcvrai')};
+function histo(type){var H=[];Object.keys(CH).forEach(function(k){var c=CH[k],m=c.mo||{};if(!(c.st==='done'||c.closed)||!(m.prev>0&&m.reel>0))return;var T=typesDe(c.t);if(T.length===1&&T[0]===type)H.push({n:c.n,t:c.t,prev:m.prev,reel:m.reel})});
+ if(demo())EXC.forEach(function(e){if(typesDe(e.t)[0]===type)H.push(Object.assign({ex:true},e))});return H}
+function mediane(L){L=L.slice().sort(function(a,b){return a-b});var n=L.length;return n?(n%2?L[(n-1)/2]:(L[n/2-1]+L[n/2])/2):1}
+function cadenceDe(type){var H=histo(type),r=Math.round(mediane(H.map(function(h){return h.reel/h.prev}))*100)/100;return {type:type,H:H,r:r}}
+function propositions(){if(!onC())return [];return TYPES.map(function(t){return cadenceDe(t[0])}).filter(function(c){var ret=CAD.ret[c.type];
+ if(c.H.length<CAD_MIN)return false;if(ret?Math.abs(c.r-ret.r)<CAD_PROCHE:Math.abs(c.r-1)<CAD_ECART)return false;if(CAD.non[c.type]&&c.H.length<CAD.non[c.type]+2)return false;return true})}
+var pctC=function(r){var p=Math.round((r-1)*100);return (p>0?'+':p<0?'−':'')+Math.abs(p)+' %'};
+function phraseC(r){var p=Math.abs(Math.round((r-1)*100));return r>=1?p+' % de temps en plus que prévu':p+' % de temps en moins que prévu'}
+function filCadences(){return propositions().slice(0,1).map(function(c){
+ return '<div class="card jr-c"><div class="jr-h"><span class="jr-ic">'+IC.rythme+'</span><span><b>'+nomType(c.type)+' : votre vraie cadence</b><small>Sur vos '+c.H.length+' derniers chantiers, vous avez mis '+phraseC(c.r)+'. Je retiens votre rythme ?</small></span></div>'+
+  '<div class="jr-row"><button type="button" class="btn" data-cadnon="'+c.type+'">Non merci</button><button type="button" class="btn go" data-cadvoir="'+c.type+'">Voir et décider</button></div></div>'}).join('')}
+function ficheCadence(type){var c=cadenceDe(type),ret=CAD.ret[type],ex=c.H.some(function(h){return h.ex});
+ var h='<div id="cad-f" class="vh"><div class="vh-f"><p class="cad-big">'+pctC(c.r)+'<small>'+(c.r>=1?'de temps en plus':'de temps en moins')+' que prévu, sur '+c.H.length+' chantiers</small></p>'+
+  '<div class="cad-t">'+c.H.map(function(x){var e=x.reel/x.prev;return '<div><span><b>'+esc(x.n)+'</b><small>'+esc(x.t)+(x.ex?' · exemple':'')+'</small></span><span>'+fr2(x.prev,1).replace(',0','')+' h prévues<small>'+fr2(x.reel,1).replace(',0','')+' h passées</small></span><em class="'+(e>=1?'cad-p':'cad-m')+'">'+pctC(e)+'</em></div>'}).join('')+'</div>'+
+  (ex?'<p class="cad-n">Chiffres d\'exemple : vos vrais chantiers prendront leur place.</p>':'')+'</div>'+
+  '<div class="vh-f"><span class="vh-lab">Et ensuite ?</span><p class="cad-n" style="margin:0">Cliky ne change rien tout seul. Dans chaque pré-devis de '+nomType(type).toLowerCase()+', il vous montrera <b>le calcul normal</b> et <b>le calcul avec votre cadence</b>, côte à côte. Vous choisissez à chaque fois.</p>'+
+  (ret?'<p class="cad-n" style="margin:0">Cadence retenue aujourd\'hui : '+pctC(ret.r)+'.</p>':'')+'</div>'+
+  '<div class="jr-ok"><button type="button" class="btn" data-cadnon="'+type+'">Non merci</button><button type="button" class="btn go" data-cadok="'+type+'">Je retiens ma cadence</button></div></div>';
+ X.xopen(nomType(type)+' : votre cadence','Calculée avec vos récaps du soir','<div>'+h+'</div>','')}
+function mesCadences(){var R=Object.keys(CAD.ret),E=TYPES.map(function(t){return cadenceDe(t[0])}).filter(function(c){return c.H.length&&!CAD.ret[c.type]});
+ var h='<div id="cad-m" class="vh"><p class="cad-n" style="margin:0 2px">Une cadence retenue ne change rien toute seule : chaque pré-devis vous montre le calcul normal et le calcul avec votre cadence.</p>'+
+  (R.length?'<div class="vh-f"><span class="vh-lab">Retenues</span>'+R.map(function(t){var x=CAD.ret[t];return '<div class="cad-r"><span><b>'+nomType(t)+'</b><small>'+phraseC(x.r)+' · '+x.n+' chantiers · le '+esc(x.le.split('-').reverse().join('/'))+'</small></span><button type="button" class="btn" data-cadoubli="'+t+'">Oublier</button></div>'}).join('')+'</div>':'')+
+  '<div class="vh-f"><span class="vh-lab">En cours d\'apprentissage</span>'+(E.length?E.map(function(c){return '<div class="cad-r"><span><b>'+nomType(c.type)+'</b><small>'+(c.H.length>=CAD_MIN?(Math.abs(c.r-1)<CAD_ECART?'Vous êtes dans les temps prévus ('+pctC(c.r)+')':phraseC(c.r)):c.H.length+' chantier'+(c.H.length>1?'s':'')+' sur '+CAD_MIN+' pour commencer')+'</small></span>'+(c.H.length>=CAD_MIN&&Math.abs(c.r-1)>=CAD_ECART?'<button type="button" class="btn go" data-cadvoir="'+c.type+'">Voir</button>':'')+'</div>'}).join(''):'<p class="cad-n" style="margin:0">Rien encore : il faut des chantiers terminés avec leurs récaps du soir.</p>')+'</div>'+
+  '<div class="jr-ok"><button type="button" class="btn go" data-cadfin>C\'est bon</button></div></div>';
+ X.xopen('Mes cadences',R.length?R.length+' retenue'+(R.length>1?'s':''):'Apprises sur vos chantiers','<div>'+h+'</div>','')}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-cadvoir],[data-cadnon],[data-cadok],[data-cadoubli],[data-cadfin],[data-jrcad]');if(!b)return;var s=b.dataset;
+ if(s.cadvoir)return ficheCadence(s.cadvoir);
+ if(s.cadnon){CAD.non[s.cadnon]=cadenceDe(s.cadnon).H.length;saveCad();if($('#cad-f'))X.xclose();X.toast('Pas de souci','Cliky reproposera après 2 nouveaux chantiers.');return fil()}
+ if(s.cadok){var c=cadenceDe(s.cadok);CAD.ret[s.cadok]={r:c.r,n:c.H.length,le:jourIso(0)};delete CAD.non[s.cadok];saveCad();X.xclose();X.toast('Cadence retenue',nomType(s.cadok)+' '+pctC(c.r)+' · vous la verrez dans vos prochains pré-devis.');return fil()}
+ if(s.cadoubli){delete CAD.ret[s.cadoubli];saveCad();X.toast('Cadence oubliée',nomType(s.cadoubli)+' : retour au calcul normal.');return mesCadences()}
+ if(s.cadfin!=null)return X.xclose();
+ if(s.jrcad!=null)return mesCadences()});
 
 /* ---------- branchements ---------- */
 function partir(id){var c=CH[id];if(!c)return;var d=jourIso(0),j=journee(d,id,true);j.dep=maintenant();j.ok=false;save();
@@ -425,5 +479,5 @@ function majPartout(){injecter();fil()}
 var chx=$('#chx');if(chx)new MutationObserver(function(){if(!$('#jr-ch',chx)&&$('.ch-res',chx)||!$('#jr-four',chx)&&$('#ch-four',chx))injecter()}).observe(chx,{childList:true,subtree:true});
 fil();setInterval(fil,60000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)majPartout()});
-window.PCJR={vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+window.PCJR={cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
