@@ -286,8 +286,9 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .opt{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--muted);margin-left:auto}
 @media (min-width:900px){#fx .grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;align-items:start}#fx .grid2>div:last-child h3:first-child{margin-top:0}}
 #v-face{white-space:nowrap}
-#fx-loupe{position:fixed;width:140px;height:140px;border-radius:50%;overflow:hidden;z-index:95;background:var(--surface);box-shadow:0 0 0 3px #B8924F,0 10px 28px rgba(0,0,0,.25);pointer-events:none}#fx-loupe svg{width:100%;height:100%;display:block}#fx-loupe i{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border:1.5px solid #B8924F;border-radius:50%;opacity:.7}
-#fx .pk-in.mini{max-width:420px}#fx .mg{display:flex;align-items:center;gap:12px;margin:6px 0 14px;font-size:15px}#fx .mg svg{width:64px;height:64px;flex:none}
+#fx-loupe{position:fixed;width:92px;height:92px;border-radius:50%;overflow:hidden;z-index:95;background:var(--surface);box-shadow:0 0 0 1px rgba(184,146,79,.7),0 4px 12px rgba(0,0,0,.14);pointer-events:none}#fx-loupe svg{width:100%;height:100%;display:block}#fx-loupe i{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border:1px solid #B8924F;border-radius:50%;opacity:.6}
+#fx .pk-in.mini{max-width:420px}#fx .tiles.mg2{grid-template-columns:repeat(2,1fr)}#fx .mg2 .tile svg{width:64px;height:64px}
+#fx .mg{display:flex;align-items:center;gap:12px;margin:6px 0 14px;font-size:15px}#fx .mg svg{width:64px;height:64px;flex:none}
 
 #fx .halo{fill:#B8924F;opacity:.2}#fx .sym.st-exist{opacity:.45}#fx .sym.st-exist.on{opacity:.8}
 #fx .it .dt.faire{box-shadow:0 0 0 3px rgba(184,146,79,.35)}#fx .it .dt.exist{opacity:.4}
@@ -349,7 +350,7 @@ function render(){const d=$("fx"),P=K(),rm=room();if(!rm)return close();const F=
  h+=V.met?`<div class="card" style="margin-top:14px">${metHTML(M)}</div>`:`<button class="lien" data-a="met">Mes métiers : ${M.length?esc(M.map(k=>(MET.find(m=>m[0]===k)||[,""])[1]).join(", ")):"aucun choisi"}</button>`;
  h+=V.reg?`<div class="card" style="margin-top:10px">${regHTML()}</div>`:(fams().length?`<button class="lien" data-a="reg">Mes règles de pose (hauteurs, distances)</button>`:"");
  d.innerHTML=h+`</div>`+(V.merge&&V.tab==="mur"&&wall()?mergeHTML():V.pick?pickHTML():"")}
-function mergeHTML(){const E=eqs(wall().s),a=E[V.merge.i],b=E[V.merge.j];if(!a||!b){V.merge=null;return""}const n=MOD[a.t]+MOD[b.t],t=n===2?"pc2":"pc3";return`<div class="pick" role="dialog" aria-label="Prises collées"><div class="pk-in mini"><div class="pk-h"><b>Ces prises se touchent</b><button class="rd" data-a="mergeno" aria-label="Fermer">✕</button></div><div class="mg">${icoMur(t)}<span>On en fait une <b>${T[t].n.toLowerCase()}</b> (un seul boîtier) ?</span></div><button class="bt go big" data-a="mergeok" style="width:100%;justify-content:center">Oui, ${T[t].n.toLowerCase()}</button><button class="bt big" data-a="mergeno" style="width:100%;justify-content:center;margin-top:8px">Non, garder ${n} prises</button></div></div>`}
+function mergeHTML(){const E=eqs(wall().s),a=E[V.merge.i],b=E[V.merge.j];if(!a||!b){V.merge=null;return""}const n=MOD[a.t]+MOD[b.t],opts=n===2?["pc2","pc3"]:["pc3"];return`<div class="pick" role="dialog" aria-label="Prises collées"><div class="pk-in mini"><div class="pk-h"><b>Ces prises se touchent : on en fait…</b><button class="rd" data-a="mergeno" aria-label="Fermer">✕</button></div><div class="tiles mg2">${opts.map(t=>`<button class="tile" data-a="mergeok" data-t="${t}">${icoMur(t)}<span>Une ${T[t].n.toLowerCase()}</span></button>`).join("")}</div><button class="bt big" data-a="mergeno" style="width:100%;justify-content:center;margin-top:10px">Non, garder ${n} prises séparées</button></div></div>`}
 function head(t,s,noBack){return`<div class="eh">${noBack?"":`<button class="bk" data-a="close" aria-label="Retour au plan">‹ Plan</button>`}<div class="tx"><b>${esc(t)}</b><small>${esc(s)}</small></div>${noBack?`<button class="rd" data-a="close" aria-label="Fermer">✕</button>`:""}</div>`}
 function area(p){let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1]}return a/2}
 function metHTML(M){return`<p style="margin:4px 2px 6px;font-weight:800;font-size:16px">Quels métiers faites-vous ?</p><div class="muted" style="font-size:14px">Touchez les vôtres. Les prises ne sont proposées qu'aux électriciens, l'eau aux plombiers, la clim aux climaticiens.</div><div class="met">${MET.map(([k,n])=>`<button class="bt${M.includes(k)?" on":""}" data-met="${k}" aria-pressed="${M.includes(k)}">${M.includes(k)?"✓ ":""}${n}</button>`).join("")}</div><button class="bt go big" data-a="metok">C'est noté</button>`}
@@ -416,7 +417,7 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
  if(a==="close")return close();
  if(a==="pickx"){V.pick=null;return render()}
  if(a==="mergeno"){V.merge=null;return render()}
- if(a==="mergeok"&&V.merge){const E=eqs(wall().s),A=E[V.merge.i],B=E[V.merge.j];if(A&&B){snap();const n=MOD[A.t]+MOD[B.t],t=n===2?"pc2":"pc3";B.x=Math.round((A.x*MOD[A.t]+B.x*MOD[B.t])/n);B.t=t;B.n=T[t].n;if(A.st==="faire")B.st="faire";E.splice(V.merge.i,1);V.sel=E.indexOf(B)}V.merge=null;save();render();toast("Une seule "+(V.sel>=0?eqs(wall().s)[V.sel].n.toLowerCase():"prise"));return}
+ if(a==="mergeok"&&V.merge){const E=eqs(wall().s),A=E[V.merge.i],B=E[V.merge.j];if(A&&B){snap();const n=MOD[A.t]+MOD[B.t],t=d.t||(n===2?"pc2":"pc3");B.x=Math.round((A.x*MOD[A.t]+B.x*MOD[B.t])/n);B.t=t;B.n=T[t].n;if(A.st==="faire")B.st="faire";E.splice(V.merge.i,1);V.sel=E.indexOf(B)}V.merge=null;save();render();toast("Une seule "+(V.sel>=0?eqs(wall().s)[V.sel].n.toLowerCase():"prise"));return}
  if(a==="askx"){V.ask=false;return render()}
  if(a==="allfaire"){snap();const L=V.tab==="mur"?(K().EQ.get(wall().s.a)||[]):(room().eqp||[]),all=L.filter(e=>vis(e.t)).every(e=>e.st==="faire");L.forEach(e=>{if(vis(e.t))e.st=all?undefined:"faire"});save();render();toast(all?"Tout remis « déjà en place »":"Tout est à faire ici");return}
  if(a==="reg"){V.reg=!V.reg;render();if(V.reg)setTimeout(()=>{const c=$("fx").querySelector(".regs");c&&c.scrollIntoView({behavior:"smooth",block:"start"})},30);return}
@@ -457,9 +458,9 @@ function onChange(ev){const i=ev.target;if(!V)return;
 
 /* Loupe au-dessus du doigt pendant le glissement (le doigt cache ce qu'on touche) */
 function loupe(ev,c){let d=$("fx-loupe");if(!ev){if(d)d.hidden=true;return}if(ev.pointerType==="mouse")return;const svg=DR&&DR.svg;if(!svg)return;
- if(!d){d=document.createElement("div");d.id="fx-loupe";d.innerHTML='<svg></svg><i></i>';$("fx").appendChild(d)}const S=140,Z=2.4,vb=svg.viewBox.baseVal,sc=vb.width/svg.getBoundingClientRect().width,w=S*sc/Z;
+ if(!d){d=document.createElement("div");d.id="fx-loupe";d.innerHTML='<svg></svg><i></i>';$("fx").appendChild(d)}const S=92,Z=2,vb=svg.viewBox.baseVal,sc=vb.width/svg.getBoundingClientRect().width,w=S*sc/Z;
  const ls=d.querySelector("svg");ls.setAttribute("viewBox",`${c.x-w/2} ${c.y-w/2} ${w} ${w}`);ls.setAttribute("font-size",svg.getAttribute("font-size")||"");ls.innerHTML=svg.innerHTML;
- let top=ev.clientY-S-70;if(top<8)top=ev.clientY+60;d.style.left=Math.max(8,Math.min(innerWidth-S-8,ev.clientX-S/2))+"px";d.style.top=top+"px";d.hidden=false}
+ let top=ev.clientY-S-26;if(top<8)top=ev.clientY+30;d.style.left=Math.max(8,Math.min(innerWidth-S-8,ev.clientX-S/2))+"px";d.style.top=top+"px";d.hidden=false}
 /* Doigt : sur un élément = le glisser (pas de 5 cm) ; sur le mur vide = toucher pour poser, glisser à gauche/droite = mur suivant. */
 let DR=null,BG=null;
 function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
