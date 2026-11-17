@@ -265,11 +265,12 @@ function ouvrirDemande(c){if(!c)return;
 var COUR=null;
 /* Plan dessiné par le client : le module Plan s'ouvre en mode artisan et reçoit le plan de la demande.
    Les retouches de l'artisan restent sur cet appareil (une sauvegarde par client). */
-function voirPlan(){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan;if(!P)return;var k=COUR.contact||{},nom=k.nom||'le client';
- ouvrir('📐 Plan de '+esc(nom)+'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>','<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=44&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
+var VPNEW=false;
+function voirPlan(nouveau){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan,pm=lsG(clePm());if(!P&&!pm&&!nouveau)return;var k=COUR.contact||{},nom=k.nom||'le client',moi=!P;VPNEW=moi;
+ ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=45&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
- if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||''},'*')}
+ if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||'',nouveau:VPNEW},'*')}
  /* Plan retouché par l'artisan : gardé ici jusqu'au recalcul (sauf s'il est identique au plan déjà recalculé) */
  if(d.type==='proclik-plan-modifie'&&d.plan&&COUR&&COUR.contact){var D2=COUR.demande,P2=D2&&D2.plan_corrige_le&&D2.details&&D2.details.plan;if(P2&&JSON.stringify(P2)===JSON.stringify(d.plan))lsS(clePm(),null);else lsS(clePm(),{t:Date.now(),plan:d.plan})}});
 /* Le pré-devis à valider, comme un devis qu'on travaille (Cyril, 31/10) : le total, le plan, les lignes modifiables d'un appui,
@@ -404,7 +405,7 @@ function recalcHTML(d){if(lsG(clePm()))return '<div class="card vsec vrc"><b>�
 function boutonPlan(a){return '<button type="button" class="vtab-plan'+(a?'':' vsans')+'" '+(a?'data-vplan':'data-vnoplan')+' aria-label="'+(a?'Voir le plan':'Pas de plan dessiné')+'">'+ICPLAN+'<span>Plan</span>'+(a?'':'<i class="vx" aria-hidden="true">×</i>')+'</button>'}
 var ICPLAN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 12h7v8M11 4v5M15 12h5"/></svg>';
 (function(){var s=document.createElement('style');s.textContent='html body .cf .dv-seg button.vtab-plan.vsans{opacity:.5;box-shadow:none}html body .cf .dv-seg button.vtab-plan .vx{position:absolute;top:3px;right:calc(50% - 24px);width:17px;height:17px;min-width:0;padding:0;border-radius:50%;background:var(--muted,#8A90A0);color:#fff;font:700 13px/17px var(--f,inherit);text-align:center}';document.head.appendChild(s)})();
-function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});
+function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});if(!aPlan){var pm0=lsG(clePm());aPlan=!!(pm0&&pm0.plan&&(pm0.plan.floors||[]).some(function(f){return (f.pieces||[]).length}))}
  var plan=aPlan?'<button class="vbtn" type="button" data-vplan style="width:100%">📐 '+(d.demande.plan_corrige_le?'Voir le plan (retouché par vous)':'Voir le plan dessiné par le client')+'</button>':'';
  /* Le client : ses coordonnées, ses réponses, ses photos, son plan */
  var cl='<div class="card"><div class="vkv">'+(k.telephone?'<span>Téléphone</span><b><a href="tel:'+esc(k.telephone)+'">'+esc(k.telephone)+'</a></b>':'')+(k.email?'<span>E-mail</span><b style="word-break:break-all"><a href="mailto:'+esc(k.email)+'">'+esc(k.email)+'</a></b>':'')+
@@ -623,14 +624,15 @@ function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){
   function(err){z.innerHTML='<h3>Vos vraies factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vraies factures (branchement en cours).':err.message)+'</p>'})}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vnoplan],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok],[data-vcad],[data-vcadl]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vnoplan],[data-vplannew],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok],[data-vcad],[data-vcadl]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vc'))ouvrirDemande(b.getAttribute('data-vc'));
  else if(b.hasAttribute('data-vfermer'))fermer();
  else if(b.hasAttribute('data-vetapes'))etapes();
  else if(b.hasAttribute('data-vset'))changer(b.getAttribute('data-vset'));
  else if(b.hasAttribute('data-vretour'))retour();
  else if(b.hasAttribute('data-vplan'))voirPlan();
- else if(b.hasAttribute('data-vnoplan'))toastV('Pas de plan','Le client n\'a pas dessiné de plan pour cette demande.');
+ else if(b.hasAttribute('data-vnoplan'))ouvrir('📐 Pas de plan<small>'+esc((COUR&&COUR.contact&&COUR.contact.nom)||'Le client')+' n\'a pas dessiné de plan avec sa demande</small>','<div class="card vsec"><p class="vst" style="padding:0">Vous pouvez le dessiner vous-même, par exemple pendant la visite. Ensuite, un appui sur « Recalculer » et le pré-devis le reprend.</p></div>','<button class="vbtn" type="button" data-vretour>← Retour</button><button class="vbtn go" type="button" data-vplannew>📐 Créer le plan</button>');
+ else if(b.hasAttribute('data-vplannew'))voirPlan(true);
  else if(b.hasAttribute('data-vrecalc'))recalc();
  else if(b.hasAttribute('data-vcadl'))cadLigneChoix(b.getAttribute('data-vcadl'));
  else if(b.hasAttribute('data-vcad'))cadAction(b.getAttribute('data-vcad'));
