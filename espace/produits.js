@@ -103,13 +103,45 @@ function sourceBC(){var s=BC.source||'',m=/—\s*([^(,]+)/.exec(s),d=/relevé du
  return t?'Prix de votre fournisseur ('+t.charAt(0).toUpperCase()+t.slice(1)+(d?', relevés le '+d[1]:'')+').':''}
 function ligneBC(a){return '<button class="cf-li pr-li bc-li" type="button" data-bc="'+esc(a.c)+'"><span class="tx"><b>'+esc(a.d)+'</b><small>'+esc(a.cond)+
   (a.modifie?' · <em class="bc-m">votre prix</em>':a.ajoute?' · <em class="bc-m">ajouté par vous</em>':a.provisoire?' · <em class="bc-p">prix provisoire</em>':'')+'</small></span><span class="cf-m"><b>'+prix(a.pc)+'</b><small>/ '+esc(parCond(a))+'</small></span></button>'}
-function vueBC(){var A=BC.articles;
+/* ---------- Mes fournisseurs (17/11, Cyril) : une carte par fournisseur, on y glisse ses documents ---------- */
+var FO=lsG('pc-cliky-four',null),FOe='',LF='';
+function chargerFO(force){if(!enDirect()||FOe==='charge'||(FOe==='ok'&&!force))return;FOe='charge';
+ PCV.api('/espace/fournisseurs').then(function(x){FO=x.fournisseurs||[];lsS('pc-cliky-four',FO);FOe='ok';if(seg==='cliky')vue()},function(){FOe='err'})}
+function fourDe(id){return (FO||[]).filter(function(f){return f.id===id})[0]}
+function vueFO(){if(!FO)return '';
+ return '<div class="sec-h bc-fh"><h2>Mes fournisseurs</h2><span>'+FO.length+'</span></div><div class="bc-fos">'+FO.map(function(f){
+  return '<div class="card bc-fo"><button type="button" class="bc-fot" data-bcfo="'+esc(f.id)+'"><b>'+esc(f.nom)+'</b><small>'+(f.habituel?'<em class="bc-m">votre fournisseur habituel</em> · ':'')+f.n+' article'+(f.n>1?'s':'')+'</small></button>'+
+   '<button class="btn sm bc-aj" type="button" data-bclire="'+esc(f.id)+'">'+IC.doc+'<span>Déposer un tarif, un devis ou une facture</span></button></div>'}).join('')+
+  '<button class="btn sm bc-aj bc-fonew" type="button" data-bcfonew>'+IC.plus+'<span>Ajouter un fournisseur</span></button></div>'}
+function corpsFO(f){f=f||{};var m=f.relance_mois==null?6:f.relance_mois;
+ return '<div class="cf-form pr-form bc-foform"><label>Nom du fournisseur<input id="fo-n" autocomplete="off" placeholder="Ex. : Point P Grenoble" value="'+esc(f.nom||'')+'"'+(f.id==='base'?'':'')+'></label>'+
+  '<label>Son e-mail <small>pour lui demander son tarif à jour</small><input id="fo-e" type="email" autocomplete="off" placeholder="agence@fournisseur.fr" value="'+esc(f.email||'')+'"></label>'+
+  '<p class="bc-lab">Lui redemander son tarif</p><div class="pr-u" role="group" aria-label="Relance">'+[[3,'tous les 3 mois'],[6,'tous les 6 mois'],[12,'tous les ans'],[0,'jamais']].map(function(x){return '<button type="button" data-forel="'+x[0]+'" aria-pressed="'+(m===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'+
+  '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'')+'La relance partira de l\'adresse de Cliky dès qu\'elle sera ouverte : vous la validerez la première fois.</div></div>'}
+var FOF={};
+function ouvrirFO(id){var f=id?fourDe(id):null;FOF={id:id||'',rel:f?f.relance_mois:6};
+ X.xopen(f?f.nom:'Ajouter un fournisseur',f?(f.n+' article'+(f.n>1?'s':'')+(f.habituel?' · fournisseur habituel':'')):'Vous y glisserez ensuite ses tarifs et factures',corpsFO(f),
+  (f&&!f.habituel?'<button class="btn" data-fohab="'+esc(f.id)+'">Mon habituel</button>':f&&f.id!=='base'&&!f.n?'<button class="btn" data-fosup="'+esc(f.id)+'">Retirer</button>':'<button class="btn" data-xclose>Annuler</button>')+'<button class="btn go" data-fook>Enregistrer</button>')}
+function envoyerFO(corps,msg){$$('[data-fook],[data-fohab],[data-fosup]').forEach(function(x){x.disabled=true});
+ PCV.api('/espace/fournisseurs',{method:'POST',body:corps}).then(function(x){FO=x.fournisseurs||[];lsS('pc-cliky-four',FO);X.xclose();vue();X.toast(msg[0],msg[1])},
+  function(e){$$('[data-fook],[data-fohab],[data-fosup]').forEach(function(x){x.disabled=false});X.toast('Pas enregistré',e.message)})}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bcfo],[data-bcfonew],[data-forel],[data-fook],[data-fohab],[data-fosup]');if(!b||!X)return;var a=function(n){return b.getAttribute(n)};
+ if(b.hasAttribute('data-bcfo'))ouvrirFO(a('data-bcfo'));
+ else if(b.hasAttribute('data-bcfonew'))ouvrirFO('');
+ else if(b.hasAttribute('data-forel')){FOF.rel=+a('data-forel');$$('[data-forel]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}
+ else if(b.hasAttribute('data-fohab'))envoyerFO({id:a('data-fohab'),habituel:true},['Fournisseur habituel changé','Cliky prend ses prix d\'abord.']);
+ else if(b.hasAttribute('data-fosup'))envoyerFO({id:a('data-fosup'),supprimer:true},['Fournisseur retiré','']);
+ else{var n=(($('#fo-n')||{}).value||'').trim(),m=(($('#fo-e')||{}).value||'').trim();if(!n){X.toast('Il manque le nom','Le nom du fournisseur.');return}
+  envoyerFO(FOF.id?{id:FOF.id,modif:{nom:n,email:m,relance_mois:FOF.rel}}:{ajout:{nom:n,email:m,relance_mois:FOF.rel}},[FOF.id?'Fournisseur enregistré':'Fournisseur ajouté',FOF.id?'':'Glissez-y ses tarifs et factures : Cliky les lit.'])}});
+function vueBC(){var A=BC.articles;chargerFO();
  if(!A)return '<p class="hint">'+(BC.etat==='err'?esc(BC.err||'Base indisponible pour l\'instant.')+' <button class="lnk" type="button" data-bcre>Réessayer</button>':'Chargement de la base de Cliky…')+'</p>';
  var t=sansAcc(qc).trim(),L=t?A.filter(function(a){return sansAcc(a.d+' '+a.f+' '+a.c+' '+a.cond).indexOf(t)>=0}):A;
  var h='<div class="card pr-info"><span class="pr-ci">'+IC.cliky+'</span><div><b>'+A.length+' articles que Cliky utilise pour vos pré-devis</b><p>'+esc(sourceBC())+' Touchez un article pour mettre votre prix : Cliky le prend dès le prochain pré-devis, et « Recalculer » aussi.</p>'+
   (BC.n?'<p class="bc-n">'+BC.n+' changement'+(BC.n>1?'s':'')+' de votre part</p>':'')+'</div></div>'+
+  vueFO()+
+  '<div class="sec-h bc-fh"><h2>Tous les articles</h2><span>'+A.length+'</span></div>'+
   '<label class="pr-q">'+IC.cherche+'<input id="pr-qc" type="search" autocomplete="off" placeholder="Chercher : BA13, vis, laine, porte…" value="'+esc(qc)+'"></label>'+
-  '<div class="bc-acts"><button class="btn sm bc-aj" type="button" data-bclire>'+IC.doc+'<span>Lire une facture fournisseur</span></button><button class="btn sm bc-aj" type="button" data-bcnew>'+IC.plus+'<span>Ajouter un article</span></button></div>';
+  '<div class="bc-acts"><button class="btn sm bc-aj" type="button" data-bcnew>'+IC.plus+'<span>Ajouter un article</span></button></div>';
  if(!L.length)return h+'<p class="hint">Rien pour « '+esc(qc)+' ». <button class="lnk" type="button" data-bcnew>L\'ajouter</button></p>';
  var G=[],ix={};L.forEach(function(a){if(!(a.f in ix)){ix[a.f]=G.length;G.push({f:a.f,L:[]})}G[ix[a.f]].L.push(a)});
  G.forEach(function(g){var o=t||BC.ouv[g.f];
@@ -133,7 +165,7 @@ function corpsAjBC(){var f=[];(BC.articles||[]).forEach(function(a){if(f.indexOf
   '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'')+'Cliky le connaît dès le prochain pré-devis. ProClik le range ensuite dans votre base.</div></div>'}
 function lireAjBC(){var g=function(id){var e=$(id);return e?e.value:null};var d=g('#bc-d');if(d!=null)FB.d=d;var c=g('#bc-c');if(c!=null)FB.c=c;var p=g('#bc-p');if(p!=null)FB.p=p;var f=g('#bc-f');if(f!=null)FB.f=f}
 function ajBC(nom){FB={d:nom||'',c:'unité'};X.xopen('Ajouter un article','À la base de Cliky',corpsAjBC(),'<button class="btn" data-xclose>Annuler</button><button class="btn go" data-bcaok>Ajouter</button>')}
-function uniteDe(c){var m=/de\s+[\d.,]+\s*(m²|m³|ml|m|kg|l)\b/i.exec(c);if(m)return m[1];if(/\d/.test(c))return 'pièce';var w=parCond({cond:c});return w==='unité'?'u':w}
+function uniteDe(c){var m=/de\s+[\d.,]+\s*(m²|m³|ml|kg|m|l)(?![a-z])/i.exec(c);if(m)return m[1];if(/\d/.test(c))return 'pièce';var w=parCond({cond:c});return w==='unité'?'u':w}
 function envoyerBC(corps,msg){$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup],[data-bcluok]').forEach(function(x){x.disabled=true});
  return PCV.api('/espace/base',{method:'POST',body:corps}).then(function(x){majBC(x);BC.etat='ok';X.xclose();vue();X.toast(msg[0],msg[1])},
   function(e){$$('[data-bcok],[data-bcaok],[data-bcori],[data-bcsup],[data-bcluok]').forEach(function(x){x.disabled=false});X.toast('Pas enregistré',e.message)})}
@@ -143,24 +175,33 @@ function fichierB64(f){return new Promise(function(ok,ko){
  if(f.type==='application/pdf'){if(f.size>3.5*1048576)return ko(new Error('PDF trop lourd (3,5 Mo au plus) : envoyez une photo de chaque page.'));var r=new FileReader();r.onload=function(){ok(String(r.result))};r.onerror=function(){ko(new Error('Fichier illisible'))};return r.readAsDataURL(f)}
  var u=URL.createObjectURL(f),im=new Image();im.onload=function(){var k=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.85))};
  im.onerror=function(){ko(new Error('Photo illisible : JPEG, PNG ou PDF'))};im.src=u})}
-function lireDoc(f){if(!f||!X)return;LU=null;
- X.xopen('Cliky lit votre document','Facture, devis ou bon de livraison','<div class="bc-lu"><p class="bc-att"><span class="bc-sp"></span>Cliky lit chaque ligne et la retrouve dans votre base. Comptez une demi-minute.</p></div>','<button class="btn" data-xclose>Annuler</button>');
- fichierB64(f).then(function(d){return PCV.api('/espace/lire-document',{method:'POST',body:{fichier:d,nom:f.name}})}).then(function(x){LU=x;afficherLu()},
+function lireDoc(f){if(!f||!X)return;LU=null;var fo=fourDe(LF);
+ X.xopen('Cliky lit votre document',fo?fo.nom:'Tarif, devis, facture ou bon de livraison','<div class="bc-lu"><p class="bc-att"><span class="bc-sp"></span>Cliky lit chaque ligne et la retrouve dans votre base. Comptez une demi-minute.</p></div>','<button class="btn" data-xclose>Annuler</button>');
+ fichierB64(f).then(function(d){return PCV.api('/espace/lire-document',{method:'POST',body:{fichier:d,nom:f.name,fournisseur:LF}})}).then(function(x){LU=x;afficherLu()},
   function(e){var z=$('.bc-lu');if(z)z.innerHTML='<p class="hint">'+esc(e.message)+'</p>'})}
 function afficherLu(){var z=$('.bc-lu');if(!z||!LU)return;var d=LU.document||{},L=LU.lignes||[];
+ /* document déposé chez un autre fournisseur que celui de l'article : son prix devient un article de CE fournisseur (on compare, on n'écrase pas) */
+ var art=function(c){return (BC.articles||[]).filter(function(x){return x.c===c})[0]||{}},ailleurs=[];
+ if(LU.fournisseur){L=L.filter(function(l){var a=art(l.code);if(l.code&&l.apres&&a.four&&a.four!==LU.fournisseur){var f0=fourDe(a.four);ailleurs.push({designation:l.article,cond_lu:l.conditionnement,famille:a.f,reference:l.reference,prix_ht:l.apres,compare:l.avant,chez:f0?f0.nom:'',sur:l.sur,note:l.note,u:a.u,pu:a.pu&&a.pc?Math.round(a.pu*l.apres/a.pc*1e6)/1e6:0});return false}return true})}
  var ch=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)>=0.005}),pareil=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)<0.005}).length,hors=L.filter(function(l){return !l.code});
  var h='<p class="bc-d"><b>'+esc((d.type||'Document').replace(/^./,function(c){return c.toUpperCase()})+(d.fournisseur?' '+d.fournisseur:''))+'</b><small>'+esc([d.numero?'n° '+d.numero:'',d.date].filter(Boolean).join(' · '))+' · '+L.length+' ligne'+(L.length>1?'s':'')+' lue'+(L.length>1?'s':'')+'</small></p>';
  if(ch.length)h+='<p class="hint">Cochez les prix à mettre à jour. Ceux qui demandent un œil ne sont pas cochés.</p>'+ch.map(function(l,i){return '<label class="bc-lp'+(l.sur?'':' doute')+'"><input type="checkbox" data-bclp="'+i+'"'+(l.sur?' checked':'')+'><span><b>'+esc(l.article)+'</b><small>'+esc(l.conditionnement)+' · lu : « '+esc(l.designation)+' »</small>'+(l.note?'<em>'+esc(l.note)+'</em>':'')+'</span><i>'+prix(l.avant)+' → <b>'+prix(l.apres)+'</b><small>'+(l.ecart_pct>0?'+':'')+String(l.ecart_pct).replace('.',',')+' %</small></i></label>'}).join('');
  else h+='<p class="hint">Aucun prix à changer'+(pareil?' : '+pareil+' prix déjà à jour.':'.')+'</p>';
  if(ch.length&&pareil)h+='<p class="hint">'+pareil+' prix déjà à jour.</p>';
- if(hors.length)h+='<details class="bc-hors"><summary>'+hors.length+' ligne'+(hors.length>1?'s':'')+' pas dans votre base</summary>'+hors.map(function(l){return '<p>'+esc(l.designation)+(l.prix_ht?' · '+prix(l.prix_ht):'')+'</p>'}).join('')+'<p class="hint">Ajoutez-les avec « Ajouter un article » si vous les reprenez souvent.</p></details>';
- if(ch.length)h+='<div class="bc-luf"><button class="btn go" type="button" data-bcluok>Mettre à jour les prix cochés</button></div>';
- z.innerHTML=h;LU.ch=ch}
+ var fo=fourDe(LU.fournisseur),nv=ailleurs.concat(hors).filter(function(l){return l.prix_ht>0&&!/livraison|transport|frais de port|\bport\b|éco-?participation|remise|acompte/i.test(l.designation)}),autres=hors.filter(function(l){return nv.indexOf(l)<0});
+ if(nv.length)h+='<p class="bc-lab">'+nv.length+' produit'+(nv.length>1?'s':'')+' pas encore dans votre base</p><p class="hint">'+(fo?'Cochés : ils seront rangés chez '+esc(fo.nom)+'.':'Cochez ceux que vous reprenez souvent.')+'</p>'+
+  nv.map(function(l,i){return '<label class="bc-lp"><input type="checkbox" data-bcln="'+i+'"'+(fo&&l.sur!==false?' checked':'')+'><span><b>'+esc(l.designation)+'</b><small>'+esc([l.cond_lu,l.famille,l.reference?'réf. '+l.reference:''].filter(Boolean).join(' · '))+'</small>'+(l.compare?'<em class="bc-cmp">'+(l.prix_ht<l.compare?'Moins cher':'Plus cher')+' que chez '+esc(l.chez||'votre autre fournisseur')+' ('+prix(l.compare)+')</em>':'')+'</span><i><b>'+prix(l.prix_ht)+'</b><small>'+esc(l.cond_lu||'')+'</small></i></label>'}).join('');
+ if(autres.length)h+='<details class="bc-hors"><summary>'+autres.length+' ligne'+(autres.length>1?'s':'')+' non reprise'+(autres.length>1?'s':'')+' (frais, lignes sans prix)</summary>'+autres.map(function(l){return '<p>'+esc(l.designation)+'</p>'}).join('')+'</details>';
+ if(ch.length||nv.length)h+='<div class="bc-luf"><button class="btn go" type="button" data-bcluok>Enregistrer ce qui est coché</button></div>';
+ z.innerHTML=h;LU.ch=ch;LU.nv=nv}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bclire],[data-bcluok]');if(!b||!X)return;
- if(b.hasAttribute('data-bclire')){var inp=document.createElement('input');inp.type='file';inp.accept='image/*,application/pdf';inp.onchange=function(){lireDoc(inp.files&&inp.files[0])};inp.click()}
+ if(b.hasAttribute('data-bclire')){LF=b.getAttribute('data-bclire')||'';var inp=document.createElement('input');inp.type='file';inp.accept='image/*,application/pdf';inp.onchange=function(){lireDoc(inp.files&&inp.files[0])};inp.click()}
  else{var M=$$('[data-bclp]').filter(function(c){return c.checked}).map(function(c){var l=LU.ch[+c.getAttribute('data-bclp')];return {code:l.code,prix:l.apres}});
-  if(!M.length){X.toast('Rien de coché','Cochez les prix à mettre à jour.');return}var d=LU.document||{};
-  envoyerBC({modifs:M,source:[d.type,d.fournisseur,d.numero].filter(Boolean).join(' ')},[M.length+' prix mis à jour','Cliky les prend dès le prochain pré-devis.'])}});
+  var N=$$('[data-bcln]').filter(function(c){return c.checked}).map(function(c){var l=LU.nv[+c.getAttribute('data-bcln')],cd=l.cond_lu||'unité';return {d:l.designation,cond:cd,u:l.u||uniteDe(cd),pu:l.pu||undefined,prix:l.prix_ht,f:l.famille||'Ajoutés par vous'}});
+  if(!M.length&&!N.length){X.toast('Rien de coché','Cochez les prix ou les produits à garder.');return}var d=LU.document||{},src=[d.type,d.fournisseur,d.numero].filter(Boolean).join(' ');
+  var fin=function(){var t=[M.length?M.length+' prix mis à jour':'',N.length?N.length+' produit'+(N.length>1?'s':'')+' ajouté'+(N.length>1?'s':''):''].filter(Boolean).join(', ');setTimeout(function(){FOe='';chargerFO(true)},1200);return [t.charAt(0).toUpperCase()+t.slice(1),'Cliky les prend dès le prochain pré-devis.']};
+  if(M.length&&N.length)PCV.api('/espace/base',{method:'POST',body:{modifs:M,source:src}}).then(function(){envoyerBC({ajouts:N,four:LU.fournisseur},fin())},function(e){X.toast('Pas enregistré',e.message)});
+  else if(M.length)envoyerBC({modifs:M,source:src},fin());else envoyerBC({ajouts:N,four:LU.fournisseur},fin())}});
 document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('bc-fam'))BC.ouv[d.getAttribute('data-bcf')]=d.open},true);
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-bc],[data-bcnew],[data-bcok],[data-bcori],[data-bcsup],[data-bcaok],[data-bccond],[data-bcre]');if(!b||!X)return;
  var a=function(n){return b.getAttribute(n)};

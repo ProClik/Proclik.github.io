@@ -88,3 +88,13 @@
 .bc-lp i{font-style:normal;text-align:right;font-size:13px;white-space:nowrap;display:grid}
 .bc-hors{margin-top:12px;font-size:13.5px}.bc-hors summary{cursor:pointer;font-weight:700}.bc-hors p{margin:6px 0}
 .bc-luf{margin-top:14px;display:flex;justify-content:flex-end}
+
+/* Mes fournisseurs (17/11) */
+.bc-fh{margin:6px 0 -4px}
+.bc-fos{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.bc-fo{display:grid;gap:10px;align-content:start;min-width:0}
+.bc-fot{display:grid;gap:3px;text-align:left;border:0;background:none;padding:0;color:var(--fg);font:inherit;cursor:pointer}
+.bc-fot b{font-size:16px}.bc-fot small{font-size:12.5px;color:var(--muted)}
+.bc-fonew{justify-self:start;align-self:center}
+.bc-lab{margin:14px 0 2px;font-weight:700;font-size:14px}
+.bc-lp em.bc-cmp{color:var(--accx)}
