@@ -53,7 +53,7 @@ function pour(id,cli){var p=id&&un(id);if(!p){p={id:'pl'+Date.now().toString(36)
 var COUR=null;
 function ouvrirPlan(id){var p=un(id);if(!p)return;COUR=id;var c=client(p.cli),M=manque(p).filter(function(x){return x!=='le dessin'});
  X.xopen('📐 '+(c?c.n:'Plan sans client'),M.length?'Manque '+M.join(', ')+' : vous pourrez compléter plus tard':(c&&c.adr)||'',
-  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=47&chantier='+encodeURIComponent(p.id)+'"></iframe>',
+  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=48&chantier='+encodeURIComponent(p.id)+'"></iframe>',
   '<button class="btn" type="button" data-pllist>← Mes plans</button>'+(p.cli?'':'<button class="btn go" type="button" data-plcomp="'+esc(p.id)+'">Choisir le client</button>'),null);}
 addEventListener('message',function(e){var f=d.getElementById('pl-frame');if(!f||e.source!==f.contentWindow||!COUR)return;var m=e.data||{},p=un(COUR);if(!p)return;
  if(m.type==='proclik-plan-ready'){var c=client(p.cli);f.contentWindow.postMessage({type:'proclik-plan-load',plan:p.plan||null,nouveau:true,prenom:''},'*')}
