@@ -16,7 +16,8 @@ const N={
  reserve:.2,    /* norme : 20 % de place libre dans le tableau */
  marge:.10,     /* usage : 10 % de marge sur les longueurs */
  lov:.3,        /* usage : 30 cm de réserve de fil dans chaque boîte */
- plancher:.2    /* usage : épaisseur de plancher entre deux niveaux, en m */
+ plancher:.2,   /* usage : épaisseur de plancher entre deux niveaux, en m */
+ pente:.02      /* norme DTU 60.11 : pente des évacuations entre 1 et 3 cm par mètre ; 2 cm/m retenu */
 };
 /* Marque de l'électricien (Cyril 17/11) : il choisit son fournisseur habituel ; « Autre » = sans marque */
 const MQ={schneider:{n:"Schneider Electric",coffret:"Resi9 13 modules",app:"Odace"},legrand:{n:"Legrand",coffret:"Drivia 13 modules",app:"Dooxie"},hager:{n:"Hager",coffret:"Gamma 13 modules",app:"Essensya"}};
@@ -40,7 +41,7 @@ function viaEl(a,b){if(a.w&&b.w&&a.sg.a===b.sg.a&&Math.abs(a.h-b.h)<.15)return{L
  return{L:plaf,via:"plafond"}}
 function hopEl(a,b){return viaEl(a,b).L}
 /* Passage de l'eau : par le sol du niveau le plus haut des deux. */
-function hopEau(a,b){const base=Math.max(a.zf,b.zf);return Math.abs(a.x-b.x)+Math.abs(a.y-b.y)+Math.abs(zab(a)-base)+Math.abs(zab(b)-base)}
+function hopEau(a,b){return Math.abs(a.x-b.x)+Math.abs(a.y-b.y)+Math.abs(zab(a)-zab(b))}
 /* Chaînage au plus proche, à partir d'un départ */
 function chaine(dep,L,hop){const rest=L.slice(),seq=[];let cur=dep;while(rest.length){let k=0,best=1e9;rest.forEach((p,i)=>{const d=hop(cur,p);if(d<best){best=d;k=i}});const p=rest.splice(k,1)[0];seq.push({a:cur,b:p,L:best});cur=p}return seq}
 const nm=e=>String(e.n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
@@ -112,7 +113,7 @@ function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[
   disjoncteurs:Object.keys(dj).map(n=>({n,q:dj[n]})),autres:[{n:"Peigne d'alimentation",q:rang},{n:"Bornier de terre",q:1}].concat(hc?[{n:"Contacteur heures creuses (chauffe-eau)",q:1}]:[]),
   modules:mod,rangees:rang,rangs,coffret:(MQ[marque()]?`${MQ[marque()].n} ${MQ[marque()].coffret}`:`Coffret ${N.rang} modules`)+` × ${rang} rangée${rang>1?"s":""}`,marque:MQ[marque()]?{n:MQ[marque()].n,tableau:MQ[marque()].coffret,appareillage:MQ[marque()].app}:null,
   ...(com.length?{communication:"Coffret de communication (grade 2TV) dans la gaine technique, à côté du tableau"}:{})};
- hyp.push("Électricité : câbles passés par le plafond, puis descente dans le mur jusqu'à chaque point ; fils H07V-U sous gaine ICTA ; marge "+Math.round(N.marge*100)+" % + "+N.lov*100+" cm dans chaque boîte.");
+ hyp.push("Électricité : au plus court, dans le mur quand les points sont dans la même pièce, sinon par le plafond puis descente dans le mur ; fils H07V-U sous gaine ICTA ; marge "+Math.round(N.marge*100)+" % + "+N.lov*100+" cm dans chaque boîte.");
  hyp.push("Tableau : compté pour tous les circuits de la maison ; différentiels selon la surface ("+r1(surf)+" m²), 8 circuits max chacun, 20 % de place libre.");
  /* ---- Plomberie ---- */
  const eau=[],evs=[];
@@ -120,17 +121,18 @@ function calc(){const P=K(),F=X();if(!P||!F)return null;const pts=points(),hyp=[
  let nour=pts.find(p=>p.e.t==="nour")||pts.find(p=>p.e.t==="cee");
  if(!nour&&eau.length){const by=new Map();eau.forEach(o=>by.set(o.p.rm,(by.get(o.p.rm)||0)+1));let rm=null,n=-1;by.forEach((v,k)=>{if(v>n){n=v;rm=k}});const o=eau.find(x=>x.p.rm===rm);nour={...o.p,h:.4,est:1,e:{t:"nour"}};hyp.push("Nourrice : position estimée dans "+rm.nom+" (posez « Nourrice » sur un mur pour un calcul exact). L'arrivée jusqu'à la nourrice est à mesurer.")}
  const mc={},pvc={},rac={},addM=(k,L)=>{mc[k]=(mc[k]||0)+L},addP=(k,L)=>{pvc[k]=(pvc[k]||0)+L},addR=(k,q)=>{rac[k]=(rac[k]||0)+(q||1)};
- eau.forEach(o=>{const L=hopEau(nour,o.p);hops.push({k:o.c,a:nour,b:o.p,L});if(!faire(o.p))return;addM("Multicouche 16 × 2 "+(o.c==="ef"?"(eau froide, gaine bleue)":"(eau chaude, gaine rouge)"),L*(1+N.marge));addR("Raccord à sertir 16 sur la nourrice");addR("Applique à sertir 16 (sortie de mur)");addR("Coude à sertir 16",2+(Math.abs(nour.x-o.p.x)>.05&&Math.abs(nour.y-o.p.y)>.05?1:0))});
+ eau.forEach(o=>{const L=hopEau(nour,o.p);hops.push({k:o.c,a:nour,b:o.p,L});if(!faire(o.p))return;addM("Multicouche 16 × 2 "+(o.c==="ef"?"(eau froide, gaine bleue)":"(eau chaude, gaine rouge)"),L*(1+N.marge));addR("Raccord à sertir 16 sur la nourrice");addR("Applique à sertir 16 (sortie de mur)");addR("Coude à sertir 16",(Math.abs(nour.x-o.p.x)>.05&&Math.abs(nour.y-o.p.y)>.05?1:0)+(Math.abs(zab(nour)-zab(o.p))>.05?2:0)+1)});
  const nEF=eau.filter(o=>o.c==="ef"&&faire(o.p)).length,nEC=eau.filter(o=>o.c==="ec"&&faire(o.p)).length;
  if(nEF){addR("Nourrice eau froide "+nEF+" départ"+(nEF>1?"s":""));addR("Raccord à sertir d'arrivée sur nourrice")}if(nEC){addR("Nourrice eau chaude "+nEC+" départ"+(nEC>1?"s":""));addR("Raccord à sertir d'arrivée sur nourrice")}
  const dia=p=>{const n=nm(p.e);return/wc/.test(n)?100:/lavabo|bidet|vasque/.test(n)?32:40};
  const chutes=new Map();
  evs.forEach(p=>{let ch=chutes.get(p.fi);if(!ch){ch=evs.find(q=>q.fi===p.fi&&dia(q)===100)||evs.find(q=>dia(q)===100)||evs.find(q=>q.fi===p.fi);ch={...ch,h:0};chutes.set(p.fi,ch);if(dia(ch)!==100||ch.fi!==p.fi)ch.est=1}
-  const L=Math.abs(p.x-ch.x)+Math.abs(p.y-ch.y)+p.h;hops.push({k:"ev",a:ch,b:p,L,d:dia(p)});if(!faire(p))return;const d=dia(p);addP("PVC évacuation Ø"+d+" (gris)",L*(1+N.marge));addR("Coude PVC Ø"+d+" à coller",2+(Math.abs(p.x-ch.x)>.05&&Math.abs(p.y-ch.y)>.05?1:0));const mj=Math.ceil(L*(1+N.marge)/4)-1;if(mj>0)addR("Manchon PVC Ø"+d+" à coller",mj);if(d!==100)addR("Culotte / té Ø100 × Ø"+d+" à coller");addR("Collier de fixation Ø"+d,Math.max(1,Math.ceil(L/.8)))});
+  const Lh=Math.abs(p.x-ch.x)+Math.abs(p.y-ch.y),chute=Lh*N.pente,L=Lh+p.h;hops.push({k:"ev",a:ch,b:p,L,d:dia(p),Lh,chute});
+  if(faire(p)&&p.h<chute+.01&&dia(p)!==100)hyp.push(`⚠ ${p.e.n||"Évacuation"} (${p.rm.nom}) : ${String(r1(Lh)).replace(".",",")} m jusqu'à la chute, il faut ${Math.round(chute*100)} cm de pente mais la sortie est à ${Math.round(p.h*100)} cm du sol : prévoir une réhausse (receveur, socle) ou un passage sous le plancher.`);if(!faire(p))return;const d=dia(p);addP("PVC évacuation Ø"+d+" (gris)",L*(1+N.marge));addR("Coude PVC Ø"+d+" à coller",2+(Math.abs(p.x-ch.x)>.05&&Math.abs(p.y-ch.y)>.05?1:0));const mj=Math.ceil(L*(1+N.marge)/4)-1;if(mj>0)addR("Manchon PVC Ø"+d+" à coller",mj);if(d!==100)addR("Culotte / té Ø100 × Ø"+d+" à coller");addR("Collier de fixation Ø"+d,Math.max(1,Math.ceil(L/.8)))});
  if(evs.some(faire)){addR("Colle PVC (pot)");addR("Décapant PVC")}
  chutes.forEach(ch=>{if(ch.zf>0){addP("PVC chute Ø100 (gris, descente jusqu'au rez-de-chaussée)",ch.zf);hyp.push("Chute Ø100 : descente jusqu'au rez-de-chaussée comptée ; le raccordement au tout-à-l'égout est à mesurer.")}});
- if(evs.length)hyp.push("Évacuations : diamètres DTU (WC Ø100, lavabo/bidet Ø32, douche, baignoire, évier, lave-linge Ø40), pente de 1 à 3 cm par mètre vers la chute, branchée au WC ; raccords à coller : 2 coudes par branchement (+1 s'il tourne), 1 manchon par barre de 4 m, 1 collier tous les 80 cm (estimation).");
- if(eau.length)hyp.push("Alimentation : multicouche 16 × 2 en pieuvre (une ligne par point d'eau froide ou chaude), passée par le sol ; marge "+Math.round(N.marge*100)+" %.");
+ if(evs.length)hyp.push("Évacuations : diamètres DTU (WC Ø100, lavabo/bidet Ø32, douche, baignoire, évier, lave-linge Ø40), pente de 2 cm par mètre (DTU 60.11 : entre 1 et 3 cm par mètre) vers la chute, branchée au WC, tuyaux le long des murs ; raccords à coller : 2 coudes par branchement (+1 s'il tourne), 1 manchon par barre de 4 m, 1 collier tous les 80 cm (estimation).");
+ if(eau.length)hyp.push("Alimentation : multicouche 16 × 2 en pieuvre (une ligne par point d'eau froide ou chaude), passée dans les murs à l'horizontale, montée ou descente seulement là où il faut ; coudes à sertir : 1 au point d'eau, 1 par angle, 2 par changement de hauteur ; marge "+Math.round(N.marge*100)+" %.");
  /* ---- Clim ---- */
  const clim={},cr={};pts.filter(p=>p.e.t==="split").forEach(s=>{const g=pts.find(q=>q.e.t==="ge"&&q.fi===s.fi)||pts.find(q=>q.e.t==="ge");const c=pts.find(q=>q.e.t==="cond"&&q.rm===s.rm);
   if(g){const L=Math.abs(s.x-g.x)+Math.abs(s.y-g.y)+Math.abs(zab(s)-zab(g))+.3;hops.push({k:"clim",a:s,b:g,L});if(faire(s)){const l=r1(L*(1+N.marge));clim["Liaisons frigorifiques cuivre isolé 1/4\" + 3/8\" (jusqu'à environ 3,5 kW ; 1/4\" + 1/2\" au-delà, selon la notice)"]=(clim["Liaisons frigorifiques cuivre isolé 1/4\" + 3/8\" (jusqu'à environ 3,5 kW ; 1/4\" + 1/2\" au-delà, selon la notice)"]||0)+l;clim["Câble d'interconnexion 4G1,5"]=(clim["Câble d'interconnexion 4G1,5"]||0)+l;clim["Goulotte / cache-liaisons"]=(clim["Goulotte / cache-liaisons"]||0)+l}}
