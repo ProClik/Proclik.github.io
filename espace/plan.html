@@ -7,7 +7,8 @@
 <script src="theme.js?v=1"></script>
 <script src="../devis/boutons-icones.js?v=3" defer></script>
 <script src="../devis/icones.js?v=1" defer></script>
-<script src="plan-faces.js?v=4" defer></script>
+<script src="../devis/loupe.js?v=1" defer></script>
+<script src="plan-faces.js?v=6" defer></script>
 <style>
 /* Layout : onglets étages et pièces, grande planche (plan 2D ou vue 3D) avec barres flottantes, fiches en bas d'écran, liste des cotes par pièce, total pour Cliky. */
 :root{
@@ -1799,6 +1800,6 @@ if(GD){document.documentElement.classList.add("gd");
  setTimeout(()=>{ST.cam=null;fit();all();if(n>1){fit();ST.cam={x:VB.x,y:VB.y,w:VB.w}}setTimeout(()=>gdRun(n),450)},500)}
 
 /* Accès étroit pour la vue « murs de face / plafond » de l'artisan (espace/plan-faces.js). */
-try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,get SH(){return SH},CL}}catch(e){}
+try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
 })();
 </script>

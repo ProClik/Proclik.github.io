@@ -15,7 +15,7 @@ const R5=v=>Math.round(v/5)*5;
 /* Familles : el = électricité, eau = plomberie et chauffage, clim = climatisation. h = hauteur du milieu par défaut (cm), à ajuster. */
 const FAM={el:"Électricité",eau:"Plomberie et chauffage",clim:"Climatisation"};
 const T={
- pc:{n:"Prise 16 A",h:30,f:"el"},pc2:{n:"Prise double",h:30,f:"el"},p32:{n:"Prise 32 A (plaque)",h:15,f:"el"},
+ pc:{n:"Prise 16 A",h:30,f:"el"},pc2:{n:"Prise double",h:30,f:"el"},pc3:{n:"Prise triple",h:30,f:"el"},p32:{n:"Prise 32 A (plaque)",h:15,f:"el"},
  tv:{n:"Prise TV",h:30,f:"el"},rj:{n:"Prise internet (RJ45)",h:30,f:"el"},
  int:{n:"Interrupteur",h:110,f:"el"},vv:{n:"Va-et-vient",h:110,f:"el"},app:{n:"Applique",h:180,f:"el"},
  iph:{n:"Interphone",h:150,f:"el"},tab:{n:"Tableau électrique",h:160,f:"el",w:60,hh:80},vmcm:{n:"Bouche VMC (mur)",h:220,f:"el"},
@@ -59,6 +59,7 @@ function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";
  switch(e.t){
   case"pc":g=`<circle class="bx" cx="${x}" cy="${y}" r="8"/><circle class="pt" cx="${x-3}" cy="${y}" r="1.6"/><circle class="pt" cx="${x+3}" cy="${y}" r="1.6"/>`;break;
   case"pc2":g=`<rect class="bx" x="${x-15}" y="${y-8}" width="30" height="16" rx="5"/>${[-10,-4,4,10].map(k=>`<circle class="pt" cx="${x+k}" cy="${y}" r="1.5"/>`).join("")}`;break;
+  case"pc3":g=`<rect class="bx" x="${x-22}" y="${y-8}" width="44" height="16" rx="5"/>${[-17,-11,-3,3,11,17].map(k=>`<circle class="pt" cx="${x+k}" cy="${y}" r="1.5"/>`).join("")}`;break;
   case"p32":g=`<circle class="bx" cx="${x}" cy="${y}" r="9"/><circle class="pt" cx="${x-3.5}" cy="${y+2}" r="1.5"/><circle class="pt" cx="${x+3.5}" cy="${y+2}" r="1.5"/><circle class="pt" cx="${x}" cy="${y-3.5}" r="1.5"/>`;break;
   case"tv":case"rj":g=`<rect class="bx" x="${x-9}" y="${y-8}" width="18" height="16" rx="4"/><text class="tt" x="${x}" y="${y+3.5}">${e.t==="tv"?"TV":"RJ"}</text>`;break;
   case"int":g=`<rect class="bx" x="${x-8}" y="${y-8}" width="16" height="16" rx="3"/><line class="gl" x1="${x-3}" y1="${y+4}" x2="${x+3}" y2="${y-4}"/>`;break;
@@ -79,7 +80,12 @@ function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";
   case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-7}" width="18" height="14" rx="3"/><text class="tt" x="${x}" y="${y+3.5}" style="font-size:7px">°C</text>`;break;
  }
  const k=(T[e.t]||{}).w?1:Math.max(1,fs/14),r=Math.max(20*k,((T[e.t]||{}).w||0)/2);
- return `<g class="sym st-${e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${r}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`:""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
+ return `<g class="sym st-${i<0?"ico":e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${r}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`:""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
+/* Demi-largeur dessinée d'un élément (cm), pour qu'ils se collent sans se chevaucher */
+const HW={pc:8,pc2:15,pc3:22,p32:9,tv:9,rj:9,int:8,vv:8,app:9,iph:7,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
+const HH={tab:40,rad:28,ss:60,split:15,ge:30};
+function hw(t,L){const fs=Math.max(15,(L+160)/34),k=(T[t]||{}).w?1:Math.max(1,fs/14);return(HW[t]||9)*k}
+const MOD={pc:1,pc2:2,pc3:3};
 const pill=(x,y,t,fs)=>{const w=t.length*fs*.58+fs*.9;return`<rect class="pill" x="${x-w/2}" y="${y-fs*.75}" width="${w}" height="${fs*1.5}" rx="${fs*.75}"/><text class="pillt" x="${x}" y="${y+fs*.32}" font-size="${fs*.85}">${t}</text>`};
 const dim=(x1,x2,y,t,fs)=>`<line class="cl" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line class="cl" x1="${x1}" y1="${y-fs*.4}" x2="${x1}" y2="${y+fs*.4}"/><line class="cl" x1="${x2}" y1="${y-fs*.4}" x2="${x2}" y2="${y+fs*.4}"/><text class="ck" x="${(x1+x2)/2}" y="${y-fs*.45}" font-size="${fs*.95}">${t}</text>`;
 
@@ -146,7 +152,7 @@ const RG=[
  ["prise","Prises de courant : hauteur du milieu",30,"usage (norme : au moins 5 cm)"],
  ["inter","Interrupteurs : hauteur du milieu",115,"usage (accessibilité : entre 90 et 130 cm)"],
  ["porte","Interrupteur : distance au bord de la porte",20,"usage"],
- ["coin","Distance minimale à un angle",15,"usage"],
+ ["coin","Distance minimale à un angle",20,"usage"],
  ["ptrav","Cuisine : prises au-dessus du plan de travail",110,"usage"],
  ["p32","Cuisine : prise 32 A de la plaque",15,"usage"],
  ["rj","Prises RJ45 et TV : hauteur",30,"usage"],
@@ -280,6 +286,9 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .opt{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--muted);margin-left:auto}
 @media (min-width:900px){#fx .grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;align-items:start}#fx .grid2>div:last-child h3:first-child{margin-top:0}}
 #v-face{white-space:nowrap}
+#fx-loupe{position:fixed;width:140px;height:140px;border-radius:50%;overflow:hidden;z-index:95;background:var(--surface);box-shadow:0 0 0 3px #B8924F,0 10px 28px rgba(0,0,0,.25);pointer-events:none}#fx-loupe svg{width:100%;height:100%;display:block}#fx-loupe i{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border:1.5px solid #B8924F;border-radius:50%;opacity:.7}
+#fx .pk-in.mini{max-width:420px}#fx .mg{display:flex;align-items:center;gap:12px;margin:6px 0 14px;font-size:15px}#fx .mg svg{width:64px;height:64px;flex:none}
+
 #fx .halo{fill:#B8924F;opacity:.2}#fx .sym.st-exist{opacity:.45}#fx .sym.st-exist.on{opacity:.8}
 #fx .it .dt.faire{box-shadow:0 0 0 3px rgba(184,146,79,.35)}#fx .it .dt.exist{opacity:.4}
 #fx .ask{flex-wrap:wrap}#fx .ak{flex:1 1 150px}#fx .qk3{display:flex;gap:6px;flex-wrap:wrap}#fx .qk3 button{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 13.5px var(--f);padding:8px 12px;border-radius:999px;cursor:pointer;min-height:40px}
@@ -339,7 +348,8 @@ function render(){const d=$("fx"),P=K(),rm=room();if(!rm)return close();const F=
  if(V.tab==="mur")h+=murHTML();else if(V.tab==="plaf")h+=plafHTML();else h+=climHTML();
  h+=V.met?`<div class="card" style="margin-top:14px">${metHTML(M)}</div>`:`<button class="lien" data-a="met">Mes métiers : ${M.length?esc(M.map(k=>(MET.find(m=>m[0]===k)||[,""])[1]).join(", ")):"aucun choisi"}</button>`;
  h+=V.reg?`<div class="card" style="margin-top:10px">${regHTML()}</div>`:(fams().length?`<button class="lien" data-a="reg">Mes règles de pose (hauteurs, distances)</button>`:"");
- d.innerHTML=h+`</div>`+(V.ask&&V.tab==="mur"&&wall()?askHTML():V.pick?pickHTML():"")}
+ d.innerHTML=h+`</div>`+(V.merge&&V.tab==="mur"&&wall()?mergeHTML():V.pick?pickHTML():"")}
+function mergeHTML(){const E=eqs(wall().s),a=E[V.merge.i],b=E[V.merge.j];if(!a||!b){V.merge=null;return""}const n=MOD[a.t]+MOD[b.t],t=n===2?"pc2":"pc3";return`<div class="pick" role="dialog" aria-label="Prises collées"><div class="pk-in mini"><div class="pk-h"><b>Ces prises se touchent</b><button class="rd" data-a="mergeno" aria-label="Fermer">✕</button></div><div class="mg">${icoMur(t)}<span>On en fait une <b>${T[t].n.toLowerCase()}</b> (un seul boîtier) ?</span></div><button class="bt go big" data-a="mergeok" style="width:100%;justify-content:center">Oui, ${T[t].n.toLowerCase()}</button><button class="bt big" data-a="mergeno" style="width:100%;justify-content:center;margin-top:8px">Non, garder ${n} prises</button></div></div>`}
 function head(t,s,noBack){return`<div class="eh">${noBack?"":`<button class="bk" data-a="close" aria-label="Retour au plan">‹ Plan</button>`}<div class="tx"><b>${esc(t)}</b><small>${esc(s)}</small></div>${noBack?`<button class="rd" data-a="close" aria-label="Fermer">✕</button>`:""}</div>`}
 function area(p){let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1]}return a/2}
 function metHTML(M){return`<p style="margin:4px 2px 6px;font-weight:800;font-size:16px">Quels métiers faites-vous ?</p><div class="muted" style="font-size:14px">Touchez les vôtres. Les prises ne sont proposées qu'aux électriciens, l'eau aux plombiers, la clim aux climaticiens.</div><div class="met">${MET.map(([k,n])=>`<button class="bt${M.includes(k)?" on":""}" data-met="${k}" aria-pressed="${M.includes(k)}">${M.includes(k)?"✓ ":""}${n}</button>`).join("")}</div><button class="bt go big" data-a="metok">C'est noté</button>`}
@@ -405,6 +415,8 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
  const a=d.a;if(!a)return;
  if(a==="close")return close();
  if(a==="pickx"){V.pick=null;return render()}
+ if(a==="mergeno"){V.merge=null;return render()}
+ if(a==="mergeok"&&V.merge){const E=eqs(wall().s),A=E[V.merge.i],B=E[V.merge.j];if(A&&B){snap();const n=MOD[A.t]+MOD[B.t],t=n===2?"pc2":"pc3";B.x=Math.round((A.x*MOD[A.t]+B.x*MOD[B.t])/n);B.t=t;B.n=T[t].n;if(A.st==="faire")B.st="faire";E.splice(V.merge.i,1);V.sel=E.indexOf(B)}V.merge=null;save();render();toast("Une seule "+(V.sel>=0?eqs(wall().s)[V.sel].n.toLowerCase():"prise"));return}
  if(a==="askx"){V.ask=false;return render()}
  if(a==="allfaire"){snap();const L=V.tab==="mur"?(K().EQ.get(wall().s.a)||[]):(room().eqp||[]),all=L.filter(e=>vis(e.t)).every(e=>e.st==="faire");L.forEach(e=>{if(vis(e.t))e.st=all?undefined:"faire"});save();render();toast(all?"Tout remis « déjà en place »":"Tout est à faire ici");return}
  if(a==="reg"){V.reg=!V.reg;render();if(V.reg)setTimeout(()=>{const c=$("fx").querySelector(".regs");c&&c.scrollIntoView({behavior:"smooth",block:"start"})},30);return}
@@ -443,14 +455,22 @@ function onChange(ev){const i=ev.target;if(!V)return;
  else{const rm=room(),e=(rm.eqp||[])[V.sel],b=bb(rm);if(!e)return;if(n==="px")e.x=Math.max(b[0],Math.min(b[2],b[0]+v))/100;if(n==="py")e.y=Math.max(b[1],Math.min(b[3],b[1]+v))/100}
  save();render()}
 
+/* Loupe au-dessus du doigt pendant le glissement (le doigt cache ce qu'on touche) */
+function loupe(ev,c){let d=$("fx-loupe");if(!ev){if(d)d.hidden=true;return}if(ev.pointerType==="mouse")return;const svg=DR&&DR.svg;if(!svg)return;
+ if(!d){d=document.createElement("div");d.id="fx-loupe";d.innerHTML='<svg></svg><i></i>';$("fx").appendChild(d)}const S=140,Z=2.4,vb=svg.viewBox.baseVal,sc=vb.width/svg.getBoundingClientRect().width,w=S*sc/Z;
+ const ls=d.querySelector("svg");ls.setAttribute("viewBox",`${c.x-w/2} ${c.y-w/2} ${w} ${w}`);ls.setAttribute("font-size",svg.getAttribute("font-size")||"");ls.innerHTML=svg.innerHTML;
+ let top=ev.clientY-S-70;if(top<8)top=ev.clientY+60;d.style.left=Math.max(8,Math.min(innerWidth-S-8,ev.clientX-S/2))+"px";d.style.top=top+"px";d.hidden=false}
 /* Doigt : sur un élément = le glisser (pas de 5 cm) ; sur le mur vide = toucher pour poser, glisser à gauche/droite = mur suivant. */
 let DR=null,BG=null;
 function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
 function onDown(ev){if(!V||ev.target.closest(".pick"))return;const g=ev.target.closest(".sym");if(!g){const svg=ev.target.closest("#fx-esvg,#fx-psvg");BG=svg?{svg,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId}:null;return}const svg=g.ownerSVGElement;const i=+g.dataset.i;V.sel=i;DR={i,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault();svg.querySelectorAll(".sym").forEach(s=>s.classList.toggle("on",+s.dataset.i===i))}
 function onMove(ev){if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
- if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);e.x=Math.max(5,Math.min(L-5,R5(Pt.x)));/* hauteur fixée par la règle : on glisse seulement à l'horizontale (Cyril) */const el=$("fx").querySelector(".elev");el.innerHTML=svgMur();DR.svg=$("fx-esvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}}
- else{const rm=room(),e=rm.eqp[DR.i],b=bb(rm);e.x=Math.max(b[0],Math.min(b[2],b[0]+R5(Pt.x-b[0])))/100;e.y=Math.max(b[1],Math.min(b[3],b[1]+R5(Pt.y-b[1])))/100;const el=$("fx").querySelector(".elev");el.innerHTML=svgPlaf();DR.svg=$("fx-psvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}}}
-function onUp(ev){if(DR){const m=DR.moved,i=DR.i;DR=null;if(!m){/* un toucher = à faire / déjà en place (Cyril 17/11) */const it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(it){snap();it.st=it.st==="faire"?undefined:"faire"}V.sel=i}save();render();return}
+ if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);const r=RR(),E=eqs(w.s),a=hw(e.t,L),lo=Math.max(r.coin,a),hi=L-Math.max(r.coin,a);let x=Math.max(lo,Math.min(hi,R5(Pt.x)));
+  /* collé à l'élément voisin, jamais l'un sur l'autre (Cyril 17/11) */for(let n=0;n<3;n++)E.forEach((o,j)=>{if(j===DR.i||Math.abs(o.h-e.h)>=Math.max(18,(HH[o.t]||8)+(HH[e.t]||8)))return;const d=a+hw(o.t,L);if(Math.abs(x-o.x)<d)x=x>=o.x?o.x+d:o.x-d});
+  e.x=Math.round(Math.max(lo,Math.min(hi,x)));/* hauteur fixée par la règle : on glisse seulement à l'horizontale (Cyril) */const el=$("fx").querySelector(".elev");el.innerHTML=svgMur();DR.svg=$("fx-esvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x,y:H()-e.h})}
+ else{const rm=room(),e=rm.eqp[DR.i],b=bb(rm);e.x=Math.max(b[0],Math.min(b[2],b[0]+R5(Pt.x-b[0])))/100;e.y=Math.max(b[1],Math.min(b[3],b[1]+R5(Pt.y-b[1])))/100;const el=$("fx").querySelector(".elev");el.innerHTML=svgPlaf();DR.svg=$("fx-psvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x*100,y:e.y*100})}}
+function onUp(ev){loupe(null);if(DR&&DR.moved&&V.tab==="mur"){const w=wall(),E=eqs(w.s),e=E[DR.i],L=Math.round(K().dist(w.s.a,w.s.b)*100);if(e&&MOD[e.t]){const j=E.findIndex((o,j)=>j!==DR.i&&MOD[o.t]&&Math.abs(o.h-e.h)<10&&Math.abs(o.x-e.x)<=hw(o.t,L)+hw(e.t,L)+1);if(j>=0&&MOD[e.t]+MOD[E[j].t]<=3)V.merge={i:DR.i,j}}}
+ if(DR){const m=DR.moved,i=DR.i;DR=null;if(!m){/* un toucher = à faire / déjà en place (Cyril 17/11) */const it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(it){snap();it.st=it.st==="faire"?undefined:"faire"}V.sel=i}save();render();return}
  if(!BG||ev.pointerId!==BG.id)return;const B=BG;BG=null;const dx=ev.clientX-B.x0,dy=ev.clientY-B.y0;
  if(V.tab==="mur"&&Math.abs(dx)>60&&Math.abs(dx)>2*Math.abs(dy))return go(dx<0?1:-1);
  if(Math.hypot(dx,dy)>10)return;
