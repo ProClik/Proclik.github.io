@@ -221,7 +221,7 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 .btn.go:not([disabled]),.bigbtn,.bc-ok,#pf-done.fin{animation:pcOnde 1.8s ease-out infinite}
 /* l'onde garde le relief du bouton (Cyril 11/11 : « Continuer » perdait son bouton) */
 .btn.go,.bigbtn,#pf-done{--rs:var(--up)}.bc-ok{--rs:var(--up-s)}
-#pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
+#pf-done:not(.fin){display:none!important} #pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
 :root[data-theme="dark"] #pf-done{background:var(--mint);color:var(--ink)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pf-done{background:var(--mint);color:var(--ink)}}
 #planfull iframe{flex:1 1 0;width:100%;border:0;display:block;min-height:0}
@@ -572,7 +572,7 @@ const D={
    {k:"conduit",t:"chips",l:"Un conduit de cheminée traverse les combles ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"aides",t:"chips",l:"Souhaitez-vous bénéficier des aides de l'État ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")}]},
  rampants:{t:"L'isolation sous la toiture",s:"Pour des combles aménagés (chambre sous les toits).",cheer:"Vous y êtes presque",f:[
-   {k:"surface",t:"num",l:"Surface de toiture à isoler",u:"m²",st:1,dk:1,h:"Côté intérieur, pans de toit seulement."},
+   {k:"surface",t:"num",l:"Surface de toiture à isoler",u:"m²",st:1,dk:1,h:"Côté intérieur, pans de toit seulement.",sh:()=>!(S.mode==="plan"&&S.travaux.some(k=>PLANABLE.includes(k)))},
    {k:"forme",t:"chips",l:"Forme du toit",o:["2 pentes","1 pente",DK],h:"2 pentes : le toit monte des deux côtés jusqu'au faîtage, au milieu. 1 pente : il monte d'un seul côté, jusqu'à un mur plus haut."},
    {k:"hfait",t:"num",l:"Hauteur sous le toit, au point le plus haut",lf:i=>i.forme==="1 pente"?"Hauteur sous le toit, côté haut":"Hauteur sous le faîtage, au milieu",u:"cm",st:1,dk:1,hf:i=>i.forme==="1 pente"?"Du plancher des combles jusqu'au toit, contre le mur le plus haut.":"Du plancher des combles jusqu'au point le plus haut du toit."},
    {k:"hmur1",t:"num",l:"Hauteur du petit mur, sous le 1er pan",lf:i=>i.forme==="1 pente"?"Hauteur du petit mur, côté bas":"Hauteur du petit mur, sous le 1er pan",u:"cm",st:1,dk:1,h:"Du plancher jusqu'au début de la pente. 0 s'il n'y a pas de petit mur."},
@@ -622,7 +622,7 @@ const D={
    {k:"rampe",t:"chips",l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
  autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
    {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
- finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Presque fini",f:[
+ finition:{t:"Quelle finition ?",s:"Pour les plaques de plâtre.",cheer:"Une question rapide",f:[
    {k:"fin",t:"chips",l:"Finition des plaques",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris."}]},
  photos:{t:"Quelques photos",s:"Ce sont elles qui rendent le pré-devis vraiment juste.",cheer:"Les photos, ça change tout",f:[
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
@@ -638,7 +638,7 @@ const D={
    {k:"pj",t:"note",l:"Pièces jointes : une photo de chaque pièce concernée, et votre plan si vous en avez un. Ce sont elles qui rendent le devis juste."},
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Ajouter des photos",small:"Une vue d'ensemble de chaque pièce, puis les détails"},
    {k:"plan",t:"file",l:"Plan ou document (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan ou un document",small:"Plan, ancien devis, diagnostic… en photo ou en PDF"}]},
- projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Dernière ligne droite",f:[
+ projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Bien avancé",f:[
    {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
    {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Accès difficile, meubles à déplacer, contraintes de dates…"}]},
@@ -752,14 +752,14 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=37");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&v=39");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
 function tPieces(){const t=S.plan.trace;return t&&t.floors?t.floors.flatMap(f=>f.pieces.map(p=>({...p,etage:f.nom}))):[]}
-function planCheer(){const n=nPieces();return n?`${n} pièce${n>1?"s":""} 👍`:"Facile, promis"}
+function planCheer(){const n=nPieces(),t=tPieces();if(n===1&&t[0]&&Math.abs((+t[0].surface_m2||0)-14)<.05)return"Facile, promis";return n?`${n} pièce${n>1?"s":""} 👍`:"Facile, promis"}
 function planCheerOld(){const P=S.plan;if(P.sub==="pieces")return P.rooms.length?`${P.rooms.length} pièce${P.rooms.length>1?"s":""} 👍`:"Facile, promis";if(P.sub==="apercu")return"Joli plan !";const left=P.rooms.length-P.sub-1;return left?`Plus que ${left} pièce${left>1?"s":""} 👍`:"Dernière pièce !"}
-function planPayload(){const t=S.plan.trace||{floors:[]},ps=tPieces(),M=ps.flatMap(p=>p.murs||[]);return{...JSON.parse(JSON.stringify(t)),...(S.plan.aide?{aide_demandee:"Le client n'a pas réussi à finir son plan : l'appeler pour le compléter"}:{}),surface_totale_m2:+ps.reduce((a,p)=>a+(+p.surface_m2||0),0).toFixed(2),murs_exterieurs_m:+M.reduce((a,m)=>a+(m.exterieur_m??(m.type==="mur extérieur"?m.longueur_m:0)),0).toFixed(2),murs_entre_pieces_m:+(M.reduce((a,m)=>a+(m.entre_pieces_m??0),0)/2).toFixed(2),menuiseries:ps.flatMap(p=>(p.murs||[]).flatMap(m=>(m.ouvertures||[]).map(o=>({repere:o.repere,piece:p.nom,designation:o.designation,a_changer:o.a_changer??null,ouverture:o.ouverture,volet:o.volet??null,materiau:o.materiau??null,couleur:o.couleur??null,pose:o.pose??null,pose_position:o.pose_position??null,volet_commande:o.volet_commande??null,volet_pose:o.volet_pose??null,volet_enroulement:o.volet_enroulement??null,volet_couleur:o.volet_couleur??null,largeur_cm:o.largeur_cm,hauteur_cm:o.hauteur_cm,menuiserie_exterieure:o.menuiserie_exterieure})))).sort((a,b)=>String(a.repere).localeCompare(String(b.repere),"fr",{numeric:true})),murs_a_faire:M.filter(m=>m.travaux).map(m=>({type:m.type,longueur_m:m.longueur_m,travaux:m.travaux})),objectif_isolation:S.plan.obj||null,plafond_actuel:S.plan.support||null,note:"Plan dessiné par le client avec le module Plan (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine, à confirmer à la visite (mitoyenneté, garage non chauffé) ; tailles estimées à vérifier."}}
+function planPayload(){const t=S.plan.trace||{floors:[]},ps=tPieces(),M=ps.flatMap(p=>p.murs||[]);return{...JSON.parse(JSON.stringify(t)),...(S.plan.aide?{aide_demandee:"Le client n'a pas réussi à finir son plan : l'appeler pour le compléter"}:{}),surface_totale_m2:+ps.reduce((a,p)=>a+(+p.surface_m2||0),0).toFixed(2),murs_exterieurs_m:+M.reduce((a,m)=>a+(m.exterieur_m??(m.type==="mur extérieur"?m.longueur_m:0)),0).toFixed(2),murs_entre_pieces_m:+(M.reduce((a,m)=>a+(m.entre_pieces_m??0),0)/2).toFixed(2),menuiseries:ps.flatMap(p=>(p.murs||[]).flatMap(m=>(m.ouvertures||[]).map(o=>({repere:o.repere,piece:p.nom,designation:o.designation,a_changer:o.a_changer??null,ouverture:o.ouverture,volet:o.volet??null,materiau:o.materiau??null,couleur:o.couleur??null,pose:o.pose??null,pose_position:o.pose_position??null,volet_commande:o.volet_commande??null,volet_pose:o.volet_pose??null,volet_enroulement:o.volet_enroulement??null,volet_couleur:o.volet_couleur??null,largeur_cm:o.largeur_cm,hauteur_cm:o.hauteur_cm,encadrement:o.encadrement??null,menuiserie_exterieure:o.menuiserie_exterieure})))).sort((a,b)=>String(a.repere).localeCompare(String(b.repere),"fr",{numeric:true})),murs_a_faire:M.filter(m=>m.travaux).map(m=>({type:m.type,longueur_m:m.longueur_m,travaux:m.travaux})),objectif_isolation:S.plan.obj||null,plafond_actuel:S.plan.support||null,note:"Plan dessiné par le client avec le module Plan (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine, à confirmer à la visite (mitoyenneté, garage non chauffé) ; tailles estimées à vérifier."}}
 function planPayloadOld(){const P=S.plan,H=P.H_dk?null:pn(P.H);const pieces=P.rooms.map(r=>{const[L,l]=dimsOf(r);return{nom:r.nom,type:ptName(r.type),longueur_m:L,largeur_m:l,surface_m2:+(L*l).toFixed(2),perimetre_m:+(2*(L+l)).toFixed(2),estimee:!!r.dk,taille_estimee:r.dk?SIZES[r.size]:null,travaux:r.trav.map(k=>PTRAV[k])}});
  const lay=layout(),W=walls(lay);lay.forEach(o=>{const p=pieces[o.i];p.position_m={x:+o.x.toFixed(2),y:+o.y.toFixed(2)};p.murs=W.filter(w=>w.i===o.i).map(w=>({cote:w.side,longueur_m:+(w.b-w.a).toFixed(2),type:w.type==="ext"?"mur extérieur":"mur entre pièces (avec "+P.rooms[w.other].nom+")"}))});
  const extL=W.filter(w=>w.type==="ext").reduce((s,w)=>s+w.b-w.a,0),cloL=W.filter(w=>w.type==="clo"&&w.i<w.other).reduce((s,w)=>s+w.b-w.a,0);
@@ -787,8 +787,8 @@ function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
 function SIMPLE(){return false}
-function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k));if(pl){a.push("mode");if(S.mode==="plan")a.push("plan")}if(SIMPLE()){a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(pl&&S.mode==="plan"&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});
- if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");a.push("photos","projet","contact","recap");return a}
+// 17/11 (Cyril) : tout ce que le plan ne dessine pas (combles, rampants, escalier, autre) est demandé AVANT le plan : le plan reprend ces réponses (hauteurs du toit, fenêtres de toit).
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k)),avPlan=pl&&S.mode==="plan";if(pl)a.push("mode");if(SIMPLE()){if(avPlan)a.push("plan");a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(avPlan&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});if(S.travaux.some(k=>PLAQUE.includes(k)))a.push("finition");if(avPlan)a.push("projet","plan","photos","contact","recap");else a.push("photos","projet","contact","recap");return a}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
 const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
@@ -1026,7 +1026,7 @@ function fitPage0(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.
  const real=p=>p.filter(u=>!u[0].classList.contains("item-h")).length;
  for(let k=0;k<PU.length;k++){apply(k);for(let g=0;g<6&&document.documentElement.scrollHeight>H+1&&real(PU[k])>1;g++){const u=PU[k].pop();if(!PU[k+1])PU.push([]);PU[k+1].unshift(u);pages=PU.map(p=>p.flat());apply(k)}}
  fitPage.pages=pages;if(fitPage.toItem){fitPage.toItem=false;const h0=document.querySelector("#app .item:not(.mini)>.item-h");const j=h0?pages.findIndex(p=>p.includes(h0)):-1;if(j>=0)fitPage.p[cur]=j}const i=Math.max(0,Math.min(pages.length-1,fitPage.p[cur]||0));fitPage.p[cur]=i;apply(i);
- const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0)sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `);else sub.innerHTML=`<span class="pgn">${t}</span>`}}
+ const sub=document.querySelector("#app>section>.sub");if(sub){const t=`Partie ${i+1} sur ${pages.length}`;if(i===0){const o=sub.querySelector(".pgn");if(o)o.textContent=t;else sub.insertAdjacentHTML("afterbegin",`<span class="pgn">${t}</span> · `)}else sub.innerHTML=`<span class="pgn">${t}</span>`}}
 // Téléphone : s'il reste de la place, on la prend (Cyril 11/11) : détails réaffichés, boutons plus grands, cartes qui remplissent l'écran
 function fitRoom(){const b=document.body,sec=document.querySelector("#app>section"),R=["r1","r2","r3"];b.classList.remove(...R);b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}
  if(innerWidth>600||cur==="plan"||cur==="done"||(fitPage.pages||[]).length>1||!sec)return;
@@ -1070,7 +1070,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
  S.contact={prenom:"Exemple",nom:"Démo",tel:"06 00 00 00 00",email:"exemple@exemple.fr",rgpd:true};cur="travaux";render()}
 
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
- if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),toit:S.travaux.includes("rampants")?{forme:R.forme||null,hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2")}:null},"*");return}
+ if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),toit:S.travaux.includes("rampants")?{forme:R.forme||null,hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2"),ft:R.ft||null,ftsz:R.ftsz||null,ftetat:R.ftetat||null}:null},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
  if(d.type==="proclik-plan-sheet")return;
  if(d.type==="proclik-plan-trav"&&Array.isArray(d.travaux)){d.travaux.forEach(k=>{if(TRAVAUX.some(t=>t[0]===k)&&!S.travaux.includes(k))S.travaux.push(k)});save();return}

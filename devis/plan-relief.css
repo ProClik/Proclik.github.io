@@ -268,3 +268,18 @@ html.client body #sheet .sh-h [data-close]{background:var(--mint)!important;colo
 html:root:root{--bg:var(--n1-bg);--surface:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);
   --mint:var(--n1-nuit);--mint-ink:var(--n1-nuit);--acc:var(--n1-nuit);--laiton:var(--n1-laiton);
   --up:var(--n1-pk);--up-s:var(--n1-pk);--up-xs:var(--n1-pk);--shadow:var(--n1-pk);--in:var(--n1-in);--in-s:var(--n1-in)}
+/* 17/11 : un gros bouton par étape dans la consigne (Cyril : plan ultra facile) */
+html body #clbanner #clb-go{order:1;flex:1 1 auto;min-height:36px;padding:6px 14px;border:0;border-radius:999px;background:#1B2440;color:#fff;font:800 14px var(--f);box-shadow:var(--up-xs);animation:gpulse 1.8s ease-out infinite;white-space:nowrap}
+:root[data-theme="dark"] body #clbanner #clb-go{background:#F2EEE4;color:#1B2440}
+html body #clbanner #clb-go[hidden]{display:none}
+html body #clbanner:has(#clb-go:not([hidden])) #clb-v span{display:none}
+html body #clbanner:has(#clb-go:not([hidden])) #clb-v{padding:0;width:32px;justify-content:center}
+html body #clbanner:has(#clb-go:not([hidden])) #clb-x{font-size:0;padding:4px 9px;gap:0}
+html body #clbanner:has(#clb-go:not([hidden])) #clb-x svg{width:14px;height:14px}
+html body #clbanner:has(#clb-go:not([hidden])) #clb-b{margin-left:0}
+html body #clbanner:has(#clb-go:not([hidden])) #clb-x{order:1}
+/* étape passée : rond vide, pas une coche */
+html body #cltl li.sk i{background:transparent!important;color:var(--muted)!important;box-shadow:inset 0 0 0 1.5px var(--line)!important}
+@media (max-width:640px){html body #clbanner:has(#clb-go:not([hidden])) #clb-p{display:none}html body #clbanner #clb-go{flex:0 1 auto;padding:6px 12px;font-size:13.5px}}
+@media (max-width:640px){html body #clbanner:has(#clb-go:not([hidden])) #clb-x{display:none}html body #clbanner:has(#clb-go:not([hidden])) #clb-b{order:1;margin-left:auto}}
+html body #clbanner.tool #clb-go{display:none}
