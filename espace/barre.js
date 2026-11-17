@@ -76,7 +76,7 @@
   /* le panneau range ses bulles par famille, avec un petit titre (Cyril, 15/11) ; une famille vide ne s'affiche pas */
   var FAMILLES=val(C.familles)||[
     {t:"Devis et factures",v:["devis","factures","cadences"]},
-    {t:"Chantiers",v:["chantiers","planning","cotes","vehicules","monequipe"]},
+    {t:"Chantiers",v:["chantiers","planning","plans","cotes","vehicules","monequipe"]},
     {t:"Achats",v:["prix","produits","depenses"]},
     {t:"Et aussi",v:["accueil","clients","reseaux","reglages"]}
   ];
