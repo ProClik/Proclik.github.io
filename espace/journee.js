@@ -62,6 +62,21 @@ function finDe(j){if(j.fin!=null)return {m:j.fin,src:j.finSrc||'recap'};var now=
 function heures(j,c){var a=j.arr!=null?j.arr:arrivee(j,c).m,f=finDe(j).m,p=j.pause!=null?j.pause:REG.pause;return Math.max(0,(f-a-p))/60*(j.pers||1)}
 
 /* ---------- styles ---------- */
+/* Icônes de véhicules ProClik (17/11) : profil de côté, trait fin bleu nuit arrondi, roues avec moyeu laiton (rappel du point du logo).
+   viewBox 0 0 48 32, sol à y=26. Classe .vk-c = carrosserie, .vk-w = roue, .vk-h = moyeu laiton, .vk-g = vitre (trait léger). */
+var VMOD=[
+ ['berline','Berline','<path class="vk-c" d="M4 22.5v-3.2c0-1.2.8-2.2 2-2.5l6.5-1.6 5.6-4.4c1-.8 2.2-1.2 3.4-1.2h9c1.4 0 2.7.6 3.6 1.6l3.4 4 4.4 1c1.2.3 2.1 1.4 2.1 2.6v3.7"/><path class="vk-c" d="M10.5 23h7.5M30 23h7.5M4 23h2.5M41.5 23H44"/><path class="vk-g" d="M14 15.5l4.6-3.6c.7-.5 1.5-.8 2.4-.8h4.5v4.4zM28.5 11.1h2.6c.9 0 1.8.4 2.4 1.1l2.8 3.3h-7.8z"/>',[14.3,33.8]],
+ ['suv','SUV','<path class="vk-c" d="M4 22.5v-5.4c0-1 .6-1.9 1.6-2.2l5.4-1.8 3.8-5c.8-1 2-1.6 3.3-1.6h15.6c1.2 0 2.3.5 3.1 1.4l4.7 5.3 1.7.5c1 .3 1.8 1.2 1.8 2.3v6.5"/><path class="vk-c" d="M10.5 23h7.5M30 23h7.5M4 23h2.5M41.5 23H44"/><path class="vk-g" d="M14.2 13.2l2.6-3.4c.4-.5 1-.8 1.6-.8h5.1v4.2zM26.5 9h6.4c.6 0 1.1.3 1.5.7l3.1 3.5h-11z"/><path class="vk-c" d="M18 5.5h14"/>',[14.3,33.8]],
+ ['fourgonnette','Fourgonnette','<path class="vk-c" d="M4 22.5V9.6C4 8.2 5.2 7 6.6 7h19.6c1 0 2 .5 2.6 1.3l5.4 6.5 6.3 1.3c1.3.3 2.3 1.4 2.3 2.7v3.7"/><path class="vk-c" d="M10.5 23h7.5M30 23h7.5M4 23h2.5M41.5 23H44"/><path class="vk-g" d="M27 10h1.2c.5 0 .9.2 1.2.5l3.7 4.5H27z"/><path class="vk-c" d="M22.5 8v14"/>',[14.3,33.8]],
+ ['fourgon','Fourgon','<path class="vk-c" d="M3 22.5V6.8C3 5.3 4.3 4 5.8 4H31c1.2 0 2.2.6 2.8 1.6l5.3 9.4 4.6 1.4c1.3.4 2.3 1.6 2.3 3v3.1"/><path class="vk-c" d="M10.5 23h7.5M30.5 23h7M3 23h3.5M41.5 23H46"/><path class="vk-g" d="M31.5 7h.3c.5 0 1 .3 1.2.7l3.9 7.3h-5.4z"/><path class="vk-c" d="M27 4.5v18M3 17h24"/>',[14.3,34.3]],
+ ['benne','Camion benne','<path class="vk-c" d="M30 22.5V9.3c0-1.3 1.1-2.3 2.3-2.3h4.2c.9 0 1.7.5 2.1 1.3l3.7 7.2 1.6.8c.9.4 1.4 1.3 1.4 2.3v4"/><path class="vk-g" d="M33 10h3.1c.4 0 .8.2 1 .6l2.3 4.4H33z"/><path class="vk-c" d="M2.5 18.5h26.5M4 18.5L2.5 9.5h25l1.5 9"/><path class="vk-c" d="M6 13.5h20" opacity=".55"/><path class="vk-c" d="M10.5 23h3.5M22 23h9.7M38.3 23H44M2.5 23h1.5V18.5"/>',[7.3,18,35]],
+ ['plateau','Plateau','<path class="vk-c" d="M30 22.5V9.3c0-1.3 1.1-2.3 2.3-2.3h4.2c.9 0 1.7.5 2.1 1.3l3.7 7.2 1.6.8c.9.4 1.4 1.3 1.4 2.3v4"/><path class="vk-g" d="M33 10h3.1c.4 0 .8.2 1 .6l2.3 4.4H33z"/><path class="vk-c" d="M2 18.5h27.5M2 18.5v-2.5M29.5 18.5v-3"/><path class="vk-c" d="M10.5 23h3.5M22 23h9.7M38.3 23H44M3 23h1"/>',[7.3,18,35]],
+ ['pickup','Pick-up','<path class="vk-c" d="M3.5 22.5v-6.3h20V9.4c0-1.3 1.1-2.4 2.4-2.4h7.5c1 0 1.9.5 2.4 1.3l4.3 6.7 2.6.7c1.3.4 2.3 1.6 2.3 3v3.8"/><path class="vk-g" d="M26.5 10h6.3c.5 0 .9.2 1.1.6l3 4.4H26.5z"/><path class="vk-c" d="M3.5 16.2v-2.7"/><path class="vk-c" d="M10.5 23h7.5M30.5 23h7M3.5 23h3M41.5 23h3"/>',[14.3,34.3]]];
+function vIcone(mod,cls){var m=VMOD.filter(function(x){return x[0]===mod})[0]||VMOD[3];
+ return '<svg class="vk'+(cls?' '+cls:'')+'" viewBox="0 0 48 32" aria-hidden="true">'+m[2]+m[3].map(function(x){return '<circle class="vk-w" cx="'+x+'" cy="23.2" r="3.4"/><circle class="vk-h" cx="'+x+'" cy="23.2" r="1.15"/>'}).join('')+'<path class="vk-s" d="M2 29.5h44"/></svg>'}
+var VCSS='.vk{width:100%;height:100%;overflow:visible}.vk .vk-c,.vk .vk-w{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}'+
+ '.vk .vk-g{fill:color-mix(in srgb,currentColor 9%,transparent);stroke:currentColor;stroke-width:1.1;stroke-linejoin:round;opacity:.75}'+
+ '.vk .vk-h{fill:var(--n1-laiton,#A8823F)}.vk .vk-s{stroke:currentColor;stroke-width:1;stroke-linecap:round;opacity:.18}';
 var css='.jr-c{display:grid;gap:10px}.jr-c .jr-h{display:flex;align-items:center;gap:10px}.jr-c .jr-h b{font-size:16px}.jr-c .jr-h small{display:block;color:var(--muted);font-size:13px;font-weight:600}'+
  '.jr-ic{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--soft,#EEF1F6)}.jr-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}'+
  '.jr-go{width:100%;min-height:54px;font-size:16px}.jr-l{display:grid;gap:4px;font-size:14px}.jr-l span{display:flex;justify-content:space-between;gap:10px}.jr-l em{font-style:normal;color:var(--muted);font-size:12.5px}'+
@@ -99,7 +114,7 @@ var css='.jr-c{display:grid;gap:10px}.jr-c .jr-h{display:flex;align-items:center
  '.vh-sec{display:grid;gap:6px;padding:14px;border-radius:18px;background:var(--n1-calme,var(--card,#fff))}.vh-r{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;border-top:1px solid var(--line,rgba(0,0,0,.08));padding-top:6px}.vh-r em{font-style:normal;color:var(--muted)}.vh-r b{white-space:nowrap}'+
  '.vh-pick{display:grid;gap:8px}.vh-pick .vh-tick{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--n1-in,inset 0 1px 3px rgba(0,0,0,.12));color:transparent}.vh-pick .vh-tick svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4}'+
  '.vh-pick.on .vh-c{box-shadow:0 0 0 2px var(--n1-nuit,#1B2440)}.vh-pick.on .vh-tick{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}.vh-qui{padding:0 6px}.vh-qui small{color:var(--muted);font-weight:700}'+
- '.jr-four{margin-top:12px;padding:12px;border-radius:16px;background:var(--soft,#EEF1F6);display:grid;gap:8px}.jr-four b{font-size:14.5px}'+
+ VCSS+'.vh-i .vk{width:40px;height:27px}.vh-i.lg .vk{width:50px;height:33px}.vh-i svg.vk,.vh-o span svg.vk{fill:none;stroke:none}.vh-m .vh-o span svg.vk{width:58px;height:38px}.vk .vk-h{stroke:none}'+'.vh-m{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}.vh-m .vh-o{padding:10px 6px 9px;gap:4px;font-size:12.5px}.vh-m .vh-o span{width:62px;height:40px;color:var(--n1-nuit,#1B2440)}.vh-m .vh-o[aria-pressed=true] span{color:var(--n1-nuit-fg,#fff)}.vh-m .vh-o[aria-pressed=true] .vk-h{fill:#D4B483}'+'.jr-four{margin-top:12px;padding:12px;border-radius:16px;background:var(--soft,#EEF1F6);display:grid;gap:8px}.jr-four b{font-size:14.5px}'+
  '@media print{body>*:not(#jr-print){display:none!important}}';
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 
@@ -170,7 +185,7 @@ function rcRendre(){var ETAPES=RC.E=etapes();if(RC.k>=ETAPES.length)RC.k=ETAPES.
   '<p class="jr-sub" style="margin:14px 0 6px">Pause de midi</p><div class="jr-row">'+[[0,'Aucune'],[30,'30 min'],[60,'1 h'],[90,'1 h 30']].map(function(p){return '<button type="button" class="btn" data-jrz="'+p[0]+'" aria-pressed="'+(RC.pause===p[0])+'">'+p[1]+'</button>'}).join('')+'</div>'+
   '<div class="jr-ok"><button type="button" class="btn" data-jrb>← Retour</button><button type="button" class="btn go" data-jrn>C\'est bon</button></div>';
  if(e==='veh')h+='<p class="jr-q">Quel véhicule aujourd\'hui ?</p><p class="jr-sub">Un ou plusieurs. Les kilomètres comptent pour chacun.</p><div class="vh-l">'+VEHS().map(function(v){var on=RC.vehs.indexOf(v.id)>=0,A=v.ass||[];
-   return '<div class="vh-pick'+(on?' on':'')+'"><button type="button" class="vh-c" data-rcv="'+v.id+'" aria-pressed="'+on+'"><span class="vh-i">'+IV.van+'</span><span class="vh-t"><b>'+esc(v.nom)+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b><small>'+(A.length?A.map(nomP).join(', '):'Personne d\'attribué')+'</small></span><span class="vh-tick">'+IC.coche+'</span></button>'+
+   return '<div class="vh-pick'+(on?' on':'')+'"><button type="button" class="vh-c" data-rcv="'+v.id+'" aria-pressed="'+on+'"><span class="vh-i">'+vIcone(v.mod)+'</span><span class="vh-t"><b>'+esc(v.nom)+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b><small>'+(A.length?A.map(nomP).join(', '):'Personne d\'attribué')+'</small></span><span class="vh-tick">'+IC.coche+'</span></button>'+
     (on&&A.length>1?'<div class="vh-qui"><small>Qui conduisait ?</small><div class="jr-row">'+A.map(function(a){return '<button type="button" class="btn" data-rcc="'+v.id+'" data-p="'+a+'" aria-pressed="'+(RC.cond[v.id]===a)+'">'+esc(nomP(a))+'</button>'}).join('')+'</div></div>':'')+'</div>'}).join('')+'</div>'+
   '<div class="jr-ok"><button type="button" class="btn" data-jrb>← Retour</button><button type="button" class="btn go" data-jrn>C\'est bon</button></div>';
  if(e==='recap'){var t=Math.max(0,RC.fin-RC.arr-RC.pause),tot=Math.round(t/60*RC.pers*4)/4,ch=RC.O.filter(function(x){return RC.fait[x[0]]!==RC.av[x[0]]});
@@ -318,7 +333,7 @@ function echeances(v){var t=new Date(X.TODAY||new Date());return [['ct','Contrô
  var d=new Date(v[e[0]]+'T12:00:00'),n=Math.round((d-t)/864e5);return {k:e[0],nom:e[1],d:v[e[0]],n:n}})}
 function badgeEch(e){return '<span class="vh-b'+(e.n<0?' al':e.n<=30?' wa':'')+'">'+esc(e.nom)+' · '+(e.n<0?'dépassé':e.n===0?'aujourd\'hui':e.n<=30?'dans '+e.n+' j':new Date(e.d+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}))+'</span>'}
 function carteVeh(v){var s=statsVeh(v.id,jourIso(0).slice(0,7)),E=echeances(v).filter(function(e){return e.n<=30});
- return '<button type="button" class="vh-c" data-vhs="'+v.id+'"><span class="vh-i">'+IV.van+'</span><span class="vh-t"><b>'+esc(v.nom||'Véhicule')+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b>'+
+ return '<button type="button" class="vh-c" data-vhs="'+v.id+'"><span class="vh-i">'+vIcone(v.mod)+'</span><span class="vh-t"><b>'+esc(v.nom||'Véhicule')+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b>'+
   '<small>'+(vehPret(v)?carbNom(v.type)+' · '+fr2(v.conso,1)+' '+uniteV(v)+'/100 km':'À régler')+' · '+((v.ass||[]).length?(v.ass||[]).map(nomP).join(', '):'personne d\'attribué')+'</small>'+
   (s.j?'<small class="vh-m">Ce mois : '+fr2(s.km,0)+' km · '+fr2(s.eur)+' €</small>':'')+(E.length?'<span class="vh-bs">'+E.map(badgeEch).join('')+'</span>':'')+'</span><span class="go">›</span></button>'}
 function mesVehicules(retour){MV.retour=retour||MV.retour;var V=VEHS();
@@ -341,6 +356,7 @@ function ficheRendre(nv){var v=F,el=v.type==='elec',P=personnes();
  var h='<div id="jr-fv" class="vh">'+
   '<div class="vh-f"><label>Nom<small>Comme vous l\'appelez : « le Trafic », « camion blanc »…</small><input id="fv-n" value="'+esc(v.nom)+'" placeholder="Nom du véhicule" autocapitalize="sentences"></label>'+
   '<label>Plaque <small>(facultatif)</small><input id="fv-p" value="'+esc(v.plaque)+'" placeholder="AB-123-CD" autocapitalize="characters"></label></div>'+
+  '<div class="vh-f"><span class="vh-lab">Modèle</span><div class="vh-ch vh-m">'+VMOD.map(function(m){return '<button type="button" class="vh-o" data-fvm="'+m[0]+'" aria-pressed="'+((v.mod||'fourgon')===m[0])+'"><span>'+vIcone(m[0])+'</span>'+m[1]+'</button>'}).join('')+'</div></div>'+
   '<div class="vh-f"><span class="vh-lab">Carburant</span><div class="vh-ch">'+CARB.map(function(c){return '<button type="button" class="vh-o" data-fvt="'+c[0]+'" aria-pressed="'+(v.type===c[0])+'"><span>'+(c[0]==='elec'?IV.prise:IV.goutte)+'</span>'+c[1]+'</button>'}).join('')+'</div></div>'+
   (v.type?'<div class="vh-f"><span class="vh-lab">Consommation<small>Celle de votre tableau de bord.</small></span><div class="vh-big"><input id="fv-c" inputmode="decimal" value="'+(v.conso?String(v.conso).replace('.',','):'')+'" placeholder="—" aria-label="Consommation"><span>'+(el?'kWh':'L')+' / 100 km</span></div>'+
    '<span class="vh-lab">'+(el?'Votre prix du kWh':'Prix au litre de secours')+'<small>'+(el?'Celui de votre recharge (maison ou borne).':'Utilisé seulement si le prix du jour n\'arrive pas.')+'</small></span><div class="vh-big sm"><input id="fv-x" inputmode="decimal" value="'+(v.prix?String(v.prix).replace('.',','):'')+'" placeholder="—" aria-label="Prix"><span>€ / '+(el?'kWh':'L')+'</span></div></div>':'')+
@@ -351,6 +367,7 @@ function ficheRendre(nv){var v=F,el=v.type==='elec',P=personnes();
   var garder=function(){var n=function(id){var x=$(id);return x?parseFloat(x.value.replace(',','.').replace(/[^\d.]/g,'')):NaN};F.nom=$('#fv-n').value.trim();F.plaque=$('#fv-p').value.trim().toUpperCase();
    var c=n('#fv-c'),p=n('#fv-x');if(isFinite(c)&&c>0&&c<60)F.conso=c;if(isFinite(p)&&p>0&&p<10)F.prix=p;$$('#jr-fv [data-fvd]').forEach(function(x){F[x.dataset.fvd]=x.value||''})};
   b.addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var s=t.dataset;
+   if(s.fvm){garder();F.mod=s.fvm;return ficheRendre(nv)}
    if(s.fvt){garder();if(F.type!==s.fvt){F.type=s.fvt;delete F.conso;delete F.prix}return ficheRendre(nv)}
    if(s.fva){garder();F.ass=F.ass||[];var i=F.ass.indexOf(s.fva);if(i<0)F.ass.push(s.fva);else F.ass.splice(i,1);return ficheRendre(nv)}
    if(s.fvx!=null)return mesVehicules();
@@ -359,7 +376,7 @@ function ficheRendre(nv){var v=F,el=v.type==='elec',P=personnes();
     var i=VEHS().map(function(x){return x.id}).indexOf(F.id);if(i<0)VEHS().push(F);else VEHS()[i]=F;save();X.toast('Véhicule enregistré',F.nom+' · '+carbNom(F.type)+' · '+fr2(F.conso,1)+' '+uniteV(F)+'/100 km');return mesVehicules()}})})}
 function suiviVeh(id){var v=vehDe(id);if(!v)return mesVehicules();var m=jourIso(0).slice(0,7),s=statsVeh(id,m),T=statsVeh(id,null),E=echeances(v);
  var parCh={},parC={};s.L.forEach(function(x){var a=parCh[x.ch]=parCh[x.ch]||{km:0,eur:0,j:0};a.km+=x.km||0;a.eur+=x.eur||0;a.j++;var c=x.cond||'?',b=parC[c]=parC[c]||{km:0,j:0};b.km+=x.km||0;b.j++});
- var h='<div id="jr-sv" class="vh"><div class="vh-hd"><span class="vh-i lg">'+IV.van+'</span><div><b>'+esc(v.nom)+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b><small>'+carbNom(v.type)+' · '+fr2(v.conso,1)+' '+uniteV(v)+'/100 km</small>'+
+ var h='<div id="jr-sv" class="vh"><div class="vh-hd"><span class="vh-i lg">'+vIcone(v.mod)+'</span><div><b>'+esc(v.nom)+(v.plaque?' <em>'+esc(v.plaque)+'</em>':'')+'</b><small>'+carbNom(v.type)+' · '+fr2(v.conso,1)+' '+uniteV(v)+'/100 km</small>'+
   '<span class="vh-bs">'+((v.ass||[]).length?(v.ass||[]).map(function(a){return '<span class="vh-b">'+esc(nomP(a))+'</span>'}).join(''):'<span class="vh-b">Personne d\'attribué</span>')+'</span></div></div>'+
   '<div class="vh-k"><div><b>'+fr2(s.km,0)+'</b><small>km en '+moisNom(m+'-01')+'</small></div><div><b>'+fr2(s.q,1)+'</b><small>'+uniteV(v)+'</small></div><div><b>'+fr2(s.eur)+' €</b><small>de carburant</small></div></div>'+
   (E.length?'<div class="vh-sec"><b>Échéances</b><span class="vh-bs">'+E.map(badgeEch).join('')+'</span></div>':'')+
