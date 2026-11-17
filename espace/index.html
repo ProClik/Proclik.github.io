@@ -1495,12 +1495,14 @@ function fourHTML(c){if(c.cote)calcCloison(c);var ok=c.four.filter(fdone).length
   (c.st!=='done'?'<form class="addline" id="ch-ff" style="margin-top:10px"><input id="ch-fa" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Article (ex. BA13)" aria-label="Article" style="flex:2"><input id="ch-fq" placeholder="Qté" aria-label="Quantité" style="flex:0 0 74px;min-width:0"><button class="btn sm go">Ajouter</button></form><div class="chs-sug" id="ch-fsug" hidden></div>'+
    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm" id="ch-fv">🎙 Dicter</button>'+(todo?'<button class="btn sm go" id="ch-fdp">Demander un prix ('+todo+' ligne'+(todo>1?'s':'')+')</button>':'')+'</div><p class="hint" style="margin-top:6px">Cochez au chargement du camion ou à la livraison. Touchez l\'état pour le changer.</p>':'');}
 function cost(c){var mat=c.reel.reduce(function(s2,r){return s2+parseFloat(r[1].replace(/\s/g,'').replace(',','.'))},0),mo=c.mo||{prev:0,reel:0,taux:0};
- var moP=mo.prev*mo.taux,moR=mo.reel*mo.taux,cp=c.prev+moP,cr=mat+moR,ht=c.fin.ht;
- return{mat:r2(mat),moP:moP,moR:moR,cp:r2(cp),cr:r2(cr),mp:r2(ht-cp),mr:r2(ht-cr),pp:ht?Math.round((ht-cp)/ht*100):0,pr:ht?Math.round((ht-cr)/ht*100):0,mo:mo};}
+ var tr=(c.trajets||[]).reduce(function(s2,t){return s2+(+t.eur||0)},0);
+ var moP=mo.prev*mo.taux,moR=mo.reel*mo.taux,cp=c.prev+moP,cr=mat+moR+tr,ht=c.fin.ht;
+ return{tr:r2(tr),mat:r2(mat),moP:moP,moR:moR,cp:r2(cp),cr:r2(cr),mp:r2(ht-cp),mr:r2(ht-cr),pp:ht?Math.round((ht-cp)/ht*100):0,pr:ht?Math.round((ht-cr)/ht*100):0,mo:mo};}
 function coutHTML(c,small){if(!c.fact)return '';var k=cost(c),diff=r2(k.mr-k.mp);
  var h='<div class="cmp cost"><span></span><b class="ch">Prévu</b><b class="ch">Réel</b>'+
   '<span>Matériaux</span><b>'+eur(c.prev)+'</b><b>'+eur(k.mat)+'</b>'+
   '<span>Main d\'œuvre <small>('+k.mo.prev+' h → '+k.mo.reel+' h × '+k.mo.taux+' €/h, exemple)</small></span><b>'+eur(k.moP)+'</b><b>'+eur(k.moR)+'</b>'+
+  (k.tr?'<span>Trajets <small>(carburant, '+(c.trajets||[]).length+' jour'+((c.trajets||[]).length>1?'s':'')+')</small></span><b>—</b><b>'+eur(k.tr)+'</b>':'')+
   '<span><b style="color:var(--fg)">Coût du chantier</b></span><b>'+eur(k.cp)+'</b><b>'+eur(k.cr)+'</b>'+
   '<span>Vendu HT</span><b>'+eur(c.fin.ht)+'</b><b>'+eur(c.fin.ht)+'</b>'+
   '<span><b style="color:var(--fg)">Marge</b></span><b>'+eur(k.mp)+' · '+k.pp+' %</b><b class="'+(diff>=0?'up':'dn')+'">'+eur(k.mr)+' · '+k.pr+' %</b></div>'+
@@ -1699,7 +1701,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="devis.js?v=7"></script>
 <script src="commandes.js?v=2"></script>
 <link rel="stylesheet" href="chantiers.css?v=3">
-<script src="chantiers.js?v=7"></script><script src="journee.js?v=1"></script>
+<script src="chantiers.js?v=7"></script><script src="journee.js?v=4"></script>
 <script src="planning-ajout.js?v=3"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
 <script src="depenses.js?v=3"></script>
