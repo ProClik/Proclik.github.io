@@ -79,7 +79,7 @@ function sym(e,i,fs,sel){const x=e.x,y=H()-e.h;let g="";
   case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-7}" width="18" height="14" rx="3"/><text class="tt" x="${x}" y="${y+3.5}" style="font-size:7px">°C</text>`;break;
  }
  const k=(T[e.t]||{}).w?1:Math.max(1,fs/14),r=Math.max(20*k,((T[e.t]||{}).w||0)/2);
- return `<g class="sym st-${e.st||"p"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${r}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`:""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
+ return `<g class="sym st-${e.st==="faire"?"faire":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${r}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`:""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g></g>`}
 const pill=(x,y,t,fs)=>{const w=t.length*fs*.58+fs*.9;return`<rect class="pill" x="${x-w/2}" y="${y-fs*.75}" width="${w}" height="${fs*1.5}" rx="${fs*.75}"/><text class="pillt" x="${x}" y="${y+fs*.32}" font-size="${fs*.85}">${t}</text>`};
 const dim=(x1,x2,y,t,fs)=>`<line class="cl" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line class="cl" x1="${x1}" y1="${y-fs*.4}" x2="${x1}" y2="${y+fs*.4}"/><line class="cl" x1="${x2}" y1="${y-fs*.4}" x2="${x2}" y2="${y+fs*.4}"/><text class="ck" x="${(x1+x2)/2}" y="${y-fs*.45}" font-size="${fs*.95}">${t}</text>`;
 
@@ -122,7 +122,7 @@ function svgPlaf(){const rm=room(),pts=rm.pts.map(p=>[p[0]*100,p[1]*100]),xs=pts
  let s=`<svg id="fx-psvg" viewBox="${b[0]-mg} ${b[1]-mg} ${w+mg*1.5} ${h+mg*1.5}" font-size="${fs}" role="img" aria-label="Plafond vu de dessus"><polygon class="pfond" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
  pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length];s+=`<line class="pmur" x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke-width="${M/60}"/>`});
  const E=(rm.eqp||[]).map((e,i)=>({e,i})).filter(o=>vis(o.e.t)),k=M/420,X=[],Y=[];
- E.forEach(({e,i})=>{const x=e.x*100,y=e.y*100;X.push(Math.round(x));Y.push(Math.round(y));s+=`<g class="sym st-${e.st||"p"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.4)}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.2)}"/>`:""}${symPlaf(e.t,x,y,Math.max(1,k))}</g>`});
+ E.forEach(({e,i})=>{const x=e.x*100,y=e.y*100;X.push(Math.round(x));Y.push(Math.round(y));s+=`<g class="sym st-${e.st==="faire"?"faire":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.4)}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.2)}"/>`:""}${symPlaf(e.t,x,y,Math.max(1,k))}</g>`});
  s+=chain(X,b[0],b[2],b[1]-mg*.45,1,fs)+chain(Y,b[1],b[3],b[0]-mg*.45,0,fs);
  if(V.sel>=0&&rm.eqp&&rm.eqp[V.sel]){const e=rm.eqp[V.sel],x=e.x*100,y=e.y*100;s+=`<line class="cs" stroke-dasharray="6 5" x1="${b[0]}" y1="${y}" x2="${x}" y2="${y}"/><line class="cs" stroke-dasharray="6 5" x1="${x}" y1="${b[1]}" x2="${x}" y2="${y}"/>`+pill((b[0]+x)/2,y-fs*.9,Math.round(x-b[0])+" cm",fs)+pill(x+fs*2.6,(b[1]+y)/2,Math.round(y-b[1])+" cm",fs)}
  return s+"</svg>"}
@@ -280,7 +280,7 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .opt{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--muted);margin-left:auto}
 @media (min-width:900px){#fx .grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;align-items:start}#fx .grid2>div:last-child h3:first-child{margin-top:0}}
 #v-face{white-space:nowrap}
-#fx .halo{fill:#B8924F;opacity:.2}#fx .sym.st-exist{opacity:.42}#fx .sym.st-p .bx{stroke-dasharray:3 2}
+#fx .halo{fill:#B8924F;opacity:.2}#fx .sym.st-exist{opacity:.45}#fx .sym.st-exist.on{opacity:.8}
 #fx .it .dt.faire{box-shadow:0 0 0 3px rgba(184,146,79,.35)}#fx .it .dt.exist{opacity:.4}
 #fx .ask{flex-wrap:wrap}#fx .ak{flex:1 1 150px}#fx .qk3{display:flex;gap:6px;flex-wrap:wrap}#fx .qk3 button{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 13.5px var(--f);padding:8px 12px;border-radius:999px;cursor:pointer;min-height:40px}
 #fx .qk3 button[aria-pressed="true"]{border-color:#B8924F;background:rgba(184,146,79,.14)}#fx .qk3 button[data-st="exist"][aria-pressed="true"]{border-color:var(--muted);background:var(--paper)}#fx .st1{flex:1 1 100%}
@@ -335,7 +335,7 @@ function render(){const d=$("fx"),P=K(),rm=room();if(!rm)return close();const F=
  else h+=`<div class="eh"><button class="bk" data-a="close" aria-label="Retour au plan">‹ Plan</button><div class="tx"><b>${esc(rm.nom)}</b><small>${fr(Math.abs(area(rm.pts)))} m²</small></div></div>`;
  h+=`<div class="tabs" role="group" aria-label="Vue">${tabs.map(([k,n])=>`<button data-tab="${k}" aria-pressed="${V.tab===k}">${n}</button>`).join("")}</div>`;
  if(P.F().rooms.length>1&&V.tab!=="mur")h+=`<div class="chips" role="group" aria-label="Pièce">${P.F().rooms.map((r,i)=>`<button data-ri="${i}" aria-pressed="${i===V.ri}">${esc(r.nom)}</button>`).join("")}</div>`;
- if(V.tab!=="clim"&&M.length){const n=autoRoom();if(n)setTimeout(()=>toast(`${n} éléments posés aux hauteurs habituelles. Vérifiez mur par mur.`),50)}
+ if(V.tab!=="clim"&&M.length){const n=autoRoom();if(n)setTimeout(()=>toast(`${n} éléments posés aux hauteurs habituelles. Touchez ceux qui sont à faire.`),50)}
  if(V.tab==="mur")h+=murHTML();else if(V.tab==="plaf")h+=plafHTML();else h+=climHTML();
  h+=V.met?`<div class="card" style="margin-top:14px">${metHTML(M)}</div>`:`<button class="lien" data-a="met">Mes métiers : ${M.length?esc(M.map(k=>(MET.find(m=>m[0]===k)||[,""])[1]).join(", ")):"aucun choisi"}</button>`;
  h+=V.reg?`<div class="card" style="margin-top:10px">${regHTML()}</div>`:(fams().length?`<button class="lien" data-a="reg">Mes règles de pose (hauteurs, distances)</button>`:"");
@@ -347,15 +347,15 @@ function metHTML(M){return`<p style="margin:4px 2px 6px;font-weight:800;font-siz
 /* Une seule ligne sous le dessin : l'élément touché (ses 2 cotes à taper, « Encore un », Enlever), sinon le gros bouton Ajouter. */
 function barHTML(name,inputs,tp){const e=V.sel>=0;
  if(!fams().length)return`<div class="cons"><i></i><span>Les portes et fenêtres sont affichées. Les prises, l'eau et la clim s'ajoutent pour les électriciens, plombiers et climaticiens (« Mes métiers » en bas).</span></div>`;
- if(e){const it=V.tab==="mur"?eqs(wall().s)[V.sel]:(room().eqp||[])[V.sel];return`<div class="bar"><b class="nm">${esc(name)}</b>${inputs}<div class="qk3 st1">${ST3.slice(0,2).map(([k,n])=>`<button data-st="${k}" data-i="${V.sel}" aria-pressed="${it&&it.st===k}">${n}</button>`).join("")}</div><div class="acts"><button class="bt" data-a="dup">＋ Encore ${esc(un(name))}</button><button class="bt del" data-a="del" aria-label="Enlever">Enlever</button><button class="bt ok" data-a="desel">OK</button></div></div>`}
- return`<div class="bar0"><button class="bt go big" data-a="add">＋ Ajouter</button><span class="muted">ou touchez ${tp} à l'endroit voulu${V.tab==="mur"?" · glissez à gauche ou à droite pour déplacer":""}</span></div>`}
+ if(e){const it=V.tab==="mur"?eqs(wall().s)[V.sel]:(room().eqp||[])[V.sel];return`<div class="bar"><b class="nm">${esc(name)}</b>${inputs}<div class="qk3 st1"><button data-st="faire" data-i="${V.sel}" aria-pressed="${!!(it&&it.st==="faire")}">${it&&it.st==="faire"?"✓ À faire (dans le devis)":"Déjà en place · touchez pour « à faire »"}</button></div><div class="acts"><button class="bt" data-a="dup">＋ Encore ${esc(un(name))}</button><button class="bt del" data-a="del" aria-label="Enlever">Enlever</button><button class="bt ok" data-a="desel">OK</button></div></div>`}
+ return`<div class="cons"><i></i><span><b>Touchez ce qui est à faire</b> : il s'allume et part dans le devis. Ce qui reste pâle est déjà en place.</span></div><div class="bar0"><button class="bt go big" data-a="add">＋ Ajouter</button><button class="bt" data-a="allfaire">Tout est à faire ici</button></div><div class="note">Pour ajouter : touchez ${tp} à un endroit vide.${V.tab==="mur"?" Pour déplacer : glissez à gauche ou à droite.":" Pour déplacer : glissez."}</div>`}
 const un=n=>/^(Prise|Arrivée|Évacuation|Applique|Bouche|Grille|Cassette|Unité|Commande)/.test(n)?"une":"un";
 function murHTML(){const w=wall();if(!w)return`<p class="muted">Cette pièce n'a pas encore de murs.</p>`;const sg=w.s,E=eqs(sg),O=opens(sg),e=V.sel>=0?E[V.sel]:null,W=walls();
  let h=`<div class="grid2"><div><div class="elev">${svgMur()}</div><div class="nav"><button class="rd" data-a="prev" aria-label="Mur précédent">‹</button><span>Mur ${V.wi+1} sur ${W.length}<small>glissez le doigt sur le mur pour changer</small></span><button class="rd" data-a="next" aria-label="Mur suivant">›</button></div>`;
  h+=barHTML(e?(e.n||T[e.t].n):"",e?`<label>du sol <input data-n="h" inputmode="numeric" value="${Math.round(e.h)}"> cm</label><label>de l'angle gauche <input data-n="x" inputmode="numeric" value="${Math.round(e.x)}"> cm</label>`:"","le mur");
  h+=`</div><div>`;
  const L=[];O.forEach(o=>L.push({x:o.x1,h:`<div class="it ro"><span class="dt ouv"></span><span><b>${esc(o.nm)} ${Math.round(o.x2-o.x1)} × ${o.h}</b><small>${o.al?"allège "+o.al+" cm · ":""}à ${Math.round(o.x1)} cm de l'angle gauche</small></span></div>`}));
- E.forEach((x,i)=>{if(!vis(x.t))return;L.push({x:x.x,h:`<button class="it${i===V.sel?" on":""}" data-sel="${i}"><span class="dt ${T[x.t].f}${x.st?" "+x.st:""}"></span><span><b>${esc(x.n||T[x.t].n)}</b><small>${Math.round(x.h)} cm du sol · ${Math.round(x.x)} cm de l'angle gauche</small></span></button>`})});
+ E.forEach((x,i)=>{if(!vis(x.t))return;L.push({x:x.x,h:`<button class="it${i===V.sel?" on":""}" data-sel="${i}"><span class="dt ${T[x.t].f}${x.st?" "+x.st:""}"></span><span><b>${esc(x.n||T[x.t].n)}</b><small>${x.st==="faire"?"<b style=\"display:inline;color:#B8924F\">À faire</b>":"Déjà en place"} · ${Math.round(x.h)} cm du sol · ${Math.round(x.x)} cm de l'angle</small></span></button>`})});
  L.sort((a,b)=>a.x-b.x);
  h+=`<h3>Sur ce mur, de gauche à droite</h3><div class="liste">${L.length?L.map(o=>o.h).join(""):`<div class="muted" style="padding:6px 2px">Rien pour l'instant.</div>`}</div>`;
  const all=W.reduce((a,w)=>{(K().EQ.get(w.s.a)||[]).forEach(x=>{if(vis(x.t))a[x.t]=(a[x.t]||0)+1});return a},{});
@@ -372,7 +372,7 @@ function plafHTML(){const rm=room(),E=rm.eqp||[],e=V.sel>=0?E[V.sel]:null,b=bb(r
  let h=`<div class="grid2"><div><div class="elev">${svgPlaf()}</div>`;
  h+=barHTML(e?(e.n||TP[e.t].n):"",e?`<label>du mur de gauche <input data-n="px" inputmode="numeric" value="${Math.round(e.x*100-b[0])}"> cm</label><label>du mur du haut <input data-n="py" inputmode="numeric" value="${Math.round(e.y*100-b[1])}"> cm</label>`:"","le plafond");
  h+=`</div><div><h3>Au plafond</h3><div class="liste">`;const L=E.map((x,i)=>({x,i})).filter(o=>vis(o.x.t));
- h+=L.length?L.map(({x,i})=>`<button class="it${i===V.sel?" on":""}" data-sel="${i}"><span class="dt ${TP[x.t].f}${x.st?" "+x.st:""}"></span><span><b>${esc(x.n||TP[x.t].n)}</b><small>${Math.round(x.x*100-b[0])} cm du mur de gauche · ${Math.round(x.y*100-b[1])} cm du mur du haut</small></span></button>`).join(""):`<div class="muted" style="padding:6px 2px">Rien pour l'instant.</div>`;
+ h+=L.length?L.map(({x,i})=>`<button class="it${i===V.sel?" on":""}" data-sel="${i}"><span class="dt ${TP[x.t].f}${x.st?" "+x.st:""}"></span><span><b>${esc(x.n||TP[x.t].n)}</b><small>${x.st==="faire"?"<b style=\"display:inline;color:#B8924F\">À faire</b>":"Déjà en place"} · ${Math.round(x.x*100-b[0])} cm du mur de gauche · ${Math.round(x.y*100-b[1])} cm du mur du haut</small></span></button>`).join(""):`<div class="muted" style="padding:6px 2px">Rien pour l'instant.</div>`;
  h+=`</div>`;const n=L.reduce((a,o)=>(a[o.x.t]=(a[o.x.t]||0)+1,a),{});if(L.length)h+=`<div class="note">${Object.keys(n).map(k=>`${n[k]} × ${esc(TP[k].n.toLowerCase())}`).join(" · ")}</div>`;
  return h+`</div></div>`}
 function spotIco(c,r){let s=`<svg viewBox="0 0 60 44" aria-hidden="true"><rect x="2" y="2" width="56" height="40" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>`;for(let j=0;j<r;j++)for(let i=0;i<c;i++)s+=`<circle cx="${2+56*(i+.5)/c}" cy="${2+40*(j+.5)/r}" r="3.6" fill="currentColor"/>`;return s+"</svg>"}
@@ -393,7 +393,7 @@ function climHTML(){const rm=room(),c=rm.clim||{},q=(k,lab,opts)=>`<div class="c
 
 /* ---------- Actions ---------- */
 function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.contains("pick")){V.pick=null;return render()}const b=ev.target.closest("button,[data-w]");if(!b||!V)return;const d=b.dataset,P=K();
- if(d.st){const i=+d.i,it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(!it)return;snap();if(d.st==="non"){if(V.tab==="mur")eqs(wall().s).splice(i,1);else room().eqp.splice(i,1);V.sel=-1}else it.st=it.st===d.st&&!V.ask?undefined:d.st;save();return render()}
+ if(d.st){const i=+d.i,it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(!it)return;snap();if(d.st==="non"){if(V.tab==="mur")eqs(wall().s).splice(i,1);else room().eqp.splice(i,1);V.sel=-1}else it.st=it.st===d.st?undefined:d.st;save();return render()}
  if(d.put){const at=V.pick&&V.pick.at;V.pick=null;return put(d.put,at)}
  if(d.grid){V.pick=null;return grid(d.grid)}
  if(d.w!=null){V.wi=+d.w;V.sel=-1;return render()}
@@ -406,7 +406,7 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
  if(a==="close")return close();
  if(a==="pickx"){V.pick=null;return render()}
  if(a==="askx"){V.ask=false;return render()}
- if(a==="allfaire"||a==="askok"){const w=wall();snap();if(a==="allfaire")(K().EQ.get(w.s.a)||[]).forEach(e=>{if(vis(e.t)&&!e.st)e.st="faire"});save();V.ask=false;if(V.wi===walls().length-1){render();toast("Tous les murs de la pièce sont faits ✓");return}return go(1,true)}
+ if(a==="allfaire"){snap();const L=V.tab==="mur"?(K().EQ.get(wall().s.a)||[]):(room().eqp||[]),all=L.filter(e=>vis(e.t)).every(e=>e.st==="faire");L.forEach(e=>{if(vis(e.t))e.st=all?undefined:"faire"});save();render();toast(all?"Tout remis « déjà en place »":"Tout est à faire ici");return}
  if(a==="reg"){V.reg=!V.reg;render();if(V.reg)setTimeout(()=>{const c=$("fx").querySelector(".regs");c&&c.scrollIntoView({behavior:"smooth",block:"start"})},30);return}
  if(a==="met"){V.met=!V.met;render();if(V.met)setTimeout(()=>{const c=$("fx").querySelector(".card:last-of-type");c&&c.scrollIntoView({behavior:"smooth",block:"center"})},30);return}
  if(a==="metok"){if(!metiers())setMetiers(V.metTmp||[]);V.met=false;return render()}
@@ -424,7 +424,7 @@ function onClick(ev){if(V&&V.pick&&ev.target.classList&&ev.target.classList.cont
   if(a==="del"){E.splice(V.sel,1);V.sel=-1}
   save();return render()}}
 function focusBar(){const b=$("fx").querySelector(".bar");if(b&&b.getBoundingClientRect().bottom>innerHeight)b.scrollIntoView({behavior:"smooth",block:"nearest"})}
-function go(d,force){const n=walls().length;if(!force&&d>0&&fams().length&&wall()&&aDemander(wall()).length){V.ask=true;V.sel=-1;return render()}if(n<2)return;V.wi=(V.wi+d+n)%n;V.sel=-1;V.pick=null;render();const el=$("fx").querySelector(".elev");if(el){el.classList.add(d>0?"sl":"sr");setTimeout(()=>el.classList.remove("sl","sr"),260)}}
+function go(d,force){const n=walls().length;if(n<2)return;V.wi=(V.wi+d+n)%n;V.sel=-1;V.pick=null;render();const el=$("fx").querySelector(".elev");if(el){el.classList.add(d>0?"sl":"sr");setTimeout(()=>el.classList.remove("sl","sr"),260)}}
 /* Pose : à l'endroit touché (hauteur habituelle de l'élément), sinon au milieu sur une place libre. */
 function put(t,at){const P=K();snap();
  if(V.tab==="mur"){const w=wall();if(!w)return;const L=Math.round(P.dist(w.s.a,w.s.b)*100),E=eqs(w.s),h=Math.min(H()-10,hdef(t));let x;
@@ -450,7 +450,7 @@ function onDown(ev){if(!V||ev.target.closest(".pick"))return;const g=ev.target.c
 function onMove(ev){if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
  if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);e.x=Math.max(5,Math.min(L-5,R5(Pt.x)));/* hauteur fixée par la règle : on glisse seulement à l'horizontale (Cyril) */const el=$("fx").querySelector(".elev");el.innerHTML=svgMur();DR.svg=$("fx-esvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}}
  else{const rm=room(),e=rm.eqp[DR.i],b=bb(rm);e.x=Math.max(b[0],Math.min(b[2],b[0]+R5(Pt.x-b[0])))/100;e.y=Math.max(b[1],Math.min(b[3],b[1]+R5(Pt.y-b[1])))/100;const el=$("fx").querySelector(".elev");el.innerHTML=svgPlaf();DR.svg=$("fx-psvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}}}
-function onUp(ev){if(DR){const m=DR.moved;DR=null;if(m)save();render();focusBar();return}
+function onUp(ev){if(DR){const m=DR.moved,i=DR.i;DR=null;if(!m){/* un toucher = à faire / déjà en place (Cyril 17/11) */const it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(it){snap();it.st=it.st==="faire"?undefined:"faire"}V.sel=i}save();render();return}
  if(!BG||ev.pointerId!==BG.id)return;const B=BG;BG=null;const dx=ev.clientX-B.x0,dy=ev.clientY-B.y0;
  if(V.tab==="mur"&&Math.abs(dx)>60&&Math.abs(dx)>2*Math.abs(dy))return go(dx<0?1:-1);
  if(Math.hypot(dx,dy)>10)return;
