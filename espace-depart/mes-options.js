@@ -14,7 +14,7 @@ var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){r
 
 var TXT={
  cliky:{court:'Le pré-devis se prépare tout seul',
-  avec:['Dès qu\'une demande arrive, Cliky prépare le pré-devis avec vos prix et le plan du client.','Il prépare la demande de prix pour votre fournisseur, avec les dimensions.','Le devis, la facture d\'acompte et la facture finale se créent tout seuls après votre validation.','Sur vos chantiers, il range et décrit les photos.'],
+  avec:['Dès qu\'une demande arrive, Cliky prépare le pré-devis avec vos prix et le plan du client.','Il prépare la demande de prix pour votre fournisseur, avec les dimensions.','Le soir, un récap de 20 secondes à cocher : les heures et l\'avancement vont dans le coût du chantier (à activer ou non).','Le devis, la facture d\'acompte et la facture finale se créent tout seuls après votre validation.','Sur vos chantiers, il range et décrit les photos.'],
   sans:'Vos demandes arrivent quand même, avec les réponses du client, ses photos et son plan. Le chiffrage, les devis et les factures, vous les faites vous-même dans l\'Espace.'},
  reservation:{court:'Vos clients prennent rendez-vous en ligne',
   avec:['Vos clients choisissent un créneau libre dans votre agenda.','Un acompte peut être demandé à la réservation.','Le rendez-vous arrive directement dans votre Planning.'],
@@ -105,6 +105,7 @@ function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===
  var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
  var h='<div class="card mo-tete'+(on?' on':'')+'"><span class="mo-gal">'+o.i+'</span><div><b>'+esc(titre)+'</b><small>'+esc(t.court)+'</small></div></div>'+
   '<div class="xsec"><h3>'+(on?'Ce qu\'elle fait pour vous':'Avec '+esc(o.n))+'</h3><div class="card"><ul class="mo-ul">'+t.avec.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>'+
+  (on&&k==='cliky'&&window.PCJR?PCJR.reglagesHTML():'')+
   (on?'':'<div class="xsec"><h3>Sans cette option</h3><div class="card"><p class="mo-p">'+esc(t.sans)+'</p></div></div>'+
    (k==='lien'?'<p class="mo-p mo-cy"><a class="btn" style="display:inline-flex;text-decoration:none" href="/demo-vx-9m2t/espace.html?r=relie" target="_blank" rel="noopener">Voir comment ça marche ›</a></p><p class="mo-p mo-cy">Exemple avec un négoce fictif. <b>Ça vous intéresse ? Dites-le à Cyril.</b></p>':'<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>'));
  X.xopen(o.n,on?'Option branchée':'Option à découvrir',h,
