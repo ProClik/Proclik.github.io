@@ -45,7 +45,7 @@ function lieu(c){var P=(X.PINS||window.PINS||[]).filter(function(p){return p.nam
 /* Vrai trajet routier (17/11, Cyril « On y va ») : le service le calcule une fois par chantier (Google Routes API,
    gardé 30 jours), on le garde dans le chantier (c.route). Sans réponse (clé pas encore posée, démo) : vol d'oiseau. */
 function depart(){return (REG.depot||'').trim()||(REG.cp?REG.cp+', France':DEPOT.lat+','+DEPOT.lon)}
-function adresseCh(c){var o=c.dos&&X.DOS&&X.DOS[c.dos];return (o&&o.adr&&!/\[/.test(o.adr)?o.adr:'')||(c.v?c.v+', France':'')}
+function adresseCh(c){var o=c.dos&&(window.PCCH&&PCCH.dos?PCCH.dos(c.dos):X.DOS&&X.DOS[c.dos]);return (o&&o.adr&&!/\[/.test(o.adr)?o.adr:'')||(c.v?c.v+', France':'')}
 var enCours={};
 function chercherRoute(c){var de=depart(),a=adresseCh(c),k=c.id+'|'+de+'|'+a;if(!a||enCours[k]||!window.PCV||!document.documentElement.classList.contains('pcvrai'))return;enCours[k]=1;
  PCV.api('/espace/trajet?de='+encodeURIComponent(de)+'&a='+encodeURIComponent(a)).then(function(x){if(x&&x.km>0&&x.min>0){c.route={km:x.km,min:x.min,de:de,a:a};X.saveCH();majPartout()}},function(){})}
@@ -487,7 +487,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 
 /* ---------- branchements ---------- */
 function partir(id){var c=CH[id];if(!c)return;var d=jourIso(0),j=journee(d,id,true);j.dep=maintenant();j.ok=false;save();
- var o=c.dos&&X.DOS&&X.DOS[c.dos],adr=(o&&o.adr&&!/\[/.test(o.adr)?o.adr:c.v)||c.v;
+ var o=c.dos&&(window.PCCH&&PCCH.dos?PCCH.dos(c.dos):X.DOS&&X.DOS[c.dos]),adr=(o&&o.adr&&!/\[/.test(o.adr)?o.adr:c.v)||c.v;
  if(window.PCGPS)PCGPS.ouvrir(adr);X.toast('Bonne route','Arrivée estimée vers '+hmLong(arrivee(j,c).m)+'. Rien à toucher en arrivant.');majPartout()}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-jrgo],[data-jrrecap],[data-jrfv],[data-jrfo],[data-jrfx],[data-jrlst],[data-jrhs],[data-jrhsrien],[data-jrmois]');if(!b)return;var s=b.dataset;
  if(s.jrgo)return partir(s.jrgo);

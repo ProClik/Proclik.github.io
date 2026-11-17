@@ -85,6 +85,14 @@ function dossierHTML(k){var x=VD[k];
    (d?'<button class="cf-li" type="button" data-vc="'+esc(k)+'"><span class="cf-av cf-doc">'+IC.docs+'</span><span class="tx"><b>Sa demande du formulaire</b><small>réponses, photos'+(d.plan?', plan dessiné':'')+'</small></span><span class="go">›</span></button>':'')+
    pre+Dv.map(lv).join('')+Fa.map(lv).join('')+'</div>')+
   (x.err&&!vide?'<p class="hint">'+esc(x.err)+'</p>':'')}
+/* Espace réel : les boutons « Créer » du chantier passent par les vrais documents (VosFactures), pas par des brouillons d'exemple */
+function creerVrai(c){return '<div class="card"><b style="font-size:14px">Créer</b><div class="ch-new" style="margin-top:10px">'+[['pre','Pré-devis',IC.devis],['devis','Devis',IC.devis],['ac','Facture d\'acompte',IC.acompte],['fact','Facture',IC.fact]].map(function(x){return '<button type="button" class="btn" data-chvrai="'+x[0]+'">'+x[2]+x[1]+'</button>'}).join('')+'</div>'+
+ '<p class="hint" style="margin-top:8px">Le devis part dans VosFactures. Les factures d\'acompte et de fin se créent depuis le devis, dans le dossier du client.</p></div>'}
+function actionVrai(c,t){var k=c.dos,x=VD[k],P=x&&x.dem&&x.dem.pre_devis||[],Dv=(x&&x.docs||[]).filter(function(y){return y.type==='devis'});
+ if(t==='devis'){if(PCV.nouveauDevis)PCV.nouveauDevis(k,c.t);return}
+ if(t==='pre'){if(P.length){PCV.ouvrirDemande(k);return}X.toast('Pas de pré-devis pour ce client','Il arrive quand le client remplit le formulaire. Sinon : bouton Devis, fait à la main.');return}
+ if(!Dv.length){X.toast('Créez d\'abord le devis','La facture reprend les lignes du devis.');return}
+ PCV.ouvrirDemande(k);X.toast(t==='ac'?'Facture d\'acompte':'Facture de fin','Dans « Devis et factures », touchez le devis puis '+(t==='ac'?'« Acompte ».':'« Facture finale ».'));}
 function chargerDossier(c){var o=dos(c);if(!o||!o.vrai||!enVrai())return;var k=c.dos,fini=0,x={dem:null,docs:[],err:''};
  var maj=function(){if(++fini<2)return;VD[k]=x;var b=document.getElementById('ch-vdos');if(b&&b.getAttribute('data-c')===k)b.innerHTML=dossierHTML(k)};
  PCV.api('/espace/demande?c='+encodeURIComponent(k)).then(function(r){x.dem=r.demande||null;maj()},function(e){if(!/introuvable|aucune|404/i.test(e.message))x.err=e.message;maj()});
@@ -302,6 +310,7 @@ function documents(c){var o=dos(c),L=[],vd=dossierVrai(c);
  if(o)(o.docs||[]).forEach(function(x){if(X.DOCS&&X.DOCS[x])L.push({ic:x==='devis'?IC.devis:x==='acompte'?IC.acompte:x==='plan'?IC.plan:IC.docs,t:X.DOCS[x][0]+(x==='devis'&&c.dv?' '+c.dv:''),s:X.DOCS[x][1],a:'data-odoc="'+c.dos+'|'+x+'"'})});
  var G={devis:[],fact:[],autre:[]};L.forEach(function(x){(/Devis|Pré-devis/.test(x.t)?G.devis:/Facture|acompte/i.test(x.t)?G.fact:G.autre).push(x)});
  var li=function(x){return '<button class="cf-li" type="button" '+x.a+'><span class="cf-av cf-doc">'+x.ic+'</span><span class="tx"><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="go">›</span></button>'};
+ if(vd)return vd+creerVrai(c);
  return vd+'<div class="card"><b style="font-size:14px">Créer</b><div class="ch-new" style="margin-top:10px">'+[['pre','Pré-devis',IC.devis],['devis','Devis',IC.devis],['ac','Facture d\'acompte',IC.acompte],['fact','Facture',IC.fact]].map(function(x){return '<button type="button" class="btn" data-chnew="'+x[0]+'">'+x[2]+x[1]+'</button>'}).join('')+'</div>'+
   '<p class="hint" style="margin-top:8px">Tout passe d\'abord par un brouillon que vous vérifiez. Factures et devis partent ensuite dans VosFactures.</p></div>'+
   [['Devis',G.devis],['Factures',G.fact],['Autres documents',G.autre]].map(function(g){return g[1].length?'<div><div class="sec-h"><h2>'+g[0]+'</h2><span>'+g[1].length+'</span></div><div class="card lst cf-l ch-docs">'+g[1].map(li).join('')+'</div></div>':''}).join('')+
@@ -420,6 +429,7 @@ function lier(c){var id=c.id;
  /* notes, photos, documents */
  var na=$('#ch-nadd');if(na)na.addEventListener('click',function(){noteSheet(c)});
  var pa=$('#ch-padd');if(pa)pa.addEventListener('click',function(){photoSheet(c)});
+ $$('#chx [data-chvrai]').forEach(function(b){b.addEventListener('click',function(){actionVrai(c,b.dataset.chvrai)})});
  $$('#chx [data-chnew]').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.chnew;if((t==='ac'||t==='fact')&&!c.fin.ht){X.toast('Créez d\'abord le devis','La facture reprend les lignes du devis.');return}preFacture(c,t==='fact'?'solde':t)})});
  $$('#chx [data-cdoc]').forEach(function(b){b.addEventListener('click',function(){voirDoc(c,b.dataset.cdoc)})});
  $$('#chx [data-odoc]').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.odoc.split('|');X.openDoc(p[0],p[1])})});}
@@ -466,6 +476,6 @@ function clientSecours(cb){var ty='part';
    if(ty==='pro'&&pre)o.contact=pre+' '+nom;
    DOS[k]=o;var N=X.lsGet('pc-cl1',{});N[k]=o;X.lsSet('pc-cl1',N);cb(k);});});}
 
-window.PCCH={liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
+window.PCCH={dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
 if(X.setCurCh)liste();
 })();

@@ -156,7 +156,7 @@ function messages(){
 /* ---------- ma barre du bas ---------- */
 function barre(){
   var B=window.PCBarre;if(!B)return;
-  /* sur iPad et ordinateur, on règle le menu de côté (jusqu'à 6 boutons) ; le téléphone garde son propre choix (Cyril, 15/11) */
+  /* sur iPad et ordinateur, on règle le menu de côté (jusqu'à 10 boutons) ; le téléphone garde son propre choix (Cyril, 15/11) */
   if(innerWidth>=900)return cote(B);
   var choix=B.bas();
   var dispo=B.TOUS.filter(function(v){return v!=='reglages'&&B.info(v)});
@@ -181,7 +181,7 @@ function barre(){
 }
 
 function cote(B){
-  var MAX=B.COTE_MAX||6,choix=B.cote();
+  var MAX=B.COTE_MAX||10,choix=B.cote();
   var dispo=B.TOUS.filter(function(v){return v!=='reglages'&&B.info(v)});
   function rend(){
     var p=$('#rg-pos');if(!p)return;
@@ -220,7 +220,7 @@ if(menu&&X)menu.addEventListener('click',function(){
   /* aides + barre, juste après « Affichage simple » */
   var s=$('#m-simple',c),frag=d.createElement('div');
   frag.innerHTML='<button id="rg-aides"><span class="av">'+IC.aide+'</span><span class="tx"><b>Aides à l\'écran</b><small>Les explications de chaque menu. À couper quand vous êtes à l\'aise</small></span><span class="sw'+(sansAides?'':' on')+'" role="switch" aria-checked="'+(!sansAides)+'"></span></button>'+
-    (window.PCBarre?'<button id="rg-barre"><span class="av">'+IC.barre+'</span><span class="tx">'+(innerWidth>=900?'<b>Mon menu de côté</b><small>Choisir jusqu\'à 6 boutons toujours visibles</small>':'<b>Ma barre du bas</b><small>Choisir les 4 boutons toujours à portée de pouce</small>')+'</span><span class="go">›</span></button>':'');
+    (window.PCBarre?'<button id="rg-barre"><span class="av">'+IC.barre+'</span><span class="tx">'+(innerWidth>=900?'<b>Mon menu de côté</b><small>Choisir jusqu\'à 10 boutons toujours visibles</small>':'<b>Ma barre du bas</b><small>Choisir les 4 boutons toujours à portée de pouce</small>')+'</span><span class="go">›</span></button>':'');
   var apres=s?s.nextSibling:c.firstChild;
   while(frag.firstChild)c.insertBefore(frag.firstChild,apres);
   $('#rg-aides').addEventListener('click',function(){
