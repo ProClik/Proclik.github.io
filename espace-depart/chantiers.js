@@ -53,7 +53,18 @@ var saveCH=function(){X.saveCH()};
 function avc(c){return X.avc?X.avc(c):0}
 function cfin(c){return X.cfin(c)}
 function etat(c){return c.st==='run'?['En cours','ok']:c.st==='start'?['À démarrer','todo']:['Terminé','grey']}
-function dos(c){return c.dos&&(DOS[c.dos]||vraiDos(c.dos))}
+function dos(c){var o=c.dos&&(DOS[c.dos]||vraiDos(c.dos));if((o&&o.vrai)||!monCh(c)||!enVrai())return o;
+ /* Chantier créé avant le 17/11 dans l'Espace réel : relié à un client de démonstration ou à rien.
+    On le rattache au vrai client du même nom s'il n'y en a qu'un (Cyril : « la partie plan de Virginie ne montre toujours pas son vrai plan »). */
+ var nm=function(s){return norm(String(s||'').replace(/^(m\.|mme|mlle|monsieur|madame)\s+/i,''))},n=nm(c.n);if(!n)return o;
+ var V=vrais().filter(function(x){var a=nm(x.nom);return a&&(a===n||n.indexOf(a)>=0||a.indexOf(n)>=0)});
+ if(V.length===1){c.dos=V[0].contact;saveCH();return vraiDos(c.dos)}
+ return o}
+/* pas de vrai client trouvé : on le choisit (Espace réel) */
+function monCh(c){return !!(c&&/^c[0-9a-z]{7,}$/.test(c.id||""))}
+function relierHTML(c){var C=clientsChoix();return '<div class="card"><b>Ce chantier n\'est relié à aucun client de votre Espace</b><p class="hint" style="margin:6px 0 10px">Choisissez le client : son plan, sa demande, son pré-devis et ses devis s\'afficheront ici.</p>'+
+ '<label class="ch-f" style="display:grid;gap:6px">Le client<select id="ch-rel">'+C.map(function(x){return '<option value="'+esc(x.k)+'">'+esc(x.n)+(x.v?' · '+esc(x.v):'')+'</option>'}).join('')+'</select></label>'+
+ '<button class="btn go" style="width:100%;margin-top:10px" type="button" data-chrel="'+esc(c.id)+'">Relier ce chantier</button></div>'}
 /* Vrais clients (Cyril 17/11 : « je dois retrouver tout de A à Z ») : ceux du formulaire et ceux créés dans l'Espace.
    Dans l'Espace réel, le chantier se crée pour eux, et retrouve leur demande, leur pré-devis, leurs devis et factures. */
 function enVrai(){return document.documentElement.classList.contains('pcvrai')&&window.PCV&&PCV.api}
@@ -170,7 +181,7 @@ function resume(c){var a=avc(c),f=cfin(c),o=dos(c),reel=(c.reel||[]).reduce(func
  return '<div class="card ch-res"><span class="ring" style="--p:'+a+'"><span>'+a+'%</span></span><span class="tx"><b>Avancement</b><small>'+(typeof suite==='string'?suite:'En ce moment : '+esc(suite[0]).toLowerCase()+' ('+suite[2]+'\u00a0%)')+'</small></span></div>'+
   (c.fin.ht?'<div class="card"><div class="bar2"><span>Encaissé</span><div class="prog f"><i style="width:'+(f.ttc?Math.round((f.ttc-f.rest)/f.ttc*100):0)+'%"></i></div><b>'+eur(f.ttc-f.rest)+'</b><span>Achats</span><div class="prog f"><i style="width:'+(c.prev?Math.min(100,Math.round(reel/c.prev*100)):0)+'%"></i></div><b>'+eur(reel)+(c.prev?' / '+eur(c.prev):'')+'</b></div></div>':'')+
   (T.length?'<div><div class="sec-h"><h2>À faire</h2><span>touchez pour y aller</span></div><div class="ch-afaire">'+T.map(function(t){return '<button type="button" data-aller="'+t[0]+'"><span class="n">'+t[1]+'</span><span class="tx">'+esc(t[2])+'</span><span class="go">›</span></button>'}).join('')+'</div></div>':'')+
-  dossierVrai(c)+cliCard(c,o,true);}
+  dossierVrai(c)+(enVrai()&&monCh(c)&&!(o&&o.vrai)?relierHTML(c):cliCard(c,o,true));}
 function cliCard(c,o,court){if(!o)return '<div class="card"><b>Client</b><p class="hint" style="margin-top:6px">Chantier importé avant ProClik : pas de fiche client.</p></div>';
  var adr=o.adr||o.v||'';
  return '<div class="card"><div class="ch-cli"><b>'+esc(o.prenom?o.prenom+' '+(o.nom||o.n):o.contact||o.n)+'</b>'+(o.contact&&!o.prenom?'<span>'+esc(o.n)+'</span>':'')+'<span>'+esc(adr)+'</span>'+(court?'':'<span>'+esc(o.tel||'')+(o.mail?' · '+esc(o.mail):'')+'</span>')+'</div>'+
@@ -181,6 +192,7 @@ function partie(c,o){
  if(o==='trav')return travaux(c);
  if(o==='fin')return finances(c);
  if(o==='four')return (X.fourHTML?X.fourHTML(c)+achats(c)+'</div>':'')+(window.PCPLAN&&PCPLAN.livHTML?PCPLAN.livHTML(c):'');
+ if((o==='plan'||o==='cli'||o==='docs')&&enVrai()&&monCh(c)&&!(dos(c)&&dos(c).vrai))return relierHTML(c);
  if(o==='plan'&&dos(c)&&dos(c).vrai&&enVrai())return '<div id="ch-vplan" data-c="'+esc(c.dos)+'">'+planVraiHTML(c.dos)+'</div>';
  if(o==='plan')return window.pcPlanCard?window.pcPlanCard(c):'<div class="card"><p class="hint">Pas de plan pour ce chantier.</p></div>';
  if(o==='agenda')return agenda(c);
@@ -503,7 +515,8 @@ function clientSecours(cb){var ty='part';
 
 (function(){var st=document.createElement('style');st.textContent='.ch-pmini{display:block;width:100%;max-height:260px;margin:10px 0}';document.head.appendChild(st)})();
 /* « Ouvrir le plan » / « Créer le plan » : la carte se redessine quand le plan arrive, d'où l'écoute sur la page */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-chplan]');if(!b)return;e.preventDefault();var k=b.getAttribute('data-chplan'),p=planDe(k);if(window.PCPLANS&&PCPLANS.ouvrirPour)PCPLANS.ouvrirPour(k,p&&p.plan)});
+document.addEventListener('click',function(e){var r=e.target.closest&&e.target.closest('[data-chrel]');if(r){e.preventDefault();var c=CH[r.getAttribute('data-chrel')],s=document.getElementById('ch-rel');if(c&&s&&s.value){c.dos=s.value;var o=dos(c);if(o){c.n=o.n;if(!c.v&&o.v)c.v=o.v}saveCH();X.toast('Chantier relié',(o?o.n:'')+' · son dossier s\'affiche.');ouvrir(c.id,ong)}return}
+ var b=e.target.closest&&e.target.closest('[data-chplan]');if(!b)return;e.preventDefault();var k=b.getAttribute('data-chplan'),p=planDe(k);if(window.PCPLANS&&PCPLANS.ouvrirPour)PCPLANS.ouvrirPour(k,p&&p.plan)});
 window.PCCH={dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
 if(X.setCurCh)liste();
 })();
