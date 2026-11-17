@@ -110,12 +110,13 @@ function chargerFO(force){if(!enDirect()||FOe==='charge'||(FOe==='ok'&&!force))r
 function fourDe(id){return (FO||[]).filter(function(f){return f.id===id})[0]}
 function vueFO(){if(!FO)return '';
  return '<div class="sec-h bc-fh"><h2>Mes fournisseurs</h2><span>'+FO.length+'</span></div><div class="bc-fos">'+FO.map(function(f){
-  return '<div class="card bc-fo"><button type="button" class="bc-fot" data-bcfo="'+esc(f.id)+'"><b>'+esc(f.nom)+'</b><small>'+(f.habituel?'<em class="bc-m">votre fournisseur habituel</em> · ':'')+f.n+' article'+(f.n>1?'s':'')+'</small></button>'+
+  return '<div class="card bc-fo"><button type="button" class="bc-fot" data-bcfo="'+esc(f.id)+'"><b>'+esc(f.nom)+'</b><small>'+(f.habituel?'<em class="bc-m">votre fournisseur habituel</em> · ':'')+f.n+' article'+(f.n>1?'s':'')+(f.adresse?' · '+esc(f.adresse):'')+'</small></button>'+
    '<button class="btn sm bc-aj" type="button" data-bclire="'+esc(f.id)+'">'+IC.doc+'<span>Déposer un tarif, un devis ou une facture</span></button></div>'}).join('')+
   '<button class="btn sm bc-aj bc-fonew" type="button" data-bcfonew>'+IC.plus+'<span>Ajouter un fournisseur</span></button></div>'}
 function corpsFO(f){f=f||{};var m=f.relance_mois==null?6:f.relance_mois;
  return '<div class="cf-form pr-form bc-foform"><label>Nom du fournisseur<input id="fo-n" autocomplete="off" placeholder="Ex. : Point P Grenoble" value="'+esc(f.nom||'')+'"'+(f.id==='base'?'':'')+'></label>'+
   '<label>Son e-mail <small>pour lui demander son tarif à jour</small><input id="fo-e" type="email" autocomplete="off" placeholder="agence@fournisseur.fr" value="'+esc(f.email||'')+'"></label>'+
+  '<label>Adresse du comptoir <small>pour calculer le vrai détour quand vous y passez avant le chantier</small><input id="fo-a" autocomplete="off" placeholder="N°, rue, code postal, commune" value="'+esc(f.adresse||'')+'"></label>'+
   '<p class="bc-lab">Lui redemander son tarif</p><div class="pr-u" role="group" aria-label="Relance">'+[[3,'tous les 3 mois'],[6,'tous les 6 mois'],[12,'tous les ans'],[0,'jamais']].map(function(x){return '<button type="button" data-forel="'+x[0]+'" aria-pressed="'+(m===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'+
   '<div class="dp-opt">'+(window.PCTAG?PCTAG('cliky'):'')+'La relance partira de l\'adresse de Cliky dès qu\'elle sera ouverte : vous la validerez la première fois.</div></div>'}
 var FOF={};
@@ -131,8 +132,8 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-forel')){FOF.rel=+a('data-forel');$$('[data-forel]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}
  else if(b.hasAttribute('data-fohab'))envoyerFO({id:a('data-fohab'),habituel:true},['Fournisseur habituel changé','Cliky prend ses prix d\'abord.']);
  else if(b.hasAttribute('data-fosup'))envoyerFO({id:a('data-fosup'),supprimer:true},['Fournisseur retiré','']);
- else{var n=(($('#fo-n')||{}).value||'').trim(),m=(($('#fo-e')||{}).value||'').trim();if(!n){X.toast('Il manque le nom','Le nom du fournisseur.');return}
-  envoyerFO(FOF.id?{id:FOF.id,modif:{nom:n,email:m,relance_mois:FOF.rel}}:{ajout:{nom:n,email:m,relance_mois:FOF.rel}},[FOF.id?'Fournisseur enregistré':'Fournisseur ajouté',FOF.id?'':'Glissez-y ses tarifs et factures : Cliky les lit.'])}});
+ else{var n=(($('#fo-n')||{}).value||'').trim(),m=(($('#fo-e')||{}).value||'').trim(),ad=(($('#fo-a')||{}).value||'').trim();if(!n){X.toast('Il manque le nom','Le nom du fournisseur.');return}
+  envoyerFO(FOF.id?{id:FOF.id,modif:{nom:n,email:m,adresse:ad,relance_mois:FOF.rel}}:{ajout:{nom:n,email:m,adresse:ad,relance_mois:FOF.rel}},[FOF.id?'Fournisseur enregistré':'Fournisseur ajouté',FOF.id?'':'Glissez-y ses tarifs et factures : Cliky les lit.'])}});
 function vueBC(){var A=BC.articles;chargerFO();
  if(!A)return '<p class="hint">'+(BC.etat==='err'?esc(BC.err||'Base indisponible pour l\'instant.')+' <button class="lnk" type="button" data-bcre>Réessayer</button>':'Chargement de la base de Cliky…')+'</p>';
  var t=sansAcc(qc).trim(),L=t?A.filter(function(a){return sansAcc(a.d+' '+a.f+' '+a.c+' '+a.cond).indexOf(t)>=0}):A;

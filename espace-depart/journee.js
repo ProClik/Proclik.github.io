@@ -49,13 +49,23 @@ function adresseCh(c){var o=c.dos&&X.DOS&&X.DOS[c.dos];return (o&&o.adr&&!/\[/.t
 var enCours={};
 function chercherRoute(c){var de=depart(),a=adresseCh(c),k=c.id+'|'+de+'|'+a;if(!a||enCours[k]||!window.PCV||!document.documentElement.classList.contains('pcvrai'))return;enCours[k]=1;
  PCV.api('/espace/trajet?de='+encodeURIComponent(de)+'&a='+encodeURIComponent(a)).then(function(x){if(x&&x.km>0&&x.min>0){c.route={km:x.km,min:x.min,de:de,a:a};X.saveCH();majPartout()}},function(){})}
+/* Fournisseurs (Cyril 17/11) : leur adresse est dans Produits › Mes fournisseurs. Au comptoir, on touche son fournisseur :
+   l'Espace sait d'où on repart, calcule le vrai trajet fournisseur → chantier et le vrai détour du jour. */
+var ROUTES=lget('pc-routes',{});
+function fournisseursAdr(){var F=X.lsGet('pc-cliky-four',null)||[];return F.filter(function(f){return (f.adresse||'').trim()})}
+function foDe(j){return j&&j.fo&&j.fo.adr?j.fo:null}
+function route2(de,a){if(!de||!a)return null;var k=(de+'|'+a).toLowerCase(),R=ROUTES[k];if(R)return R;
+ if(enCours[k]||!window.PCV||!document.documentElement.classList.contains('pcvrai'))return null;enCours[k]=1;
+ PCV.api('/espace/trajet?de='+encodeURIComponent(de)+'&a='+encodeURIComponent(a)).then(function(x){if(x&&x.km>0&&x.min>0){ROUTES[k]={km:x.km,min:x.min};lset('pc-routes',ROUTES);majPartout()}},function(){});return null}
 function trajet(c){var de=depart(),a=adresseCh(c),R=c.route;
  if(R&&R.de===de&&R.a===a)return {km:Math.round(R.km),min:R.min,vrai:true,txt:duree(R.min)+' de route ('+Math.round(R.km)+' km, trajet calculé)'};
  chercherRoute(c);
  var L=lieu(c);if(!L)return {km:null,min:20,txt:'environ 20 min de route (adresse sans position)'};
  var d=Math.max(1,km(DEPOT,L)*1.3),m=Math.max(5,Math.round(d/VITESSE*60));return {km:Math.round(d),min:m,txt:'environ '+duree(m)+' de route ('+Math.round(d)+' km)'}}
 function arrivee(j,c){var t=trajet(c),marge=REG.marge||0;
- if(j.four!=null)return {m:j.four+t.min+marge,src:'fournisseur',det:'liste donnée au fournisseur à '+hmLong(j.four)+' + '+t.txt+' + '+marge+' min de marge'};
+ var fo=foDe(j),r=fo&&route2(fo.adr,adresseCh(c));
+ if(j.four!=null&&r)return {m:j.four+r.min+marge,src:'fournisseur',det:'liste donnée chez '+fo.nom+' à '+hmLong(j.four)+' + '+duree(r.min)+' de route ('+Math.round(r.km)+' km, trajet calculé) + '+marge+' min de marge'};
+ if(j.four!=null)return {m:j.four+t.min+marge,src:'fournisseur',det:'liste donnée '+(fo?'chez '+fo.nom:'au fournisseur')+' à '+hmLong(j.four)+' + '+t.txt+' + '+marge+' min de marge'};
  if(j.dep!=null)return {m:j.dep+t.min+marge,src:'calcul',det:'départ à '+hmLong(j.dep)+' + '+t.txt+' + '+marge+' min de marge'};
  return {m:j.cal,src:'calendrier',det:'heure prévue dans votre calendrier (rien touché ce matin)'}}
 
@@ -146,8 +156,13 @@ function carteChantier(c){if(c.st==='done'||!onJ())return '';var d=jourIso(0);se
   '<button type="button" class="btn go jr-go" data-jrrecap="'+esc(c.id)+'">Faire le récap du jour</button></div>'}
 
 /* ---------- « Liste donnée au fournisseur » en bas des fournitures ---------- */
+function fourDonne(ch,f){var j=journee(jourIso(0),ch,true);j.four=maintenant();j.fo=f?{id:f.id,nom:f.nom,adr:f.adresse}:null;j.ok=false;save();if(f)route2(depart(),f.adresse);
+ X.toast('Liste donnée'+(f?' chez '+f.nom:'')+' ✓','Arrivée recalculée vers '+hmLong(arrivee(j,CH[ch]).m)+'.');majPartout()}
+function choixFo(ch,FA){X.xopen('Chez quel fournisseur ?','Cliky calcule le trajet jusqu\'au chantier depuis là','<div class="jr-c" style="display:grid;gap:8px">'+
+ FA.map(function(f){return '<button type="button" class="btn" data-jrfo="'+esc(ch+'|'+f.id)+'" style="justify-content:flex-start;text-align:left"><span><b>'+esc(f.nom)+'</b><br><small style="color:var(--muted)">'+esc(f.adresse)+'</small></span></button>'}).join('')+
+ '<button type="button" class="btn" data-jrfo="'+esc(ch+'|')+'">Un autre fournisseur</button></div>','')}
 function blocFournisseur(c){if(c.st==='done'||!onJ())return '';var j=journee(jourIso(0),c.id,false);
- if(j&&j.four!=null)return '<div class="jr-four" id="jr-four"><b>✓ Liste donnée au fournisseur à '+hmLong(j.four)+'</b><span class="hint">Votre arrivée sur le chantier est recalculée depuis là. Un oubli ? La liste est juste au-dessus.</span>'+
+ if(j&&j.four!=null)return '<div class="jr-four" id="jr-four"><b>✓ Liste donnée '+(foDe(j)?'chez '+esc(j.fo.nom):'au fournisseur')+' à '+hmLong(j.four)+'</b><span class="hint">Votre arrivée sur le chantier est recalculée depuis là. Un oubli ? La liste est juste au-dessus.</span>'+
   '<div class="jr-row"><button type="button" class="btn" data-jrlst>Revoir la liste</button><button type="button" class="btn" data-jrfx="'+esc(c.id)+'">Annuler l\'heure</button></div></div>';
  return '<div class="jr-four" id="jr-four"><b>Au comptoir du fournisseur ?</b><span class="hint">Donnez la liste ci-dessus, puis touchez ce bouton : Cliky note l\'heure et recalcule votre arrivée.</span>'+
   '<button type="button" class="btn go jr-go" data-jrfv="'+esc(c.id)+'">Liste donnée au fournisseur ✓</button></div>'}
@@ -324,7 +339,9 @@ function prixCarb(v,cb){if(!vehPret(v))return cb(null);
  if(!P||!P.api||!vrai||!/^\d{5}$/.test(REG.cp||''))return repli();
  P.api('/espace/carburant?cp='+REG.cp+'&type='+v.type).then(function(x){if(!x||!(x.prix>0))return repli();
   PJ[k]={prix:x.prix,src:'prix du jour, '+x.n+' station'+(x.n>1?'s':'')+(x.cp&&x.cp.length===2?' du département':' du secteur'),t:Date.now()};lset('pc-carb',PJ);cb(PJ[k])},repli)}
-function kmJour(j,c){var t=trajet(c);if(t.km==null)return null;return {km:t.km*2+(j.four!=null?(REG.detour||0):0),det:t.km+' km aller, '+t.km+' km retour'+(j.four!=null&&REG.detour?', '+REG.detour+' km de détour fournisseur':'')}}
+function kmJour(j,c){var t=trajet(c);if(t.km==null)return null;var fo=j.four!=null&&foDe(j),r1=fo&&route2(depart(),fo.adr),r2=fo&&route2(fo.adr,adresseCh(c));
+ if(r1&&r2){var a1=Math.round(r1.km),a2=Math.round(r2.km);return {km:a1+a2+t.km,det:a1+' km jusqu\'à '+fo.nom+', '+a2+' km jusqu\'au chantier, '+t.km+' km retour'}}
+ return {km:t.km*2+(j.four!=null?(REG.detour||0):0),det:t.km+' km aller, '+t.km+' km retour'+(j.four!=null&&REG.detour?', '+REG.detour+' km de détour fournisseur':'')}}
 /* coût des trajets du jour pour les véhicules choisis : [{veh, cond, km, q, u, prix, eur, src} | {veh, err}] */
 function coutTrajet(j,c,ids,cb){var k=kmJour(j,c);if(!k)return cb({err:'Adresse du chantier sans position : kilomètres inconnus.'});
  if(!VEHS().length)return cb({err:'veh',km:k.km,det:k.det});
@@ -351,7 +368,7 @@ function mesVehicules(retour){MV.retour=retour||MV.retour;var V=VEHS();
  var h='<div id="jr-mv" class="vh"><p class="jr-sub">'+(V.length?'Touchez un véhicule pour voir son suivi.':'Ajoutez le véhicule qui va sur vos chantiers. Il sert au coût des trajets.')+'</p>'+
   '<div class="vh-l">'+V.map(carteVeh).join('')+'</div><button type="button" class="vh-add" data-vhn><span>+</span>Ajouter un véhicule</button>'+
   '<div class="vh-g"><b>Pour tous les véhicules</b><label>Adresse du dépôt<small>D\'où partent les camions le matin : sert à calculer le vrai trajet jusqu\'au chantier.</small><input id="jr-vdep" value="'+esc(REG.depot||'')+'" placeholder="N°, rue, code postal, commune" autocomplete="street-address"></label><label>Code postal du dépôt<small>Pour le prix du jour des stations autour de chez vous.</small><input id="jr-vcp" inputmode="numeric" maxlength="5" value="'+esc(REG.cp||'')+'"></label>'+
-  '<div><span class="vh-lab">Détour pour passer chez le fournisseur<small>Ajouté les jours où la liste est donnée au comptoir.</small></span><div class="jr-row">'+[0,5,10,15,20].map(function(n){return '<button type="button" class="btn" data-vhd="'+n+'" aria-pressed="'+((REG.detour||0)===n)+'">'+(n?n+' km':'Aucun')+'</button>'}).join('')+'</div></div></div>'+
+  '<div><span class="vh-lab">Détour pour passer chez le fournisseur<small>Seulement pour un fournisseur sans adresse. Avec son adresse (Produits › Mes fournisseurs), le vrai détour est calculé.</small></span><div class="jr-row">'+[0,5,10,15,20].map(function(n){return '<button type="button" class="btn" data-vhd="'+n+'" aria-pressed="'+((REG.detour||0)===n)+'">'+(n?n+' km':'Aucun')+'</button>'}).join('')+'</div></div></div>'+
   (MV.retour?'<div class="jr-ok"><button type="button" class="btn go" data-vhfin>C\'est bon</button></div>':'')+'</div>';
  X.xopen('Mes véhicules',V.length?V.length+' véhicule'+(V.length>1?'s':''):'','<div>'+h+'</div>','',function(){var b=$('#jr-mv');
   var dp=$('#jr-vdep');if(dp)dp.addEventListener('change',function(){REG.depot=dp.value.trim().slice(0,160);save()});var cp=$('#jr-vcp');cp.addEventListener('change',function(){if(/^\d{5}$/.test(cp.value.trim())){REG.cp=cp.value.trim();save()}});
@@ -472,10 +489,11 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 function partir(id){var c=CH[id];if(!c)return;var d=jourIso(0),j=journee(d,id,true);j.dep=maintenant();j.ok=false;save();
  var o=c.dos&&X.DOS&&X.DOS[c.dos],adr=(o&&o.adr&&!/\[/.test(o.adr)?o.adr:c.v)||c.v;
  if(window.PCGPS)PCGPS.ouvrir(adr);X.toast('Bonne route','Arrivée estimée vers '+hmLong(arrivee(j,c).m)+'. Rien à toucher en arrivant.');majPartout()}
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-jrgo],[data-jrrecap],[data-jrfv],[data-jrfx],[data-jrlst],[data-jrhs],[data-jrhsrien],[data-jrmois]');if(!b)return;var s=b.dataset;
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-jrgo],[data-jrrecap],[data-jrfv],[data-jrfo],[data-jrfx],[data-jrlst],[data-jrhs],[data-jrhsrien],[data-jrmois]');if(!b)return;var s=b.dataset;
  if(s.jrgo)return partir(s.jrgo);
  if(s.jrrecap)return recap(s.jrrecap);
- if(s.jrfv){var j=journee(jourIso(0),s.jrfv,true);j.four=maintenant();j.ok=false;save();X.toast('Liste donnée ✓','Arrivée recalculée vers '+hmLong(arrivee(j,CH[s.jrfv]).m)+'.');return majPartout()}
+ if(s.jrfv){var FA=fournisseursAdr();if(FA.length>1)return choixFo(s.jrfv,FA);return fourDonne(s.jrfv,FA[0]||null)}
+ if(s.jrfo){X.xclose();var p2=s.jrfo.split('|'),F2=fournisseursAdr().filter(function(f){return f.id===p2[1]})[0]||null;return fourDonne(p2[0],F2)}
  if(s.jrfx){var j2=journee(jourIso(0),s.jrfx,false);if(j2){j2.four=null;save()}return majPartout()}
  if(s.jrlst!=null){var l=$('#ch-four');if(l)l.scrollIntoView({behavior:'smooth',block:'start'});return}
  if(s.jrhs)return feuilleHS(s.jrhs);
