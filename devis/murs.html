@@ -189,6 +189,8 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .same{display:grid;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}.same>span{font-size:13px;font-weight:800;color:var(--muted)}.same>div{display:flex;flex-wrap:wrap;gap:6px}
 .same .chip{appearance:none;border:1.5px solid var(--act);background:var(--surface);color:var(--act);font:800 13.5px var(--font);border-radius:999px;padding:8px 13px;cursor:pointer}
 .sls{display:grid;gap:6px}.sl{appearance:none;display:flex;justify-content:space-between;gap:10px;align-items:center;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;font:600 13.5px var(--font);color:var(--muted);cursor:pointer;text-align:left}.sl b{color:var(--fg);font-weight:800;text-align:right}
+.fph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 8px}.phb{display:inline-flex;align-items:center;gap:8px;background:var(--act);color:var(--on-act);border-radius:999px;padding:11px 16px;font:800 14.5px var(--font);cursor:pointer}.fph img{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1.5px solid var(--line)}
+.fnt{display:flex;gap:8px;align-items:stretch}.fnt textarea{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);font:600 14.5px/1.35 var(--font);padding:9px 12px;resize:none}.fnt .mic{appearance:none;flex:none;width:48px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--laiton);display:grid;place-items:center;cursor:pointer}.fnt .mic.on{background:var(--laiton);color:#fff;animation:blk 1.2s infinite}
 .ssdone{display:grid;justify-items:center;text-align:center;gap:6px;padding:14px 0;animation:pIn .5s cubic-bezier(.2,.9,.3,1.25) both}.ssdone b{font-size:20px;font-weight:800}.ssdone span{color:var(--muted)}
 .ssdone .ck{stroke-dasharray:40;stroke-dashoffset:40;animation:ckD .5s .15s ease forwards}@keyframes ckD{to{stroke-dashoffset:0}}
 @media (min-aspect-ratio:5/4){
@@ -749,7 +751,7 @@ function startRoom(){const q=PC.queue[PC.qn];if(!q){showRecap();return}if(!PC.R[
 function goWall(i){wi=i;M=WALLS[wi];face=0;sel=null;askAll=!!G().length;PC.rv=null;confirmDel=false;drag=null;HIST.length=0;$("undo").disabled=true;$("dock").classList.remove("open");lvl0=-1;
  cat=firstCat();ui();const t0=performance.now()+180;M.items.forEach((it,j)=>{it._a={t:t0+j*70,d:0,dy:-140};it.settle=0});draw();anim();steps();if(!PC.coached){PC.coached=1;setTimeout(coach,5200)}}
 function saveSnap(){const s0=sel;sel=null;M.items.forEach(i=>delete i._a);draw();const s=$("wall").cloneNode(true);s.removeAttribute("id");s.removeAttribute("style");M.snap=s.outerHTML;sel=s0}
-function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
+function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
 // ---------- Récap ----------
 function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});if(msg)setTimeout(()=>toast(msg,2400),200)}
 function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
@@ -787,6 +789,7 @@ const SQ={sol:[
  {k:"depose",q:"Quel sol y a-t-il aujourd'hui ?",s:"Il sera enlevé avant de poser le nouveau.",o:["Carrelage","Parquet","Moquette","Lino / PVC",DKs],if:a=>a.etat==="On le change"},
  {k:"revet",q:"Quel sol voulez-vous ?",o:["Carrelage","Parquet","Sol souple (lino, vinyle)",DKs],if:a=>/change|pas encore/.test(a.etat||"")},
  {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"}],
+ fin:[],
  pf:[
  {k:"pf",q:"Le plafond de cette pièce…",o:["Rien à faire","À refaire",DKs]},
  {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
@@ -834,8 +837,8 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
 // ---------- Parcours ----------
-function roomEnd(){const q=PC.queue[PC.qn],parts=["sol","pf"].filter(needPart);
- if(!parts.length)return nextRoom(true);PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="sol"?"Maintenant, le sol":"Maintenant, le plafond");setTimeout(()=>startSS(0),1700)}
+function roomEnd(){const q=PC.queue[PC.qn],parts=["sol","pf"].filter(needPart).concat(["fin"]);
+ PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
 function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
  if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
 function startSS(pi,o={}){const q=o.q||PC.queue[PC.qn],p=o.part||PC.parts[pi],a=soA(q.id,p);
@@ -843,7 +846,7 @@ function startSS(pi,o={}){const q=o.q||PC.queue[PC.qn],p=o.part||PC.parts[pi],a=
  if(!a.pf&&p==="pf"&&/^Partout/.test(A.plafs||"")){a.pf="À refaire";a._pre=1}
  PC.step="s";PC.ss={pi,p,q,i:o.sum?99:0,edit:!!o.edit};showScr("ss");ssUI(true)}
 function sameList(){const {p,q}=PC.ss;return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
-function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(PC.ss.i>V.length)PC.ss.i=V.length;const i=PC.ss.i,sum=i>=V.length;
+function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(p==="fin")return finUI(anim);if(PC.ss.i>V.length)PC.ss.i=V.length;const i=PC.ss.i,sum=i>=V.length;
  $("ss-t").textContent=`${q.r.nom} · ${p==="sol"?"le sol":"le plafond"}`;$("ss-s").innerHTML=`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`;
  drawTop($("ss-svg"),q,p,a);
  const card=$("ss-card");let h="";
@@ -852,7 +855,7 @@ function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(PC.ss.i>V.le
    (sl.length?`<div class="same"><span>${p==="sol"?"Même sol que…":"Même plafond que…"}</span><div>${sl.map(x=>`<button type="button" class="chip" data-same="${x.id}">${x.r.nom}</button>`).join("")}</div></div>`:"");
   $("ss-go").textContent=a._pre&&i===0?"Oui, c'est ça ›":"Continuer ›";$("ss-go").disabled=a[Q.k]==null}
  else{h=`<small>C'est noté</small><h2>${p==="sol"?"Le sol":"Le plafond"} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${a[Q.k]||"—"}</b></button>`).join("")}</div>`;
-  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):"C'est bon, le plafond ›"}
+  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):PC.parts[PC.ss.pi+1]==="pf"?"C'est bon, le plafond ›":"C'est bon ›"}
  card.innerHTML=h;if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
 $("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
  if(b.dataset.same){const src=PC.SO[b.dataset.same][p];Object.keys(a).forEach(k=>delete a[k]);Object.assign(a,JSON.parse(JSON.stringify(src)));a._done=0;PC.ss.i=99;toast(`<b>Recopié</b> depuis ${b.textContent}`,2000);ssUI(true);return}
@@ -870,6 +873,21 @@ $("ss-back").onclick=()=>{clearTimeout(PC.ssT);vib(6);if(PC.ss.i>0){PC.ss.i=Math
 function ssParty(t,sub,cb){const c=$("ss-card");c.innerHTML=`<div class="ssdone">${'<svg viewBox="0 0 60 60" width="74" height="74" fill="none"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ck"/></svg>'}<b>${t}</b><span>${sub}</span></div>`;$("ss-go").disabled=true;vib([10,40,14]);setTimeout(cb,1700)}
 function topThumb(q,p){const s=document.createElementNS("http://www.w3.org/2000/svg","svg");drawTop(s,q,p,soA(q.id,p),{uid:q.id.replace("-","_")+p,still:1,nolab:1});return s.outerHTML}
 if(!EMB)window.__pc={roomEnd,PC,exportSols};
+
+// ---------- Pour finir : une photo et un mot (facultatifs) ----------
+function finUI(anim){const {q}=PC.ss,a=soA(q.id,"fin"),nx=PC.queue[PC.qn+1];a.ph=a.ph||[];
+ $("ss-t").textContent=`${q.r.nom} · pour finir`;$("ss-s").innerHTML="Facultatif, mais <i>très utile</i> à l'artisan";drawTop($("ss-svg"),q,"sol",soA(q.id,"sol"));
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ $("ss-card").innerHTML=`<small>Dernière chose</small><h2>Une photo de : ${q.r.nom} ?</h2><div class="fph"><label class="phb"><input type="file" accept="image/*" capture="environment" id="fin-ph" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>${a.ph.length?"Une autre photo":"Prendre une photo"}</label>${a.ph.map(x=>`<img src="${x}" alt="">`).join("")}</div>
+  <div class="fnt"><textarea id="fin-nt" rows="2" placeholder="Un détail à dire sur cette pièce ? (facultatif)">${(a.note||"").replace(/</g,"&lt;")}</textarea>${SR?`<button type="button" class="mic" id="fin-mic" aria-label="Dicter"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>`:""}</div>`;
+ $("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":nx?(a.ph.length||a.note?"Pièce suivante ›":"Passer, pièce suivante ›"):(a.ph.length||a.note?"Voir le récap ›":"Passer, voir le récap ›");
+ const card=$("ss-card");if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
+function shrinkImg(file,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.8))};im.onerror=()=>res(null);im.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)})}
+$("ss-card").addEventListener("change",async e=>{if(e.target.id!=="fin-ph")return;const f=e.target.files&&e.target.files[0];if(!f)return;const q=PC.ss.q,a=soA(q.id,"fin");const img=await shrinkImg(f,1600);if(!img)return;a.ph=(a.ph||[]).concat([img]).slice(-3);
+ post({type:"proclik-murs-photo",piece:q.r.nom,img});vib(10);toast("<b>Photo ajoutée</b> ✓",1800);finUI(false)});
+$("ss-card").addEventListener("input",e=>{if(e.target.id!=="fin-nt")return;soA(PC.ss.q.id,"fin").note=e.target.value;const nx=PC.queue[PC.qn+1],a=soA(PC.ss.q.id,"fin");$("ss-go").textContent=nx?(a.ph.length||a.note?"Pièce suivante ›":"Passer, pièce suivante ›"):(a.ph.length||a.note?"Voir le récap ›":"Passer, voir le récap ›")});
+$("ss-card").addEventListener("click",e=>{const b=e.target.closest("#fin-mic");if(!b)return;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;if(PC.rec){try{PC.rec.stop()}catch(_){}return}
+ const r=new SR();r.lang="fr-FR";r.interimResults=false;PC.rec=r;b.classList.add("on");const ta=$("fin-nt");r.onresult=ev=>{const t=[...ev.results].map(x=>x[0].transcript).join(" ");ta.value=(ta.value?ta.value+" ":"")+t;ta.dispatchEvent(new Event("input",{bubbles:true}))};r.onend=()=>{PC.rec=null;const m=$("fin-mic");if(m)m.classList.remove("on")};r.onerror=()=>{toast("Le micro ne répond pas : utilisez celui du clavier 🎤",2600)};try{r.start()}catch(_){PC.rec=null}});
 
 function miniPlan(){const m=$("mini"),w0=WALLS[0],lv=w0.lv,r=GEO[lv].rooms[+w0.rid.split("-")[1]],b=bbox(lv),p=40,s=m.querySelector("svg");
  s.setAttribute("viewBox",`${b.x-p} ${b.y-p} ${b.w+2*p} ${b.h+2*p}`);s.style.aspectRatio=`${b.w+2*p}/${b.h+2*p}`;const k=Math.max(b.w,b.h)/100;
