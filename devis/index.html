@@ -558,6 +558,8 @@ const D={
   {k:"elec",t:"chips",l:"L'électricité de ces pièces…",h:"Prises, interrupteurs, éclairage.",o:["On n'y touche pas","Quelques prises à ajouter ou déplacer","Tout est à refaire",DK]},
   {k:"plomb",t:"chips",l:"Et la plomberie ?",h:"Arrivées d'eau et évacuations.",o:["On n'y touche pas","Quelques changements","Tout est à refaire",DK],sh:i=>(i.pcs||[]).some(p=>/Cuisine|Salle de bain|WC|Buanderie/.test(p))},
   {k:"chauf",t:"chips",l:"Comment est chauffé le logement ?",o:["Radiateurs électriques","Radiateurs à eau","Plancher chauffant","Poêle ou autre",DK]},
+{k:"sols",t:"chips",l:"Les sols à changer, c'est…",h:"On vous demandera ensuite pièce par pièce, avec votre plan.",o:["Partout où il y a des travaux","Dans certaines pièces seulement",DK],sh:()=>(S.travaux||[]).includes("sol")},
+{k:"plafs",t:"chips",l:"Les plafonds à refaire, c'est…",h:"Pareil : pièce par pièce, après le plan.",o:["Partout où il y a des travaux","Dans certaines pièces seulement",DK],sh:()=>(S.travaux||[]).includes("plafond")},
   {k:"parking",t:"chips",l:"Où l'artisan peut-il se garer ?",o:["Place privée ou cour","Dans la rue, gratuit","Dans la rue, payant",DK]},
   {k:"acces",t:"chips",l:"L'accès au chantier est…",h:"Difficile : escalier étroit, rue piétonne, longue distance à pied, portail étroit…",o:["Facile","Difficile",DK]}]},
  cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
@@ -771,7 +773,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&v=44");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=45");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -801,7 +803,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
-const LQ=[["cp","commune"],["type"],["mur"],["age"],["occupe"],["ou","niveau","ascenseur"],["pcs"],["nch"],["cuis"],["sdb"],["sdbeq"],["elec"],["plomb"],["chauf"],["parking"],["acces"]];
+const LQ=[["cp","commune"],["type"],["mur"],["age"],["occupe"],["ou","niveau","ascenseur"],["pcs"],["nch"],["cuis"],["sdb"],["sdbeq"],["elec"],["plomb"],["chauf"],["sols"],["plafs"],["parking"],["acces"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
@@ -1099,11 +1101,11 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
 
 // 18/11 (Cyril) : après le plan, « Vos murs, vus de face » (devis/murs.html), pré-remplis par le tracé et les réponses du logement.
 function mursOK(){const g=S.plan&&S.plan.trace&&S.plan.trace.geo;return!!(g&&g.some(f=>f.rooms&&f.rooms.length))}
-function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=1");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
-function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:S.logement},"*")}catch(e){}}
+function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=2");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
+function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:Object.assign({},S.logement,{trav:S.travaux||[]})},"*")}catch(e){}}
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-murs-ready")mursLoad();
- if(d.type==="proclik-murs"){S.murs=d.murs;save()}
+ if(d.type==="proclik-murs"){S.murs=d.murs;if(d.sols){S.sols=d.sols;/* sols et plafonds pièce par pièce : renvoyés au plan, qui garde le même calcul (Cyril 18/11) */const pf=document.getElementById("pframe");try{if(pf&&pf.contentWindow)pf.contentWindow.postMessage({type:"proclik-plan-sols",sols:d.sols},"*")}catch(x){}}save()}
  if(d.type==="proclik-murs-finish"){document.getElementById("mursfull").hidden=true;document.body.style.overflow="";render()}});
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),ou:(S.logement||{}).ou||[],ltype:(S.logement||{}).type||"",toit:S.travaux.includes("rampants")?{forme:R.forme||null,hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2"),ft:R.ft||null,ftsz:R.ftsz||null,ftetat:R.ftetat||null}:null},"*");return}

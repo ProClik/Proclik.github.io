@@ -181,12 +181,25 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .th{appearance:none;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:4px 4px 3px;display:grid;gap:1px;cursor:pointer;min-width:0;transition:transform .15s}
 .th:active{transform:scale(.96)}.th svg{width:100%;height:58px;display:block;pointer-events:none}.th span{font:700 11px var(--font);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sent{flex:1;display:grid;place-content:center;justify-items:center;text-align:center;gap:10px;animation:sheetIn .5s ease both}.sent b{font-size:24px;font-weight:800}.sent p{margin:0;max-width:340px;color:var(--muted);line-height:1.45}
+/* sol / plafond */
+.ssw{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}.ssw .pv{flex:1;min-height:120px}
+#ss-svg{overflow:hidden!important;border-radius:16px}
+#ss .sq-card{flex:none;justify-content:flex-start}#ss .qo{min-height:50px}
+.fillin{animation:fIn .45s ease both}@keyframes fIn{from{opacity:0}}
+.same{display:grid;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}.same>span{font-size:13px;font-weight:800;color:var(--muted)}.same>div{display:flex;flex-wrap:wrap;gap:6px}
+.same .chip{appearance:none;border:1.5px solid var(--act);background:var(--surface);color:var(--act);font:800 13.5px var(--font);border-radius:999px;padding:8px 13px;cursor:pointer}
+.sls{display:grid;gap:6px}.sl{appearance:none;display:flex;justify-content:space-between;gap:10px;align-items:center;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;font:600 13.5px var(--font);color:var(--muted);cursor:pointer;text-align:left}.sl b{color:var(--fg);font-weight:800;text-align:right}
+.ssdone{display:grid;justify-items:center;text-align:center;gap:6px;padding:14px 0;animation:pIn .5s cubic-bezier(.2,.9,.3,1.25) both}.ssdone b{font-size:20px;font-weight:800}.ssdone span{color:var(--muted)}
+.ssdone .ck{stroke-dasharray:40;stroke-dashoffset:40;animation:ckD .5s .15s ease forwards}@keyframes ckD{to{stroke-dashoffset:0}}
 @media (min-aspect-ratio:5/4){
+ #ss{display:grid;grid-template-columns:minmax(0,1fr) clamp(250px,36vw,380px);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"pv st" "pv tip" "pv card" "pv foot";column-gap:12px}
+ #ss>*{max-width:none}#ss>.steps{grid-area:st}#ss>.tipc{grid-area:tip}.ssw{display:contents}.ssw .pv{grid-area:pv}#ss-card{grid-area:card;align-self:center}#ss>.foot{grid-area:foot}
+ #ss .qgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
  #sp{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,32vw,330px);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"pv st" "pv tip" "pv cards" "pv go";column-gap:12px}
  #sp>*{max-width:none}#sp .steps{grid-area:st}#sp .tipc{grid-area:tip}#sp .pv{grid-area:pv}#sp-cards{grid-area:cards;align-self:end}#sp-go{grid-area:go}
  #sp .nm{grid-template-columns:repeat(2,minmax(0,1fr))}#sp .qo.sm{flex-direction:row;justify-content:flex-start;text-align:left;min-height:42px;padding:6px 10px;gap:8px}
  .srm{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,32vw,330px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"pv tip" "pv w" "pv go";column-gap:12px;max-width:1100px}
- .srm .tipc{grid-area:tip}.srm .pv{grid-area:pv}.srm .srw{grid-area:w;align-content:start}#sr-go{grid-area:go}.srm .ths{grid-template-columns:repeat(2,minmax(0,1fr))}.srm .th svg{height:clamp(30px,9vh,90px)}
+ .srm .tipc{grid-area:tip}.srm .pv{grid-area:pv}.srm .srw{grid-area:w;align-content:start}#sr-go{grid-area:go}.srm .ths{grid-template-columns:repeat(2,minmax(0,1fr))}.srm .ths:has(>:nth-child(5)){grid-template-columns:repeat(3,minmax(0,1fr))}.srm .th svg{height:clamp(30px,9vh,90px)}
  #sr>.steps{max-width:1100px}
 }
 @media (min-aspect-ratio:5/4) and (max-height:520px){
@@ -203,6 +216,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 <div id="pf-rot" role="note"><div class="rot-in"><svg class="rot-ph" viewBox="0 0 120 120" aria-hidden="true"><path class="rot-ar" d="M28 30A44 44 0 0 1 92 30" fill="none" stroke-width="3" stroke-linecap="round"/><path class="rot-ar" d="M84 22l8 8-10 4" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g class="rot-g"><rect x="40" y="30" width="40" height="72" rx="8" class="rot-c"/><rect x="45" y="40" width="30" height="52" rx="2" class="rot-s"/><path d="M48 84V56h24v28M48 70h24" fill="none" class="rot-p" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="96.5" r="2" class="rot-b"/></g></svg><b>Tournez votre téléphone</b><p>Couché sur le côté, le mur est bien plus grand : plus facile de placer vos meubles du bout du doigt.</p><small>L'écran ne tourne pas ? Ouvrez le centre de contrôle et touchez le petit cadenas.</small><button type="button" id="pf-rot-x">Continuer sans tourner</button></div></div>
 <section class="scr" id="sq" hidden><div class="steps"></div><div class="sq-card" id="sq-card"><small id="sq-n"></small><h2 id="sq-t"></h2><p id="sq-s"></p><div class="qgrid" id="sq-o"></div></div><div class="foot"><button class="back" id="sq-back" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>Retour</button><button class="go" id="sq-go" type="button">Continuer ›</button></div></section>
 <section class="scr" id="sp" hidden><div class="steps"></div><div class="tipc"><b id="sp-tip"></b><span id="sp-sub"></span></div><div class="pv"><svg id="sp-svg"></svg></div><div id="sp-cards"></div><button class="go" id="sp-go" type="button"></button></section>
+<section class="scr" id="ss" hidden><div class="steps"></div><div class="tipc"><b id="ss-t"></b><span id="ss-s"></span></div><div class="ssw"><div class="pv"><svg id="ss-svg"></svg></div><div class="sq-card" id="ss-card"></div></div><div class="foot"><button class="back" id="ss-back" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>Retour</button><button class="go" id="ss-go" type="button">Continuer ›</button></div></section>
 <section class="scr" id="sr" hidden><div class="steps"></div><div id="sr-main" class="srm"><div class="tipc"><b>Vos murs, pièce par pièce</b><span id="sr-n"></span></div><div class="pv"><svg id="sr-svg"></svg></div><div class="srw"><div id="sr-room"></div><div class="ths" id="sr-th"></div></div><button class="go" id="sr-go" type="button">C'est bon, je continue ›</button></div><div id="sr-sent" class="sent" hidden><svg viewBox="0 0 60 60" width="84" height="84" fill="none" aria-hidden="true"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>C'est envoyé !</b><p>L'artisan reçoit votre plan, vos murs et vos réponses. Il revient vers vous avec votre devis.</p><button class="back" id="sr-again" type="button">Recommencer la maquette</button></div></section>
 <div class="app" hidden>
  <div class="top steps"></div>
@@ -647,7 +661,7 @@ $("ok").onclick=()=>{if(epAsk()){vib(8);toast("Une petite question d'abord, just
  if(WALLS&&!(isClo()&&face===0)){saveSnap();WALLS[wi].done=true;
  if(PC.edit){showRecap("<b>C'est corrigé !</b> Seul ce mur a changé");return}
  if(wi<WALLS.length-1){party(`Mur ${wi+1} terminé !`,`On passe au mur ${wi+2}`);setTimeout(()=>{goWall(wi+1);toast(`<b>Mur ${wi+1}</b> : la flèche du petit plan montre où regarder`,3000)},1700)}
- else{const nx=PC.queue[PC.qn+1];party(`${M.room} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")},1900)}
+ else roomEnd()
  return}if(isClo()&&face===0){face=1;sel=null;party("Première face terminée !","On passe à l'autre côté");ui();draw()}else{party("Mur terminé !","Votre devis vient de gagner en précision");$("ok").textContent="Mur suivant ›"}};
 $("room").addEventListener("input",e=>{M.named=true;if(face===1&&isClo())M.room2=e.target.value;else{M.room=e.target.value;if(WALLS)WALLS.forEach(w=>{w.room=M.room;w.named=true})}$("f1").textContent="Côté "+(M.room||"pièce 1");$("f2").textContent="Côté "+(M.room2||"pièce 2");draw()});
 $("rtype").addEventListener("change",e=>{const v=e.target.value;if(face===1&&isClo()){M.rt2=v;if(!M.named2)M.room2=ROOMS[v]}else{(WALLS||[M]).forEach(w=>{w.rt=v;if(!w.named)w.room=ROOMS[v]})}sel=null;cat=firstCat();ui();draw()});
@@ -665,8 +679,8 @@ function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
 // ---------- Géométrie (cm) ----------
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
-function prep(G){return G.map(f=>({nom:f.nom,H:Math.round((f.H||2.5)*100),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
- rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom)}})})).filter(f=>f.rooms.length)}
+function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
+ rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null}})})).filter(f=>f.rooms.length)}
 const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
 function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
 function cen(r){const p=r.pts;let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1]});return[x/p.length,y/p.length]}
@@ -693,9 +707,9 @@ function drawPlan(s,o={}){const box=s.getBoundingClientRect(),wide=box.width/Mat
    const lab=r.nom||"",[cx,cy]=cen(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
    const t=el("text",{x:cx,y:cy+f1*.35,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":f1,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=lab;
    if(st.sub){const u2=el("text",{x:cx,y:cy+f1*.35+fs*1.1,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":Math.min(fs*.8,(rw-20)/(st.sub.length*.6)),fill:"var(--muted)","pointer-events":"none"},g);u2.textContent=st.sub}})});return sc}
-function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`,cur={p:0,f:1,r:2}[PC.step];
+function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`,cur={p:0,f:1,s:1,r:2}[PC.step];
  const h=`<span class="sd">${[0,1,2].map(i=>`<i class="${i<cur?"ok":i===cur?"on":""}"></i>`).join("")}</span><b>${lab}</b>`;document.querySelectorAll(".steps").forEach(e=>e.innerHTML=h)}
-function showScr(id){["sq","sp","sr"].forEach(s=>$(s).hidden=s!==id);document.documentElement.classList.toggle("fv",!id);document.querySelector(".app").hidden=!!id;steps()}
+function showScr(id){["sq","sp","sr","ss"].forEach(s=>$(s).hidden=s!==id);document.documentElement.classList.toggle("fv",!id);document.querySelector(".app").hidden=!!id;steps()}
 function startPick(){PC.step="p";showScr("sp");planUI()}
 function planUI(){const n=ALLR().filter(q=>q.r.works).length;$("sp-tip").textContent="Touchez les pièces où il y a des travaux";
  $("sp-sub").innerHTML=n?`${n} pièce${n>1?"s":""} choisie${n>1?"s":""} d'après vos réponses. On ne passera que dans celles-là.`:"Touchez au moins une pièce.";$("sp-cards").innerHTML=`<button class="back" id="sp-skip" type="button">Passer cette étape</button>`;
@@ -737,16 +751,17 @@ function goWall(i){wi=i;M=WALLS[wi];face=0;sel=null;askAll=!!G().length;PC.rv=nu
 function saveSnap(){const s0=sel;sel=null;M.items.forEach(i=>delete i._a);draw();const s=$("wall").cloneNode(true);s.removeAttribute("id");s.removeAttribute("style");M.snap=s.outerHTML;sel=s0}
 function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
 // ---------- Récap ----------
-function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs()});if(msg)setTimeout(()=>toast(msg,2400),200)}
+function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});if(msg)setTimeout(()=>toast(msg,2400),200)}
 function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
  requestAnimationFrame(()=>drawPlan($("sr-svg"),{tap:1,room:(r,lv)=>{const id=lv+"-"+GEO[lv].rooms.indexOf(r),me=PC.sel===id,w=!!PC.R[id];return{fill:me?"var(--laiton-soft)":w?"color-mix(in srgb,var(--laiton-soft) 45%,var(--wall))":"var(--wall)",ring:me,sub:w?"✓ Murs":""}}}));
  const q=ALLR().find(x=>x.id===PC.sel),W=q&&PC.R[q.id];
- $("sr-room").innerHTML=q?`<b>${q.r.nom}</b> <small>${W?"Touchez un mur pour le corriger":"Pas de travaux dans cette pièce"}</small>`:"";
- $("sr-th").innerHTML=W?W.map((w,j)=>`<button class="th" data-w="${j}">${(w.snap||"<svg></svg>").replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>Mur ${j+1} · ${w.L} cm</span></button>`).join(""):"";
+ const SO=q&&PC.SO[q.id]||{},tp=["sol","pf"].filter(x=>SO[x]&&SO[x]._done);
+ $("sr-room").innerHTML=q?`<b>${q.r.nom}</b> <small>${W?"Touchez un mur"+(tp.length?", le sol ou le plafond":"")+" pour le corriger":"Pas de travaux dans cette pièce"}</small>`:"";
+ $("sr-th").innerHTML=W?W.map((w,j)=>`<button class="th" data-w="${j}">${(w.snap||"<svg></svg>").replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>Mur ${j+1} · ${w.L} cm</span></button>`).join("")+tp.map(x=>`<button class="th" data-s="${x}">${topThumb(q,x).replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>${sumTxt(x,SO[x])}</span></button>`).join(""):"";
  $("sr-n").textContent=`${done.length} pièce${done.length>1?"s":""} · ${done.reduce((a,q)=>a+PC.R[q.id].reduce((b,w)=>b+w.items.filter(i=>i.st==="faire"||i.rep==="oui").length,0),0)} éléments à faire`}
 $("sr-svg").addEventListener("click",e=>{const g=e.target.closest("[data-r]");if(!g)return;PC.sel=g.dataset.r;vib(6);recapUI()});
-$("sr-th").addEventListener("click",e=>{const b=e.target.closest("[data-w]");if(!b)return;WALLS=PC.R[PC.sel];PC.step="f";PC.edit=true;showScr(null);goWall(+b.dataset.w);M.epDone=true;draw()});
-function finish(){post({type:"proclik-murs",murs:exportMurs()});post({type:"proclik-murs-finish"});if(!EMB){$("sr-main").hidden=true;$("sr-sent").hidden=false;PC.step="r";showScr("sr");$("sr-main").hidden=true;$("sr-sent").hidden=false}}
+$("sr-th").addEventListener("click",e=>{const s2=e.target.closest("[data-s]");if(s2){vib(6);const q=ALLR().find(x=>x.id===PC.sel);startSS(0,{q,part:s2.dataset.s,edit:1,sum:1});return}const b=e.target.closest("[data-w]");if(!b)return;WALLS=PC.R[PC.sel];PC.step="f";PC.edit=true;showScr(null);goWall(+b.dataset.w);M.epDone=true;draw()});
+function finish(){post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});post({type:"proclik-murs-finish"});if(!EMB){$("sr-main").hidden=true;$("sr-sent").hidden=false;PC.step="r";showScr("sr");$("sr-main").hidden=true;$("sr-sent").hidden=false}}
 $("sr-go").onclick=()=>{vib([10,40,14]);finish()};$("sr-again").onclick=()=>location.reload();
 addEventListener("resize",()=>{if(PC.step==="p")planUI();if(PC.step==="r")recapUI()});
 M={type:"mur",rt:"cuisine",L:300,H:250,room:"",items:[]};
@@ -761,7 +776,100 @@ else{// démo hors formulaire : un logement fictif
   {nom:"Étage",H:2.5,rooms:[R0(0,0,4,4.5,"Chambre 1"),R0(4,0,2.6,2.5,"Salle de bain"),R0(4,2.5,2.6,2,"Couloir"),R0(6.6,0,2.2,4.5,"Chambre 2")],
   segs:[S0([0,0],[8.8,0],[{k:"fenetre",p:1.4,w:1.2},{k:"fenetre",p:5,w:.6}]),S0([8.8,0],[8.8,4.5],[{k:"fenetre",p:1.5,w:1}]),S0([8.8,4.5],[0,4.5]),S0([0,4.5],[0,0]),
    {a:[4,0],b:[4,4.5],k:"clo",ops:[{k:"porte",p:3.08,w:.83}]},{a:[6.6,0],b:[6.6,4.5],k:"clo",ops:[{k:"porte",p:3.08,w:.83}]},{a:[4,2.5],b:[6.6,2.5],k:"clo",ops:[{k:"porte",p:.94,w:.73}]}]}],
-  {pcs:["Cuisine","Salle de bain"],cuis:"On la change",sdb:"On les change",sdbeq:["Douche","Meuble vasque","WC","Sèche-serviettes"],elec:"Quelques prises à ajouter ou déplacer",plomb:"Quelques changements",chauf:"Radiateurs électriques"})}
+  {trav:["sol","plafond"],sols:"Partout où il y a des travaux",pcs:["Cuisine","Salle de bain","Chambre(s)"],cuis:"On la change",sdb:"On les change",sdbeq:["Douche","Meuble vasque","WC","Sèche-serviettes"],elec:"Quelques prises à ajouter ou déplacer",plomb:"Quelques changements",chauf:"Radiateurs électriques"})}
+
+// ================= SOL ET PLAFOND, PIÈCE PAR PIÈCE (Cyril 18/11) =================
+// Après les murs d'une pièce : son sol vu du dessus, puis son plafond. Une question à la fois, « Même que… » pour recopier une pièce déjà faite.
+// Les réponses sont renvoyées au plan (proclik-plan-sols) : le calcul lit les mêmes champs qu'avant.
+const DKs="Je ne sais pas";
+const SQ={sol:[
+ {k:"etat",q:"Le sol de cette pièce…",o:["On le garde","On le change","Il n'y a pas encore de sol",DKs]},
+ {k:"depose",q:"Quel sol y a-t-il aujourd'hui ?",s:"Il sera enlevé avant de poser le nouveau.",o:["Carrelage","Parquet","Moquette","Lino / PVC",DKs],if:a=>a.etat==="On le change"},
+ {k:"revet",q:"Quel sol voulez-vous ?",o:["Carrelage","Parquet","Sol souple (lino, vinyle)",DKs],if:a=>/change|pas encore/.test(a.etat||"")},
+ {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"}],
+ pf:[
+ {k:"pf",q:"Le plafond de cette pièce…",o:["Rien à faire","À refaire",DKs]},
+ {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
+ {k:"pfSup",q:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DKs],if:a=>a.pf==="À refaire"},
+ {k:"pfIso",q:"Isolant au-dessus ?",o:["Oui","Non",DKs],if:a=>a.pf==="À refaire"}]};
+const SHORT={etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
+PC.SO={};
+const needPart=p=>(A.trav||[]).includes(p==="sol"?"sol":"plafond");
+const soA=(id,p)=>{const o=PC.SO[id]||(PC.SO[id]={});return o[p]||(o[p]={})};
+const ssVis=(p,a)=>SQ[p].filter(x=>!x.if||x.if(a));
+const fr1=v=>(Math.round(v*10)/10).toLocaleString("fr-FR");
+const m2=r=>fr1(Math.abs(area(r.pts))/1e4);
+function solConv(a){if(!a.etat)return null;const E={"On le garde":"Déjà en place","On le change":"À changer","Il n'y a pas encore de sol":"À créer"}[a.etat]||null,o={etat:E};
+ if(!E){o.dk=1;return o}if(E==="Déjà en place"){o.depose="Aucune";o.revet="Aucun";return o}
+ o.depose=E==="À créer"?"Aucune":a.depose&&a.depose!==DKs?a.depose:"À préciser";
+ o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";return o}
+function pfConv(a){if(!a.pf)return null;const o={pf:a.pf};if(a.pf==="À refaire"){o.pfBas=a.pfBas||DKs;o.pfSup=a.pfSup||DKs;o.pfIso=a.pfIso||DKs}return o}
+function exportSols(){return ALLR().filter(q=>PC.SO[q.id]).map(q=>{const o=PC.SO[q.id];return{fi:q.r.fi,ri:q.r.ri,zi:q.r.zi,piece:q.r.nom,sol:o.sol&&o.sol._done?solConv(o.sol):undefined,pf:o.pf&&o.pf._done?pfConv(o.pf):undefined}}).filter(x=>x.sol||x.pf)}
+function sumTxt(p,a){if(p==="sol"){if(!a.etat)return"";if(a.etat===DKs)return"Sol : à voir avec l'artisan";if(a.etat==="On le garde")return"Sol gardé";return(a.revet&&a.revet!==DKs?a.revet.replace(/ \(.*/,""):"Nouveau sol")+(a.revet==="Carrelage"&&a.carFmt&&a.carFmt!==DKs?" "+a.carFmt:"")}
+ if(!a.pf)return"";return a.pf==="À refaire"?"Plafond à refaire":a.pf===DKs?"Plafond : à voir":"Plafond : rien à faire"}
+// ---------- Dessin : la pièce vue du dessus ----------
+function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=P.map(v=>v[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0,h=Math.max(...ys)-y0,pad=Math.max(w,h)*.1+30,k=Math.max(w,h)/320;
+ s.setAttribute("viewBox",`${x0-pad} ${y0-pad} ${w+2*pad} ${h+2*pad}`);s.setAttribute("preserveAspectRatio","xMidYMid meet");
+ const d="M"+P.map(v=>v.join(" ")).join("L")+"Z",uid="t"+(o.uid||"m");let h2=`<defs><clipPath id="${uid}c"><path d="${d}"/></clipPath>`;
+ let fill="",lab="",sub="";
+ if(p==="sol"){const ch=/change|pas encore/.test(a.etat||"");
+  if(ch&&a.revet==="Carrelage"){const f=(a.carFmt&&a.carFmt!==DKs?a.carFmt:"45 × 45").split("×").map(v=>parseFloat(v)),cw=Math.max(f[0],f[1]),chh=Math.min(f[0],f[1]);
+   h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${cw}" height="${chh}"><rect width="${cw}" height="${chh}" fill="var(--tile,#E6E9EE)"/><path d="M0 0H${cw}M0 0V${chh}" stroke="var(--joint,#B9BFCB)" stroke-width="${Math.max(1.2,1.6*k)}"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--wood,#D9B98A)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&/souple/.test(a.revet||""))fill="var(--soft-floor,#CFD8E6)";
+  else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
+  lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
+ else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
+  lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
+ h2+=`</defs>`;
+ GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--wall2)" opacity=".7"/>`});
+ h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--wall)"}"/>`;
+ if(fill)h2+=`<g clip-path="url(#${uid}c)" class="${o.still?"":"fillin"}"><rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="${fill}"/></g>`;
+ if(p==="pf"){const cx=cen(r)[0],cy=y0+h*.2;h2+=`<circle cx="${cx}" cy="${cy}" r="${9*k}" fill="var(--laiton)" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${20*k}" fill="none" stroke="var(--laiton)" stroke-width="${1.4*k}" opacity=".35"/>`}
+ GEO[lv].segs.forEach(g=>{h2+=`<path d="M${g.a[0]} ${g.a[1]}L${g.b[0]} ${g.b[1]}" stroke="var(--fg)" stroke-width="${g.k==="clo"?Math.max(6,7*k):Math.max(10,12*k)}" stroke-linecap="square"/>`;
+  const dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
+   h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="${op.k==="fenetre"?"var(--glass)":"var(--surface)"}" stroke-width="${Math.max(10,12*k)+1}"/>`;if(op.k==="fenetre")h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="var(--fg)" stroke-width="${Math.max(2,2*k)}"/>`})});
+ if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(30*k+8,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
+  h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
+ s.innerHTML=h2}
+const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+// ---------- Parcours ----------
+function roomEnd(){const q=PC.queue[PC.qn],parts=["sol","pf"].filter(needPart);
+ if(!parts.length)return nextRoom(true);PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="sol"?"Maintenant, le sol":"Maintenant, le plafond");setTimeout(()=>startSS(0),1700)}
+function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
+ if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
+function startSS(pi,o={}){const q=o.q||PC.queue[PC.qn],p=o.part||PC.parts[pi],a=soA(q.id,p);
+ if(!a.etat&&p==="sol"&&/^Partout/.test(A.sols||"")){a.etat="On le change";a._pre=1}
+ if(!a.pf&&p==="pf"&&/^Partout/.test(A.plafs||"")){a.pf="À refaire";a._pre=1}
+ PC.step="s";PC.ss={pi,p,q,i:o.sum?99:0,edit:!!o.edit};showScr("ss");ssUI(true)}
+function sameList(){const {p,q}=PC.ss;return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
+function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(PC.ss.i>V.length)PC.ss.i=V.length;const i=PC.ss.i,sum=i>=V.length;
+ $("ss-t").textContent=`${q.r.nom} · ${p==="sol"?"le sol":"le plafond"}`;$("ss-s").innerHTML=`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`;
+ drawTop($("ss-svg"),q,p,a);
+ const card=$("ss-card");let h="";
+ if(!sum){const Q=V[i],sl=i===0?sameList():[];
+  h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid">${Q.o.map(v=>`<button type="button" class="qo${v===DKs?" dk":""}" data-v="${v}" aria-pressed="${a[Q.k]===v}"><span>${v}</span><em>${a[Q.k]===v?"✓":""}</em></button>`).join("")}</div>`+
+   (sl.length?`<div class="same"><span>${p==="sol"?"Même sol que…":"Même plafond que…"}</span><div>${sl.map(x=>`<button type="button" class="chip" data-same="${x.id}">${x.r.nom}</button>`).join("")}</div></div>`:"");
+  $("ss-go").textContent=a._pre&&i===0?"Oui, c'est ça ›":"Continuer ›";$("ss-go").disabled=a[Q.k]==null}
+ else{h=`<small>C'est noté</small><h2>${p==="sol"?"Le sol":"Le plafond"} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${a[Q.k]||"—"}</b></button>`).join("")}</div>`;
+  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):"C'est bon, le plafond ›"}
+ card.innerHTML=h;if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
+$("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
+ if(b.dataset.same){const src=PC.SO[b.dataset.same][p];Object.keys(a).forEach(k=>delete a[k]);Object.assign(a,JSON.parse(JSON.stringify(src)));a._done=0;PC.ss.i=99;toast(`<b>Recopié</b> depuis ${b.textContent}`,2000);ssUI(true);return}
+ if(b.dataset.i!=null){PC.ss.i=+b.dataset.i;ssUI(true);return}
+ const V=ssVis(p,a),Q=V[PC.ss.i];a[Q.k]=b.dataset.v;delete a._pre;Object.keys(a).forEach(k=>{if(SQ[p].some(x=>x.k===k)&&!ssVis(p,a).some(x=>x.k===k))delete a[k]});
+ ssUI(false);clearTimeout(PC.ssT);PC.ssT=setTimeout(()=>{PC.ss.i++;ssUI(true)},320)});
+$("ss-go").onclick=()=>{const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);vib(8);clearTimeout(PC.ssT);
+ if(PC.ss.i<V.length){if(a[V[PC.ss.i].k]==null)return;delete a._pre;PC.ss.i++;ssUI(true);return}
+ a._done=1;post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});
+ if(PC.ss.edit){showRecap("<b>C'est corrigé !</b>");return}
+ if(PC.ss.pi<PC.parts.length-1){startSS(PC.ss.pi+1);return}
+ const nx=PC.queue[PC.qn+1];ssParty(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap",()=>nextRoom(false))};
+$("ss-back").onclick=()=>{clearTimeout(PC.ssT);vib(6);if(PC.ss.i>0){PC.ss.i=Math.min(PC.ss.i,ssVis(PC.ss.p,soA(PC.ss.q.id,PC.ss.p)).length)-1;ssUI(true);return}
+ if(PC.ss.edit){showRecap();return}if(PC.ss.pi>0){startSS(PC.ss.pi-1,{sum:1});return}PC.step="f";showScr(null);goWall(WALLS.length-1)};
+function ssParty(t,sub,cb){const c=$("ss-card");c.innerHTML=`<div class="ssdone">${'<svg viewBox="0 0 60 60" width="74" height="74" fill="none"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ck"/></svg>'}<b>${t}</b><span>${sub}</span></div>`;$("ss-go").disabled=true;vib([10,40,14]);setTimeout(cb,1700)}
+function topThumb(q,p){const s=document.createElementNS("http://www.w3.org/2000/svg","svg");drawTop(s,q,p,soA(q.id,p),{uid:q.id.replace("-","_")+p,still:1,nolab:1});return s.outerHTML}
+if(!EMB)window.__pc={roomEnd,PC,exportSols};
 
 function miniPlan(){const m=$("mini"),w0=WALLS[0],lv=w0.lv,r=GEO[lv].rooms[+w0.rid.split("-")[1]],b=bbox(lv),p=40,s=m.querySelector("svg");
  s.setAttribute("viewBox",`${b.x-p} ${b.y-p} ${b.w+2*p} ${b.h+2*p}`);s.style.aspectRatio=`${b.w+2*p}/${b.h+2*p}`;const k=Math.max(b.w,b.h)/100;
