@@ -108,7 +108,7 @@ if(reduit&&!site)return;
 /* Espace : à chaque ouverture (et au retour dans l'appli après une pause), une courte ouverture plein écran (~2,3 s)
    qui cache la page pendant qu'elle se met en place (plus d'écran qui saute). Cyril, 3/11. */
 if(!site&&!vitrine){
- var K='#pc-ouk{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .45s ease}'+
+ var K='#pc-ouk{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .7s cubic-bezier(.4,0,.2,1)}'+
  ':root[data-theme="dark"] #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}'+
  '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}}'+
  '#pc-ouk.fin{opacity:0;pointer-events:none}'+
@@ -128,8 +128,8 @@ if(!site&&!vitrine){
  '#pc-ouk:not(.go),#pc-ouk:not(.go) *{animation-play-state:paused!important}'+
  '@media (prefers-reduced-motion:reduce){#pc-ouk *{animation-duration:.01s!important;animation-delay:0s!important}}';
  var stk=d.createElement('style');stk.textContent=K;d.head.appendChild(stk);
- /* déjà ouverte : la même courte ouverture, jouée 2,2 fois plus vite (~2,3 s au lieu de 5 s). Cyril, 18/11. */
- var VITE=2.2,DUK=reduit?700:Math.round(5000/VITE);
+ /* déjà ouverte : la même courte ouverture, jouée 1,5 fois plus vite (~3,3 s au lieu de 5 s) ; 2,2 était trop rapide (Cyril, 19/11). */
+ var VITE=1.5,DUK=reduit?700:Math.round(5000/VITE);
  /* on attend que la page ait fini de se charger (ou 1,5 s au plus) pour lancer l'animation : sinon l'iPhone, occupé à charger, la fait saccader au tout début */
  function pret(cb){var ok=false;function go(){if(ok)return;ok=true;requestAnimationFrame(function(){requestAnimationFrame(cb)})}if(d.readyState==='complete')go();else{window.addEventListener('load',go);setTimeout(go,1500)}}
  function couvre(){
@@ -141,7 +141,7 @@ if(!site&&!vitrine){
   goutte(o.querySelector('.gk svg'),.05);
   /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
   var lk=o.querySelector('.lk'),gk=o.querySelector('.gk');gk.style.setProperty('--dx',((lk.offsetWidth-gk.offsetWidth)/2)+'px');
-  var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},500)}
+  var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},750)}
   o.addEventListener('click',fin);pret(function(){o.classList.add('go');try{if(o.getAnimations)o.getAnimations({subtree:true}).forEach(function(an){an.playbackRate=VITE})}catch(e){}setTimeout(fin,DUK)});
  }
  if(court){window.PC_OUV_MS=DUK;couvre()}
