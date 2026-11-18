@@ -5,7 +5,7 @@
 <title>Vos murs</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="stylesheet" href="../fonts/fonts.css">
-<script src="haptique.js?v=1" defer></script><script src="../espace/theme.js?v=1"></script>
+<script src="haptique.js?v=1" defer></script><script src="icones.js?v=2"></script><script src="../espace/theme.js?v=1"></script>
 <style>
 /* Un seul écran : le mur prend toute la place libre ; en largeur (tablette, PC, téléphone couché) le mur à gauche, les commandes à droite. Style N1 ProClik : bleu nuit pour agir, laiton en touche. */
 :root{
@@ -158,7 +158,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 @media (min-width:700px){.qgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .qo{appearance:none;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1.5px solid transparent;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi);font:700 14.5px/1.2 var(--font);color:var(--fg);text-align:left;cursor:pointer;min-height:58px;transition:transform .15s,border-color .2s,background .2s}
 .qo:active{transform:none}
-.qo svg{flex:none;color:var(--fg)}
+.qo svg{flex:none;color:var(--fg)}.qo .ci{width:24px;height:24px;margin:0;color:var(--act,var(--fg))}.qo .ci.sw{width:20px;height:20px}
 .qo em{margin-left:auto;flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800}
 .qo[aria-pressed="true"]{border-color:var(--act);background:color-mix(in srgb,var(--act) 7%,var(--surface))}
 .qo[aria-pressed="true"] em{background:var(--act);border-color:var(--act);color:var(--on-act);animation:pIn .25s cubic-bezier(.2,.9,.3,1.4)}
@@ -323,7 +323,7 @@ const I={
  inter:'<rect x="5" y="4" width="14" height="16" rx="3"/><path d="M12 8v8"/>',
  rj:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 10h6v4H9z"/>',
  applique:'<path d="M8 5h8l-2 7h-4z"/><path d="M12 12v4M9 20h6"/>',
- radiateur:'<rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 7v11M11 7v11M15 7v11M19 7v11"/>',
+ radiateur:'<rect x="4" y="5.5" width="2.8" height="12.5" rx="1.4"/><rect x="8.4" y="5.5" width="2.8" height="12.5" rx="1.4"/><rect x="12.8" y="5.5" width="2.8" height="12.5" rx="1.4"/><rect x="17.2" y="5.5" width="2.8" height="12.5" rx="1.4"/><path d="M5.4 18v1.8M18.6 18v1.8"/>',
  seche:'<path d="M6 3v18M18 3v18M6 7h12M6 11h12M6 15h12"/>',
  clim:'<rect x="2" y="6" width="20" height="9" rx="3"/><path d="M5 12h14M8 18l-1 2M12 18v2M16 18l1 2"/>'
 };
@@ -873,7 +873,7 @@ function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(p==="fin")re
   h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid"><button type="button" class="qo" data-m="all" aria-pressed="${all}"><span>Tous les murs</span><em>${all?"✓":""}</em></button>${W.map((w,j)=>`<button type="button" class="qo" data-m="${j}" aria-pressed="${m.includes(j)}"><span>Mur ${j+1} · ${fr1(w.L/100)} m</span><em>${m.includes(j)?"✓":""}</em></button>`).join("")}</div>`;
   $("ss-go").textContent="Continuer ›";$("ss-go").disabled=!m.length}
  else if(!sum){const Q=V[i],sl=i===0?sameList():[];
-  h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid">${Q.o.map(v=>`<button type="button" class="qo${v===DKs?" dk":""}" data-v="${v}" aria-pressed="${a[Q.k]===v}"><span>${v}</span><em>${a[Q.k]===v?"✓":""}</em></button>`).join("")}</div>`+
+  h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid">${Q.o.map(v=>`<button type="button" class="qo${v===DKs?" dk":""}" data-v="${v}" aria-pressed="${a[Q.k]===v}">${v===DKs||!window.icoOf?"":icoOf(v)}<span>${v}</span><em>${a[Q.k]===v?"✓":""}</em></button>`).join("")}</div>`+
    (sl.length?`<div class="same"><span>${p==="sol"?"Même sol que…":"Même plafond que…"}</span><div>${sl.map(x=>`<button type="button" class="chip" data-same="${x.id}">${x.r.nom}</button>`).join("")}</div></div>`:"");
   $("ss-go").textContent=a._pre&&i===0?"Oui, c'est ça ›":"Continuer ›";$("ss-go").disabled=a[Q.k]==null}
  else{h=`<small>C'est noté</small><h2>${{sol:"Le sol",pf:"Le plafond",fai:"La faïence"}[p]} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${Q.multi?faiLab(a,q):a[Q.k]||"—"}</b></button>`).join("")}</div>`;
