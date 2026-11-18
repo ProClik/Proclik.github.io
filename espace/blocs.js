@@ -136,7 +136,7 @@
     produits:function(v){var c=$(".cf.pr",v),bs=c?$$(":scope>.dv-seg button",c):[];if(bs.length<3)return null;
       var N=bs.map(function(b){var i=b.querySelector("i");return i?(parseInt(txt(i),10)||0):""});return {b:bs,N:N,S:["fournitures","main-d'œuvre","référence"],T:["","",""]}},
     clients:function(v){var c=$(".cl",v),bs=c?$$(":scope>.cl-seg button",c):[];if(bs.length<3)return null;
-      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises"],T:["",N[1]?"chaud":"",""]}}
+      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises","à prévoir"],T:["",N[1]?"chaud":"","",N[3]?"chaud":""]}}
   };
   function menuTuiles(v){var id=v.id.replace(/^v-/,""),f=TM[id];if(!essai||!f)return false;var r=null;try{r=f(v)}catch(e){}if(!r)return false;
     r.b[0].parentNode.classList.add("tm");r.b[0].parentNode.style.setProperty("--n",r.b.length);
