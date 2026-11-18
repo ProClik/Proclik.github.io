@@ -20,7 +20,7 @@ var enDirect=function(){return !!(SERVICE&&jeton())};
 /* Copie des questions pour la démo (le service envoie les siennes, toujours à jour). */
 var Q0=[{"id":"non_faits","c":"Travaux que je ne fais pas","p":"detail","t":"m","g":"partout","ch":[["sols","Sols (carrelage, parquet)"],["fenetres","Pose de fenêtres"],["portes","Portes intérieures"],["combles","Isolation des combles perdus"],["rampants","Combles aménagés (rampants)"],["escaliers","Trémies d'escalier"]],"d":[]},{"id":"doublage","c":"Je fais","p":"habitude","g":"murs","ch":[["appuis","Sur appuis (fourrure murale horizontale, appuis, rail contre-cloison, fourrures)"],["ossature","Sur ossature (rails et montants 48)"],["colle","Doublage collé (complexe isolant)"]],"d":"appuis"},{"id":"doublage_epaisseur","c":"Épaisseur de laine","p":"habitude","g":"murs","ch":[["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"]],"d":"120"},{"id":"doublage_planb","c":"Je fais alors","p":"planb","g":"murs","ch":[["oss48","Ossature 48 (45 kraft entre montants + laine nue derrière)"],["oss70","Ossature 70 (laine 70 entre montants + laine nue derrière)"]],"d":"oss48"},{"id":"doublage_pv","c":"Pare-vapeur","p":"detail","g":"murs","ch":[["kraft","Le kraft de la laine"],["membrane","Une membrane à part"]],"d":"kraft"},{"id":"rampants_ep1","c":"1re couche (nue, entre chevrons)","p":"habitude","g":"rampants","ch":[["chevrons","Selon les chevrons"],["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"],["200","200 mm"]],"d":"chevrons"},{"id":"rampants_ep2","c":"2e couche (kraft, croisée)","p":"habitude","g":"rampants","ch":[["auto","Pour atteindre R = 6"],["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"],["200","200 mm"]],"d":"auto"},{"id":"rampants_suspente","c":"Suspentes","p":"habitude","g":"rampants","ch":[["verifier","Je choisis à chaque fois"],["240","240 mm"],["300","300 mm"],["400","400 mm"]],"d":"verifier"},{"id":"rampants_planb","c":"Je fais alors","p":"planb","g":"rampants","ch":[["suivre","La 1re couche suit les chevrons, la 2e grossit"],["garder","Je garde mes épaisseurs (suspentes plus longues)"]],"d":"suivre"},{"id":"rampants_pv","c":"Pare-vapeur","p":"detail","g":"rampants","ch":[["kraft","Le kraft de la laine"],["membrane","Une membrane à part"]],"d":"kraft"},{"id":"cloison_ossature","c":"Ossature","p":"habitude","g":"cloisons","ch":[["48","48"],["70","70"]],"d":"48"},{"id":"cloison_laine","c":"Laine","p":"habitude","g":"cloisons","ch":[["avec","Oui (45 en ossature 48, 70 en ossature 70)"],["sans","Non"]],"d":"avec"},{"id":"plafond_type","c":"Je fais","p":"habitude","g":"plafonds","ch":[["suspendu","Suspendus (fourrures F47 + suspentes)"],["autoportant","Autoportants (ossature d'un mur à l'autre)"]],"d":"suspendu"},{"id":"plafond_laine","c":"Laine au-dessus","p":"habitude","g":"plafonds","ch":[["0","Non"],["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"],["200","200 mm"]],"d":"0"},{"id":"plafond_suspente_longue","c":"Je fais alors","p":"planb","g":"plafonds","ch":[["verifier","Je choisis à chaque fois"],["170","Suspentes 170 mm"],["240","Suspentes 240 mm"],["300","Suspentes 300 mm"],["400","Suspentes 400 mm"]],"d":"verifier"},{"id":"combles_type","c":"Je fais","p":"habitude","g":"combles","ch":[["souffle","Laine soufflée (350 mm)"],["rouleaux","Laine en rouleaux"]],"d":"souffle"},{"id":"combles_ep","c":"Épaisseur en rouleaux","p":"habitude","g":"combles","ch":[["200","200 mm"],["240","240 mm"],["300","300 mm"]],"si":{"combles_type":"rouleaux"},"d":"300"},{"id":"combles_trappe","c":"Je fais alors","p":"planb","g":"combles","ch":[["oui","Je crée une trappe isolée"],["question","Je décide sur place"]],"d":"question"},{"id":"sol_ajouts","c":"J'ajoute d'habitude","p":"habitude","t":"m","g":"sols","ch":[["depose","Dépose de l'ancien sol"],["ragreage","Ragréage"],["souscouche","Sous-couche (parquet)"],["plinthes","Plinthes"],["seuils","Barres de seuil"]],"d":["plinthes"]},{"id":"cloison_phonique","c":"Plaques","p":"habitude","g":"cloisons","ch":[["standard","1 plaque par face"],["renforcee","2 plaques par face"]],"d":"standard"},{"id":"hauteur_defaut","c":"Hauteur sous plafond, si le client ne la donne pas","p":"detail","g":"partout","ch":[["2.5","2,50 m"],["2.6","2,60 m"],["2.7","2,70 m"]],"d":"2.5"},{"id":"largeur_porte_defaut","c":"Largeur de porte, si le client ne la donne pas","p":"detail","g":"partout","ch":[["73","73 cm"],["83","83 cm"],["93","93 cm"]],"d":"83"},{"id":"finition","c":"Finition des plaques","p":"habitude","g":"partout","ch":[["pret","Prêt à peindre (bandes + enduit)"],["bandes","Bandes seules"]],"d":"pret"},{"id":"poignee","c":"Poignée standard avec chaque porte","p":"habitude","g":"partout","ch":[["oui","Oui"],["non","Non, le client la choisit"]],"d":"oui"},{"id":"protection","c":"Protection et nettoyage de fin de chantier","p":"habitude","g":"partout","ch":[["oui","Oui"],["non","Non"]],"d":"oui"}];
 var O0={"doublage_epaisseur":"160","rampants_ep1":"140","rampants_ep2":"160","rampants_suspente":"300"};
-var TITRES={murs:'Isolation des murs',rampants:'Rampants (sous la toiture)',cloisons:'Cloisons',plafonds:'Plafonds',combles:'Combles perdus',sols:'Sols',partout:'Partout'};
+var TITRES={murs:'Isolation des murs',rampants:'Rampants (sous la toiture)',cloisons:'Cloisons',plafonds:'Plafonds',combles:'Combles perdus',sols:'Pose des sols',partout:'Partout'};
 /* quand le pré-devis passe au plan B tout seul */
 var QUAND={murs:'mur abîmé, humide, qui ne tient pas les fixations, gros faux aplomb',rampants:'chevrons plus petits que votre 1re couche',plafonds:'plafond à descendre nettement',combles:'pas de trappe pour monter aux combles'};
 /* ce qui se fait toujours, sans réglage */
@@ -48,7 +48,7 @@ var SUM={
  poignee:function(v){return v==='non'?'sans poignée':'poignée fournie'},
  protection:function(v){return v==='non'?'sans protection':'protection et nettoyage'}
 };
-var G=null,V={},ORI={},ouvert='murs';
+var G=null,V={},ORI={};
 function depuisDemo(){
   var g={};Q0.forEach(function(q){(g[q.g]=g[q.g]||[]).push({id:q.id,court:q.c,partie:q.p,type:q.t==='m'?'multi':'choix',choix:q.ch,si:q.si,defaut:q.d})});
   G=Object.keys(TITRES).filter(function(k){return g[k]}).map(function(k){return {id:k,titre:TITRES[k],questions:g[k]}});
@@ -84,24 +84,49 @@ function puces(q){
     return '<button type="button" class="hb-c" data-q="'+esc(q.id)+'" data-v="'+esc(c[0])+'" aria-pressed="'+on+'">'+(p?esc(p[1].trim())+'<small>'+esc(p[2])+'</small>':esc(t))+'</button>'}).join('')+'</div>';
 }
 function bloc(q){return '<div class="hb-q"><h4>'+esc(q.court)+'</h4>'+puces(q)+'</div>'}
-function rendu(){
-  var h='<p class="hb-intro">Le client en dit peu ? Votre pré-devis est calculé <b>comme vous faites d\'habitude</b>. Ce que le client a dit passe toujours avant, et vous changez chaque ligne ensuite.</p>'+
-   (enDirect()?'':'<p class="hb-demo">Exemple : en démo, vos choix restent sur cet appareil.</p>')+
-   '<div class="hb-l">'+G.map(function(g){
-    var hab=g.questions.filter(function(q){return q.partie==='habitude'&&q.id!=='non_faits'&&visible(q)}),
-        pb=g.questions.filter(function(q){return q.partie==='planb'&&visible(q)}),
-        det=g.questions.filter(function(q){return q.partie==='detail'&&q.id!=='non_faits'&&visible(q)}),
-        off=NF[g.id]&&nonFaits().indexOf(NF[g.id])>=0,o=ouvert===g.id;
-    return '<section class="hb-g'+(o?' on':'')+(off?' off':'')+'" data-g="'+g.id+'">'+
-     '<button type="button" class="hb-h" aria-expanded="'+o+'"><span class="hb-i">'+(IC[g.id]||IC.partout)+'</span><span class="tx"><b>'+esc(g.titre)+'</b><small>'+(g.id==='partout'?'':'D\'habitude : ')+esc(resume(g))+'</small></span><span class="go">›</span></button>'+
-     '<div class="hb-b">'+(off?'':hab.map(bloc).join('')+
+/* maquette n°4 validée (Cyril, 18/11 20h43) : un onglet par métier, une carte par travail qui se lit d'un coup d'œil
+   (libellé → valeur en gras, ligne Plan B orange) ; « Changer » ouvre les choix dans la carte, « C'est bon » la referme.
+   Le sol est un métier à part (décision Cyril 18/11 20h40). */
+var METIERS=[['plaq','Plaquiste',['murs','rampants','cloisons','plafonds','combles'],'murs'],['sol','Sols',['sols'],'sols'],['tout','Partout',['partout'],'partout']];
+var onglet='plaq',edit='';
+var court=function(t){return String(t).split(' (')[0]};
+function valeur(q){var v=val(q);if(SUM[q.id])return SUM[q.id](v);
+  return q.type==='multi'?(v.length?v.map(function(c){return court(lib(q,c))}).join(', '):'Aucun'):court(lib(q,v))}
+function fiche(g){
+  var hab=g.questions.filter(function(q){return q.partie==='habitude'&&q.id!=='non_faits'&&visible(q)}),
+      pb=g.questions.filter(function(q){return q.partie==='planb'&&visible(q)}),
+      det=g.questions.filter(function(q){return q.partie==='detail'&&q.id!=='non_faits'&&visible(q)}),
+      off=NF[g.id]&&nonFaits().indexOf(NF[g.id])>=0,e=edit===g.id;
+  var tete='<div class="hb-ft"><span class="hb-i">'+(IC[g.id]||IC.partout)+'</span><h3>'+esc(g.titre)+'</h3>'+
+    (e?'':'<button type="button" class="hb-mod" data-e="'+g.id+'">Changer</button>')+'</div>';
+  if(!e){
+    if(off)return '<section class="hb-f off" data-g="'+g.id+'">'+tete+'<p class="hb-off">Je ne fais pas ce travail</p></section>';
+    var rows=hab.map(function(q){return '<dt>'+esc(court(q.court))+'</dt><dd>'+esc(valeur(q))+'</dd>'}).join('');
+    var planb=pb.length?'<p class="hb-pbl"><b>Plan B</b><span>'+esc(pb.map(valeur).join(', '))+(QUAND[g.id]?'<i> · si '+esc(QUAND[g.id])+'</i>':'')+'</span></p>':'';
+    var tj=TOUJOURS[g.id]?'<p class="hb-tjl"><b>Toujours</b><span>'+esc(TOUJOURS[g.id])+'</span></p>':'';
+    return '<section class="hb-f" data-g="'+g.id+'">'+tete+(rows?'<dl class="hb-rows">'+rows+'</dl>':'')+planb+tj+(g.id==='partout'?nfResume():'')+'</section>';
+  }
+  return '<section class="hb-f on" data-g="'+g.id+'">'+tete+'<div class="hb-b">'+(off?'':hab.map(bloc).join('')+
       (TOUJOURS[g.id]?'<p class="hb-tj"><b>Toujours :</b> '+esc(TOUJOURS[g.id])+'</p>':'')+
-      (pb.length?'<div class="hb-pb"><h4>Quand le chantier ne le permet pas</h4>'+(QUAND[g.id]?'<p>Par exemple : <b>'+esc(QUAND[g.id])+'</b>. Le pré-devis passe tout seul à ce choix.</p>':'')+pb.map(function(q){return puces(q)}).join('')+'</div>':'')+
+      (pb.length?'<div class="hb-pb"><h4>Plan B · quand le chantier ne le permet pas</h4>'+(QUAND[g.id]?'<p>Par exemple : <b>'+esc(QUAND[g.id])+'</b>. Le pré-devis passe tout seul à ce choix.</p>':'')+pb.map(function(q){return puces(q)}).join('')+'</div>':'')+
       (det.length?'<details class="hb-d"><summary>Plus de détails</summary>'+det.map(bloc).join('')+'</details>':''))+
       (NF[g.id]?'<button type="button" class="hb-nf" data-nf="'+NF[g.id]+'">'+(off?'Je fais ce travail':'Je ne fais pas ce travail')+'</button>':'')+
       (g.id==='partout'?nfPartout():'')+
-     '</div></section>'}).join('')+'</div>';
-  return h;
+      '<button type="button" class="btn hb-ok" data-e="">C\'est bon</button></div></section>';
+}
+function nfResume(){var q=tout().filter(function(y){return y.id==='non_faits'})[0];if(!q)return '';
+  var v=val(q).filter(function(c){return !/^(rampants|combles|sols)$/.test(c)});
+  return v.length?'<dl class="hb-rows"><dt>Je ne fais pas</dt><dd>'+esc(v.map(function(c){return court(lib(q,c))}).join(', '))+'</dd></dl>':''}
+function rendu(){
+  var ids=(G||[]).map(function(g){return g.id});
+  var mets=METIERS.filter(function(m){return m[2].some(function(k){return ids.indexOf(k)>=0})});
+  if(!mets.some(function(m){return m[0]===onglet}))onglet=(mets[0]||[''])[0];
+  var m=mets.filter(function(x){return x[0]===onglet})[0]||['','',[]];
+  return '<p class="hb-intro">Le client en dit peu ? Votre pré-devis est calculé <b>comme vous faites d\'habitude</b>. Touchez « Changer » pour modifier.</p>'+
+   (enDirect()?'':'<p class="hb-demo">Exemple : en démo, vos choix restent sur cet appareil.</p>')+
+   '<div class="hb-tabs" role="tablist" aria-label="Mes métiers">'+mets.map(function(x){return '<button type="button" class="hb-tab" role="tab" data-t="'+x[0]+'" aria-selected="'+(x[0]===onglet)+'">'+(IC[x[3]]||'')+esc(x[1])+'</button>'}).join('')+'</div>'+
+   '<div class="hb-l">'+(G||[]).filter(function(g){return m[2].indexOf(g.id)>=0}).map(fiche).join('')+'</div>'+
+   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>';
 }
 /* les autres travaux qu'on peut ne pas faire (fenêtres, portes, escaliers) : dans « Partout » */
 function nfPartout(){
@@ -117,7 +142,9 @@ function enregistre(ch){
   file=file.then(function(){return appel({valeurs:ch})}).then(function(){peindre();toast('Habitude enregistrée','Les prochains pré-devis la prennent.')}).catch(function(e){toast('Pas enregistré',String(e.message||e));return appel().then(peindre).catch(function(){})});
 }
 function lier(c){
-  $$('.hb-h',c).forEach(function(b){b.addEventListener('click',function(){var g=b.parentNode.dataset.g;ouvert=ouvert===g?'':g;peindre()})});
+  $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';peindre()})});
+  $$('[data-e]',c).forEach(function(b){b.addEventListener('click',function(){var g=b.dataset.e||b.closest('.hb-f').dataset.g;edit=b.dataset.e;peindre();
+    var f=$('.hb-f[data-g="'+g+'"]',c);if(f&&f.scrollIntoView)f.scrollIntoView({block:'nearest',behavior:'smooth'})})});
   $$('.hb-c',c).forEach(function(b){b.addEventListener('click',function(){
     var q=tout().filter(function(y){return y.id===b.dataset.q})[0];if(!q)return;var o={};
     if(q.type==='multi'){var v=val(q).slice(),i=v.indexOf(b.dataset.v);if(i>=0)v.splice(i,1);else v.push(b.dataset.v);o[q.id]=v}
@@ -172,6 +199,22 @@ st.textContent=
  '.hb-pb{background:var(--warn-bg);border-radius:13px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}.hb-pb h4{color:var(--warn)}.hb-pb p{margin:0;font-size:13px;line-height:1.4}'+
  '.hb-tj{margin:0;font-size:13px;color:var(--muted);line-height:1.4}'+
  '.hb-d summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);padding:2px 0}.hb-d[open] summary{margin-bottom:10px}.hb-d .hb-q+.hb-q{margin-top:12px}'+
+ '.hb-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin:4px -2px 2px;scrollbar-width:none}.hb-tabs::-webkit-scrollbar{display:none}'+
+ '.hb-tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 15px;border-radius:999px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line),0 2px 4px rgba(14,19,34,.08)}'+
+ '.hb-tab svg{width:18px;height:18px}.hb-tab[aria-selected=true]{background:var(--nuit,#1B2440);color:#fff;box-shadow:none}'+
+ ':root[data-theme=dark] .hb-tab[aria-selected=true]{background:#E8EAF2;color:#0E1322}'+
+ '.hb-f{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}'+
+ '.hb-ft{display:flex;align-items:center;gap:12px}.hb-ft h3{flex:1;margin:0;font-size:16px;font-weight:800;line-height:1.25}'+
+ '.hb-mod{flex:none;min-height:40px;padding:6px 14px;border-radius:12px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line),0 2px 4px rgba(14,19,34,.1)}'+
+ '.hb-rows{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:7px 12px;margin:0}'+
+ '.hb-rows dt{color:var(--muted);font-size:13.5px;line-height:1.35}.hb-rows dd{margin:0;font-weight:800;font-size:15px;line-height:1.3}'+
+ '.hb-pbl,.hb-tjl{display:flex;gap:10px;margin:0;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.4}'+
+ '.hb-pbl{background:var(--warn-bg)}.hb-pbl b{color:var(--warn);flex:none}.hb-pbl i{font-style:normal;color:var(--muted)}'+
+ '.hb-tjl{background:var(--soft)}.hb-tjl b{flex:none}.hb-tjl span{color:var(--muted)}.hb-cf{margin-top:12px}'+
+ '.hb-off{margin:0;color:var(--muted);font-weight:700}.hb-f.off .hb-i{opacity:.5}'+
+ '.hb-f .hb-b{display:flex;padding:0}.hb-ok{align-self:stretch;margin-top:4px}'+
+ '.hb-mod:focus-visible,.hb-tab:focus-visible{outline:2px solid var(--accx,#A8823F);outline-offset:2px}'+
+ '@media(min-width:700px){.hb-rows{grid-template-columns:200px 1fr}}'+
  '.hb-nf{align-self:flex-start;background:none;border:0;padding:4px 0;font:inherit;font-size:13px;font-weight:700;color:var(--muted);text-decoration:underline;cursor:pointer}';
 d.head.appendChild(st);
 })();
