@@ -514,7 +514,7 @@ const SIC={travaux:SV('<path d="M6 26 18 14"/><path d="M17 9.5 22.5 4l5.5 5.5-5.
  finition:SV('<rect x="6" y="5" width="18" height="8" rx="2"/><path d="M24 9h3v6H16v4"/><rect x="14" y="19" width="4" height="9" rx="1"/>'),photos:SV('<path d="M5 10h5l2.5-3.5h7L22 10h5v16H5z"/><circle cx="16" cy="17.5" r="4.5"/>'),
  projet:SV('<rect x="5" y="7" width="22" height="20" rx="3"/><path d="M5 13h22M11 4.5v5M21 4.5v5"/><path d="m12 20 3 3 5-5.5"/>'),contact:SV('<circle cx="16" cy="11.5" r="5"/><path d="M6.5 27c1.5-5 5-7.5 9.5-7.5s8 2.5 9.5 7.5"/>'),
  recap:SV('<path d="M28 4 4 14.5l9 3.5 3.5 9z"/><path d="M28 4 13 18"/>'),autre:SV('<circle cx="9" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="23" cy="16" r="2"/>')};
-const SNM={travaux:"Travaux",logement:"Logement",mode:"Plan ou texte",plan:"Plan",simple:"Description",finition:"Finition",photos:"Photos",projet:"Calendrier",contact:"Coordonnées",recap:"Envoi"};
+const SNM={travaux:"Travaux",logement:"Logement",mode:"Plan ou texte",plan:"Plan",simple:"Description",finition:"Finition",photos:"Photos",projet:"Calendrier",note:"Note",contact:"Coordonnées",recap:"Envoi"};
 const sic=k=>SIC[k]||(IC[k]?IC[k].replace("<svg ",'<svg aria-hidden="true" '):SIC.autre);
 const snm=k=>SNM[k]||((TRAVAUX.find(t=>t[0]===k)||[])[1])||"";
 // Lot B (Cyril 17/11) : 4 grandes parties fixes au lieu d'un nombre d'étapes qui change en route.
@@ -527,6 +527,10 @@ function filH_old(st,n){const ok='<svg viewBox="0 0 24 24" fill="none" stroke="c
 const PLAQUE=["cloison","doublage","plafond","rampants"];
 const PHTX={cloison:"L'endroit de la future cloison, sol et plafond compris.",doublage:"Chaque mur à isoler, en entier, avec ses fenêtres et ses prises.",plafond:"Le plafond de chaque pièce, et la trappe s'il y en a une.",combles:"Les combles, depuis la trappe ou l'escalier, avec l'isolant s'il y en a.",rampants:"Les pièces sous la toiture, la pente du toit et ses fenêtres de toit.",fenetres:"Chaque fenêtre de l'intérieur, en entier avec le mur autour, et le coffre du volet s'il y en a un.",portes:"Chaque porte à changer, ouverte, avec son encadrement.",sol:"Le sol de chaque pièce, et une plinthe de près.",escalier:"L'escalier en entier, ou l'endroit prévu, du bas et du haut.",autre:"Ce que vous voulez faire."};
 const PHT=()=>S.travaux.filter(k=>PHTX[k]).map(k=>`<li>${esc(PHTX[k])}</li>`).join("");
+// 18/11 (Cyril) : le client donne ses dimensions, la surface de pente est calculée pour lui (faîtage au milieu pour 2 pentes).
+const RPLAN=()=>S.mode==="plan"&&S.travaux.some(k=>PLANABLE.includes(k));
+const RSURF=r=>{r=r||S.rampants||{};const g=k=>r[k+"_dk"]?null:pn(r[k]);const L=g("L"),l=g("l"),hf=g("hfait"),m1=g("hmur1"),m2=r.forme==="1 pente"?null:(g("hmur2")??m1);if(!L||!l||!hf||m1==null||!/pente/.test(r.forme||""))return null;
+ const pan=(run,h)=>Math.hypot(run,Math.max(0,hf-h)/100);const s=r.forme==="1 pente"?L*pan(l,m1):L*(pan(l/2,m1)+pan(l/2,m2));return s>0?Math.round(s*10)/10:null};
 const FAIDES=()=>S.travaux.some(k=>["doublage","combles","rampants"].includes(k));
 const FPLUS=()=>S.travaux.some(k=>PLAQUE.includes(k))||FAIDES();
 
@@ -551,7 +555,10 @@ const D={
    {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre",DK]},
    {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
-   {k:"galandage",t:"chips",l:"Une porte coulissante qui rentre dans le mur ?",o:["Oui","Non",DK],sh:i=>i.portes>0}]},
+   {k:"largeur",t:"chips",l:"Largeur de la porte (hauteur standard 204 cm)",lf:i=>i.portes>1?"Largeur des portes (hauteur standard 204 cm)":"Largeur de la porte (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
+   {k:"galandage",t:"chips",l:"Une porte coulissante qui rentre dans le mur ?",o:["Oui","Non",DK],sh:i=>i.portes>0},
+   {k:"porte_type",t:"chips",l:"Modèle de porte",o:["Standard","Plus isolante contre le bruit",DK],sh:i=>i.portes>0},
+   {k:"porte_fin",t:"chips",l:"Finition de la porte",lf:i=>i.portes>1?"Finition des portes":"Finition de la porte",h:"Fin de chantier : finition sur demande, plus chère.",o:["Prête à peindre","Fin de chantier (finition sur demande)",DK],sh:i=>i.portes>0}]},
   f:[{k:"phonique",t:"chips",l:"Isolation contre le bruit",o:["Standard","Renforcée",DK],h:"Renforcée = deux plaques par face, idéal pour une chambre ou une salle de bain."}]},
  doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
   g:{n:"Mur",cnt:"Combien de murs à isoler ?",add:"+ Ajouter un autre mur",f:[
@@ -575,11 +582,14 @@ const D={
    {k:"existant",t:"chips",l:"Y a-t-il déjà de l'isolant ?",o:["Non","Oui, ancien ou tassé",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"spots",t:"chips",l:"Des spots encastrés dans le plafond en dessous ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"conduit",t:"chips",l:"Un conduit de cheminée traverse les combles ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")}]},
- rampants:{t:"L'isolation sous la toiture",s:"Trois questions, le reste sera vu sur place.",cheer:"Le toit, c'est presque fait",f:[
+ rampants:{t:"L'isolation sous la toiture",s:"Vos mesures suffisent : la surface est calculée pour vous.",cheer:"Le toit, c'est presque fait",f:[
    {k:"forme",t:"chips",l:"Le toit descend…",o:["2 pentes","1 pente",DK],h:"2 pentes : le plafond penche des deux côtés. 1 pente : il penche d'un seul côté."},
    {k:"hfait",t:"num",l:"Hauteur au plus haut",u:"cm",st:1,dk:1,h:"Du sol de la pièce jusqu'au point le plus haut du plafond (la flèche sur le dessin)."},
-   {k:"ft",t:"chips",l:"Combien de fenêtres dans la pente du toit ?",o:["Aucune","1","2","3","4 ou plus",DK]},
-   {k:"surface",t:"num",l:"Surface de pente à isoler, environ",u:"m²",st:1,dk:1,h:"Seulement les parties qui penchent.",sh:()=>!(S.mode==="plan"&&S.travaux.some(k=>PLANABLE.includes(k)))}]},
+   {k:"hmur1",t:"num",l:"Hauteur en bas, 1er côté",lf:i=>i.forme==="1 pente"?"Hauteur en bas, côté le plus bas":"Hauteur en bas, 1er côté",u:"cm",st:1,dk:1,h:"Du sol jusqu'à l'endroit où le plafond commence à pencher (« en bas » sur le dessin). Souvent entre 40 et 120 cm."},
+   {k:"hmur2",t:"num",l:"Hauteur en bas, 2e côté",u:"cm",st:1,dk:1,h:"Pareil de l'autre côté. Souvent la même.",sh:i=>i.forme!=="1 pente"},
+   {k:"L",t:"num",l:"Longueur de la pièce sous le toit",u:"m",st:.1,dk:1,pre:[3,4,5,6,8],h:"Mesurée au sol, dans le sens du haut du toit. Plusieurs pièces : mesurez tout l'étage.",sh:()=>!RPLAN()},
+   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[3,4,5,6],hf:i=>{const r=RSURF(i);return r?`C'est tout : ≈ ${fr(r)} m² de pente à isoler, calculés pour vous.`:"Mesurée au sol, d'un côté bas à l'autre."},sh:()=>!RPLAN()},
+   {k:"ft",t:"chips",l:"Combien de fenêtres dans la pente du toit ?",o:["Aucune","1","2","3","4 ou plus",DK]}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
   g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
    {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
@@ -593,7 +603,7 @@ const D={
    {k:"coul",t:"chips",l:"Essence du bois",o:["Chêne clair","Chêne doré","Chêne foncé","Noyer","Pin","Bois exotique","Bois peint",DK],h:"Bois peint : la teinte se précise avec l'artisan.",sh:i=>i.mat==="Bois"},
    {k:"volet",t:"chips",l:"Voulez-vous un volet roulant neuf avec cette fenêtre ?",o:["Aucun","Manuel","Motorisé",DK],h:"Manuel : avec une manivelle ou une sangle. Motorisé : avec un bouton."}]}},
  portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Porte par porte",
-  g:{n:"Porte",cnt:"Combien de portes ?",add:"+ Ajouter une autre porte",copy:1,f:[
+  g:{n:"Porte",cnt:"Combien de portes à changer ou à ajouter ?",add:"+ Ajouter une autre porte",copy:1,f:[
    {k:"largeur",t:"chips",l:"Largeur (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK]},
    {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit",DK]},
    {k:"bati",t:"chips",l:"Cette porte…",o:["Dans une cloison neuve","Remplace une ancienne porte (à déposer)",DK]},
@@ -637,7 +647,9 @@ const D={
  projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Pour le planning",f:[
    {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
    {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
-   {k:"msg",t:"area",v:()=>!SIMPLE(),l:"Un détail à ajouter ?",ph:"Meubles à déplacer, code du portail, contraintes de dates…"}]},
+   {k:"msg",t:"area",v:()=>!SIMPLE()&&S.mode==="plan",l:"Un détail à ajouter ?",ph:"Meubles à déplacer, code du portail, contraintes de dates…"}]},
+ note:{t:"Un mot pour "+CONFIG.artisan+" ?",s:"Facultatif. Tout ce qui n'a pas trouvé sa place : vos envies, vos questions, ce qui vous inquiète.",cheer:"Presque fini",f:[
+   {k:"msg",t:"area",l:"Votre note",ph:"Ex. j'aimerais une porte coulissante dans la chambre, le chantier doit être fini avant Noël, code du portail…"}]},
  contact:{t:"Où vous envoyer votre devis ?",s:"Dernière étape.",cheer:"Et voilà !",f:[
    {k:"prenom",t:"text",cap:1,l:"Prénom",ac:"given-name",ph:"Ex. Marie",req:1},
    {k:"nom",t:"text",cap:1,l:"Nom",ac:"family-name",ph:"Ex. Dupont",req:1},
@@ -748,7 +760,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&v=42");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&v=43");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -762,12 +774,12 @@ function planPayloadOld(){const P=S.plan,H=P.H_dk?null:pn(P.H);const pieces=P.ro
  return{hauteur_sous_plafond_m:H,pieces,murs_exterieurs_m:+extL.toFixed(2),murs_entre_pieces_m:+cloL.toFixed(2),surface_totale_m2:+pieces.reduce((s,p)=>s+p.surface_m2,0).toFixed(2),objectif_isolation:P.obj||null,plafond_actuel:P.support||null,note:"Plan placé par le client (pièces collées à leur place). Murs extérieurs = côtés sans pièce voisine ; à confirmer à la visite (mitoyenneté, garage non chauffé), comme les tailles estimées."}}
 function planInput(el){const P=S.plan,k=el.dataset.pk,i=el.dataset.pi===""?null:+el.dataset.pi,v=el.value.replace(",",".");
  if(i==null){P[k]=v;P[k+"_dk"]=false}else{const r=P.rooms[i];if(r.dk){const[a,b]=dimsOf(r);r.L=a;r.l=b;r.dk=false;r[k]=v;save();render();const e=document.getElementById(`pn-${{L:"lo",l:"la",H:"h"}[k]}-${i}`);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}return}r[k]=v;const pr=document.getElementById("prect");if(pr)pr.innerHTML=rectSVG(r)}save()}
-let S=load()||fresh();if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;if(!S.simple)S.simple={};["sol","escalier"].forEach(k=>{if(!S[k])S[k]={items:[{}]}});["cloison","doublage","plafond","fenetres","portes","sol","escalier"].forEach(k=>{const o=S[k];if(o&&o.n==null&&o.items&&o.items.some(it=>Object.keys(it).some(x=>!["H","portes","fen"].includes(x))))o.n=o.items.length});
+let S=load()||fresh();if(!S.note)S.note={};if(!S.plan)S.plan={H:2.5,rooms:[],sub:"apercu",trace:null};S.plan.sub="apercu";if(S.mode===undefined)S.mode=null;if(!S.simple)S.simple={};["sol","escalier"].forEach(k=>{if(!S[k])S[k]={items:[{}]}});["cloison","doublage","plafond","fenetres","portes","sol","escalier"].forEach(k=>{const o=S[k];if(o&&o.n==null&&o.items&&o.items.some(it=>Object.keys(it).some(x=>!["H","portes","fen"].includes(x))))o.n=o.items.length});
 let cur="intro";
 const files={photos:[],plan:[]};
 const t0=Date.now();
 
-function fresh(){return {mode:null,simple:{},plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
+function fresh(){return {mode:null,note:{},simple:{},plan:{H:2.5,rooms:[],sub:"apercu",trace:null},travaux:[],logement:{},contact:{},projet:{},photos:{},finition:{},autre:{},combles:{surface_dk:false},rampants:{chevrons_dk:true},
  cloison:{items:[{H:2.5,portes:0}],phonique:"Standard"},doublage:{items:[{H:2.5,fen:0}],epaisseur_dk:true},plafond:{items:[{H:2.5}]},fenetres:{items:[{}]},portes:{items:[{}]},sol:{items:[{}]},escalier:{items:[{}]}}}
 function load(){try{const x=JSON.parse(localStorage.getItem("clikdevis-brouillon")||"null");return x&&x.travaux?x:null}catch(e){return null}}
 const PRE=()=>(S.contact.prenom||"").trim().split(/\s+/)[0]||"";
@@ -784,7 +796,7 @@ function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
 function SIMPLE(){return false}
 // 17/11 (Cyril) : tout ce que le plan ne dessine pas (combles, rampants, escalier, autre) est demandé AVANT le plan : le plan reprend ces réponses (hauteurs du toit, fenêtres de toit).
-function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k)),avPlan=pl&&S.mode==="plan";if(pl)a.push("mode");if(SIMPLE()){if(avPlan)a.push("plan");a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if(S.travaux.includes(k)&&!(avPlan&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});if(FPLUS())a.push("finition");if(avPlan)a.push("projet","plan","photos","contact","recap");else a.push("photos","projet","contact","recap");return a}
+function steps(){const a=["travaux","logement"],pl=S.travaux.some(k=>PLANABLE.includes(k)),avPlan=pl&&S.mode==="plan";if(pl)a.push("mode");if(SIMPLE()){if(avPlan)a.push("plan");a.push("simple","projet","contact","recap");return a}TRAVAUX.forEach(([k])=>{if((S.travaux.includes(k)||(k==="portes"&&S.travaux.includes("cloison")))&&!(avPlan&&["doublage","plafond","cloison","fenetres","portes","sol"].includes(k)))a.push(k)});if(FPLUS())a.push("finition");if(avPlan)a.push("projet","plan","photos","contact","recap");else a.push("photos","projet","note","contact","recap");return a}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{maximumFractionDigits:2});
 const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
@@ -824,8 +836,8 @@ function badge(sec,it){
 }
 // Lot B (Cyril 17/11) : portes déjà indiquées dans les cloisons = comptées, la question « portes » ne demande que les autres.
 function cloPortes(){return S.travaux.includes("cloison")&&S.mode!=="plan"?((S.cloison||{}).items||[]).reduce((a,it)=>a+(+it.portes||0),0):0}
-function CNTL(){const c=cloPortes();return cur==="portes"&&c?"Combien d'autres portes à changer ?":D[cur].g.cnt}
-function CNT0(){const c=cloPortes();return cur==="portes"&&c?`Les ${c>1?c+" portes":"la porte"} de vos cloisons ${c>1?"sont déjà comptées":"est déjà comptée"}. 0 s'il n'y en a pas d'autres.`:""}
+function CNTL(){const c=cloPortes()||(cur==="portes"&&!S.travaux.includes("portes")),apt=/appart/i.test((S.logement||{}).type||"");return cur==="portes"&&c?`Ailleurs ${apt?"dans l'appartement":"dans la maison"}, d'autres portes à changer ou à ajouter ?`:D[cur].g.cnt}
+function CNT0(){const c=cloPortes();if(cur==="portes"&&!c&&!S.travaux.includes("portes"))return"0 s'il n'y en a pas.";return cur==="portes"&&c?`${c>1?"Les "+c+" portes":"La porte"} de vos cloisons ${c>1?"sont déjà réglées":"est déjà réglée"}. 0 s'il n'y en a pas d'autres.`:""}
 function render(){
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
  document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.classList.toggle("nonav",cur==="intro"||cur==="done");document.body.classList.toggle("intro",cur==="intro");
@@ -844,16 +856,17 @@ function render(){
  else if(cur==="recap")h+=recapH();
  else{
   if(ILL[cur])h+=`<figure class="ill">${ILL[cur][0]}<figcaption>${esc(ILL[cur][1])}</figcaption></figure>`;
-  if(d.sch&&!(d.g&&d.g.cnt&&!(S[cur].n>0)))h+=`<div class="schema">${SCH[d.sch]}<p>${d.sch==="fenetre"?"Mesurez la largeur et la hauteur de l'ouverture, côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol : longueur et largeur.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p></div>`;
+  if(d.sch&&schNow())h+=`<div class="schema">${SCH[d.sch]}<p>${d.sch==="fenetre"?"Mesurez la largeur et la hauteur de l'ouverture, côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol : longueur et largeur.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p></div>`;
   if(cur==="plafond"&&S.mode==="plan"&&planRooms().length)h+=`<div class="prooms"><p class="lab">Pièces de votre plan : touchez celles où faire le plafond</p><div class="chips">${planRooms().map(r=>`<button type="button" class="chip" data-proom="${esc(r.nom)}" aria-pressed="${S.plafond.items.some(it=>it.piece===r.nom)}">${esc(r.nom)} · ${fr(r.s)} m²</button>`).join("")}</div><p class="hint">Les mesures sont reprises du plan, modifiables ci-dessous.</p></div>`;
   if(d.g&&d.g.cnt&&S[cur].n>0&&!S[cur].cedit)h+=`<div class="q cnt cmini"><span><span class="lab">${esc(CNTL())}</span> <b>${S[cur].n_dk?DK:S[cur].n}</b></span><button type="button" class="del" data-cedit="1">Changer</button></div>`;
   else if(d.g&&d.g.cnt){const n=S[cur].n,M=d.g.cmax||8,z=CNT0();h+=`<div class="q cnt"><span class="lab" id="cnt-${cur}">${esc(CNTL())}</span>${z?`<p class="hint">${esc(z)}</p>`:""}<div class="chips" role="group" aria-labelledby="cnt-${cur}">${Array.from({length:M+1},(_,j)=>j).filter(j=>j>0||z).map(j=>`<button type="button" class="chip" data-cnt="${j}" aria-pressed="${n===j&&!S[cur].n_dk}">${j}</button>`).join("")}<button type="button" class="chip dk" data-cnt="dk" aria-pressed="${!!S[cur].n_dk}">${DK}</button></div>${S[cur].n_dk?`<p class="hint">Pas de souci : décrivez-en une, ${esc(CONFIG.artisan)} comptera le reste sur place.</p>`:""}${n===0?`<p class="hint">Rien à prévoir ici : touchez « Continuer ».</p>`:""}</div>`}
   if(d.g&&(!d.g.cnt||S[cur].n>0)){const op=iOpen(cur);S[cur].items.forEach((it,i)=>{const b=badge(cur,it);
    if(d.g.cnt&&i!==op){const sm=iSum(cur,it);h+=`<button type="button" class="item mini${it._ok?" ok":""}" data-iopen="${i}"><span class="mi-t">${it._ok?"✓ ":""}${esc(d.g.n)} n°${i+1}${it.piece?" · "+esc(it.piece):""}</span><span class="mi-s">${it._ok?esc(sm||"Rempli"):"À remplir"}</span><span class="mi-m">${it._ok?"Modifier":"Remplir"}</span></button>`;return}
-   h+=`<div class="item" data-n="${esc(d.g.n)} n°${i+1}"><div class="item-h"><h3>${d.g.n} n°${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.f.map(f=>fieldH(f,cur,i)).join("")}${d.g.cnt?`<button type="button" class="btn go iok" data-iok="${i}">C'est bon pour ${/^(Pièce|Cloison|Fenêtre|Porte)$/.test(d.g.n)?"la":"le"} ${d.g.n.toLowerCase()} n°${i+1}</button>`:""}</div>`});
-   h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
-   if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}
+   h+=`<div class="item" data-n="${esc(d.g.n)} n°${i+1}"><div class="item-h"><h3>${d.g.n} n°${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.cnt?(()=>{const V=iqVis(cur,i),q=iqPos(cur,i);return`<p class="hint iqn">Question ${q+1} sur ${V.length}</p><div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="iq${i}-${q}">${fieldH(V[q],cur,i)}${schTxt(cur,V[q])}</div>`})():d.g.f.map(f=>fieldH(f,cur,i)).join("")}${d.g.cnt&&iqPos(cur,i)===iqVis(cur,i).length-1?`<button type="button" class="btn go iok" data-iok="${i}">C'est bon pour ${/^(Pièce|Cloison|Fenêtre|Porte)$/.test(d.g.n)?"la":"le"} ${d.g.n.toLowerCase()} n°${i+1}</button>`:""}</div>`});
+   if(!(d.g.cnt&&iOpen(cur)>=0)){h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
+   if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}}
   if(cur==="photos")h+=`<div class="q phx"><span class="lab">Ce qui aide ${esc(CONFIG.artisan)}</span><ul class="tips">${PHT()}<li>Chaque pièce entière, depuis un coin.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul></div>`;
+  {const q=iqKey();if(q&&q!=="0-0")h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub"></p>`)}
   if(d.f&&cur==="logement"){const[i,v]=lqPos(),g=LQ[S.lq];h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub">Question ${i+1} sur ${v.length}${S.lq===0?" · "+esc(d.s):""}</p>`);h+=`<div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="lq${S.lq}">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
   else if(d.f&&!(d.g&&d.g.cnt&&!(S[cur].n>0)))h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
   // Lot B (Cyril 17/11) : plus de « Ajouter une photo » sous chaque travail, tout est réuni dans l'étape Photos.
@@ -863,7 +876,7 @@ function render(){
  // Même écran redessiné après un toucher : pas d'animation d'entrée ni de saut de l'écran (Cyril 11/11)
  // Fluidité (Cyril 11/11) : sur le même écran, on met à jour la page en place (les boutons gardent leur animation),
  // et entre deux questions du logement seule la question glisse.
- const same=render.k===cur,sameQ=same&&render.q===S.lq,sy=scrollY;render.k=cur;render.q=S.lq;render.dir=0;
+ const same=render.k===cur,sameQ=same&&render.q===S.lq+"|"+iqKey(),sy=scrollY;render.k=cur;render.q=S.lq+"|"+iqKey();render.dir=0;
  if(!same){h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');if(NAV9)h=h.replace('<section class="fade">',`<section class="fade ${NAV9>0?"s9i":"s9b"}">`)}if(same&&app.firstElementChild){h=h.replace('<section class="fade">','<section>');if(sameQ)h=h.replace(/class="lq lq-(in|back)"/,'class="lq"');const t=document.createElement("div");t.innerHTML=h;morph(app,t)}else app.innerHTML=h;
  if(same&&scrollY!==sy)scrollTo(0,sy);
  if(window.icoDeco)icoDeco(app);if(window.btnDeco)btnDeco();fitPage();fitRoom();focus9();
@@ -908,7 +921,7 @@ function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win
  (p.murs||[]).forEach((m,mi)=>{const ouv=(m.ouvertures||[]);if(m.type==="mur extérieur"&&/isoler|refaire/i.test(m.travaux||""))o.dbl+=Math.max(0,(m.longueur_m||0)*H-ouv.reduce((a,x)=>a+(x.largeur_cm||0)*(x.hauteur_cm||0)/1e4,0));
   ouv.forEach(x=>{const nsp=v=>v&&!/je ne sais/i.test(v);const d=[x.materiau,x.couleur,x.ouverture&&x.k!=="porte"?x.ouverture.toLowerCase():null,x.pose&&nsp(x.pose)?(x.k==="porte"?"pose "+x.pose.toLowerCase():x.pose.toLowerCase()):null,x.volet&&x.volet!=="Aucun"?(/je ne sais/i.test(x.volet)?"volet à définir":x.volet.toLowerCase())+(x.volet_commande&&nsp(x.volet_commande)?" "+x.volet_commande.toLowerCase():""):null].filter(nsp);const e={piece:p.nom,txt:`${x.repere} ${String(x.designation||"").toLowerCase()} ${x.largeur_cm}×${x.hauteur_cm}${d.length?" · "+d.join(", "):""}`,simple:`${x.repere} · ${x.designation||""} · ${x.largeur_cm} × ${x.hauteur_cm} cm · ${p.nom}, mur ${mi+1}${f.nom&&t.floors.length>1?" ("+f.nom+")":""}${/^oui|^à changer/i.test(x.a_changer||"")?" · à changer":/^à créer/i.test(x.a_changer||"")?" · à créer":/^non,|^déjà/i.test(x.a_changer||"")?" · déjà en place":" · état non précisé"}`,vol:x.volet&&x.volet!=="Aucun"?`↳ ${/je ne sais/i.test(x.volet)?"Volet (type à définir)":/^volet/i.test(x.volet)?x.volet:"Volet "+x.volet.toLowerCase()}${[x.volet_commande,x.volet_pose&&"pose "+x.volet_pose.toLowerCase(),x.volet_enroulement&&"enroulement "+x.volet_enroulement.toLowerCase(),x.volet_couleur].filter(nsp).map(v=>" · "+v).join("")}`:null};(x.menuiserie_exterieure?(x.k==="porte"?o.extD:o.win):o.intD).push(e)})})})});return o}
 function totals(){const r=[];if(SIMPLE())return r;const tp=tPieces();if(S.mode==="plan"&&tp.length){const ps=planStats();r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`);if(ps.clo)r.push(`≈ ${fr(ps.clo)} m² de cloison`);if(ps.dbl)r.push(`≈ ${fr(ps.dbl)} m² de murs à isoler`);if(ps.win.length)r.push(`${ps.win.length} fenêtre${ps.win.length>1?"s":""}`);if(ps.extD.length)r.push(`${ps.extD.length} porte${ps.extD.length>1?"s":""} extérieure${ps.extD.length>1?"s":""}`);if(ps.intD.length)r.push(`${ps.intD.length} porte${ps.intD.length>1?"s":""} intérieure${ps.intD.length>1?"s":""}`);
-  ["combles","rampants"].forEach(k=>{if(S.travaux.includes(k)&&pn(S[k].surface)&&!(k==="combles"&&/aménag/i.test(S.combles.type||"")))r.push(`≈ ${fr(pn(S[k].surface))} m² de ${k==="combles"?"combles":"rampants"}`)});return r}if(S.mode==="plan"&&tp.length){r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`)}const sum=(sec,a,b)=>S[sec].items.reduce((s,it)=>{const x=pn(it[a]),y=pn(it[b]);return s+(x&&y&&!it[a+"_dk"]&&!it[b+"_dk"]?x*y:0)},0);
+  ["combles","rampants"].forEach(k=>{const sv=k==="rampants"?RSURF():pn(S[k].surface);if(S.travaux.includes(k)&&sv&&!(k==="combles"&&/aménag/i.test(S.combles.type||"")))r.push(`≈ ${fr(sv)} m² de ${k==="combles"?"combles":"rampants"}`)});return r}if(S.mode==="plan"&&tp.length){r.push(`plan : ${nPieces()} pièce${nPieces()>1?"s":""}, ≈ ${fr(tp.reduce((a,p)=>a+(+p.surface_m2||0),0))} m² au sol`)}const sum=(sec,a,b)=>S[sec].items.reduce((s,it)=>{const x=pn(it[a]),y=pn(it[b]);return s+(x&&y&&!it[a+"_dk"]&&!it[b+"_dk"]?x*y:0)},0);
  if(S.travaux.includes("cloison")){const v=sum("cloison","L","H");if(v)r.push(`≈ ${fr(v)} m² de cloison`)}
  if(S.travaux.includes("doublage")){const v=sum("doublage","L","H");if(v)r.push(`≈ ${fr(v)} m² de murs à isoler`)}
  if(S.travaux.includes("plafond")){const v=sum("plafond","L","l");if(v)r.push(`≈ ${fr(v)} m² de plafond`)}
@@ -929,10 +942,10 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
   const its=items.filter(x=>typeof x==="object"),txt=items.filter(x=>typeof x!=="object");
   h+=`<div class="rblock"><h3>${esc(D[s].t)}<button type="button" data-goto="${s}">Modifier</button></h3>${its.map(x=>`<div class="ritem${ROPEN.has(x.sec+x.t)?" open":""}"><button type="button" class="ri-s" data-rtog="${esc(x.sec+x.t)}" aria-expanded="${ROPEN.has(x.sec+x.t)}"><span class="ri-ic">${IC[x.sec]||""}</span><span class="ri-t"><b>${esc(x.t)}${x.pc?" · "+esc(x.pc):""}</b>${x.b?`<span class="ri-b">${esc(x.b)}</span>`:""}</span><span class="ri-m">Voir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><ul>${x.parts.map(p=>{const k=p.indexOf(" : ");return`<li>${k>0?`<span>${esc(p.slice(0,k))}</span><b>${esc(p.slice(k+3))}</b>`:esc(p)}</li>`}).join("")}</ul></div>`).join("")}${txt.length?`<ul>${txt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`});
  return h+`<button type="button" class="add" data-goto="travaux" style="margin-top:4px">+ Ajouter des travaux</button></div>`}
-function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="open"?undefined:v))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();(det.fenetres?.items||[]).forEach(it=>{if(it.pose==null)it.pose=DK});(det.portes?.items||[]).forEach(it=>{if(it.sens==null)it.sens=DK});(det.plafond?.items||[]).forEach(it=>{if(it.support==null)it.support=DK});if(det.doublage&&det.doublage.epaisseur==null)det.doublage.epaisseur_dk=true;if(det.plan&&det.plan.plafond_actuel==null&&S.travaux.includes("plafond"))det.plan.plafond_actuel=DK;{const F=S.finition||{},ai=F.aides;if(ai){["combles","rampants"].forEach(k=>{if(det[k])det[k].aides=ai});if(/^oui/i.test(ai)){if(det.doublage&&det.doublage.objectif!=="Isolation renforcée")det.doublage.objectif="Avoir droit aux aides";if(det.plan&&S.travaux.includes("doublage")&&(det.plan.objectif_isolation||"")!=="Isolation renforcée")det.plan.objectif_isolation="Avoir droit aux aides"}}}if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="open"||k==="qi"||k==="qiI"?undefined:v))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(det.rampants){const rs=RPLAN()?null:RSURF();if(rs){det.rampants.surface=rs;det.rampants.surface_calculee="Calculée depuis les mesures du client";delete det.rampants.surface_dk}else if(!RPLAN()){delete det.rampants.surface;det.rampants.surface_dk=true}}(det.fenetres?.items||[]).forEach(it=>{if(it.pose==null)it.pose=DK});(det.portes?.items||[]).forEach(it=>{if(it.sens==null)it.sens=DK});(det.plafond?.items||[]).forEach(it=>{if(it.support==null)it.support=DK});if(det.doublage&&det.doublage.epaisseur==null)det.doublage.epaisseur_dk=true;if(det.plan&&det.plan.plafond_actuel==null&&S.travaux.includes("plafond"))det.plan.plafond_actuel=DK;{const F=S.finition||{},ai=F.aides;if(ai){["combles","rampants"].forEach(k=>{if(det[k])det[k].aides=ai});if(/^oui/i.test(ai)){if(det.doublage&&det.doublage.objectif!=="Isolation renforcée")det.doublage.objectif="Avoir droit aux aides";if(det.plan&&S.travaux.includes("doublage")&&(det.plan.objectif_isolation||"")!=="Isolation renforcée")det.plan.objectif_isolation="Avoir droit aux aides"}}}if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
   contact:{prenom:cap(S.contact.prenom).trim(),nom:cap(S.contact.nom).trim(),telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
-  logement:{...S.logement,commune:cap(S.logement.commune).trim()},mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.projet,
+  logement:{...S.logement,commune:cap(S.logement.commune).trim()},mode:S.mode||"texte",travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.mode==="plan"?S.projet:{...S.projet,msg:(S.note||{}).msg||S.projet.msg||""},
   fichiers:{photos:files.photos.map(f=>(f.tag&&D[f.tag]?D[f.tag].t+" · ":"")+f.name),plans:files.plan.map(f=>f.name)},resume:totals(),piege:document.querySelector("[data-hp]")?.value||""}}
 let lastPayload=null;
 // Finir plus tard : la demande (sans photos) est compressée dans un lien, que le client s'envoie à lui-même (partage ou e-mail).
@@ -1003,7 +1016,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
 // Téléphone : si l'écran dépasse, on le coupe en parties qui tiennent à l'écran (Cyril 11/11)
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.tete9,.sub,.err,.hp,.qph,.iok"))}
 // Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
-function fitPage(){const b=document.body,over=()=>{if(innerWidth>600||["intro","done","plan"].includes(cur))return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
+function fitPage(){const b=document.body,over=()=>{if(innerWidth>600||["intro","done","plan"].includes(cur)||iqKey())return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
  cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
 // 17/11 (Cyril, lot A) : la partie affichée suit son CONTENU, pas son numéro. Quand une réponse raccourcit l'écran,
 // les parties sont recalculées : on retrouve la partie qui contient la question où l'on était (avant : on gardait le
@@ -1012,7 +1025,7 @@ function fitKey(e){if(!e)return"";const q=e.matches("[data-k]")?e:e.querySelecto
 function fitAk0(c){if(fitPage.ak)delete fitPage.ak[c]}
 function fitAnc(p){const e=(p||[]).find(x=>!x.classList.contains("item-h"))||(p||[])[0];return fitKey(e)}
 function fitPage0(){fitPage.p=fitPage.p||{};{const b=document.body,sec=document.querySelector("#app>section");b.classList.remove("r1","r2","r3");document.querySelectorAll("#app .item.pg-off,#app .item.cont,#app .iok.pg-off,#app .qph.pg-off").forEach(e=>e.classList.remove("pg-off","cont"));b.classList.remove("grow");if(sec){sec.classList.remove("fill");sec.style.minHeight=""}}const B=fitBlocks();B.forEach(e=>e.classList.remove("pg-off"));fitPage.pages=[];
- if(!B.length||["intro","done","plan","logement"].includes(cur))return;
+ if(!B.length||["intro","done","plan","logement"].includes(cur)||iqKey())return;
  const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);let H=innerHeight;if(typing&&fitPage.H)H=fitPage.H;else fitPage.H=H;
  const Y=e=>e.getBoundingClientRect();let top0=Y(B[0]).top+scrollY;const avail0=H-parseFloat(getComputedStyle(document.body).paddingBottom)-28-((document.querySelector("#app .qph")||{}).offsetHeight||0);
  // Petit écran : le schéma seul sur une page ne sert à rien, on le cache s'il ne tient pas avec la question suivante.
@@ -1047,7 +1060,7 @@ function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(pr
  const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
  if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
 let NAV9=0;
-function go(dir){if(go.busy)return;const st=steps();let n=st.indexOf(cur);
+function go(dir){if(go.busy)return;const st=steps();let n=st.indexOf(cur);if(iqGo(dir))return;
  let iLeft=false;if(dir>0&&D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n>0){const k=iOpen(cur),ok=document.querySelector("#app .iok");if(k>=0&&ok&&!ok.classList.contains("pg-off")){if(iDone(cur,k,true))return;iLeft=true}}
  if(dir>0&&!iLeft&&cur!=="logement"&&(fitPage.pages||[]).length>1&&missHere(cur))return;
  if(!iLeft&&cur!=="logement"&&fitGo(dir))return;
@@ -1128,24 +1141,37 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.goto){cur=ds.goto;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;fitAk0(cur);if(cur==="logement")S.lq=0;render();scrollTo(0,0);return}
  if(ds.trav){const k=ds.trav,a=S.travaux;a.includes(k)?a.splice(a.indexOf(k),1):a.push(k);save();render();return}
  if(ds.iok!=null){iDone(cur,+ds.iok,false);return}
- if(ds.iopen!=null){S[cur].open=+ds.iopen;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;fitAk0(cur);fitPage.toItem=true;save();render();document.querySelector("#app .item:not(.mini)")?.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(ds.iopen!=null){S[cur].open=+ds.iopen;S[cur].qi=0;S[cur].qiI=+ds.iopen;fitPage.p=fitPage.p||{};fitPage.p[cur]=0;fitAk0(cur);fitPage.toItem=true;save();render();document.querySelector("#app .item:not(.mini)")?.scrollIntoView({behavior:"smooth",block:"start"});return}
  if(ds.cedit){S[cur].cedit=true;save();render();return}
  if(ds.cnt!=null){const o=S[cur],dk=ds.cnt==="dk",n=dk?1:+ds.cnt,it=o.items;o.n_dk=dk||undefined;o.n=n;o.open=undefined;o.cedit=false;while(it.length<n)it.push(newItem(cur));if(it.length>n)it.length=n;save();render();if(n===0){clearTimeout(go.t);go.t=setTimeout(()=>{if(S[cur]&&S[cur].n===0)go(1)},380)}return}
  if(ds.add){const it=S[cur].items;it.push(newItem(cur));if(D[cur].g.cnt){S[cur].n=it.length;S[cur].open=it.length-1}save();render();const items=document.querySelectorAll(".item");items[items.length-1]?.scrollIntoView({behavior:"smooth",block:"start"});return}
  if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);if(D[cur].g&&D[cur].g.cnt){S[cur].n=S[cur].items.length;S[cur].open=undefined}save();render();return}
  const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
  if(ds.multi){const a=(Array.isArray(o[k])?o[k]:[]).filter(x=>ds.v===DK?x===DK:x!==DK);o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
- if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="logement"&&cur==="logement"&&o[k]!=null&&!ds.multi&&LQ[S.lq||0].length===1){save();render();clearTimeout(go.t);go.t=setTimeout(()=>{if(cur==="logement")go(1)},380);return}if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();return}
- if(ds.pre!=null){o[k]=+ds.pre;o[k+"_dk"]=false;o[k+"_o"]=false;save();render();return}
+ if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="logement"&&cur==="logement"&&o[k]!=null&&!ds.multi&&LQ[S.lq||0].length===1){save();render();clearTimeout(go.t);go.t=setTimeout(()=>{if(cur==="logement")go(1)},380);return}if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();if(o[k]!=null&&!(sec==="fenetres"&&k==="taille"&&o[k]==="Autre taille"))iqAuto(sec,ds.i===""?null:+ds.i);return}
+ if(ds.pre!=null){o[k]=+ds.pre;o[k+"_dk"]=false;o[k+"_o"]=false;save();render();iqAuto(sec,ds.i===""?null:+ds.i);return}
  if(ds.preo){o[k+"_o"]=true;o[k+"_dk"]=false;save();render();setTimeout(()=>document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus(),30);return}
- if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();return}
+ if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();if(!was)iqAuto(sec,ds.i===""?null:+ds.i);return}
  if(ds.op){const st=+ds.st;const v=pn(o[k])??0;let nv=ds.op==="+"?v+st:v-st;if(nv<0)nv=0;o[k]=Math.round(nv*100)/100;o[k+"_dk"]=false;save();render();document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus();return}
  if(ds.step){const v=(o[k]??+ds.min)+(+ds.step);o[k]=Math.max(+ds.min,Math.min(+ds.max,v));save();render();return}
 });
 // Fiches en accordéon (Cyril 11/11) : une seule fiche ouverte ; « C'est bon » la replie en une ligne et ouvre la suivante.
+// 18/11 (Cyril) : parcours « décrire mes travaux » = une question à la fois dans chaque fiche (comme « Parlez-nous du logement »), qui avance seule après un choix.
+function schNow(){const d=D[cur];if(!d.g||!d.g.cnt)return true;if(!(S[cur].n>0))return false;const k=iOpen(cur);if(k<0)return false;const f=iqVis(cur,k)[iqPos(cur,k)];return innerWidth>=600&&!!f&&["L","H","l","Lc","Hc","taille"].includes(f.k)}
+function schTxt(sec,f){const d=D[sec];if(!d.sch||innerWidth>=600||!f||!["L","H","l","Lc","Hc","taille"].includes(f.k))return"";return`<p class="hint">${d.sch==="fenetre"?"Mesurez l'ouverture côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p>`}
+function iqVis(sec,i){const it=S[sec].items[i]||{};return D[sec].g.f.filter(f=>!f.sh||f.sh(it))}
+function iqPos(sec,i){const n=iqVis(sec,i).length,o=S[sec];let q=o.qi||0;if(o.qiI!==i){q=0;o.qi=0;o.qiI=i}return Math.max(0,Math.min(n-1,q))}
+function iqKey(){const d=D[cur];if(!d||!d.g||!d.g.cnt||!(S[cur].n>0))return"";const k=iOpen(cur);return k<0?"":k+"-"+iqPos(cur,k)}
+function iqMove(sec,i,q,dir){const o=S[sec];o.qi=q;o.qiI=i;MISS=null;save();const el=document.querySelector('#app .item .lq'),RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{render.dir=dir;render();render.dir=0};if(!el||RM){fin();return}clearTimeout(iqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");iqMove.t=setTimeout(fin,170)}
+function iqGo(dir){const d=D[cur];if(!d||!d.g||!d.g.cnt||!(S[cur].n>0))return false;const k=iOpen(cur);if(k<0)return false;const V=iqVis(cur,k),q=iqPos(cur,k);
+ if(dir>0&&q<V.length-1){const f=missF(cur,k,[V[q]]);if(f){missShow(cur,k,f);render();return true}iqMove(cur,k,q+1,1);return true}
+ if(dir<0&&q>0){iqMove(cur,k,q-1,-1);return true}
+ if(dir<0&&q===0&&k>0){const o=S[cur];o.open=k-1;o.qi=iqVis(cur,k-1).length-1;o.qiI=k-1;save();render.dir=-1;render();render.dir=0;return true}
+ return false}
+function iqAuto(sec,i){if(sec!==cur||i==null||!D[sec]?.g?.cnt)return;clearTimeout(go.t);go.t=setTimeout(()=>{if(cur===sec&&iOpen(sec)===i)go(1)},380)}
 function iOpen(sec){const o=S[sec],it=o.items||[];if(o.open===-1)return -1;if(o.open!=null&&o.open<it.length)return o.open;const k=it.findIndex(x=>!x._ok);return k}
 function iSum(sec,it){const b=badge(sec,it),v=D[sec].g.f.filter(f=>(!f.sh||f.sh(it))&&f.t==="chips"&&f.k!=="piece").map(f=>it[f.k]??f.def).filter(x=>x&&x!==DK&&!/^\d+ cm$/.test(x)&&!/ × /.test(x));return[b,...v].filter(Boolean).slice(0,4).join(" · ")}
-function iDone(sec,i,leave){const o=S[sec],it=o.items;{const f=missF(sec,i,D[sec].g.f);if(f){missShow(sec,i,f);return true}}MISS=null;it[i]._ok=true;let k=it.findIndex((x,j)=>j>i&&!x._ok);if(k<0)k=it.findIndex(x=>!x._ok);o.open=k<0?-1:k;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitAk0(sec);fitPage.toItem=true;save();if(k<0&&leave&&!(D[sec].f||[]).some(f=>!f.v||f.v(o))){fitPage.toItem=false;return false}render();const el=document.querySelector("#app .item:not(.mini)")||document.querySelector("#app .cnt");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return true}
+function iDone(sec,i,leave){const o=S[sec],it=o.items;{const f=missF(sec,i,D[sec].g.f);if(f){missShow(sec,i,f);return true}}MISS=null;it[i]._ok=true;let k=it.findIndex((x,j)=>j>i&&!x._ok);if(k<0)k=it.findIndex(x=>!x._ok);o.open=k<0?-1:k;o.qi=0;o.qiI=o.open;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitAk0(sec);fitPage.toItem=true;save();if(k<0&&leave&&!(D[sec].f||[]).some(f=>!f.v||f.v(o))){fitPage.toItem=false;return false}render();const el=document.querySelector("#app .item:not(.mini)")||document.querySelector("#app .cnt");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return true}
 function newItem(sec){const it=S[sec].items,last=it[it.length-1]||{},d=D[sec];if(d.g.copy&&it.length)return Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k)));if(sec==="doublage"||sec==="cloison")return{H:last.H??2.5,portes:0,fen:0};if(sec==="plafond")return{H:last.H??2.5};return{}}
 function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
 // Code postal <-> commune : propositions de la base officielle des communes (geo.api.gouv.fr, gratuite, sans clé).
