@@ -106,3 +106,10 @@ html body .theme-b:active{box-shadow:var(--in);transform:scale(.97)}
 html body .theme-b .sol{display:none}
 :root[data-theme="dark"] body .theme-b .lune{display:none}
 :root[data-theme="dark"] body .theme-b .sol{display:block}
+
+/* Cyril 18/11 : les boutons ne bougent plus au survol (trackpad de l'iPad) ni au clic : l'appui se voit seulement
+   au relief qui se creuse ; la petite vibration (haptique.js) confirme le toucher. */
+@media (hover:hover){html body .btn:not([disabled]):hover,html body .bigbtn:hover{transform:none}
+  html body .btn.go:not([disabled]):hover::before,html body .bigbtn:hover::before{transform:none}}
+html body .btn:active,html body .bc-b button:active,html body .bigbtn:active,html body #pf-done:active,html body #pf-later:active,html body .chip:active,html body .add:active,html body .card:active,html body .mcard:active,html body .theme-b:active{transform:none!important}
+html body .card:active,html body .mcard:active{box-shadow:var(--in)}

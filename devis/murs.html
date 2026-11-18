@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="fr">
+<html data-vib-page lang="fr">
 <head>
 <meta charset="utf-8">
 <title>Vos murs</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="stylesheet" href="../fonts/fonts.css">
-<script src="../espace/theme.js?v=1"></script>
+<script src="haptique.js?v=1" defer></script><script src="../espace/theme.js?v=1"></script>
 <style>
 /* Un seul écran : le mur prend toute la place libre ; en largeur (tablette, PC, téléphone couché) le mur à gauche, les commandes à droite. Style N1 ProClik : bleu nuit pour agir, laiton en touche. */
 :root{
@@ -103,7 +103,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 #wall .pf .gl{stroke:var(--fg);stroke-width:1.2px;fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke}
 #wall .pf .gl.sep{stroke-width:1px;opacity:.45}#wall .pf .pt{fill:var(--fg)}#wall .pf .ef{fill:var(--ef)}#wall .pf .ec{fill:var(--ec)}
 .undo{position:absolute;left:8px;top:8px;z-index:4;display:inline-flex;align-items:center;gap:6px;appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 10px;cursor:pointer;box-shadow:0 2px 8px rgba(20,28,52,.08);transition:opacity .2s,transform .15s}
-.undo svg{width:17px;height:17px}.undo:disabled{opacity:.35;cursor:default}.undo:not(:disabled):active{transform:scale(.95)}
+.undo svg{width:17px;height:17px}.undo:disabled{opacity:.35;cursor:default}.undo:not(:disabled):active{transform:none}
 #mini{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--fg);white-space:nowrap;flex:none}#mini[hidden]{display:none}#mini svg{height:46px;width:auto;max-width:110px;flex:none}#mtx small{display:block;font-weight:700;font-size:11.5px;color:var(--muted)}@media (max-width:600px){.tog .tl{display:none}}
 #coach{position:fixed;z-index:40;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;transform:translate(-50%,-50%)}
 #coach i{width:38px;height:38px;border-radius:50%;background:rgba(168,130,63,.22);border:2px solid var(--laiton);box-shadow:0 4px 14px rgba(20,28,52,.18);animation:coach 2.4s ease-in-out 2 both}
@@ -157,7 +157,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 @media (min-width:700px){.qgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .qo{appearance:none;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1.5px solid transparent;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi);font:700 14.5px/1.2 var(--font);color:var(--fg);text-align:left;cursor:pointer;min-height:58px;transition:transform .15s,border-color .2s,background .2s}
-.qo:active{transform:scale(.97)}
+.qo:active{transform:none}
 .qo svg{flex:none;color:var(--fg)}
 .qo em{margin-left:auto;flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800}
 .qo[aria-pressed="true"]{border-color:var(--act);background:color-mix(in srgb,var(--act) 7%,var(--surface))}
@@ -179,7 +179,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .srw{display:grid;gap:6px}#sr-room{font-size:15px}#sr-room small{color:var(--muted);font-weight:600;font-size:12.5px;margin-left:4px}
 .ths{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.ths:empty{display:none}
 .th{appearance:none;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:4px 4px 3px;display:grid;gap:1px;cursor:pointer;min-width:0;transition:transform .15s}
-.th:active{transform:scale(.96)}.th svg{width:100%;height:58px;display:block;pointer-events:none}.th span{font:700 11px var(--font);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th:active{transform:none}.th svg{width:100%;height:58px;display:block;pointer-events:none}.th span{font:700 11px var(--font);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sent{flex:1;display:grid;place-content:center;justify-items:center;text-align:center;gap:10px;animation:sheetIn .5s ease both}.sent b{font-size:24px;font-weight:800}.sent p{margin:0;max-width:340px;color:var(--muted);line-height:1.45}
 /* sol / plafond */
 .ssw{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}.ssw .pv{flex:1;min-height:120px}
@@ -558,7 +558,7 @@ function announce(it){const c=CAT[it.k],l=needTxt(c);if(!l.length)return;it.puls
 function deselect(){if(sel!=null&&M.items[sel]&&!M.items[sel].lock)M.items[sel].lock=true;sel=null}
 let liftSnap=null;
 const TOUCH=matchMedia("(pointer:coarse)").matches,HOLD=280;let hold=null,raf=0,toastT=0;
-function vib(n){if(navigator.vibrate){try{navigator.vibrate(n)}catch(e){}}}
+function vib(n){if(window.pcVib){window.pcVib(Array.isArray(n)?n[0]:n);return}if(navigator.vibrate){try{navigator.vibrate(n)}catch(e){}}}
 let lvl0=-1,WALLS=null,wi=0;
 function allItems(){return WALLS?WALLS.flatMap(w=>w.items):M.items}
 function miss(){return M.items.filter(o=>visible(o)&&(!o.lock||!o.st||(o.st==="exist"&&!CAT[o.k].petit&&!o.rep)))}
