@@ -2,6 +2,7 @@
    Quand le client en dit peu, le pré-devis est calculé avec les habitudes de l'artisan, à modifier ensuite ligne par ligne.
    Pour chaque travail : « D'habitude » (cases à toucher), « Quand le chantier ne le permet pas » (plan B : mur abîmé,
    chevrons trop petits…), « Plus de détails » replié, et « Je ne fais pas ce travail ».
+   Réservé à l'option Cliky (bandeau Cliky ; sans l'option, la ligne ouvre « Mes options »).
    Ce que le client a dit passe toujours avant l'habitude. Chaque toucher est enregistré tout de suite (service : /espace/habitudes,
    même fiche que la mise en service). Sans service (démo) : exemple rempli, gardé sur l'appareil. */
 (function(){
@@ -139,7 +140,11 @@ function poser(){
   var c=$('#x-in .card.menu');if(!c)return;
   var b=d.createElement('button');b.type='button';b.id='hb-ligne';
   b.innerHTML='<span class="av hb-av">'+IC.tete+'</span><span class="tx"><b>Mes habitudes de chantier</b><small>160 mm aux murs, rampants croisés… le pré-devis fait comme vous</small></span><span class="go">›</span>';
-  b.addEventListener('click',function(){X.xclose();setTimeout(ouvrir,0)});
+  /* réservé à l'option Cliky (décision de Cyril, 18/11) : sans elle, le pré-devis n'est pas automatique, la ligne mène à « Mes options » */
+  var cl=window.PCOPT?PCOPT.actif('cliky'):true;
+  if(window.PCTAG)b.querySelector('.tx').insertAdjacentHTML('afterbegin',PCTAG('cliky'));
+  if(!cl)b.querySelector('.tx small').textContent='Avec l\'option Cliky : le pré-devis se calcule comme vous faites';
+  b.addEventListener('click',function(){X.xclose();setTimeout(cl||!window.PCMesOptions?ouvrir:PCMesOptions.ouvrir,0)});
   var mo=$('#mo-opt',c);c.insertBefore(b,mo?mo.nextSibling:c.firstChild);
 }
 if(menu)menu.addEventListener('click',function(){setTimeout(poser,10)});
