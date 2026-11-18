@@ -1,0 +1,915 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Vos murs</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<script src="../espace/theme.js?v=1"></script>
+<style>
+/* Un seul écran : le mur prend toute la place libre ; en largeur (tablette, PC, téléphone couché) le mur à gauche, les commandes à droite. Style N1 ProClik : bleu nuit pour agir, laiton en touche. */
+:root{
+ --bg:#EEF0F4;--surface:#F8F9FB;--soft:#E4E7EE;--fg:#1B2440;--muted:#5D6478;--line:#C9CEDA;
+ --act:#1B2440;--on-act:#FFFFFF;--laiton:#A8823F;--laiton-soft:#E9DFC9;--wall:#FFFFFF;--wall2:#EEF0F5;
+ --wood:#E6EAF0;--wood2:#D9DEE7;--top:#9AA1B2;--glass:#CFE4F2;--inox:#D9DDE4;--ceram:#FFFFFF;
+ --ef:#2F7DE1;--ec:#E8590C;--ev:#6B7280;--el:#A8823F;
+ --hi:#FFFFFF;--lo:#C7CCD8;--bad:#C8553D;
+ --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}
+[hidden]{display:none!important}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-block:8px;-webkit-tap-highlight-color:transparent}
+.app{height:100%;max-width:1180px;margin:0 auto;display:grid;gap:8px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"top" "head" "stage" "side"}
+.top{grid-area:top}.head{grid-area:head;display:grid;gap:6px}.stage{grid-area:stage}.side{grid-area:side;display:grid;gap:8px;align-content:end;min-height:0}
+@media (min-aspect-ratio:5/4){.app{grid-template-columns:minmax(0,1fr) clamp(260px,32vw,350px);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"top top" "stage head" "stage side"}.head{align-content:start}}
+.demo{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;white-space:nowrap;align-items:center;font-size:12px;color:var(--muted)}
+.demo b{font-weight:700}
+.pill{appearance:none;font:inherit;font-weight:700;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--act);color:var(--on-act);border-color:var(--act)}
+h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01em}
+.name{display:flex;gap:6px;align-items:center}
+.name input,.name select{font:inherit;font-weight:700;font-size:16px;color:var(--fg);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:6px 10px;min-width:0}
+.name input{flex:1 1 0;width:0}.name select{flex:0 1 auto;max-width:48%}
+.name label{font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap}
+.hrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.faces{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px;background:var(--surface)}
+.faces button{appearance:none;border:0;background:transparent;font:inherit;font-weight:700;font-size:13px;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+.faces button[aria-pressed="true"]{background:var(--act);color:var(--on-act)}
+.tog{appearance:none;font:inherit;font-weight:700;font-size:12px;color:var(--muted);background:transparent;border:1px dashed var(--line);border-radius:999px;padding:6px 10px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.tog[aria-pressed="true"]{color:var(--fg);border-style:solid;border-color:var(--laiton);background:var(--laiton-soft)}
+.tog i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.stage{min-height:0;display:flex;flex-direction:column;background:var(--surface);border-radius:20px;padding:6px 4px 2px;box-shadow:5px 5px 12px var(--lo),-5px -5px 12px var(--hi);touch-action:none;user-select:none;-webkit-user-select:none;position:relative}
+.stage svg{display:block;flex:1;min-height:0;width:100%;height:100%;overflow:visible}
+.hintline{font-size:12px;line-height:16px;color:var(--muted);text-align:center;margin:0 0 4px;height:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px;font-size:11px;font-weight:700;color:var(--muted);margin:0 0 2px}
+.legend span{display:inline-flex;gap:4px;align-items:center}.legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dock{display:grid;align-content:end;gap:6px;min-height:0}
+.cats{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cats button{appearance:none;flex:1 0 auto;font:inherit;font-weight:700;font-size:12.5px;color:var(--muted);background:var(--soft);border:0;border-radius:999px;padding:7px 10px;cursor:pointer;white-space:nowrap}
+.cats button[aria-pressed="true"]{background:var(--act);color:var(--on-act)}
+.add{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.btn{appearance:none;font:inherit;font-weight:700;font-size:11.5px;line-height:1.15;color:var(--fg);background:var(--surface);border:0;border-radius:14px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi);text-align:center;min-height:54px;justify-content:center}
+.btn:active{box-shadow:inset 2px 2px 5px var(--lo),inset -2px -2px 5px var(--hi)}
+.btn svg{width:22px;height:22px;flex:none}
+.btn:focus-visible,.pill:focus-visible,.faces button:focus-visible,.cats button:focus-visible,.tog:focus-visible{outline:3px solid var(--laiton);outline-offset:2px}
+#addbtn{display:none}
+@media (max-aspect-ratio:5/4),(max-height:520px){.side{position:relative}.dock.open .pal{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 66px);max-width:620px;margin:0 auto;background:var(--surface);border-radius:18px;padding:10px;box-shadow:0 -6px 24px rgba(15,20,36,.18);border:1px solid var(--line);z-index:5}#addbtn{display:flex;flex-direction:row;justify-content:center;min-height:44px;font-size:15px;gap:8px}.dock:not(.open) .pal{display:none}.dock.open #addbtn{display:none}}
+#addbtn[hidden]{display:none!important}
+.pal{display:grid;gap:6px}
+.card{background:var(--surface);border-radius:16px;padding:10px 12px;display:grid;gap:7px;border:1.5px solid var(--laiton)}
+.card .t{font-weight:800;font-size:15px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.card .t small{font-weight:600;color:var(--muted);font-size:12px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.row .k{font-weight:700;font-size:13px;color:var(--muted)}
+.chip{appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--soft);border:1.5px solid transparent;border-radius:999px;padding:5px 10px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--act);background:var(--surface)}
+.chip.okb{margin-left:auto;background:var(--act);color:var(--on-act)}
+.tools{display:flex;gap:6px;align-items:center;flex:none}
+.ic{appearance:none;border:0;font:inherit;font-weight:800;font-size:13px;color:var(--fg);background:var(--surface);border-radius:999px;min-width:40px;height:40px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi)}
+.ic svg{width:20px;height:20px}
+.ic.lk{background:var(--act);color:var(--on-act);box-shadow:0 0 0 3px var(--laiton-soft)}
+.press{transform-box:fill-box;transform-origin:center;animation:press .3s ease-out both}
+@keyframes press{from{transform:scale(1)}to{transform:scale(1.03)}}
+.lift{transform-box:fill-box;transform-origin:center;transform:scale(1.045);filter:drop-shadow(0 7px 9px rgba(20,28,52,.24));animation:liftIn .22s cubic-bezier(.2,.9,.3,1.25) both}
+@keyframes liftIn{from{transform:scale(1.03);filter:drop-shadow(0 0 0 rgba(20,28,52,0))}}
+.settle{transform-box:fill-box;transform-origin:center;animation:settle .3s cubic-bezier(.2,.9,.3,1.3) both}
+@keyframes settle{from{transform:scale(1.045)}to{transform:scale(1)}}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translate(-50%,-8px);opacity:0;pointer-events:none;max-width:calc(100% - 24px);width:max-content;padding:8px 14px;border-radius:999px;background:rgba(27,36,64,.92);color:#fff;font-size:13px;font-weight:600;line-height:1.3;text-align:center;box-shadow:0 6px 18px rgba(20,28,52,.22);transition:opacity .25s ease,transform .35s cubic-bezier(.2,.9,.3,1.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);z-index:50}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #toast{background:rgba(242,238,228,.96);color:#1B2440}:root:not([data-theme="light"]) #toast b{color:#8A6A2F}}
+:root[data-theme="dark"] #toast{background:rgba(242,238,228,.96);color:#1B2440}:root[data-theme="dark"] #toast b{color:#8A6A2F}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast b{color:#E9D3A6;font-weight:800}
+.row.wsc{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}.row.wsc::-webkit-scrollbar{display:none}.row.wsc .k{flex:none}.row.wsc .chip{flex:none}
+.card{transition:opacity .25s ease,transform .3s cubic-bezier(.2,.9,.3,1.1)}
+.card.away{opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity .2s,transform .25s}
+#gauge{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px;pointer-events:none}
+#gauge #gl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.01em}
+#gauge .bars{display:flex;gap:3px}#gauge i{width:12px;height:5px;border-radius:3px;background:var(--soft);transition:background .4s ease,transform .4s cubic-bezier(.2,.9,.3,1.6)}
+#gauge i.on{background:var(--laiton)}#gauge.up i.on:last-of-type,#gauge.up i.new{transform:scaleY(1.8)}
+#gauge.up #gl{color:var(--laiton)}
+#party{position:absolute;inset:0;display:grid;place-items:center;z-index:7;pointer-events:none}
+#party .bub{background:var(--surface);border-radius:22px;padding:18px 22px;text-align:center;box-shadow:0 14px 40px rgba(20,28,52,.22);animation:pIn .5s cubic-bezier(.2,.9,.3,1.25) both;max-width:84%}
+#party .bub b{display:block;font-size:17px;font-weight:800;margin-top:6px}#party .bub span{display:block;font-size:13px;color:var(--muted);margin-top:4px;font-weight:600}
+#party svg{width:58px;height:58px;display:block;margin:0 auto}#party .bub{border:1.5px solid var(--laiton-soft)}#party circle{stroke-dasharray:160;stroke-dashoffset:160;animation:draw .6s .1s ease-out forwards}#party path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .35s .55s ease-out forwards}
+#party .dot{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--laiton);left:50%;top:50%;animation:fly .9s ease-out forwards}
+@keyframes pIn{from{transform:scale(.85);opacity:0}}@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fly{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.4);opacity:0}}
+#wall .pf .bx{fill:var(--surface);stroke:var(--fg);stroke-width:1.3px;vector-effect:non-scaling-stroke}
+#wall .pf .bx.cl{stroke:var(--ef)}#wall .pf .clp{fill:var(--ef)}
+#wall .pf .gl{stroke:var(--fg);stroke-width:1.2px;fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#wall .pf .gl.sep{stroke-width:1px;opacity:.45}#wall .pf .pt{fill:var(--fg)}#wall .pf .ef{fill:var(--ef)}#wall .pf .ec{fill:var(--ec)}
+.undo{position:absolute;left:8px;top:8px;z-index:4;display:inline-flex;align-items:center;gap:6px;appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 10px;cursor:pointer;box-shadow:0 2px 8px rgba(20,28,52,.08);transition:opacity .2s,transform .15s}
+.undo svg{width:17px;height:17px}.undo:disabled{opacity:.35;cursor:default}.undo:not(:disabled):active{transform:scale(.95)}
+#mini{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--fg);white-space:nowrap;flex:none}#mini[hidden]{display:none}#mini svg{height:46px;width:auto;max-width:110px;flex:none}#mtx small{display:block;font-weight:700;font-size:11.5px;color:var(--muted)}@media (max-width:600px){.tog .tl{display:none}}
+#coach{position:fixed;z-index:40;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;transform:translate(-50%,-50%)}
+#coach i{width:38px;height:38px;border-radius:50%;background:rgba(168,130,63,.22);border:2px solid var(--laiton);box-shadow:0 4px 14px rgba(20,28,52,.18);animation:coach 2.4s ease-in-out 2 both}
+#coach span{font-size:12.5px;font-weight:700;color:#fff;background:rgba(27,36,64,.92);padding:5px 10px;border-radius:999px;white-space:nowrap;animation:coachT 4.8s ease both}
+@keyframes coach{0%{opacity:0;transform:scale(1.2)}12%{opacity:1;transform:scale(1)}28%{transform:scale(.8)}42%{transform:scale(.8) translateX(0)}72%{transform:scale(.8) translateX(60px);opacity:1}88%{opacity:0;transform:scale(.8) translateX(60px)}100%{opacity:0}}
+@keyframes coachT{0%,4%{opacity:0}10%,90%{opacity:1}100%{opacity:0}}
+@media (max-aspect-ratio:5/4){h1{display:none}}
+#pf-rot{display:none;position:fixed;inset:0;z-index:60;background:var(--bg);align-items:center;justify-content:center;padding:24px}
+@media (orientation:portrait) and (max-width:600px) and (pointer:coarse){html.fv:not(.rotok) #pf-rot{display:flex}}
+#pf-rot .rot-in{display:grid;justify-items:center;gap:12px;text-align:center;max-width:320px;animation:sheetIn .4s ease both}
+#pf-rot svg{width:150px;height:150px}
+#pf-rot .rot-c{fill:var(--surface);stroke:var(--fg);stroke-width:3}
+#pf-rot .rot-s{fill:var(--bg)}#pf-rot .rot-p{stroke:var(--fg)}#pf-rot .rot-b{fill:var(--fg)}
+#pf-rot .rot-ar{stroke:var(--laiton);animation:rotAr 3s ease-in-out infinite}
+#pf-rot .rot-g{transform-origin:60px 66px;animation:rotPh 3s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes rotPh{0%,18%{transform:rotate(0)}45%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@keyframes rotAr{0%,10%{opacity:0}25%,45%{opacity:1}60%,100%{opacity:0}}
+#pf-rot b{font-size:23px;line-height:1.2}#pf-rot p{margin:0;font-size:16px;line-height:1.45;color:var(--fg)}
+#pf-rot small{font-size:13.5px;line-height:1.4;color:var(--muted)}
+#pf-rot-x{appearance:none;border:0;background:transparent;color:var(--muted);font:700 14px var(--font);text-decoration:underline;text-underline-offset:3px;padding:12px 16px;margin-top:6px;cursor:pointer;min-height:44px}
+@media (min-aspect-ratio:5/4) and (max-height:520px){.app{grid-template-columns:minmax(0,1fr) clamp(178px,24vw,226px);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"stage top" "stage head" "stage side";gap:6px}h1{display:none}.hintline{display:none}.demo{flex-wrap:nowrap}.demo{font-size:11px;gap:4px}.demo .chip{font-size:11.5px;padding:3px 8px}.name label{display:none}.name select{font-size:14px;padding:4px 8px;border-radius:10px}.name input{font-size:14px!important;padding:4px 8px!important}.legend{font-size:10px}.side{gap:6px}.side .go{padding:9px 8px;font-size:13.5px;white-space:nowrap}.tog{font-size:11px;padding:4px 8px}.tog .tl{display:none}.hrow{flex-wrap:wrap;row-gap:6px}#tech{order:3}#mini{flex-basis:100%;gap:8px;white-space:normal;min-width:0}#mini svg{height:70px;max-width:118px}#mtx{min-width:0;line-height:1.2}#gauge #gl{font-size:9.5px}.side .btn{min-height:38px}.side #addbtn{min-height:38px;font-size:13.5px}.card .go,.card .go.all{font-size:14px;padding:9px 12px}.card .t{font-size:14px}.card .chip{font-size:12.5px;padding:4px 9px}.ic{height:34px;min-width:34px;font-size:12px}.card{max-width:none;padding:9px 10px}.card .t{flex-wrap:wrap;row-gap:6px;align-items:center}.card .t>span:first-child{flex:1 1 140px;min-width:0}.card .tools{margin-left:auto}.stage{padding-top:2px}}
+.go.all{width:100%;padding:11px 16px;font-size:15px;margin-top:2px}
+.ic.lk.nudge{animation:nudge .9s ease-out 2}
+@keyframes nudge{0%{box-shadow:0 0 0 0 var(--laiton)}70%{box-shadow:0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:0 0 0 3px var(--laiton-soft)}}
+.ic:active{box-shadow:inset 2px 2px 5px var(--lo),inset -2px -2px 5px var(--hi)}
+.auto{color:var(--fg);font-weight:600}
+.auto .dot{width:8px;height:8px;border-radius:50%;background:var(--laiton);flex:none}
+.hintline b{font-weight:800}
+.del{appearance:none;border:0;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--muted);text-decoration:underline;cursor:pointer;padding:5px 4px}
+.go{appearance:none;font:inherit;font-weight:800;font-size:16px;color:var(--on-act);background:var(--act);border:0;border-radius:999px;padding:13px 18px;cursor:pointer;width:100%}
+@media (max-height:700px){.card .inf{display:none}}
+@media (max-aspect-ratio:5/4),(max-height:520px){.card{position:absolute;left:0;right:0;bottom:0;z-index:6;box-shadow:0 -8px 28px rgba(15,20,36,.16),0 2px 6px rgba(15,20,36,.08);max-width:620px;margin:0 auto}}
+.card:not([hidden]){animation:sheetIn .32s cubic-bezier(.2,.9,.3,1.1) both}
+@keyframes sheetIn{from{transform:translateY(16px);opacity:0}}
+@media (max-height:600px){.btn{min-height:46px;font-size:11px}.btn svg{width:18px;height:18px}.go{padding:10px 16px;font-size:15px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- Parcours ---------- */
+.name,#tech{display:none!important}
+.card .go{white-space:normal!important;line-height:1.2}.card .t span{min-width:0}
+.steps{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);min-height:18px;cursor:default}
+.steps b{font-weight:800;color:var(--fg)}
+.sd{display:inline-flex;gap:4px}.sd i{width:16px;height:5px;border-radius:3px;background:var(--soft)}.sd i.ok{background:var(--laiton)}.sd i.on{background:var(--act)}
+.scr{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 12px) max(14px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(14px,env(safe-area-inset-left,0px))}
+.scr>*{width:100%;max-width:760px;margin-inline:auto}
+.sq-card{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.sq-card.in{animation:qIn .35s cubic-bezier(.2,.9,.3,1) both}@keyframes qIn{from{opacity:0;transform:translateX(22px)}}
+.sq-card small{font-size:12.5px;font-weight:700;color:var(--laiton)}
+.sq-card h2{margin:0;font-size:clamp(20px,3vw,26px);line-height:1.2;font-weight:800;letter-spacing:-.01em}
+.sq-card p{margin:0 0 8px;color:var(--muted);font-size:14px}
+.qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+@media (min-width:700px){.qgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.qo{appearance:none;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1.5px solid transparent;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi);font:700 14.5px/1.2 var(--font);color:var(--fg);text-align:left;cursor:pointer;min-height:58px;transition:transform .15s,border-color .2s,background .2s}
+.qo:active{transform:scale(.97)}
+.qo svg{flex:none;color:var(--fg)}
+.qo em{margin-left:auto;flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800}
+.qo[aria-pressed="true"]{border-color:var(--act);background:color-mix(in srgb,var(--act) 7%,var(--surface))}
+.qo[aria-pressed="true"] em{background:var(--act);border-color:var(--act);color:var(--on-act);animation:pIn .25s cubic-bezier(.2,.9,.3,1.4)}
+.qo.dk{box-shadow:none;border:1px dashed var(--line);background:transparent;color:var(--muted)}.qo.dk em{display:none}
+.foot{display:flex;gap:10px;align-items:center}.foot .go{flex:1}
+.back{appearance:none;border:0;background:transparent;font:700 15px var(--font);color:var(--muted);padding:12px 6px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.go:disabled{opacity:.45;cursor:default}
+.tipc{background:var(--surface);border-radius:16px;padding:10px 14px;display:grid;gap:2px;box-shadow:3px 3px 8px var(--lo),-3px -3px 8px var(--hi)}
+.tipc b{font-size:17px;font-weight:800;line-height:1.25}.tipc span{font-size:13.5px;color:var(--muted);line-height:1.35}.tipc i{font-style:normal;color:var(--laiton);font-weight:700}
+.pv{flex:1;min-height:0;background:var(--surface);border-radius:20px;box-shadow:5px 5px 12px var(--lo),-5px -5px 12px var(--hi);padding:6px}
+.pv svg{width:100%;height:100%;display:block;overflow:visible}
+#sp-cards:empty{display:none}
+.nm{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.qo.sm{flex-direction:column;justify-content:center;text-align:center;gap:3px;min-height:56px;padding:6px 4px;font-size:12px}
+.blink{animation:blk 1.3s ease-in-out infinite}@keyframes blk{50%{opacity:.2}}
+[data-r]{transition:opacity .2s}
+.srm{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.srw{display:grid;gap:6px}#sr-room{font-size:15px}#sr-room small{color:var(--muted);font-weight:600;font-size:12.5px;margin-left:4px}
+.ths{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.ths:empty{display:none}
+.th{appearance:none;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:4px 4px 3px;display:grid;gap:1px;cursor:pointer;min-width:0;transition:transform .15s}
+.th:active{transform:scale(.96)}.th svg{width:100%;height:58px;display:block;pointer-events:none}.th span{font:700 11px var(--font);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sent{flex:1;display:grid;place-content:center;justify-items:center;text-align:center;gap:10px;animation:sheetIn .5s ease both}.sent b{font-size:24px;font-weight:800}.sent p{margin:0;max-width:340px;color:var(--muted);line-height:1.45}
+/* sol / plafond */
+.ssw{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}.ssw .pv{flex:1;min-height:120px}
+#ss-svg{overflow:hidden!important;border-radius:16px}
+#ss .sq-card{flex:none;justify-content:flex-start}#ss .qo{min-height:50px}
+.fillin{animation:fIn .45s ease both}@keyframes fIn{from{opacity:0}}
+.same{display:grid;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}.same>span{font-size:13px;font-weight:800;color:var(--muted)}.same>div{display:flex;flex-wrap:wrap;gap:6px}
+.same .chip{appearance:none;border:1.5px solid var(--act);background:var(--surface);color:var(--act);font:800 13.5px var(--font);border-radius:999px;padding:8px 13px;cursor:pointer}
+.sls{display:grid;gap:6px}.sl{appearance:none;display:flex;justify-content:space-between;gap:10px;align-items:center;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;font:600 13.5px var(--font);color:var(--muted);cursor:pointer;text-align:left}.sl b{color:var(--fg);font-weight:800;text-align:right}
+.fph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 8px}.phb{display:inline-flex;align-items:center;gap:8px;background:var(--act);color:var(--on-act);border-radius:999px;padding:11px 16px;font:800 14.5px var(--font);cursor:pointer}.fph img{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1.5px solid var(--line)}
+.fnt{display:flex;gap:8px;align-items:stretch}.fnt textarea{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);font:600 14.5px/1.35 var(--font);padding:9px 12px;resize:none}.fnt .mic{appearance:none;flex:none;width:48px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--laiton);display:grid;place-items:center;cursor:pointer}.fnt .mic.on{background:var(--laiton);color:#fff;animation:blk 1.2s infinite}
+.ssdone{display:grid;justify-items:center;text-align:center;gap:6px;padding:14px 0;animation:pIn .5s cubic-bezier(.2,.9,.3,1.25) both}.ssdone b{font-size:20px;font-weight:800}.ssdone span{color:var(--muted)}
+.ssdone .ck{stroke-dasharray:40;stroke-dashoffset:40;animation:ckD .5s .15s ease forwards}@keyframes ckD{to{stroke-dashoffset:0}}
+@media (min-aspect-ratio:5/4){
+ #ss{display:grid;grid-template-columns:minmax(0,1fr) clamp(250px,36vw,380px);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"pv st" "pv tip" "pv card" "pv foot";column-gap:12px}
+ #ss>*{max-width:none}#ss>.steps{grid-area:st}#ss>.tipc{grid-area:tip}.ssw{display:contents}.ssw .pv{grid-area:pv}#ss-card{grid-area:card;align-self:center}#ss>.foot{grid-area:foot}
+ #ss .qgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #sp{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,32vw,330px);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"pv st" "pv tip" "pv cards" "pv go";column-gap:12px}
+ #sp>*{max-width:none}#sp .steps{grid-area:st}#sp .tipc{grid-area:tip}#sp .pv{grid-area:pv}#sp-cards{grid-area:cards;align-self:end}#sp-go{grid-area:go}
+ #sp .nm{grid-template-columns:repeat(2,minmax(0,1fr))}#sp .qo.sm{flex-direction:row;justify-content:flex-start;text-align:left;min-height:42px;padding:6px 10px;gap:8px}
+ .srm{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,32vw,330px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"pv tip" "pv w" "pv go";column-gap:12px;max-width:1100px}
+ .srm .tipc{grid-area:tip}.srm .pv{grid-area:pv}.srm .srw{grid-area:w;align-content:start}#sr-go{grid-area:go}.srm .ths{grid-template-columns:repeat(2,minmax(0,1fr))}.srm .ths:has(>:nth-child(5)){grid-template-columns:repeat(3,minmax(0,1fr))}.srm .th svg{height:clamp(30px,9vh,90px)}
+ #sr>.steps{max-width:1100px}
+}
+@media (min-aspect-ratio:5/4) and (max-height:520px){
+ .scr{gap:6px;padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
+ .sq-card h2{font-size:18px}.sq-card p{margin-bottom:4px;font-size:13px}.qgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.qo{min-height:44px;padding:6px 10px;font-size:13px}.qo svg{width:22px;height:22px}
+ .tipc{padding:8px 12px}.tipc b{font-size:15px}.tipc span{font-size:12.5px}
+ #sp .qo.sm{min-height:36px;font-size:12px;padding:4px 8px}#sp .qo.sm svg{width:18px;height:18px}
+ .go{padding:10px 14px;font-size:14.5px}
+}
+</style>
+</head>
+<body>
+
+<div id="pf-rot" role="note"><div class="rot-in"><svg class="rot-ph" viewBox="0 0 120 120" aria-hidden="true"><path class="rot-ar" d="M28 30A44 44 0 0 1 92 30" fill="none" stroke-width="3" stroke-linecap="round"/><path class="rot-ar" d="M84 22l8 8-10 4" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g class="rot-g"><rect x="40" y="30" width="40" height="72" rx="8" class="rot-c"/><rect x="45" y="40" width="30" height="52" rx="2" class="rot-s"/><path d="M48 84V56h24v28M48 70h24" fill="none" class="rot-p" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="96.5" r="2" class="rot-b"/></g></svg><b>Tournez votre téléphone</b><p>Couché sur le côté, le mur est bien plus grand : plus facile de placer vos meubles du bout du doigt.</p><small>L'écran ne tourne pas ? Ouvrez le centre de contrôle et touchez le petit cadenas.</small><button type="button" id="pf-rot-x">Continuer sans tourner</button></div></div>
+<section class="scr" id="sq" hidden><div class="steps"></div><div class="sq-card" id="sq-card"><small id="sq-n"></small><h2 id="sq-t"></h2><p id="sq-s"></p><div class="qgrid" id="sq-o"></div></div><div class="foot"><button class="back" id="sq-back" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>Retour</button><button class="go" id="sq-go" type="button">Continuer ›</button></div></section>
+<section class="scr" id="sp" hidden><div class="steps"></div><div class="tipc"><b id="sp-tip"></b><span id="sp-sub"></span></div><div class="pv"><svg id="sp-svg"></svg></div><div id="sp-cards"></div><button class="go" id="sp-go" type="button"></button></section>
+<section class="scr" id="ss" hidden><div class="steps"></div><div class="tipc"><b id="ss-t"></b><span id="ss-s"></span></div><div class="ssw"><div class="pv"><svg id="ss-svg"></svg></div><div class="sq-card" id="ss-card"></div></div><div class="foot"><button class="back" id="ss-back" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>Retour</button><button class="go" id="ss-go" type="button">Continuer ›</button></div></section>
+<section class="scr" id="sr" hidden><div class="steps"></div><div id="sr-main" class="srm"><div class="tipc"><b>Vos murs, pièce par pièce</b><span id="sr-n"></span></div><div class="pv"><svg id="sr-svg"></svg></div><div class="srw"><div id="sr-room"></div><div class="ths" id="sr-th"></div></div><button class="go" id="sr-go" type="button">C'est bon, je continue ›</button></div><div id="sr-sent" class="sent" hidden><svg viewBox="0 0 60 60" width="84" height="84" fill="none" aria-hidden="true"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>C'est envoyé !</b><p>L'artisan reçoit votre plan, vos murs et vos réponses. Il revient vers vous avec votre devis.</p><button class="back" id="sr-again" type="button">Recommencer la maquette</button></div></section>
+<div class="app" hidden>
+ <div class="top steps"></div>
+ <div class="head">
+  <h1 id="ttl">Votre mur, vu de face</h1>
+  <div class="name"><label for="room" id="roomlab">Pièce</label><input id="room" autocomplete="off"><select id="rtype" aria-label="Type de pièce"></select></div>
+  <div class="hrow"><div class="faces" id="faces" role="group" aria-label="Face de la cloison"><button id="f1" aria-pressed="true"></button><button id="f2" aria-pressed="false"></button></div>
+   <div id="mini" hidden><svg viewBox="0 0 30 30" aria-hidden="true"></svg><span id="mtx"></span></div><button class="tog" id="tech" aria-pressed="false"><i style="background:var(--ef)"></i><i style="background:var(--el)"></i>Vue artisan<span class="tl"> : eau et électricité</span></button><div id="gauge" aria-label="Précision du devis"><span id="gl">Précision du devis</span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span></div></div>
+ </div>
+ <div class="stage" id="stage"><div id="toast" role="status" aria-live="polite"></div><button id="undo" class="undo" type="button" disabled aria-label="Annuler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4.5 9.5 9 5"/><path d="M4.5 9.5H14a5.5 5.5 0 0 1 0 11h-3"/></svg><span>Annuler</span></button><div id="coach" hidden><i></i><span>Maintenez, puis glissez</span></div><div id="party" hidden></div><svg id="wall" role="img" aria-label="Mur vu de face"></svg><div class="legend" id="legend" hidden><span><i style="background:var(--ef)"></i>Eau froide</span><span><i style="background:var(--ec)"></i>Eau chaude</span><span><i style="background:var(--ev)"></i>Évacuation</span><span><i style="background:var(--el)"></i>Électricité</span></div><p class="hintline" id="hint"></p></div>
+ <div class="side">
+  <div class="dock" id="dock">
+   <div class="card" id="card" hidden></div>
+   <button class="btn" id="addbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter sur ce mur</button>
+   <div class="pal" id="pal"><div class="cats" id="cats" role="group" aria-label="Catégories"></div><div class="add" id="add"></div></div>
+  </div>
+  <button class="go" id="ok">C'est bon pour ce mur</button>
+ </div>
+</div>
+
+<script>
+(()=>{
+const NS="http://www.w3.org/2000/svg";
+// ---------- Pièces ----------
+const ROOMS={cuisine:"Cuisine",sdb:"Salle de bain",wc:"WC",chambre:"Chambre",sejour:"Séjour",bureau:"Bureau",entree:"Entrée / couloir",buanderie:"Buanderie"};
+const ALL=Object.keys(ROOMS),SEC=["chambre","sejour","bureau","entree"],HUM=["cuisine","sdb","wc","buanderie"];
+const CATS={meuble:"Meubles",eau:"Plomberie",elec:"Électricité",chaud:"Chauffage et clim",ouv:"Portes et fenêtres"};
+// ---------- Catalogue ----------
+// bas = du sol au bas de l'élément, h = hauteur, w = largeurs proposées (standards français), d = profondeur (info).
+// need = ce que l'élément demande (posé d'office côté artisan) : [type, x relatif 0..1, hauteur du sol].
+// Hauteurs d'usage, marquées réglables par l'artisan.
+const CAT={
+ porte:{n:"Porte",c:"ouv",r:ALL,h:204,bas:0,w:[63,73,83,93],deux:true,ic:"porte"},
+ fenetre:{n:"Fenêtre",c:"ouv",r:ALL,h:115,bas:90,w:[60,80,100,120,140],murSeul:true,ic:"fenetre"},
+ // cuisine (plan de travail à 90 cm, meubles hauts à 145 cm)
+ mbas:{n:"Meuble bas",c:"meuble",r:["cuisine","buanderie"],h:90,bas:0,w:[20,30,40,60,80],d:60,ic:"mbas",info:"Plan de travail à 90 cm"},
+ mevier:{n:"Meuble évier",c:"meuble",r:["cuisine","buanderie"],h:90,bas:0,w:[60,80],d:60,ic:"evier",need:[["ef",.42,50],["ec",.58,50],["ev",.5,40]]},
+ mplaque:{n:"Plaque de cuisson",c:"meuble",r:["cuisine"],h:90,bas:0,w:[60,80,90],d:60,ic:"plaque",need:[["el",.5,15,"32 A"]],info:"Four dessous possible"},
+ lv:{n:"Lave-vaisselle",c:"meuble",r:["cuisine"],h:90,bas:0,w:[45,60],d:60,ic:"lv",need:[["ef",.2,30],["ev",.8,40],["el",.5,30,"16 A"]],info:"Sous le plan de travail"},
+ frigo:{n:"Réfrigérateur",c:"meuble",r:["cuisine"],h:185,bas:0,w:[55,60,70,90],d:65,ic:"frigo",need:[["el",.5,30]]},
+ colfour:{n:"Colonne four",c:"meuble",r:["cuisine"],h:215,bas:0,w:[60],d:60,ic:"colfour",need:[["el",.5,30,"16 A"]]},
+ mo:{n:"Micro-ondes",c:"meuble",r:["cuisine"],h:30,bas:92,w:[45,50,60],d:40,ic:"mo",need:[["el",.5,135]],info:"Posé sur le plan de travail"},
+ mhaut:{n:"Meuble haut",c:"meuble",r:["cuisine","buanderie"],h:70,bas:145,w:[20,30,40,60,80],d:35,ic:"mhaut"},
+ hotteint:{n:"Hotte intégrée au meuble",s:"Hotte intégrée",c:"meuble",r:["cuisine"],h:70,bas:145,w:[60,80],d:35,ic:"hotteint",need:[["el",.5,220]],info:"Dans un meuble haut, au-dessus de la plaque"},
+ hotte:{n:"Hotte cheminée",c:"meuble",r:["cuisine"],h:60,bas:155,w:[60,90],d:50,ic:"hotte",need:[["el",.5,220]],info:"65 cm au-dessus de la plaque"},
+ // salle de bain
+ mvasque:{n:"Meuble vasque",c:"meuble",r:["sdb"],h:55,bas:30,w:[60,80,90,100,120,140],d:46,ic:"vasque",need:[["ef",.42,55],["ec",.58,55],["ev",.5,45]],info:"Plan de vasque à 85 cm"},
+ miroir:{n:"Miroir lumineux",c:"meuble",r:["sdb","wc","entree"],h:70,bas:115,w:[60,80,100,120],d:3,ic:"miroir",need:[["el",.5,190]]},
+ colsdb:{n:"Colonne",c:"meuble",r:["sdb"],h:160,bas:20,w:[30,35,40],d:30,ic:"colsdb"},
+ // séjour, chambre, bureau
+ mtv:{n:"Meuble TV",c:"meuble",r:["sejour","chambre"],h:50,bas:0,w:[120,140,160,180],d:40,ic:"mtv",need:[["el",.25,30],["el",.75,30]]},
+ bureau:{n:"Bureau",c:"meuble",r:["bureau","chambre"],h:75,bas:0,w:[100,120,140,160],d:60,ic:"bureau",need:[["el",.85,30]]},
+ // plomberie
+ wc:{n:"WC suspendu",c:"eau",r:["wc","sdb"],h:115,bas:0,w:[50],d:55,ic:"wc",need:[["ef",.8,15],["ev",.5,23]],info:"Bâti-support, cuvette à 40 cm"},
+ lavemains:{n:"Lave-mains",c:"eau",r:["wc"],h:25,bas:70,w:[40,45],d:25,ic:"lavemains",need:[["ef",.5,55],["ev",.5,45]]},
+ douche:{n:"Douche",c:"eau",r:["sdb"],h:200,bas:0,w:[80,90,100,120,140],d:90,ic:"douche",need:[["ef",.45,110],["ec",.55,110],["ev",.5,0]]},
+ baignoire:{n:"Baignoire",c:"eau",r:["sdb"],h:55,bas:0,w:[150,160,170,180],d:70,ic:"baignoire",need:[["ef",.12,70],["ec",.22,70],["ev",.1,5]]},
+ ll:{n:"Lave-linge",c:"eau",r:["sdb","buanderie","cuisine"],h:85,bas:0,w:[60],d:60,ic:"ll",need:[["ef",.25,95],["ev",.75,80],["el",.5,30,"16 A"]]},
+ ce:{n:"Chauffe-eau",c:"eau",r:["sdb","buanderie","cuisine","wc"],h:120,bas:70,w:[55],d:55,ic:"ce",need:[["ef",.35,60],["ec",.65,60],["ev",.5,40],["el",.5,200,"20 A"]],info:"Fixé au mur, 150 à 200 L"},
+ // électricité
+ prise:{n:"Prise",c:"elec",r:ALL,h:8,bas:26,w:[8],petit:1,ic:"prise",info:"Axe à 30 cm du sol"},
+ prise2:{n:"Prise double",c:"elec",r:ALL,h:8,bas:26,w:[15],petit:1,ic:"prise",info:"Axe à 30 cm du sol"},
+ prisept:{n:"Prise plan de travail",c:"elec",r:["cuisine"],h:8,bas:106,w:[15],petit:1,ic:"prise",info:"Axe à 110 cm, au-dessus du plan"},
+ inter:{n:"Interrupteur",c:"elec",r:ALL,h:8,bas:106,w:[8],petit:1,ic:"inter",info:"Axe à 110 cm du sol"},
+ rj:{n:"Prise TV / internet",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",info:"Axe à 30 cm du sol"},
+ applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",info:"À 180 cm du sol"},
+ // chauffage et clim
+ radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
+ seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
+ clim:{n:"Clim murale",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"}
+};
+// Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
+const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
+const bas=(c)=>c.top!=null?M.H-c.top-c.h:c.bas;
+const needH=(c,n)=>c.top!=null?bas(c)+c.h/2:n[2];
+// ---------- Icônes du menu ----------
+const I={
+ porte:'<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1" fill="currentColor"/>',
+ fenetre:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v16M4 12h16"/>',
+ mbas:'<rect x="3" y="7" width="18" height="13" rx="1"/><path d="M2 7h20M12 7v13M9 10v3M15 10v3"/>',
+ evier:'<rect x="3" y="9" width="18" height="11" rx="1"/><path d="M2 9h20M12 9v11M9 9V5a2 2 0 0 1 4 0"/>',
+ plaque:'<rect x="3" y="9" width="18" height="11" rx="1"/><path d="M2 9h20M7 7.5h3M14 7.5h3"/><rect x="6" y="12" width="12" height="5" rx="1"/>',
+ lv:'<rect x="4" y="5" width="16" height="15" rx="1"/><path d="M4 8h16M8 6.5h4"/>',
+ frigo:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M6 13h12M9 5v4M9 16v3"/>',
+ colfour:'<rect x="6" y="2" width="12" height="20" rx="1"/><rect x="8" y="9" width="8" height="6" rx="1"/>',
+ mo:'<rect x="3" y="6" width="18" height="12" rx="2"/><rect x="5.5" y="8.5" width="9" height="7" rx="1"/><path d="M17.5 9v1M17.5 12v1"/>',
+ mhaut:'<rect x="3" y="4" width="18" height="10" rx="1"/><path d="M12 4v10M9 11v2M15 11v2"/>',
+ hotteint:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M3 12h18M12 4v8M8 14.5h8"/>',
+ hotte:'<path d="M10 3h4v7l6 6H4l6-6z"/>',
+ vasque:'<path d="M4 10h16l-1 3H5z"/><rect x="5" y="13" width="14" height="7" rx="1"/><path d="M12 10V7h2"/>',
+ miroir:'<rect x="5" y="3" width="14" height="18" rx="7"/>',
+ colsdb:'<rect x="8" y="2" width="8" height="20" rx="1"/><path d="M8 12h8"/>',
+ mtv:'<rect x="3" y="13" width="18" height="7" rx="1"/><rect x="6" y="4" width="12" height="7" rx="1"/>',
+ bureau:'<path d="M3 9h18M5 9v11M19 9v11M13 9v6h6"/>',
+ wc:'<rect x="7" y="3" width="10" height="6" rx="1"/><path d="M6 11h12a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6z"/><path d="M10 17v3h4v-3"/>',
+ lavemains:'<path d="M5 11h14l-2 4H7z"/><path d="M12 11V7h2"/>',
+ douche:'<path d="M5 21V8a3 3 0 0 1 3-3h2"/><path d="M10 5h4M8 11v1M12 12v1M10 14v1"/><path d="M3 21h18"/>',
+ baignoire:'<path d="M3 12h18v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 12V6a2 2 0 0 1 4 0"/>',
+ ll:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M7 6h3"/>',
+ ce:'<rect x="7" y="2" width="10" height="17" rx="5"/><path d="M10 19v3M14 19v3"/>',
+ prise:'<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9.5" cy="12" r="1.2" fill="currentColor"/><circle cx="14.5" cy="12" r="1.2" fill="currentColor"/>',
+ inter:'<rect x="5" y="4" width="14" height="16" rx="3"/><path d="M12 8v8"/>',
+ rj:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 10h6v4H9z"/>',
+ applique:'<path d="M8 5h8l-2 7h-4z"/><path d="M12 12v4M9 20h6"/>',
+ radiateur:'<rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 7v11M11 7v11M15 7v11M19 7v11"/>',
+ seche:'<path d="M6 3v18M18 3v18M6 7h12M6 11h12M6 15h12"/>',
+ clim:'<rect x="2" y="6" width="20" height="9" rx="3"/><path d="M5 12h14M8 18l-1 2M12 18v2M16 18l1 2"/>'
+};
+// ---------- Exemples ----------
+const EX={
+ cuis:{type:"mur",rt:"cuisine",L:360,H:250,room:"Cuisine",items:[
+  {k:"frigo",w:60,x:0},{k:"mbas",w:60,x:60},{k:"mplaque",w:60,x:120},{k:"mevier",w:120,x:180},{k:"lv",w:60,x:300},
+  {k:"mhaut",w:60,x:60},{k:"hotteint",w:60,x:120},{k:"mhaut",w:60,x:180},{k:"mhaut",w:60,x:240},{k:"mhaut",w:60,x:300},
+  {k:"prisept",w:15,x:82},{k:"prisept",w:15,x:322}]},
+ sdb:{type:"mur",rt:"sdb",L:300,H:250,room:"Salle de bain",items:[
+  {k:"douche",w:90,x:0},{k:"mvasque",w:80,x:115},{k:"miroir",w:80,x:115},{k:"seche",w:50,x:232},{k:"inter",w:8,x:210}]},
+ clo:{type:"cloison",rt:"chambre",rt2:"entree",L:320,H:250,room:"Chambre",room2:"Couloir",items:[{k:"porte",w:83,x:118.5,face:0},{k:"inter",w:8,x:213,face:0}]},
+ mur:{type:"mur",rt:"sejour",L:410,H:250,room:"Séjour",items:[{k:"fenetre",w:120,x:145},{k:"radiateur",w:100,x:155}]}
+};
+let M,face=0,sel=null,drag=null,U=1,cat="meuble",tech=false,exk="cuis";
+const $=id=>document.getElementById(id);
+const isClo=()=>M.type==="cloison";
+const RT=()=>face===1&&isClo()?M.rt2:M.rt;
+const vx=it=>face===1&&CAT[it.k].deux?M.L-it.x-it.w:it.x;
+const visible=it=>CAT[it.k].deux||(it.face||0)===face;
+const R=v=>Math.round(v);
+function load(k){exk=k;M=JSON.parse(JSON.stringify(EX[k]));M.items.forEach(it=>{if(it.face==null)it.face=0;it.lock=true;const c=CAT[it.k];it.st=it.k==="fenetre"&&k==="mur"?"exist":(k==="cuis"||k==="sdb")&&!c.petit&&c.c!=="ouv"?undefined:"faire"});face=0;sel=null;askAll=true;
+ document.querySelectorAll("[data-ex]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ex===k));cat=firstCat();lvl0=-1;HIST.length=0;$("undo").disabled=true;$("party").hidden=true;WALLS=null;wi=0;if(k!=="clo"){WALLS=[M];[300,M.L,300].forEach((L,j)=>WALLS.push({type:"mur",rt:M.rt,L,H:M.H,room:M.room,items:[]}))}ui();draw();if(!askAll||G().length<2)setTimeout(coach,4300);setTimeout(()=>toast("Placez tout, <b>même ce que vous gardez</b> : votre devis sera plus juste",3800),400)}
+function avail(){const rt=RT();return Object.keys(CAT).filter(k=>{const c=CAT[k];return c.r.includes(rt)&&!(c.murSeul&&isClo())})}
+function firstCat(){const a=avail();return Object.keys(CATS).find(c=>a.some(k=>CAT[k].c===c))}
+function ui(){
+ $("ttl").textContent=isClo()?"Votre cloison, vue de face":"Votre mur, vu de face";
+ $("faces").hidden=!isClo();
+ $("f1").textContent="Côté "+(M.room||"pièce 1");$("f2").textContent="Côté "+(M.room2||"pièce 2");
+ $("f1").setAttribute("aria-pressed",face===0);$("f2").setAttribute("aria-pressed",face===1);
+ $("room").value=face===1&&isClo()?(M.room2||""):M.room;$("roomlab").textContent=face===1&&isClo()?"Pièce de ce côté":"Pièce";
+ $("rtype").innerHTML=Object.entries(ROOMS).map(([k,v])=>`<option value="${k}"${k===RT()?" selected":""}>${v}</option>`).join("");
+ $("ok").textContent=isClo()&&face===0?"C'est bon, voir l'autre face":"C'est bon pour ce mur";
+ const a=avail();if(!a.some(k=>CAT[k].c===cat))cat=firstCat();
+ $("cats").innerHTML=Object.entries(CATS).filter(([c])=>a.some(k=>CAT[k].c===c)).map(([c,n])=>`<button data-cat="${c}" aria-pressed="${c===cat}">${n}</button>`).join("");
+ $("add").innerHTML=a.filter(k=>CAT[k].c===cat).map(k=>`<button class="btn" data-add="${k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[CAT[k].ic]}</svg>${CAT[k].s||CAT[k].n}</button>`).join("");
+ $("tech").setAttribute("aria-pressed",tech);$("legend").hidden=!tech;
+ const ac=$("cats").querySelector('[aria-pressed="true"]');if(ac)$("cats").scrollLeft=Math.max(0,ac.offsetLeft-12);
+}
+// ---------- Dessin ----------
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(p,x,y,s,o={}){const t=el("text",{x,y,"text-anchor":o.a||"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":o.w||700,"font-size":(o.fs||12)*U,fill:o.c||"var(--fg)"},p);t.textContent=s;return t}
+function cote(p,x1,x2,y,lab,c){if(x2-x1<1)return;el("path",{d:`M${x1} ${y-5*U}v${10*U}M${x2} ${y-5*U}v${10*U}M${x1} ${y}H${x2}`,stroke:c||"var(--muted)","stroke-width":1.2,fill:"none"},p);if(x2-x1<18*U)return;const w=(String(lab).length*6.6+10)*U,mx=(x1+x2)/2;el("rect",{x:mx-w/2,y:y-9*U,width:w,height:18*U,rx:9*U,fill:"var(--surface)"},p);txt(p,mx,y+4.5*U,lab,{c:c||"var(--fg)",fs:12.5})}
+const S="var(--fg)";
+function knob(g,x,y,w,h){el("rect",{x,y,width:w,height:h,rx:Math.min(w,h)/2,fill:S},g)}
+function doorsBox(g,x,y,w,h,fill){const n=w>=60?2:1,dw=w/n;for(let i=0;i<n;i++){el("rect",{x:x+i*dw+1.5,y:y+1.5,width:dw-3,height:h-3,rx:4,fill,stroke:S,"stroke-width":1.2},g);const left=n===2?(i===0):false;knob(g,left?x+i*dw+dw-7:x+i*dw+4,y+6,2.2,10)}}
+// Silhouette de chaque élément (pour le trait de surbrillance qui suit la forme)
+const rr=(x,y,w,h,r)=>{r=Math.max(0,Math.min(r,w/2,h/2));return `M${x+r} ${y}H${x+w-r}A${r} ${r} 0 0 1 ${x+w} ${y+r}V${y+h-r}A${r} ${r} 0 0 1 ${x+w-r} ${y+h}H${x+r}A${r} ${r} 0 0 1 ${x} ${y+h-r}V${y+r}A${r} ${r} 0 0 1 ${x+r} ${y}Z`};
+function shape(it,x,y,c){const w=it.w,h=c.h,k=it.k;
+ if(k==="hotte"){const cw=w*.32;return `M${x+w/2-cw/2} ${y}h${cw}v${h-20}l${(w-cw)/2} 12v8h${-w}v-8l${(w-cw)/2} -12z`}
+ if(k==="mvasque")return rr(x-2,y,w+4,10,3)+rr(x,y+10,w,h-10,4);
+ if(k==="miroir")return rr(x,y,w,h,8);
+ if(k==="bureau")return rr(x,y,w,4,2)+rr(x+3,y+4,4,h-4,0)+rr(x+w-40,y+4,37,h-4,4);
+ if(k==="wc"){return `M${x+4} ${y+h-40}h${w-8}q0 22 ${-(w-8)/2} 22q${-(w-8)/2} 0 ${-(w-8)/2} -22z`+rr(x+w/2-11,y+h-108+14,22,14,2)}
+ if(k==="lavemains")return `M${x} ${y}h${w}l-4 ${h}h${-(w-8)}z`;
+ if(k==="baignoire")return rr(x,y,w,h,6);
+ if(k==="ce")return rr(x,y,w,h,w/2);
+ if(k==="clim")return rr(x,y,w,h,8);
+ if(k==="radiateur")return rr(x,y,w,h,5);
+ if(k==="applique")return `M${x+4} ${y}h${w-8}l4 ${h}h${-w}z`;
+ if(k==="mtv")return rr(x,y,w,h-6,4);
+ if(k==="seche")return rr(x,y,w,h,2);
+ if(c.petit)return rr(x,y,w,h,2.5);return rr(x,y,w,h,5)}
+function drawItem(e,it,x,y,c){const w=it.w,h=c.h,k=it.k;
+ const box=(f,sw=2)=>el("rect",{x,y,width:w,height:h,rx:5,fill:f,stroke:S,"stroke-width":sw},e);
+ if(k==="porte"){box("var(--wall2)");el("rect",{x:x+5,y:y+5,width:w-10,height:h-5,rx:3,fill:"none",stroke:"var(--line)","stroke-width":1.2},e);const hx=face===0?x+w-12:x+12;el("rect",{x:hx-2,y:y+h-105,width:4,height:14,rx:2,fill:S},e);return}
+ if(k==="fenetre"){box("var(--glass)");el("path",{d:`M${x+w/2} ${y}v${h}`,stroke:S,"stroke-width":1.5},e);el("path",{d:`M${x-6} ${y+h}h${w+12}`,stroke:S,"stroke-width":3},e);return}
+ if(["mbas","mevier","mplaque","lv"].includes(k)){ // caisson + plinthe 10 + plan de travail 4
+  el("rect",{x:x+2,y:y+h-10,width:w-4,height:10,rx:3,fill:"var(--top)"},e);
+  if(k==="lv"){el("rect",{x,y:y+4,width:w,height:h-14,rx:4,fill:"var(--inox)",stroke:S,"stroke-width":1.5},e);el("path",{d:`M${x+4} ${y+14}h${w-8}`,stroke:S,"stroke-width":1},e);knob(g0(e),x+w/2-8,y+8,16,2.4);for(let i=0;i<3;i++)el("circle",{cx:x+8+i*5,cy:y+9.5,r:1,fill:S},e)}
+  else doorsBox(e,x,y+4,w,h-14,"var(--wood)");
+  el("rect",{x:x-1,y,width:w+2,height:4,rx:2,fill:"var(--top)",stroke:S,"stroke-width":1},e);
+  if(k==="mevier"){el("path",{d:`M${x+w/2-4} ${y}v-14q0-6 6-6h4v4`,fill:"none",stroke:S,"stroke-width":2,"stroke-linecap":"round"},e);el("rect",{x:x+w*.2,y:y-1,width:w*.6,height:2,fill:S},e)}
+  if(k==="mplaque"){el("rect",{x:x+6,y:y-2.5,width:w-12,height:2.5,rx:1,fill:S},e);el("rect",{x:x+6,y:y+10,width:w-12,height:h-34,rx:2,fill:"var(--inox)",stroke:S,"stroke-width":1.2},e)}
+  return}
+ if(k==="mhaut"){doorsBox(e,x,y,w,h,"var(--wood)");return}
+ if(k==="hotteint"){doorsBox(e,x,y,w,h-14,"var(--wood)");el("rect",{x:x+1.5,y:y+h-14,width:w-3,height:13,rx:3,fill:"var(--inox)",stroke:S,"stroke-width":1.4},e);el("rect",{x:x+w/2-9,y:y+h-5,width:18,height:2.4,rx:1.2,fill:S},e);for(let i=0;i<3;i++)el("circle",{cx:x+8+i*5,cy:y+h-8.5,r:1,fill:S},e);return}
+ if(k==="mo"){box("var(--inox)");el("rect",{x:x+4,y:y+4,width:w*.62,height:h-8,rx:2,fill:"var(--fg)",opacity:.55},e);el("circle",{cx:x+w*.82,cy:y+9,r:2,fill:"none",stroke:S,"stroke-width":1.2},e);el("circle",{cx:x+w*.82,cy:y+18,r:2,fill:"none",stroke:S,"stroke-width":1.2},e);return}
+ if(k==="frigo"){box("var(--inox)");el("path",{d:`M${x} ${y+h*.62}h${w}`,stroke:S,"stroke-width":1.5},e);knob(e,x+6,y+h*.35,2.6,18);knob(e,x+6,y+h*.66,2.6,12);return}
+ if(k==="colfour"){box("var(--wood)");el("rect",{x:x+4,y:y+h*.38,width:w-8,height:58,rx:4,fill:"var(--inox)",stroke:S,"stroke-width":1.4},e);el("rect",{x:x+9,y:y+h*.38+16,width:w-18,height:34,rx:2,fill:"var(--fg)",opacity:.75},e);el("path",{d:`M${x} ${y+h*.38-4}h${w}M${x} ${y+h*.38+62}h${w}`,stroke:S,"stroke-width":1.2},e);return}
+ if(k==="hotte"){const cw=w*.32;el("path",{d:`M${x+w/2-cw/2} ${y}h${cw}v${h-20}l${(w-cw)/2} 12v8h${-w}v-8l${(w-cw)/2} -12z`,fill:"var(--inox)",stroke:S,"stroke-width":1.6,"stroke-linejoin":"round"},e);return}
+ if(k==="mvasque"){doorsBox(e,x,y+10,w,h-10,"var(--wood)");el("rect",{x:x-2,y,width:w+4,height:10,rx:3,fill:"var(--ceram)",stroke:S,"stroke-width":1.5},e);el("path",{d:`M${x+w/2-3} ${y}v-12q0-5 5-5h5`,fill:"none",stroke:S,"stroke-width":2,"stroke-linecap":"round"},e);return}
+ if(k==="miroir"){el("rect",{x,y,width:w,height:h,rx:8,fill:"var(--glass)",stroke:S,"stroke-width":1.8},e);el("path",{d:`M${x+8} ${y+h-12}l${Math.min(18,w/4)} ${-Math.min(18,w/4)}M${x+8} ${y+h-24}l${Math.min(10,w/6)} ${-Math.min(10,w/6)}`,stroke:"var(--wall)","stroke-width":2,opacity:.8},e);return}
+ if(k==="colsdb"){box("var(--wood)");el("path",{d:`M${x} ${y+h/2}h${w}`,stroke:S,"stroke-width":1.2},e);knob(e,x+w-6,y+h/2-16,2.2,10);knob(e,x+w-6,y+h/2+6,2.2,10);return}
+ if(k==="mtv"){doorsBox(e,x,y,w,h-6,"var(--wood)");el("rect",{x:x+4,y:y+h-6,width:5,height:6,fill:S},e);el("rect",{x:x+w-9,y:y+h-6,width:5,height:6,fill:S},e);return}
+ if(k==="bureau"){el("rect",{x,y,width:w,height:4,rx:2,fill:"var(--wood2)",stroke:S,"stroke-width":1.4},e);el("rect",{x:x+3,y:y+4,width:4,height:h-4,fill:S},e);el("rect",{x:x+w-40,y:y+4,width:37,height:h-4,rx:4,fill:"var(--wood)",stroke:S,"stroke-width":1.2},e);el("path",{d:`M${x+w-40} ${y+28}h37M${x+w-40} ${y+52}h37`,stroke:S,"stroke-width":1},e);return}
+ if(k==="wc"){el("rect",{x,y,width:w,height:h,rx:5,fill:"var(--wall2)",stroke:"var(--line)","stroke-width":1.2,"stroke-dasharray":"4 3"},e);el("rect",{x:x+w/2-11,y:y+h-108+14,width:22,height:14,rx:2,fill:"var(--ceram)",stroke:S,"stroke-width":1.4},e);el("path",{d:`M${x+4} ${y+h-40}h${w-8}q0 22 ${-(w-8)/2} 22q${-(w-8)/2} 0 ${-(w-8)/2} -22z`,fill:"var(--ceram)",stroke:S,"stroke-width":1.6},e);return}
+ if(k==="lavemains"){el("path",{d:`M${x} ${y}h${w}l-4 ${h}h${-(w-8)}z`,fill:"var(--ceram)",stroke:S,"stroke-width":1.6,"stroke-linejoin":"round"},e);el("path",{d:`M${x+w/2-2} ${y}v-10q0-4 4-4h4`,fill:"none",stroke:S,"stroke-width":2,"stroke-linecap":"round"},e);return}
+ if(k==="douche"){el("rect",{x,y:y+h-8,width:w,height:8,rx:4,fill:"var(--ceram)",stroke:S,"stroke-width":1.5},e);el("rect",{x:x+w-6,y:y+10,width:5,height:h-18,fill:"var(--glass)",stroke:S,"stroke-width":1},e);el("rect",{x:x+2,y,width:w-10,height:h-8,fill:"var(--glass)",opacity:.35},e);el("path",{d:`M${x+w*.5} ${y+h-10}V${y+30}q0-14 -14-14h-4`,fill:"none",stroke:S,"stroke-width":2},e);el("rect",{x:x+w*.5-18-4,y:y+14,width:12,height:4,rx:2,fill:S},e);el("rect",{x:x+w*.5-6,y:y+h-100,width:12,height:6,rx:2,fill:S},e);return}
+ if(k==="baignoire"){el("rect",{x,y,width:w,height:h,rx:6,fill:"var(--ceram)",stroke:S,"stroke-width":1.8},e);el("path",{d:`M${x+4} ${y+8}h${w-8}`,stroke:"var(--line)","stroke-width":1.5},e);el("path",{d:`M${x+w*.17} ${y}v-16q0-5 5-5h5`,fill:"none",stroke:S,"stroke-width":2,"stroke-linecap":"round"},e);return}
+ if(k==="ll"){box("var(--ceram)");el("path",{d:`M${x} ${y+16}h${w}`,stroke:S,"stroke-width":1.2},e);el("circle",{cx:x+w/2,cy:y+16+(h-16)/2,r:Math.min(w,h-16)*.34,fill:"var(--glass)",stroke:S,"stroke-width":2},e);el("rect",{x:x+6,y:y+6,width:16,height:4,rx:2,fill:S},e);el("circle",{cx:x+w-10,cy:y+8,r:3.5,fill:"none",stroke:S,"stroke-width":1.4},e);return}
+ if(k==="ce"){el("rect",{x,y,width:w,height:h,rx:w/2,fill:"var(--ceram)",stroke:S,"stroke-width":1.8},e);el("path",{d:`M${x+w*.35} ${y+h}v10M${x+w*.65} ${y+h}v10`,stroke:S,"stroke-width":2},e);el("circle",{cx:x+w/2,cy:y+h*.32,r:4,fill:"none",stroke:S,"stroke-width":1.4},e);return}
+ if(k==="radiateur"){el("rect",{x,y,width:w,height:h,rx:5,fill:"var(--wall2)",stroke:S,"stroke-width":1.8},e);for(let i=x+8;i<x+w-4;i+=8)el("path",{d:`M${i} ${y+5}v${h-10}`,stroke:"var(--line)","stroke-width":1.5},e);return}
+ if(k==="seche"){el("path",{d:`M${x+3} ${y}v${h}M${x+w-3} ${y}v${h}`,stroke:S,"stroke-width":3,"stroke-linecap":"round"},e);for(let i=y+8;i<y+h-4;i+=9)el("path",{d:`M${x+3} ${i}h${w-6}`,stroke:S,"stroke-width":1.6},e);return}
+ if(k==="clim"){el("rect",{x,y,width:w,height:h,rx:8,fill:"var(--ceram)",stroke:S,"stroke-width":1.8},e);el("path",{d:`M${x+6} ${y+h-9}h${w-12}`,stroke:S,"stroke-width":1.4},e);el("path",{d:`M${x+8} ${y+h-4}h${w-16}`,stroke:"var(--line)","stroke-width":2},e);el("circle",{cx:x+w-10,cy:y+8,r:1.6,fill:"var(--laiton)"},e);return}
+ if(k==="applique"){pf(e,"app",x+w/2,y+h/2,h/18);return}
+ // petits appareillages
+ const cx=x+w/2,cy=y+h/2,kk=h/18;
+ if(c.ic==="prise")pf(e,"pc",cx,cy,kk,w>10?2:1);
+ else if(c.ic==="inter")pf(e,"int",cx,cy,kk);
+ else pf(e,"rj",cx,cy,kk);
+}
+function g0(e){return e}
+// ---------- Symboles électricité / plomberie : les mêmes que le plan de l'Espace (espace/plan-faces.js) ----------
+const PFpl=n=>`<rect class="bx" x="${-9*n}" y="-9" width="${18*n}" height="18" rx="4"/>${n>1?Array.from({length:n-1},(_,k)=>`<line class="gl sep" x1="${-9*n+18*(k+1)}" y1="-6" x2="${-9*n+18*(k+1)}" y2="6"/>`).join(""):""}`;
+const PFm={pc:x=>`<circle class="gl" cx="${x}" cy="0" r="5.2"/><circle class="pt" cx="${x-2.3}" cy=".8" r="1.15"/><circle class="pt" cx="${x+2.3}" cy=".8" r="1.15"/><circle class="pt" cx="${x}" cy="-2.6" r=".8"/>`,
+ int:x=>`<rect class="gl" x="${x-4.5}" y="-5.5" width="9" height="11" rx="1.6"/><line class="gl" x1="${x-4.5}" y1="0" x2="${x+4.5}" y2="0"/>`,
+ rj:x=>`<path class="gl" d="M${x-4} -3h8v4h-2v2h-4v-2h-2z"/>`,
+ tv:x=>`<circle class="gl" cx="${x}" cy="0" r="4.2"/><circle class="pt" cx="${x}" cy="0" r="1.4"/>`};
+function PFs(t,n){n=n||1;
+ if(PFm[t])return PFpl(n)+Array.from({length:n},(_,k)=>PFm[t](-9*n+9+18*k)).join("");
+ switch(t){
+  case"p32":return`<rect class="bx" x="-11" y="-11" width="22" height="22" rx="4.5"/><circle class="gl" cx="0" cy="0" r="7"/><circle class="pt" cx="-3.3" cy="2" r="1.3"/><circle class="pt" cx="3.3" cy="2" r="1.3"/><circle class="pt" cx="0" cy="-3.4" r="1.3"/>`;
+  case"app":return PFpl(1)+`<line class="gl" x1="-4" y1="-4" x2="4" y2="4"/><line class="gl" x1="4" y1="-4" x2="-4" y2="4"/>`;
+  case"ef":case"ec":return`<rect class="bx" x="-8" y="-8" width="16" height="16" rx="3.5"/><circle class="${t}" cx="0" cy="0" r="4.2"/>`;
+  case"ev":return`<rect class="bx" x="-9" y="-9" width="18" height="18" rx="4"/><circle class="gl" cx="0" cy="0" r="5.5"/><circle class="pt" cx="0" cy="0" r="1.8"/>`;
+  case"liai":return`<rect class="bx cl" x="-9" y="-9" width="18" height="18" rx="4"/><circle class="clp" cx="-2.5" cy="0" r="2.4"/><circle class="clp" cx="3" cy="0" r="1.6"/>`;
+  case"cond":return`<rect class="bx cl" x="-8" y="-8" width="16" height="16" rx="3.5"/><path class="gl" d="M0 -4.5 q4 5 0 8.5 q-4 -3.5 0 -8.5"/>`;
+  case"sortie":return`<rect class="bx" x="-8" y="-8" width="16" height="16" rx="3.5"/><circle class="gl" cx="0" cy="0" r="3.2"/><line class="gl" x1="0" y1="3.2" x2="0" y2="8"/>`;
+ }return PFpl(1)}
+function pf(g,t,cx,cy,k,n){const s=el("g",{class:"pf",transform:`translate(${cx} ${cy}) scale(${k})`},g);s.innerHTML=PFs(t,n);return s}
+const dotC={ef:"var(--ef)",ec:"var(--ec)",ev:"var(--ev)",el:"var(--el)"};
+function overlaps(a,b){const ca=CAT[a.k],cb=CAT[b.k];const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function draw(){
+ const s=$("wall");s.innerHTML="";const L=M.L,H=M.H,pr=14;let pl,pt,pb;
+ for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
+ const g=el("g",{},s);
+ 
+ cote(g,0,L,-15*U,R(L)+" cm");
+ el("rect",{x:0,y:0,width:L,height:H,fill:"var(--wall)",stroke:S,"stroke-width":2.5,rx:2},g);
+ // carrelage mural discret derrière l'évier / la douche
+ M.items.forEach(it=>{if(!visible(it))return;const c=CAT[it.k];if(it.k==="douche"){el("rect",{x:vx(it),y:0,width:it.w,height:H,fill:"var(--wall2)"},g)}});
+ // crédence : une seule bande continue au-dessus du plan de travail (meubles bas, évier, plaque, lave-vaisselle qui se touchent)
+ {const iv=M.items.filter(o=>visible(o)&&["mevier","mplaque","mbas","lv"].includes(o.k)).map(o=>[vx(o),vx(o)+o.w]).sort((a,b)=>a[0]-b[0]),run=[];iv.forEach(([a,b])=>{const l=run[run.length-1];if(l&&a<=l[1]+1)l[1]=Math.max(l[1],b);else run.push([a,b])});run.forEach(([a,b])=>el("rect",{x:a,y:H-145,width:b-a,height:55,fill:"var(--wall2)"},g))}
+ el("path",{d:`M-10 ${H}H${L+10}`,stroke:S,"stroke-width":3},g);
+ for(let i=-10;i<L+10;i+=14)el("path",{d:`M${i} ${H+2}l-8 8`,stroke:"var(--line)","stroke-width":1.2},g);
+ el("path",{d:`M${-24*U} 0v${H}M${-24*U-5} 0h10M${-24*U-5} ${H}h10`,stroke:"var(--muted)","stroke-width":1.2,fill:"none"},g);
+ const ht=txt(g,-24*U,H/2,R(H)+" cm",{fs:12.5});ht.setAttribute("transform",`rotate(-90 ${-24*U} ${H/2})`);
+ if(drag&&drag.snap!=null)el("path",{d:`M${drag.snap} 4V${H-4}`,stroke:"var(--laiton)","stroke-width":1.5,"stroke-dasharray":"5 5"},g);
+ // ordre : grands éléments derrière, petits devant
+ const order=M.items.map((it,i)=>i).filter(i=>visible(M.items[i])).sort((a,b)=>(CAT[M.items[a].k].petit?1:0)-(CAT[M.items[b].k].petit?1:0));
+ if(drag){const k=order.indexOf(sel);if(k>=0){order.splice(k,1);order.push(sel)}}
+ const now0=performance.now();
+ if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
+ if(drag&&sel!=null&&M.items[sel]){const zz=wetZones(M.items[sel]);zz.forEach(z=>{const a=Math.max(0,z.a),b=Math.min(L,z.b);if(b<=a)return;el("rect",{x:a,y:H-z.y1,width:b-a,height:z.y1-z.y0,rx:6,fill:"var(--bad)","fill-opacity":.07,stroke:"var(--bad)","stroke-opacity":.35,"stroke-width":1,"stroke-dasharray":"4 4","pointer-events":"none"},g)});
+  if(zz.length){const z=zz[0],a=Math.max(0,z.a),b=Math.min(L,z.b);txt(g,(a+b)/2,H-z.y1+16*U,"Interdit près de l'eau",{fs:10.5,c:"var(--bad)",w:700})}}
+ order.forEach(i=>{const it=M.items[i],c=CAT[it.k],x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
+  const e=el("g",{"data-i":i,style:"cursor:grab"},g);
+  if(drag&&on){e.setAttribute("class","lift");e.style.animationDelay=-(now0-drag.t0)+"ms"}
+  else if(hold&&hold.i===i){e.setAttribute("class","press");e.style.animationDelay=-(now0-hold.t0)+"ms"}
+  else if(it.settle&&now0-it.settle<320){e.setAttribute("class","settle");e.style.animationDelay=-(now0-it.settle)+"ms"}
+  const art=el("g",{"fill-opacity":c.petit?1:.5,"stroke-opacity":.85},e);drawItem(art,it,x,y,c);
+  // surbrillance : un trait laiton à l'intérieur, qui suit la forme exacte de l'élément
+  if(it.st==="faire"||it.rep==="oui"||on){if(c.petit)el("circle",{cx:x+it.w/2,cy:y+c.h/2,r:on?12:10,fill:"none",stroke:"var(--laiton)","stroke-width":on?2.2:1.6,opacity:on?1:.85,"pointer-events":"none"},e);else{const d=shape(it,x,y,c),cid="hl"+i+"-"+face;const cp=el("clipPath",{id:cid},e);el("path",{d},cp);el("path",{d,fill:"none",stroke:"var(--laiton)","stroke-width":on?6:4.4,opacity:on?1:.85,"clip-path":`url(#${cid})`,"stroke-linejoin":"round","pointer-events":"none"},e)}}
+  if(drag&&drag.tgt===i){const cid="tg"+i;const cp=el("clipPath",{id:cid},e);el("path",{d:shape(it,x,y,c)},cp);el("path",{d:shape(it,x,y,c),fill:"none",stroke:"var(--laiton)","stroke-width":5,"stroke-dasharray":"7 5","clip-path":`url(#${cid})`,"pointer-events":"none"},e)}
+  if(wetBad(it))el("rect",{x:x-3,y:y-3,width:it.w+6,height:c.h+6,rx:5,fill:"none",stroke:"var(--bad)","stroke-width":2,"stroke-dasharray":"5 4"},e);
+  if(M.items.some((o,j)=>j!==i&&visible(o)&&overlaps(it,o)))el("rect",{x:x-2,y:y-2,width:it.w+4,height:c.h+4,rx:4,fill:"none",stroke:"var(--bad)","stroke-width":2,"stroke-dasharray":"6 4"},e);
+  if(it.lock&&(!it.st||(it.st==="exist"&&!c.petit&&!it.rep))&&!on&&!drag){const bx=c.petit?x+it.w+3*U:x+it.w-8*U,by=c.petit?y-3*U:y+8*U;el("circle",{cx:bx,cy:by,r:6.5*U,fill:"var(--laiton-soft)",stroke:"var(--laiton)","stroke-width":1.2,"pointer-events":"none"},e);txt(e,bx,by+3.6*U,"?",{fs:10,w:800,c:"var(--laiton)"}).setAttribute("pointer-events","none")}
+  if(it.st==="exist"&&it.rep!=="oui"&&!on)e.setAttribute("opacity",".6");
+  if(it._a&&it._a.dy&&performance.now()<it._a.t)e.setAttribute("opacity","0");
+  el("rect",{x:x-(c.petit?12:2),y:y-(c.petit?12:2),width:it.w+(c.petit?24:4),height:c.h+(c.petit?24:4),fill:"transparent"},e);
+ });
+ // ce que chaque meuble ou appareil apporte avec lui (prises, arrivées et évacuations d'eau) : toujours visible, très discret
+ const now=Date.now();
+ M.items.forEach((it,ii)=>{if(!visible(it))return;const c=CAT[it.k],fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
+  const m=el("g",{"pointer-events":"none",opacity:sel===ii||fresh||tech?1:.75},g);
+  if(fresh){const r=el("circle",{cx:x,cy:y,r:5*U,fill:"none",stroke:col,"stroke-width":1.5},m);el("animate",{attributeName:"r",values:`${4*U};${13*U}`,dur:"1.1s",repeatCount:"2"},r);el("animate",{attributeName:"opacity",values:"0.9;0",dur:"1.1s",repeatCount:"2"},r)}
+  const lab=n[3]||"",pt=n[0]==="el"?(lab==="32 A"?"p32":/sortie/.test(lab)?"sortie":lab==="liaison"?"liai":"pc"):lab==="condensats"?"cond":n[0];
+  pf(m,pt,x,y,8.5*U/18);
+  if(tech&&n[3])txt(m,x,y-7*U,n[3],{fs:9,c:col})})});
+ // cotes de l'élément touché
+ if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],x=vx(it),y=H-bas(c)-c.h;
+  cote(g,0,x,H+26*U,R(x),"var(--laiton)");if(it.w>=30)cote(g,x,x+it.w,H+26*U,R(it.w),"var(--laiton)");cote(g,x+it.w,L,H+26*U,R(L-x-it.w),"var(--laiton)");
+  const b=bas(c);if(b>0){const ax=x+it.w+12>L-20?x-10:x+it.w+10,axe=c.petit?R(b+c.h/2):R(b);el("path",{d:`M${ax} ${H}V${c.petit?y+c.h/2:y+c.h}`,stroke:"var(--laiton)","stroke-width":1.2,"stroke-dasharray":"3 3"},g);txt(g,ax+(ax>x?4:-4),H-8,axe+" cm",{a:ax>x?"start":"end",c:"var(--laiton)",fs:12})}
+ }
+ if(flash&&Date.now()<flash.until){$("hint").innerHTML=flash.html;card();gauge();return}
+ $("hint").textContent=drag?(drag.tgt!=null?"Lâchez pour échanger les deux":drag.snap!=null?"Calé":"Glissez à gauche ou à droite"):(sel!=null?(TOUCH?"Pour le bouger : maintenez le doigt dessus":"Pour le bouger : cliquez et glissez"):(tech?"Points d'eau et d'électricité posés d'office pour l'artisan":M.items.some(visible)?(TOUCH?"Maintenez un élément pour le déplacer. ":"Cliquez-glissez un élément pour le déplacer. ")+"Placez aussi ce que vous gardez.":"Rien sur ce mur ? Touchez « Ajouter », même pour ce que vous gardez."));
+ card();gauge();mini();okLabel();
+}
+const LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 7.6-1.7"/><circle cx="12" cy="16" r="1.3" fill="currentColor"/></svg>';
+const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>';
+function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=null));if(PC.step==="f"&&PC.rv&&sel==null){const j=M.items.indexOf(PC.rv.list[PC.rv.i]);if(j>=0)sel=j}const ep=epAsk(),grp=!ep&&sel==null&&askAll&&G().length>=2;const open=sel!=null||grp||ep;document.querySelector(".app").classList.toggle("sel",open);$("pal").hidden=open;$("addbtn").style.visibility=open?"hidden":"";if(!open){k.hidden=true;return}if(ep){k.hidden=false;const L=EPL(),n=L.length,yes=F.trav.some(t=>["elec","plomb","chauf"].includes(t));const B1=`<button class="${yes?"go all":"chip"}" data-ep="oui">Oui, certaines choses changent</button>`,B2=`<button class="${yes?"chip":"go all"}" data-ep="non">Non, tout reste comme ça</button>`;
+ k.innerHTML=`<div class="t"><span>${M.epAdd?"Et le reste, on y touche ?":"L'électricité et la plomberie de ce mur, on y touche ?"} <small>${n} élément${n>1?"s":""} posé${n>1?"s":""} pour vous</small></span></div>${yes?B1:B2}<div class="row">${yes?B2:B1}<button class="chip" data-ep="add">Il en manque</button><button class="chip" data-ep="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Placés là où on les met d'habitude. Pas au bon endroit ? Maintenez et glissez.</div>`;return}
+ if(grp){k.hidden=false;const n=G().length;k.innerHTML=`<div class="t"><span>${["cuisine","sdb","buanderie"].includes(RT())?"Votre "+ROOMS[RT()].toLowerCase()+" est déjà là ?":"Ces éléments sont déjà là ?"} <small>${n} éléments sur ce mur</small></span></div><button class="go all" data-all="rep">Oui, on change tout</button><div class="row"><button class="chip" data-all="garde">Oui, on garde tout</button><button class="chip" data-all="faire">Non, tout est à créer</button><button class="chip" data-all="dk">Je ne sais pas</button><button class="chip" data-all="un">Un peu des deux</button></div><div class="row inf" style="color:var(--muted)">Vous pourrez changer un élément à part en le touchant.</div>`;return}const it=M.items[sel],c=CAT[it.k];k.hidden=false;
+ if(PC.rv&&PC.rv.list[PC.rv.i]===it){const n=PC.rv.list.length;k.innerHTML=`<div class="t"><span>${c.n} <small>${PC.rv.i+1} sur ${n}</small></span></div><div class="row"><span class="k">${FEM.test(c.n)?"Celle-ci":"Celui-ci"}, on ${leLa(c)} change ?</span></div><button class="go all" data-rv="oui">Oui, à changer</button><div class="row"><button class="chip" data-rv="non">Non, ${ilElle(c).toLowerCase()} reste</button><button class="chip" data-rv="del">${ilElle(c)} n'existe pas</button><button class="chip" data-rv="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Pas au bon endroit ? Maintenez et glissez.</div>`;return}
+ const sub=`<small>${c.d?"· prof. "+c.d+" cm":""}${c.deux&&isClo()?" · des deux côtés":""}</small>`;
+ const wb=wetBad(it),wet=wb?`<div class="row" style="color:var(--bad);font-weight:700;font-size:13px">${wb.t==="eau"?"Trop près de la "+(wb.o.k==="douche"?"douche":"baignoire")+" : interdit par la norme (60 cm minimum). À déplacer.":"Pas au-dessus de "+(wb.t==="evier"?"l'évier":"la plaque")+" : interdit par la norme. À déplacer."}</div>`:"";const nt=needTxt(c);const auto=wet+(nt.length?`<div class="row inf auto" style="flex-wrap:nowrap;align-items:baseline"><span class="dot"></span><span>Ajouté automatiquement : ${nt.join(", ")}</span></div>`:"");
+ if(confirmDel){k.innerHTML=`<div class="t"><span>Retirer ${c.n.toLowerCase()} ?</span></div><div class="row inf" style="color:var(--muted)">${nt.length?"Ce qui va avec ("+nt.join(", ")+") sera retiré aussi.":"Vous pourrez le remettre depuis le menu."}</div><div class="row"><button class="chip" data-nodel="1">Annuler</button><button class="chip okb" data-del="1" style="background:var(--bad);color:#fff">Oui, retirer</button></div>`;return}
+ const tools=`<span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button>${it.lock?`<button class="ic lk" data-unlock="1" aria-label="Déverrouiller pour déplacer">${LOCK}<span>Déplacer</span></button>`:""}</span>`;
+ const ST=[["exist","Déjà en place"],["faire","À créer"],["dk","Je ne sais pas"]];
+ if(!it.lock){
+  k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+
+  (c.w.length>1?`<div class="row"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"")+
+  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+auto+
+  `<button class="go" data-place="1" style="padding:11px 16px;font-size:15px">C'est bien placé</button>`;return}
+ if(it.askN){k.innerHTML=`<div class="t"><span>Combien de ${it.k==="mhaut"?"meubles hauts":"meubles bas"} de ${it.w} cm, côte à côte ?</span><span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button></span></div><button class="go all" data-n="full">Sur toute la longueur possible</button><div class="row">${[1,2,3,4,5].map(n=>`<button class="chip" data-n="${n}">${n}</button>`).join("")}</div>`;return}
+ const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
+ k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+wrow+
+ (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
+ `<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
+// ---------- Placement : jamais l'un sur l'autre, au plus collés ----------
+function band(a,b){const ca=CAT[a.k],cb=CAT[b.k],ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+// ---------- Électricité près de l'eau (NF C 15-100) ----------
+// salle d'eau : rien sur la douche ou la baignoire (volumes 0 et 1), et prises/interrupteurs interdits à moins de 60 cm (volume 2) ;
+// cuisine : pas de prise ni d'appareil branché au-dessus de l'évier ou de la plaque.
+const CL2=["Miroir lumineux","Sèche-serviettes","Radiateur","Applique","Clim murale","Chauffe-eau","Hotte cheminée","Hotte intégrée au meuble"];// appareils fixes autorisés en volume 2 (classe II) : l'artisan vérifie
+const FEM=/^(Prise|Plaque|Colonne|Hotte|Fenêtre|Porte|Douche|Baignoire|Applique|Clim)/,ilElle=c=>FEM.test(c.n)?"Elle":"Il",leLa=c=>FEM.test(c.n)?"la":"le";
+const plugEl=c=>!CL2.includes(c.n)&&(c.need||[]).some(n=>n[0]==="el"&&!/sortie|liaison/.test(n[3]||""));
+function wetZones(it){const c=CAT[it.k],z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
+ M.items.forEach(o=>{if(o===it||!visible(o))return;const x=vx(o);
+  if(o.k==="douche"||o.k==="baignoire"){const m=sm||(plugEl(c)&&c.c!=="elec")?60:0;z.push({a:x-m,b:x+o.w+m,y0:0,y1:Math.min(M.H,225),t:"eau",o})}
+  if((o.k==="mevier"||o.k==="mplaque")&&(c.c==="elec"||it.k==="mo")&&bas(c)>=88)z.push({a:x,b:x+o.w,y0:90,y1:M.H,t:o.k==="mevier"?"evier":"plaque",o})});return z}
+function wetBad(it){const x=vx(it);return wetZones(it).find(z=>x<z.b-.5&&x+it.w>z.a+.5)}
+function place(it,want){const c=CAT[it.k],m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
+ const bl=M.items.filter(o=>o!==it&&visible(o)&&band(it,o)).map(o=>[vx(o),vx(o)+o.w]).concat(wetZones(it).map(z=>[z.a,z.b])).sort((a,b)=>a[0]-b[0]);
+ const gaps=[];let cur=lo;bl.forEach(([a,b])=>{if(a-it.w>=cur-1e-6)gaps.push([cur,a-it.w]);cur=Math.max(cur,b)});if(hi>=cur-1e-6)gaps.push([cur,hi]);
+ let best=null;gaps.forEach(([a,b])=>{if(b<a)return;const x=Math.min(b,Math.max(a,want)),d=Math.abs(x-want);if(!best||d<best[0])best=[d,x]});return best?best[1]:null}
+// ---------- Glisser ----------
+function svgX(ev){const s=$("wall"),p=s.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(s.getScreenCTM().inverse()).x}
+function clamp(it,x){return Math.max(0,Math.min(M.L-it.w,x))}
+function snapX(it,x){const c=CAT[it.k],L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
+ M.items.forEach(o=>{if(o===it||!visible(o))return;const co=CAT[o.k],ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
+  if(sameBand||(!c.petit&&!co.petit)){cand.push([ox+o.w,ox+o.w],[ox-it.w,ox])}
+  if(!c.petit&&!co.petit&&!sameBand)cand.push([ox,ox],[ox+o.w-it.w,ox+o.w]);
+  if(c.petit&&!co.petit)cand.push([ox+o.w/2-it.w/2,ox+o.w/2])});
+ let best=null;cand.forEach(([v,l])=>{const d=Math.abs(x-v);if(d<=T&&(!best||d<best[0]))best=[d,v,l]});return best?[best[1],best[2]]:[x,null]}
+let flash=null,confirmDel=false,askAll=false;
+const G=()=>M.items.filter(o=>visible(o)&&!CAT[o.k].petit&&CAT[o.k].c!=="ouv"&&!o.st);
+const NEEDN={ef:"arrivée d'eau froide",ec:"arrivée d'eau chaude",ev:"évacuation",el:"prise"};
+function needTxt(c){const m={};(c.need||[]).forEach(n=>{const t=n[0]==="el"?(n[3]&&/A$/.test(n[3])?"prise "+n[3]:n[3]?n[3].replace("sortie de câble","sortie de câble").replace("liaison","alimentation"):"prise"):n[3]==="condensats"?"évacuation des condensats":NEEDN[n[0]];m[t]=(m[t]||0)+1});return Object.entries(m).map(([t,k])=>(k>1?k+" × ":"")+t)}
+function announce(it){const c=CAT[it.k],l=needTxt(c);if(!l.length)return;it.pulse=Date.now();flash={html:`<b style="color:var(--laiton)">Ajouté avec ${c.n.toLowerCase()} :</b> ${l.join(", ")}`,until:Date.now()+4200};setTimeout(()=>{flash=null;draw()},4300)}
+function deselect(){if(sel!=null&&M.items[sel]&&!M.items[sel].lock)M.items[sel].lock=true;sel=null}
+let liftSnap=null;
+const TOUCH=matchMedia("(pointer:coarse)").matches,HOLD=280;let hold=null,raf=0,toastT=0;
+function vib(n){if(navigator.vibrate){try{navigator.vibrate(n)}catch(e){}}}
+let lvl0=-1,WALLS=null,wi=0;
+function allItems(){return WALLS?WALLS.flatMap(w=>w.items):M.items}
+function miss(){return M.items.filter(o=>visible(o)&&(!o.lock||!o.st||(o.st==="exist"&&!CAT[o.k].petit&&!o.rep)))}
+function mini(){const m=$("mini");m.hidden=!WALLS;if(!WALLS)return;if(WALLS[0].lv!=null)return miniPlan();const S=[[5,5,25,5],[25,5,25,25],[25,25,5,25],[5,25,5,5]];m.querySelector("svg").innerHTML=`<rect x="5" y="5" width="20" height="20" rx="3" fill="var(--wall2)"/>`+S.map((q,i)=>`<line x1="${q[0]}" y1="${q[1]}" x2="${q[2]}" y2="${q[3]}" stroke="${i===wi?"var(--act)":WALLS[i].done?"var(--laiton)":"var(--line)"}" stroke-width="${i===wi?4:2.6}" stroke-linecap="round"/>`).join("");$("mtx").textContent=`Mur ${wi+1} sur ${WALLS.length}`}
+function okLabel(){if(PC.step==="f"&&(epAsk()||PC.rv)){$("ok").textContent=PC.rv?`Encore ${PC.rv.list.length-PC.rv.i} à vérifier`:"Encore 1 réponse";return}const n=miss().length;$("ok").textContent=n?`Encore ${n} réponse${n>1?"s":""}`:isClo()&&face===0?"C'est bon, voir l'autre face":PC.edit?"C'est bon, retour au récap":WALLS&&wi<WALLS.length-1?"C'est bon, mur suivant ›":"C'est bon, pièce terminée"}const LV=["","Bon début","Ça prend forme","Très bien","Excellent"];
+function gauge(){const n=allItems().filter(o=>o.lock&&o.st&&!(o.st==="exist"&&!CAT[o.k].petit&&!o.rep)).length;const lv=n===0?0:n<3?1:n<6?2:n<10?3:n<16?4:5;
+ const bars=document.querySelectorAll("#gauge i");bars.forEach((b,i)=>{b.classList.toggle("on",i<lv);b.classList.toggle("new",i===lv-1&&lv>lvl0&&lvl0>=0)});
+ if(lvl0>=0&&lv>lvl0){const g=$("gauge");g.classList.add("up");setTimeout(()=>g.classList.remove("up"),700);vib(8);if(LV[lv-1]&&lv>1)toast(`<b>${LV[lv-1]} !</b> Votre devis gagne en précision`,2200)}lvl0=lv}
+function party(t,sub){const P=$("party");let h=`<div class="bub"><svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>${t}</b><span>${sub}</span></div>`;
+ for(let i=0;i<14;i++){const a=i/14*Math.PI*2,r=90+Math.random()*50;h+=`<i class="dot" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px;animation-delay:${.35+Math.random()*.15}s;${i%3?"":"background:var(--act)"}"></i>`}
+ P.innerHTML=h;P.hidden=false;vib([10,40,14]);setTimeout(()=>{P.hidden=true},2300)}
+const HIST=[];
+function snap(){HIST.push(JSON.stringify(M.items,(k,v)=>k==="_a"||k==="settle"||k==="pulse"?undefined:v));if(HIST.length>60)HIST.shift();$("undo").disabled=false}
+function undo(){if(!HIST.length)return;PC.rv=null;M.items=JSON.parse(HIST.pop());sel=null;confirmDel=false;askAll=false;drag=null;$("undo").disabled=!HIST.length;vib(8);toast("Annulé",1200);draw()}
+function coach(){try{if(localStorage.getItem("pk-coach"))return}catch(e){}if(sel!=null||drag||!$("party").hidden)return;const g=[...document.querySelectorAll("#wall [data-i]")].find(x=>!CAT[M.items[+x.dataset.i].k].petit);if(!g)return;const r=g.getBoundingClientRect(),c=$("coach");c.style.left=(r.left+r.width/2-30)+"px";c.style.top=(r.top+r.height/2)+"px";c.hidden=false;const k=c.cloneNode(true);c.replaceWith(k);k.id="coach";setTimeout(()=>{k.hidden=true},4900);try{localStorage.setItem("pk-coach","1")}catch(e){}}
+function toast(h,ms=2600){const t=$("toast");t.innerHTML=h;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),ms)}
+const carried=it=>drag&&drag.free!=null&&M.items[sel]===it;
+function dX(it){return carried(it)?drag.free:vx(it)+off(it)}
+function dY(it){if(carried(it))return drag.dy;const a=it._a;if(!a||!a.dy)return 0;const p=(performance.now()-a.t)/320;if(p<0)return a.dy;return p>=1?0:a.dy*Math.pow(1-p,3)}
+function svgY(ev){const s=$("wall"),p=s.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(s.getScreenCTM().inverse()).y}
+function off(it){const a=it._a;if(!a)return 0;const p=(performance.now()-a.t)/320;if(p>=1){delete it._a;return 0}return a.d*Math.pow(1-p,3)}
+let looping=false;
+function anim(){setTimeout(draw,420);if(looping)return;looping=true;const step=()=>{draw();if(M.items.some(o=>o._a||(o.settle&&performance.now()-o.settle<320))||hold)requestAnimationFrame(step);else looping=false};requestAnimationFrame(step)}
+function nom(it){return CAT[it.k].n}
+function lift(ev){const i=hold.i,it=M.items[i];snap();liftSnap=HIST[HIST.length-1];clearTimeout(hold.tm);hold=null;sel=i;confirmDel=false;it.relock=it.lock;it.lock=false;
+ drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
+$("wall").addEventListener("pointerdown",ev=>{$("dock").classList.remove("open");const g=ev.target.closest("[data-i]");if(!g){deselect();draw();return}
+ const i=+g.dataset.i,it=M.items[i];if(sel!==i)confirmDel=false;
+ if(sel!=null&&sel!==i)deselect();
+ $("wall").setPointerCapture(ev.pointerId);
+ if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
+ hold={id:ev.pointerId,i,x0:ev.clientX,y0:ev.clientY,t0:performance.now(),mouse:ev.pointerType==="mouse",last:ev};
+ hold.tm=setTimeout(()=>{if(hold&&hold.i===i)lift(hold.last)},HOLD);anim()});
+$("wall").addEventListener("pointermove",ev=>{
+ if(hold&&ev.pointerId===hold.id){hold.last=ev;const d=Math.hypot(ev.clientX-hold.x0,ev.clientY-hold.y0);
+  if(d>6){if(hold.mouse){lift(ev)}else{clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`Maintenez le doigt sur <b>${nom(it)}</b> un instant, puis glissez`);draw();return}}else return}
+ if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;
+ // meuble lâché sur un autre meuble de la même hauteur : ils échangeront leur place
+ const t0=drag.tgt;drag.tgt=null;if(!CAT[it.k].petit){const t=M.items.findIndex(o=>o!==it&&visible(o)&&!CAT[o.k].petit&&!CAT[o.k].deux&&band(it,o)&&fx>=vx(o)&&fx<=vx(o)+o.w);if(t>=0)drag.tgt=t}
+ if(drag.tgt!=null&&drag.tgt!==t0)vib(6);
+ const [sx,line0]=snapX(it,x);let px=place(it,sx);if(px==null){if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()});return}let line=Math.abs(px-sx)<.5?line0:null;x=R(px);if(line!=null&&drag.snap==null)vib(8);drag.snap=line;
+ it.x=face===1&&CAT[it.k].deux?M.L-x-it.w:x;if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})});
+// ---------- Rangées de meubles : « combien ? », toute la longueur, largeur qui réarrange le reste ----------
+const REP=k=>k==="mbas"||k==="mhaut";let runN=0;
+const setVx=(o,x)=>{o.x=R(face===1&&CAT[o.k].deux?M.L-x-o.w:x)};
+function bandItems(it){return M.items.filter(o=>visible(o)&&!CAT[o.k].petit&&band(it,o)).sort((a,b)=>vx(a)-vx(b))}
+function gapsAround(it){const B=bandItems(it).filter(o=>o!==it),x=vx(it),e=x+it.w,m=MARGE(CAT[it.k]);let lo=m,hi=M.L-m;
+ B.forEach(o=>{const a=vx(o),b=a+o.w;if(b<=x+.5)lo=Math.max(lo,b);if(a>=e-.5)hi=Math.min(hi,a)});return [lo,hi]}
+function pieces(len,c,pref){const ws=[...c.w].sort((a,b)=>b-a),min=ws[ws.length-1],out=[];let rest=len;
+ while(rest>=min-.01){const w=pref<=rest+.01?pref:ws.find(v=>v<=rest+.01);out.push(w);rest-=w}return {out,rest:R(rest)}}
+function cloneOf(it,w,x){const o={k:it.k,w,x:0,face:it.face||0,lock:true,run:it.run};if(it.st)o.st=it.st;if(it.rep)o.rep=it.rep;setVx(o,x);o.pulse=Date.now();return o}
+function setCount(it,n){const c=CAT[it.k];it.run=it.run||++runN;it.runW=it.w;it.full=n==="full";const [lo,hi]=gapsAround(it),x=vx(it),e=x+it.w;let add=[],rest=0;
+ if(n==="full"){const r=pieces(hi-e,c,it.w);let p=e;r.out.forEach(w=>{add.push(cloneOf(it,w,p));p+=w});const l=pieces(x-lo,c,it.w);let q=x;l.out.forEach(w=>{q-=w;add.push(cloneOf(it,w,q))});rest=r.rest+l.rest}
+ else{let k=n-1,p=e;while(k>0&&p+it.w<=hi+.01){add.push(cloneOf(it,it.w,p));p+=it.w;k--}let q=x;while(k>0&&q-it.w>=lo-.01){q-=it.w;add.push(cloneOf(it,it.w,q));k--}if(k>0)rest=-k}
+ M.items.push(...add);const tot=add.length+1;
+ toast(rest<0?`Place pour ${tot} seulement sur ce mur`:`${tot} × ${c.n.toLowerCase()} posé${tot>1?"s":""}`+(rest>0?` · il reste ${rest} cm, l'artisan posera un fileur`:""),3000);if(add.length)vib(10)}
+function resize(it,nw){const B=bandItems(it),i=B.indexOf(it),ow=it.w;let a=i,b=i;
+ while(a>0&&Math.abs(vx(B[a-1])+B[a-1].w-vx(B[a]))<1)a--;while(b<B.length-1&&Math.abs(vx(B[b])+B[b].w-vx(B[b+1]))<1)b++;
+ const ch=B.slice(a,b+1),start=vx(ch[0]),lim=b<B.length-1?vx(B[b+1]):M.L-MARGE(CAT[it.k]);const old=new Map(ch.map(o=>[o,vx(o)]));it.w=nw;
+ let tot=()=>ch.reduce((s,o)=>s+o.w,0),gone=0;
+ while(start+tot()>lim+.5){let j=-1;for(let q=ch.length-1;q>=0;q--)if(ch[q]!==it&&it.run&&ch[q].run===it.run){j=q;break}if(j<0)break;const o=ch.splice(j,1)[0];M.items.splice(M.items.indexOf(o),1);gone++}
+ if(start+tot()>lim+.5){it.w=ow;toast("Pas assez de place pour cette largeur");sel=M.items.indexOf(it);return false}
+ let x=start;ch.forEach(o=>{setVx(o,x);x+=o.w;const d=old.get(o)-vx(o);if(Math.abs(d)>.5)o._a={d,t:performance.now()}});let added=0,rest=0;
+ if(it.full&&it.run){const r=pieces(lim-x,CAT[it.k],it.runW||nw);r.out.forEach(w=>{M.items.push(cloneOf(it,w,x));x+=w;added++});rest=r.rest}
+ sel=M.items.indexOf(it);toast(`Largeur ${nw} cm`+(gone||added?" · le reste s'est réarrangé":"")+(rest>0?` · il reste ${rest} cm`:""),2400);anim();return true}
+function swap(it,o,ox){const a=ox,b=vx(o);let nIt,nO;if(a<b){nO=a;nIt=b+o.w-it.w}else{nIt=b;nO=a+it.w-o.w}
+ const save=[it.x,o.x];it.x=nIt;o.x=nO;const bad=[it,o].some(z=>vx(z)<0||vx(z)+z.w>M.L||M.items.some(q=>q!==z&&visible(q)&&band(z,q)&&vx(q)<vx(z)+z.w-.5&&vx(z)<vx(q)+q.w-.5));
+ if(bad){[it.x,o.x]=save;toast("Pas la place d'échanger ces deux-là");return false}it.x=R(it.x);o.x=R(o.x);o.pulse=Date.now();return true}
+const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`<b>${nom(it)}</b> sélectionné${TOUCH?" · maintenez le doigt dessus pour le déplacer":""}`);draw();return}
+ if(drag){const it=M.items[sel];if(it){const vis=drag.free!=null?drag.free:vx(it),vdy=drag.dy||0;drag.free=null;if(drag.tgt!=null){const o=M.items[drag.tgt],o0=vx(o);it.x=drag.ox;if(swap(it,o,drag.ox)){o._a={d:o0-vx(o),t:performance.now()};toast(`<b>${nom(it)}</b> et <b>${nom(o)}</b> échangés`,1800);vib(10)}}it._a={d:vis-vx(it),dy:vdy,t:performance.now()};
+  it.settle=performance.now();if(it.relock){it.lock=true}delete it.relock}drag=null;if(liftSnap&&HIST[HIST.length-1]===liftSnap&&liftSnap===JSON.stringify(M.items,(k,v)=>k==="_a"||k==="settle"||k==="pulse"||k==="relock"?undefined:v)){HIST.pop();$("undo").disabled=!HIST.length}liftSnap=null;draw();anim()}};$("wall").addEventListener("pointerup",end);$("wall").addEventListener("pointercancel",end);
+// ---------- Commandes ----------
+$("card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
+ if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
+ if(b.dataset.w){const ow=it.w,ox=it.x,nw=+b.dataset.w;it.w=nw;const cx=vx({...it,w:ow,x:ox});const px=place(it,cx);if(px==null){it.w=ow;$("hint").textContent="Pas assez de place pour cette largeur";return}it.x=face===1&&CAT[it.k].deux?M.L-px-nw:px;it.x=R(it.x)}
+ if(b.dataset.trash){confirmDel=true;card();gauge();return}if(b.dataset.nodel){confirmDel=false;card();return}
+ if(b.dataset.unlock){it.lock=false;if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}}
+ if(b.dataset.del){M.items.splice(sel,1);sel=null;confirmDel=false}if(b.dataset.fin)sel=null;
+ if(b.dataset.n){delete it.askN;setCount(it,b.dataset.n==="full"?"full":+b.dataset.n);draw();anim();return}
+ if(b.dataset.place){it.lock=true;announce(it);if(REP(it.k)&&!it.run)it.askN=true;if(navigator.vibrate){try{navigator.vibrate(10)}catch(e){}}}
+ if(b.dataset.st&&it.run)M.items.forEach(o=>{if(o!==it&&o.run===it.run&&!o.st){o.st=b.dataset.st}});
+ if(b.dataset.rep&&it.run)M.items.forEach(o=>{if(o!==it&&o.run===it.run&&!o.rep&&o.st==="exist"){o.rep=b.dataset.rep}});
+ if(b.dataset.st){it.st=b.dataset.st;if(it.st!=="exist"||CAT[it.k].petit){delete it.rep;sel=null}}if(b.dataset.rep){it.rep=b.dataset.rep;sel=null}if(b.dataset.st0){delete it.st;delete it.rep}draw()});
+$("card").addEventListener("click",ev=>{const b=ev.target.closest("[data-all]");if(!b)return;const v=b.dataset.all;const L=G();askAll=false;if(v!=="un"){snap();setTimeout(coach,900)}
+ if(v==="un"){const i=M.items.indexOf(L[0]);sel=i;$("hint").textContent="Répondez élément par élément";draw();return}
+ if(v==="garde")setTimeout(()=>toast("<b>Parfait, c'est noté.</b> L'artisan saura où passent l'eau et l'électricité, votre devis sera plus juste",3600),50);
+ L.forEach(o=>{if(v==="rep"){o.st="exist";o.rep="oui"}else if(v==="garde"){o.st="exist";o.rep="non"}else o.st=v});draw()});
+$("cats").addEventListener("click",ev=>{const b=ev.target.closest("[data-cat]");if(!b)return;cat=b.dataset.cat;ui()});
+$("add").addEventListener("click",ev=>{const b=ev.target.closest("[data-add]");if(!b)return;const k=b.dataset.add,c=CAT[k];
+ const w=c.w.includes(83)?83:c.w.includes(60)?60:c.w[Math.min(1,c.w.length-1)];
+ const it={k,w,x:0,face};let px=null;for(const ww of [w,...c.w.slice().sort((a,b)=>a-b)]){it.w=ww;px=place(it,REP(k)?0:(M.L-ww)/2);if(px!=null)break}
+ if(px==null){$("dock").classList.remove("open");if(/^prise/.test(k)&&k!=="prisept"&&avail().includes("prisept")){const b2=document.createElement("button");b2.dataset.add="prisept";$("add").appendChild(b2);b2.click();b2.remove();toast("Plus de place en bas : <b>on la met au-dessus du plan de travail</b>",3200);return}toast("Plus de place à cette hauteur. <b>Touchez un meuble</b> pour le réduire ou le retirer",3600);return}snap();it.x=R(px);if(face===1&&c.deux)it.x=M.L-it.x-w;if(REP(k)){it.lock=true;it.askN=true;it.pulse=Date.now()}M.items.push(it);sel=M.items.length-1;$("dock").classList.remove("open");draw()});
+$("undo").onclick=undo;
+try{if(sessionStorage.getItem("pk-rotok"))document.documentElement.classList.add("rotok")}catch(e){}
+$("pf-rot-x").onclick=()=>{document.documentElement.classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(e){}draw()};
+matchMedia("(orientation:landscape)").addEventListener("change",e=>{if(e.matches&&TOUCH)setTimeout(()=>toast("<b>Parfait !</b> Le mur est bien plus grand comme ça",2200),300)});
+addEventListener("pointerdown",()=>{const c=$("coach");if(c)c.hidden=true},true);
+$("addbtn").onclick=()=>{$("dock").classList.add("open");const ac=$("cats").querySelector('[aria-pressed="true"]');if(ac)$("cats").scrollLeft=Math.max(0,ac.offsetLeft-12)};
+$("f1").onclick=()=>{face=0;deselect();ui();draw()};$("f2").onclick=()=>{face=1;deselect();ui();draw()};
+$("tech").onclick=()=>{tech=!tech;ui();draw()};
+$("ok").onclick=()=>{if(epAsk()){vib(8);toast("Une petite question d'abord, juste au-dessus",2200);return}if(PC.rv){toast("On termine la vérification, élément par élément",2200);return}const L=miss();if(L.length){const m=M.items.indexOf(L[0]);if(sel!=null&&sel!==m)deselect();askAll=false;M.items[m].lock=true;sel=m;toast(L.length>1?`Encore ${L.length} réponses : on les passe une par une`:"Dernière réponse pour ce mur",2200);draw();return}
+ if(WALLS&&!(isClo()&&face===0)){saveSnap();WALLS[wi].done=true;
+ if(PC.edit){showRecap("<b>C'est corrigé !</b> Seul ce mur a changé");return}
+ if(wi<WALLS.length-1){party(`Mur ${wi+1} terminé !`,`On passe au mur ${wi+2}`);setTimeout(()=>{goWall(wi+1);toast(`<b>Mur ${wi+1}</b> : la flèche du petit plan montre où regarder`,3000)},1700)}
+ else roomEnd()
+ return}if(isClo()&&face===0){face=1;sel=null;party("Première face terminée !","On passe à l'autre côté");ui();draw()}else{party("Mur terminé !","Votre devis vient de gagner en précision");$("ok").textContent="Mur suivant ›"}};
+$("room").addEventListener("input",e=>{M.named=true;if(face===1&&isClo())M.room2=e.target.value;else{M.room=e.target.value;if(WALLS)WALLS.forEach(w=>{w.room=M.room;w.named=true})}$("f1").textContent="Côté "+(M.room||"pièce 1");$("f2").textContent="Côté "+(M.room2||"pièce 2");draw()});
+$("rtype").addEventListener("change",e=>{const v=e.target.value;if(face===1&&isClo()){M.rt2=v;if(!M.named2)M.room2=ROOMS[v]}else{(WALLS||[M]).forEach(w=>{w.rt=v;if(!w.named)w.room=ROOMS[v]})}sel=null;cat=firstCat();ui();draw()});
+document.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>load(b.dataset.ex));
+addEventListener("resize",()=>draw());
+// ================= VOS MURS, VUS DE FACE (après le plan du formulaire) =================
+// Reçoit le plan tracé par le client (export plan.html : geo) et ses réponses (logement) ; pièces avec travaux -> murs pré-remplis -> récap.
+const EMB=/[?&]embed=1/.test(location.search);
+const PC={step:"p",edit:false,rv:null,R:{},queue:[],qn:0,sel:null};
+let A={},GEO=null;
+const ALLR=()=>GEO?GEO.flatMap((f,lv)=>f.rooms.map((r,ri)=>({r,lv,id:lv+"-"+ri}))):[];
+const RTOF=n=>/cuisine/i.test(n)?"cuisine":/bain|douche|sdb/i.test(n)?"sdb":/\bwc\b|toilette/i.test(n)?"wc":/chambre/i.test(n)?"chambre":/bureau/i.test(n)?"bureau":/buanderie|cellier/i.test(n)?"buanderie":/entr|couloir|dégag|hall/i.test(n)?"entree":"sejour";
+const PCS={"Cuisine":"cuisine","Salle de bain":"sdb","WC":"wc","Chambre(s)":"chambre","Séjour":"sejour","Entrée / couloir":"entree","Bureau":"bureau","Buanderie":"buanderie"};
+function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
+// ---------- Géométrie (cm) ----------
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
+function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
+function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
+ rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null}})})).filter(f=>f.rooms.length)}
+const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
+function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
+function cen(r){const p=r.pts;let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1]});return[x/p.length,y/p.length]}
+// ouvertures du plan posées sur ce mur (segments du plan alignés avec le mur)
+function opsOn(lv,a,b){const d=sub(b,a),L=len(d),u=[d[0]/L,d[1]/L],out=[];
+ GEO[lv].segs.forEach(s=>{const da=Math.abs((s.a[0]-a[0])*u[1]-(s.a[1]-a[1])*u[0]),db=Math.abs((s.b[0]-a[0])*u[1]-(s.b[1]-a[1])*u[0]);if(da>8||db>8)return;const sd=sub(s.b,s.a),sl=len(sd)||1,su=[sd[0]/sl,sd[1]/sl];
+  s.ops.forEach(o=>{const P=[s.a[0]+su[0]*o.p,s.a[1]+su[1]*o.p],Q=[s.a[0]+su[0]*(o.p+o.w),s.a[1]+su[1]*(o.p+o.w)];let x1=dot(sub(P,a),u),x2=dot(sub(Q,a),u);if(x1>x2)[x1,x2]=[x2,x1];if(x2<5||x1>L-5)return;x1=Math.max(0,x1);x2=Math.min(L,x2);
+   if(!out.some(q=>Math.abs(q.x-x1)<4))out.push({k:o.k==="fenetre"?"fenetre":"porte",x:Math.round(x1),w:Math.round(x2-x1)})})});return out}
+// ---------- Plan vu de dessus ----------
+function drawPlan(s,o={}){const box=s.getBoundingClientRect(),wide=box.width/Math.max(1,box.height)>1.25,gap=110,lvs=o.lvs||GEO.map((f,i)=>i);
+ const bx=lvs.map(l=>bbox(l)),off=[];let W=0,H=0;bx.forEach((b,i)=>{if(wide){off.push([W-b.x,-b.y]);W+=b.w+(i<bx.length-1?gap:0);H=Math.max(H,b.h)}else{off.push([-b.x,H-b.y]);H+=b.h+(i<bx.length-1?gap:0);W=Math.max(W,b.w)}});
+ const pad=30,top=lvs.length>1?pad+60:pad;s.setAttribute("viewBox",`${-pad} ${-top} ${W+2*pad} ${H+top+pad}`);
+ const sc=Math.max((W+2*pad)/Math.max(1,box.width),(H+top+pad)/Math.max(1,box.height)),fs=15*sc;s.innerHTML="";
+ lvs.forEach((lv,li)=>{const [ox,oy]=off[li],g=el("g",{transform:`translate(${ox} ${oy})`},s),b=bx[li];
+  if(lvs.length>1){const t=el("text",{x:b.x,y:b.y-26,"font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":fs,fill:"var(--muted)"},g);t.textContent=GEO[lv].nom}
+  GEO[lv].rooms.forEach((r,ri)=>{const st=o.room?o.room(r,lv):{};const rg=el("g",{"data-r":lv+"-"+ri,style:o.tap?"cursor:pointer":""},g);
+   el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:st.fill||"var(--wall)"},rg)});
+  GEO[lv].segs.forEach(q=>{el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--fg)","stroke-width":Math.max(q.k==="clo"?8:12,(q.k==="clo"?2:3)*sc),"stroke-linecap":"square",fill:"none","pointer-events":"none"},g);
+   const d=sub(q.b,q.a),L=len(d)||1,u=[d[0]/L,d[1]/L];q.ops.forEach(o=>{const P=[q.a[0]+u[0]*o.p,q.a[1]+u[1]*o.p],Q=[q.a[0]+u[0]*(o.p+o.w),q.a[1]+u[1]*(o.p+o.w)];
+    el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:o.k==="fenetre"?"var(--glass)":"var(--wall)","stroke-width":Math.max(10,3*sc),"pointer-events":"none"},g);
+    if(o.k==="fenetre")el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"pointer-events":"none"},g);
+    else{const n=[-u[1],u[0]],r=o.w*.9;el("path",{d:`M${P[0]} ${P[1]}L${P[0]+n[0]*r} ${P[1]+n[1]*r}A${r} ${r} 0 0 ${1} ${Q[0]} ${Q[1]}`,fill:"none",stroke:"var(--muted)","stroke-width":Math.max(1.5,.7*sc),"stroke-dasharray":`${5*sc/2} ${4*sc/2}`,"pointer-events":"none"},g)}})});
+  GEO[lv].rooms.forEach(r=>{const st=o.room?o.room(r,lv):{};if(st.ring)el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:"none",stroke:"var(--laiton)","stroke-width":4*sc,"stroke-linejoin":"round","stroke-opacity":.9,transform:"",class:st.ringc||"","pointer-events":"none"},g);
+   const lab=r.nom||"",[cx,cy]=cen(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
+   const t=el("text",{x:cx,y:cy+f1*.35,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":f1,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=lab;
+   if(st.sub){const u2=el("text",{x:cx,y:cy+f1*.35+fs*1.1,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":Math.min(fs*.8,(rw-20)/(st.sub.length*.6)),fill:"var(--muted)","pointer-events":"none"},g);u2.textContent=st.sub}})});return sc}
+function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`,cur={p:0,f:1,s:1,r:2}[PC.step];
+ const h=`<span class="sd">${[0,1,2].map(i=>`<i class="${i<cur?"ok":i===cur?"on":""}"></i>`).join("")}</span><b>${lab}</b>`;document.querySelectorAll(".steps").forEach(e=>e.innerHTML=h)}
+function showScr(id){["sq","sp","sr","ss"].forEach(s=>$(s).hidden=s!==id);document.documentElement.classList.toggle("fv",!id);document.querySelector(".app").hidden=!!id;steps()}
+function startPick(){PC.step="p";showScr("sp");planUI()}
+function planUI(){const n=ALLR().filter(q=>q.r.works).length;$("sp-tip").textContent="Touchez les pièces où il y a des travaux";
+ $("sp-sub").innerHTML=n?`${n} pièce${n>1?"s":""} choisie${n>1?"s":""} d'après vos réponses. On ne passera que dans celles-là.`:"Touchez au moins une pièce.";$("sp-cards").innerHTML=`<button class="back" id="sp-skip" type="button">Passer cette étape</button>`;
+ $("sp-go").hidden=false;$("sp-go").disabled=!n;$("sp-go").textContent=n?`C'est parti : ${n} pièce${n>1?"s":""} ›`:"Choisissez une pièce";
+ requestAnimationFrame(()=>drawPlan($("sp-svg"),{tap:1,room:r=>({fill:r.works?"var(--laiton-soft)":"var(--wall)",ring:r.works,sub:r.works?"✓ Travaux":""})}))}
+$("sp-go").onclick=()=>{vib(8);PC.queue=ALLR().filter(q=>q.r.works);PC.qn=0;startRoom()};
+$("sp-cards").addEventListener("click",e=>{if(e.target.closest("#sp-skip"))finish()});
+$("sp-svg").addEventListener("click",e=>{const g=e.target.closest("[data-r]");if(!g)return;const q=ALLR().find(x=>x.id===g.dataset.r);q.r.works=!q.r.works;vib(6);planUI()});
+// ---------- Murs pré-remplis ----------
+function putAt(w,k,x,ww,o={}){const c=CAT[k];M=w;face=0;const it={k,w:ww||c.w[0],x:0,face:0,lock:true};const px=place(it,x);if(px==null||(o.exact!==false&&Math.abs(px-x)>1))return null;it.x=R(px);
+ if(o.faire)it.st="faire";else if(o.none){}else{it.st="exist";if(o.rep)it.rep=o.rep;else if(!c.petit)it.rep="non";if(!o.keep&&!o.rep)it.prop=1}w.items.push(it);return it}
+const putAny=(w,k,x,ww,o={})=>putAt(w,k,x,ww,Object.assign({exact:false},o));
+const stOf=v=>/refaire|créer/i.test(v||"")?{faire:1}:/n'y touche|garde/i.test(v||"")?{keep:1}:/change/i.test(v||"")&&!/Quelques/.test(v)?{rep:"oui"}:{};
+function buildRoom(r,lv){const H=GEO[lv].H,E=edges(r);const W=E.map((e,i)=>{const a=[e[0],e[1]],b=[e[2],e[3]],L=Math.round(len(sub(b,a)));return{type:"mur",rt:r.rt,L,H,room:r.nom,named:true,items:opsOn(lv,a,b).map(o=>({k:o.k,w:o.w,x:o.x,face:0,lock:true,st:"exist",rep:"non"})),side:i,rid:lv+"-"+GEO[lv].rooms.indexOf(r),lv}}).filter(w=>w.L>=40);
+ if(!W.length)return[];const sv=M,dw=W.findIndex(w=>w.items.some(i=>i.k==="porte")),free=W.filter(w=>!w.items.some(i=>i.k==="porte")).sort((a,b)=>b.L-a.L),nowin=free.filter(w=>!w.items.some(i=>i.k==="fenetre")),eSt=stOf(A.elec),pSt=stOf(A.plomb);
+ if(r.rt==="cuisine"&&free[0]){const f=A.cuis?stOf(A.cuis):{none:1},w=free[0];let x=0;
+  [["frigo",60],["mbas",80],["mevier",80],["lv",60],["mplaque",60]].forEach(([k,ww])=>{if(x+ww<=w.L){putAt(w,k,x,ww,f);x+=ww}});[80,60,40,30,20].forEach(ww=>{while(x+ww<=w.L){putAt(w,"mbas",x,ww,f);x+=ww}});
+  w.items.filter(i=>CAT[i.k].bas===0&&i.k!=="frigo"&&CAT[i.k].c==="meuble").forEach(b=>{const k=b.k==="mplaque"?"hotteint":"mhaut";if(!putAt(w,k,b.x,b.w,f)){for(const vv of CAT.mhaut.w.filter(v=>v<=b.w).sort((a,c)=>c-a)){if(putAt(w,"mhaut",b.x,vv,f)||putAt(w,"mhaut",b.x+b.w-vv,vv,f))break}}});
+  w.items.filter(i=>i.k==="mbas"||i.k==="lv").forEach(b=>{if(w.items.filter(i=>i.k==="prisept").length<2&&b.w>=40)putAt(w,"prisept",b.x+b.w/2-7.5,15,eSt)})}
+ if(r.rt==="sdb"){const f=A.sdb?stOf(A.sdb):pSt,eq=(A.sdbeq||[]).length&&!(A.sdbeq||[]).every(x=>/sais/.test(x))?A.sdbeq:["Douche","Meuble vasque","WC"],has=t=>eq.includes(t);const a=nowin[0]||free[0]||W[0],b=nowin[1]||free[1]||a,c=W.find(w=>w!==a&&w!==b&&w.items.some(i=>i.k==="fenetre"))||b;
+  if(has("Baignoire"))putAny(a,"baignoire",a.L-170,170,f);if(has("Douche"))putAny(has("Baignoire")?b:a,"douche",0,90,f);if(has("WC"))putAny(a,"wc",15,50,f);
+  if(has("Meuble vasque")){const v=putAny(b,"mvasque",(b.L-80)/2,80,f);if(v)putAt(b,"miroir",v.x,80,f)}if(has("Sèche-serviettes"))putAny(c,"seche",15,50,f);if(has("Lave-linge"))putAny(c,"ll",c.L-75,60,f);
+  const v=b.items.find(i=>i.k==="mvasque");if(v)putAny(b,"prise",v.x+v.w+18,8,eSt)}
+ if(r.rt==="wc"&&dw>=0){const w=W[(dw+Math.floor(W.length/2))%W.length];putAny(w,"wc",(w.L-50)/2,50,pSt)}
+ if(dw>=0){const w=W[dw],d=w.items.find(i=>i.k==="porte");putAny(w,"inter",d.x+d.w+15<=w.L-28?d.x+d.w+15:d.x-23,8,eSt)}
+ const NB={sejour:5,chambre:3,bureau:3,entree:1,buanderie:1}[r.rt]||0;let n=0;const order=W.slice().sort((a,b)=>b.L-a.L);
+ for(const fr of [.5,.18,.82,.35,.65]){for(const w of order){if(n>=NB)break;if(putAt(w,"prise",w.L*fr-4,8,eSt))n++}}
+ if(["sejour","chambre","bureau"].includes(r.rt))putAny(order[0],"rj",order[0].L*.5+24,8,eSt);
+ if(/Radiateurs/.test(A.chauf||"")&&!["sdb","wc","cuisine"].includes(r.rt))W.forEach(w=>w.items.filter(i=>i.k==="fenetre").forEach(fe=>{const ww=CAT.radiateur.w.filter(v=>v<=fe.w).pop()||60;putAny(w,"radiateur",fe.x+fe.w/2-ww/2,ww)}));
+ M=sv;const st=dw<0?0:(dw+Math.round(W.length/2))%W.length;return W.map((w,j)=>W[(st+j)%W.length])}
+const EPK=["elec","eau","chaud","meuble"];
+const EPL=()=>M.items.filter(it=>visible(it)&&it.prop&&it.st==="exist"&&!it.rv&&EPK.includes(CAT[it.k].c));
+const epAsk=()=>PC.step==="f"&&sel==null&&!PC.rv&&!M.epDone&&EPL().length>0;
+const F={trav:[]};
+function startRoom(){const q=PC.queue[PC.qn];if(!q){showRecap();return}if(!PC.R[q.id])PC.R[q.id]=buildRoom(q.r,q.lv);WALLS=PC.R[q.id];if(!WALLS.length){PC.qn++;return startRoom()}
+ F.trav=/Quelques|change|sais/i.test((A.elec||"")+(A.plomb||""))||!A.elec?["elec"]:[];PC.step="f";PC.edit=false;showScr(null);goWall(0);setTimeout(()=>toast(`<b>${q.r.nom}</b> : tout est déjà posé. Vérifiez, déplacez, c'est tout !`,3400),500)}
+function goWall(i){wi=i;M=WALLS[wi];face=0;sel=null;askAll=!!G().length;PC.rv=null;confirmDel=false;drag=null;HIST.length=0;$("undo").disabled=true;$("dock").classList.remove("open");lvl0=-1;
+ cat=firstCat();ui();const t0=performance.now()+180;M.items.forEach((it,j)=>{it._a={t:t0+j*70,d:0,dy:-140};it.settle=0});draw();anim();steps();if(!PC.coached){PC.coached=1;setTimeout(coach,5200)}}
+function saveSnap(){const s0=sel;sel=null;M.items.forEach(i=>delete i._a);draw();const s=$("wall").cloneNode(true);s.removeAttribute("id");s.removeAttribute("style");M.snap=s.outerHTML;sel=s0}
+function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
+// ---------- Récap ----------
+function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});if(msg)setTimeout(()=>toast(msg,2400),200)}
+function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
+ requestAnimationFrame(()=>drawPlan($("sr-svg"),{tap:1,room:(r,lv)=>{const id=lv+"-"+GEO[lv].rooms.indexOf(r),me=PC.sel===id,w=!!PC.R[id];return{fill:me?"var(--laiton-soft)":w?"color-mix(in srgb,var(--laiton-soft) 45%,var(--wall))":"var(--wall)",ring:me,sub:w?"✓ Murs":""}}}));
+ const q=ALLR().find(x=>x.id===PC.sel),W=q&&PC.R[q.id];
+ const SO=q&&PC.SO[q.id]||{},tp=["sol","pf"].filter(x=>SO[x]&&SO[x]._done);
+ $("sr-room").innerHTML=q?`<b>${q.r.nom}</b> <small>${W?"Touchez un mur"+(tp.length?", le sol ou le plafond":"")+" pour le corriger":"Pas de travaux dans cette pièce"}</small>`:"";
+ $("sr-th").innerHTML=W?W.map((w,j)=>`<button class="th" data-w="${j}">${(w.snap||"<svg></svg>").replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>Mur ${j+1} · ${w.L} cm</span></button>`).join("")+tp.map(x=>`<button class="th" data-s="${x}">${topThumb(q,x).replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>${sumTxt(x,SO[x])}</span></button>`).join(""):"";
+ $("sr-n").textContent=`${done.length} pièce${done.length>1?"s":""} · ${done.reduce((a,q)=>a+PC.R[q.id].reduce((b,w)=>b+w.items.filter(i=>i.st==="faire"||i.rep==="oui").length,0),0)} éléments à faire`}
+$("sr-svg").addEventListener("click",e=>{const g=e.target.closest("[data-r]");if(!g)return;PC.sel=g.dataset.r;vib(6);recapUI()});
+$("sr-th").addEventListener("click",e=>{const s2=e.target.closest("[data-s]");if(s2){vib(6);const q=ALLR().find(x=>x.id===PC.sel);startSS(0,{q,part:s2.dataset.s,edit:1,sum:1});return}const b=e.target.closest("[data-w]");if(!b)return;WALLS=PC.R[PC.sel];PC.step="f";PC.edit=true;showScr(null);goWall(+b.dataset.w);M.epDone=true;draw()});
+function finish(){post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});post({type:"proclik-murs-finish"});if(!EMB){$("sr-main").hidden=true;$("sr-sent").hidden=false;PC.step="r";showScr("sr");$("sr-main").hidden=true;$("sr-sent").hidden=false}}
+$("sr-go").onclick=()=>{vib([10,40,14]);finish()};$("sr-again").onclick=()=>location.reload();
+addEventListener("resize",()=>{if(PC.step==="p")planUI();if(PC.step==="r")recapUI()});
+M={type:"mur",rt:"cuisine",L:300,H:250,room:"",items:[]};
+function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);ALLR().forEach(({r})=>{r.works=want.length?want.includes(r.rt):true});startPick()}
+addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-load"){PC.R={};boot(d.plan&&d.plan.geo,d.rep||{})}});
+if(EMB)post({type:"proclik-murs-ready"});
+else{// démo hors formulaire : un logement fictif
+ const R0=(x,y,w,h,n)=>({nom:n,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]}),S0=(a,b,ops)=>({a,b,k:"mur",ops:ops||[]});
+ boot([{nom:"Rez-de-chaussée",H:2.5,rooms:[R0(0,0,5.2,4.5,"Séjour"),R0(5.2,0,3.6,2.8,"Cuisine"),R0(5.2,2.8,2.2,1.7,"Entrée"),R0(7.4,2.8,1.4,1.7,"WC")],
+  segs:[S0([0,0],[8.8,0],[{k:"fenetre",p:1.2,w:1.2},{k:"fenetre",p:6.4,w:1.2}]),S0([8.8,0],[8.8,4.5],[{k:"fenetre",p:.9,w:1},{k:"fenetre",p:3.3,w:.6}]),S0([8.8,4.5],[0,4.5],[{k:"porte",p:1.8,w:.93},{k:"fenetre",p:5.1,w:1.4}]),S0([0,4.5],[0,0],[{k:"fenetre",p:1.4,w:1.2}]),
+   {a:[5.2,0],b:[5.2,4.5],k:"clo",ops:[{k:"porte",p:3.24,w:.83}]},{a:[5.2,2.8],b:[8.8,2.8],k:"clo",ops:[{k:"porte",p:.39,w:.83}]},{a:[7.4,2.8],b:[7.4,4.5],k:"clo",ops:[{k:"porte",p:.63,w:.73}]}]},
+  {nom:"Étage",H:2.5,rooms:[R0(0,0,4,4.5,"Chambre 1"),R0(4,0,2.6,2.5,"Salle de bain"),R0(4,2.5,2.6,2,"Couloir"),R0(6.6,0,2.2,4.5,"Chambre 2")],
+  segs:[S0([0,0],[8.8,0],[{k:"fenetre",p:1.4,w:1.2},{k:"fenetre",p:5,w:.6}]),S0([8.8,0],[8.8,4.5],[{k:"fenetre",p:1.5,w:1}]),S0([8.8,4.5],[0,4.5]),S0([0,4.5],[0,0]),
+   {a:[4,0],b:[4,4.5],k:"clo",ops:[{k:"porte",p:3.08,w:.83}]},{a:[6.6,0],b:[6.6,4.5],k:"clo",ops:[{k:"porte",p:3.08,w:.83}]},{a:[4,2.5],b:[6.6,2.5],k:"clo",ops:[{k:"porte",p:.94,w:.73}]}]}],
+  {trav:["sol","plafond"],sols:"Partout où il y a des travaux",pcs:["Cuisine","Salle de bain","Chambre(s)"],cuis:"On la change",sdb:"On les change",sdbeq:["Douche","Meuble vasque","WC","Sèche-serviettes"],elec:"Quelques prises à ajouter ou déplacer",plomb:"Quelques changements",chauf:"Radiateurs électriques"})}
+
+// ================= SOL ET PLAFOND, PIÈCE PAR PIÈCE (Cyril 18/11) =================
+// Après les murs d'une pièce : son sol vu du dessus, puis son plafond. Une question à la fois, « Même que… » pour recopier une pièce déjà faite.
+// Les réponses sont renvoyées au plan (proclik-plan-sols) : le calcul lit les mêmes champs qu'avant.
+const DKs="Je ne sais pas";
+const SQ={sol:[
+ {k:"etat",q:"Le sol de cette pièce…",o:["On le garde","On le change","Il n'y a pas encore de sol",DKs]},
+ {k:"depose",q:"Quel sol y a-t-il aujourd'hui ?",s:"Il sera enlevé avant de poser le nouveau.",o:["Carrelage","Parquet","Moquette","Lino / PVC",DKs],if:a=>a.etat==="On le change"},
+ {k:"revet",q:"Quel sol voulez-vous ?",o:["Carrelage","Parquet","Sol souple (lino, vinyle)",DKs],if:a=>/change|pas encore/.test(a.etat||"")},
+ {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"}],
+ fin:[],
+ pf:[
+ {k:"pf",q:"Le plafond de cette pièce…",o:["Rien à faire","À refaire",DKs]},
+ {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
+ {k:"pfSup",q:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DKs],if:a=>a.pf==="À refaire"},
+ {k:"pfIso",q:"Isolant au-dessus ?",o:["Oui","Non",DKs],if:a=>a.pf==="À refaire"}]};
+const SHORT={etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
+PC.SO={};
+const needPart=p=>(A.trav||[]).includes(p==="sol"?"sol":"plafond");
+const soA=(id,p)=>{const o=PC.SO[id]||(PC.SO[id]={});return o[p]||(o[p]={})};
+const ssVis=(p,a)=>SQ[p].filter(x=>!x.if||x.if(a));
+const fr1=v=>(Math.round(v*10)/10).toLocaleString("fr-FR");
+const m2=r=>fr1(Math.abs(area(r.pts))/1e4);
+function solConv(a){if(!a.etat)return null;const E={"On le garde":"Déjà en place","On le change":"À changer","Il n'y a pas encore de sol":"À créer"}[a.etat]||null,o={etat:E};
+ if(!E){o.dk=1;return o}if(E==="Déjà en place"){o.depose="Aucune";o.revet="Aucun";return o}
+ o.depose=E==="À créer"?"Aucune":a.depose&&a.depose!==DKs?a.depose:"À préciser";
+ o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";return o}
+function pfConv(a){if(!a.pf)return null;const o={pf:a.pf};if(a.pf==="À refaire"){o.pfBas=a.pfBas||DKs;o.pfSup=a.pfSup||DKs;o.pfIso=a.pfIso||DKs}return o}
+function exportSols(){return ALLR().filter(q=>PC.SO[q.id]).map(q=>{const o=PC.SO[q.id];return{fi:q.r.fi,ri:q.r.ri,zi:q.r.zi,piece:q.r.nom,sol:o.sol&&o.sol._done?solConv(o.sol):undefined,pf:o.pf&&o.pf._done?pfConv(o.pf):undefined}}).filter(x=>x.sol||x.pf)}
+function sumTxt(p,a){if(p==="sol"){if(!a.etat)return"";if(a.etat===DKs)return"Sol : à voir avec l'artisan";if(a.etat==="On le garde")return"Sol gardé";return(a.revet&&a.revet!==DKs?a.revet.replace(/ \(.*/,""):"Nouveau sol")+(a.revet==="Carrelage"&&a.carFmt&&a.carFmt!==DKs?" "+a.carFmt:"")}
+ if(!a.pf)return"";return a.pf==="À refaire"?"Plafond à refaire":a.pf===DKs?"Plafond : à voir":"Plafond : rien à faire"}
+// ---------- Dessin : la pièce vue du dessus ----------
+function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=P.map(v=>v[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0,h=Math.max(...ys)-y0,pad=Math.max(w,h)*.1+30,k=Math.max(w,h)/320;
+ s.setAttribute("viewBox",`${x0-pad} ${y0-pad} ${w+2*pad} ${h+2*pad}`);s.setAttribute("preserveAspectRatio","xMidYMid meet");
+ const d="M"+P.map(v=>v.join(" ")).join("L")+"Z",uid="t"+(o.uid||"m");let h2=`<defs><clipPath id="${uid}c"><path d="${d}"/></clipPath>`;
+ let fill="",lab="",sub="";
+ if(p==="sol"){const ch=/change|pas encore/.test(a.etat||"");
+  if(ch&&a.revet==="Carrelage"){const f=(a.carFmt&&a.carFmt!==DKs?a.carFmt:"45 × 45").split("×").map(v=>parseFloat(v)),cw=Math.max(f[0],f[1]),chh=Math.min(f[0],f[1]);
+   h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${cw}" height="${chh}"><rect width="${cw}" height="${chh}" fill="var(--tile,#E6E9EE)"/><path d="M0 0H${cw}M0 0V${chh}" stroke="var(--joint,#B9BFCB)" stroke-width="${Math.max(1.2,1.6*k)}"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--wood,#D9B98A)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&/souple/.test(a.revet||""))fill="var(--soft-floor,#CFD8E6)";
+  else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
+  lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
+ else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
+  lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
+ h2+=`</defs>`;
+ GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--wall2)" opacity=".7"/>`});
+ h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--wall)"}"/>`;
+ if(fill)h2+=`<g clip-path="url(#${uid}c)" class="${o.still?"":"fillin"}"><rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="${fill}"/></g>`;
+ if(p==="pf"){const cx=cen(r)[0],cy=y0+h*.2;h2+=`<circle cx="${cx}" cy="${cy}" r="${9*k}" fill="var(--laiton)" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${20*k}" fill="none" stroke="var(--laiton)" stroke-width="${1.4*k}" opacity=".35"/>`}
+ GEO[lv].segs.forEach(g=>{h2+=`<path d="M${g.a[0]} ${g.a[1]}L${g.b[0]} ${g.b[1]}" stroke="var(--fg)" stroke-width="${g.k==="clo"?Math.max(6,7*k):Math.max(10,12*k)}" stroke-linecap="square"/>`;
+  const dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
+   h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="${op.k==="fenetre"?"var(--glass)":"var(--surface)"}" stroke-width="${Math.max(10,12*k)+1}"/>`;if(op.k==="fenetre")h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="var(--fg)" stroke-width="${Math.max(2,2*k)}"/>`})});
+ if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(30*k+8,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
+  h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
+ s.innerHTML=h2}
+const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+// ---------- Parcours ----------
+function roomEnd(){const q=PC.queue[PC.qn],parts=["sol","pf"].filter(needPart).concat(["fin"]);
+ PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
+function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
+ if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
+function startSS(pi,o={}){const q=o.q||PC.queue[PC.qn],p=o.part||PC.parts[pi],a=soA(q.id,p);
+ if(!a.etat&&p==="sol"&&/^Partout/.test(A.sols||"")){a.etat="On le change";a._pre=1}
+ if(!a.pf&&p==="pf"&&/^Partout/.test(A.plafs||"")){a.pf="À refaire";a._pre=1}
+ PC.step="s";PC.ss={pi,p,q,i:o.sum?99:0,edit:!!o.edit};showScr("ss");ssUI(true)}
+function sameList(){const {p,q}=PC.ss;return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
+function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(p==="fin")return finUI(anim);if(PC.ss.i>V.length)PC.ss.i=V.length;const i=PC.ss.i,sum=i>=V.length;
+ $("ss-t").textContent=`${q.r.nom} · ${p==="sol"?"le sol":"le plafond"}`;$("ss-s").innerHTML=`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`;
+ drawTop($("ss-svg"),q,p,a);
+ const card=$("ss-card");let h="";
+ if(!sum){const Q=V[i],sl=i===0?sameList():[];
+  h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid">${Q.o.map(v=>`<button type="button" class="qo${v===DKs?" dk":""}" data-v="${v}" aria-pressed="${a[Q.k]===v}"><span>${v}</span><em>${a[Q.k]===v?"✓":""}</em></button>`).join("")}</div>`+
+   (sl.length?`<div class="same"><span>${p==="sol"?"Même sol que…":"Même plafond que…"}</span><div>${sl.map(x=>`<button type="button" class="chip" data-same="${x.id}">${x.r.nom}</button>`).join("")}</div></div>`:"");
+  $("ss-go").textContent=a._pre&&i===0?"Oui, c'est ça ›":"Continuer ›";$("ss-go").disabled=a[Q.k]==null}
+ else{h=`<small>C'est noté</small><h2>${p==="sol"?"Le sol":"Le plafond"} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${a[Q.k]||"—"}</b></button>`).join("")}</div>`;
+  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):PC.parts[PC.ss.pi+1]==="pf"?"C'est bon, le plafond ›":"C'est bon ›"}
+ card.innerHTML=h;if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
+$("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
+ if(b.dataset.same){const src=PC.SO[b.dataset.same][p];Object.keys(a).forEach(k=>delete a[k]);Object.assign(a,JSON.parse(JSON.stringify(src)));a._done=0;PC.ss.i=99;toast(`<b>Recopié</b> depuis ${b.textContent}`,2000);ssUI(true);return}
+ if(b.dataset.i!=null){PC.ss.i=+b.dataset.i;ssUI(true);return}
+ const V=ssVis(p,a),Q=V[PC.ss.i];a[Q.k]=b.dataset.v;delete a._pre;Object.keys(a).forEach(k=>{if(SQ[p].some(x=>x.k===k)&&!ssVis(p,a).some(x=>x.k===k))delete a[k]});
+ ssUI(false);clearTimeout(PC.ssT);PC.ssT=setTimeout(()=>{PC.ss.i++;ssUI(true)},320)});
+$("ss-go").onclick=()=>{const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);vib(8);clearTimeout(PC.ssT);
+ if(PC.ss.i<V.length){if(a[V[PC.ss.i].k]==null)return;delete a._pre;PC.ss.i++;ssUI(true);return}
+ a._done=1;post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});
+ if(PC.ss.edit){showRecap("<b>C'est corrigé !</b>");return}
+ if(PC.ss.pi<PC.parts.length-1){startSS(PC.ss.pi+1);return}
+ const nx=PC.queue[PC.qn+1];ssParty(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap",()=>nextRoom(false))};
+$("ss-back").onclick=()=>{clearTimeout(PC.ssT);vib(6);if(PC.ss.i>0){PC.ss.i=Math.min(PC.ss.i,ssVis(PC.ss.p,soA(PC.ss.q.id,PC.ss.p)).length)-1;ssUI(true);return}
+ if(PC.ss.edit){showRecap();return}if(PC.ss.pi>0){startSS(PC.ss.pi-1,{sum:1});return}PC.step="f";showScr(null);goWall(WALLS.length-1)};
+function ssParty(t,sub,cb){const c=$("ss-card");c.innerHTML=`<div class="ssdone">${'<svg viewBox="0 0 60 60" width="74" height="74" fill="none"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ck"/></svg>'}<b>${t}</b><span>${sub}</span></div>`;$("ss-go").disabled=true;vib([10,40,14]);setTimeout(cb,1700)}
+function topThumb(q,p){const s=document.createElementNS("http://www.w3.org/2000/svg","svg");drawTop(s,q,p,soA(q.id,p),{uid:q.id.replace("-","_")+p,still:1,nolab:1});return s.outerHTML}
+if(!EMB)window.__pc={roomEnd,PC,exportSols};
+
+// ---------- Pour finir : une photo et un mot (facultatifs) ----------
+function finUI(anim){const {q}=PC.ss,a=soA(q.id,"fin"),nx=PC.queue[PC.qn+1];a.ph=a.ph||[];
+ $("ss-t").textContent=`${q.r.nom} · pour finir`;$("ss-s").innerHTML="Facultatif, mais <i>très utile</i> à l'artisan";drawTop($("ss-svg"),q,"sol",soA(q.id,"sol"));
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ $("ss-card").innerHTML=`<small>Dernière chose</small><h2>Une photo de : ${q.r.nom} ?</h2><div class="fph"><label class="phb"><input type="file" accept="image/*" capture="environment" id="fin-ph" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>${a.ph.length?"Une autre photo":"Prendre une photo"}</label>${a.ph.map(x=>`<img src="${x}" alt="">`).join("")}</div>
+  <div class="fnt"><textarea id="fin-nt" rows="2" placeholder="Un détail à dire sur cette pièce ? (facultatif)">${(a.note||"").replace(/</g,"&lt;")}</textarea>${SR?`<button type="button" class="mic" id="fin-mic" aria-label="Dicter"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>`:""}</div>`;
+ $("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":nx?(a.ph.length||a.note?"Pièce suivante ›":"Passer, pièce suivante ›"):(a.ph.length||a.note?"Voir le récap ›":"Passer, voir le récap ›");
+ const card=$("ss-card");if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
+function shrinkImg(file,max){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.8))};im.onerror=()=>res(null);im.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)})}
+$("ss-card").addEventListener("change",async e=>{if(e.target.id!=="fin-ph")return;const f=e.target.files&&e.target.files[0];if(!f)return;const q=PC.ss.q,a=soA(q.id,"fin");const img=await shrinkImg(f,1600);if(!img)return;a.ph=(a.ph||[]).concat([img]).slice(-3);
+ post({type:"proclik-murs-photo",piece:q.r.nom,img});vib(10);toast("<b>Photo ajoutée</b> ✓",1800);finUI(false)});
+$("ss-card").addEventListener("input",e=>{if(e.target.id!=="fin-nt")return;soA(PC.ss.q.id,"fin").note=e.target.value;const nx=PC.queue[PC.qn+1],a=soA(PC.ss.q.id,"fin");$("ss-go").textContent=nx?(a.ph.length||a.note?"Pièce suivante ›":"Passer, pièce suivante ›"):(a.ph.length||a.note?"Voir le récap ›":"Passer, voir le récap ›")});
+$("ss-card").addEventListener("click",e=>{const b=e.target.closest("#fin-mic");if(!b)return;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;if(PC.rec){try{PC.rec.stop()}catch(_){}return}
+ const r=new SR();r.lang="fr-FR";r.interimResults=false;PC.rec=r;b.classList.add("on");const ta=$("fin-nt");r.onresult=ev=>{const t=[...ev.results].map(x=>x[0].transcript).join(" ");ta.value=(ta.value?ta.value+" ":"")+t;ta.dispatchEvent(new Event("input",{bubbles:true}))};r.onend=()=>{PC.rec=null;const m=$("fin-mic");if(m)m.classList.remove("on")};r.onerror=()=>{toast("Le micro ne répond pas : utilisez celui du clavier 🎤",2600)};try{r.start()}catch(_){PC.rec=null}});
+
+function miniPlan(){const m=$("mini"),w0=WALLS[0],lv=w0.lv,r=GEO[lv].rooms[+w0.rid.split("-")[1]],b=bbox(lv),p=40,s=m.querySelector("svg");
+ s.setAttribute("viewBox",`${b.x-p} ${b.y-p} ${b.w+2*p} ${b.h+2*p}`);s.style.aspectRatio=`${b.w+2*p}/${b.h+2*p}`;const k=Math.max(b.w,b.h)/100;
+ let h="";GEO[lv].rooms.forEach(q=>{h+=`<path d="M${q.pts.map(p=>p.join(" ")).join("L")}Z" fill="${q===r?"var(--laiton-soft)":"var(--wall2)"}" stroke="var(--line)" stroke-width="${k}"/>`});
+ const E=edges(r);WALLS.forEach((w,j)=>{const q=E[w.side],cur=j===wi;h+=`<line x1="${q[0]}" y1="${q[1]}" x2="${q[2]}" y2="${q[3]}" stroke="${cur?"var(--act)":w.done?"var(--laiton)":"var(--fg)"}" stroke-width="${(cur?4:w.done?2.6:1.3)*k}" stroke-linecap="round"${cur?' class="blink"':""}/>`});
+ const q=E[WALLS[wi].side],[cx,cy]=cen(r),tx=(q[0]+q[2])/2,ty=(q[1]+q[3])/2,a=Math.atan2(ty-cy,tx-cx),L=Math.hypot(tx-cx,ty-cy)*.86,sp=.55;
+ h+=`<path d="M${cx} ${cy}L${cx+Math.cos(a-sp)*L} ${cy+Math.sin(a-sp)*L}L${cx+Math.cos(a+sp)*L} ${cy+Math.sin(a+sp)*L}Z" fill="var(--laiton)" opacity=".35"/><circle cx="${cx}" cy="${cy}" r="${5*k}" fill="var(--act)" stroke="var(--surface)" stroke-width="${1.2*k}"/><circle cx="${cx+Math.cos(a)*1.8*k}" cy="${cy+Math.sin(a)*1.8*k}" r="${1.3*k}" fill="var(--on-act)"/>`;
+ s.innerHTML=h;$("mtx").innerHTML=`${M.room}<small>Mur ${wi+1} sur ${WALLS.length}</small>`}
+$("card").addEventListener("click",ev=>{const b=ev.target.closest("[data-ep],[data-rv]");if(!b)return;vib(8);
+ if(b.dataset.ep){const v=b.dataset.ep,L=EPL();
+  if(v==="non"){snap();L.forEach(it=>{it.prop=0;it.rv=1});M.epDone=true;toast("<b>Noté !</b> L'artisan sait où passent l'eau et l'électricité",2600)}
+  if(v==="dk"){snap();L.forEach(it=>{it.st="dk";it.rv=1});M.epDone=true;toast("Pas de souci, <b>l'artisan vérifiera</b> sur place",2400)}
+  if(v==="oui"){PC.rv={list:L,i:0};sel=M.items.indexOf(L[0]);toast("On les passe <b>une par une</b>, celle qui brille",2200)}
+  if(v==="add"){M.epAdd=true;cat=avail().some(k=>CAT[k].c==="elec")?"elec":cat;ui();$("dock").classList.add("open")}
+  draw();return}
+ const it=M.items[sel],v=b.dataset.rv;if(!PC.rv||!it)return;snap();PC.rv=PC.rv;
+ if(v==="oui")it.rep="oui";if(v==="non")it.prop=0;if(v==="dk")it.st="dk";it.rv=1;if(v==="del")M.items.splice(sel,1);
+ PC.rv.i++;const nx=PC.rv.list[PC.rv.i];
+ if(nx)sel=M.items.indexOf(nx);else{const ch=PC.rv.list.filter(o=>o.rep==="oui").length;PC.rv=null;sel=null;M.epDone=true;toast(ch?`<b>C'est noté :</b> ${ch} élément${ch>1?"s":""} à changer, en laiton sur le mur`:"<b>C'est noté !</b> Rien ne change sur ce mur",2800)}
+ draw()});
+
+})();
+</script>
+</body>
+</html>
