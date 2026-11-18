@@ -4,7 +4,7 @@
 
 
 <link rel="stylesheet" href="../fonts/fonts.css">
-<script src="../espace/theme.js?v=1"></script>
+<script src="haptique.js?v=1" defer></script><script src="../espace/theme.js?v=1"></script>
 <script src="boutons-icones.js?v=3" defer></script>
 <script src="icones.js?v=1" defer></script>
 <style>
@@ -301,7 +301,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 .hero9 .htiles{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}.hero9 .htiles span{display:inline-flex;align-items:baseline;gap:5px;background:var(--bg,#EEF0F5);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;color:var(--muted,#5B6478)}.hero9 .htiles i{font-style:normal;font-weight:800;color:var(--fg,#1B2440);font-size:15px}
 .hero9 p{margin:0;font-weight:700;color:var(--fg,#1B2440);font-size:14px}
 </style>
-<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=6">
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -791,7 +791,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"✏️ Modifier mon plan":"✏️ Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");try{const fs=pf.requestFullscreen||pf.webkitRequestFullscreen;if(fs&&matchMedia("(pointer:coarse)").matches&&!document.fullscreenElement){const r=fs.call(pf,{navigationUI:"hide"});if(r&&r.catch)r.catch(()=>{})}}catch(_){}if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=49");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");try{const fs=pf.requestFullscreen||pf.webkitRequestFullscreen;if(fs&&matchMedia("(pointer:coarse)").matches&&!document.fullscreenElement){const r=fs.call(pf,{navigationUI:"hide"});if(r&&r.catch)r.catch(()=>{})}}catch(_){}if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=50");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;document.body.style.overflow="hidden";updSub()}
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;try{const fe=document.fullscreenElement||document.webkitFullscreenElement;if(fe){const x=document.exitFullscreen||document.webkitExitFullscreen;const r=x&&x.call(document);if(r&&r.catch)r.catch(()=>{})}}catch(_){}document.body.style.overflow="";if(!silent)render()}
 function updSub(){const n=nPieces(),el=document.getElementById("pf-sub");if(el)el.textContent=(n?`${n} pièce${n>1?"s":""} · ≈ ${fr(tPieces().reduce((a,p)=>a+(p.surface_m2||0),0))} m²`:"Le contour du logement est prêt")+" · enregistré sur cet appareil ✓"}
 function nPieces(){return tPieces().reduce((a,p)=>a+(p.zones&&p.zones.length?p.zones.length:1),0)}
@@ -1125,7 +1125,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
 
 // 18/11 (Cyril) : après le plan, « Vos murs, vus de face » (devis/murs.html), pré-remplis par le tracé et les réponses du logement.
 function mursOK(){const g=S.plan&&S.plan.trace&&S.plan.trace.geo;return!!(g&&g.some(f=>f.rooms&&f.rooms.length))}
-function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=4");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
+function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=5");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
 function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:Object.assign({},S.logement,{trav:S.travaux||[]})},"*")}catch(e){}}
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-murs-ready")mursLoad();  if(d.type==="proclik-murs-photo"&&d.img){/* photo prise à la fin d'une pièce (Cyril 18/11) : rangée avec les photos du chantier */if(files.photos.length<10)files.photos.push({name:(d.piece||"Pièce")+".jpg",img:d.img,file:null,tag:d.piece||null});return}
