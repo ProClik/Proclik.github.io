@@ -116,7 +116,8 @@ if(!site&&!vitrine){
  '#pc-ouk:not(.go),#pc-ouk:not(.go) *{animation-play-state:paused!important}'+
  '@media (prefers-reduced-motion:reduce){#pc-ouk *{animation-duration:.01s!important;animation-delay:0s!important}}';
  var stk=d.createElement('style');stk.textContent=K;d.head.appendChild(stk);
- var DUK=reduit?700:5000;
+ /* déjà ouverte : la même courte ouverture, jouée 2,2 fois plus vite (~2,3 s au lieu de 5 s). Cyril, 18/11. */
+ var VITE=2.2,DUK=reduit?700:Math.round(5000/VITE);
  /* on attend que la page ait fini de se charger (ou 1,5 s au plus) pour lancer l'animation : sinon l'iPhone, occupé à charger, la fait saccader au tout début */
  function pret(cb){var ok=false;function go(){if(ok)return;ok=true;requestAnimationFrame(function(){requestAnimationFrame(cb)})}if(d.readyState==='complete')go();else{window.addEventListener('load',go);setTimeout(go,1500)}}
  function couvre(){
@@ -129,7 +130,7 @@ if(!site&&!vitrine){
   /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
   var lk=o.querySelector('.lk'),gk=o.querySelector('.gk');gk.style.setProperty('--dx',((lk.offsetWidth-gk.offsetWidth)/2)+'px');
   var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},500)}
-  o.addEventListener('click',fin);pret(function(){o.classList.add('go');setTimeout(fin,DUK)});
+  o.addEventListener('click',fin);pret(function(){o.classList.add('go');try{if(o.getAnimations)o.getAnimations({subtree:true}).forEach(function(an){an.playbackRate=VITE})}catch(e){}setTimeout(fin,DUK)});
  }
  if(court){window.PC_OUV_MS=DUK;couvre()}
  /* retour dans l'appli après au moins 30 s ailleurs : on rejoue la courte ouverture */
