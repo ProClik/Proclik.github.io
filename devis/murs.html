@@ -757,7 +757,7 @@ function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.se
 function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
  requestAnimationFrame(()=>drawPlan($("sr-svg"),{tap:1,room:(r,lv)=>{const id=lv+"-"+GEO[lv].rooms.indexOf(r),me=PC.sel===id,w=!!PC.R[id];return{fill:me?"var(--laiton-soft)":w?"color-mix(in srgb,var(--laiton-soft) 45%,var(--wall))":"var(--wall)",ring:me,sub:w?"✓ Murs":""}}}));
  const q=ALLR().find(x=>x.id===PC.sel),W=q&&PC.R[q.id];
- const SO=q&&PC.SO[q.id]||{},tp=["sol","pf"].filter(x=>SO[x]&&SO[x]._done);
+ const SO=q&&PC.SO[q.id]||{},tp=["fai","sol","pf"].filter(x=>SO[x]&&SO[x]._done);
  $("sr-room").innerHTML=q?`<b>${q.r.nom}</b> <small>${W?"Touchez un mur"+(tp.length?", le sol ou le plafond":"")+" pour le corriger":"Pas de travaux dans cette pièce"}</small>`:"";
  $("sr-th").innerHTML=W?W.map((w,j)=>`<button class="th" data-w="${j}">${(w.snap||"<svg></svg>").replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>Mur ${j+1} · ${w.L} cm</span></button>`).join("")+tp.map(x=>`<button class="th" data-s="${x}">${topThumb(q,x).replace("<svg",'<svg preserveAspectRatio="xMidYMid meet"')}<span>${sumTxt(x,SO[x])}</span></button>`).join(""):"";
  $("sr-n").textContent=`${done.length} pièce${done.length>1?"s":""} · ${done.reduce((a,q)=>a+PC.R[q.id].reduce((b,w)=>b+w.items.filter(i=>i.st==="faire"||i.rep==="oui").length,0),0)} éléments à faire`}
@@ -790,12 +790,17 @@ const SQ={sol:[
  {k:"revet",q:"Quel sol voulez-vous ?",o:["Carrelage","Parquet","Sol souple (lino, vinyle)",DKs],if:a=>/change|pas encore/.test(a.etat||"")},
  {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"}],
  fin:[],
+ fai:[
+ {k:"fai",q:"De la faïence aux murs ?",s:"Les carreaux collés au mur : autour de la douche, derrière l'évier…",o:["Oui, à poser","Non, pas de faïence",DKs]},
+ {k:"faiM",q:"Sur quels murs ?",s:"Touchez un ou plusieurs murs : ils s'allument sur le dessin.",multi:1,if:a=>a.fai==="Oui, à poser"},
+ {k:"faiH",q:"Jusqu'à quelle hauteur ?",o:["Jusqu'au plafond","À mi-hauteur (1,20 m)","Une crédence (60 cm)",DKs],if:a=>a.fai==="Oui, à poser"},
+ {k:"faiF",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 90","30 × 60","25 × 40",DKs],if:a=>a.fai==="Oui, à poser"}],
  pf:[
  {k:"pf",q:"Le plafond de cette pièce…",o:["Rien à faire","À refaire",DKs]},
  {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfSup",q:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfIso",q:"Isolant au-dessus ?",o:["Oui","Non",DKs],if:a=>a.pf==="À refaire"}]};
-const SHORT={etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
+const SHORT={fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
 PC.SO={};
 const needPart=p=>(A.trav||[]).includes(p==="sol"?"sol":"plafond");
 const soA=(id,p)=>{const o=PC.SO[id]||(PC.SO[id]={});return o[p]||(o[p]={})};
@@ -806,9 +811,18 @@ function solConv(a){if(!a.etat)return null;const E={"On le garde":"Déjà en pla
  if(!E){o.dk=1;return o}if(E==="Déjà en place"){o.depose="Aucune";o.revet="Aucun";return o}
  o.depose=E==="À créer"?"Aucune":a.depose&&a.depose!==DKs?a.depose:"À préciser";
  o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";return o}
+// Faïence (Cyril 18/11) : murs choisis × hauteur, moins les portes ; renvoyée au plan (pc.faience) pour le calcul.
+const WET=["sdb","wc","cuisine","buanderie"];
+const faiWalls=q=>PC.R[q.id]||[];
+const faiLab=(a,q)=>{const W=faiWalls(q),m=a.faiM||[];return !m.length?"—":m.length===W.length?"Tous les murs":"Mur"+(m.length>1?"s ":" ")+m.map(j=>j+1).join(", ")};
+function faiConv(a,q){if(!a.fai)return null;if(a.fai===DKs)return{a_voir:true};if(!/^Oui/.test(a.fai))return{non:true};
+ const W=faiWalls(q),H=GEO[q.lv].H,h=a.faiH==="À mi-hauteur (1,20 m)"?120:a.faiH==="Une crédence (60 cm)"?60:H,m=(a.faiM||[]).filter(j=>W[j]);
+ let S=0;m.forEach(j=>{const w=W[j];S+=w.L*Math.min(h,H);w.items.filter(i=>i.k==="porte").forEach(d=>{S-=d.w*Math.min(h,204)})});
+ return{surface_m2:Math.max(0,Math.round(S/100)/100),format:a.faiF&&a.faiF!==DKs?a.faiF:null,murs:m.map(j=>j+1),hauteur_cm:Math.min(h,H),...(a.faiH===DKs||!a.faiH?{hauteur_a_verifier:true}:{}),fenetres_non_deduites:true}}
 function pfConv(a){if(!a.pf)return null;const o={pf:a.pf};if(a.pf==="À refaire"){o.pfBas=a.pfBas||DKs;o.pfSup=a.pfSup||DKs;o.pfIso=a.pfIso||DKs}return o}
-function exportSols(){return ALLR().filter(q=>PC.SO[q.id]).map(q=>{const o=PC.SO[q.id];return{fi:q.r.fi,ri:q.r.ri,zi:q.r.zi,piece:q.r.nom,sol:o.sol&&o.sol._done?solConv(o.sol):undefined,pf:o.pf&&o.pf._done?pfConv(o.pf):undefined}}).filter(x=>x.sol||x.pf)}
-function sumTxt(p,a){if(p==="sol"){if(!a.etat)return"";if(a.etat===DKs)return"Sol : à voir avec l'artisan";if(a.etat==="On le garde")return"Sol gardé";return(a.revet&&a.revet!==DKs?a.revet.replace(/ \(.*/,""):"Nouveau sol")+(a.revet==="Carrelage"&&a.carFmt&&a.carFmt!==DKs?" "+a.carFmt:"")}
+function exportSols(){return ALLR().filter(q=>PC.SO[q.id]).map(q=>{const o=PC.SO[q.id];return{fi:q.r.fi,ri:q.r.ri,zi:q.r.zi,piece:q.r.nom,sol:o.sol&&o.sol._done?solConv(o.sol):undefined,pf:o.pf&&o.pf._done?pfConv(o.pf):undefined,fai:o.fai&&o.fai._done?faiConv(o.fai,q):undefined}}).filter(x=>x.sol||x.pf||x.fai)}
+function sumTxt(p,a){if(p==="fai"){if(!a.fai)return"";if(a.fai===DKs)return"Faïence : à voir";if(!/^Oui/.test(a.fai))return"Pas de faïence";return"Faïence"+(a.faiF&&a.faiF!==DKs?" "+a.faiF:"")}
+ if(p==="sol"){if(!a.etat)return"";if(a.etat===DKs)return"Sol : à voir avec l'artisan";if(a.etat==="On le garde")return"Sol gardé";return(a.revet&&a.revet!==DKs?a.revet.replace(/ \(.*/,""):"Nouveau sol")+(a.revet==="Carrelage"&&a.carFmt&&a.carFmt!==DKs?" "+a.carFmt:"")}
  if(!a.pf)return"";return a.pf==="À refaire"?"Plafond à refaire":a.pf===DKs?"Plafond : à voir":"Plafond : rien à faire"}
 // ---------- Dessin : la pièce vue du dessus ----------
 function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=P.map(v=>v[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0,h=Math.max(...ys)-y0,pad=Math.max(w,h)*.1+30,k=Math.max(w,h)/320;
@@ -822,6 +836,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
   else if(ch&&/souple/.test(a.revet||""))fill="var(--soft-floor,#CFD8E6)";
   else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
   lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
+ else if(p==="fai"){if(/^Oui/.test(a.fai||""))fill="color-mix(in srgb,var(--laiton-soft) 35%,var(--wall))";lab=r.nom;sub=sumTxt("fai",a)||"La faïence"}
  else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
   lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
  h2+=`</defs>`;
@@ -832,38 +847,46 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  GEO[lv].segs.forEach(g=>{h2+=`<path d="M${g.a[0]} ${g.a[1]}L${g.b[0]} ${g.b[1]}" stroke="var(--fg)" stroke-width="${g.k==="clo"?Math.max(6,7*k):Math.max(10,12*k)}" stroke-linecap="square"/>`;
   const dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
    h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="${op.k==="fenetre"?"var(--glass)":"var(--surface)"}" stroke-width="${Math.max(10,12*k)+1}"/>`;if(op.k==="fenetre")h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="var(--fg)" stroke-width="${Math.max(2,2*k)}"/>`})});
+ if(p==="fai"&&PC.R[q.id]){const W=PC.R[q.id],E=edges(r),on=/^Oui/.test(a.fai||"")?a.faiM||[]:[],[cx0,cy0]=cen(r);
+  W.forEach((w,j)=>{const e=E[w.side];if(!e)return;const sel=on.includes(j),mx=(e[0]+e[2])/2,my=(e[1]+e[3])/2,dx=cx0-mx,dy=cy0-my,dl=Math.hypot(dx,dy)||1,ox=mx+dx/dl*26*k,oy=my+dy/dl*26*k;
+   if(sel)h2+=`<line x1="${e[0]}" y1="${e[1]}" x2="${e[2]}" y2="${e[3]}" stroke="var(--laiton)" stroke-width="${Math.max(8,10*k)}" stroke-linecap="round" opacity=".9"/>`;
+   if(!o.nolab)h2+=`<circle cx="${ox}" cy="${oy}" r="${12*k}" fill="${sel?"var(--laiton)":"var(--surface)"}" stroke="var(--fg)" stroke-width="${1.2*k}"/><text x="${ox}" y="${oy+4.5*k}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="800" font-size="${13*k}" fill="var(--fg)">${j+1}</text>`})}
  if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(30*k+8,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
   h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
 // ---------- Parcours ----------
-function roomEnd(){const q=PC.queue[PC.qn],parts=["sol","pf"].filter(needPart).concat(["fin"]);
- PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
+function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(needPart)).concat(["fin"]);
+ PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="fai"?"Maintenant, la faïence":parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
 function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
  if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
 function startSS(pi,o={}){const q=o.q||PC.queue[PC.qn],p=o.part||PC.parts[pi],a=soA(q.id,p);
  if(!a.etat&&p==="sol"&&/^Partout/.test(A.sols||"")){a.etat="On le change";a._pre=1}
  if(!a.pf&&p==="pf"&&/^Partout/.test(A.plafs||"")){a.pf="À refaire";a._pre=1}
  PC.step="s";PC.ss={pi,p,q,i:o.sum?99:0,edit:!!o.edit};showScr("ss");ssUI(true)}
-function sameList(){const {p,q}=PC.ss;return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
+function sameList(){const {p,q}=PC.ss;if(p==="fai")return[];return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
 function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(p==="fin")return finUI(anim);if(PC.ss.i>V.length)PC.ss.i=V.length;const i=PC.ss.i,sum=i>=V.length;
- $("ss-t").textContent=`${q.r.nom} · ${p==="sol"?"le sol":"le plafond"}`;$("ss-s").innerHTML=`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`;
+ const PN={sol:"le sol",pf:"le plafond",fai:"la faïence"};$("ss-t").textContent=`${q.r.nom} · ${PN[p]}`;{const fc=p==="fai"&&faiConv(a,q);$("ss-s").innerHTML=p!=="fai"?`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`:fc&&fc.surface_m2>0?`<i>${fr1(fc.surface_m2)} m²</i> de faïence, d'après votre plan`:"Les murs carrelés de cette pièce"}
  drawTop($("ss-svg"),q,p,a);
  const card=$("ss-card");let h="";
- if(!sum){const Q=V[i],sl=i===0?sameList():[];
+ if(!sum&&V[i].multi){const Q=V[i],W=faiWalls(q),m=a[Q.k]||[],all=m.length===W.length&&W.length>0;
+  h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid"><button type="button" class="qo" data-m="all" aria-pressed="${all}"><span>Tous les murs</span><em>${all?"✓":""}</em></button>${W.map((w,j)=>`<button type="button" class="qo" data-m="${j}" aria-pressed="${m.includes(j)}"><span>Mur ${j+1} · ${fr1(w.L/100)} m</span><em>${m.includes(j)?"✓":""}</em></button>`).join("")}</div>`;
+  $("ss-go").textContent="Continuer ›";$("ss-go").disabled=!m.length}
+ else if(!sum){const Q=V[i],sl=i===0?sameList():[];
   h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid">${Q.o.map(v=>`<button type="button" class="qo${v===DKs?" dk":""}" data-v="${v}" aria-pressed="${a[Q.k]===v}"><span>${v}</span><em>${a[Q.k]===v?"✓":""}</em></button>`).join("")}</div>`+
    (sl.length?`<div class="same"><span>${p==="sol"?"Même sol que…":"Même plafond que…"}</span><div>${sl.map(x=>`<button type="button" class="chip" data-same="${x.id}">${x.r.nom}</button>`).join("")}</div></div>`:"");
   $("ss-go").textContent=a._pre&&i===0?"Oui, c'est ça ›":"Continuer ›";$("ss-go").disabled=a[Q.k]==null}
- else{h=`<small>C'est noté</small><h2>${p==="sol"?"Le sol":"Le plafond"} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${a[Q.k]||"—"}</b></button>`).join("")}</div>`;
-  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):PC.parts[PC.ss.pi+1]==="pf"?"C'est bon, le plafond ›":"C'est bon ›"}
+ else{h=`<small>C'est noté</small><h2>${{sol:"Le sol",pf:"Le plafond",fai:"La faïence"}[p]} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${Q.multi?faiLab(a,q):a[Q.k]||"—"}</b></button>`).join("")}</div>`;
+  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):PC.parts[PC.ss.pi+1]==="pf"?"C'est bon, le plafond ›":PC.parts[PC.ss.pi+1]==="sol"?"C'est bon, le sol ›":"C'est bon ›"}
  card.innerHTML=h;if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
-$("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
+$("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i],[data-m]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
+ if(b.dataset.m!=null){const Q=ssVis(p,a)[PC.ss.i],W=faiWalls(q);let m=(a[Q.k]||[]).slice();if(b.dataset.m==="all")m=m.length===W.length?[]:W.map((w,j)=>j);else{const j=+b.dataset.m;m=m.includes(j)?m.filter(x=>x!==j):m.concat(j).sort((x,y)=>x-y)}a[Q.k]=m;ssUI(false);return}
  if(b.dataset.same){const src=PC.SO[b.dataset.same][p];Object.keys(a).forEach(k=>delete a[k]);Object.assign(a,JSON.parse(JSON.stringify(src)));a._done=0;PC.ss.i=99;toast(`<b>Recopié</b> depuis ${b.textContent}`,2000);ssUI(true);return}
  if(b.dataset.i!=null){PC.ss.i=+b.dataset.i;ssUI(true);return}
  const V=ssVis(p,a),Q=V[PC.ss.i];a[Q.k]=b.dataset.v;delete a._pre;Object.keys(a).forEach(k=>{if(SQ[p].some(x=>x.k===k)&&!ssVis(p,a).some(x=>x.k===k))delete a[k]});
  ssUI(false);clearTimeout(PC.ssT);PC.ssT=setTimeout(()=>{PC.ss.i++;ssUI(true)},320)});
 $("ss-go").onclick=()=>{const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);vib(8);clearTimeout(PC.ssT);
- if(PC.ss.i<V.length){if(a[V[PC.ss.i].k]==null)return;delete a._pre;PC.ss.i++;ssUI(true);return}
+ if(PC.ss.i<V.length){const v0=a[V[PC.ss.i].k];if(v0==null||(V[PC.ss.i].multi&&!v0.length))return;delete a._pre;PC.ss.i++;ssUI(true);return}
  a._done=1;post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});
  if(PC.ss.edit){showRecap("<b>C'est corrigé !</b>");return}
  if(PC.ss.pi<PC.parts.length-1){startSS(PC.ss.pi+1);return}
@@ -872,7 +895,7 @@ $("ss-back").onclick=()=>{clearTimeout(PC.ssT);vib(6);if(PC.ss.i>0){PC.ss.i=Math
  if(PC.ss.edit){showRecap();return}if(PC.ss.pi>0){startSS(PC.ss.pi-1,{sum:1});return}PC.step="f";showScr(null);goWall(WALLS.length-1)};
 function ssParty(t,sub,cb){const c=$("ss-card");c.innerHTML=`<div class="ssdone">${'<svg viewBox="0 0 60 60" width="74" height="74" fill="none"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ck"/></svg>'}<b>${t}</b><span>${sub}</span></div>`;$("ss-go").disabled=true;vib([10,40,14]);setTimeout(cb,1700)}
 function topThumb(q,p){const s=document.createElementNS("http://www.w3.org/2000/svg","svg");drawTop(s,q,p,soA(q.id,p),{uid:q.id.replace("-","_")+p,still:1,nolab:1});return s.outerHTML}
-if(!EMB)window.__pc={roomEnd,PC,exportSols};
+if(!EMB)window.__pc={roomEnd,PC,exportSols,startSS};
 
 // ---------- Pour finir : une photo et un mot (facultatifs) ----------
 function finUI(anim){const {q}=PC.ss,a=soA(q.id,"fin"),nx=PC.queue[PC.qn+1];a.ph=a.ph||[];
