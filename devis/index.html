@@ -538,7 +538,7 @@ const D={
   {k:"commune",t:"text",cap:1,l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
   {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel",DK]},
   {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK]},
-  {k:"iso",t:"chips",l:"Ces murs sont isolés aujourd'hui avec…",h:"Ce que vous voyez côté intérieur. Dans le doute, « Je ne sais pas ».",o:["Laine + BA13","Doublage polystyrène collé","Brique + plâtre","Pas d'isolation",DK],sh:()=>S.travaux.includes("doublage")},
+  {k:"isocote",t:"chips",l:"Vous voulez isoler vos murs…",h:"Par l'intérieur : doublage dans les pièces. Par l'extérieur : sur les façades.",o:["Par l'intérieur","Par l'extérieur","Je ne sais pas encore"],sh:()=>S.travaux.includes("doublage")},
   {k:"age",t:"chips",l:"Le logement a-t-il plus de 2 ans ?",o:["Oui","Non",DK],h:"Pour vous appliquer la TVA à 10 % au lieu de 20 %."},
   {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non",DK]},
   {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles",DK],sh:i=>i.type==="Maison"||!i.type||i.type===DK},
@@ -779,7 +779,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
-const LQ=[["cp","commune"],["type"],["mur"],["iso"],["age"],["occupe"],["ou","niveau","ascenseur"],["parking"],["acces"]];
+const LQ=[["cp","commune"],["type"],["mur"],["isocote"],["age"],["occupe"],["ou","niveau","ascenseur"],["parking"],["acces"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
