@@ -211,7 +211,7 @@
     var jr=soir?prochain():AUJ(),L=jr?evs(iso(jr)):[],cur=-1,k;
     if(!soir){for(k=0;k<L.length;k++){if(hm(L[k].e||L[k].s)>n&&!(midi&&hm(L[k].s)<=n&&k<L.length-1&&hm(L[k+1].s)-n<180)){cur=k;break}}if(cur<0)cur=L.length}
     var KT={run:"Chantier",plan:"Chantier",done:"Chantier",visit:"Visite",pc:"Point ProClik",liv:"Livraison",devis:"Devis",ent:"Entretien",st:"Sous-traitant",autre:"Rendez-vous"};
-    var F=[{ic:JI.cafe,h:"Café",t:"Départ",cl:"fr-cafe"}].concat(L.slice(0,4).map(function(e){var w=e.k==="pc"?"20 min":e.k==="visit"?e.t.replace(/^Visite\s*/,""):lieu(e);return {ic:JI[e.k]||IC.agenda,h:hTxt(e.s),t:KT[e.k]||"Rendez-vous",w:w,cl:"k-"+e.k}})).concat([{ic:FLAG,h:"Fin",t:"de journée",cl:"fr-fin"}]);
+    var F=[{ic:JI.cafe,h:"Café",t:"Départ",cl:"fr-cafe"}].concat(L.slice(0,4).map(function(e){var w=e.k==="pc"?"20 min":e.k==="visit"?e.t.replace(/^Visite\s*/,""):lieu(e);return {ic:JI[e.k]||IC.agenda,h:hTxt(e.s),t:KT[e.k]||"Rendez-vous",w:w,cl:"k-"+e.k,e:e}})).concat([{ic:FLAG,h:"Fin",t:"de journée",cl:"fr-fin"}]);
     var ici=soir?0:cur+1;if(!soir&&cur>=L.length)ici=F.length-1;
     var frise='<ol class="fr" aria-label="Votre journée">'+F.map(function(x,q){return '<li class="fr-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><span class="fr-i">'+x.ic+"</span><small>"+x.h+"</small><span class=\"fr-t\"><b>"+esc(x.t)+"</b>"+(x.w?"<em>"+esc(x.w)+"</em>":"")+"</span></li>"}).join("")+"</ol>";
     var e=soir?L[0]:L[cur],foc="";
@@ -220,9 +220,21 @@
         (!soir&&lieu(e)&&e.k!=="pc"?'<button type="button" class="fo-go" data-gps="'+esc(lieu(e))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</div></div>"}
     else foc='<div class="fo"><small>'+(soir?"Demain":"Plus rien au planning")+"</small><div><span><b>"+(soir?"Rien de prévu pour l'instant":"La journée est bouclée")+"</b></span></div></div>";
     var nv=0;(D.afaire||[]).forEach(function(x){if(x[4]!=="suivre")nv+=x[0]});
-    return '<div class="pt"><div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir · demain":midi?"Le point de midi":"Le point du matin")+"</small>"+(nv?'<span class="pt-nv">'+IC.predevis+nv+" à valider</span>":"")+"</div>"+
-      frise+foc+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
-      (u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":midi?"Pendant la pause":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"")+"</div>"};
+    var mot=P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"";
+    var btn=u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":midi?"Pendant la pause":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"";
+    var rec=(D.afaire||[]).filter(function(x){return x[0]>0&&x[4]!=="suivre"}).slice(0,3);
+    rec=rec.length?'<div class="pr"><small>'+(soir?"Ce soir":"Aujourd'hui")+' à valider</small>'+rec.map(function(x){return '<button type="button" class="pr-l" data-accv="'+x[5]+'"><span class="pr-i">'+IC[x[1]]+"</span><b>"+x[0]+"</b><span>"+esc(x[2])+" <em>"+esc(x[3])+"</em></span></button>"}).join("")+"</div>":"";
+    var tete2='<div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir · demain":midi?"Le point de midi":"Le point du matin")+"</small>"+(nv?'<span class="pt-nv">'+IC.predevis+nv+" à valider</span>":"")+"</div>";
+    /* variantes à essayer (Cyril, 19/11) : ?point=a frise + carte côte à côte, b journée verticale, c étapes en tuiles */
+    var VV=(location.search.match(/[?&]point=([abc])/)||[])[1]||"";
+    if(VV==="b"){var vl='<ol class="vj">'+F.map(function(x,q){var ev=x.e,go=ev&&!soir&&q===ici&&lieu(ev)&&ev.k!=="pc";
+        return '<li class="vj-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><b class="vj-h">'+(x.e?x.h:"")+'</b><span class="fr-i">'+x.ic+'</span><span class="vj-t"><b>'+(x.e?esc(x.e.t):x.h+" "+esc(x.t))+"</b>"+(x.e?"<em>"+esc(x.t+(x.w?" · "+x.w:""))+"</em>":"")+"</span>"+
+          (go?'<button type="button" class="fo-go" data-gps="'+esc(lieu(ev))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</li>"}).join("")+"</ol>";
+      return '<div class="pt pv-b">'+tete2+'<div class="pt-g"><div class="pt-a">'+vl+'</div><div class="pt-b">'+rec+mot+btn+"</div></div></div>"}
+    if(VV==="c"){var tl='<ol class="tz">'+F.map(function(x,q){return '<li class="tz-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><span class="fr-i">'+x.ic+'</span><b>'+x.h+"</b><span>"+esc(x.t)+"</span>"+(x.w?"<em>"+esc(x.w)+"</em>":"")+"</li>"}).join("")+"</ol>";
+      return '<div class="pt pv-c">'+tete2+tl+'<div class="pt-g"><div class="pt-a">'+foc+'</div><div class="pt-b">'+rec+mot+btn+"</div></div></div>"}
+    if(VV==="a")return '<div class="pt pv-a">'+tete2+'<div class="pt-g"><div class="pt-a">'+frise+foc+'</div><div class="pt-b">'+rec+mot+btn+"</div></div></div>";
+    return '<div class="pt">'+tete2+frise+foc+mot+btn+"</div>"};
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   /* Devis signés et taux de réussite en tête (Cyril, 19/11 : « pour motiver »), puis trois montants avec leur icône */
   R.chiffres=function(){var ns=3,ne=5,pc=Math.round(ns/ne*100),C=[["argent","Encaissé","8 640 €","factures",0],["signe","Signé","14 210 €","devis",0],["facture","À encaisser","2 760 €","factures",1]];

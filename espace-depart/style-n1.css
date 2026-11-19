@@ -423,3 +423,56 @@ html body .tdb .fr-e.fait .fr-t{opacity:.45}
 html body .tdb .fr-e.ici .fr-t b{opacity:1}
 @media (min-width:700px){html body .tdb .fr-i{width:46px;height:46px}html body .tdb .fr-i svg{width:21px;height:21px}html body .tdb .fr::before{top:22px}
   html body .tdb .fr-e small{font-size:14px}html body .tdb .fr-t b{font-size:13.5px}html body .tdb .fr-t em{font-size:12.5px}}
+
+/* §23 Variantes du point du jour (Cyril, 19/11 : « plusieurs variantes, façon ProClik, sur iPad il manque quelque chose ») — ?point=a|b|c, mêmes couleurs */
+html body .tdb .pt-g{display:grid;gap:12px}
+html body .tdb .pt-a,html body .tdb .pt-b{display:grid;gap:12px;align-content:start;min-width:0}
+@media (min-width:700px){
+  html body .tdb .pv-a .pt-g,html body .tdb .pv-b .pt-g,html body .tdb .pv-c .pt-g{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:stretch}
+  html body .tdb .pv-a .pt-b,html body .tdb .pv-b .pt-b,html body .tdb .pv-c .pt-b{align-content:end;padding-left:20px;border-left:1px solid color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent)}
+  html body .tdb .pv-c .pt-b{border-left:0;padding-left:0}
+  html body .tdb .pv-a .pt-mot,html body .tdb .pv-b .pt-mot{font-size:15px}
+}
+/* B : la journée à la verticale */
+html body .tdb .vj{position:relative;list-style:none;margin:0;padding:0;display:grid;gap:6px}
+html body .tdb .vj::before{content:"";position:absolute;left:76px;top:20px;bottom:20px;width:2px;border-radius:2px;background:color-mix(in srgb,var(--n1-nuit-fg) 20%,transparent)}
+html body .tdb .vj-e{position:relative;display:grid;grid-template-columns:52px 40px minmax(0,1fr) auto;align-items:center;gap:0 12px;padding:6px 8px 6px 0;border-radius:16px}
+html body .tdb .vj-e .fr-i{position:relative;z-index:1}
+html body .tdb .vj-h{text-align:right;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+html body .tdb .vj-t{display:grid;gap:1px;min-width:0}
+html body .tdb .vj-t b{font-size:15.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .vj-t em{font-style:normal;font-size:12.5px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .vj-e.fait{opacity:.45}
+html body .tdb .vj-e.ici{background:color-mix(in srgb,var(--n1-nuit-fg) 9%,transparent)}
+html body .tdb .vj-e.ici .vj-h{color:var(--n1-laiton)}
+html body .tdb .vj-e.ici .fr-i{background:var(--n1-nuit-fg);color:var(--n1-nuit);box-shadow:0 0 0 2.5px var(--n1-nuit),0 0 0 4.5px var(--n1-laiton)}
+html body .tdb .vj-e.fr-cafe .vj-t b,html body .tdb .vj-e.fr-fin .vj-t b{font-size:14px;font-weight:700;opacity:.85}
+/* C : les étapes en tuiles */
+html body .tdb .tz{list-style:none;margin:2px 0 0;padding:0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+html body .tdb .tz::-webkit-scrollbar{display:none}
+html body .tdb .tz-e{position:relative;flex:1 0 96px;display:grid;justify-items:start;gap:2px;padding:12px;border-radius:16px;background:color-mix(in srgb,var(--n1-nuit-fg) 8%,transparent);min-width:0}
+html body .tdb .tz-e .fr-i{width:34px;height:34px;margin-bottom:6px}
+html body .tdb .tz-e .fr-i svg{width:17px;height:17px}
+html body .tdb .tz-e b{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+html body .tdb .tz-e span:not(.fr-i){font-size:12.5px;font-weight:700;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+html body .tdb .tz-e em{font-style:normal;font-size:12px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+html body .tdb .tz-e.fait{opacity:.45}
+html body .tdb .tz-e.ici{background:var(--n1-nuit-fg);color:var(--n1-nuit);box-shadow:inset 0 3px 0 var(--n1-laiton)}
+html body .tdb .tz-e.ici .fr-i{background:color-mix(in srgb,var(--n1-nuit) 10%,transparent);color:var(--n1-nuit)}
+html body .tdb .tz-e.ici b{color:var(--n1-laiton)}
+html body .tdb .tz-e:not(:last-child)::after{content:"";position:absolute;right:-7px;top:28px;width:6px;height:2px;background:color-mix(in srgb,var(--n1-nuit-fg) 25%,transparent)}
+
+/* sur iPad, la colonne de droite : ce qui attend votre validation (une ligne par type) */
+html body .tdb .pr{display:none}
+@media (min-width:700px){
+  html body .tdb .pr{display:grid;gap:6px;margin-bottom:auto}
+  html body .tdb .pr>small{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+  html body .tdb .pr-l{display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;border-radius:14px;background:color-mix(in srgb,var(--n1-nuit-fg) 8%,transparent);color:var(--n1-nuit-fg);font:inherit;text-align:left;cursor:pointer}
+  html body .tdb .pr-i{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,transparent)}
+  html body .tdb .pr-i svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  html body .tdb .pr-l>b{font-size:17px;font-weight:800;min-width:16px}
+  html body .tdb .pr-l>span:last-child{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html body .tdb .pr-l em{font-style:normal;font-weight:500;opacity:.7}
+  html body .tdb .pv-a .pt-b,html body .tdb .pv-b .pt-b,html body .tdb .pv-c .pt-b{align-content:stretch;grid-template-rows:1fr auto auto}
+  html body .tdb .pv-a .pt-nv,html body .tdb .pv-b .pt-nv,html body .tdb .pv-c .pt-nv{display:none}
+}
