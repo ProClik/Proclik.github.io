@@ -476,3 +476,6 @@ html body .tdb .pr{display:none}
   html body .tdb .pv-a .pt-b,html body .tdb .pv-b .pt-b,html body .tdb .pv-c .pt-b{align-content:stretch;grid-template-rows:1fr auto auto}
   html body .tdb .pv-a .pt-nv,html body .tdb .pv-b .pt-nv,html body .tdb .pv-c .pt-nv{display:none}
 }
+/* §24 Le point du jour reste BLEU NUIT la nuit aussi (Cyril, 19/11 : « sur iPad tu as changé la couleur ») : mêmes valeurs qu'en jour, dans le bloc seulement */
+:root[data-theme="dark"] body .tdb .w[data-w=point]{--n1-nuit:#1B2440;--n1-nuit-fg:#fff;--n1-go-sh:0 8px 18px -6px rgba(0,0,0,.6)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .tdb .w[data-w=point]{--n1-nuit:#1B2440;--n1-nuit-fg:#fff}}
