@@ -276,7 +276,7 @@ body[data-v="pc"] .cl, body[data-v="cl"] .pc{display:none!important}
 .esp3 li{position:relative;padding-left:22px;font-size:14.5px;color:var(--muted);line-height:1.4}
 .esp3 li::before{content:"";position:absolute;left:2px;top:.42em;width:10px;height:5px;border-left:2px solid var(--laiton);border-bottom:2px solid var(--laiton);transform:rotate(-45deg)}
 .esp3 li b{color:var(--fg);font-weight:700}
-.esp3 .px{margin-top:auto;padding-top:8px;font-size:14px;color:var(--muted)}.esp3 .px b{color:var(--fg);font-size:15px;font-weight:800}
+.esp3 .px{margin-top:auto;padding-top:8px;font-size:14px;color:var(--muted)}.esp3 .px b{color:var(--fg);font-size:15px;font-weight:800}.esp3 .px small{display:block;font-size:12.5px;line-height:1.4;margin-top:3px}
 @media (max-width:760px){.esp3 .g{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:12px -16px 0;padding:4px 16px 14px;scroll-padding:0 16px;scrollbar-width:none}.esp3 .g::-webkit-scrollbar{display:none}.esp3 .c{flex:0 0 84%;scroll-snap-align:center}}
 .prix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:32px}
 .prix>div{padding:22px;border-radius:20px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -802,7 +802,7 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
           <div class="px">À partir de <b>149 €</b> HT par mois</div></div>
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 20V10l6-5 6 5v10"/><path d="M10 20v-5h4v5"/></svg></span><div><span class="nom">ARCHI</span><span class="qui">Vous menez le chantier des autres</span></div></div>
           <ul><li><b>Chantier partagé dans le forfait</b>, SMS compris : invitez les entreprises par un lien, rien à installer</li><li>Entreprises et client, s'il le souhaite : <b>accès gratuit à leur espace privé le temps du chantier</b></li><li>Chacune <b>ne voit que ce qui la concerne</b></li><li><b>Réserves sur le plan, réception signée</b> et son PV</li></ul>
-          <div class="px">À partir de <b>99 €</b> HT par mois</div></div>
+          <div class="px">À partir de <b>99 €</b> HT par mois<small>Jusqu'à 3 chantiers en cours (10 entreprises chacun). De 4 à 8 : 149 €, de 9 à 15 : 199 €, au-delà : sur devis.</small></div></div>
       </div>
     </div>
     <div class="prix">
@@ -954,7 +954,7 @@ document.querySelectorAll('.onglets button').forEach(b=>b.addEventListener('clic
    b3:['Compris','Carte des chantiers','Tous vos chantiers sur une carte, avec l’itinéraire en un geste.',['Chantiers en cours et à venir','GPS de votre choix','Pratique pour organiser la tournée'],['v-chantiers']],
    o1:['En option','Cliky, l’IA ProClik','Votre assistant de bureau. Il prépare le travail avec vos habitudes de chantier, vous vérifiez et vous validez.',['Pré-devis prêt dès que la demande arrive','Vos habitudes par métier : isolation, cloisons, sols, carrelage, équipements…','Liste du matériel du chantier, prête pour le fournisseur','Factures fournisseur lues, prix et marge réelle à jour','Journée de chantier, trajets et votre vrai rythme'],['v-cliky-devis', 'v-devis']],
    b4:['Compris','Contrats d’entretien','Clim, pompe à chaleur : vos contrats d’entretien notés dans la fiche du client, et plus rien d’oublié.',['Rappel au client un mois avant','Relance s’il ne répond pas, puis « à appeler »','Rendez-vous d’entretien dans votre planning']],
-   o6:['En option','Chantier partagé','Invitez vos entreprises, vos salariés et votre client sur le chantier. Pour eux, rien à installer : un lien suffit. Option pour PRO : 39 € HT par mois, SMS compris. Déjà dans le forfait TEAM et ARCHI.',['Conversation de chantier, ce qui est décidé reste épinglé','Réserves posées sur le plan, corrigées puis validées','Réception pièce par pièce, signée à l’écran, avec son PV','Architectes : chaque entreprise ne voit que ce qui la concerne'],['v-reserves', 'v-conv']],
+   o6:['En option','Chantier partagé','Invitez vos entreprises, vos salariés et votre client sur le chantier. Pour eux, rien à installer : un lien suffit. Option pour PRO : 39 € HT par mois, SMS compris, 2 chantiers partagés en cours avec 5 invités chacun. Déjà dans le forfait TEAM et ARCHI.',['Conversation de chantier, ce qui est décidé reste épinglé','Réserves posées sur le plan, corrigées puis validées','Réception pièce par pièce, signée à l’écran, avec son PV','Architectes : chaque entreprise ne voit que ce qui la concerne'],['v-reserves', 'v-conv']],
    o2:['En option','Réservation','Vos clients choisissent un créneau libre, même quand vous êtes sur un chantier.',['Créneaux pris dans votre agenda','Acompte en ligne contre les rendez-vous oubliés','Rappel envoyé la veille'],['v-reservation']],
    o3:['En option','Avis Google','Après le chantier, votre client reçoit une demande d’avis au bon moment.',['Envoi automatique, le lendemain par défaut','Plus d’avis, plus de confiance','Vous gardez la main sur le moment']],
    o4:['En option','Réseaux sociaux','Publiez vos chantiers sans quitter votre Espace.',['Facebook, Instagram et LinkedIn','Messages reçus au même endroit','Une photo, deux mots, c’est publié'],['v-reseaux']],
