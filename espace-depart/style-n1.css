@@ -127,9 +127,9 @@ html:root body .pill.ok{background:color-mix(in srgb,var(--n1-ok) 14%,transparen
 html:root body .pill.warn{background:color-mix(in srgb,var(--n1-warn) 15%,transparent);color:color-mix(in srgb,var(--n1-warn) 80%,var(--fg))}
 html:root body .pill.todo{background:color-mix(in srgb,var(--n1-nuit) 10%,transparent);color:var(--n1-nuit)}
 html:root body .pill.grey{background:var(--teinte);color:var(--muted)}
-/* pastilles rouges : la même rose douce que les autres alertes */
-html body .rouge,html body .cf .rouge{background:var(--n1-alert)}
-:root[data-theme="dark"] body :is(.rouge,.cf .rouge){color:#141927}
+/* pastilles rouges : restent rouges, en plus doux (rouge pastel, Cyril 19/11) */
+html body .rouge,html body .cf .rouge{background:#E26D6D;color:#fff}
+:root[data-theme="dark"] body :is(.rouge,.cf .rouge){background:#F09A9A;color:#141927}
 /* anneau d'avancement : piste visible, même à 0 % */
 html body .ring{background:conic-gradient(var(--n1-nuit) calc(var(--p)*1%),color-mix(in srgb,var(--n1-nuit) 12%,transparent) 0)}
 html body .ring::before{background:var(--n1-calme)}
