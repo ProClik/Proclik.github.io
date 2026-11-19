@@ -49,8 +49,9 @@
         ["signe","Facturé",eur0(tout),"HT, toutes les factures",1],["ok","Acomptes",ac,"à envoyer"]]},
     clients:function(){var v=$("#v-clients"),t=segN(v,"Tous"),s=segN(v,"À suivre"),p=segN(v,"Pros");if(t==null)return null;
       return [["gens","Clients",t,"en tout"],["horloge","À suivre",s||0,"devis ou chantier en cours"],["pro","Pros",p||0,"entreprises"],["maison","Particuliers",Math.max(0,t-(p||0)),"maisons et appartements"]]},
-    depenses:function(){var m=txt($("#v-depenses .dp-mt")),r=badge("#badge-d"),mt=m.match(/[\d\s  ]+,\d\d\s*€/);
-      return [["porte","Ce mois-ci",mt?mt[0].trim():(/aucune/i.test(m)?"0 €":"—"),"HT"],["pile","À ranger",r,r?"il manque le chantier":"tout est rangé"]]},
+    /* Lire seulement le petit texte du montant : avant, le nom du mois (« Octobre 2026 ») se collait au montant → « 2026172,18 € » (bug 19/11). */
+    depenses:function(){var mt0=$("#v-depenses .dp-mt"),m=txt(mt0&&mt0.querySelector("small")),mo=txt(mt0&&mt0.querySelector("b")),r=badge("#badge-d"),mt=m.match(/\d[\d\s  ]*,\d\d\s*€/),cur=!mo||/mois en cours/.test(m);
+      return [["porte",cur?"Ce mois-ci":(mo.split(" ")[0]||"Ce mois-là"),mt?mt[0].trim():(/aucune/i.test(m)?"0 €":"—"),"HT"],["pile","À ranger",r,r?"il manque le chantier":"tout est rangé"]]},
     /* Achats : compté sur les vraies listes (demandes de prix et commandes), plus sur le texte affiché */
     prix:function(){var D=P.DP||[],C=P.CMD?P.CMD():[],k=function(s){return D.filter(function(x){return x.st===s}).length},
       r=C.filter(function(c){return c.st==="envoyee"||c.st==="conf"}).length;
@@ -136,7 +137,7 @@
     produits:function(v){var c=$(".cf.pr",v),bs=c?$$(":scope>.dv-seg button",c):[];if(bs.length<3)return null;
       var N=bs.map(function(b){var i=b.querySelector("i");return i?(parseInt(txt(i),10)||0):""});return {b:bs,N:N,S:["fournitures","main-d'œuvre","référence"],T:["","",""]}},
     clients:function(v){var c=$(".cl",v),bs=c?$$(":scope>.cl-seg button",c):[];if(bs.length<3)return null;
-      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises"],T:["",N[1]?"chaud":"",""]}}
+      var N=bs.map(function(b){return parseInt(txt(b.querySelector("i")),10)||0});return {b:bs,N:N,S:["en tout","en cours","entreprises","à prévoir"],T:["",N[1]?"chaud":"","",N[3]?"chaud":""]}}
   };
   function menuTuiles(v){var id=v.id.replace(/^v-/,""),f=TM[id];if(!essai||!f)return false;var r=null;try{r=f(v)}catch(e){}if(!r)return false;
     r.b[0].parentNode.classList.add("tm");r.b[0].parentNode.style.setProperty("--n",r.b.length);
