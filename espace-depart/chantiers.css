@@ -165,3 +165,89 @@ html body .btn.go.ch-arm{box-shadow:0 0 0 2px var(--acc),-6px -6px 14px var(--hi
 #chx .ch-ag .tx{flex:1;min-width:0;display:grid;gap:2px}
 #chx .ch-ag .tx b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #chx .ch-ag .tx small{color:var(--muted);font-size:12.5px}
+/* Entreprises du chantier (18/11) : la 10e tuile prend toute la ligne sur téléphone, 2 rangées de 5 sur iPad, une rangée sur PC */
+html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-direction:row;justify-content:center;gap:8px}
+@media (min-width:600px){html body #chx .ch-menu button[data-ong="equipe"]{grid-column:auto;flex-direction:column;gap:4px}}
+@media (min-width:900px){html body #chx .ch-menu{grid-template-columns:repeat(10,1fr)}}
+#chx .ch-menu button[data-ong="equipe"] i{position:static;margin-left:2px}
+@media (min-width:600px){#chx .ch-menu button[data-ong="equipe"] i{position:absolute}}
+#chx .cp-e{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line,rgba(127,127,127,.18))}
+#chx .cp-e i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--k-st,var(--n1-laiton))}
+#chx .cp-e .tx{min-width:0;display:flex;flex-direction:column}#chx .cp-e small{color:var(--muted);font-size:12.5px}
+#chx #cp-voir{display:flex;align-items:center;justify-content:center;gap:8px}
+#chx #cp-voir svg,#chx .cp-b svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cp-ch{display:grid;gap:8px}.cp-ch .btn{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:11px 13px}.cp-ch .btn small{color:var(--muted);font-weight:600}
+.cp-ch .btn[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit)}
+.cp-ap{display:grid;gap:8px}.cp-l{display:flex;gap:10px;align-items:center;padding:10px;border-radius:14px;background:var(--n1-teinte,rgba(127,127,127,.1))}
+.cp-l .r{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--n1-calme);flex:none}
+.cp-l .r svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cp-l .tx{min-width:0;display:flex;flex-direction:column}.cp-l small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.cp-l.non .r{color:var(--n1-alert)}
+
+/* Conversation du chantier au style ProClik (19/11) : bulles à plat, les miennes en bleu nuit, seul ce qui se touche ressort */
+#chx .cp-dec{background:var(--n1-teinte);border-radius:16px;padding:11px 13px;margin-bottom:14px;box-shadow:inset 3px 0 0 var(--n1-laiton)}
+#chx .cp-dk{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#chx .cp-dk::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--n1-laiton)}
+#chx .cp-dec p{margin:6px 0 0;font-size:14.5px;font-weight:700;line-height:1.35}
+#chx .cp-dec small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+#chx .cp-fil{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+#chx .cp-j{text-align:center;margin:4px 0 0}
+#chx .cp-j span{display:inline-block;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--n1-teinte);border-radius:99px;padding:3px 10px}
+#chx .cp-m{display:flex;gap:8px;align-items:flex-end;max-width:86%}
+#chx .cp-m.moi{align-self:flex-end;justify-content:flex-end}
+#chx .cp-av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;background:var(--n1-teinte);color:var(--n1-nuit);margin-bottom:18px}
+#chx .cp-c{display:flex;flex-direction:column;gap:3px;min-width:0}
+#chx .cp-m.moi .cp-c{align-items:flex-end}
+#chx .cp-n{font-size:12px;font-weight:800;padding-left:4px}#chx .cp-n small{font-weight:600;color:var(--muted)}
+#chx .cp-r{display:flex;align-items:center;gap:6px}
+#chx .cp-m.moi .cp-r{flex-direction:row-reverse}
+#chx .cp-bu{margin:0;font-size:14.5px;line-height:1.42;padding:9px 13px;border-radius:18px 18px 18px 6px;background:var(--n1-bg);color:var(--n1-fg)}
+#chx .cp-m.moi .cp-bu{border-radius:18px 18px 6px 18px;background:var(--n1-nuit);color:var(--n1-nuit-fg)}
+#chx .cp-h{font-size:11px;font-weight:700;color:var(--muted);padding:0 4px}
+#chx .cp-h .ok{color:var(--n1-ok)}#chx .cp-h .la{color:var(--n1-laiton)}
+#chx .cp-pin{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:0;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--muted);cursor:pointer}
+#chx .cp-pin:active{box-shadow:var(--n1-in)}
+#chx .cp-pin svg,#chx .cp-ro svg,#chx .cp-ih{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+#chx .cp-w{display:flex;align-items:flex-end;gap:8px}
+#chx #cp-t{flex:1;min-width:0;box-sizing:border-box;border:0;border-radius:22px;padding:11px 15px;font:inherit;font-size:15px;line-height:1.35;background:var(--n1-bg);box-shadow:var(--n1-in);color:inherit;resize:none;max-height:140px;outline:none}
+#chx .cp-ro{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:0;padding:0;cursor:pointer}
+#chx .cp-ro.pk{background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--n1-nuit)}
+#chx .cp-ro.go{background:var(--n1-nuit);color:var(--n1-nuit-fg);box-shadow:var(--n1-go-sh)}
+#chx .cp-ro svg{width:20px;height:20px}
+#chx #cp-mic.on{box-shadow:inset 0 0 0 2px var(--n1-laiton);color:var(--n1-laiton)}
+/* Icône du métier + accès des entreprises (Cyril 19/11) */
+.cp-mi{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--n1-teinte);color:var(--n1-nuit)}
+.cp-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cp-mi.gros{width:48px;height:48px}.cp-mi.gros svg{width:24px;height:24px}
+#chx .cp-av svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#chx button.cp-e{width:100%;background:none;border:0;border-bottom:1px solid var(--line,rgba(127,127,127,.18));font:inherit;color:inherit;text-align:left;cursor:pointer;padding:10px 0}
+#chx .cp-e .tx{flex:1}#chx .cp-go{color:var(--muted);font-size:20px;padding:0 4px}
+#chx .cp-e.off{opacity:.5}
+#chx .cp-rap{border-radius:16px;padding:12px;margin:2px 0 8px;background:color-mix(in srgb,var(--n1-warn) 11%,var(--n1-calme));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-warn) 35%,transparent)}
+#chx .cp-rap b{display:block;font-size:14.5px}#chx .cp-rap small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+#chx .cp-rb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#chx .cp-fin,.cp-cut{color:var(--n1-alert)}
+.cp-ics{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.cp-ic{aspect-ratio:1;border:0;border-radius:14px;display:grid;place-items:center;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--n1-nuit);cursor:pointer;max-width:56px;width:100%;justify-self:center}
+.cp-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cp-ic[aria-pressed="true"]{background:var(--n1-nuit);color:var(--n1-nuit-fg);box-shadow:var(--n1-go-sh)}
+.cp-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cp-seg .btn[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit)}
+.cp-ch .btn{flex-direction:row!important;align-items:center!important;gap:10px}
+.cp-ch .btn>span:last-child{display:flex;flex-direction:column}
+.cp-tete{display:flex;align-items:center;gap:12px}.cp-tete b{display:block;font-size:17px}.cp-tete small{color:var(--muted)}
+.cp-ic{aspect-ratio:auto;max-width:none;padding:9px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit}
+.cp-ic small{font-size:10px;font-weight:700;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-ics{grid-template-columns:repeat(4,1fr)}
+@media (min-width:600px){.cp-ics{grid-template-columns:repeat(6,1fr)}}
+.cp-seg .btn{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}
+.cp-seg .btn small{font-size:12px;font-weight:600;color:var(--muted)}
+.btn.cp-cut,#chx .btn.cp-fin{color:var(--n1-alert)!important}
+/* Note privée de l'architecte sur une entreprise (19/11) */
+.cp-nt{display:grid;gap:8px;padding:12px;border-radius:16px;background:var(--n1-teinte)}
+.cp-nl{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:14px;font-weight:700}
+.cp-st{display:flex;gap:4px}
+.cp-st button{width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--muted);cursor:pointer;padding:0}
+.cp-st svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.cp-st button[aria-pressed="true"]{color:var(--n1-laiton)}.cp-st button[aria-pressed="true"] svg{fill:var(--n1-laiton)}
+#chx .cp-moy{color:var(--n1-laiton);font-weight:800}

@@ -37,11 +37,14 @@ var TXT={
  equipe:{court:'Toute votre équipe dans le même Espace',
   avec:['Le planning de l\'équipe : qui est sur quel chantier, chaque jour, et s\'il manque du monde.','Chacun voit sa semaine sur son téléphone, avec son propre accès (chef, bureau, terrain).','Vous envoyez le planning en un geste, chacun le reçoit.'],
   sans:'Votre Espace reste à votre nom seul : le planning montre vos chantiers et vos rendez-vous.'},
+ conversation:{court:'Une conversation par chantier avec les entreprises',
+  avec:['Dans chaque chantier, une conversation que vous et toutes les entreprises invitées lisez au même endroit.','Vous voyez qui a lu chaque message.','Ce qui est décidé s\'épingle en haut : personne ne peut dire « on ne savait pas ».','Les entreprises la reçoivent par un lien SMS, sans appli. Elles ne voient jamais vos prix.','Option gratuite pour les entreprises à partir de 2 personnes.'],
+  sans:'Les entreprises de vos chantiers restent visibles avec leurs jours, et vous les prévenez par SMS ou par téléphone, comme aujourd\'hui.'},
  reseaux:{court:'Vos réseaux sociaux gérés pour vous',
   avec:['ProClik s\'occupe de vos réseaux sociaux à votre place.','Vos plus beaux chantiers mis en avant, avec votre accord.'],
   sans:'Vous gérez vos réseaux sociaux vous-même, si vous en avez.'}
 };
-var ORDRE=['equipe','lien','cliky','reservation','sms','assistant','avis','reseaux','image'];
+var ORDRE=['equipe','conversation','lien','cliky','reservation','sms','assistant','avis','reseaux','image'];
 /* Options pas encore dans options.js : nom et icône ici (même style de trait) */
 var I=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'};
 var EN_PLUS={
@@ -56,7 +59,7 @@ function etat(k){return O.actif(k)}
 function liste(){return ORDRE.filter(function(k){return info(k)&&TXT[k]})}
 function nbOn(){return liste().filter(function(k){return etat(k)===true}).length}
 /* geste propre à chaque option, rejoué toutes les 4 à 5 s (comme les icônes du site vitrine) */
-var GESTE={lien:'mo-coche',cliky:'mo-salut',reservation:'mo-coche',sms:'mo-parle',assistant:'mo-parle',avis:'mo-monte',reseaux:'mo-salut',image:'mo-tourne'};
+var GESTE={conversation:'mo-parle',lien:'mo-coche',cliky:'mo-salut',reservation:'mo-coche',sms:'mo-parle',assistant:'mo-parle',avis:'mo-monte',reseaux:'mo-salut',image:'mo-tourne'};
 var IC_OPT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2.2"/><rect x="13" y="4" width="7" height="7" rx="2.2"/><rect x="4" y="13" width="7" height="7" rx="2.2"/><path d="M16.5 13.5v6M13.5 16.5h6"/></svg>';
 
 /* ---------- le bouton « Options » en haut de l'Espace, avec le nombre d'options branchées (sans couleur d'alerte) ---------- */
@@ -102,7 +105,7 @@ if(menu)menu.addEventListener('click',function(){setTimeout(poser,0)});
 
 /* ---------- la fiche d'une option : elle seule, avec son explication ---------- */
 function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===true;fermer();
- var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
+ var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':k==='conversation'?(on?'La conversation de chantier est branchée sur votre Espace':'Option gratuite à partir de 2 personnes'):on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
  var h='<div class="card mo-tete'+(on?' on':'')+'"><span class="mo-gal">'+o.i+'</span><div><b>'+esc(titre)+'</b><small>'+esc(t.court)+'</small></div></div>'+
   '<div class="xsec"><h3>'+(on?'Ce qu\'elle fait pour vous':'Avec '+esc(o.n))+'</h3><div class="card"><ul class="mo-ul">'+t.avec.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>'+
   (on&&k==='cliky'&&window.PCJR?PCJR.reglagesHTML():'')+
