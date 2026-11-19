@@ -12,7 +12,8 @@ window.PC_ENT={
  /* les fonctions de l'Espace : true = présente, false = retirée pour ce client.
     Les options payantes (Cliky, Réservation, SMS…) restent réglées par l'abonnement, dans Mes options. */
  modules:{
-  equipe:true          /* planning de l'équipe : qui est sur quel chantier, chaque jour */
+  equipe:true,         /* planning de l'équipe : qui est sur quel chantier, chaque jour */
+  conversation:true    /* conversation de chantier avec les entreprises invitées : option GRATUITE, à partir de 2 personnes (Cyril 19/11) */
  }
 };
 /* Rangement à part : chaque clé gardée sur l'appareil est préfixée par l'identifiant de l'entreprise. */

@@ -490,10 +490,12 @@ function part(c){if(c.part)return c.part;
  return c.part}
 function nonLus(c){return c.part?c.part.nl||0:(c.id==='alpes'?2:0)}
 function qui(c,de){if(de==='moi')return {n:'Vous',m:''};var e=part(c).ent.filter(function(x){return x.id===de})[0];return e||{n:'Entreprise',m:''}}
-function msgHTML(c,x,i){var q=qui(c,x.de),moi=x.de==='moi';
- return '<div class="cp-msg'+(moi?' moi':'')+(x.epi?' epi':'')+'"><div class="cp-q"><b>'+esc(q.n)+'</b>'+(q.m?'<span>'+esc(q.m)+'</span>':'')+'<span>'+esc(x.h)+'</span></div>'+
-  '<p>'+esc(x.t)+'</p><div class="cp-p">'+(x.epi?'<span class="cp-dec">'+IC.epingle+'Décidé</span>':'')+'<span>Lu par '+(x.lu||0)+' sur '+part(c).ent.length+'</span>'+
-  (!x.epi?'<button type="button" data-cpepi="'+i+'">'+IC.epingle+'Épingler</button>':'')+'</div></div>'}
+function ini(n){return String(n||'?').split(/\s+/).filter(function(w){return w&&!/^(du|de|des|la|le|les|et)$/i.test(w)}).map(function(w){return w[0]}).join('').slice(0,2).toUpperCase()}
+function msgHTML(c,x,i){var q=qui(c,x.de),moi=x.de==='moi',hh=String(x.h||'').split(' · '),n=part(c).ent.length,tous=n&&(x.lu||0)>=n;
+ return '<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av">'+esc(ini(q.n))+'</span>')+'<div class="cp-c">'+(moi?'':'<span class="cp-n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
+  '<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p>'+(x.epi?'':'<button type="button" class="cp-pin" data-cpepi="'+i+'" aria-label="Épingler comme décision" title="Épingler comme décision">'+IC.epingle+'</button>')+'</div>'+
+  '<span class="cp-h">'+esc(hh[1]||hh[0]||'')+' · <span class="'+(tous?'ok':'')+'">'+(tous?'✓✓ lu par tous':x.lu?'✓ lu par '+x.lu+' sur '+n:'✓ envoyé')+'</span>'+(x.epi?' · <span class="la">épinglé</span>':'')+'</span></div></div>'}
+function jourDe(h){return String(h||'').split(' · ')[0]}
 function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
  var h='<div class="card" id="cp-ent"><div class="row" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b><span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span></div>';
  if(!E.length)h+='<p class="hint" style="margin:4px 0 0">Invitez les entreprises qui travaillent ici. Elles reçoivent un lien par SMS, sans appli, et retrouvent tout au même endroit.</p>';
@@ -503,11 +505,14 @@ function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
  h+='</div>';
  if(E.length){
   var ord=M.map(function(x,i){return [x,i]}),epi=ord.filter(function(y){return y[0].epi}),aut=ord.filter(function(y){return !y[0].epi});
-  h+='<div class="card" id="cp-fil"><div class="row" style="margin-bottom:10px"><b>La conversation du chantier</b><span style="font-size:12px;color:var(--muted)">tout le monde la voit</span></div>'+
-   '<div class="cp-fil">'+epi.concat(aut).map(function(y){return msgHTML(c,y[0],y[1])}).join('')+'</div>'+
-   '<textarea id="cp-t" rows="2" placeholder="Écrire à toutes les entreprises du chantier…"></textarea>'+
-   '<div class="cp-b"><button type="button" class="btn" id="cp-mic">'+IC.micro+'<span>Dicter</span></button><button type="button" class="btn go cf-go" id="cp-send"><span class="lab"><span>Envoyer à tous</span></span></button></div>'+
-   '<p class="hint" style="margin:10px 0 0">Épinglez ce qui est décidé : ça reste en haut, personne ne peut dire « on ne savait pas ».</p></div>';}
+  var dj='',fil=M.map(function(x,i){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j==='À l\'instant'||/\d+ h/.test(j)?'Aujourd\'hui':j)+'</span></div>':'';dj=j;return sep+msgHTML(c,x,i)}).join('');
+  var dec=M.filter(function(x){return x.epi});
+  if(window.PCOPT&&PCOPT.actif('conversation')===false)return h+'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Option gratuite à partir de 2 personnes : dites-le à Cyril.</p></div>';
+  h+='<div class="card" id="cp-fil">'+(window.PCTAG?PCTAG('conversation'):'')+''+
+   (dec.length?'<div class="cp-dec"><span class="cp-dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(qui(c,x.de).n)+' · '+esc(jourDe(x.h))+'</small></p>'}).join('')+'</div>':'')+
+   '<div class="cp-fil">'+fil+'</div>'+
+   '<div class="cp-w"><textarea id="cp-t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button type="button" class="cp-ro pk" id="cp-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro go" id="cp-send" aria-label="Envoyer à tous">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>'+
+   '<p class="hint" style="margin:10px 2px 0">Touchez '+IC.epingle.replace('<svg','<svg class="cp-ih"')+' sur un message pour le garder dans « Ce qui est décidé ».</p></div>';}
  return h}
 function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(window.PCPLAN&&PCPLAN.st?PCPLAN.st.tous():[]).filter(function(t){return deja.indexOf(t.id)<0}),sel=S[0]?S[0].id:'autre';
  var h=(S.length?'<p class="hint" style="margin:0 0 8px">Vos sous-traitants</p><div class="cp-ch">'+S.map(function(t,i){return '<button type="button" class="btn" data-cpst="'+esc(t.id)+'" aria-pressed="'+(i===0)+'"><b>'+esc(t.n)+'</b><small>'+esc(t.m)+'</small></button>'}).join('')+'<button type="button" class="btn" data-cpst="autre" aria-pressed="false"><b>Une autre entreprise</b><small>Pas encore dans vos contacts</small></button></div>':'')+
@@ -534,6 +539,7 @@ function lierEquipe(c){
  var v=$('#cp-voir');if(v)v.addEventListener('click',function(){apercu(c)});
  $$('#chx [data-cpepi]').forEach(function(x){x.addEventListener('click',function(){part(c).msgs[+x.dataset.cpepi].epi=1;saveCH();recharger('equipe','#cp-fil');X.toast('Épinglé','Le message reste en haut de la conversation.')})});
  var t=$('#cp-t'),m=$('#cp-mic');if(t&&m)dictee2(m,t);
+ if(t)t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
  var s=$('#cp-send');if(s)s.addEventListener('click',function(){var v=(t.value||'').trim();if(!v){t.focus();return}
   part(c).msgs.push({de:'moi',t:v,h:maint(),lu:0});saveCH();attente('sms');recharger('equipe','#cp-fil');X.toast('Envoyé à tous',part(c).ent.length+' entreprises le reçoivent (démo).')})}
 function dictee2(btn,ta){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
