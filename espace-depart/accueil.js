@@ -208,12 +208,23 @@
     var KT={run:"Chantier",plan:"Chantier",done:"Chantier",visit:"Visite",pc:"Point ProClik",liv:"Livraison",devis:"Devis",ent:"Entretien",st:"Sous-traitant",autre:"Rendez-vous"};
     var F=[{ic:JI.cafe,h:"Café",t:"Départ",cl:"fr-cafe"}].concat(L.slice(0,4).map(function(e){var w=e.k==="pc"?"20 min":e.k==="visit"?e.t.replace(/^Visite\s*/,""):lieu(e);return {ic:JI[e.k]||IC.agenda,h:hTxt(e.s),t:KT[e.k]||"Rendez-vous",w:w,cl:"k-"+e.k,e:e}})).concat([{ic:FLAG,h:"Fin",t:"de journée",cl:"fr-fin"}]);
     var ici=soir?0:cur+1;if(!soir&&cur>=L.length)ici=F.length-1;
-    var frise='<ol class="fr" aria-label="Votre journée">'+F.map(function(x,q){return '<li class="fr-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><span class="fr-i">'+x.ic+"</span><small>"+x.h+"</small><span class=\"fr-t\"><b>"+esc(x.t)+"</b>"+(x.w?"<em>"+esc(x.w)+"</em>":"")+"</span></li>"}).join("")+"</ol>";
-    var e=soir?L[0]:L[cur],foc="";
-    if(e){var enc=!soir&&hm(e.s)<=n,lab=soir?(iso(jr)===iso(new Date(AUJ().getTime()+864e5))?"Demain":jr.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+" · "+hTxt(e.s):enc?"En ce moment · jusqu'à "+hTxt(e.e):"Ensuite · "+hTxt(e.s)+" · dans "+duree(hm(e.s)-n);
-      foc='<div class="fo"><small>'+lab+"</small><div><span><b>"+esc(e.t)+"</b><em>"+esc(e.w||"")+"</em></span>"+
-        (!soir&&lieu(e)&&e.k!=="pc"?'<button type="button" class="fo-go" data-gps="'+esc(lieu(e))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</div></div>"}
-    else foc='<div class="fo"><small>'+(soir?"Demain":"Plus rien au planning")+"</small><div><span><b>"+(soir?"Rien de prévu pour l'instant":"La journée est bouclée")+"</b></span></div></div>";
+    /* toucher une icône = ce moment s'affiche juste en dessous, sans aller dans les menus (Cyril, 19/11 : « que l'artisan ne rentre rien ») */
+    var sel=acc._fr!=null&&acc._fr<F.length?acc._fr:Math.min(ici,F.length-1);
+    var frise='<ol class="fr" aria-label="Votre journée">'+F.map(function(x,q){return '<li class="fr-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+(q===sel?" sel":"")+'"><button type="button" class="fr-b" data-fr="'+q+'" aria-pressed="'+(q===sel)+'"><span class="fr-i">'+x.ic+"</span><small>"+x.h+"</small>"+(q===ici&&!soir?'<i class="fr-now">'+(x.e&&hm(x.e.s)<=n?"en cours":"à venir")+"</i>":"")+"<span class=\"fr-t\"><b>"+esc(x.t)+"</b>"+(x.w?"<em>"+esc(x.w)+"</em>":"")+"</span></button></li>"}).join("")+"</ol>";
+    var GO='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>',OUV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+    var X=F[sel],e=X.e,foc="",jlab=soir?(iso(jr)===iso(new Date(AUJ().getTime()+864e5))?"Demain":jr.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()})):"";
+    function ligne(ic,tx){return '<li><span class="fo-li">'+ic+"</span><span>"+tx+"</span></li>"}
+    if(e){var enc=!soir&&hm(e.s)<=n&&hm(e.e||e.s)>n,passe=!soir&&hm(e.e||e.s)<=n,lab=soir?jlab+" · "+hTxt(e.s)+(e.e?" → "+hTxt(e.e):""):enc?"En ce moment · jusqu'à "+hTxt(e.e):passe?"Fait · "+hTxt(e.s)+" → "+hTxt(e.e):(hm(e.s)>n?"À "+hTxt(e.s)+" · dans "+duree(hm(e.s)-n):hTxt(e.s));
+      var CHs=(window.PCX&&PCX.CH)||{},c=null;Object.keys(CHs).forEach(function(k){var y=CHs[k];if(!c&&y&&(y.id===(e.x&&e.x.ch)||y.n===e.t||(y.n&&e.t.indexOf(y.n)>=0)))c=y});
+      var det=[];
+      if(c&&c.ouv){var et=c.ouv.filter(function(o){return o[2]<100})[0];if(et)det.push(ligne(IC.chantier,"Aujourd'hui : <b>"+esc(et[0])+"</b> · "+et[2]+" % fait"))}
+      if(c&&c.four){c.four.filter(function(m){return !/livr|pris/i.test(m[2])}).slice(0,2).forEach(function(m){det.push(ligne(IC.fournisseur,(/command/i.test(m[2])?"Commandé : ":"À prévoir : ")+"<b>"+esc(m[0])+"</b> · "+esc((String(m[1]).match(/\d+\s*manquantes?/)||[m[1]])[0])))})}
+      if(!c&&e.w)det.push(ligne(e.k==="visit"?JI.visit:IC.agenda,esc(e.w)));
+      var bt=(lieu(e)&&e.k!=="pc"?'<button type="button" class="fo-go" data-gps="'+esc(lieu(e))+'">'+GO+"Y aller</button>":"")+(c?'<button type="button" class="fo-go" data-chouv="'+esc(c.id)+'">Voir le chantier'+OUV+"</button>":"");
+      foc='<div class="fo"><small>'+lab+'</small><div><span><b>'+esc(e.t)+"</b><em>"+esc(lieu(e)||KT[e.k]||"")+"</em></span></div>"+(det.length?'<ul class="fo-d">'+det.join("")+"</ul>":"")+(bt?'<div class="fo-b">'+bt+"</div>":"")+"</div>"}
+    else if(X.cl==="fr-cafe"){var p1=L[0];foc='<div class="fo"><small>'+(soir?jlab+" · départ":"Départ")+'</small><div><span><b>'+(p1?"Premier rendez-vous à "+hTxt(p1.s):"Rien de prévu")+"</b><em>"+(p1?esc(p1.t+(lieu(p1)?" · "+lieu(p1):"")):"Une journée pour avancer les devis")+"</em></span></div>"+(p1&&lieu(p1)?'<div class="fo-b"><button type="button" class="fo-go" data-gps="'+esc(lieu(p1))+'">'+GO+"Y aller</button></div>":"")+"</div>"}
+    else{var nv0=0;(D.afaire||[]).forEach(function(x){if(x[4]!=="suivre")nv0+=x[0]});var dl=L[L.length-1];
+      foc='<div class="fo"><small>Fin de journée'+(dl&&dl.e?" · vers "+hTxt(dl.e):"")+'</small><div><span><b>'+(nv0?nv0+" chose"+(nv0>1?"s":"")+" à valider ce soir":"Rien à valider ce soir")+"</b><em>On range les outils, et à demain</em></span></div></div>"}
     var nv=0;(D.afaire||[]).forEach(function(x){if(x[4]!=="suivre")nv+=x[0]});
     var mot=P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"";
     var btn=u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":midi?"Pendant la pause":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"";
@@ -339,6 +350,8 @@
     if((el=e.target.closest("[data-wx]"))){var w=el.closest(".w");flip(w,function(){etat.L=etat.L.filter(function(x){return x[0]!==w.dataset.w});etat.p="";garder();acc._h=null;rendre()});return}
     if((el=e.target.closest("[data-ws]"))){var b=el.closest(".w"),T=W[b.dataset.w].t;etat.L.forEach(function(x){if(x[0]===b.dataset.w)x[1]=T[(T.indexOf(x[1])+1)%T.length]});etat.p="";garder();flip(null,function(){acc._h=null;rendre()});return}
     if((el=e.target.closest("[data-mois]"))){acc._mois=+el.dataset.mois;acc._h=null;return rendre()}
+    if((el=e.target.closest("[data-fr]"))){acc._fr=+el.dataset.fr;acc._h=null;return rendre()}
+    if((el=e.target.closest("[data-chouv]"))){var idc=el.dataset.chouv,nc=$("#nb-chantiers")||$("#tt-chantiers");if(nc)nc.click();setTimeout(function(){if(window.PCCH)PCCH.ouvrir(idc)},120);return}
     if((el=e.target.closest("[data-jour]"))){acc._jour=el.dataset.jour;acc._h=null;return rendre()}
     if((el=e.target.closest("[data-nv]"))){var q=$$(".pcq button",ancien)[+el.dataset.nv];if(q)q.click();return}
     if((el=e.target.closest("[data-accv]"))){var n=$("#nb-"+el.dataset.accv)||$("#tt-"+el.dataset.accv);if(n)n.click();return}
