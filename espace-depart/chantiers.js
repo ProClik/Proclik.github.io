@@ -585,7 +585,7 @@ function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PC
   '<div class="cp-l"><span class="r">'+IC.docs+'</span><span class="tx"><b>Les documents et les photos</b><small>Ceux que vous choisissez de partager</small></span></div>'+
   '<div class="cp-l"><span class="r">'+IC.sms+'</span><span class="tx"><b>La conversation</b><small>'+(der?esc(der.t):'Rien pour l\'instant')+'</small></span></div>'+
   '<div class="cp-l non"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Ne voit pas</b><small>Vos prix, vos devis, vos factures, vos autres chantiers</small></span></div></div>';
- X.xopen('Ce que voit '+e.n,'Un lien reçu par SMS, sans appli ni mot de passe',h,'<button class="btn go" data-xclose>Fermer</button>')}
+ X.xopen('Ce que voit '+e.n,'Son lien personnel, reçu par SMS ou e-mail',h,'<button class="btn" data-xclose>Fermer</button><a class="btn go" style="text-decoration:none;display:flex;align-items:center;justify-content:center" href="invite.html?e='+encodeURIComponent(e.id)+'&ch='+encodeURIComponent(c.id)+'" target="_blank" rel="noopener">Ouvrir sa page</a>')}
 function lierEquipe(c){
  var b=$('#cp-inv');if(b)b.addEventListener('click',function(){inviter(c)});
  var v=$('#cp-voir');if(v)v.addEventListener('click',function(){apercu(c)});
