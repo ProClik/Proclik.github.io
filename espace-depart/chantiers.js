@@ -695,7 +695,7 @@ function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c),tri=X.lsGet
  var h='<div class="card" id="cp-res"><div class="row" style="margin-bottom:6px"><b>Réserves</b><span style="font-size:12px;color:var(--muted)">'+(R.length?(n?nv+' levée'+(nv>1?'s':'')+' sur '+R.length:'toutes levées ✓'):'aucune')+'</span></div>';
  if(R.length)h+='<div class="cp-prog" role="img" aria-label="'+nv+' sur '+R.length+' levées"><i style="width:'+Math.round(nv/R.length*100)+'%"></i></div>'+
   '';
- if(R.length&&PIECES[c.id])h+='<details class="cp-pld"><summary>'+I('<path d="M3.5 5.5l5.5-2 6 2 5.5-2v15l-5.5 2-6-2-5.5 2z"/><path d="M9 3.5v15M15 5.5v15"/>')+'Voir les réserves sur le plan</summary>'+planRes(c)+'</details>';
+ if(R.length&&PIECES[c.id])h+='<button type="button" class="cp-plm" id="cp-plm" aria-label="Agrandir le plan">'+planRes(c)+'<span class="z">'+I('<path d="M14 4h6v6M10 20H4v-6M20 4l-6 6M4 20l6-6"/>')+'</span></button>';
  else h+=planRes(c);
  if(!R.length)h+='<p class="hint" style="margin:4px 0 0">Un défaut à reprendre ? Une photo, une phrase, et celui qui doit corriger est prévenu par SMS.</p>';
  if(R.length>1)h+='<div class="cp-tri" role="tablist">'+RTRI.map(function(t){return '<button type="button" data-rtri="'+t[0]+'" aria-pressed="'+(tri===t[0])+'">'+t[1]+'</button>'}).join('')+'</div>';
@@ -813,6 +813,7 @@ function cliCard(c){var k=cliDe(c);if(!k)return '';k.nl=0;
 function lierResCard(c){
  $$('#cp-res [data-cprs]').forEach(function(b){b.addEventListener('click',function(){ficheRes(c,+b.dataset.cprs)})});
  $$('#cp-res [data-rtri]').forEach(function(b){b.addEventListener('click',function(){X.lsSet('pc-res-tri',b.dataset.rtri);var o=$('#cp-res'),y=o.getBoundingClientRect().top;o.outerHTML=resCard(c);lierResCard(c);window.scrollBy(0,$('#cp-res').getBoundingClientRect().top-y)})});
+ var pm=$('#cp-plm');if(pm)pm.addEventListener('click',function(){pm.classList.toggle('grand');pm.setAttribute('aria-label',pm.classList.contains('grand')?'Réduire le plan':'Agrandir le plan')});
  $$('#cp-res [data-rmore]').forEach(function(b){b.addEventListener('click',function(){b.nextElementSibling.hidden=false;b.remove()})});
  var s=$('#cp-sig');if(s)s.addEventListener('click',function(){signaler(c)});
  var r=$('#cp-rec');if(r)r.addEventListener('click',function(){reception(c)});
