@@ -109,3 +109,39 @@ html body .pb-mic .pb-g{box-shadow:var(--n1-pk),0 0 0 5px color-mix(in srgb,var(
   html body .nav button[aria-selected="true"] .ico,html body .nav button[aria-selected="true"] .ico.pk-v{background:var(--bg);box-shadow:0 0 0 2px var(--n1-laiton);color:var(--n1-nuit)}
   html body .nav button:active .ico{background:var(--teinte);box-shadow:none}
 }
+
+/* 11. Finitions (Cyril 19/11, « embellir tout l'Espace ») : rien ne bouge de place, mêmes couleurs (/n1.css).
+   Titres d'écran plus présents, chiffres alignés, étiquettes d'état à plat et colorées selon leur sens,
+   changement d'onglet en fondu doux, anneaux d'avancement lisibles même à 0 %, planning du téléphone sans onglet coupé. */
+html body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+html body :is(h1,h2,h3){text-wrap:balance}
+html body :is(p,.lead,.hint){text-wrap:pretty}
+html body ::selection{background:color-mix(in srgb,var(--n1-laiton) 28%,transparent)}
+/* titre de chaque écran (Clients, Devis, Planning…) : un cran au-dessus des titres de blocs */
+html body .view .row:is(.cf-top,.fl-a)>h2,html body #v-cotes>.row>h2,html body #v-reseaux>h2:first-child{font-size:23px;font-weight:800;letter-spacing:-.6px;line-height:1.1}
+html body .view .cf-top .cf-n{font-size:13px;font-weight:600;color:var(--muted)}
+@media (min-width:900px){html body .view .row:is(.cf-top,.fl-a)>h2,html body #v-cotes>.row>h2,html body #v-reseaux>h2:first-child{font-size:27px;letter-spacing:-.8px}}
+/* étiquettes d'état : elles ne se touchent pas, donc à plat, sur une teinte de leur sens */
+html:root body .pill{box-shadow:none;letter-spacing:.1px}
+html:root body .pill.ok{background:color-mix(in srgb,var(--n1-ok) 14%,transparent);color:color-mix(in srgb,var(--n1-ok) 80%,var(--fg))}
+html:root body .pill.warn{background:color-mix(in srgb,var(--n1-warn) 15%,transparent);color:color-mix(in srgb,var(--n1-warn) 80%,var(--fg))}
+html:root body .pill.todo{background:color-mix(in srgb,var(--n1-nuit) 10%,transparent);color:var(--n1-nuit)}
+html:root body .pill.grey{background:var(--teinte);color:var(--muted)}
+/* pastilles rouges : la même rose douce que les autres alertes */
+html body .rouge,html body .cf .rouge{background:var(--n1-alert)}
+:root[data-theme="dark"] body :is(.rouge,.cf .rouge){color:#141927}
+/* anneau d'avancement : piste visible, même à 0 % */
+html body .ring{background:conic-gradient(var(--n1-nuit) calc(var(--p)*1%),color-mix(in srgb,var(--n1-nuit) 12%,transparent) 0)}
+html body .ring::before{background:var(--n1-calme)}
+/* changement d'onglet : l'écran arrive en fondu doux (pas de mouvement) */
+@media (prefers-reduced-motion:no-preference){html body .view:not([hidden]){animation:pcVue .32s ease-out both}}
+@keyframes pcVue{from{opacity:0}to{opacity:1}}
+/* Planning sur téléphone : Jour, Semaine, Mois, Carte et Équipe tiennent sur une ligne */
+@media (max-width:899px){
+  html body #v-planning .seg.oi-a{display:flex;width:100%}
+  html body #v-planning .seg.oi-a button{flex:1 1 0;min-width:0;padding-inline:4px;text-align:center;white-space:nowrap}
+}
+/* ordinateur : barres de défilement fines, couleur du bleu nuit */
+@media (pointer:fine){html{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--n1-nuit) 28%,transparent) transparent}}
+/* Planning sur iPad et ordinateur : la semaine prend toute la largeur (elle s'arrêtait aux trois quarts) */
+@media (min-width:900px){html body #v-planning.ord-a:not([hidden]){grid-template-columns:auto minmax(0,1fr) auto}}
