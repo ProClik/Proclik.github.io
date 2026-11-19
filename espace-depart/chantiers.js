@@ -656,7 +656,7 @@ function pieces(c){return PIECES[c.id]||[['Tout le chantier',8,8,144,84]]}
 function resL(c){var P=part(c);if(!P.res)P.res=c.id==='alpes'?[
   {id:'r1',t:'Un spot de l\'accueil clignote',ent:'st-elec',pc:'Accueil',st:'ouv',par:'cli',d:'ven. 16/10',ph:1,notes:[['ven. 16/10 · 8 h 05','Mme Garnier : le spot juste au-dessus du comptoir.'],['ven. 16/10 · 9 h 20','Élec Belledonne passe lundi matin avec un transformateur neuf.']]},
   {id:'r2',t:'Joint du lavabo à refaire : il fuit un peu',ent:'st-plomb',pc:'Accueil',st:'corr',par:'moi',d:'mer. 14/10',ph:1,dc:'ven. 16/10',notes:[['ven. 16/10 · 10 h 40','Plomberie du Vercors : joint silicone refait, sec dans 24 h.']]},
-  {id:'r3',t:'Bande de plafond qui se décolle au-dessus de la porte',ent:'sal:Kevin',pc:'Couloir',st:'ouv',par:'moi',d:'ven. 16/10',ph:1}]:[];return P.res}
+  {id:'r3',t:'Bande de plafond qui se décolle au-dessus de la porte',ent:'sal:Kevin',pc:'Couloir',st:'ouv',par:'moi',d:'jeu. 8/10',ph:1}]:[];return P.res}
 function cliDe(c){var P=part(c);if(P.cli===undefined)P.cli=c.id==='alpes'?{n:'Mme Garnier',code:'H8R3',vu:'vu hier',commun:0,nl:1,msgs:[
   {de:'cli',t:'Bonjour, les patients demandent si l\'accueil sera ouvert lundi ?',h:'jeu. 15/10 · 12 h 40'},
   {de:'moi',t:'Oui, tout sera fini lundi midi. On fait la réception ensemble à 15 h 30.',h:'jeu. 15/10 · 13 h 05'},
@@ -677,10 +677,34 @@ function planRes(c,sel){if(!PIECES[c.id])return '';var Pz=pieces(c),R=resL(c);
 /* vignettes photo des réserves (Cyril 19/11 : coins arrondis, on touche la photo pour ouvrir la fiche) */
 function photoT(lab,on,g){return '<span class="cp-ph'+(on?' on':'')+'"'+(on&&g?' style="background:'+g+'"':'')+'>'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
 function photoT0(lab,on){return '<span class="cp-ph'+(on?' on':'')+'">'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
-function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c);
- var h='<div class="card" id="cp-res"><div class="row" style="margin-bottom:8px"><b>Réserves</b><span style="font-size:12px;color:var(--muted)">'+(R.length?(n?n+' en cours':'toutes levées ✓'):'aucune')+'</span></div>'+planRes(c);
+/* Réserves bien classées (Cyril 19/11 : « très important, facile à suivre ») :
+   avancement en haut, classement au choix (état / pièce / qui corrige), ce qui vous attend en premier,
+   ancienneté visible, réserves levées repliées. */
+var RTRI=[['etat','Par état'],['piece','Par pièce'],['qui','Par entreprise']];
+var RORD={corr:0,ouv:1,val:2};
+var RSEC={corr:['À valider par vous','Corrigées : regardez la photo et validez','wa'],ouv:['À corriger','En attente de celui qui corrige','al'],val:['Levées','Validées, c\'est terminé','ok']};
+function resJours(r){var m=/(\d{1,2})\/(\d{1,2})/.exec(r.d||'');if(!m)return 0;var d=new Date(2026,+m[2]-1,+m[1],12),t=X.TODAY?new Date(X.TODAY):new Date();return Math.max(0,Math.round((t-d)/864e5))}
+function resAge(r){if(r.st==='val')return '';var j=resJours(r),lab=r.st==='corr'?'corrigée, à vous de valider':j?'depuis '+j+' jour'+(j>1?'s':''):'signalée aujourd\'hui';return '<span class="cp-age'+(r.st==='ouv'&&j>=7?' tard':'')+'">'+lab+'</span>'}
+function resRow(c,r,i,tri){var e=entDe(c,r.ent),s=RST[r.st];
+ return '<button type="button" class="cp-rs" data-cprs="'+i+'">'+PCPH.vg(r,i,'cp-rn '+s[1])+'<span class="tx"><b>'+esc(r.t)+'</b><small>'+(tri!=='qui'?'<span class="cp-mini">'+icQ(e)+'</span>'+esc(e.n):'')+(tri!=='qui'&&tri!=='piece'?' · ':'')+(tri!=='piece'?esc(r.pc):'')+(r.par==='cli'?' · par le client':'')+'</small>'+
+  (tri==='etat'?resAge(r):'<span class="cp-ln"><span class="cp-pill '+s[1]+'">'+s[0]+'</span>'+(r.st==='ouv'?resAge(r):'')+'</span>')+'</span>'+PCPH.mini(r)+'<span class="cp-go">›</span></button>'}
+function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c),tri=X.lsGet('pc-res-tri','etat'),nv=R.filter(function(r){return r.st==='val'}).length;
+ var h='<div class="card" id="cp-res"><div class="row" style="margin-bottom:6px"><b>Réserves</b><span style="font-size:12px;color:var(--muted)">'+(R.length?(n?nv+' levée'+(nv>1?'s':'')+' sur '+R.length:'toutes levées ✓'):'aucune')+'</span></div>';
+ if(R.length)h+='<div class="cp-prog" role="img" aria-label="'+nv+' sur '+R.length+' levées"><i style="width:'+Math.round(nv/R.length*100)+'%"></i></div>'+
+  '<div class="cp-cpt">'+['corr','ouv','val'].map(function(k){var m=R.filter(function(r){return r.st===k}).length;return '<span class="'+RSEC[k][2]+(m?'':' zero')+'"><b>'+m+'</b>'+(k==='corr'?'à valider':k==='ouv'?'à corriger':'levée'+(m>1?'s':''))+'</span>'}).join('')+'</div>';
+ h+=planRes(c);
  if(!R.length)h+='<p class="hint" style="margin:4px 0 0">Un défaut à reprendre ? Une photo, une phrase, et celui qui doit corriger est prévenu par SMS.</p>';
- R.forEach(function(r,i){var e=entDe(c,r.ent),s=RST[r.st];h+='<button type="button" class="cp-rs" data-cprs="'+i+'">'+PCPH.vg(r,i,'cp-rn '+s[1])+'<span class="tx"><b>'+esc(r.t)+'</b><small><span class="cp-mini">'+icQ(e)+'</span>'+esc(e.n)+' · '+esc(r.pc)+(r.par==='cli'?' · signalée par le client':'')+'</small><span class="cp-pill '+s[1]+'">'+s[0]+'</span></span>'+PCPH.mini(r)+'<span class="cp-go">›</span></button>'});
+ if(R.length>1)h+='<div class="cp-tri" role="tablist">'+RTRI.map(function(t){return '<button type="button" data-rtri="'+t[0]+'" aria-pressed="'+(tri===t[0])+'">'+t[1]+'</button>'}).join('')+'</div>';
+ var I2=R.map(function(r,i){return i}),G=[];
+ if(tri==='piece'){pieces(c).map(function(p){return p[0]}).concat(R.map(function(r){return r.pc})).forEach(function(pc){if(G.some(function(g){return g.k===pc}))return;var L=I2.filter(function(i){return R[i].pc===pc});if(L.length)G.push({k:pc,t:pc,L:L})})}
+ else if(tri==='qui'){I2.forEach(function(i){var k=R[i].ent||'';if(!G.some(function(g){return g.k===k})){var e=entDe(c,k);G.push({k:k,t:e.n,ic:icQ(e),L:[]})}G.filter(function(g){return g.k===k})[0].L.push(i)})}
+ else ['corr','ouv','val'].forEach(function(k){var L=I2.filter(function(i){return R[i].st===k});if(L.length)G.push({k:k,t:RSEC[k][0],s:RSEC[k][1],c:RSEC[k][2],L:L})});
+ G.forEach(function(g){g.L.sort(function(a,b){return RORD[R[a].st]-RORD[R[b].st]||resJours(R[b])-resJours(R[a])});
+  var lv=g.L.filter(function(i){return R[i].st==='val'}),vis=tri==='etat'&&g.k==='val'?[]:g.L.filter(function(i){return R[i].st!=='val'}),cach=tri==='etat'&&g.k==='val'?g.L:lv;
+  h+='<div class="cp-sec'+(g.c?' '+g.c:'')+'"><div class="cp-sech">'+(g.ic?'<span class="cp-mini">'+g.ic+'</span>':'')+'<b>'+esc(g.t)+'</b><span class="n">'+g.L.length+'</span>'+(g.s?'<small>'+esc(g.s)+'</small>':'')+'</div>'+
+   vis.map(function(i){return resRow(c,R[i],i,tri)}).join('')+
+   (cach.length?'<button type="button" class="cp-more" data-rmore>'+(vis.length?'+ '+cach.length+' levée'+(cach.length>1?'s':''):'Voir '+(cach.length>1?'les '+cach.length+' réserves levées':'la réserve levée'))+'</button><div hidden data-rmz>'+cach.map(function(i){return resRow(c,R[i],i,tri)}).join('')+'</div>':'')+'</div>'});
+ h+='';
  if(!P.termine||n)h+='<button type="button" class="btn go cf-go" id="cp-sig" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Signaler un problème</span></span></button>';
  if(P.recep)h+='<button type="button" class="cp-l cp-pvb" id="cp-pv" style="width:100%;margin-top:10px"><span class="r">'+IC.docs+'</span><span class="tx"><b>Réception signée le '+esc(dt(P.recep.d))+'</b><small>Par '+esc(P.recep.qui)+' · '+(P.recep.n?P.recep.n+' réserve'+(P.recep.n>1?'s':'')+' notée'+(P.recep.n>1?'s':''):'sans réserve')+' · voir le procès-verbal</small></span><span class="cp-go">›</span></button>';
  else if(!P.termine&&c.st!=='done')h+='<button type="button" class="btn" id="cp-rec" style="width:100%;margin-top:10px">'+I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')+'<span>Réception avec '+esc(cli?cli.n:'le client')+'</span></button>';
@@ -782,11 +806,14 @@ function cliCard(c){var k=cliDe(c);if(!k)return '';k.nl=0;
  return '<div class="card cp-priv" id="cp-cfil"><div class="row" style="margin-bottom:8px"><b>Avec '+esc(k.n)+'</b><span style="font-size:12px;color:var(--muted)">conversation privée</span></div>'+
   '<p class="cp-lu priv">'+IC_LOCK+'<span>Privé : vous et '+esc(k.n)+' seulement. Aucune entreprise ne lit ces messages.</span></p><div class="cp-fil">'+fil+'</div>'+
   (part(c).termine?'':'<div class="cp-w"><textarea id="cp-ct" rows="1" placeholder="Écrire à '+esc(k.n)+' seulement…"></textarea><button type="button" class="cp-ro go" id="cp-csend" aria-label="Envoyer">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+'</div>'}
-function lierRes(c){
- $$('#chx [data-cprs]').forEach(function(b){b.addEventListener('click',function(){ficheRes(c,+b.dataset.cprs)})});
+function lierResCard(c){
+ $$('#cp-res [data-cprs]').forEach(function(b){b.addEventListener('click',function(){ficheRes(c,+b.dataset.cprs)})});
+ $$('#cp-res [data-rtri]').forEach(function(b){b.addEventListener('click',function(){X.lsSet('pc-res-tri',b.dataset.rtri);var o=$('#cp-res'),y=o.getBoundingClientRect().top;o.outerHTML=resCard(c);lierResCard(c);window.scrollBy(0,$('#cp-res').getBoundingClientRect().top-y)})});
+ $$('#cp-res [data-rmore]').forEach(function(b){b.addEventListener('click',function(){b.nextElementSibling.hidden=false;b.remove()})});
  var s=$('#cp-sig');if(s)s.addEventListener('click',function(){signaler(c)});
  var r=$('#cp-rec');if(r)r.addEventListener('click',function(){reception(c)});
- var p=$('#cp-pv');if(p)p.addEventListener('click',function(){pv(c)});
+ var p=$('#cp-pv');if(p)p.addEventListener('click',function(){pv(c)})}
+function lierRes(c){lierResCard(c);
  var k=$('#cp-cli');if(k)k.addEventListener('click',function(){ficheCli(c)});
  var ki=$('#cp-clinv');if(ki)ki.addEventListener('click',function(){var o=dos({dos:c.dos});part(c).cli={n:(o&&o.n)||c.n,code:codeNeuf(),vu:'',commun:0,nl:0,msgs:[]};saveCH();recharger('equipe');X.toast('Invitation envoyée',part(c).cli.n+' reçoit son lien par SMS (démo).')});
  var t=$('#cp-ct'),se=$('#cp-csend');if(t)t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
