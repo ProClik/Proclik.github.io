@@ -182,3 +182,21 @@ html body input[type=checkbox]:not([switch]):not(.vtick):checked{background-colo
 html body input[type=checkbox]:not([switch]):not(.vtick):active{transform:scale(.9)}
 html body input[type=checkbox]:not([switch]):not(.vtick):disabled{opacity:.5;cursor:default}
 html body input[type=checkbox]:not([switch]):not(.vtick):focus-visible{outline:2px solid var(--n1-nuit);outline-offset:2px}
+
+/* 15. Disposition plus lisible (Cyril 19/11) : moins de place perdue, l'essentiel remonte, aucune couleur changée. */
+@media (max-width:899px){
+  /* Accueil : les 4 chiffres du mois en tuiles compactes (le graphique des 6 mois reste juste en dessous) */
+  html body #v-accueil .w.sz-s .tu{padding:12px 14px;gap:2px;min-height:0}
+  html body #v-accueil .w.sz-s .tu-sp{display:none}
+  html body #v-accueil .w.sz-s .tu b{font-size:24px;margin-top:6px}
+  html body #v-accueil .w.sz-s .tu-h small{font-size:13px}
+  html body #v-accueil .tdb-g{grid-auto-rows:minmax(92px,auto)!important}
+  /* aides « ? » : plus courtes */
+  html body .tip{padding:10px 12px;gap:10px;border-radius:16px}
+  html body .tip .pc-aide{font-size:13px;line-height:1.35}
+  /* fiche d'un chantier : retour discret, nom sur une ligne, menu à icônes resserré */
+  html body #chx .xback{min-height:40px;padding:6px 14px;font-size:14px}
+  html body #chx>.cf>.sec-h h2{font-size:21px;line-height:1.15}
+  html body #chx .ch-menu{gap:2px;padding:4px}
+  html body #chx .ch-menu button{padding:6px 2px 6px}
+}
