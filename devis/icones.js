@@ -173,7 +173,7 @@ CIR.unshift(
  [/^Radiateurs? électriques?/,"radelec"],[/^Radiateurs? à eau/,"radiateur"],[/^Plancher chauffant$|^Chauffage au sol/,"plancher"],[/^Poêle/,"poele"],[/^Pas de chauffage/,"nochauf"],[/^Clim/,"clim"],
  [/^Douche/,"douche"],[/^Baignoire/,"baignoire"],[/^(Meuble vasque|Lave-mains)/,"vasque"],[/^(Lave-linge|Buanderie)/,"lavelinge"],[/^Chauffe-eau/,"ceau"],[/^Sèche-serviettes/,"seche"],[/^Hotte/,"hotte"],[/^Miroir/,"miroir"],[/^Renfort/,"renfort"],
  [/^(On (la|le|les) garde|On garde|On n'y touche pas|Non, (on )?garde|Reste comme il est|Garder)/,"garde"],[/^On (la|le|les) change|^À changer/,"remplacer"],[/^Elle est à créer|^À créer/,"creer"],[/^Il n'y a pas encore de sol/,"sansSol"],
- [/^Tout est à refaire/,"renover"],[/^Quelques prises/,"prise"],[/^Quelques changements/,"outil"],[/^Partout où/,"tout"],[/^Dans certaines pièces/,"certaines"],
+ [/^Tout est à (re)?faire/,"renover"],[/^Quelques prises/,"prise"],[/^Quelques changements/,"outil"],[/^Partout où/,"tout"],[/^Dans certaines pièces/,"certaines"],
  [/^Place privée/,"parking"],[/^Dans la rue, payant/,"euro"],[/^Dans la rue/,"voiture"],[/^Facile$/,"facile"],[/^Difficile$/,"difficile"],
  [/^Par l'intérieur|^Intérieur$/,"dedans"],[/^Par l'extérieur|^Extérieur$/,"dehors"],[/^À isoler$/,"isolation"],[/^Sur de l'ancien/,"ancien"],[/^(Sur ossature|Ossature|oss$|Cloison standard)/,"montants"],[/^Remplace une ancienne/,"depose"],[/^Sous la toiture/,"combles"],
  [/^Sol souple|^Lino/,"vinyle"],[/^Oui, à poser/,"faience"],[/^Non, pas de/,"non"],[/^Jusqu'au plafond/,"faiPlafond"],[/^À mi-hauteur/,"faience"],[/^Une crédence/,"credence"],
