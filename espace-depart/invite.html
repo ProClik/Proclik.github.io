@@ -82,8 +82,10 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .ro.go{width:44px;padding:0}
 .acces{display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--n1-muted);font-weight:600;padding:4px 4px 0;line-height:1.4}
 .acces svg{width:16px;height:16px}
-.offre{display:flex;align-items:center;gap:12px;padding:13px;border-radius:18px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent);width:100%;text-align:left}
+.offre{display:grid;gap:12px;padding:13px;border-radius:18px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent);width:100%;text-align:left}
 .offre .r{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--n1-laiton);background:color-mix(in srgb,var(--n1-laiton) 13%,transparent);flex:none}
+.offre .ot{display:flex;align-items:center;gap:12px}
+.ex{width:100%;text-decoration:none;color:var(--n1-fg)}.ex .exi{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--n1-laiton);background:color-mix(in srgb,var(--n1-laiton) 13%,transparent)}.ex .exi svg{width:15px;height:15px}
 .offre b{display:block;font-size:14.5px}.offre small{display:block;font-size:12.5px;color:var(--n1-muted);margin-top:2px;line-height:1.35}
 /* première ouverture : code SMS */
 .porte{min-height:100dvh;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right)) 24px max(16px,env(safe-area-inset-left))}
@@ -203,7 +205,7 @@ function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
  var h='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Le chantier est terminé</h1><p>'+esc(ARTISAN)+' a clôturé le chantier <b>'+esc(ch.n)+'</b>. Merci pour votre travail !<br>Le récapitulatif (décisions, plans, conversation) vous a été envoyé par e-mail.</p>'+
   '<div class="note"><b>Comment avez-vous trouvé l\'Espace de ce chantier ?</b>'+etoiles(note,'st')+'<div id="suite"></div></div>'+
   '<div class="fin-off"><span class="dk">Offre de fin de chantier</span><span class="pct" aria-label="moins 50 % sur vos 3 premiers mois"><b><i class="mn" aria-hidden="true"></i>50</b><sup>%</sup><span class="u">sur vos 3<br>premiers mois</span></span><p>Le même Espace, à votre nom : vos clients, vos devis, vos factures, votre planning et vos sous-traitants, réunis comme sur ce chantier.</p>'+cliky()+
-  '<button class="go" id="essai">'+IC.home+'J\'en profite</button></div>'+
+  '<button class="go" id="essai">'+IC.home+'J\'en profite</button>'+btnEx()+'</div>'+
   '<p style="margin:14px 0 0;font-size:12.5px">Votre accès à ce chantier est fermé.</p></div></div>';
  $('#app').innerHTML=h;
  function suite(n){var S=$('#suite');
@@ -221,8 +223,12 @@ function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
  $('#essai').addEventListener('click',function(){toast('Cyril vous rappelle pour ouvrir votre Espace (démo)')});
 }
 /* Pendant le chantier : une seule petite offre, jamais avant son 2e passage */
+/* Espace d'exemple réglé sur SON métier (Cyril 19/11) : « Voir mon Espace d'électricien » */
+function metLib(){var m=(moi.m||'').trim().toLowerCase();if(!m)return 'Voir mon Espace d\'exemple';return 'Voir mon Espace '+(/^[aeéèêiîoôuyh]/.test(m)?'d\'':'de ')+m}
+function lienEx(){return 'index.html?exemple='+encodeURIComponent(moi.ic||'autre')+'&nom='+encodeURIComponent(moi.n||'')+'&m='+encodeURIComponent(moi.m||'')}
+function btnEx(){return '<a class="b2 pk ex" href="'+lienEx()+'"><span class="exi">'+icM(moi.ic)+'</span>'+esc(metLib())+'</a>'}
 function offre(){if(J.filter(function(j){return j[0]<AUJ}).length<2)return '';
- return '<button class="offre pk" id="offre"><span class="r">'+IC.home+'</span><span style="flex:1;min-width:0"><b>Vous aimez l\'Espace de '+esc(ARTISAN)+' ? Et pourtant, vous n\'avez encore rien vu…</b><small>Le vôtre range vos clients, vos factures et vos sous-traitants. Et Cliky, l\'IA de ProClik, fait vos devis pour vous.</small></span>'+IC.chev+'</button>'}
+ return '<div class="offre"><div class="ot"><span class="r">'+IC.home+'</span><span style="flex:1;min-width:0"><b>Vous aimez l\'Espace de '+esc(ARTISAN)+' ? Et pourtant, vous n\'avez encore rien vu…</b><small>Le vôtre range vos clients, vos factures et vos sous-traitants. Et Cliky, l\'IA de ProClik, fait vos devis pour vous.</small></span></div>'+btnEx()+'</div>'}
 
 /* ---------- son chantier ---------- */
 function plan(){return '<svg class="plan" viewBox="0 0 160 100" aria-label="Plan du local"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
@@ -263,7 +269,6 @@ function chantier(){
  var th=$('#theme'),r=document.documentElement,icT=function(){th.innerHTML=r.getAttribute('data-theme')==='dark'?IC.soleil:IC.lune};icT();
  th.addEventListener('click',function(){var d=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',d);try{localStorage.setItem('pc-theme',d)}catch(e){}icT()});
  var jy=$('#jy');if(jy)jy.addEventListener('click',function(){jy.classList.add('ok');jy.innerHTML=IC.check+'C\'est noté';toast(ARTISAN+' voit que vous serez là')});
- var of=$('#offre');if(of)of.addEventListener('click',function(){of.querySelector('small').textContent='Cyril vous rappelle pour en parler (démo).'});
  var it=$('#iti');if(it)it.addEventListener('click',function(){toast('Ouverture du GPS (démo)')});
  $('#appel').addEventListener('click',function(){toast('Appel de '+ARTISAN+' (démo)')});
  [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});
