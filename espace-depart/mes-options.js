@@ -38,7 +38,7 @@ var TXT={
   avec:['Le planning de l\'équipe : qui est sur quel chantier, chaque jour, et s\'il manque du monde.','Chacun voit sa semaine sur son téléphone, avec son propre accès (chef, bureau, terrain).','Vous envoyez le planning en un geste, chacun le reçoit.'],
   sans:'Votre Espace reste à votre nom seul : le planning montre vos chantiers et vos rendez-vous.'},
  conversation:{court:'Une conversation par chantier avec les entreprises',
-  avec:['Dans chaque chantier, une conversation que vous et toutes les entreprises invitées lisez au même endroit.','Vous voyez qui a lu chaque message.','Ce qui est décidé s\'épingle en haut : personne ne peut dire « on ne savait pas ».','Les entreprises la reçoivent par un lien SMS, sans appli. Elles ne voient jamais vos prix.','Option gratuite pour les entreprises à partir de 2 personnes.'],
+  avec:['Dans chaque chantier, une conversation que vous et toutes les entreprises invitées lisez au même endroit.','Vous voyez qui a lu chaque message.','Ce qui est décidé s\'épingle en haut : personne ne peut dire « on ne savait pas ».','Les entreprises la reçoivent par un lien SMS, sans appli. Elles ne voient jamais vos prix.','Déjà dans le forfait TEAM et ARCHI. En option pour PRO.'],
   sans:'Les entreprises de vos chantiers restent visibles avec leurs jours, et vous les prévenez par SMS ou par téléphone, comme aujourd\'hui.'},
  reseaux:{court:'Vos réseaux sociaux gérés pour vous',
   avec:['ProClik s\'occupe de vos réseaux sociaux à votre place.','Vos plus beaux chantiers mis en avant, avec votre accord.'],
@@ -105,7 +105,7 @@ if(menu)menu.addEventListener('click',function(){setTimeout(poser,0)});
 
 /* ---------- la fiche d'une option : elle seule, avec son explication ---------- */
 function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===true;fermer();
- var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':k==='conversation'?(on?'La conversation de chantier est branchée sur votre Espace':'Option gratuite à partir de 2 personnes'):on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
+ var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':k==='conversation'?(on?'La conversation de chantier est branchée sur votre Espace':'En option pour PRO, déjà dans TEAM et ARCHI'):on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
  var h='<div class="card mo-tete'+(on?' on':'')+'"><span class="mo-gal">'+o.i+'</span><div><b>'+esc(titre)+'</b><small>'+esc(t.court)+'</small></div></div>'+
   '<div class="xsec"><h3>'+(on?'Ce qu\'elle fait pour vous':'Avec '+esc(o.n))+'</h3><div class="card"><ul class="mo-ul">'+t.avec.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>'+
   (on&&k==='cliky'&&window.PCJR?PCJR.reglagesHTML():'')+

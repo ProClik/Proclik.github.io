@@ -566,7 +566,7 @@ function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
   var ord=M.map(function(x,i){return [x,i]}),epi=ord.filter(function(y){return y[0].epi}),aut=ord.filter(function(y){return !y[0].epi});
   var dj='',fil=M.map(function(x,i){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j==='À l\'instant'||/\d+ h/.test(j)?'Aujourd\'hui':j)+'</span></div>':'';dj=j;return sep+msgHTML(c,x,i)}).join('');
   var dec=M.filter(function(x){return x.epi});
-  if(window.PCOPT&&PCOPT.actif('conversation')===false)return h+'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Option gratuite à partir de 2 personnes : dites-le à Cyril.</p></div>'+cliCard(c);
+  if(window.PCOPT&&PCOPT.actif('conversation')===false)return h+'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>'+cliCard(c);
   h+='<div class="card" id="cp-fil">'+(window.PCTAG?PCTAG('conversation'):'')+''+
    (dec.length?'<div class="cp-dec"><span class="cp-dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(qui(c,x.de).n)+' · '+esc(jourDe(x.h))+'</small></p>'}).join('')+'</div>':'')+
    '<div class="cp-fil">'+fil+'</div>'+
