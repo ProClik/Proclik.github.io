@@ -4,7 +4,7 @@
 <link rel="apple-touch-icon" href="icone-1024.png?v=4">
 <link rel="stylesheet" href="../fonts/fonts.css">
 <link rel="stylesheet" href="../n1.css">
-<script src="theme.js?v=1"></script><script src="photos-demo.js?v=1"></script>
+<script src="theme.js?v=1"></script><script src="photos-demo.js?v=2"></script>
 <style>
 /* Page de l'entreprise invitée sur un chantier (idée de Cyril du 18-19/11) : elle l'ouvre avec le lien reçu par SMS ou e-mail.
    Style définitif ProClik (/n1.css) : fond calme, bleu nuit pour les actions, laiton en simple touche, seul ce qui se touche ressort.
@@ -297,7 +297,7 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
   (PZ.length>1?'<svg class="plan" viewBox="0 0 160 100" aria-label="Plan avec les réserves"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
    PZ.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-6)+'" text-anchor="middle" class="plt">'+esc(p[0])+'</text>'}).join('')+pins(R)+'</svg>':'')+
   R.map(function(r,i){var q=quiM(r.ent),nx=(r.phx||[]).length;return '<div class="rs">'+PCPH.vg(r,i,'rn '+RST[r.st][1])+'<div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · '+esc(r.ent?q.n:ARTISAN+' choisit qui corrige')+(nx?' · '+nx+' photo'+(nx>1?'s':'')+' ajoutée'+(nx>1?'s':''):'')+'</small><span class="pill '+RST[r.st][1]+'">'+RST[r.st][0]+'</span>'+
-   (r.st!=='val'?'<button class="b2 pk fx" data-addph="'+i+'">'+IC.photo+'Ajouter une photo</button>':'')+'</div></div>'}).join('')+
+   (r.st!=='val'?'<button class="b2 pk fx" data-addph="'+i+'">'+IC.photo+'Ajouter une photo</button>':'')+'</div>'+PCPH.mini(r)+'</div>'}).join('')+
   '<div id="sig"></div>'+(P.recep?'':'<button class="go" id="sg" style="margin-top:12px">'+IC.flag+'Signaler un problème</button>')+
   (P.recep?'<button class="ln" data-doc="Procès-verbal de réception" style="margin-top:12px"><span class="r">'+IC.docs+'</span><span class="tx"><b>Réception signée le '+esc(dt(P.recep.d))+'</b><small>Le procès-verbal, avec '+(P.recep.n||'aucune')+' réserve'+(P.recep.n>1?'s':'')+'</small></span>'+IC.chev+'</button>':'')+'</section>'+
  '</div><div class="col">'+
