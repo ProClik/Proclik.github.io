@@ -26,3 +26,20 @@
   tout();
   new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1){if(n.matches&&n.matches(".sec-h>h2"))pose(n);else tout(n)}})})}).observe(document.body,{childList:true,subtree:true});
 })();
+/* Titre de chaque écran (Clients, Devis, Planning…) avec l'icône du menu à côté (Cyril 19/11) : même dessin que dans le menu, à plat (ne se touche pas). */
+(function(){
+  "use strict";
+  var SEL=".view .row:is(.cf-top,.fl-a)>h2,#v-cotes>.row>h2,#v-reseaux>h2:first-child";
+  function pose(h){if(h.querySelector(".tecr"))return;var v=h.closest(".view");if(!v)return;
+    var b=document.getElementById("nb-"+v.id.replace(/^v-/,""));var s=b&&b.querySelector("svg");if(!s)return;
+    var i=document.createElement("span");i.className="tecr";i.setAttribute("aria-hidden","true");i.appendChild(s.cloneNode(true));h.insertBefore(i,h.firstChild);h.classList.add("tecr-h")}
+  var t;function tout(){clearTimeout(t);t=setTimeout(function(){try{[].forEach.call(document.querySelectorAll(SEL),pose)}catch(e){}},60)}
+  var st=document.createElement("style");
+  st.textContent="html body h2.tecr-h{display:inline-flex;align-items:center;gap:10px}"+
+    "html body .tecr{display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:50%;background:var(--teinte);color:var(--n1-nuit,var(--fg));box-shadow:none}"+
+    "html body .tecr svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}"+
+    "@media (min-width:900px){html body .tecr{width:40px;height:40px}html body .tecr svg{width:21px;height:21px}}";
+  document.head.appendChild(st);
+  tout();addEventListener("load",tout);
+  new MutationObserver(tout).observe(document.body,{childList:true,subtree:true});
+})();

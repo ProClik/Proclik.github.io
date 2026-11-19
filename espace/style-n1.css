@@ -109,3 +109,581 @@ html body .pb-mic .pb-g{box-shadow:var(--n1-pk),0 0 0 5px color-mix(in srgb,var(
   html body .nav button[aria-selected="true"] .ico,html body .nav button[aria-selected="true"] .ico.pk-v{background:var(--bg);box-shadow:0 0 0 2px var(--n1-laiton);color:var(--n1-nuit)}
   html body .nav button:active .ico{background:var(--teinte);box-shadow:none}
 }
+
+/* 11. Finitions (Cyril 19/11, « embellir tout l'Espace ») : rien ne bouge de place, mêmes couleurs (/n1.css).
+   Titres d'écran plus présents, chiffres alignés, étiquettes d'état à plat et colorées selon leur sens,
+   changement d'onglet en fondu doux, anneaux d'avancement lisibles même à 0 %, planning du téléphone sans onglet coupé. */
+html body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+html body :is(h1,h2,h3){text-wrap:balance}
+html body :is(p,.lead,.hint){text-wrap:pretty}
+html body ::selection{background:color-mix(in srgb,var(--n1-laiton) 28%,transparent)}
+/* titre de chaque écran (Clients, Devis, Planning…) : un cran au-dessus des titres de blocs */
+html body .view .row:is(.cf-top,.fl-a)>h2,html body #v-cotes>.row>h2,html body #v-reseaux>h2:first-child{font-size:23px;font-weight:800;letter-spacing:-.6px;line-height:1.1}
+html body .view .cf-top .cf-n{font-size:13px;font-weight:600;color:var(--muted)}
+@media (min-width:900px){html body .view .row:is(.cf-top,.fl-a)>h2,html body #v-cotes>.row>h2,html body #v-reseaux>h2:first-child{font-size:27px;letter-spacing:-.8px}}
+/* étiquettes d'état : elles ne se touchent pas, donc à plat, sur une teinte de leur sens */
+html:root body .pill{box-shadow:none!important;letter-spacing:.1px}
+html:root body .pill.ok{background:color-mix(in srgb,var(--n1-ok) 14%,transparent);color:color-mix(in srgb,var(--n1-ok) 80%,var(--fg))}
+html:root body .pill.warn{background:color-mix(in srgb,var(--n1-warn) 15%,transparent);color:color-mix(in srgb,var(--n1-warn) 80%,var(--fg))}
+html:root body .pill.todo{background:color-mix(in srgb,var(--n1-nuit) 10%,transparent);color:var(--n1-nuit)}
+html:root body .pill.grey{background:var(--teinte);color:var(--muted)}
+/* pastilles rouges : restent rouges, en plus doux (rouge pastel, Cyril 19/11) */
+html body .rouge,html body .cf .rouge{background:#E26D6D;color:#fff}
+:root[data-theme="dark"] body :is(.rouge,.cf .rouge){background:#F09A9A;color:#141927}
+/* anneau d'avancement : piste visible, même à 0 % */
+html body .ring{background:conic-gradient(var(--n1-nuit) calc(var(--p)*1%),color-mix(in srgb,var(--n1-nuit) 12%,transparent) 0)}
+html body .ring::before{background:var(--n1-calme)}
+/* changement d'onglet : l'écran arrive en fondu doux (pas de mouvement) */
+@media (prefers-reduced-motion:no-preference){html body .view:not([hidden]){animation:pcVue .32s ease-out both}}
+@keyframes pcVue{from{opacity:0}to{opacity:1}}
+/* Planning sur téléphone : Jour, Semaine, Mois, Carte et Équipe tiennent sur une ligne */
+@media (max-width:899px){
+  html body #v-planning .seg.oi-a{display:flex;width:100%}
+  html body #v-planning .seg.oi-a button{flex:1 1 0;min-width:0;padding-inline:4px;text-align:center;white-space:nowrap}
+}
+/* ordinateur : barres de défilement fines, couleur du bleu nuit */
+@media (pointer:fine){html{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--n1-nuit) 28%,transparent) transparent}}
+/* Planning sur iPad et ordinateur : la semaine prend toute la largeur (elle s'arrêtait aux trois quarts) */
+@media (min-width:900px){html body #v-planning.ord-a:not([hidden]){grid-template-columns:auto minmax(0,1fr) auto}}
+
+/* 12. Liste des chantiers plus vivante (Cyril 19/11 : « un peu fade ») : vraie carte par chantier,
+   couleur de l'état sur le liseré gauche et sur l'anneau (en cours vert, à démarrer bleu nuit, terminé gris),
+   anneau plus grand, nom en gros, dates avec une petite icône de calendrier. Deux colonnes sur iPad et ordinateur. */
+html body .chrow{--ch-c:var(--n1-nuit);position:relative;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:16px;padding:16px 16px 16px 20px;border-radius:20px;min-height:96px}
+html body .chrow:has(.pill.ok){--ch-c:var(--n1-ok)}
+html body .chrow:has(.pill.grey){--ch-c:var(--n1-muted)}
+html body .chrow::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--ch-c)}
+html body .chrow .ring{width:58px;height:58px;background:conic-gradient(var(--ch-c) calc(var(--p)*1%),color-mix(in srgb,var(--ch-c) 14%,transparent) 0)}
+html body .chrow .ring::before{width:46px;height:46px}
+html body .chrow .ring span{font-size:13px;font-weight:800;color:var(--fg)}
+html body .chrow .tx b{font-size:16px;font-weight:800;letter-spacing:-.2px;line-height:1.25;margin-bottom:3px}
+html body .chrow .tx small{font-size:13px;line-height:1.4}
+html body .chrow .tx small:last-child{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:3px 9px 3px 7px;border-radius:999px;background:var(--teinte);color:var(--fg);font-weight:600;font-size:12.5px}
+html body .chrow .tx small:last-child::before{content:"";width:14px;height:14px;flex:none;background:currentColor;opacity:.75;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='4' y='5' width='16' height='15' rx='3'/%3E%3Cpath d='M8 3v4M16 3v4M4 10h16'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='4' y='5' width='16' height='15' rx='3'/%3E%3Cpath d='M8 3v4M16 3v4M4 10h16'/%3E%3C/svg%3E") center/contain no-repeat}
+html body .chrow .pill{align-self:start}
+@media (max-width:420px){html body .chrow{grid-template-columns:auto minmax(0,1fr);row-gap:8px}html body .chrow .pill{grid-column:2;grid-row:1;justify-self:end;margin-bottom:-4px}html body .chrow .tx{grid-column:2}html body .chrow .ring{grid-row:1/3}}
+@media (min-width:900px){html body .col:has(>.chrow){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px!important}}
+
+/* 13. Menu à icônes d'un chantier (Travaux, Planning, Notes…) : l'onglet choisi n'est plus un rectangle,
+   c'est une bulle ronde bleu nuit autour de l'icône (arrondi ProClik, Cyril 19/11). */
+html body #chx .ch-menu svg{box-sizing:content-box;padding:8px;margin:-4px 0 -3px;border-radius:50%;transition:background .25s,color .25s}
+html body #chx .ch-menu button[aria-selected="true"]{background:transparent!important;box-shadow:none!important;color:var(--fg);font-weight:800}
+html body #chx .ch-menu button[aria-selected="true"] svg{background:var(--n1-nuit);color:var(--n1-nuit-fg)!important;box-shadow:0 6px 14px -6px rgba(14,19,34,.45)}
+html body #chx .ch-menu button i{top:2px;right:calc(50% - 28px)}
+
+/* 14. Cases à cocher rondes, style ProClik (Cyril 19/11) : rond fin, coché = rond bleu nuit plein avec une coche */
+html body input[type=checkbox]:not([switch]):not(.vtick){-webkit-appearance:none;appearance:none;width:24px!important;height:24px!important;min-height:0!important;min-width:24px;margin:0;padding:0;flex:none;border-radius:50%;
+  border:1.5px solid color-mix(in srgb,var(--n1-muted) 55%,transparent);background:var(--n1-calme) center/14px 14px no-repeat;box-shadow:none;cursor:pointer;vertical-align:middle;transition:background-color .2s,border-color .2s,transform .15s}
+html body input[type=checkbox]:not([switch]):not(.vtick):checked{background-color:var(--n1-nuit);border-color:var(--n1-nuit);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+:root[data-theme="dark"] body input[type=checkbox]:not([switch]):not(.vtick):checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E1322' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+html body input[type=checkbox]:not([switch]):not(.vtick):active{transform:scale(.9)}
+html body input[type=checkbox]:not([switch]):not(.vtick):disabled{opacity:.5;cursor:default}
+html body input[type=checkbox]:not([switch]):not(.vtick):focus-visible{outline:2px solid var(--n1-nuit);outline-offset:2px}
+
+/* 15. Disposition plus lisible (Cyril 19/11) : moins de place perdue, l'essentiel remonte, aucune couleur changée. */
+@media (max-width:899px){
+  /* Accueil : les 4 chiffres du mois en tuiles compactes (le graphique des 6 mois reste juste en dessous) */
+  html body #v-accueil .w.sz-s .tu{padding:12px 14px;gap:2px;min-height:0}
+  html body #v-accueil .w.sz-s .tu-sp{display:none}
+  html body #v-accueil .w.sz-s .tu b{font-size:24px;margin-top:6px}
+  html body #v-accueil .w.sz-s .tu-h small{font-size:13px}
+  html body #v-accueil .tdb-g{grid-auto-rows:minmax(92px,auto)!important}
+  /* aides « ? » : plus courtes */
+  html body .tip{padding:10px 12px;gap:10px;border-radius:16px}
+  html body .tip .pc-aide{font-size:13px;line-height:1.35}
+  /* fiche d'un chantier : retour discret, nom sur une ligne, menu à icônes resserré */
+  html body #chx .xback{min-height:40px;padding:6px 14px;font-size:14px}
+  html body #chx>.cf>.sec-h h2{font-size:21px;line-height:1.15}
+  html body #chx .ch-menu{gap:2px;padding:4px}
+  html body #chx .ch-menu button{padding:6px 2px 6px}
+}
+
+/* 16. Une seule façon d'expliquer : les petites aides sous les boutons (Factures, Dépenses) prennent le même
+   dessin que les aides « ? » des autres écrans (bloc teinté, texte à gauche). */
+html body :is(.fa-aide,.dp-aide){background:var(--teinte);border-radius:16px;padding:10px 14px;margin:0;text-align:left!important;color:color-mix(in srgb,var(--fg) 78%,transparent);font-size:13px;line-height:1.4}
+
+/* §17 Accueil matin / soir (Cyril, 19/11) : le bloc « Bonjour » (date, la journée en une phrase, un petit mot léger),
+   « Ma journée » en ligne de temps avec « Y aller », les chiffres du mois sur une bande, les chantiers en anneaux.
+   Plat pour ce qui se lit, en relief pour ce qui se touche. Couleurs inchangées. */
+html body .acc-bj{display:flex;gap:14px;align-items:flex-start;margin:2px 0 4px;padding:18px 18px 16px;border-radius:24px;background:var(--n1-teinte);box-shadow:none}
+html body .acc-bj .bj-ic{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--n1-calme,var(--rs));color:var(--n1-laiton)}
+html body .acc-bj .bj-ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html body .acc-bj .bj-c{min-width:0;flex:1}
+html body .acc-bj .bj-d{display:block;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--n1-muted,var(--muted))}
+html body .acc-bj #hello{margin:2px 0 6px;font-size:28px;line-height:1.1}
+html body .acc-bj .bj-r{margin:0;font-size:15.5px;font-weight:650;line-height:1.4;color:var(--fg)}
+html body .acc-bj .bj-mot{margin:6px 0 0;font-size:13.5px;font-style:italic;color:var(--n1-muted,var(--muted))}
+html body .bj-cache{display:none!important}
+@media (min-width:900px){html body .acc-bj{padding:22px 24px;align-items:center}html body .acc-bj #hello{font-size:32px}html body .acc-bj .bj-ic{width:54px;height:54px}html body .acc-bj .bj-ic svg{width:28px;height:28px}}
+
+/* Ma journée : une ligne de temps */
+html body .tdb .jr{position:relative;list-style:none;margin:0;padding:0;display:grid;gap:8px}
+html body .tdb .jr::before{content:"";position:absolute;left:74px;top:18px;bottom:18px;width:2px;border-radius:2px;background:var(--n1-teinte)}
+html body .tdb .jr-e{position:relative;display:grid;grid-template-columns:58px 14px minmax(0,1fr) auto;align-items:center;gap:0 10px;padding:8px 8px 8px 0;border-radius:16px}
+html body .tdb .jr-e.ici{background:var(--n1-teinte)}
+html body .tdb .jr-e.passe{opacity:.55}
+html body .tdb .jr-h{text-align:right;white-space:nowrap;font-size:13.5px;font-weight:800;font-variant-numeric:tabular-nums}
+html body .tdb .jr-p{position:relative;z-index:1;width:14px;height:14px;box-sizing:border-box;border-radius:50%;border:3px solid var(--k-visit);background:var(--rs)}
+html body .tdb .jr-e.k-run .jr-p,html body .tdb .jr-e.k-plan .jr-p{border-color:var(--k-run)}
+html body .tdb .jr-e.k-pc .jr-p{border-color:var(--k-pc)}html body .tdb .jr-e.k-ent .jr-p{border-color:var(--k-st)}
+html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit);border-color:var(--n1-nuit)}
+html body .tdb .jr-t{display:grid;gap:1px;min-width:0}
+html body .tdb .jr-t b{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .jr-t small{font-size:12.5px;color:var(--n1-muted,var(--muted));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .jr-n{font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--n1-laiton)}
+html body .tdb .jr-go{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 13px;border:0;border-radius:999px;background:var(--rs);box-shadow:var(--up-s,var(--up));color:var(--n1-nuit);font:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+:root[data-theme="dark"] body .tdb .jr-go{color:var(--fg)}
+html body .tdb .jr-go svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+html body .tdb .jr-go:active{transform:scale(.96)}
+@media (max-width:420px){html body .tdb .jr-go span{display:none}html body .tdb .jr-go{width:40px;padding:0;justify-content:center}}
+
+/* Mes chiffres du mois : une seule bande */
+html body .tdb .cm{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+html body .tdb .cm-c{display:grid;gap:3px;min-width:0;padding:10px 10px;border:0;border-radius:16px;background:var(--rs);box-shadow:var(--up-s,var(--up));color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+html body .tdb .cm-c small{font-size:11.5px;font-weight:700;color:var(--n1-muted,var(--muted));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .cm-c b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.01em}
+html body .tdb .cm-c b.cor{color:#E26D6D}:root[data-theme="dark"] body .tdb .cm-c b.cor{color:#F09A9A}
+html body .tdb .cm-c:active{transform:scale(.97)}
+@media (max-width:420px){html body .tdb .cm{gap:6px}html body .tdb .cm-c{padding:9px 7px}html body .tdb .cm-c b{font-size:14px}html body .tdb .cm-c small{font-size:10.5px}}
+
+/* Chantiers en cours : un anneau d'avancement comme dans le menu Chantiers */
+html body .tdb .ch-b{grid-template-columns:minmax(0,1fr) auto}
+html body .tdb .ch-p{display:flex;align-items:center;gap:8px}
+html body .tdb .ch-o{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--n1-nuit) calc(var(--p)*1%),var(--n1-teinte) 0)}
+:root[data-theme="dark"] body .tdb .ch-o{background:conic-gradient(var(--fg) calc(var(--p)*1%),var(--n1-teinte) 0)}
+html body .tdb .ch-o em{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--rs);font-style:normal;font-size:11.5px;font-weight:800;color:var(--fg)}
+html body .tdb .ch-o em{white-space:nowrap;font-size:10.5px;letter-spacing:-.02em}
+html body .tdb .ch-o-t.z{display:inline!important;color:var(--fg);font-weight:800}
+@container tdb (max-width:640px){html body .tdb .sz-m .af{grid-template-columns:1fr}}
+html body .tdb .ch-o-t{font-size:12px;font-weight:700;color:var(--n1-muted,var(--muted))}
+@media (max-width:420px){html body .tdb .ch-o-t{display:none}}
+
+/* §18 Icônes de la journée et de « À faire » (Cyril, 19/11) : café pour commencer, fournisseur, chantier, visite… chaque moment a son icône */
+html body .tdb .jr-e{grid-template-columns:52px 36px minmax(0,1fr) auto}
+html body .tdb .jr::before{left:79px;top:22px;bottom:22px}
+html body .tdb .jr-p{--jc:var(--k-visit);display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:color-mix(in srgb,var(--jc) 15%,var(--rs));color:var(--jc)}
+html body .tdb .jr-p svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .jr-e.k-run .jr-p,html body .tdb .jr-e.k-plan .jr-p,html body .tdb .jr-e.k-done .jr-p{--jc:var(--k-run)}
+html body .tdb .jr-e.k-liv .jr-p{--jc:var(--k-liv)}html body .tdb .jr-e.k-pc .jr-p{--jc:var(--k-pc)}html body .tdb .jr-e.k-ent .jr-p,html body .tdb .jr-e.k-st .jr-p{--jc:var(--k-st)}
+html body .tdb .jr-e.k-devis .jr-p{--jc:var(--k-devis)}html body .tdb .jr-e.k-autre .jr-p{--jc:var(--k-autre)}
+html body .tdb .jr-e.k-cafe .jr-p,html body .tdb .jr-e.k-fin .jr-p{--jc:var(--n1-laiton)}
+html body .tdb .jr-e.k-cafe,html body .tdb .jr-e.k-fin{padding-top:4px;padding-bottom:4px}
+html body .tdb .jr-e.k-cafe .jr-t b,html body .tdb .jr-e.k-fin .jr-t b{font-size:14px;font-weight:700}
+html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit);color:#fff}
+:root[data-theme="dark"] body .tdb .jr-e.ici .jr-p{background:var(--fg);color:var(--rs)}
+/* À faire : icônes neutres, la couleur seulement sur le mot d'action (Cyril, 19/11) */
+html body .tdb .af,html body .tdb .sz-m .af{grid-template-columns:1fr}
+html body .tdb .af-b .afa-ic{background:var(--n1-teinte);box-shadow:none;color:var(--n1-fg,var(--fg))}
+html body .tdb .af-b em{--ac:var(--k-run);font-style:normal;font-weight:800;background:none;padding:0;color:var(--ac)}
+html body .tdb .af-b.t-envoyer em{--ac:#D25A5A}:root[data-theme="dark"] body .tdb .af-b.t-envoyer em{--ac:#F09A9A}
+html body .tdb .af-b.i-fournisseur em{--ac:var(--k-liv)}html body .tdb .af-b.t-ranger em{--ac:var(--k-autre)}
+html body .tdb .af-b.t-suivre em{--ac:var(--n1-muted)}
+html body .tdb .afa-ic svg{width:19px;height:19px}
+
+/* §19 Accueil « Matin et soir » au style ProClik définitif (Cyril, 19/11 : qualité, facilité, moderne), comme la démo RT2O :
+   une seule colonne aérée, le nom en grand, « Le point du matin / du soir » en bleu nuit avec LA chose à faire, puis des listes calmes. */
+html.acc-pro-on body .acc-bj{background:none;padding:6px 2px 2px;margin:0}
+html.acc-pro-on body .acc-bj .bj-ic,html.acc-pro-on body .acc-bj .bj-r,html.acc-pro-on body .acc-bj .bj-mot{display:none}
+html.acc-pro-on body .acc-bj .bj-c{display:flex;flex-direction:column}
+html.acc-pro-on body .acc-bj .bj-h{order:1}html.acc-pro-on body .acc-bj .bj-d{order:2;text-transform:none;letter-spacing:0;font-size:14.5px;font-weight:600}
+html.acc-pro-on body .acc-bj #hello{font-size:30px;margin:0 0 4px}
+@media (min-width:900px){html.acc-pro-on body #v-accueil:not([hidden]){max-width:900px;margin-inline:auto}html.acc-pro-on body .acc-bj #hello{font-size:34px}}
+html body .tdb.acc-pro .tdb-g{grid-template-columns:minmax(0,1fr)!important;gap:14px}
+html body .tdb.acc-pro .tdb-g>.w{grid-column:auto!important;grid-row:auto!important;border-radius:22px;background:var(--n1-calme);box-shadow:var(--n1-calme-sh)}
+html body .tdb.acc-pro .w-in{padding:18px}
+html body .tdb.acc-pro .w-h>b{font-size:17px}
+html body .tdb.acc-pro .w-ic{border-radius:11px;background:var(--n1-teinte);box-shadow:none;color:var(--n1-fg)}
+html body .tdb.acc-pro .tdb-ex{margin:2px 4px 10px}
+/* Le point du jour : la carte bleu nuit */
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){background:var(--n1-nuit)!important;color:var(--n1-nuit-fg);box-shadow:var(--n1-go-sh)!important}
+html body .tdb .pt{display:grid;gap:12px}
+html body .tdb .pt-h{display:flex;align-items:center;gap:10px}
+html body .tdb .pt-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,transparent);color:var(--n1-laiton)}
+html body .tdb .pt-ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pt-h small{font-size:13px;font-weight:800;opacity:.78}
+html body .tdb .pt-t{margin:0;font-size:16.5px;line-height:1.5;font-weight:500}
+html body .tdb .pt-t b{font-weight:800}
+html body .tdb .pt-mot{margin:-4px 0 0;font-size:13.5px;font-style:italic;opacity:.7}
+html body .tdb .pt-go{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:2px;padding:12px 12px 12px 18px;border:0;border-radius:18px;background:var(--n1-nuit-fg);color:var(--n1-nuit);font:inherit;text-align:left;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+html body .tdb .pt-go span{display:grid;gap:1px;min-width:0}
+html body .tdb .pt-go small{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--n1-laiton)}
+html body .tdb .pt-go b{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .pt-go i{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--n1-nuit);color:var(--n1-nuit-fg);font-style:normal;font-weight:800}
+html body .tdb .pt-go:active{transform:scale(.98)}
+
+/* §20 Accueil lisible d'un coup d'œil (Cyril, 19/11) : le point du jour en lignes à icônes, devis signés + % de réussite,
+   avancement des chantiers en anneau ProClik (trait fin bleu nuit + point laiton, comme le logo) */
+html body .tdb .pt-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+html body .tdb .pt-l li{display:flex;align-items:center;gap:12px;min-width:0;font-size:16px;line-height:1.3}
+html body .tdb .pt-li{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:color-mix(in srgb,var(--n1-nuit-fg) 11%,transparent);color:var(--n1-nuit-fg)}
+html body .tdb .pt-li svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pt-hh{flex:none;min-width:0;font-weight:800;font-variant-numeric:tabular-nums;color:var(--n1-laiton)}
+html body .tdb .pt-l li>span:last-child{min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .tdb .pt-l li small{font-weight:500;opacity:.7;margin-left:4px}
+html body .tdb .pt-l li b{font-weight:800}
+/* L'anneau ProClik */
+html body .tdb .an{position:relative;flex:none;display:grid;place-items:center;width:48px;height:48px}
+html body .tdb .an svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+html body .tdb .an-f{fill:none;stroke:var(--n1-teinte);stroke-width:2.6}
+html body .tdb .an-v{fill:none;stroke:var(--n1-nuit);stroke-width:2.6;stroke-linecap:round}
+html body .tdb .an-p{fill:var(--n1-laiton);stroke:var(--n1-calme);stroke-width:1.6}
+html body .tdb .an em{font-style:normal;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--fg)}
+html body .tdb .an em small{font-size:8.5px;margin-left:1px}
+:root[data-theme="dark"] body .tdb .an-v{stroke:var(--fg)}
+html body .tdb .ch-p{gap:0}
+/* Chiffres : la ligne qui motive, puis 3 montants avec icône */
+html body .tdb .cm-top{display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;border:0;border-radius:18px;background:var(--n1-teinte);color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+html body .tdb .cm-an{width:58px;height:58px}html body .tdb .cm-an em{font-size:15px}
+html body .tdb .cm-an .an-f{stroke:color-mix(in srgb,var(--n1-nuit) 12%,transparent)}
+html body .tdb .cm-tx{display:grid;gap:2px;min-width:0}
+html body .tdb .cm-tx b{font-size:19px;font-weight:800}html body .tdb .cm-tx b span{font-weight:600;color:var(--n1-muted)}
+html body .tdb .cm-tx small{font-size:13px;color:var(--n1-muted)}
+html body .tdb .cm{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-top:10px}
+html body .tdb .cm-c{gap:2px}
+html body .tdb .cm-ic{display:grid;place-items:center;width:28px;height:28px;margin-bottom:4px;border-radius:9px;background:var(--n1-teinte);color:var(--n1-fg,var(--fg))}
+html body .tdb .cm-ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:420px){html body .tdb .cm-c b{font-size:15px}}
+
+/* §21 « Le point du jour » sublimé (Cyril, 19/11 : « la partie la plus importante quand on ouvre l'appli »). Trois versions à essayer (?point=1|2|3) :
+   1 le ciel (lumière qui change matin / midi / soir + trame de plan), 2 l'arc du jour (point laiton = maintenant), 3 le prochain rendez-vous en grand */
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){position:relative;overflow:hidden}
+html body .tdb .pt-ciel{position:absolute;inset:0;pointer-events:none;border-radius:inherit;overflow:hidden;
+  background-image:radial-gradient(color-mix(in srgb,var(--n1-nuit-fg) 9%,transparent) 1px,transparent 1.2px);background-size:18px 18px}
+html body .tdb .pt-ciel i{position:absolute;border-radius:50%;display:block}
+html body .tdb .pt-ciel i:nth-child(1){width:300px;height:300px;top:-150px;right:-110px;background:radial-gradient(closest-side,color-mix(in srgb,var(--n1-laiton) 42%,transparent),transparent)}
+html body .tdb .m-midi .pt-ciel i:nth-child(1){width:420px;height:300px;top:-170px;right:auto;left:50%;margin-left:-210px;background:radial-gradient(closest-side,color-mix(in srgb,var(--n1-laiton) 50%,transparent),transparent)}
+html body .tdb .m-soir .pt-ciel i:nth-child(1){top:auto;bottom:-170px;right:auto;left:-120px;background:radial-gradient(closest-side,color-mix(in srgb,var(--n1-laiton) 26%,transparent),transparent)}
+html body .tdb .m-soir .pt-ciel i:nth-child(2){width:2px;height:2px;top:18%;right:12%;background:var(--n1-nuit-fg);opacity:.75;
+  box-shadow:-40px 22px 0 0 color-mix(in srgb,var(--n1-nuit-fg) 60%,transparent),-95px 6px 0 -.3px var(--n1-nuit-fg),-150px 30px 0 0 color-mix(in srgb,var(--n1-nuit-fg) 50%,transparent),-20px 60px 0 -.3px var(--n1-nuit-fg),-210px 14px 0 0 color-mix(in srgb,var(--n1-nuit-fg) 45%,transparent)}
+html body .tdb .pt.v1,html body .tdb .pt.v2,html body .tdb .pt.v3{position:relative}
+html body .tdb .pt.v1>*:not(.pt-ciel),html body .tdb .pt.v2>*:not(.pt-ciel),html body .tdb .pt.v3>*:not(.pt-ciel){position:relative;z-index:1}
+html body .tdb .pt[class*=" v"] .pt-ciel{inset:-18px}
+/* 2 : l'arc du jour */
+html body .tdb .pa{position:relative;aspect-ratio:300/90;margin:6px 4px 4px}
+html body .tdb .pa svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+html body .tdb .pa-f{fill:none;stroke:color-mix(in srgb,var(--n1-nuit-fg) 30%,transparent);stroke-width:1.6;stroke-dasharray:2 5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+html body .tdb .pa-d{fill:none;stroke:var(--n1-laiton);stroke-width:2.4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+html body .tdb .pa-e{position:absolute;display:grid;place-items:center;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:var(--n1-nuit);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--n1-nuit-fg) 45%,transparent);color:var(--n1-nuit-fg)}
+html body .tdb .pa-e.fait{opacity:.5}
+html body .tdb .pa-e svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pa-n{position:absolute;width:14px;height:14px;transform:translate(-50%,-50%);border-radius:50%;background:var(--n1-laiton);box-shadow:0 0 0 5px color-mix(in srgb,var(--n1-laiton) 28%,transparent);animation:paN 2.6s ease-in-out infinite}
+@keyframes paN{50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--n1-laiton) 10%,transparent)}}
+@media (prefers-reduced-motion:reduce){html body .tdb .pa-n{animation:none}}
+html body .tdb .pa-a,html body .tdb .pa-z{position:absolute;bottom:-4px;font-size:11px;font-weight:700;opacity:.6}
+html body .tdb .pa-a{left:0}html body .tdb .pa-z{right:0}
+/* 3 : le prochain rendez-vous en grand */
+html body .tdb .pgr{display:grid;gap:10px;padding-bottom:14px;border-bottom:1px solid color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent)}
+html body .tdb .pgr-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+html body .tdb .pgr-h b{font-size:48px;line-height:1;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+html body .tdb .pgr-h small{font-size:14px;font-weight:800;color:var(--n1-laiton)}
+html body .tdb .pgr-t{display:flex;align-items:center;gap:12px;min-width:0}
+html body .tdb .pgr-t>span:nth-child(2){display:grid;gap:1px;min-width:0;flex:1}
+html body .tdb .pgr-t b{font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .pgr-t small{font-size:13px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .pgr-go{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:color-mix(in srgb,var(--n1-nuit-fg) 13%,transparent);color:var(--n1-nuit-fg);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+html body .tdb .pgr-go svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+
+/* §22 Le point du jour en FRISE (Cyril, 19/11 : « simple, efficace, joli, chronologie de la journée avec des icônes ») — couleurs inchangées :
+   bleu nuit, texte clair, laiton seulement sur l'étape en cours. */
+html body .tdb .pt-h{flex-wrap:wrap}
+html body .tdb .pt-nv{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:color-mix(in srgb,var(--n1-nuit-fg) 12%,transparent);font-size:12.5px;font-weight:800}
+html body .tdb .pt-nv svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .fr{position:relative;list-style:none;margin:6px 0 2px;padding:0;display:flex;justify-content:space-between}
+html body .tdb .fr::before{content:"";position:absolute;left:20px;right:20px;top:19px;height:2px;border-radius:2px;background:color-mix(in srgb,var(--n1-nuit-fg) 20%,transparent)}
+html body .tdb .fr-e{position:relative;z-index:1;display:grid;justify-items:center;gap:7px;min-width:0}
+html body .tdb .fr-i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(color-mix(in srgb,var(--n1-nuit-fg) 11%,transparent),color-mix(in srgb,var(--n1-nuit-fg) 11%,transparent)),var(--n1-nuit);color:var(--n1-nuit-fg);transition:transform .3s}
+html body .tdb .fr-i svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .fr-e small{font-size:12px;font-weight:700;opacity:.78;white-space:nowrap;font-variant-numeric:tabular-nums}
+html body .tdb .fr-e.fait .fr-i,html body .tdb .fr-e.fait small{opacity:.42}
+html body .tdb .fr-e.ici .fr-i{background:var(--n1-nuit-fg);color:var(--n1-nuit);box-shadow:0 0 0 2.5px var(--n1-nuit),0 0 0 4.5px var(--n1-laiton);transform:scale(1.1)}
+html body .tdb .fr-e.ici small{opacity:1;font-weight:800;color:var(--n1-laiton)}
+html body .tdb .fo{display:grid;gap:4px;padding:12px 14px;border-radius:16px;background:color-mix(in srgb,var(--n1-nuit-fg) 8%,transparent)}
+html body .tdb .fo>small{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--n1-laiton)}
+html body .tdb .fo>div{display:flex;align-items:center;gap:12px;min-width:0}
+html body .tdb .fo>div>span{display:grid;gap:1px;min-width:0;flex:1}
+html body .tdb .fo b{font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .fo em{font-style:normal;font-size:13px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .fo-go{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent);color:var(--n1-nuit-fg);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+html body .tdb .fo-go svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+html body .tdb .fo-go:active{transform:scale(.96)}
+@media (max-width:380px){html body .tdb .fr-i{width:34px;height:34px}html body .tdb .fr::before{top:16px}}
+/* §22 b : la frise avec ses infos (heure, type, lieu) et des colonnes égales qui remplissent la largeur (iPad : plus de grands vides) */
+html body .tdb .fr{gap:4px}
+html body .tdb .fr-e{flex:1 1 0;gap:5px;text-align:center;align-content:start}
+html body .tdb .fr::before{left:10%;right:10%}
+html body .tdb .fr-e small{font-size:12.5px;font-weight:800;opacity:.95}
+html body .tdb .fr-t{display:grid;gap:1px;max-width:100%}
+html body .tdb .fr-t b{font-size:11.5px;font-weight:700;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .fr-t em{font-style:normal;font-size:11px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .fr-e.fait .fr-t{opacity:.45}
+html body .tdb .fr-e.ici .fr-t b{opacity:1}
+@media (min-width:700px){html body .tdb .fr-i{width:46px;height:46px}html body .tdb .fr-i svg{width:21px;height:21px}html body .tdb .fr::before{top:22px}
+  html body .tdb .fr-e small{font-size:14px}html body .tdb .fr-t b{font-size:13.5px}html body .tdb .fr-t em{font-size:12.5px}}
+
+/* §23 Variantes du point du jour (Cyril, 19/11 : « plusieurs variantes, façon ProClik, sur iPad il manque quelque chose ») — ?point=a|b|c, mêmes couleurs */
+html body .tdb .pt-g{display:grid;gap:12px}
+html body .tdb .pt-a,html body .tdb .pt-b{display:grid;gap:12px;align-content:start;min-width:0}
+@media (min-width:700px){
+  html body .tdb .pv-a .pt-g,html body .tdb .pv-b .pt-g,html body .tdb .pv-c .pt-g{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:stretch}
+  html body .tdb .pv-a .pt-b,html body .tdb .pv-b .pt-b,html body .tdb .pv-c .pt-b{align-content:end;padding-left:20px;border-left:1px solid color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent)}
+  html body .tdb .pv-c .pt-b{border-left:0;padding-left:0}
+  html body .tdb .pv-a .pt-mot,html body .tdb .pv-b .pt-mot{font-size:15px}
+}
+/* B : la journée à la verticale */
+html body .tdb .vj{position:relative;list-style:none;margin:0;padding:0;display:grid;gap:6px}
+html body .tdb .vj::before{content:"";position:absolute;left:76px;top:20px;bottom:20px;width:2px;border-radius:2px;background:color-mix(in srgb,var(--n1-nuit-fg) 20%,transparent)}
+html body .tdb .vj-e{position:relative;display:grid;grid-template-columns:52px 40px minmax(0,1fr) auto;align-items:center;gap:0 12px;padding:6px 8px 6px 0;border-radius:16px}
+html body .tdb .vj-e .fr-i{position:relative;z-index:1}
+html body .tdb .vj-h{text-align:right;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+html body .tdb .vj-t{display:grid;gap:1px;min-width:0}
+html body .tdb .vj-t b{font-size:15.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .vj-t em{font-style:normal;font-size:12.5px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .vj-e.fait{opacity:.45}
+html body .tdb .vj-e.ici{background:color-mix(in srgb,var(--n1-nuit-fg) 9%,transparent)}
+html body .tdb .vj-e.ici .vj-h{color:var(--n1-laiton)}
+html body .tdb .vj-e.ici .fr-i{background:var(--n1-nuit-fg);color:var(--n1-nuit);box-shadow:0 0 0 2.5px var(--n1-nuit),0 0 0 4.5px var(--n1-laiton)}
+html body .tdb .vj-e.fr-cafe .vj-t b,html body .tdb .vj-e.fr-fin .vj-t b{font-size:14px;font-weight:700;opacity:.85}
+/* C : les étapes en tuiles */
+html body .tdb .tz{list-style:none;margin:2px 0 0;padding:0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+html body .tdb .tz::-webkit-scrollbar{display:none}
+html body .tdb .tz-e{position:relative;flex:1 0 96px;display:grid;justify-items:start;gap:2px;padding:12px;border-radius:16px;background:color-mix(in srgb,var(--n1-nuit-fg) 8%,transparent);min-width:0}
+html body .tdb .tz-e .fr-i{width:34px;height:34px;margin-bottom:6px}
+html body .tdb .tz-e .fr-i svg{width:17px;height:17px}
+html body .tdb .tz-e b{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+html body .tdb .tz-e span:not(.fr-i){font-size:12.5px;font-weight:700;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+html body .tdb .tz-e em{font-style:normal;font-size:12px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+html body .tdb .tz-e.fait{opacity:.45}
+html body .tdb .tz-e.ici{background:var(--n1-nuit-fg);color:var(--n1-nuit);box-shadow:inset 0 3px 0 var(--n1-laiton)}
+html body .tdb .tz-e.ici .fr-i{background:color-mix(in srgb,var(--n1-nuit) 10%,transparent);color:var(--n1-nuit)}
+html body .tdb .tz-e.ici b{color:var(--n1-laiton)}
+html body .tdb .tz-e:not(:last-child)::after{content:"";position:absolute;right:-7px;top:28px;width:6px;height:2px;background:color-mix(in srgb,var(--n1-nuit-fg) 25%,transparent)}
+
+/* sur iPad, la colonne de droite : ce qui attend votre validation (une ligne par type) */
+html body .tdb .pr{display:none}
+@media (min-width:700px){
+  html body .tdb .pr{display:grid;gap:6px;margin-bottom:auto}
+  html body .tdb .pr>small{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+  html body .tdb .pr-l{display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;border-radius:14px;background:color-mix(in srgb,var(--n1-nuit-fg) 8%,transparent);color:var(--n1-nuit-fg);font:inherit;text-align:left;cursor:pointer}
+  html body .tdb .pr-i{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,transparent)}
+  html body .tdb .pr-i svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  html body .tdb .pr-l>b{font-size:17px;font-weight:800;min-width:16px}
+  html body .tdb .pr-l>span:last-child{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html body .tdb .pr-l em{font-style:normal;font-weight:500;opacity:.7}
+  html body .tdb .pv-a .pt-b,html body .tdb .pv-b .pt-b,html body .tdb .pv-c .pt-b{align-content:stretch;grid-template-rows:1fr auto auto}
+  html body .tdb .pv-a .pt-nv,html body .tdb .pv-b .pt-nv,html body .tdb .pv-c .pt-nv{display:none}
+}
+/* §24 Le point du jour reste BLEU NUIT la nuit aussi (Cyril, 19/11 : « sur iPad tu as changé la couleur ») : mêmes valeurs qu'en jour, dans le bloc seulement */
+:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){--n1-nuit:#1B2440;--n1-nuit-fg:#fff;--n1-go-sh:0 8px 18px -6px rgba(0,0,0,.6)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){--n1-nuit:#1B2440;--n1-nuit-fg:#fff}}
+/* §25 Frise touchable : chaque icône ouvre son moment juste en dessous (étape du jour, matériel, Y aller, Voir le chantier) */
+html body .tdb .fr-b{display:grid;justify-items:center;gap:5px;width:100%;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html body .tdb .fr-e.sel:not(.ici) .fr-i{box-shadow:0 0 0 2px var(--n1-nuit),0 0 0 3.5px var(--n1-nuit-fg)}
+html body .tdb .fr-e.sel.fait .fr-i,html body .tdb .fr-e.sel.fait small,html body .tdb .fr-e.sel.fait .fr-t{opacity:1}
+html body .tdb .fr-b:active .fr-i{transform:scale(.92)}
+html body .tdb .fo{gap:8px}
+html body .tdb .fo-d{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:6px}
+html body .tdb .fo-d li{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.3;min-width:0}
+html body .tdb .fo-d li>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .tdb .fo-d b{font-weight:800}
+html body .tdb .fo-li{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,transparent)}
+html body .tdb .fo-li svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .fo-b{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+html body .tdb .fo-b .fo-go svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .fo-d b{font-size:inherit}
+html body .tdb .fr-now{font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--n1-laiton);color:#1B2440;margin:-2px 0 1px}
+html body .tdb .fo>small{font-size:12.5px}
+html body .tdb .fo>div b{font-size:19px}
+/* §26 Le point : carte claire le jour, sombre la nuit (couleurs des autres blocs) + tout visible sans défiler */
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){--n1-nuit:var(--n1-calme);--n1-nuit-fg:#1B2440;background:var(--n1-calme)!important;box-shadow:var(--up)!important}
+:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){--n1-nuit:var(--n1-calme);--n1-nuit-fg:#E8EAF2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){--n1-nuit:var(--n1-calme);--n1-nuit-fg:#E8EAF2}}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-go{color:#fff}
+:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-go{color:#141927}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-go i{background:#fff;color:#1B2440}
+:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-go i{background:#141927;color:#E8EAF2}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .fr-e.ici .fr-i{color:#fff}
+:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .fr-e.ici .fr-i{color:#141927}
+html body .tdb .fr-now{white-space:nowrap;font-size:9.5px;padding:2px 7px;margin:0}
+html body .tdb .fo-d li>span:last-child{white-space:normal;overflow:visible}
+@media (max-width:699px){
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){padding:14px!important}
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-g,html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-a{gap:10px!important}
+  html body .tdb .pt-mot{display:none}
+  html body .tdb .fr-i{width:36px;height:36px}html body .tdb .fr-i svg{width:17px;height:17px}html body .tdb .fr::before{top:18px}
+  html body .tdb .fr-e{gap:3px}
+  html body .tdb .fr-e small{font-size:12.5px}
+  html body .tdb .fr-t em{display:none}
+  html body .tdb .fr-t b{font-size:11.5px}
+  html body .tdb .fo{padding:10px 12px;gap:6px}
+  html body .tdb .fo>small{font-size:11px}
+  html body .tdb .fo>div b{font-size:17px}
+  html body .tdb .fo-d{gap:4px}
+  html body .tdb .fo-d li{font-size:13px;gap:8px}
+  html body .tdb .fo-d li:nth-child(n+3){display:none}
+  html body .tdb .fo-li{width:24px;height:24px;border-radius:8px}html body .tdb .fo-li svg{width:13px;height:13px}
+  html body .tdb .fo-b{margin-top:2px;gap:6px}
+  html body .tdb .fo-b button{padding:7px 12px!important;font-size:13px!important;min-height:0!important}
+  html body .tdb .pt-go{padding:9px 9px 9px 14px}html body .tdb .pt-go b{font-size:15px}html body .tdb .pt-go i{width:32px;height:32px}
+  html body .tdb .pt-h small{font-size:13px}
+}
+@media (max-width:699px){
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]){padding:0!important}
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau])>.w-in{padding:14px 14px 12px!important}
+  html body #acc{margin-top:6px!important}
+  html body .tdb .fr-now{display:none}
+  html body .tdb .fr{margin:2px 0 0!important}
+  html body .tdb .fo>div>span{display:flex;align-items:baseline;column-gap:8px;flex-wrap:wrap}
+  html body .tdb .fo>div em{flex:0 1 auto}
+  html body .tdb .fo>div b{flex:0 1 auto}
+  html body .tdb .fo-b button{padding:6px 12px!important}
+}
+/* §27 bouton « à valider » en haut à droite */
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h{flex-wrap:nowrap}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv{display:inline-flex!important;margin-left:auto;flex:none;align-items:center;gap:8px;padding:6px 10px 6px 6px;border:0;border-radius:999px;background:var(--n1-nuit-fg);color:#fff;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 6px 14px -6px rgba(14,19,34,.55)}
+:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv{color:#141927;box-shadow:0 6px 14px -6px rgba(0,0,0,.7)}
+html body .tdb .pt-dvn{display:grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:999px;background:var(--n1-laiton);color:#1B2440;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+html body .tdb .pt-dv svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pt-dv:active{transform:scale(.96)}
+@media (min-width:700px){html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv{font-size:15px;padding:8px 14px 8px 8px}html body .tdb .pt-dvn{min-width:30px;height:30px}}
+@media (max-width:380px){html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h small{font-size:12px}html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv{font-size:13px}}
+/* §28 téléphone : le bouton du haut remplace celui du bas */
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h small{white-space:nowrap}
+@media (max-width:699px){
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-go{display:none}
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h{gap:8px}
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h small{font-size:12.5px}
+  html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv{font-size:13.5px;gap:6px;padding:5px 9px 5px 5px}
+  html body .tdb .pt-dvn{min-width:24px;height:24px;font-size:13px}
+}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h .pt-ic{flex:none}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-h small{min-width:0;overflow:hidden;text-overflow:ellipsis}
+/* §29 bouton « à valider » discret (icône, teinte légère) ; Y aller / Voir le chantier en bleu nuit */
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv,:root[data-theme="dark"] body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv{gap:6px;padding:6px 8px 6px 11px!important;font-size:13px!important;background:color-mix(in srgb,var(--n1-nuit-fg) 9%,transparent);color:var(--n1-nuit-fg);box-shadow:0 0 0 1px color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent) inset,0 2px 5px -3px rgba(14,19,34,.35)}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .pt-dv svg:last-child{width:13px;height:13px;opacity:.6;stroke-width:2.2}
+html body .tdb .w:is([data-w=point],[data-w=afaire],[data-w=jour],[data-w=chiffres],[data-w=chantiers],[data-w=nouveau]) .fo-b button{background:var(--n1-nuit-fg)!important;color:var(--n1-nuit)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
+/* §30 Les autres blocs de l'Accueil au style du « point » (Cyril 19/11) : en-tête discret, lignes à plat teintées, icônes en carré doux */
+html body .tdb{--ac-t:color-mix(in srgb,var(--n1-fg) 6.5%,transparent);--ac-i:color-mix(in srgb,var(--n1-fg) 9%,transparent)}
+html body .tdb .w:not([data-w=point]) .w-h{gap:10px}
+html body .tdb .w:not([data-w=point]) .w-h>b{font-size:13.5px!important;font-weight:800;opacity:.78;letter-spacing:0}
+html body .tdb .w:not([data-w=point]) .w-ic{width:32px!important;height:32px!important;border-radius:11px!important;background:var(--ac-i)!important;color:var(--n1-laiton)!important;box-shadow:none!important}
+html body .tdb .w:not([data-w=point]) .w-ic svg{width:18px;height:18px}
+html body .tdb .w:not([data-w=point]) .w-n{background:var(--ac-i)!important;color:var(--n1-fg)!important;box-shadow:none!important;font-size:12.5px;font-weight:800;min-width:26px;height:26px;padding:0 8px;border-radius:999px;display:inline-grid;place-items:center}
+html body .tdb .w:not([data-w=point]) .w-sub{font-size:12px;font-weight:700;opacity:.65}
+/* lignes touchables : à plat, fond teinté, comme « Aujourd'hui à valider » */
+html body .tdb :is(.af-b,.ch-b,.cm-c,.cm-top,.nv>button,.nv-1){background:var(--ac-t)!important;border:0!important;box-shadow:none!important;border-radius:14px!important}
+html body .tdb :is(.af-b,.ch-b,.cm-c,.cm-top,.nv>button,.nv-1):active{transform:scale(.985)}
+html body .tdb :is(.afa-ic,.cm-ic,.nv-ic){width:32px!important;height:32px!important;border-radius:10px!important;background:var(--ac-i)!important;box-shadow:none!important;color:var(--n1-fg)!important}
+html body .tdb :is(.afa-ic,.cm-ic,.nv-ic) svg{width:17px;height:17px}
+html body .tdb .afa-ic i{box-shadow:0 0 0 2px var(--n1-calme)}
+html body .tdb .af{gap:6px!important}
+html body .tdb .af-b{padding:9px 12px!important;min-height:0!important}
+html body .tdb .ch{gap:6px!important}
+html body .tdb .ch-b{padding:10px 12px!important}
+html body .tdb .cm{gap:6px!important}
+html body .tdb .af-plus{font-size:13px;font-weight:800;opacity:.75}
+/* Ma journée : même pastilles que la frise */
+html body .tdb .jr-p{background:var(--ac-i)!important;box-shadow:none!important;border-radius:50%}
+html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg)!important;box-shadow:0 0 0 2px var(--n1-calme),0 0 0 3.5px var(--n1-laiton)!important}
+html body .tdb .jr-n{color:var(--n1-laiton)!important;background:none!important;padding:0!important;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;font-style:normal}
+html body .tdb .jr-go{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
+
+/* §31 Les blocs reconstruits comme le point du jour : lignes simples (.bl-l), journée (.jl), chiffres, nouveau (.nvf) */
+html body .tdb .bl{display:grid;gap:6px}
+html body .tdb .bl-l{display:flex;align-items:center;gap:10px;width:100%;min-width:0;padding:9px 10px;border:0;border-radius:14px;background:color-mix(in srgb,var(--n1-nuit-fg) 7%,transparent);color:var(--n1-nuit-fg);font:inherit;text-align:left;cursor:pointer}
+html body .tdb .bl-l:active{transform:scale(.985)}
+html body .tdb .bl-l .pr-i{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,transparent)}
+html body .tdb .bl-l .pr-i svg,html body .tdb .bl-f svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .bl-l>b{font-size:16px;font-weight:800;min-width:12px;font-variant-numeric:tabular-nums}
+html body .tdb .bl-tx{flex:1;min-width:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .bl-tx strong{font-weight:800}
+html body .tdb .bl-tx em{font-style:normal;font-weight:500;opacity:.7}
+html body .tdb .bl-l.t-valider .bl-tx em,html body .tdb .bl-l.t-envoyer .bl-tx em,html body .tdb .bl-l.t-ranger .bl-tx em,html body .tdb .bl-l.i-fournisseur .bl-tx em{opacity:1;font-weight:800;color:var(--k-run)}
+html body .tdb .bl-l.t-envoyer .bl-tx em{color:#D25A5A}:root[data-theme="dark"] body .tdb .bl-l.t-envoyer .bl-tx em{color:#F09A9A}
+html body .tdb .bl-l.i-fournisseur .bl-tx em{color:var(--k-liv)}html body .tdb .bl-l.t-ranger .bl-tx em{color:var(--k-autre)}
+html body .tdb .bl-f{flex:none;display:grid;opacity:.5}
+html body .tdb .bl-v{flex:none;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+html body .tdb .bl-v.cor{color:#D25A5A}:root[data-theme="dark"] body .tdb .bl-v.cor{color:#F09A9A}
+html body .tdb .bl-z{flex:none;font-size:12px;font-weight:800;opacity:.65}
+html body .tdb .bl-l .an,html body .tdb .fo .an{flex:none}
+html body .tdb .fo>div{align-items:center}
+html body .tdb button.fo{width:100%;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+html body .tdb .cm-fo>div{gap:14px}
+html body .tdb .cm-fo>div b{font-size:19px}
+/* Ma journée : une ligne par rendez-vous, la même pastille que la frise, reliées par un trait */
+html body .tdb .jl-w{position:relative;display:grid;gap:4px}
+html body .tdb .jl-w::before{content:"";position:absolute;left:79px;top:22px;bottom:22px;width:2px;border-radius:2px;background:color-mix(in srgb,var(--n1-nuit-fg) 12%,transparent)}
+html body .tdb .jl{position:relative;display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:14px}
+html body .tdb .jl-h{flex:none;width:44px;text-align:right;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;opacity:.8}
+html body .tdb .jl .fr-i{flex:none;position:relative;z-index:1;width:36px;height:36px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,var(--n1-calme))}
+html body .tdb .jl .fr-i svg{width:17px;height:17px}
+html body .tdb .jl-t{flex:1;min-width:0;display:grid;gap:1px}
+html body .tdb .jl-t small{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--n1-laiton)}
+html body .tdb .jl-t b{font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .jl-t em{font-style:normal;font-size:12.5px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .jl.ici{background:color-mix(in srgb,var(--n1-nuit-fg) 7%,transparent)}
+html body .tdb .jl.ici .fr-i{background:var(--n1-nuit-fg);color:#fff;box-shadow:0 0 0 2.5px var(--n1-calme),0 0 0 4.5px var(--n1-laiton)}
+:root[data-theme="dark"] body .tdb .jl.ici .fr-i{color:#141927}
+html body .tdb .jl.ici .jl-h{color:var(--n1-laiton);opacity:1}
+html body .tdb .jl.fait{opacity:.5}
+html body .tdb .jl-go{flex:none}
+@media (max-width:699px){html body .tdb .jl-go{width:38px;height:38px;min-height:0!important;padding:0!important;justify-content:center}html body .tdb .jl-go span{display:none}}
+/* Nouveau pré-devis : trois gros ronds bleu nuit, comme la frise */
+html body .tdb .nvf::before{display:none!important}
+html body .tdb .nvf .fr-i{width:52px!important;height:52px!important;background:var(--n1-nuit-fg)!important;color:#fff!important;box-shadow:0 6px 14px -6px rgba(14,19,34,.55)!important}
+:root[data-theme="dark"] body .tdb .nvf .fr-i{color:#141927!important}
+html body .tdb .nvf .fr-i svg{width:22px;height:22px}
+html body .tdb .nvf .fr-t b{font-size:13.5px!important;opacity:1!important}
+html body .tdb .nvf .fr-t em{display:block!important;font-size:11.5px}
+html body .tdb .nvf .fr-e{gap:8px}
+html body .tdb .fo .an em,html body .tdb .bl-l .an em{font-size:12.5px;opacity:1;overflow:visible;white-space:nowrap;color:var(--n1-nuit-fg)}
+html body .tdb .fo .cm-an em{font-size:15px}
+html body .tdb .pt .an .an-v{stroke:var(--n1-nuit-fg)!important}
+html body .tdb .pt .an .an-f{stroke:color-mix(in srgb,var(--n1-nuit-fg) 13%,transparent)!important}
+html body .tdb .jl-go{background:var(--n1-nuit-fg)!important;color:var(--n1-nuit)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
+html body .tdb .fo>div>span.an{display:grid!important;place-items:center!important;flex:none!important}
+html body .tdb .cm-fo em{white-space:normal!important}
+/* §32 Tout l'Espace au style du « point du jour » (Cyril 19/11 : « applique ce style sur tout l'Espace, chaque bloc le même style »)
+   bloc = fond calme + ombre douce ; titre de bloc discret avec icône laiton en carré doux ; à droite une pastille ;
+   lignes à plat sur fond teinté ; petites étiquettes en laiton ; boutons d'action bleu nuit (inchangés). */
+html body{--sv-t:color-mix(in srgb,var(--n1-fg) 6.5%,transparent);--sv-i:color-mix(in srgb,var(--n1-fg) 9%,transparent)}
+html body .view:not(#v-accueil) .bk,html body .view:not(#v-accueil) .card:not(.bk>.card){background:var(--n1-calme)!important;border:0!important;border-radius:24px!important;box-shadow:var(--up)!important}
+html body .view:not(#v-accueil) .bk{padding:14px!important;gap:10px!important}
+/* titre de bloc */
+html body .view:not(#v-accueil) .sec-h{display:flex;align-items:center;gap:10px}
+html body .view:not(#v-accueil) .sec-h>h2,html body .view:not(#v-accueil) .sec-h>h2.ti,html body .view:not(#v-accueil) .sec-h>h3{font-size:13.5px!important;font-weight:800!important;line-height:1.2;opacity:.8;letter-spacing:0;margin:0}
+html body .view:not(#v-accueil) .ti-ic{width:32px!important;height:32px!important;border-radius:11px!important;background:var(--sv-i)!important;box-shadow:none!important;color:var(--n1-laiton)!important}
+html body .view:not(#v-accueil) .ti-ic svg{width:18px!important;height:18px!important}
+html body .view:not(#v-accueil) .sec-h>:is(span,.hint,small,button):last-child:not(:first-child){margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:0;border-radius:999px;background:var(--sv-i)!important;box-shadow:none!important;color:var(--n1-fg)!important;font-size:12.5px!important;font-weight:800!important;opacity:1;white-space:nowrap}
+/* lignes de liste : à plat, fond teinté, comme les lignes de l'Accueil */
+html body .view:not(#v-accueil) .cf-l{display:grid!important;grid-template-columns:minmax(0,1fr);gap:6px!important}
+html body .view:not(#v-accueil) .cf-li{padding:10px 12px!important;border:0!important;border-radius:14px!important;background:var(--sv-t)!important;box-shadow:none!important;min-height:0}
+html body .view:not(#v-accueil) .cf-li:active{transform:scale(.985)}
+html body .view:not(#v-accueil) .cf-av{width:36px!important;height:36px!important;border-radius:11px!important;background:var(--sv-i)!important;box-shadow:none!important;font-size:13.5px}
+html body .view:not(#v-accueil) .cf-av svg{width:17px!important;height:17px!important}
+html body .view:not(#v-accueil) .cf-li .go{opacity:.55}
+html body .view:not(#v-accueil) .chrow{border:0!important;border-radius:16px!important;background:var(--sv-t)!important;box-shadow:none!important}
+/* carte « l'essentiel » : petite étiquette en laiton comme « En ce moment » */
+html body .view:not(#v-accueil) .cf-hero>small{font-size:11.5px!important;font-weight:800!important;letter-spacing:.05em;text-transform:uppercase;color:var(--n1-laiton)!important}
+/* tuiles du haut (menu et chiffres) : même surface que les blocs, icône laiton, choisie = trait bleu nuit */
+html body .view:not(#v-accueil) .seg.tm button,html body .view:not(#v-accueil) .tb-t,html body .view:not(#v-accueil) .kpi{background:var(--n1-calme)!important;border:0!important;border-radius:18px!important;box-shadow:var(--up)!important}
+html body .view:not(#v-accueil) .seg.tm button[aria-selected="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit),var(--up)!important;background:color-mix(in srgb,var(--n1-nuit) 6%,var(--n1-calme))!important}
+html body .view:not(#v-accueil) .seg.tm button>svg,html body .view:not(#v-accueil) .tb-ic{color:var(--n1-laiton)!important}
+html body .view:not(#v-accueil) .seg.tm button[aria-selected="true"]>span{color:var(--n1-nuit)!important}
+html body .view:not(#v-accueil) .card.lst:not(.cf-l){display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+html body .view:not(#v-accueil) .card.lst>button{padding:10px 12px!important;border:0!important;border-radius:14px!important;background:var(--sv-t)!important;box-shadow:none!important}
+html body .view:not(#v-accueil) .card.lst>button :is(.cf-av,.av,.ic,.lg){border-radius:11px!important;box-shadow:none!important;background:var(--sv-i)!important}
+html body .view:not(#v-accueil) .fa-env{display:grid;gap:10px}
+html body .view:not(#v-accueil) .fa-env-h>h2 i.rouge{font-style:normal;margin-left:6px}
+html body .view:not(#v-accueil) .card.lst>div:not(.sec-h):not(.fa-env-h){padding:10px 12px!important;border:0!important;border-radius:14px!important;background:var(--sv-t)!important;box-shadow:none!important}
+/* la fiche d'un chantier garde son grand titre */
+html body #chx>.cf:not(.ch-top)>.sec-h>h2{font-size:21px!important;opacity:1!important;line-height:1.15}
+html body #chx>.cf:not(.ch-top)>.sec-h .ti-ic{display:none}
+/* Produits : icône de catégorie comme les titres de blocs (carré doux, laiton jour et nuit) */
+html body .view .pr-fam .pr-fi{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:11px;background:var(--sv-i)!important;box-shadow:none!important;color:var(--n1-laiton)!important}
+html body .view .pr-fam .pr-fi svg{width:18px;height:18px;stroke:currentColor!important}
+html body .view .pr-fam .pr-fi svg *{stroke:currentColor!important}
