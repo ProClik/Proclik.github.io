@@ -134,13 +134,26 @@
       '<div class="parc-tx"><span>Maintenant</span><b>Vérifier le pré-devis</b>'+(u.ensuite&&t==="l"?"<small>Ensuite : "+esc(u.ensuite)+"</small>":"")+"</div>"+
       (u.ligne&&t==="l"?'<div class="ligne corr"><span>'+esc(u.ligne[0])+(u.ligne[1]?'<span class="cote">'+esc(u.ligne[1])+"</span>":"")+'</span><span class="q">à vérifier</span></div>':"")+
       bouton("verif","Vérifier le pré-devis",u.attr)};
-  R.afaire=function(t,D){var L=D.afaire.filter(function(x){return x[0]>0}),max=t==="m"?3:t==="h"?4:5;
+  /* Les blocs de l'Accueil construits comme « Le point du jour » (Cyril, 19/11) : en-tête discret + bouton à droite, une carte pour l'essentiel, des lignes simples pour le reste */
+  var CHV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',GOI='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>';
+  function hd(ic,titre,pill){return '<div class="pt-h"><span class="pt-ic">'+ic+"</span><small>"+esc(titre)+"</small>"+(pill||"")+"</div>"}
+  function pil(ic,tx,attr){return attr?'<button type="button" class="pt-nv pt-dv" '+attr+">"+(ic||"")+"<span>"+tx+"</span>"+CHV+"</button>":'<span class="pt-nv">'+(ic||"")+tx+"</span>"}
+  function li(ic,tx){return '<li><span class="fo-li">'+ic+"</span><span>"+tx+"</span></li>"}
+  function rang(ic,b,tx,attr,droite,cl){return '<button type="button" class="bl-l'+(cl?" "+cl:"")+'" '+attr+'><span class="pr-i">'+ic+"</span>"+(b!=null&&b!==""?"<b>"+b+"</b>":"")+'<span class="bl-tx">'+tx+"</span>"+(droite||'<span class="bl-f">'+CHV+"</span>")+"</button>"}
+  var VERBE={valider:"Vérifier",envoyer:"Voir et envoyer",ranger:"Ranger",suivre:"Voir"};
+  R.afaire=function(t,D){var L=D.afaire.filter(function(x){return x[0]>0}),max=t==="m"?3:t==="h"?4:5,u=D.urgent;
     var n=L.reduce(function(s,x){return s+(x[4]==="suivre"?0:x[0])},0);
-    var h=tete("predevis","À faire",n?'<span class="w-n">'+n+"</span>":"");
-    if(!D.charge)return h+'<p class="vide">Chargement…</p>';
-    if(!L.length)return h+'<div class="w-rien"><b>Tout est à jour</b><span>Rien à valider ni à envoyer.</span></div>';
-    return h+'<div class="af">'+L.slice(0,max).map(function(x){
-      return '<button class="af-b t-'+x[4]+' i-'+x[1]+'" type="button" data-accv="'+x[5]+'"><span class="afa-ic">'+IC[x[1]]+"<i>"+x[0]+'</i></span><span class="afa-tx"><b>'+esc(x[2])+'</b><small><em>'+esc(x[3])+"</em>"+(x[6]?" · "+esc(x[6]):"")+"</small></span>"+'<span class="af-f">›</span></button>'}).join("")+
+    var h=hd(IC.predevis,"À faire",n?pil("",n+" en tout",'data-accv="devis"'):"");
+    if(!D.charge)return '<div class="pt">'+h+'<p class="vide">Chargement…</p></div>';
+    if(!L.length)return '<div class="pt">'+h+'<div class="fo"><small>Tout est à jour</small><div><span><b>Rien à valider ni à envoyer</b><em>Profitez-en, ça ne dure jamais longtemps.</em></span></div></div></div>';
+    var x=L[0],pp=String(x[6]||"").split(" · "),det=[],pd=x[1]==="predevis"&&u;
+    if(x[0]>1)det.push(li(IC[x[1]],"<b>"+x[0]+" "+esc(x[2].toLowerCase())+"</b> "+esc(x[3])));
+    if(pd&&u.prix)det.push(li(IC.argent,"Montant : <b>"+Number(u.prix).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" € HT</b>"));
+    if(pd&&u.ligne&&u.ligne[0])det.push(li(IC.chantier,"À vérifier : <b>"+esc(u.ligne[0])+"</b>"+(u.ligne[1]?" · "+esc(u.ligne[1]):"")));
+    var hero='<div class="fo"><small>Le plus urgent · '+esc(x[3])+'</small><div><span><b>'+esc(pp[0]||x[2])+"</b><em>"+esc(x[2]+(pp[1]?" · "+pp[1]:""))+"</em></span></div>"+(det.length?'<ul class="fo-d">'+det.join("")+"</ul>":"")+
+      '<div class="fo-b"><button type="button" class="fo-go" '+(pd?u.attr:'data-accv="'+x[5]+'"')+">"+(VERBE[x[4]]||"Ouvrir")+CHV+"</button></div></div>";
+    var R2=L.slice(1,max);
+    return '<div class="pt">'+h+hero+(R2.length?'<div class="bl">'+R2.map(function(x){return rang(IC[x[1]],x[0],esc(x[2])+" <em>"+esc(x[3])+"</em>",'data-accv="'+x[5]+'"',"","t-"+x[4]+" i-"+x[1])}).join("")+"</div>":"")+
       (L.length>max?'<button class="af-plus" type="button" data-accv="devis">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":"")+"</div>"};
   /* Encaissé par mois (exemple) : de simples barres, faciles à lire d'un coup d'œil */
   var MOIS=[["Mai","mai",6100,9200],["Juin","juin",8400,12500],["Juil.","juillet",7200,7800],["Août","août",9600,13100],["Sept.","septembre",7900,11000],["Oct.","octobre",8640,14210]];
@@ -178,18 +191,16 @@
     pc:I('<path d="M5 5h14v10H10l-4 4v-4H5z"/>'),devis:IC.predevis,ent:IC.entretien||IC.chantier,autre:IC.agenda,st:IC.chantier,
     fin:I('<path d="M4 11l8-6 8 6v8H4z"/><path d="M10 19v-5h4v5"/>')};
   function jli(cl,ico,hh,b,sm,extra){return '<li class="jr-e '+cl+'"><span class="jr-h">'+hh+'</span><span class="jr-p" aria-hidden="true">'+ico+'</span><span class="jr-t">'+(extra||"")+"<b>"+b+"</b><small>"+sm+"</small></span></li>"}
-  R.jour=function(t){var soir=moment()==="soir",d=soir?prochain():AUJ(),L=d?evs(iso(d)):[],max=t==="m"?2:4;
+  R.jour=function(t){var soir=moment()==="soir",d=soir?prochain():AUJ(),L=d?evs(iso(d)):[],max=t==="m"?3:5;
     var dem=d&&soir&&iso(d)===iso(new Date(AUJ().getTime()+864e5)),nom=d?d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):"";
-    var titre=soir?(dem?"Demain":"Prochaine journée"):"Ma journée",sous=soir?nom:"";
-    var nm=nowMin(),ic=-1;
+    var titre=soir?(dem?"Demain":"Prochaine journée"):"Ma journée",nm=nowMin(),ic=-1;
     if(!soir)L.forEach(function(e,k){if(ic<0&&hm(e.e||e.s)>nm)ic=k});
-    var h=tete("agenda",titre,sous?'<span class="w-sub">'+esc(sous)+"</span>":(L.length?'<span class="w-sub">'+L.length+" rendez-vous</span>":""));
-    if(!L.length)return h+'<div class="w-rien"><b>'+(soir?"Rien de prévu pour l'instant":"Rien de prévu aujourd'hui")+"</b><span>"+(soir?"Un créneau tout neuf à offrir à un client.":"Une journée pour avancer les devis. Ou le rangement du camion.")+"</span></div>"+
-      '<button type="button" class="af-plus" data-accv="planning">Ouvrir le planning ›</button>';
-    return h+'<ol class="jr">'+jli("k-cafe"+(!soir&&(ic>0||ic<0)?" passe":""),JI.cafe,"","Un café, et c'est parti",soir?"Pour bien commencer demain":"La journée commence")+L.slice(0,max).map(function(e,k){var l=lieu(e),go=!soir&&l&&e.k!=="pc";
-      return '<li class="jr-e k-'+e.k+(k===ic?" ici":"")+(!soir&&ic>=0&&k<ic?" passe":"")+'"><span class="jr-h">'+hTxt(e.s)+'</span><span class="jr-p" aria-hidden="true">'+(JI[e.k]||IC.agenda)+'</span><span class="jr-t">'+(k===ic?'<em class="jr-n">'+(hm(e.s)<=nm?"En ce moment":"Ensuite")+"</em>":"")+"<b>"+esc(e.t)+"</b><small>"+esc(e.w||KN[e.k]||"")+"</small></span>"+
-        (go?'<button type="button" class="jr-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg><span>Y aller</span></button>':"")+"</li>"}).join("")+(L.length<=max?jli("k-fin",JI.fin,"","Fin de journée","On range les outils, et à demain"):"")+"</ol>"+
-      (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":'<button type="button" class="af-plus" data-accv="planning">Tout le planning ›</button>')};
+    var h=hd(IC.agenda,titre,pil("",soir?esc(nom):L.length+" rendez-vous",'data-accv="planning"'));
+    if(!L.length)return '<div class="pt">'+h+'<div class="fo"><small>'+(soir?"Rien de prévu pour l'instant":"Rien de prévu aujourd'hui")+'</small><div><span><b>Journée libre</b><em>'+(soir?"Un créneau tout neuf à offrir à un client.":"Une journée pour avancer les devis. Ou ranger le camion.")+"</em></span></div></div></div>";
+    return '<div class="pt">'+h+'<div class="jl-w">'+L.slice(0,max).map(function(e,k){var l=lieu(e),go=!soir&&l&&e.k!=="pc",cur=k===ic;
+      return '<div class="jl k-'+e.k+(cur?" ici":"")+(!soir&&ic>=0&&k<ic?" fait":"")+'"><span class="jl-h">'+hTxt(e.s)+'</span><span class="fr-i">'+(JI[e.k]||IC.agenda)+'</span><span class="jl-t">'+(cur?"<small>"+(hm(e.s)<=nm?"En ce moment":"Ensuite")+"</small>":"")+"<b>"+esc(e.t)+"</b><em>"+esc(e.w||KN[e.k]||"")+"</em></span>"+
+        (go?'<button type="button" class="fo-go jl-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'">'+GOI+"<span>Y aller</span></button>":"")+"</div>"}).join("")+"</div>"+
+      (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":"")+"</div>"};
   /* « Le point du matin / du soir » : la journée racontée en deux phrases, un petit mot léger, et la seule chose à faire en premier */
   /* Trois façons de sublimer le point du jour, à essayer : ?point=1 (le ciel), 2 (l'arc du jour), 3 (le prochain en grand) */
   var PV=(location.search.match(/[?&]point=([23])/)||[])[1]||"";
@@ -249,19 +260,26 @@
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   /* Devis signés et taux de réussite en tête (Cyril, 19/11 : « pour motiver »), puis trois montants avec leur icône */
   R.chiffres=function(){var ns=3,ne=5,pc=Math.round(ns/ne*100),C=[["argent","Encaissé","8 640 €","factures",0],["signe","Signé","14 210 €","devis",0],["facture","À encaisser","2 760 €","factures",1]];
-    return tete("argent","Mes chiffres d'octobre",'<span class="w-sub">HT</span>')+
-      '<button type="button" class="cm-top" data-accv="devis">'+anneau(pc,"cm-an")+'<span class="cm-tx"><b>'+ns+" devis signés <span>sur "+ne+"</span></b><small>"+pc+" % de réussite · "+(pc>=50?"plus d'un sur deux, bravo":"chaque devis compte")+"</small></span></button>"+
-      '<div class="cm">'+C.map(function(x){return '<button type="button" class="cm-c" data-accv="'+x[3]+'"><span class="cm-ic">'+IC[x[0]]+"</span><small>"+x[1]+"</small><b"+(x[4]?' class="cor"':"")+">"+x[2]+"</b></button>"}).join("")+"</div>"};
+    return '<div class="pt">'+hd(IC.argent,"Mes chiffres",pil("","Octobre · HT",""))+
+      '<button type="button" class="fo cm-fo" data-accv="devis"><small>Devis signés ce mois</small><div>'+anneau(pc,"cm-an")+'<span><b>'+ns+" signés sur "+ne+"</b><em>"+pc+" % de réussite · "+(pc>=50?"plus d'un sur deux, bravo":"chaque devis compte")+"</em></span></div></button>"+
+      '<div class="bl">'+C.map(function(x){return rang(IC[x[0]],"",esc(x[1]),'data-accv="'+x[3]+'"','<b class="bl-v'+(x[4]?" cor":"")+'">'+x[2]+"</b>")}).join("")+"</div></div>"};
   /* L'anneau ProClik (comme le logo) : trait fin bleu nuit, et le point laiton qui avance sur le cercle */
   function anneau(p,cl){var R0=17,Lc=2*Math.PI*R0,a=(p/100*360-90)*Math.PI/180,x=(22+R0*Math.cos(a)).toFixed(2),y=(22+R0*Math.sin(a)).toFixed(2);
     return '<span class="an '+(cl||"")+'" role="img" aria-label="'+p+' %"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="an-f" cx="22" cy="22" r="'+R0+'"/><circle class="an-v" cx="22" cy="22" r="'+R0+'" stroke-dasharray="'+(Lc*p/100).toFixed(1)+" "+Lc.toFixed(1)+'" transform="rotate(-90 22 22)"/><circle class="an-p" cx="'+x+'" cy="'+y+'" r="3.4"/></svg><em>'+p+"<small>%</small></em></span>"}
   R.chantiers=function(t){var CH=(window.PCX&&PCX.CH)||{},av=(window.PCX&&PCX.avc)||function(){return 0};
-    var L=Object.keys(CH).map(function(k){return CH[k]}).filter(function(c){return c.st==="run"||c.st==="start"}).slice(0,t==="m"?2:4);
-    return tete("chantier","Chantiers en cours")+(L.length?'<div class="ch">'+L.map(function(c){var p=av(c);
-      return '<button type="button" class="ch-b" data-accv="chantiers"><span class="ch-t"><b>'+esc(c.n)+"</b><small>"+esc(c.v)+" · "+esc(c.dates||"")+'</small></span><span class="ch-p">'+(p?anneau(p,"ch-an"):'<span class="ch-o-t z">à démarrer</span>')+"</span></button>"}).join("")+"</div>":'<p class="vide">Aucun chantier en cours.</p>')};
+    var L=Object.keys(CH).map(function(k){return CH[k]}).filter(function(c){return c.st==="run"||c.st==="start"}).slice(0,t==="m"?3:5);
+    var h=hd(IC.chantier,"Chantiers en cours",L.length?pil("",L.length+" en cours",'data-accv="chantiers"'):"");
+    if(!L.length)return '<div class="pt">'+h+'<div class="fo"><small>Chantiers</small><div><span><b>Aucun chantier en cours</b><em>Le prochain devis signé arrive ici.</em></span></div></div></div>';
+    var c=L[0],p=av(c),et=c.ouv?c.ouv.filter(function(o){return o[2]<100})[0]:null,det=[];
+    if(et)det.push(li(IC.chantier,"Aujourd'hui : <b>"+esc(et[0])+"</b> · "+et[2]+" % fait"));
+    if(c.four)c.four.filter(function(m){return !/livr|pris/i.test(m[2])}).slice(0,1).forEach(function(m){det.push(li(IC.fournisseur,(/command/i.test(m[2])?"Commandé : ":"À prévoir : ")+"<b>"+esc(m[0])+"</b> · "+esc((String(m[1]).match(/\d+\s*manquantes?/)||[m[1]])[0])))});
+    var hero='<div class="fo"><small>'+(p?"En cours":"À démarrer")+(c.dates?" · "+esc(c.dates):"")+'</small><div><span><b>'+esc(c.n)+"</b><em>"+esc(c.v||"")+"</em></span>"+(p?anneau(p,"ch-an"):"")+"</div>"+(det.length?'<ul class="fo-d">'+det.join("")+"</ul>":"")+
+      '<div class="fo-b">'+(c.v?'<button type="button" class="fo-go" data-gps="'+esc(c.v)+'">'+GOI+"Y aller</button>":"")+'<button type="button" class="fo-go" data-chouv="'+esc(c.id)+'">Voir le chantier'+CHV+"</button></div></div>";
+    var R2=L.slice(1);
+    return '<div class="pt">'+h+hero+(R2.length?'<div class="bl">'+R2.map(function(c){var p=av(c);return rang(IC.chantier,"","<strong>"+esc(c.n)+"</strong> <em>"+esc(c.v||"")+(c.dates?" · "+esc(c.dates):"")+"</em>",'data-chouv="'+esc(c.id)+'"',p?anneau(p,"ch-an"):'<span class="bl-z">à démarrer</span>')}).join("")+"</div>":"")+"</div>"};
   R.nouveau=function(t){if(t==="s")return tete("plan","Nouveau")+'<button type="button" class="nv-1" data-nv="0"><span class="nv-ic">'+IC.plan+"</span><b>Nouveau pré-devis</b></button>";
-    return tete("plan","Nouveau pré-devis",'<span class="w-sub">3 façons, au choix</span>')+'<div class="nv">'+
-      [["plan","Plan et cotes","Tracez la pièce"],["micro","Dicter","Parlez, ça s'écrit"],["photo","Photo des notes","Votre feuille papier"]].map(function(x,k){return '<button type="button" data-nv="'+k+'"><span class="nv-ic">'+IC[x[0]]+"</span><span class=\"nv-t\"><b>"+x[1]+"</b><small>"+x[2]+"</small></span></button>"}).join("")+"</div>"};
+    return '<div class="pt">'+hd(IC.plan,"Nouveau pré-devis",pil("","3 façons, au choix",""))+'<ol class="fr nvf">'+
+      [["plan","Plan et cotes","Tracez la pièce"],["micro","Dicter","Parlez, ça s'écrit"],["photo","Photo des notes","Votre feuille papier"]].map(function(x,k){return '<li class="fr-e"><button type="button" class="fr-b" data-nv="'+k+'"><span class="fr-i">'+IC[x[0]]+'</span><span class="fr-t"><b>'+x[1]+"</b><em>"+x[2]+"</em></span></button></li>"}).join("")+"</ol></div>"};
   /* Petites tuiles : le titre en haut, le chiffre bien visible, et une petite tendance en bas (barres des 6 mois, ou part d'un total) */
   function spark(k){var max=Math.max.apply(null,MOIS.map(function(x){return x[k]}));
     return '<span class="tu-sp" aria-hidden="true">'+MOIS.map(function(x,i){return '<i'+(i===5?' class="on"':"")+' style="height:'+Math.max(12,x[k]/max*100).toFixed(0)+'%"></i>'}).join("")+"</span>"}
