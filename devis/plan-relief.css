@@ -286,3 +286,13 @@ html body #clbanner.tool #clb-go{display:none}
 
 /* Cyril 18/11 : boutons sans déplacement au clic (relief creusé + vibration seulement). */
 html.client body button:active,html body #esck .g button:active{transform:none!important}
+
+/* Cyril 19/11 : « C'est bon » pas assez visible. Le bouton qui valide l'étape devient le gros bouton principal :
+   pleine largeur de la consigne, bleu nuit plein (crème la nuit), onde qui invite à toucher. « Passer » reste discret. */
+html body #clbanner #clb-b.okgo:not([hidden]){order:9;flex:1 1 100%;width:100%;margin:6px 0 0;min-height:52px;padding:10px 18px;border:0;border-radius:999px;background:#1B2440;color:#fff;font:800 17px/1.15 var(--f);letter-spacing:.01em;box-shadow:0 6px 16px rgba(27,36,64,.28),inset 0 1px 0 rgba(255,255,255,.12);animation:gpulse 1.8s ease-out infinite;display:flex;align-items:center;justify-content:center;gap:8px;white-space:normal;text-align:center}
+:root[data-theme="dark"] body #clbanner #clb-b.okgo:not([hidden]){background:#F2EEE4;color:#1B2440;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+html body #clbanner #clb-b.okgo:not([hidden]):active{box-shadow:inset 0 3px 8px rgba(0,0,0,.35)}
+/* Téléphone couché : la consigne est étroite, le bouton reste grand mais un peu moins haut. */
+@media (orientation:landscape) and (max-height:560px){html.client body #clbanner #clb-b.okgo:not([hidden]){min-height:42px;font-size:14.5px;padding:8px 12px}}
+/* Un seul bouton qui pulse : quand « C'est bon » est là, l'outil de l'étape reste visible mais calme. */
+html body #clbanner:has(#clb-b.okgo:not([hidden])) #clb-go{animation:none}
