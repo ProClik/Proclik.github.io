@@ -226,7 +226,7 @@
     rec=rec.length?'<div class="pr"><small>'+(soir?"Ce soir":"Aujourd'hui")+' à valider</small>'+rec.map(function(x){return '<button type="button" class="pr-l" data-accv="'+x[5]+'"><span class="pr-i">'+IC[x[1]]+"</span><b>"+x[0]+"</b><span>"+esc(x[2])+" <em>"+esc(x[3])+"</em></span></button>"}).join("")+"</div>":"";
     var tete2='<div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir · demain":midi?"Le point de midi":"Le point du matin")+"</small>"+(nv?'<span class="pt-nv">'+IC.predevis+nv+" à valider</span>":"")+"</div>";
     /* variantes à essayer (Cyril, 19/11) : ?point=a frise + carte côte à côte, b journée verticale, c étapes en tuiles */
-    var VV=(location.search.match(/[?&]point=([abc])/)||[])[1]||"";
+    var VV=(location.search.match(/[?&]point=([abc0])/)||[])[1]||"a";
     if(VV==="b"){var vl='<ol class="vj">'+F.map(function(x,q){var ev=x.e,go=ev&&!soir&&q===ici&&lieu(ev)&&ev.k!=="pc";
         return '<li class="vj-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><b class="vj-h">'+(x.e?x.h:"")+'</b><span class="fr-i">'+x.ic+'</span><span class="vj-t"><b>'+(x.e?esc(x.e.t):x.h+" "+esc(x.t))+"</b>"+(x.e?"<em>"+esc(x.t+(x.w?" · "+x.w:""))+"</em>":"")+"</span>"+
           (go?'<button type="button" class="fo-go" data-gps="'+esc(lieu(ev))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</li>"}).join("")+"</ol>";
