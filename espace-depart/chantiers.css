@@ -252,6 +252,11 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-st button[aria-pressed="true"]{color:var(--n1-laiton)}.cp-st button[aria-pressed="true"] svg{fill:var(--n1-laiton)}
 #chx .cp-moy{color:var(--n1-laiton);font-weight:800}
 /* ---------- Réserves, réception, client connecté (Cyril 19/11) ---------- */
+.cp-lu{display:flex;align-items:center;gap:7px;margin:0 2px 8px;font-size:12px;font-weight:600;color:var(--muted,var(--n1-muted))}
+.cp-lu svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cp-lu.priv{padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--n1-laiton) 12%,transparent);color:var(--n1-fg);margin:0 0 10px}
+.cp-lu.priv svg{color:var(--n1-laiton)}
+.cp-priv{box-shadow:var(--n1-calme-sh,none),inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 40%,transparent)}
 .cp-pl{display:block;width:100%;max-width:420px;margin:2px auto 10px;color:var(--fg,var(--n1-fg))}
 .cp-plt{font:700 6.5px Manrope,sans-serif;fill:var(--muted,var(--n1-muted))}
 .cp-plz{fill:color-mix(in srgb,var(--n1-laiton) 16%,transparent);stroke:var(--n1-laiton);stroke-width:1.2;stroke-dasharray:3 2}
