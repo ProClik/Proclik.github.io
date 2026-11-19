@@ -282,4 +282,3 @@ html body .tdb .af-b.i-facture .afa-ic{--jc:#E26D6D}:root[data-theme="dark"] bod
 html body .tdb .af-b.i-fournisseur .afa-ic{--jc:var(--k-liv)}html body .tdb .af-b.i-depense .afa-ic{--jc:var(--k-autre)}
 html body .tdb .af-b.i-attente .afa-ic{--jc:var(--k-pc)}html body .tdb .af-b.i-chantier .afa-ic{--jc:var(--k-run)}html body .tdb .af-b.i-entretien .afa-ic{--jc:var(--k-st)}
 html body .tdb .afa-ic svg{width:19px;height:19px}
-@media (min-width:900px){html body .tdb .sz-m .af{grid-template-columns:1fr 1fr}}
