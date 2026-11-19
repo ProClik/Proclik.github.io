@@ -200,3 +200,7 @@ html body input[type=checkbox]:not([switch]):not(.vtick):focus-visible{outline:2
   html body #chx .ch-menu{gap:2px;padding:4px}
   html body #chx .ch-menu button{padding:6px 2px 6px}
 }
+
+/* 16. Une seule façon d'expliquer : les petites aides sous les boutons (Factures, Dépenses) prennent le même
+   dessin que les aides « ? » des autres écrans (bloc teinté, texte à gauche). */
+html body :is(.fa-aide,.dp-aide){background:var(--teinte);border-radius:16px;padding:10px 14px;margin:0;text-align:left!important;color:color-mix(in srgb,var(--fg) 78%,transparent);font-size:13px;line-height:1.4}
