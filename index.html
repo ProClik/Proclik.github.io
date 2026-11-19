@@ -705,6 +705,41 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
 .gal .vw-ch::-webkit-scrollbar{display:none}
 .gal .vw-ch button{flex:none}
 body:has(.mod:not([hidden])) .h-cta{display:none}
+
+/* Accueil : cartes « Compris » / « En option » retravaillées (19/11) */
+.univers ul.sat{background:var(--calme);border-radius:26px;padding:10px;gap:2px;box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 0 0 1px var(--line),0 26px 50px -34px rgba(14,19,34,.35);align-items:stretch!important;width:270px;position:relative;z-index:1}
+.univers ul.sat.d{box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 0 0 1px color-mix(in srgb,var(--laiton) 40%,var(--line)),0 26px 50px -34px rgba(14,19,34,.35)}
+.univers ul.sat li{display:block}
+.univers ul.sat li.t{display:flex;align-items:center;gap:11px;padding:8px 8px 12px;margin-bottom:4px;border-bottom:1px solid var(--line);text-transform:none;letter-spacing:0;color:var(--fg);font-size:inherit}
+.univers ul.sat li.t::after{display:none}
+.univers .st-i{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:var(--nuit);color:var(--nuit-fg)}
+.univers .sat.d .st-i{color:var(--laiton)}
+.univers .st-i svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.univers .st-n{display:flex;flex-direction:column;font-size:16px;font-weight:800;line-height:1.15}
+.univers .sat.d .st-n{color:var(--fg)}
+.univers .st-n small{font-size:12px;font-weight:600;color:var(--muted);margin:2px 0 0!important;display:block!important}
+.univers ul.sat .pas{width:100%;text-align:left;box-shadow:none!important;background:none;border-radius:14px;padding:8px 10px 8px 8px!important;font-size:14.5px!important;gap:11px!important;white-space:normal;line-height:1.25;transition:background .25s}
+.univers ul.sat .pas:hover,.univers ul.sat .pas:focus-visible{background:color-mix(in srgb,var(--fg) 5%,transparent);transform:none}
+.univers ul.sat .pas .ic{width:32px!important;height:32px!important;padding:7px!important;border-radius:10px;background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg);flex:none}
+.univers ul.sat.d .pas .ic{background:color-mix(in srgb,var(--laiton) 14%,transparent);color:var(--laiton)}
+.univers ul.sat .pas .chev{display:block!important;margin-left:auto;width:16px;height:16px;flex:none}
+.univers ul.sat li small.ia{display:inline;margin-left:2px}
+@media (prefers-reduced-motion:no-preference){.univers ul.sat{animation:entre .8s cubic-bezier(.2,.8,.2,1) both .3s}.univers ul.sat.g{--x:-18px}.univers ul.sat.d{--x:18px}.univers ul.sat li{animation:none}}
+@media (max-width:980px){
+ .univers ul.sat{width:auto;padding:6px;border-radius:20px}
+ .univers ul.sat li.t{padding:6px 6px 9px;gap:8px}
+ .univers .st-i{width:28px;height:28px;border-radius:9px}.univers .st-i svg{width:15px;height:15px}
+ .univers .st-n{font-size:14px}.univers .st-n small{display:none!important}
+ .univers ul.sat .pas{padding:6px 6px!important;font-size:12.5px!important;gap:8px!important;border-radius:11px}
+ .univers ul.sat .pas .ic{width:26px!important;height:26px!important;padding:5px!important;border-radius:8px}
+ .univers ul.sat .pas .chev{display:none!important}
+ .univers ul.sat li small.ia{display:none}
+}
+/* bloc des sites, à sa place sous l'accueil */
+#sites{padding-block:clamp(28px,4vw,56px)!important}
+#sites::before{display:none}
+#sites .vitrine{margin:0 auto;max-width:980px}
+@media (max-width:699px){html.fit #sites .vitrine{display:grid}}
 /* === Modernisation (aperçu 19/11) === */
 .univers::before{content:"";position:absolute;inset:-40px -2vw;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
 .univers{isolation:isolate}
@@ -781,16 +816,17 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
 </header>
 
 <main>
+
 <!-- 1. ACCUEIL -->
 <section class="hero"><div class="wrap">
   <div class="pc prod">
     <p class="sur">L'Espace ProClik</p>
     <h1>Tout votre métier.<br><span class="or">Une seule appli.</span></h1>
     <p class="lead">Votre site, vos demandes, vos devis et votre agenda, réunis dans une seule appli.</p>
-    <div class="actions"><a class="btn" href="#contact">Prendre rendez-vous</a><a class="btn sec" href="#demo">Essayer l'Espace</a><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
+    <div class="actions"><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
 
     <div class="univers">
-      <ul class="sat g"><li class="t">Compris</li>
+      <ul class="sat g"><li class="t"><span class="st-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="st-n">Compris<small>Dans tous les Espaces</small></span></li>
 <li class="a1"><button class="pas" type="button" id="p-a1" data-k="a1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3.7"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M14 10h4M14 13h3"/></svg>Carte de visite virtuelle<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="a2"><button class="pas" type="button" id="p-a2" data-k="a2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M4 12h9v8M13 4v8"/></svg>Formulaire et plan<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="a3"><button class="pas" type="button" id="p-a3" data-k="a3" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="4.7"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Tout se dicte<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
@@ -804,7 +840,7 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
         <div class="ipad"><div class="scr"><picture><source srcset="vitrine/ipad-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" fetchpriority="high" src="vitrine/ipad.jpg" alt="L'accueil de l'Espace sur iPad : le point du matin, la journée et ce qu'il reste à valider" width="1600" height="1112"></picture></div></div>
         <div class="iphone"><div class="scr"><picture><source srcset="vitrine/iphone-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" fetchpriority="high" src="vitrine/iphone.jpg" alt="L'Espace sur téléphone" width="600" height="1298"></picture></div></div>
       </div>
-      <ul class="sat d"><li class="t">En option</li>
+      <ul class="sat d"><li class="t"><span class="st-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="st-n">En option<small>À ajouter quand vous voulez</small></span></li>
         <li class="o1 opt"><button class="pas" type="button" id="p-o1" data-k="o1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="4.7"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky<small class="ia">IA ProClik</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="o6 opt"><button class="pas" type="button" id="p-o6" data-k="o6" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9 20v-5h6v5"/><circle cx="12" cy="10" r="1.6"/></svg>Chantier partagé<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="o2 opt"><button class="pas" type="button" id="p-o2" data-k="o2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M4 10h16M9 14l2 2 4-4"/></svg>Réservation<small>et acompte</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
@@ -814,12 +850,7 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
       </ul>
     </div>
     <p class="legende c"><span>Écrans d'exemple, clients fictifs</span></p>
-    <div class="vitrine" data-v="c">
-      <div class="v-l"><span class="v-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01M7 13h6M7 16h10"/></svg></span>
-      <div class="v-t"><small>Pour aller plus loin</small><h2>Votre site sur mesure</h2><p>Un vrai site à votre image, qui donne confiance et vous amène des clients. Créé avec vous, relié à votre Espace.</p></div></div>
-      <div class="v-car"><div class="v-st"><div class="v-card" data-i="0"><img src="sites/martin/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="1"><img src="sites/salon/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="2"><img src="sites/agence/vue.jpg" alt="" loading="lazy"></div></div><div class="v-ph"><img src="sites/martin/vue-m.jpg" alt="" loading="lazy"><img src="sites/salon/vue-m.jpg" alt="" loading="lazy"><img src="sites/agence/vue-m.jpg" alt="" loading="lazy"></div><div class="v-cap"><b></b><small></small></div></div>
-      <div class="v-pas" role="tablist"><button class="pas-s vp" type="button" data-k="s1" data-i="0" aria-haspopup="dialog" style="--c:#1E4657"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M12 3.5v17M5 12h14"/></svg></i><span>Menuiserie Martin<small>Menuisier</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="1" aria-haspopup="dialog" style="--c:#4A3243"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M8.7 7.7 20 17M8.7 16.3 20 7"/></svg></i><span>Maison Lila<small>Salon de coiffure</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="2" aria-haspopup="dialog" style="--c:#27325A"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-6 8 6v10zM10 20v-5h4v5"/></svg></i><span>Belledonne Immobilier<small>Agence immobilière</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-    </div>
+
   </div>
 
   <div class="cl">
@@ -836,6 +867,16 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
       <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><small>4</small><h3>Facture et garantie</h3></div></div><ul><li>Facture envoyée par mail</li><li>Garanties de la pose</li></ul></div>
     </div>
   </div>
+</div></section>
+
+<!-- SITES SUR MESURE (bloc à part, 19/11) -->
+<section id="sites" class="pc"><div class="wrap">
+    <div class="vitrine" data-v="c">
+      <div class="v-l"><span class="v-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01M7 13h6M7 16h10"/></svg></span>
+      <div class="v-t"><small>Pour aller plus loin</small><h2>Votre site sur mesure</h2><p>Un vrai site à votre image, qui donne confiance et vous amène des clients. Créé avec vous, relié à votre Espace.</p></div></div>
+      <div class="v-car"><div class="v-st"><div class="v-card" data-i="0"><img src="sites/martin/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="1"><img src="sites/salon/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="2"><img src="sites/agence/vue.jpg" alt="" loading="lazy"></div></div><div class="v-ph"><img src="sites/martin/vue-m.jpg" alt="" loading="lazy"><img src="sites/salon/vue-m.jpg" alt="" loading="lazy"><img src="sites/agence/vue-m.jpg" alt="" loading="lazy"></div><div class="v-cap"><b></b><small></small></div></div>
+      <div class="v-pas" role="tablist"><button class="pas-s vp" type="button" data-k="s1" data-i="0" aria-haspopup="dialog" style="--c:#1E4657"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M12 3.5v17M5 12h14"/></svg></i><span>Menuiserie Martin<small>Menuisier</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="1" aria-haspopup="dialog" style="--c:#4A3243"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M8.7 7.7 20 17M8.7 16.3 20 7"/></svg></i><span>Maison Lila<small>Salon de coiffure</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="2" aria-haspopup="dialog" style="--c:#27325A"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-6 8 6v10zM10 20v-5h4v5"/></svg></i><span>Belledonne Immobilier<small>Agence immobilière</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+    </div>
 </div></section>
 
 <!-- 2. TROIS ATOUTS -->
