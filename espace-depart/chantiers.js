@@ -669,11 +669,21 @@ function entDe(c,id){if(id==='moi')return {n:'Vous',m:'',ic:'archi'};if(id==='cl
  if(String(id).indexOf('sal:')===0){var s=EQS.filter(function(x){return 'sal:'+x[0]===id})[0]||[id.slice(4),'Salarié'];return {n:s[0],m:s[1]+' · votre équipe',ic:metDe(s[1]),sal:1}}
  return part(c).ent.filter(function(x){return x.id===id})[0]||{n:'À attribuer',m:'',ic:'autre'}}
 function icQ(e){return e&&e.ic==='cli'?IC_CLI:icEnt(e)}
-function planRes(c,sel){if(!PIECES[c.id])return '';var Pz=pieces(c),R=resL(c);
- return '<svg class="cp-pl" viewBox="0 0 160 100" role="img" aria-label="Plan avec les réserves"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
-  Pz.map(function(p){return (sel===p[0]?'<rect x="'+(p[1]+3)+'" y="'+(p[2]+3)+'" width="'+(p[3]-6)+'" height="'+(p[4]-6)+'" rx="3" class="cp-plz"/>':'')+'<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-6)+'" text-anchor="middle" class="cp-plt">'+esc(p[0])+'</text>'}).join('')+
-  R.map(function(r,i){var p=Pz.filter(function(x){return x[0]===r.pc})[0];if(!p)return '';var k=R.filter(function(y,j){return j<i&&y.pc===r.pc}).length;var x=p[1]+p[3]/2-6+k*13,y=p[2]+p[4]/2-5;
-   return '<g class="cp-pin2 '+RST[r.st][1]+'"><circle cx="'+x+'" cy="'+y+'" r="6"/><text x="'+x+'" y="'+(y+2.6)+'" text-anchor="middle">'+(i+1)+'</text></g>'}).join('')+'</svg>'}
+/* plan des réserves au style du plan ProClik (Cyril 19/11 : « peaufiner le plan ») :
+   murs épais aux angles arrondis, ouvertures des portes, pièces teintées selon leurs réserves, repères avec halo */
+var MURS={alpes:{ext:'M8 8H152V92H8Z',int:['M76 8V30','M76 40V54','M8 54H56','M66 54H92','M102 54H152','M52 54V62','M52 72V92','M112 54V62','M112 72V92'],
+ portes:[[56,54,66,54,0],[92,54,102,54,0],[52,62,52,72,1],[112,62,112,72,1],[76,30,76,40,1]]}};
+function planRes(c,sel){if(!PIECES[c.id])return '';var Pz=pieces(c),R=resL(c),M=MURS[c.id];
+ var etat=function(pc){var L=R.filter(function(r){return r.pc===pc});return L.some(function(r){return r.st==='ouv'})?'al':L.some(function(r){return r.st==='corr'})?'wa':L.length?'ok':''};
+ var h='<svg class="cp-pl" viewBox="0 0 160 100" role="img" aria-label="Plan avec les réserves">'+
+  '<rect x="8" y="8" width="144" height="84" rx="2.5" class="cp-plf"/>'+
+  Pz.map(function(p){var e=etat(p[0]);return '<rect x="'+(p[1]+1)+'" y="'+(p[2]+1)+'" width="'+(p[3]-2)+'" height="'+(p[4]-2)+'" class="cp-plr '+e+(sel===p[0]?' sel':'')+'"/>'}).join('');
+ if(M)h+='<g class="cp-plw"><path d="'+M.ext+'" class="ext"/>'+M.int.map(function(d){return '<path d="'+d+'"/>'}).join('')+'</g>';
+ h+=Pz.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-5.5)+'" text-anchor="middle" class="cp-plt">'+esc(p[0])+'</text>'}).join('');
+ h+=R.map(function(r,i){var p=Pz.filter(function(x){return x[0]===r.pc})[0];if(!p)return '';var L=R.filter(function(y){return y.pc===r.pc}),k=L.indexOf(r),n=L.length;
+   var x=p[1]+p[3]/2+(k-(n-1)/2)*15,y=p[2]+p[4]/2-3;
+   return '<g class="cp-pin2 '+RST[r.st][1]+'"><circle cx="'+x+'" cy="'+(y+.8)+'" r="7.6" class="sh"/><circle cx="'+x+'" cy="'+y+'" r="6.6"/><text x="'+x+'" y="'+(y+2.5)+'" text-anchor="middle">'+(i+1)+'</text></g>'}).join('');
+ return h+'</svg>'}
 /* vignettes photo des réserves (Cyril 19/11 : coins arrondis, on touche la photo pour ouvrir la fiche) */
 function photoT(lab,on,g){return '<span class="cp-ph'+(on?' on':'')+'"'+(on&&g?' style="background:'+g+'"':'')+'>'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
 function photoT0(lab,on){return '<span class="cp-ph'+(on?' on':'')+'">'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
