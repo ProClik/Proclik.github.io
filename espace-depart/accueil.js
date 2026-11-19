@@ -205,9 +205,10 @@
   R.point=function(t,D){var P=acc._pt||{},u=D.urgent,mm=moment(),soir=mm==="soir",midi=mm==="midi",n=nowMin();
     var jr=soir?prochain():AUJ(),L=jr?evs(iso(jr)):[],cur=-1,k;
     if(!soir){for(k=0;k<L.length;k++){if(hm(L[k].e||L[k].s)>n&&!(midi&&hm(L[k].s)<=n&&k<L.length-1&&hm(L[k+1].s)-n<180)){cur=k;break}}if(cur<0)cur=L.length}
-    var F=[{ic:JI.cafe,h:"Café",cl:"fr-cafe"}].concat(L.slice(0,4).map(function(e){return {ic:JI[e.k]||IC.agenda,h:hTxt(e.s),cl:"k-"+e.k}})).concat([{ic:FLAG,h:"Fin",cl:"fr-fin"}]);
+    var KT={run:"Chantier",plan:"Chantier",done:"Chantier",visit:"Visite",pc:"Point ProClik",liv:"Livraison",devis:"Devis",ent:"Entretien",st:"Sous-traitant",autre:"Rendez-vous"};
+    var F=[{ic:JI.cafe,h:"Café",t:"Départ",cl:"fr-cafe"}].concat(L.slice(0,4).map(function(e){var w=e.k==="pc"?"20 min":e.k==="visit"?e.t.replace(/^Visite\s*/,""):lieu(e);return {ic:JI[e.k]||IC.agenda,h:hTxt(e.s),t:KT[e.k]||"Rendez-vous",w:w,cl:"k-"+e.k}})).concat([{ic:FLAG,h:"Fin",t:"de journée",cl:"fr-fin"}]);
     var ici=soir?0:cur+1;if(!soir&&cur>=L.length)ici=F.length-1;
-    var frise='<ol class="fr" aria-label="Votre journée">'+F.map(function(x,q){return '<li class="fr-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><span class="fr-i">'+x.ic+"</span><small>"+x.h+"</small></li>"}).join("")+"</ol>";
+    var frise='<ol class="fr" aria-label="Votre journée">'+F.map(function(x,q){return '<li class="fr-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><span class="fr-i">'+x.ic+"</span><small>"+x.h+"</small><span class=\"fr-t\"><b>"+esc(x.t)+"</b>"+(x.w?"<em>"+esc(x.w)+"</em>":"")+"</span></li>"}).join("")+"</ol>";
     var e=soir?L[0]:L[cur],foc="";
     if(e){var enc=!soir&&hm(e.s)<=n,lab=soir?(iso(jr)===iso(new Date(AUJ().getTime()+864e5))?"Demain":jr.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+" · "+hTxt(e.s):enc?"En ce moment · jusqu'à "+hTxt(e.e):"Ensuite · "+hTxt(e.s)+" · dans "+duree(hm(e.s)-n);
       foc='<div class="fo"><small>'+lab+"</small><div><span><b>"+esc(e.t)+"</b><em>"+esc(e.w||"")+"</em></span>"+
