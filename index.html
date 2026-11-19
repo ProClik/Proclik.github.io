@@ -735,6 +735,10 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
  .univers ul.sat .pas .chev{display:none!important}
  .univers ul.sat li small.ia{display:none}
 }
+@media (min-width:700px){
+ main>section.hero{min-height:calc(100svh - var(--top-h,88px));display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}
+ main>section.hero>.wrap{width:100%}
+}
 /* bloc des sites, à sa place sous l'accueil */
 #sites{padding-block:clamp(28px,4vw,56px)!important}
 #sites::before{display:none}
@@ -1423,4 +1427,5 @@ var b=document.querySelector('.h-cta'),h=document.querySelector('.hero'),c=docum
 function maj(){var on=!hv&&!cv&&document.body.dataset.v!=='cl';b.classList.toggle('on',on);b.setAttribute('aria-hidden',on?'false':'true');b.tabIndex=on?0:-1}
 new IntersectionObserver(function(e){hv=e[0].isIntersecting;maj()}).observe(h);
 new IntersectionObserver(function(e){cv=e[0].isIntersecting;maj()}).observe(c)})();</script>
+<script>(function(){var t=document.querySelector("header.top");if(!t)return;function f(){document.documentElement.style.setProperty("--top-h",Math.ceil(t.getBoundingClientRect().height)+"px")}f();addEventListener("resize",f)})();</script>
 </body></html>
