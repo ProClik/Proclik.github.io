@@ -541,13 +541,7 @@ html body .tdb .fo-d li>span:last-child{white-space:normal;overflow:visible}
   html body .tdb .fo>div b{flex:0 1 auto}
   html body .tdb .fo-b button{padding:6px 12px!important}
 }
-/* §27 frise : le mot sous l'icône, puis l'heure ; bouton « Devis à valider » en haut à droite */
-html body .tdb .fr-k{font-size:13px;font-weight:800;line-height:1.15;max-width:100%;text-align:center;overflow-wrap:anywhere}
-html body .tdb .fr-e small{font-size:11.5px;font-weight:700;opacity:.7}
-html body .tdb .fr-e.ici small{opacity:1;color:var(--n1-laiton)}
-html body .tdb .fr-e.fait .fr-k{opacity:.45}
-html body .tdb .fr-e.ici .fr-k{font-size:13.5px}
-@media (min-width:700px){html body .tdb .fr-k{font-size:14.5px}html body .tdb .fr-e.ici .fr-k{font-size:15px}html body .tdb .fr-e small{font-size:13px}}
+/* §27 bouton « à valider » en haut à droite */
 html body .tdb .w[data-w=point] .pt-h{flex-wrap:nowrap}
 html body .tdb .w[data-w=point] .pt-dv{display:inline-flex!important;margin-left:auto;flex:none;align-items:center;gap:8px;padding:6px 10px 6px 6px;border:0;border-radius:999px;background:var(--n1-nuit-fg);color:#fff;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 6px 14px -6px rgba(14,19,34,.55)}
 :root[data-theme="dark"] body .tdb .w[data-w=point] .pt-dv{color:#141927;box-shadow:0 6px 14px -6px rgba(0,0,0,.7)}
@@ -567,3 +561,8 @@ html body .tdb .w[data-w=point] .pt-h small{white-space:nowrap}
 }
 html body .tdb .w[data-w=point] .pt-h .pt-ic{flex:none}
 html body .tdb .w[data-w=point] .pt-h small{min-width:0;overflow:hidden;text-overflow:ellipsis}
+/* §29 bouton « à valider » discret (icône, teinte légère) ; Y aller / Voir le chantier en bleu nuit */
+html body .tdb .w[data-w=point] .pt-dv,:root[data-theme="dark"] body .tdb .w[data-w=point] .pt-dv{gap:6px;padding:6px 8px 6px 11px!important;font-size:13px!important;background:color-mix(in srgb,var(--n1-nuit-fg) 9%,transparent);color:var(--n1-nuit-fg);box-shadow:0 0 0 1px color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent) inset,0 2px 5px -3px rgba(14,19,34,.35)}
+html body .tdb .w[data-w=point] .pt-dv svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .w[data-w=point] .pt-dv svg:last-child{width:13px;height:13px;opacity:.6;stroke-width:2.2}
+html body .tdb .w[data-w=point] .fo-b button{background:var(--n1-nuit-fg)!important;color:var(--n1-nuit)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
