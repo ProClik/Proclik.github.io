@@ -274,11 +274,42 @@ html body .tdb .jr-e.k-cafe,html body .tdb .jr-e.k-fin{padding-top:4px;padding-b
 html body .tdb .jr-e.k-cafe .jr-t b,html body .tdb .jr-e.k-fin .jr-t b{font-size:14px;font-weight:700}
 html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit);color:#fff}
 :root[data-theme="dark"] body .tdb .jr-e.ici .jr-p{background:var(--fg);color:var(--rs)}
-/* À faire : une ligne par chose, chaque type avec son icône en couleur */
+/* À faire : icônes neutres, la couleur seulement sur le mot d'action (Cyril, 19/11) */
 html body .tdb .af,html body .tdb .sz-m .af{grid-template-columns:1fr}
-html body .tdb .af-b .afa-ic{--jc:var(--n1-nuit);background:color-mix(in srgb,var(--jc) 14%,var(--rs));box-shadow:none;color:var(--jc)}
-:root[data-theme="dark"] body .tdb .af-b.i-predevis .afa-ic{--jc:var(--fg)}
-html body .tdb .af-b.i-facture .afa-ic{--jc:#E26D6D}:root[data-theme="dark"] body .tdb .af-b.i-facture .afa-ic{--jc:#F09A9A}
-html body .tdb .af-b.i-fournisseur .afa-ic{--jc:var(--k-liv)}html body .tdb .af-b.i-depense .afa-ic{--jc:var(--k-autre)}
-html body .tdb .af-b.i-attente .afa-ic{--jc:var(--k-pc)}html body .tdb .af-b.i-chantier .afa-ic{--jc:var(--k-run)}html body .tdb .af-b.i-entretien .afa-ic{--jc:var(--k-st)}
+html body .tdb .af-b .afa-ic{background:var(--n1-teinte);box-shadow:none;color:var(--n1-fg,var(--fg))}
+html body .tdb .af-b em{--ac:var(--k-run);display:inline-block;padding:1px 8px;border-radius:999px;font-style:normal;font-weight:800;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac)}
+html body .tdb .af-b.t-envoyer em{--ac:#D25A5A}:root[data-theme="dark"] body .tdb .af-b.t-envoyer em{--ac:#F09A9A}
+html body .tdb .af-b.i-fournisseur em{--ac:var(--k-liv)}html body .tdb .af-b.t-ranger em{--ac:var(--k-autre)}
+html body .tdb .af-b.t-suivre em{--ac:var(--n1-muted)}
 html body .tdb .afa-ic svg{width:19px;height:19px}
+
+/* §19 Accueil « Matin et soir » au style ProClik définitif (Cyril, 19/11 : qualité, facilité, moderne), comme la démo RT2O :
+   une seule colonne aérée, le nom en grand, « Le point du matin / du soir » en bleu nuit avec LA chose à faire, puis des listes calmes. */
+html.acc-pro-on body .acc-bj{background:none;padding:6px 2px 2px;margin:0}
+html.acc-pro-on body .acc-bj .bj-ic,html.acc-pro-on body .acc-bj .bj-r,html.acc-pro-on body .acc-bj .bj-mot{display:none}
+html.acc-pro-on body .acc-bj .bj-c{display:flex;flex-direction:column}
+html.acc-pro-on body .acc-bj .bj-h{order:1}html.acc-pro-on body .acc-bj .bj-d{order:2;text-transform:none;letter-spacing:0;font-size:14.5px;font-weight:600}
+html.acc-pro-on body .acc-bj #hello{font-size:30px;margin:0 0 4px}
+@media (min-width:900px){html.acc-pro-on body #v-accueil:not([hidden]){max-width:900px;margin-inline:auto}html.acc-pro-on body .acc-bj #hello{font-size:34px}}
+html body .tdb.acc-pro .tdb-g{grid-template-columns:minmax(0,1fr)!important;gap:14px}
+html body .tdb.acc-pro .tdb-g>.w{grid-column:auto!important;grid-row:auto!important;border-radius:22px;background:var(--n1-calme);box-shadow:var(--n1-calme-sh)}
+html body .tdb.acc-pro .w-in{padding:18px}
+html body .tdb.acc-pro .w-h>b{font-size:17px}
+html body .tdb.acc-pro .w-ic{border-radius:11px;background:var(--n1-teinte);box-shadow:none;color:var(--n1-fg)}
+html body .tdb.acc-pro .tdb-ex{margin:2px 4px 10px}
+/* Le point du jour : la carte bleu nuit */
+html body .tdb .w[data-w=point]{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg);box-shadow:var(--n1-go-sh)!important}
+html body .tdb .pt{display:grid;gap:12px}
+html body .tdb .pt-h{display:flex;align-items:center;gap:10px}
+html body .tdb .pt-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:color-mix(in srgb,var(--n1-nuit-fg) 10%,transparent);color:var(--n1-laiton)}
+html body .tdb .pt-ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pt-h small{font-size:13px;font-weight:800;opacity:.78}
+html body .tdb .pt-t{margin:0;font-size:16.5px;line-height:1.5;font-weight:500}
+html body .tdb .pt-t b{font-weight:800}
+html body .tdb .pt-mot{margin:-4px 0 0;font-size:13.5px;font-style:italic;opacity:.7}
+html body .tdb .pt-go{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:2px;padding:12px 12px 12px 18px;border:0;border-radius:18px;background:var(--n1-nuit-fg);color:var(--n1-nuit);font:inherit;text-align:left;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+html body .tdb .pt-go span{display:grid;gap:1px;min-width:0}
+html body .tdb .pt-go small{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--n1-laiton)}
+html body .tdb .pt-go b{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .pt-go i{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--n1-nuit);color:var(--n1-nuit-fg);font-style:normal;font-weight:800}
+html body .tdb .pt-go:active{transform:scale(.98)}

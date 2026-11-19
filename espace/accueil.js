@@ -42,6 +42,7 @@
 
   /* ---------- les blocs disponibles : nom, tailles possibles (s petit 1×1, m large 2×1, l grand 2×2, h haut 1×2) ---------- */
   var W={
+    point:{n:"Le point du jour",d:"Votre journée en quelques mots, et la chose à faire en premier",t:["m"],ic:"verif"},
     jour:{n:"Ma journée",d:"Vos rendez-vous du jour, avec le bouton pour y aller (le soir : demain)",t:["l","m"],ic:"agenda"},
     chiffres:{n:"Mes chiffres du mois",d:"Les quatre chiffres du mois sur une seule bande",t:["m"],ic:"argent"},
     urgent:{n:"Le plus urgent",d:"La demande à traiter en premier, avec le bouton pour s'en occuper",t:["l","m"],ic:"verif"},
@@ -60,8 +61,8 @@
   /* Les trois dispositions proposées à Cyril (même blocs, rangés autrement) */
   /* « Matin et soir » (Cyril, 19/11) : l'accueil change tout seul avec l'heure.
      Le matin : ma journée d'abord (rendez-vous + Y aller). Le soir : ce qu'il reste à valider, puis demain. */
-  var AUTO={matin:[["jour","l"],["urgent","l"],["afaire","m"],["chiffres","m"],["chantiers","m"],["nouveau","m"]],
-    soir:[["urgent","l"],["jour","l"],["afaire","m"],["chiffres","m"],["chantiers","m"],["nouveau","m"]]};
+  var AUTO={matin:[["point","m"],["afaire","m"],["jour","l"],["chiffres","m"],["chantiers","m"],["nouveau","m"]],
+    soir:[["point","m"],["afaire","m"],["jour","l"],["chiffres","m"],["chantiers","m"],["nouveau","m"]]};
   var forceM=(location.search.match(/[?&]moment=(matin|soir)/)||[])[1];
   function moment(){if(forceM)return forceM;var h=new Date().getHours();return h>=17||h<4?"soir":"matin"}
   var PRESETS={
@@ -166,7 +167,7 @@
   /* « Ma journée » : la journée en ligne de temps, un bouton « Y aller » par adresse ; le soir, la prochaine journée prévue */
   var AUJ=function(){return new Date(2026,9,16)};
   function hm(s){var p=String(s||"").split(":");return (+p[0]||0)*60+(+p[1]||0)}
-  function hTxt(s){var p=String(s||"").split(":");return (+p[0])+" h"+(p[1]&&p[1]!=="00"?" "+p[1]:"")}
+  function hTxt(s){var p=String(s||"").split(":");return (+p[0])+"\u00a0h"+(p[1]&&p[1]!=="00"?"\u00a0"+p[1]:"")}
   function lieu(e){return String(e.w||"").split(" · ")[0].trim()}
   function prochain(){var d=new Date(AUJ());for(var k=0;k<10;k++){d.setDate(d.getDate()+1);if(evs(iso(d)).length)return d}return null}
   /* une icône par moment de la journée (Cyril, 19/11) : café pour commencer, fournisseur, chantier, visite… */
@@ -188,6 +189,11 @@
       return '<li class="jr-e k-'+e.k+(k===ic?" ici":"")+(!soir&&ic>=0&&k<ic?" passe":"")+'"><span class="jr-h">'+hTxt(e.s)+'</span><span class="jr-p" aria-hidden="true">'+(JI[e.k]||IC.agenda)+'</span><span class="jr-t">'+(k===ic?'<em class="jr-n">'+(hm(e.s)<=nm?"En ce moment":"Ensuite")+"</em>":"")+"<b>"+esc(e.t)+"</b><small>"+esc(e.w||KN[e.k]||"")+"</small></span>"+
         (go?'<button type="button" class="jr-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg><span>Y aller</span></button>':"")+"</li>"}).join("")+(L.length<=max?jli("k-fin",JI.fin,"","Fin de journée","On range les outils, et à demain"):"")+"</ol>"+
       (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":'<button type="button" class="af-plus" data-accv="planning">Tout le planning ›</button>')};
+  /* « Le point du matin / du soir » : la journée racontée en deux phrases, un petit mot léger, et la seule chose à faire en premier */
+  R.point=function(t,D){var P=acc._pt||{},u=D.urgent,soir=moment()==="soir";
+    return '<div class="pt"><div class="pt-h"><span class="pt-ic">'+(soir?LUNE:SOLEIL)+"</span><small>"+(soir?"Le point du soir":"Le point du matin")+"</small></div>"+
+      '<p class="pt-t">'+(P.html||"")+"</p>"+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
+      (u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"")+"</div>"};
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   R.chiffres=function(){var C=[["Encaissé","8 640 €","factures",0],["Signés","14 210 €","devis",0],["À encaisser","2 760 €","factures",1],["Envoyés","9 850 €","devis",0]];
     return tete("argent","Mes chiffres d'octobre",'<span class="w-sub">HT</span>')+'<div class="cm">'+C.map(function(x){return '<button type="button" class="cm-c" data-accv="'+x[2]+'"><small>'+x[0]+"</small><b"+(x[3]?' class="cor"':"")+">"+x[1]+"</b></button>"}).join("")+"</div>"};
@@ -322,7 +328,13 @@
     hero.classList.toggle("soir",soir);
     hero.querySelector(".bj-ic").innerHTML=soir?LUNE:SOLEIL;
     hero.querySelector(".bj-d").textContent=j.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-    hero.querySelector(".bj-r").textContent=r;hero.querySelector(".bj-mot").textContent=mo[jd%mo.length];salut()}
+    hero.querySelector(".bj-r").textContent=r;hero.querySelector(".bj-mot").textContent=mo[jd%mo.length];
+    var B=function(x){return "<b>"+esc(x)+"</b>"},ev=function(e){return (e.k==="visit"?e.t.replace(/^Visite\s*/,"la visite chez "):e.k==="liv"?"la "+e.t.replace(/^Livraison/,"livraison"):e.t)},h2;
+    var nvTx=nv?B(nv+" chose"+(nv>1?"s":""))+" attend"+(nv>1?"ent":"")+" votre œil.":"Rien n'attend votre validation.";
+    if(soir){var pp=prochain(),Lp=pp?evs(iso(pp)):[],qd=pp?(iso(pp)===iso(new Date(j.getTime()+864e5))?"Demain":pp.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()})):"";
+      h2=(nv?B(nv+" chose"+(nv>1?"s":""))+" à valider ce soir, quelques minutes suffisent.":"Rien à valider ce soir.")+(Lp.length?" "+qd+", vous commencez à "+B(hTxt(Lp[0].s))+" : "+B(ev(Lp[0]))+".":"")}
+    else{h2=L.length?"Vous commencez à "+B(hTxt(L[0].s))+" : "+B(ev(L[0]))+(L[1]?", puis "+B(ev(L[1]))+" à "+B(hTxt(L[1].s)):"")+". "+nvTx:"Rien de prévu au planning aujourd'hui. "+nvTx}
+    acc._pt={html:h2,mot:mo[jd%mo.length]};acc.classList.toggle("acc-pro",etat.p==="auto");document.documentElement.classList.toggle("acc-pro-on",etat.p==="auto");salut()}
   // Salutation comme la planche : « Bonsoir » après 18 h, sans point final
   hello=$("#hello");
   function salut(){if(!hello)return;var hh=new Date().getHours(),t=hello.textContent,n=t.replace(/^Bon(jour|soir)\b/,(forceM?forceM==="soir":hh>=18||hh<5)?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
