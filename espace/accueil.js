@@ -14,6 +14,7 @@
   var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
   var eur=function(n){return Number(n).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" €"};
   var eur0=function(n){return Number(n).toLocaleString("fr-FR",{maximumFractionDigits:0})+" €"};
+  var hello=null;
   var vue=$("#v-accueil"),ancien=vue&&vue.querySelector(".grid2");if(!vue||!ancien)return;
   var acc=document.createElement("div");acc.className="acc tdb";acc.id="acc";ancien.parentNode.insertBefore(acc,ancien);
   document.documentElement.classList.add("pcacc");
@@ -41,6 +42,8 @@
 
   /* ---------- les blocs disponibles : nom, tailles possibles (s petit 1×1, m large 2×1, l grand 2×2, h haut 1×2) ---------- */
   var W={
+    jour:{n:"Ma journée",d:"Vos rendez-vous du jour, avec le bouton pour y aller (le soir : demain)",t:["l","m"],ic:"agenda"},
+    chiffres:{n:"Mes chiffres du mois",d:"Les quatre chiffres du mois sur une seule bande",t:["m"],ic:"argent"},
     urgent:{n:"Le plus urgent",d:"La demande à traiter en premier, avec le bouton pour s'en occuper",t:["l","m"],ic:"verif"},
     afaire:{n:"À faire",d:"Ce qui attend votre validation, votre envoi ou votre rangement",t:["h","l","m"],ic:"predevis"},
     argent:{n:"Chiffre d'affaires",d:"L'encaissé des 6 derniers mois, en barres",t:["l","m"],ic:"argent"},
@@ -55,18 +58,27 @@
     avis:{n:"Avis Google",d:"Votre note et les derniers avis",t:["s","m"],ic:"signe",opt:"avis"}
   };
   /* Les trois dispositions proposées à Cyril (même blocs, rangés autrement) */
+  /* « Matin et soir » (Cyril, 19/11) : l'accueil change tout seul avec l'heure.
+     Le matin : ma journée d'abord (rendez-vous + Y aller). Le soir : ce qu'il reste à valider, puis demain. */
+  var AUTO={matin:[["jour","l"],["urgent","l"],["afaire","m"],["chiffres","m"],["chantiers","m"],["nouveau","m"]],
+    soir:[["urgent","l"],["jour","l"],["afaire","m"],["chiffres","m"],["chantiers","m"],["nouveau","m"]]};
+  var forceM=(location.search.match(/[?&]moment=(matin|soir)/)||[])[1];
+  function moment(){if(forceM)return forceM;var h=new Date().getHours();return h>=17||h<4?"soir":"matin"}
   var PRESETS={
+    auto:{n:"Matin et soir",d:"Le matin votre journée, le soir ce qu'il reste à valider. Change tout seul avec l'heure",L:AUTO.matin},
     a:{n:"Atelier",d:"Le plus urgent et l'agenda en haut, les chiffres au milieu",L:[["urgent","l"],["agenda","m"],["encaisse","s"],["afaire","h"],["argent","l"],["signes","s"],["aencaisser","s"],["envoyes","s"],["chantiers","m"],["nouveau","m"]]},
     b:{n:"Chiffres d'abord",d:"Quatre chiffres en tête, puis le graphique et ce qu'il reste à faire",L:[["encaisse","s"],["signes","s"],["aencaisser","s"],["envoyes","s"],["argent","l"],["afaire","l"],["urgent","l"],["agenda","m"],["chantiers","m"]]},
     c:{n:"Ma journée",d:"L'agenda du jour et l'urgent côte à côte, l'argent plus bas",L:[["urgent","l"],["agenda","l"],["afaire","h"],["chantiers","m"],["encaisse","s"],["nouveau","m"],["aencaisser","s"],["argent","m"],["signes","s"],["envoyes","s"]]}
   };
 
   /* ---------- ce qui est enregistré ---------- */
-  var CLE="pc-tdb1",essai=(location.search.match(/[?&]accueil=([abc])/)||[])[1];
+  var CLE="pc-tdb1",essai=(location.search.match(/[?&]accueil=([abc]|auto)/)||[])[1];
   function lire(){if(essai)return {p:essai,L:PRESETS[essai].L.slice()};
     try{var o=JSON.parse(localStorage.getItem(CLE)||"null");if(o&&o.L&&o.L.length!=null)return {p:o.p||"",L:o.L.filter(function(x){return W[x[0]]&&W[x[0]].t.indexOf(x[1])>=0})}}catch(e){}
-    return {p:"b",L:PRESETS.b.L.slice()}}
+    return {p:"auto",L:AUTO.matin.slice()}}
   var etat=lire();
+  function liste(){return etat.p==="auto"?AUTO[moment()]:etat.L}
+  function fige(){if(etat.p==="auto")etat.L=AUTO[moment()].map(function(x){return x.slice()})}
   function garder(){if(essai)return;try{localStorage.setItem(CLE,JSON.stringify(etat))}catch(e){}}
 
   /* ---------- données (démo ou vraies demandes) ---------- */
@@ -111,15 +123,16 @@
 
   var R={};
   R.urgent=function(t,D){var u=D.urgent;
-    if(!D.charge)return tete("verif","Le plus urgent")+'<p class="vide">Chargement de vos demandes…</p>';
-    if(!u)return tete("verif","Le plus urgent")+'<div class="w-rien"><b>Tout est à jour</b><span>Rien à valider ni à envoyer. Le café peut rester chaud.</span></div>';
-    return '<div class="w-h urg"><small>Le plus urgent</small>'+(u.prix!=null?'<span class="prix">'+eur(u.prix)+" <small>HT</small></span>":"")+"</div>"+
+    var tu=moment()==="soir"?"À valider ce soir":"Le plus urgent";
+    if(!D.charge)return tete("verif",tu)+'<p class="vide">Chargement de vos demandes…</p>';
+    if(!u)return tete("verif",tu)+'<div class="w-rien"><b>Tout est à jour</b><span>'+(moment()==="soir"?"Rien à valider ce soir. Les pieds sous la table, c'est mérité.":"Rien à valider ni à envoyer. Le café peut rester chaud.")+'</span></div>';
+    return '<div class="w-h urg"><small>'+(moment()==="soir"?"À valider ce soir":"Le plus urgent")+'</small>'+(u.prix!=null?'<span class="prix">'+eur(u.prix)+" <small>HT</small></span>":"")+"</div>"+
       '<div class="u-qui"><b>'+esc(u.qui)+"</b><small>"+esc(u.quoi)+"</small></div>"+
       (t==="l"?parcours(u.phase):"")+
       '<div class="parc-tx"><span>Maintenant</span><b>Vérifier le pré-devis</b>'+(u.ensuite&&t==="l"?"<small>Ensuite : "+esc(u.ensuite)+"</small>":"")+"</div>"+
       (u.ligne&&t==="l"?'<div class="ligne corr"><span>'+esc(u.ligne[0])+(u.ligne[1]?'<span class="cote">'+esc(u.ligne[1])+"</span>":"")+'</span><span class="q">à vérifier</span></div>':"")+
       bouton("verif","Vérifier le pré-devis",u.attr)};
-  R.afaire=function(t,D){var L=D.afaire.filter(function(x){return x[0]>0}),max=t==="m"?2:t==="h"?4:5;
+  R.afaire=function(t,D){var L=D.afaire.filter(function(x){return x[0]>0}),max=t==="m"?3:t==="h"?4:5;
     var n=L.reduce(function(s,x){return s+(x[4]==="suivre"?0:x[0])},0);
     var h=tete("predevis","À faire",n?'<span class="w-n">'+n+"</span>":"");
     if(!D.charge)return h+'<p class="vide">Chargement…</p>';
@@ -150,10 +163,31 @@
       '<div class="ag-j">'+j.map(function(d,k){var s=iso(d),n=evs(s).length;return '<button type="button" class="ag-d'+(s===sel?" on":"")+(s===iso(auj)?" auj":"")+'" data-jour="'+s+'"><small>'+JS[k]+"</small><b>"+d.getDate()+"</b>"+(n?"<i></i>":"<i class=\"vide\"></i>")+"</button>"}).join("")+"</div>"+
       '<div class="ag-l">'+(L.length?L.slice(0,max).map(function(e){return '<div class="ag-e k-'+e.k+'"><span class="ag-h">'+e.s.replace(":"," h ")+'</span><span class="ag-t"><b>'+esc(e.t)+"</b><small>"+esc(e.w)+"</small></span></div>"}).join("")+
         (L.length>max&&t!=="m"?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":""):'<p class="vide">Rien de prévu ce jour-là.</p>')+"</div>"};
+  /* « Ma journée » : la journée en ligne de temps, un bouton « Y aller » par adresse ; le soir, la prochaine journée prévue */
+  var AUJ=function(){return new Date(2026,9,16)};
+  function hm(s){var p=String(s||"").split(":");return (+p[0]||0)*60+(+p[1]||0)}
+  function hTxt(s){var p=String(s||"").split(":");return (+p[0])+" h"+(p[1]&&p[1]!=="00"?" "+p[1]:"")}
+  function lieu(e){return String(e.w||"").split(" · ")[0].trim()}
+  function prochain(){var d=new Date(AUJ());for(var k=0;k<10;k++){d.setDate(d.getDate()+1);if(evs(iso(d)).length)return d}return null}
+  R.jour=function(t){var soir=moment()==="soir",d=soir?prochain():AUJ(),L=d?evs(iso(d)):[],max=t==="m"?2:4;
+    var dem=d&&soir&&iso(d)===iso(new Date(AUJ().getTime()+864e5)),nom=d?d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):"";
+    var titre=soir?(dem?"Demain":"Prochaine journée"):"Ma journée",sous=soir?nom:"";
+    var now=new Date(),nm=now.getHours()*60+now.getMinutes(),ic=-1;
+    if(!soir)L.forEach(function(e,k){if(ic<0&&hm(e.e||e.s)>nm)ic=k});
+    var h=tete("agenda",titre,sous?'<span class="w-sub">'+esc(sous)+"</span>":(L.length?'<span class="w-sub">'+L.length+" rendez-vous</span>":""));
+    if(!L.length)return h+'<div class="w-rien"><b>'+(soir?"Rien de prévu pour l'instant":"Rien de prévu aujourd'hui")+"</b><span>"+(soir?"Un créneau tout neuf à offrir à un client.":"Une journée pour avancer les devis. Ou le rangement du camion.")+"</span></div>"+
+      '<button type="button" class="af-plus" data-accv="planning">Ouvrir le planning ›</button>';
+    return h+'<ol class="jr">'+L.slice(0,max).map(function(e,k){var l=lieu(e),go=!soir&&l&&e.k!=="pc";
+      return '<li class="jr-e k-'+e.k+(k===ic?" ici":"")+(!soir&&ic>=0&&k<ic?" passe":"")+'"><span class="jr-h">'+hTxt(e.s)+'</span><span class="jr-p" aria-hidden="true"></span><span class="jr-t">'+(k===ic?'<em class="jr-n">'+(hm(e.s)<=nm?"En ce moment":"Ensuite")+"</em>":"")+"<b>"+esc(e.t)+"</b><small>"+esc(e.w||KN[e.k]||"")+"</small></span>"+
+        (go?'<button type="button" class="jr-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg><span>Y aller</span></button>':"")+"</li>"}).join("")+"</ol>"+
+      (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":'<button type="button" class="af-plus" data-accv="planning">Tout le planning ›</button>')};
+  /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
+  R.chiffres=function(){var C=[["Encaissé","8 640 €","factures",0],["Signés","14 210 €","devis",0],["À encaisser","2 760 €","factures",1],["Envoyés","9 850 €","devis",0]];
+    return tete("argent","Mes chiffres d'octobre",'<span class="w-sub">HT</span>')+'<div class="cm">'+C.map(function(x){return '<button type="button" class="cm-c" data-accv="'+x[2]+'"><small>'+x[0]+"</small><b"+(x[3]?' class="cor"':"")+">"+x[1]+"</b></button>"}).join("")+"</div>"};
   R.chantiers=function(t){var CH=(window.PCX&&PCX.CH)||{},av=(window.PCX&&PCX.avc)||function(){return 0};
     var L=Object.keys(CH).map(function(k){return CH[k]}).filter(function(c){return c.st==="run"||c.st==="start"}).slice(0,t==="m"?2:4);
     return tete("chantier","Chantiers en cours")+(L.length?'<div class="ch">'+L.map(function(c){var p=av(c);
-      return '<button type="button" class="ch-b" data-accv="chantiers"><span class="ch-t"><b>'+esc(c.n)+"</b><small>"+esc(c.v)+" · "+esc(c.dates||"")+'</small></span><span class="ch-p"><span class="ch-r"><span style="width:'+p+'%"></span></span><em>'+(p?p+" %":"à démarrer")+"</em></span></button>"}).join("")+"</div>":'<p class="vide">Aucun chantier en cours.</p>')};
+      return '<button type="button" class="ch-b" data-accv="chantiers"><span class="ch-t"><b>'+esc(c.n)+"</b><small>"+esc(c.v)+" · "+esc(c.dates||"")+'</small></span><span class="ch-p">'+(p?'<span class="ch-o" style="--p:'+p+'"><em>'+p+' %</em></span><span class="ch-o-t">avancé</span>':'<span class="ch-o-t z">à démarrer</span>')+"</span></button>"}).join("")+"</div>":'<p class="vide">Aucun chantier en cours.</p>')};
   R.nouveau=function(t){if(t==="s")return tete("plan","Nouveau")+'<button type="button" class="nv-1" data-nv="0"><span class="nv-ic">'+IC.plan+"</span><b>Nouveau pré-devis</b></button>";
     return tete("plan","Nouveau pré-devis",'<span class="w-sub">3 façons, au choix</span>')+'<div class="nv">'+
       [["plan","Plan et cotes","Tracez la pièce"],["micro","Dicter","Parlez, ça s'écrit"],["photo","Photo des notes","Votre feuille papier"]].map(function(x,k){return '<button type="button" data-nv="'+k+'"><span class="nv-ic">'+IC[x[0]]+"</span><span class=\"nv-t\"><b>"+x[1]+"</b><small>"+x[2]+"</small></span></button>"}).join("")+"</div>"};
@@ -178,9 +212,9 @@
       '<div class="w-in">'+R[x[0]](x[1],D)+"</div>"+
       '<button type="button" class="w-x" data-wx aria-label="Retirer le bloc '+esc(w.n)+'">'+IC.moins+"</button>"+
       (w.t.length>1?'<button type="button" class="w-s" data-ws aria-label="Changer la taille du bloc '+esc(w.n)+'">'+IC.taille+"</button>":"")+"</section>"}
-  function rendre(){if(acc._glisse)return;var D=donnees();
+  function rendre(){if(acc._glisse)return;var D=donnees();bonjour(D);
     var h='<p class="tdb-ex">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</p>"+'<div class="tdb-bar" '+(edition?"":"hidden")+'><div><b>Personnaliser l\'accueil</b><small>Gardez le doigt sur un bloc pour le déplacer</small></div><button type="button" class="btn" data-tdbajout>'+IC.plus+' Ajouter un bloc</button><button type="button" class="btn go" data-tdbfin>Terminé</button></div>'+
-      '<div class="tdb-g">'+etat.L.map(function(x){return bloc(x,D)}).join("")+"</div>"+
+      '<div class="tdb-g">'+liste().map(function(x){return bloc(x,D)}).join("")+"</div>"+
       '<div class="tdb-pied">'+(D.total?'<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+(D.demo?"":D.total+" ")+"›</span></button>":"")+
       '<button type="button" class="tdb-perso" data-tdbperso>'+IC.grille+"<span>Personnaliser l'accueil</span></button></div>";
     if(acc._h===h)return;acc._h=h;var ib=$("#instb"),co=$("#vco");acc.innerHTML=h;acc.classList.toggle("edite",edition);
@@ -189,7 +223,7 @@
 
   /* ---------- mode « personnaliser » ---------- */
   // sans tout redessiner : le bloc sous le doigt doit rester le même pour pouvoir le glisser tout de suite
-  function editer(on){edition=on;acc.classList.toggle("edite",on);var b=acc.querySelector(".tdb-bar");if(b)b.hidden=!on;acc._h=null;if(!on)rendre();
+  function editer(on){if(on)fige();edition=on;acc.classList.toggle("edite",on);var b=acc.querySelector(".tdb-bar");if(b)b.hidden=!on;acc._h=null;if(!on)rendre();
     if(on&&navigator.vibrate)try{navigator.vibrate(12)}catch(e){}}
   function ordreDOM(){etat.L=$$(".tdb-g>.w",acc).map(function(el){return [el.dataset.w,el.dataset.t]});etat.p="";garder()}
   /* les autres blocs glissent doucement vers leur nouvelle place (FLIP) */
@@ -259,9 +293,32 @@
   });
   addEventListener("keydown",function(e){if(e.key==="Escape"){if(!feuille.hidden)fermeFeuille();else if(edition)editer(false)}});
 
+  /* ---------- le bloc « Bonjour » : la date, la journée en une phrase vraie, et un petit mot léger ---------- */
+  var hello0=$("#hello"),hero=document.createElement("div");hero.className="acc-bj";
+  if(hello0){hello0.parentNode.insertBefore(hero,hello0);hero.innerHTML='<span class="bj-ic" aria-hidden="true"></span><div class="bj-c"><small class="bj-d"></small><div class="bj-h"></div><p class="bj-r"></p><p class="bj-mot"></p></div>';
+    hero.querySelector(".bj-h").appendChild(hello0);var ph=$("#phrase");if(ph)ph.classList.add("bj-cache")}
+  var SOLEIL='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>',
+    LUNE='<svg viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/></svg>';
+  var MOTS={matin:["Le café d'abord, l'Espace s'occupe du reste.","Belle journée sur les chantiers. On garde la boutique.","Un bon chantier commence toujours par un bon café.","La paperasse attendra ce soir. Elle a l'habitude."],
+    soir:["Encore quelques minutes et la journée est bouclée.","Les pieds sous la table, les devis en deux clics.","Dernier coup d'œil, et rideau.","La journée est faite. On boucle ça vite et bien."]};
+  function liste2(a){return a.length>1?a.slice(0,-1).join(", ")+" et "+a[a.length-1]:a[0]||""}
+  function bonjour(D){if(!hello0)return;var m=moment(),soir=m==="soir",j=AUJ(),L=evs(iso(j)),nv=0,a=[];
+    (D.afaire||[]).forEach(function(x){if(x[4]!=="suivre")nv+=x[0]});
+    var ch=L.filter(function(e){return /run|plan/.test(e.k)}).length,vi=L.filter(function(e){return e.k==="visit"});
+    var r;
+    if(soir){if(nv)a.push(nv+" chose"+(nv>1?"s":"")+" à valider");var p=prochain(),pl2=p?evs(iso(p)):[];
+      r=(a.length?"Ce soir : "+liste2(a)+".":"Ce soir : rien à valider.")+(pl2.length?" "+(iso(p)===iso(new Date(j.getTime()+864e5))?"Demain":p.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+" : "+pl2[0].t+" à "+hTxt(pl2[0].s)+".":"")}
+    else{if(ch)a.push(ch+" chantier"+(ch>1?"s":""));if(vi.length)a.push(vi.length===1?"1 visite à "+hTxt(vi[0].s):vi.length+" visites");if(nv)a.push(nv+" chose"+(nv>1?"s":"")+" à valider");
+      r=a.length?"Aujourd'hui : "+liste2(a)+".":"Aujourd'hui : rien de prévu, tout est à jour."}
+    var mo=MOTS[m];if(!nv&&!L.length)mo=[soir?"Tout est à jour. Le canapé vous attend.":"Rien d'urgent. Le café peut rester chaud."];
+    var jd=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,1))/864e5);
+    hero.classList.toggle("soir",soir);
+    hero.querySelector(".bj-ic").innerHTML=soir?LUNE:SOLEIL;
+    hero.querySelector(".bj-d").textContent=j.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+    hero.querySelector(".bj-r").textContent=r;hero.querySelector(".bj-mot").textContent=mo[jd%mo.length];salut()}
   // Salutation comme la planche : « Bonsoir » après 18 h, sans point final
-  var hello=$("#hello");
-  function salut(){if(!hello)return;var t=hello.textContent,n=t.replace(/^Bonjour\b/,new Date().getHours()>=18||new Date().getHours()<5?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
+  hello=$("#hello");
+  function salut(){if(!hello)return;var hh=new Date().getHours(),t=hello.textContent,n=t.replace(/^Bon(jour|soir)\b/,(forceM?forceM==="soir":hh>=18||hh<5)?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
   if(hello){salut();new MutationObserver(salut).observe(hello,{childList:true,characterData:true,subtree:true})}
   rendre();
   // vrai.js réécrit sa liste à chaque chargement, et les pastilles des onglets bougent : on suit le mouvement.
