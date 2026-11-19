@@ -4,7 +4,7 @@
 <link rel="apple-touch-icon" href="icone-1024.png?v=4">
 <link rel="stylesheet" href="../fonts/fonts.css">
 <link rel="stylesheet" href="../n1.css">
-<script src="theme.js?v=1"></script>
+<script src="theme.js?v=1"></script><script src="photos-demo.js?v=1"></script>
 <style>
 /* Page de l'entreprise invitée sur un chantier (idée de Cyril du 18-19/11) : elle l'ouvre avec le lien reçu par SMS ou e-mail.
    Style définitif ProClik (/n1.css) : fond calme, bleu nuit pour les actions, laiton en simple touche, seul ce qui se touche ressort.
@@ -142,7 +142,7 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .ring b{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--n1-nuit);font-size:17px;font-weight:800}
 .sigf{display:grid;gap:8px;margin-top:10px}.sigf textarea{width:100%;border:0;border-radius:14px;padding:11px 13px;font-size:15px;background:var(--n1-bg);box-shadow:var(--n1-in);resize:none;outline:none}
 .phb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:96px;border-radius:14px;border:1.5px dashed color-mix(in srgb,var(--n1-muted) 45%,transparent);color:var(--n1-muted);font-size:12.5px;font-weight:700}
-.phb.on{border:0;color:#fff;background:linear-gradient(135deg,#8C9AB3,#4F5B73)}
+.phb.on{border:0;color:#fff;background:linear-gradient(135deg,#2B3558,#1B2440)}
 .chs{display:flex;flex-wrap:wrap;gap:7px}.chs .b2{font-size:13px;padding:9px 12px}.chs .b2[aria-pressed="true"]{background:var(--n1-nuit);color:var(--n1-nuit-fg);box-shadow:none}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,16px);z-index:50;background:var(--n1-nuit);color:var(--n1-nuit-fg);padding:12px 16px;border-radius:14px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -296,7 +296,7 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
  '<section class="card monte res" id="cres"><h2><span class="ic">'+IC.flag+'</span>Un souci ? Les réserves<span class="sp"></span><small>'+(R.length?(o?o+' en cours':'toutes levées'):'aucune')+'</small></h2>'+
   (PZ.length>1?'<svg class="plan" viewBox="0 0 160 100" aria-label="Plan avec les réserves"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
    PZ.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-6)+'" text-anchor="middle" class="plt">'+esc(p[0])+'</text>'}).join('')+pins(R)+'</svg>':'')+
-  R.map(function(r,i){var q=quiM(r.ent),nx=(r.phx||[]).length;return '<div class="rs">'+vgn(r,i)+'<div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · '+esc(r.ent?q.n:ARTISAN+' choisit qui corrige')+(nx?' · '+nx+' photo'+(nx>1?'s':'')+' ajoutée'+(nx>1?'s':''):'')+'</small><span class="pill '+RST[r.st][1]+'">'+RST[r.st][0]+'</span>'+
+  R.map(function(r,i){var q=quiM(r.ent),nx=(r.phx||[]).length;return '<div class="rs">'+PCPH.vg(r,i,'rn '+RST[r.st][1])+'<div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · '+esc(r.ent?q.n:ARTISAN+' choisit qui corrige')+(nx?' · '+nx+' photo'+(nx>1?'s':'')+' ajoutée'+(nx>1?'s':''):'')+'</small><span class="pill '+RST[r.st][1]+'">'+RST[r.st][0]+'</span>'+
    (r.st!=='val'?'<button class="b2 pk fx" data-addph="'+i+'">'+IC.photo+'Ajouter une photo</button>':'')+'</div></div>'}).join('')+
   '<div id="sig"></div>'+(P.recep?'':'<button class="go" id="sg" style="margin-top:12px">'+IC.flag+'Signaler un problème</button>')+
   (P.recep?'<button class="ln" data-doc="Procès-verbal de réception" style="margin-top:12px"><span class="r">'+IC.docs+'</span><span class="tx"><b>Réception signée le '+esc(dt(P.recep.d))+'</b><small>Le procès-verbal, avec '+(P.recep.n||'aucune')+' réserve'+(P.recep.n>1?'s':'')+'</small></span>'+IC.chev+'</button>':'')+'</section>'+
@@ -332,8 +332,6 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
 function luC(){var L=[ARTISAN].concat(P.ent.filter(function(e){return !e.coupe&&e.id!==moi.id}).map(function(e){return e.n}));if(P.cli&&P.cli.commun&&moi.id!=='cli')L.push(P.cli.n+' (client)');
  return '<p class="lu">'+IC.lock+'<span>Lu par : vous, '+esc(L.join(', '))+'</span></p>'}
 /* vignette aux coins arrondis, numéro dessus ; le client peut ajouter des photos à une réserve (Cyril 19/11) */
-var PHG=['linear-gradient(140deg,#C9B79C,#7E6A52)','linear-gradient(140deg,#9FB3C8,#506680)','linear-gradient(140deg,#C7C2B8,#7D776C)','linear-gradient(140deg,#B8A6C4,#6B5A7D)','linear-gradient(140deg,#A9C2B0,#5B7563)'];
-function vgn(r,i){return '<span class="vg'+(r.ph?'':' vide')+'" style="'+(r.ph?'background:'+PHG[i%PHG.length]:'')+'">'+(r.ph?'':IC.photo)+'<b class="rn '+RST[r.st][1]+'">'+(i+1)+'</b></span>'}
 function cmsgs(L){var dj='';return L.map(function(x){var j=String(x.h||'').split(' · ')[0],sep=j!==dj?'<div class="j"><span>'+esc(j)+'</span></div>':'';dj=j;var mien=x.de==='cli',q=quiM(x.de);
  return sep+'<div class="m'+(mien?' moi':'')+'">'+(mien?'':'<span class="av">'+icM(q.ic)+'</span>')+'<div class="c">'+(mien?'':'<span class="n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
   '<p class="bu">'+esc(x.t)+'</p><span class="h">'+esc(String(x.h||'').split(' · ')[1]||'')+'</span></div></div>'}).join('')}
