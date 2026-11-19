@@ -800,6 +800,53 @@ body[data-cmp=bandeau] .bx{display:flex}
 .bx-c:hover{transform:translateY(-1px)}
 @media (max-width:700px){.bx-r{flex-direction:column;align-items:stretch;gap:8px}.bx-t{width:auto}}
 @media (prefers-reduced-motion:reduce){.bx-l{animation:none;flex-wrap:wrap;width:auto}.bx-l [aria-hidden]{display:none}.cx-s{transition:none}}
+
+/* Nouvelles pistes accueil (20/11) : ecrans | orbite | selecteur */
+body[data-cmp=ecrans] .univers ul.sat,body[data-cmp=orbite] .univers ul.sat,body[data-cmp=selecteur] .univers ul.sat{display:none!important}
+@media (min-width:981px){body:is([data-cmp=ecrans],[data-cmp=orbite],[data-cmp=selecteur]) .univers{grid-template-columns:minmax(0,1fr)}
+ body:is([data-cmp=ecrans],[data-cmp=orbite]) .univers .appareils{width:min(74%,1000px,calc((100svh - 360px) * 1.25))}
+ body[data-cmp=selecteur] .univers .appareils{width:min(74%,980px,calc((100svh - 480px) * 1.25))}}
+@media (max-width:980px){body:is([data-cmp=ecrans],[data-cmp=orbite],[data-cmp=selecteur]) .univers{grid-template-columns:minmax(0,1fr)}body[data-cmp=ecrans] .univers .appareils{width:88%}body[data-cmp=orbite] .univers .appareils{width:70%}}
+/* 1. les écrans racontent */
+.ec-st{position:absolute;inset:0;display:none}
+body[data-cmp=ecrans] .ec-st{display:block}
+.ec-st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .7s}
+.ec-st img.on{opacity:1}
+.ec-b{display:none;position:absolute;right:-12%;bottom:30%;z-index:4;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:18px;background:color-mix(in srgb,var(--calme) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 0 0 1px var(--line),0 18px 36px -16px rgba(14,19,34,.45);white-space:nowrap;transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.2,1)}
+body[data-cmp=ecrans] .ec-b{display:flex}
+.ec-b.chg{opacity:0;transform:translateY(8px)}
+.ec-b .ic{width:34px;height:34px;padding:8px;border-radius:11px;background:var(--nuit);color:var(--nuit-fg);fill:none;stroke:currentColor;stroke-width:1.9}
+.ec-b.o .ic{color:var(--laiton)}
+.ec-b b{display:block;font-size:14.5px;font-weight:800;color:var(--fg);line-height:1.2}.ec-b small{display:block;font-size:11.5px;font-weight:700;color:var(--muted)}.ec-b.o small{color:var(--laiton);text-transform:uppercase;letter-spacing:.08em}
+@media (max-width:700px){.ec-b{right:-4%;bottom:auto;top:62%;padding:7px 12px 7px 7px;gap:8px}.ec-b .ic{width:28px;height:28px;padding:6px}.ec-b b{font-size:12.5px}}
+/* 2. icônes en orbite */
+.or-w{display:none;position:absolute;inset:0;z-index:3;pointer-events:none}
+body[data-cmp=orbite] .or-w{display:block}
+.or-i{all:unset;pointer-events:auto;cursor:pointer;position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;display:grid;place-items:center;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 12px 24px -12px rgba(14,19,34,.45);animation:orF 5s ease-in-out infinite;animation-delay:calc(var(--n) * -.45s)}
+.or-i .ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;color:var(--fg)}
+.or-i.o{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 55%,transparent),0 12px 24px -12px rgba(14,19,34,.45)}.or-i.o .ic{color:var(--laiton)}
+.or-i span{position:absolute;bottom:calc(100% + 8px);left:50%;translate:-50% 4px;white-space:nowrap;padding:6px 10px;border-radius:10px;background:var(--nuit);color:var(--nuit-fg);font-size:12.5px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s,translate .3s}
+.or-i:hover span,.or-i:focus-visible span,.or-i.vu span{opacity:1;translate:-50% 0}
+.or-i:hover{z-index:2}
+@keyframes orF{50%{transform:translateY(-5px)}}
+@media (max-width:700px){.or-i{width:36px;height:36px;margin:-18px 0 0 -18px}.or-i .ic{width:17px;height:17px}}
+.or-lg{display:none;justify-content:center;gap:18px;font-size:13px;font-weight:700;color:var(--muted);grid-column:1/-1}
+body[data-cmp=orbite] .or-lg{display:flex}
+.or-lg i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:var(--calme);box-shadow:0 0 0 1.5px var(--fg)}.or-lg .o i{box-shadow:0 0 0 1.5px var(--laiton)}
+/* 3. sélecteur */
+.se{display:none;grid-column:1/-1;flex-direction:column;align-items:center;gap:16px}
+body[data-cmp=selecteur] .se{display:flex}
+.se-s{display:flex;padding:4px;border-radius:99px;background:color-mix(in srgb,var(--fg) 7%,transparent)}
+.se-s button{all:unset;cursor:pointer;padding:10px 20px;border-radius:99px;font-weight:800;font-size:14.5px;color:var(--fg);transition:background .3s,color .3s}
+.se-s button[aria-pressed=true]{background:var(--nuit);color:var(--nuit-fg)}
+.se-s button.o[aria-pressed=true]{color:var(--laiton)}
+.se-g{display:grid;grid-template-columns:repeat(6,minmax(0,96px));gap:14px;justify-content:center}
+.se-t{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:12.5px;font-weight:700;line-height:1.2;color:var(--fg);animation:seIn .45s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--n) * 45ms)}
+.se-t .ic{width:58px;height:58px;padding:15px;border-radius:18px;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 12px 22px -14px rgba(14,19,34,.45);fill:none;stroke:currentColor;stroke-width:1.8;transition:transform .3s}
+.se.o .se-t .ic{color:var(--laiton);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 50%,transparent),0 12px 22px -14px rgba(14,19,34,.45)}
+.se-t:hover .ic{transform:translateY(-3px)}
+@keyframes seIn{from{opacity:0;transform:translateY(8px)}}
+@media (max-width:700px){.se-g{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;width:100%}.se-t .ic{width:50px;height:50px;padding:13px}}
 /* === Modernisation (aperçu 19/11) === */
 .univers::before{content:"";position:absolute;inset:-40px 0;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
 .univers{isolation:isolate}
@@ -1511,5 +1558,32 @@ var bx=document.createElement('div');bx.className='bx';
  var r=document.createElement('div');r.className='bx-r '+(g?'g':'d');r.innerHTML='<div class="bx-t">'+head(g)+'</div><div class="bx-m"><div class="bx-l">'+chips+'<span aria-hidden="true" style="display:contents">'+chips.replace(/<button /g,'<button tabindex="-1" ')+'</span></div></div>';
  [].forEach.call(r.querySelectorAll('.bx-c'),function(b){b.addEventListener('click',function(){L[+b.dataset.i].b.click()})});bx.appendChild(r)});
 U.appendChild(bx);
+})();</script>
+<script>(function(){
+var U=document.querySelector('.univers');if(!U)return;var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function items(sel,o){return [].map.call(U.querySelectorAll(sel+' li:not(.t) .pas'),function(b){var sv=b.querySelector('svg.ic'),t='';[].forEach.call(b.childNodes,function(n){if(n.nodeType===3)t+=n.textContent});return {b:b,ic:sv?sv.outerHTML:'',t:t.trim(),o:o}})}
+var C=items('.sat.g',0),O=items('.sat.d',1),A=C.concat(O),AP=U.querySelector('.appareils');
+/* 1. écrans */
+var SH=[['Le point du jour','v-accueil',0,'b1'],['Le plan du client','e-predevis',0,'a2'],['Devis et factures','v-devis',0,'b2'],['Agenda et carte','v-planning',0,'b1'],['Cliky prépare le pré-devis','v-cliky-devis',1,'o1'],['Chantier partagé','e-conversation',1,'o6'],['Réservation','v-resa',1,'o2']];
+var ph=U.querySelector('.iphone .scr');
+if(ph){var st=document.createElement('div');st.className='ec-st';st.innerHTML=SH.map(function(x,i){return '<img alt="" decoding="async" loading="lazy" src="vitrine/'+x[1]+'.jpg"'+(i?'':' class="on"')+'>'}).join('');ph.appendChild(st);
+ var bb=document.createElement('div');bb.className='ec-b';AP.appendChild(bb);var n=0;
+ function icon(k){var b=U.querySelector('.pas[data-k="'+k+'"] svg.ic');return b?b.outerHTML:''}
+ function sh(i){n=i%SH.length;var x=SH[n];[].forEach.call(st.children,function(m,j){m.classList.toggle('on',j===n)});bb.classList.add('chg');setTimeout(function(){bb.className='ec-b'+(x[2]?' o':'');bb.innerHTML=icon(x[3])+'<span><small>'+(x[2]?'Option':'Compris')+'</small><b>'+x[0]+'</b></span>'},250)}
+ sh(0);if(!RM)setInterval(function(){if(document.body.dataset.cmp==='ecrans')sh(n+1)},3200)}
+/* 2. orbite */
+var ow=document.createElement('div');ow.className='or-w';
+ow.innerHTML=A.map(function(x,i){return '<button type="button" class="or-i'+(x.o?' o':'')+'" style="--n:'+i+'" data-i="'+i+'">'+x.ic+'<span>'+x.t+'</span></button>'}).join('');AP.appendChild(ow);
+var OI=[].slice.call(ow.children);
+function place(){var W=AP.clientWidth,H=AP.clientHeight,ph=innerWidth<701,off=ph?14:58,bulge=ph?4:26;
+ function col(L,base,side){L.forEach(function(x,i){var t=L.length>1?i/(L.length-1):.5,y=H*(.06+.88*t),k=Math.sin(Math.PI*t);var e=OI[base+i];e.style.left=(side<0?-off-bulge*k:W+off+bulge*k)+'px';e.style.top=y+'px'})}
+ col(C,0,-1);col(O,C.length,1)}
+place();addEventListener('resize',place);if('ResizeObserver'in window)new ResizeObserver(place).observe(AP);
+OI.forEach(function(e,i){e.addEventListener('click',function(){A[i].b.click()})});
+var lg=document.createElement('p');lg.className='or-lg';lg.innerHTML='<span><i></i>Compris</span><span class="o"><i></i>En option</span><span>Touchez une icône</span>';U.appendChild(lg);
+/* 3. sélecteur */
+var se=document.createElement('div');se.className='se';se.innerHTML='<div class="se-s" role="group"><button type="button" aria-pressed="true" data-o="0">Compris</button><button type="button" class="o" aria-pressed="false" data-o="1">En option</button></div><div class="se-g"></div>';U.appendChild(se);
+var sg=se.querySelector('.se-g');function fill(o){var L=o?O:C;se.classList.toggle('o',!!o);[].forEach.call(se.querySelectorAll('.se-s button'),function(b){b.setAttribute('aria-pressed',b.dataset.o==o)});sg.innerHTML=L.map(function(x,i){return '<button type="button" class="se-t" style="--n:'+i+'" data-i="'+i+'">'+x.ic+x.t+'</button>'}).join('');[].forEach.call(sg.children,function(b,i){b.addEventListener('click',function(){L[i].b.click()})})}
+se.querySelector('.se-s').addEventListener('click',function(e){var b=e.target.closest('button');if(b)fill(+b.dataset.o)});fill(0);
 })();</script>
 </body></html>
