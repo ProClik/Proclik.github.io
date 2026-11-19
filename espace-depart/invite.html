@@ -103,7 +103,8 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .stars svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .stars button[aria-pressed="true"]{color:var(--n1-laiton)}.stars button[aria-pressed="true"] svg{fill:var(--n1-laiton)}
 .fin-off{text-align:left;padding:15px;border-radius:18px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent);display:grid;gap:8px}
-.fin-off b{font-size:17px;line-height:1.25}.fin-off p{margin:0;font-size:13.5px;text-align:left}
+.fin-off b{font-size:17px;line-height:1.25}.fin-off .pct{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--n1-laiton)}
+.idees{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px;justify-content:center}.idees .b2{font-size:13px;padding:9px 12px}.idees .b2[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit);background:var(--n1-calme)}.fin-off p{margin:0;font-size:13.5px;text-align:left}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,16px);z-index:50;background:var(--n1-nuit);color:var(--n1-nuit-fg);padding:12px 16px;border-radius:14px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .demo{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--n1-muted);background:var(--n1-teinte);border-radius:99px;padding:3px 9px}
@@ -185,20 +186,25 @@ function porte(){
  C[0].focus();
 }
 var ETOILE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+var IDEES=['Trop de choses à l\'écran','Je ne trouvais pas mes jours','Les messages arrivaient trop tard','Le code SMS à l\'entrée','Le plan pas assez clair','Lent ou difficile sur mon téléphone'];
 function etoiles(n,id){return '<div class="stars" id="'+id+'" role="radiogroup" aria-label="Note sur 5">'+[1,2,3,4,5].map(function(i){return '<button type="button" data-n="'+i+'" aria-label="'+i+' sur 5" aria-pressed="'+(i<=n)+'">'+ETOILE+'</button>'}).join('')+'</div>'}
-/* Fin du chantier (Cyril 19/11) : une note sur 5 pour ProClik, un avis Google si 4 ou 5, une remarque sinon, puis l'offre de fin de chantier */
+/* Fin du chantier (Cyril 19/11) : une note sur 5 (pas d avis Google pour un invité), des idées à toucher si moins de 4, puis −50 % sur les 3 premiers mois */
 function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
  var h='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Le chantier est terminé</h1><p>'+esc(ARTISAN)+' a clôturé le chantier <b>'+esc(ch.n)+'</b>. Merci pour votre travail !<br>Le récapitulatif (décisions, plans, conversation) vous a été envoyé par e-mail.</p>'+
-  '<div class="note"><b>Comment s\'est passé ce chantier avec ProClik ?</b>'+etoiles(note,'st')+'<div id="suite"></div></div>'+
-  '<div class="fin-off"><span class="dk">Pour la suite</span><b>Gardez tout ça pour vos propres chantiers</b><p>Votre planning, la conversation avec vos sous-traitants, vos devis et vos factures, au même endroit. Un avantage de fin de chantier vous attend pour démarrer.</p>'+
-  '<button class="go" id="essai">'+IC.home+'Avoir mon Espace ProClik</button></div>'+
+  '<div class="note"><b>Comment avez-vous trouvé l\'Espace de ce chantier ?</b>'+etoiles(note,'st')+'<div id="suite"></div></div>'+
+  '<div class="fin-off"><span class="dk">Offre de fin de chantier</span><span class="pct">−50 %</span><b>sur vos 3 premiers mois</b><p>Le même Espace, à votre nom : vos clients, vos devis, vos factures, votre planning et vos sous-traitants, réunis comme sur ce chantier.</p>'+
+  '<button class="go" id="essai">'+IC.home+'J\'en profite</button></div>'+
   '<p style="margin:14px 0 0;font-size:12.5px">Votre accès à ce chantier est fermé.</p></div></div>';
  $('#app').innerHTML=h;
  function suite(n){var S=$('#suite');
-  if(n>=4)S.innerHTML='<p class="ok">Merci ! Ça nous aide beaucoup.</p><button class="b2 pk" id="avis" style="width:100%">'+ETOILE.replace('<svg','<svg class="i"')+'Laisser un avis Google sur ProClik</button>';
-  else S.innerHTML='<p>Qu\'est-ce qui n\'a pas plu ? Votre message arrive directement chez ProClik.</p><textarea id="rq" rows="3" placeholder="Votre remarque…"></textarea><button class="b2 pk" id="rqok" style="width:100%;margin-top:8px">Envoyer ma remarque</button>';
-  var a=$('#avis');if(a)a.addEventListener('click',function(){toast('Ouverture de la page d\'avis Google (démo)')});
-  var r=$('#rqok');if(r)r.addEventListener('click',function(){S.innerHTML='<p class="ok">Merci, c\'est bien reçu. On vous répond rapidement.</p>'})}
+  if(n>=4){S.innerHTML='<p class="ok">Merci ! Ça nous aide beaucoup à améliorer l\'Espace.</p>';return}
+  /* en dessous de 4 : des idées pour l'aiguiller, sinon il écrit son texte (Cyril 19/11) */
+  S.innerHTML='<p>Qu\'est-ce qui pourrait être mieux ? Touchez ce qui vous parle.</p><div class="idees">'+IDEES.map(function(x,k){return '<button type="button" class="b2 pk" data-id="'+k+'" aria-pressed="false">'+esc(x)+'</button>'}).join('')+'</div>'+
+   '<textarea id="rq" rows="2" placeholder="Autre chose ? Écrivez-le ici…"></textarea><button class="go" id="rqok" style="margin-top:10px">Envoyer</button>';
+  [].forEach.call(S.querySelectorAll('[data-id]'),function(b){b.addEventListener('click',function(){b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'))})});
+  $('#rqok').addEventListener('click',function(){var c=[].filter.call(S.querySelectorAll('[data-id]'),function(b){return b.getAttribute('aria-pressed')==='true'}).length,t=($('#rq').value||'').trim();
+   if(!c&&!t){toast('Touchez une idée ou écrivez quelques mots');return}
+   S.innerHTML='<p class="ok">Merci, c\'est bien reçu. On s\'en sert pour améliorer l\'Espace.</p>'})}
  [].forEach.call(document.querySelectorAll('#st [data-n]'),function(b){b.addEventListener('click',function(){var n=+b.dataset.n;ecrit('pc-inv-note-'+moi.id+'-'+CID,n);
   [].forEach.call(document.querySelectorAll('#st [data-n]'),function(x){x.setAttribute('aria-pressed',String(+x.dataset.n<=n))});suite(n)})});
  if(note)suite(note);
@@ -206,7 +212,7 @@ function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
 }
 /* Pendant le chantier : une seule petite offre, jamais avant son 2e passage */
 function offre(){if(J.filter(function(j){return j[0]<AUJ}).length<2)return '';
- return '<button class="offre pk" id="offre"><span class="r">'+IC.home+'</span><span style="flex:1;min-width:0"><b>Ce planning et cette conversation, pour vos propres chantiers ?</b><small>Essayez votre Espace ProClik : vos clients, vos sous-traitants, vos devis et factures.</small></span>'+IC.chev+'</button>'}
+ return '<button class="offre pk" id="offre"><span class="r">'+IC.home+'</span><span style="flex:1;min-width:0"><b>Vous aimez l\'Espace de '+esc(ARTISAN)+' ? Et pourtant, vous n\'avez encore rien vu…</b><small>Le vôtre range vos clients, vos devis, vos factures et vos sous-traitants. Comme ici, en plus grand.</small></span>'+IC.chev+'</button>'}
 
 /* ---------- son chantier ---------- */
 function plan(){return '<svg class="plan" viewBox="0 0 160 100" aria-label="Plan du local"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
