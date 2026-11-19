@@ -647,3 +647,39 @@ html body .tdb .pt .an .an-f{stroke:color-mix(in srgb,var(--n1-nuit-fg) 13%,tran
 html body .tdb .jl-go{background:var(--n1-nuit-fg)!important;color:var(--n1-nuit)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
 html body .tdb .fo>div>span.an{display:grid!important;place-items:center!important;flex:none!important}
 html body .tdb .cm-fo em{white-space:normal!important}
+/* §32 Tout l'Espace au style du « point du jour » (Cyril 19/11 : « applique ce style sur tout l'Espace, chaque bloc le même style »)
+   bloc = fond calme + ombre douce ; titre de bloc discret avec icône laiton en carré doux ; à droite une pastille ;
+   lignes à plat sur fond teinté ; petites étiquettes en laiton ; boutons d'action bleu nuit (inchangés). */
+html body{--sv-t:color-mix(in srgb,var(--n1-fg) 6.5%,transparent);--sv-i:color-mix(in srgb,var(--n1-fg) 9%,transparent)}
+html body .view:not(#v-accueil) .bk,html body .view:not(#v-accueil) .card:not(.bk>.card){background:var(--n1-calme)!important;border:0!important;border-radius:24px!important;box-shadow:var(--up)!important}
+html body .view:not(#v-accueil) .bk{padding:14px!important;gap:10px!important}
+/* titre de bloc */
+html body .view:not(#v-accueil) .sec-h{display:flex;align-items:center;gap:10px}
+html body .view:not(#v-accueil) .sec-h>h2,html body .view:not(#v-accueil) .sec-h>h2.ti,html body .view:not(#v-accueil) .sec-h>h3{font-size:13.5px!important;font-weight:800!important;line-height:1.2;opacity:.8;letter-spacing:0;margin:0}
+html body .view:not(#v-accueil) .ti-ic{width:32px!important;height:32px!important;border-radius:11px!important;background:var(--sv-i)!important;box-shadow:none!important;color:var(--n1-laiton)!important}
+html body .view:not(#v-accueil) .ti-ic svg{width:18px!important;height:18px!important}
+html body .view:not(#v-accueil) .sec-h>:is(span,.hint,small,button):last-child:not(:first-child){margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:0;border-radius:999px;background:var(--sv-i)!important;box-shadow:none!important;color:var(--n1-fg)!important;font-size:12.5px!important;font-weight:800!important;opacity:1;white-space:nowrap}
+/* lignes de liste : à plat, fond teinté, comme les lignes de l'Accueil */
+html body .view:not(#v-accueil) .cf-l{display:grid!important;grid-template-columns:minmax(0,1fr);gap:6px!important}
+html body .view:not(#v-accueil) .cf-li{padding:10px 12px!important;border:0!important;border-radius:14px!important;background:var(--sv-t)!important;box-shadow:none!important;min-height:0}
+html body .view:not(#v-accueil) .cf-li:active{transform:scale(.985)}
+html body .view:not(#v-accueil) .cf-av{width:36px!important;height:36px!important;border-radius:11px!important;background:var(--sv-i)!important;box-shadow:none!important;font-size:13.5px}
+html body .view:not(#v-accueil) .cf-av svg{width:17px!important;height:17px!important}
+html body .view:not(#v-accueil) .cf-li .go{opacity:.55}
+html body .view:not(#v-accueil) .chrow{border:0!important;border-radius:16px!important;background:var(--sv-t)!important;box-shadow:none!important}
+/* carte « l'essentiel » : petite étiquette en laiton comme « En ce moment » */
+html body .view:not(#v-accueil) .cf-hero>small{font-size:11.5px!important;font-weight:800!important;letter-spacing:.05em;text-transform:uppercase;color:var(--n1-laiton)!important}
+/* tuiles du haut (menu et chiffres) : même surface que les blocs, icône laiton, choisie = trait bleu nuit */
+html body .view:not(#v-accueil) .seg.tm button,html body .view:not(#v-accueil) .tb-t,html body .view:not(#v-accueil) .kpi{background:var(--n1-calme)!important;border:0!important;border-radius:18px!important;box-shadow:var(--up)!important}
+html body .view:not(#v-accueil) .seg.tm button[aria-selected="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit),var(--up)!important;background:color-mix(in srgb,var(--n1-nuit) 6%,var(--n1-calme))!important}
+html body .view:not(#v-accueil) .seg.tm button>svg,html body .view:not(#v-accueil) .tb-ic{color:var(--n1-laiton)!important}
+html body .view:not(#v-accueil) .seg.tm button[aria-selected="true"]>span{color:var(--n1-nuit)!important}
+html body .view:not(#v-accueil) .card.lst:not(.cf-l){display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+html body .view:not(#v-accueil) .card.lst>button{padding:10px 12px!important;border:0!important;border-radius:14px!important;background:var(--sv-t)!important;box-shadow:none!important}
+html body .view:not(#v-accueil) .card.lst>button :is(.cf-av,.av,.ic,.lg){border-radius:11px!important;box-shadow:none!important;background:var(--sv-i)!important}
+html body .view:not(#v-accueil) .fa-env{display:grid;gap:10px}
+html body .view:not(#v-accueil) .fa-env-h>h2 i.rouge{font-style:normal;margin-left:6px}
+html body .view:not(#v-accueil) .card.lst>div:not(.sec-h):not(.fa-env-h){padding:10px 12px!important;border:0!important;border-radius:14px!important;background:var(--sv-t)!important;box-shadow:none!important}
+/* la fiche d'un chantier garde son grand titre */
+html body #chx>.cf:not(.ch-top)>.sec-h>h2{font-size:21px!important;opacity:1!important;line-height:1.15}
+html body #chx>.cf:not(.ch-top)>.sec-h .ti-ic{display:none}
