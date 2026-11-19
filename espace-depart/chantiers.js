@@ -671,19 +671,41 @@ function entDe(c,id){if(id==='moi')return {n:'Vous',m:'',ic:'archi'};if(id==='cl
 function icQ(e){return e&&e.ic==='cli'?IC_CLI:icEnt(e)}
 /* plan des réserves au style du plan ProClik (Cyril 19/11 : « peaufiner le plan ») :
    murs épais aux angles arrondis, ouvertures des portes, pièces teintées selon leurs réserves, repères avec halo */
-var MURS={alpes:{ext:'M8 8H152V92H8Z',int:['M76 8V30','M76 40V54','M8 54H56','M66 54H92','M102 54H152','M52 54V62','M52 72V92','M112 54V62','M112 72V92'],
- portes:[[56,54,66,54,0],[92,54,102,54,0],[52,62,52,72,1],[112,62,112,72,1],[76,30,76,40,1]]}};
-function planRes(c,sel){if(!PIECES[c.id])return '';var Pz=pieces(c),R=resL(c),M=MURS[c.id];
+var MURS={alpes:{
+ int:['M76 8V14','M76 24V54','M8 54H56','M66 54H92','M102 54H152','M52 54V62','M52 72V92','M112 54V62','M112 72V92'],
+ /* portes : charnière, bout du battant, fin de l'arc */
+ portes:[[56,54,56,64,66,54],[102,54,102,64,92,54],[52,72,42,72,52,62],[112,72,122,72,112,62],[76,14,66,14,76,24]],
+ /* fenêtres sur les murs extérieurs : [x1,y1,x2,y2] */
+ fen:[[22,8,46,8],[96,8,120,8],[8,64,8,82],[152,64,152,82],[18,92,40,92],[122,92,144,92]],
+ entree:[136,8,148,8],
+ /* mobilier en gris léger, pour se repérer */
+ meuble:'<rect x="100" y="36" width="34" height="7" rx="1.5"/><rect x="138" y="44" width="10" height="7" rx="2"/><circle cx="143" cy="47.5" r="1.6"/>'+
+  '<rect x="13" y="13" width="7" height="7" rx="1.5"/><rect x="22" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="24" width="7" height="7" rx="1.5"/><circle cx="45" cy="32" r="5"/>'+
+  '<rect x="16" y="66" width="12" height="21" rx="2"/><rect x="126" y="66" width="12" height="21" rx="2"/>',
+ /* ex. : réserve placée à l'endroit exact (démo) */
+ xy:{r1:[117,24],r2:[143,38],r3:[97,63]}}};
+function planRes(c,sel){if(!PIECES[c.id])return '';var Pz=pieces(c),R=resL(c),M=MURS[c.id]||{};
  var etat=function(pc){var L=R.filter(function(r){return r.pc===pc});return L.some(function(r){return r.st==='ouv'})?'al':L.some(function(r){return r.st==='corr'})?'wa':L.length?'ok':''};
  var h='<svg class="cp-pl" viewBox="0 0 160 100" role="img" aria-label="Plan avec les réserves">'+
-  '<rect x="8" y="8" width="144" height="84" rx="2.5" class="cp-plf"/>'+
+  '<rect x="8" y="8" width="144" height="84" class="cp-plf"/>'+
   Pz.map(function(p){var e=etat(p[0]);return '<rect x="'+(p[1]+1)+'" y="'+(p[2]+1)+'" width="'+(p[3]-2)+'" height="'+(p[4]-2)+'" class="cp-plr '+e+(sel===p[0]?' sel':'')+'"/>'}).join('');
- if(M)h+='<g class="cp-plw"><path d="'+M.ext+'" class="ext"/>'+M.int.map(function(d){return '<path d="'+d+'"/>'}).join('')+'</g>';
- h+=Pz.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-5.5)+'" text-anchor="middle" class="cp-plt">'+esc(p[0])+'</text>'}).join('');
- h+=R.map(function(r,i){var p=Pz.filter(function(x){return x[0]===r.pc})[0];if(!p)return '';var L=R.filter(function(y){return y.pc===r.pc}),k=L.indexOf(r),n=L.length;
-   var x=p[1]+p[3]/2+(k-(n-1)/2)*15,y=p[2]+p[4]/2-3;
-   return '<g class="cp-pin2 '+RST[r.st][1]+'"><circle cx="'+x+'" cy="'+(y+.8)+'" r="7.6" class="sh"/><circle cx="'+x+'" cy="'+y+'" r="6.6"/><text x="'+x+'" y="'+(y+2.5)+'" text-anchor="middle">'+(i+1)+'</text></g>'}).join('');
- return h+'</svg>'}
+ if(M.meuble)h+='<g class="cp-plm2">'+M.meuble+'</g>';
+ /* murs extérieurs avec les trous des fenêtres et de l'entrée */
+ var O=(M.fen||[]).concat(M.entree?[M.entree]:[]);
+ h+='<g class="cp-plw"><rect x="8" y="8" width="144" height="84" class="ext"/>'+(M.int||[]).map(function(d){return '<path d="'+d+'"/>'}).join('')+'</g>';
+ h+=O.map(function(f){var hz=f[1]===f[3];return '<rect x="'+(hz?f[0]:f[0]-2.2)+'" y="'+(hz?f[1]-2.2:f[1])+'" width="'+(hz?f[2]-f[0]:4.4)+'" height="'+(hz?4.4:f[3]-f[1])+'" class="cp-plo"/>'}).join('');
+ h+=(M.fen||[]).map(function(f){var hz=f[1]===f[3];return hz?'<path class="cp-plfe" d="M'+f[0]+' '+(f[1]-1.6)+'H'+f[2]+'M'+f[0]+' '+(f[1]+1.6)+'H'+f[2]+'M'+f[0]+' '+f[1]+'H'+f[2]+'"/>':'<path class="cp-plfe" d="M'+(f[0]-1.6)+' '+f[1]+'V'+f[3]+'M'+(f[0]+1.6)+' '+f[1]+'V'+f[3]+'M'+f[0]+' '+f[1]+'V'+f[3]+'"/>'}).join('');
+ (M.portes||[]).concat(M.entree?[[M.entree[2],8,M.entree[2],20,M.entree[0],8]]:[]).forEach(function(d){var r=Math.abs(d[2]-d[0])+Math.abs(d[3]-d[1]),sw=((d[2]-d[0])*(d[5]-d[1])-(d[3]-d[1])*(d[4]-d[0]))>0?1:0;
+  h+='<path class="cp-pldo" d="M'+d[0]+' '+d[1]+'L'+d[2]+' '+d[3]+'"/><path class="cp-plar" d="M'+d[2]+' '+d[3]+'A'+r+' '+r+' 0 0 '+sw+' '+d[4]+' '+d[5]+'"/>'});
+ if(M.entree)h+='<text x="'+((M.entree[0]+M.entree[2])/2)+'" y="5" text-anchor="middle" class="cp-ple">Entrée</text>';
+ h+=Pz.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-5)+'" text-anchor="middle" class="cp-plt">'+esc(p[0])+'</text>'}).join('');
+ h+=R.map(function(r,i){var p=Pz.filter(function(x){return x[0]===r.pc})[0];if(!p)return '';var L=R.filter(function(y){return y.pc===r.pc&&!(r.xy||(M.xy||{})[y.id])}),k=L.indexOf(r),n=L.length;
+   var q=r.xy||(M.xy||{})[r.id],x=q?q[0]:p[1]+p[3]/2+(k-(n-1)/2)*15,y=q?q[1]:p[2]+p[4]/2-3;
+   return '<g class="cp-pin2 '+RST[r.st][1]+(sel&&sel!==r.pc?' pale':'')+'"><circle cx="'+x+'" cy="'+(y+.8)+'" r="6.6" class="sh"/><circle cx="'+x+'" cy="'+y+'" r="5.8"/><text x="'+x+'" y="'+(y+2.3)+'" text-anchor="middle">'+(i+1)+'</text></g>'}).join('');
+ h+='</svg>';
+ /* légende des couleurs */
+ if(R.length)h+='<div class="cp-pll"><span class="al">À corriger</span><span class="wa">À valider</span><span class="ok">Levée</span></div>';
+ return h}
 /* vignettes photo des réserves (Cyril 19/11 : coins arrondis, on touche la photo pour ouvrir la fiche) */
 function photoT(lab,on,g){return '<span class="cp-ph'+(on?' on':'')+'"'+(on&&g?' style="background:'+g+'"':'')+'>'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
 function photoT0(lab,on){return '<span class="cp-ph'+(on?' on':'')+'">'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}

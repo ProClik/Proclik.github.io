@@ -377,3 +377,16 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-plm{padding:8px;border-radius:16px;background:var(--n1-teinte)}
 .cp-plm .z{right:8px;bottom:8px;background:var(--n1-bg)}
 #x-in .cp-pl{width:100%!important;max-width:360px;height:auto!important;aspect-ratio:160/100;flex:none;max-height:none!important;margin:0 auto 12px}
+
+/* vrai plan : fenêtres, portes, entrée, mobilier, légende (Cyril 19/11 : « il manque quelque chose ») */
+.cp-plm2{fill:none;stroke:color-mix(in srgb,var(--n1-muted) 45%,transparent);stroke-width:.7}
+.cp-plo{fill:var(--n1-bg,#fff)}
+.cp-plfe{fill:none;stroke:currentColor;stroke-width:.55}
+.cp-pldo{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round}
+.cp-plar{fill:none;stroke:color-mix(in srgb,var(--n1-muted) 70%,transparent);stroke-width:.55;stroke-dasharray:1.4 1}
+.cp-ple{font:800 4.6px Manrope,sans-serif;fill:var(--n1-laiton);letter-spacing:.3px;text-transform:uppercase}
+.cp-plw rect.ext{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linejoin:round}
+.cp-pin2.pale{opacity:.35}
+.cp-pll{display:flex;justify-content:center;gap:14px;margin:6px 0 2px;font-size:11.5px;font-weight:700;color:var(--n1-muted)}
+.cp-pll span{display:inline-flex;align-items:center;gap:5px}.cp-pll span::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--n1-alert)}
+.cp-pll .wa::before{background:var(--n1-warn)}.cp-pll .ok::before{background:var(--n1-ok)}
