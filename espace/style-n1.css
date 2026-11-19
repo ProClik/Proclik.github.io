@@ -277,7 +277,7 @@ html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit);color:#fff}
 /* À faire : icônes neutres, la couleur seulement sur le mot d'action (Cyril, 19/11) */
 html body .tdb .af,html body .tdb .sz-m .af{grid-template-columns:1fr}
 html body .tdb .af-b .afa-ic{background:var(--n1-teinte);box-shadow:none;color:var(--n1-fg,var(--fg))}
-html body .tdb .af-b em{--ac:var(--k-run);display:inline-block;padding:1px 8px;border-radius:999px;font-style:normal;font-weight:800;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac)}
+html body .tdb .af-b em{--ac:var(--k-run);font-style:normal;font-weight:800;background:none;padding:0;color:var(--ac)}
 html body .tdb .af-b.t-envoyer em{--ac:#D25A5A}:root[data-theme="dark"] body .tdb .af-b.t-envoyer em{--ac:#F09A9A}
 html body .tdb .af-b.i-fournisseur em{--ac:var(--k-liv)}html body .tdb .af-b.t-ranger em{--ac:var(--k-autre)}
 html body .tdb .af-b.t-suivre em{--ac:var(--n1-muted)}
@@ -313,3 +313,36 @@ html body .tdb .pt-go small{font-size:11px;font-weight:800;letter-spacing:.06em;
 html body .tdb .pt-go b{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html body .tdb .pt-go i{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--n1-nuit);color:var(--n1-nuit-fg);font-style:normal;font-weight:800}
 html body .tdb .pt-go:active{transform:scale(.98)}
+
+/* §20 Accueil lisible d'un coup d'œil (Cyril, 19/11) : le point du jour en lignes à icônes, devis signés + % de réussite,
+   avancement des chantiers en anneau ProClik (trait fin bleu nuit + point laiton, comme le logo) */
+html body .tdb .pt-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+html body .tdb .pt-l li{display:flex;align-items:center;gap:12px;min-width:0;font-size:16px;line-height:1.3}
+html body .tdb .pt-li{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:color-mix(in srgb,var(--n1-nuit-fg) 11%,transparent);color:var(--n1-nuit-fg)}
+html body .tdb .pt-li svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pt-hh{flex:none;min-width:0;font-weight:800;font-variant-numeric:tabular-nums;color:var(--n1-laiton)}
+html body .tdb .pt-l li>span:last-child{min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .tdb .pt-l li small{font-weight:500;opacity:.7;margin-left:4px}
+html body .tdb .pt-l li b{font-weight:800}
+/* L'anneau ProClik */
+html body .tdb .an{position:relative;flex:none;display:grid;place-items:center;width:48px;height:48px}
+html body .tdb .an svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+html body .tdb .an-f{fill:none;stroke:var(--n1-teinte);stroke-width:2.6}
+html body .tdb .an-v{fill:none;stroke:var(--n1-nuit);stroke-width:2.6;stroke-linecap:round}
+html body .tdb .an-p{fill:var(--n1-laiton);stroke:var(--n1-calme);stroke-width:1.6}
+html body .tdb .an em{font-style:normal;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--fg)}
+html body .tdb .an em small{font-size:8.5px;margin-left:1px}
+:root[data-theme="dark"] body .tdb .an-v{stroke:var(--fg)}
+html body .tdb .ch-p{gap:0}
+/* Chiffres : la ligne qui motive, puis 3 montants avec icône */
+html body .tdb .cm-top{display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;border:0;border-radius:18px;background:var(--n1-teinte);color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+html body .tdb .cm-an{width:58px;height:58px}html body .tdb .cm-an em{font-size:15px}
+html body .tdb .cm-an .an-f{stroke:color-mix(in srgb,var(--n1-nuit) 12%,transparent)}
+html body .tdb .cm-tx{display:grid;gap:2px;min-width:0}
+html body .tdb .cm-tx b{font-size:19px;font-weight:800}html body .tdb .cm-tx b span{font-weight:600;color:var(--n1-muted)}
+html body .tdb .cm-tx small{font-size:13px;color:var(--n1-muted)}
+html body .tdb .cm{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-top:10px}
+html body .tdb .cm-c{gap:2px}
+html body .tdb .cm-ic{display:grid;place-items:center;width:28px;height:28px;margin-bottom:4px;border-radius:9px;background:var(--n1-teinte);color:var(--n1-fg,var(--fg))}
+html body .tdb .cm-ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:420px){html body .tdb .cm-c b{font-size:15px}}
