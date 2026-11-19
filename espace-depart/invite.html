@@ -104,7 +104,8 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .stars button[aria-pressed="true"]{color:var(--n1-laiton)}.stars button[aria-pressed="true"] svg{fill:var(--n1-laiton)}
 .fin-off{text-align:left;padding:15px;border-radius:18px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent);display:grid;gap:8px}
 .fin-off b{font-size:17px;line-height:1.25}.fin-off .pct{display:flex;align-items:flex-start;gap:3px;margin:4px 0 2px;line-height:1}
-.fin-off .pct b{font-family:Nunito,Manrope,system-ui,sans-serif;font-weight:900;font-size:56px;letter-spacing:-.04em;line-height:.9;font-variant-numeric:tabular-nums;color:var(--n1-fg)}
+.fin-off .pct b{font-family:Nunito,Manrope,system-ui,sans-serif;font-weight:900;font-size:50px;letter-spacing:-.03em;line-height:.9;font-variant-numeric:tabular-nums;color:var(--n1-laiton);display:inline-flex;align-items:center}
+.fin-off .pct .mn{display:inline-block;width:.32em;height:.1em;border-radius:.05em;background:currentColor;margin:0 .08em .02em 0}
 .fin-off .pct sup{font-family:Nunito,Manrope,system-ui,sans-serif;font-weight:900;font-size:24px;margin-top:3px;color:var(--n1-laiton)}
 .fin-off .pct .u{align-self:flex-end;margin:0 0 4px 8px;padding-left:10px;border-left:2px solid var(--n1-laiton);font-size:13px;font-weight:600;color:var(--n1-muted);line-height:1.2}
 .cliky{display:flex;gap:11px;align-items:center;text-align:left;padding:11px;border-radius:16px;background:var(--n1-teinte)}
@@ -201,7 +202,7 @@ function etoiles(n,id){return '<div class="stars" id="'+id+'" role="radiogroup" 
 function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
  var h='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Le chantier est terminé</h1><p>'+esc(ARTISAN)+' a clôturé le chantier <b>'+esc(ch.n)+'</b>. Merci pour votre travail !<br>Le récapitulatif (décisions, plans, conversation) vous a été envoyé par e-mail.</p>'+
   '<div class="note"><b>Comment avez-vous trouvé l\'Espace de ce chantier ?</b>'+etoiles(note,'st')+'<div id="suite"></div></div>'+
-  '<div class="fin-off"><span class="dk">Offre de fin de chantier</span><span class="pct"><b>−50</b><sup>%</sup><span class="u">sur vos 3<br>premiers mois</span></span><p>Le même Espace, à votre nom : vos clients, vos devis, vos factures, votre planning et vos sous-traitants, réunis comme sur ce chantier.</p>'+cliky()+
+  '<div class="fin-off"><span class="dk">Offre de fin de chantier</span><span class="pct" aria-label="moins 50 % sur vos 3 premiers mois"><b><i class="mn" aria-hidden="true"></i>50</b><sup>%</sup><span class="u">sur vos 3<br>premiers mois</span></span><p>Le même Espace, à votre nom : vos clients, vos devis, vos factures, votre planning et vos sous-traitants, réunis comme sur ce chantier.</p>'+cliky()+
   '<button class="go" id="essai">'+IC.home+'J\'en profite</button></div>'+
   '<p style="margin:14px 0 0;font-size:12.5px">Votre accès à ce chantier est fermé.</p></div></div>';
  $('#app').innerHTML=h;
