@@ -566,3 +566,28 @@ html body .tdb .w[data-w=point] .pt-dv,:root[data-theme="dark"] body .tdb .w[dat
 html body .tdb .w[data-w=point] .pt-dv svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 html body .tdb .w[data-w=point] .pt-dv svg:last-child{width:13px;height:13px;opacity:.6;stroke-width:2.2}
 html body .tdb .w[data-w=point] .fo-b button{background:var(--n1-nuit-fg)!important;color:var(--n1-nuit)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
+/* §30 Les autres blocs de l'Accueil au style du « point » (Cyril 19/11) : en-tête discret, lignes à plat teintées, icônes en carré doux */
+html body .tdb{--ac-t:color-mix(in srgb,var(--n1-fg) 6.5%,transparent);--ac-i:color-mix(in srgb,var(--n1-fg) 9%,transparent)}
+html body .tdb .w:not([data-w=point]) .w-h{gap:10px}
+html body .tdb .w:not([data-w=point]) .w-h>b{font-size:13.5px!important;font-weight:800;opacity:.78;letter-spacing:0}
+html body .tdb .w:not([data-w=point]) .w-ic{width:32px!important;height:32px!important;border-radius:11px!important;background:var(--ac-i)!important;color:var(--n1-laiton)!important;box-shadow:none!important}
+html body .tdb .w:not([data-w=point]) .w-ic svg{width:18px;height:18px}
+html body .tdb .w:not([data-w=point]) .w-n{background:var(--ac-i)!important;color:var(--n1-fg)!important;box-shadow:none!important;font-size:12.5px;font-weight:800;min-width:26px;height:26px;padding:0 8px;border-radius:999px;display:inline-grid;place-items:center}
+html body .tdb .w:not([data-w=point]) .w-sub{font-size:12px;font-weight:700;opacity:.65}
+/* lignes touchables : à plat, fond teinté, comme « Aujourd'hui à valider » */
+html body .tdb :is(.af-b,.ch-b,.cm-c,.cm-top,.nv>button,.nv-1){background:var(--ac-t)!important;border:0!important;box-shadow:none!important;border-radius:14px!important}
+html body .tdb :is(.af-b,.ch-b,.cm-c,.cm-top,.nv>button,.nv-1):active{transform:scale(.985)}
+html body .tdb :is(.afa-ic,.cm-ic,.nv-ic){width:32px!important;height:32px!important;border-radius:10px!important;background:var(--ac-i)!important;box-shadow:none!important;color:var(--n1-fg)!important}
+html body .tdb :is(.afa-ic,.cm-ic,.nv-ic) svg{width:17px;height:17px}
+html body .tdb .afa-ic i{box-shadow:0 0 0 2px var(--n1-calme)}
+html body .tdb .af{gap:6px!important}
+html body .tdb .af-b{padding:9px 12px!important;min-height:0!important}
+html body .tdb .ch{gap:6px!important}
+html body .tdb .ch-b{padding:10px 12px!important}
+html body .tdb .cm{gap:6px!important}
+html body .tdb .af-plus{font-size:13px;font-weight:800;opacity:.75}
+/* Ma journée : même pastilles que la frise */
+html body .tdb .jr-p{background:var(--ac-i)!important;box-shadow:none!important;border-radius:50%}
+html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg)!important;box-shadow:0 0 0 2px var(--n1-calme),0 0 0 3.5px var(--n1-laiton)!important}
+html body .tdb .jr-n{color:var(--n1-laiton)!important;background:none!important;padding:0!important;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;font-style:normal}
+html body .tdb .jr-go{background:var(--n1-nuit)!important;color:var(--n1-nuit-fg)!important;border:0!important;box-shadow:0 5px 12px -6px rgba(14,19,34,.55)!important}
