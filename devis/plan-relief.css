@@ -283,3 +283,6 @@ html body #cltl li.sk i{background:transparent!important;color:var(--muted)!impo
 @media (max-width:640px){html body #clbanner:has(#clb-go:not([hidden])) #clb-p{display:none}html body #clbanner #clb-go{flex:0 1 auto;padding:6px 12px;font-size:13.5px}}
 @media (max-width:640px){html body #clbanner:has(#clb-go:not([hidden])) #clb-x{display:none}html body #clbanner:has(#clb-go:not([hidden])) #clb-b{order:1;margin-left:auto}}
 html body #clbanner.tool #clb-go{display:none}
+
+/* Cyril 18/11 : boutons sans déplacement au clic (relief creusé + vibration seulement). */
+html.client body button:active,html body #esck .g button:active{transform:none!important}

@@ -118,9 +118,64 @@ CIR.push([/^À droite$/,"fleche",0],[/^(À gauche)$/,"fleche",180],[/^Au-dessus$
  [/^(Fissure|Mur abîmé|Sol pas plat)/,"abime"],[/^(Mur humide|Humidité|Pièce humide)/,"humide"],[/^Accès difficile$/,"bloque"],[/^Trappe/,"trappe"],[/^VMC/,"vmc"],[/^Seuil/,"seuil"],[/^Gaine/,"prise"],[/^Plinthes/,"bandes"],[/^Écran/,"combles"],
  [/^Petites?( |$)/,"tS"],[/^Moyennes?( |$)/,"tM"],[/^Grandes?( |$)/,"tL"],[/^Aménageables$/,"amenage"],[/^Construction neuve$|^Neuf$/,"neuf"],[/^En fin de chantier$/,"finition"],[/^À la création de la cloison$/,"creer"],[/^Phonique$/,"bruit"],[/^(Doublage|Isolation des murs)$/,"isolation"],[/^Cloisons?$/,"montants"],[/^Faux plafond$/,"baisser"],[/^Fenêtres et portes$/,"fenetre"],[/^Ancienne laine/,"ancien"],[/^Au sol/,"grenier"],[/^En rampant$/,"amenage"],[/^(Charpente|Fermettes)/,"combles"],[/^(Applique|En tableau|Feuillure|Sur appuis|Sur façade|Tunnel)/,"cadre"],[/^Hydro$/,"humide"],[/^Feu$/,"feu"],[/^(Doublés|2 peaux|OSB|CTBH)$/,"plaques"],[/^(Simples|1 peau)$/,"plaque1"],[/^(Collée|Clouée|Flottante)$/,"parquet"],[/^(Droite|Diagonale|Décalée)$/,"carrelage"],[/^La pente$|^\d+°$/,"pente2"],[/^Les hauteurs$/,"regle"],[/^Rectangle$/,"fR"],[/^En L$/,"fL"],[/^En T$/,"fT"],[/^En U$/,"fU"],[/^M\d+$/,"montants"]);
 Object.assign(CSW,{"RAL 9016":"#F1F0EA","RAL 7016":"#383E42","RAL 7035":"#CBD0CC","RAL 8019":"#3D3635","RAL 9005":"#141414","RAL 1015":"#E6D2B5","Beige":"#E6D2B5","Marron":"#5B3A29","Noir":"#141414","Gris clair":"#CBD0CC"});
-const NOI=/^(Je ne sais pas|\+ |\d+$)/;
+const NOI=/^(Je ne sais pas$|\+ |\d+$|\d+ (ou|à) \d+$|Plus de \d+$|\d+ ou plus$)/;
 function icoOf(t,dk){t=(t||"").trim();if(dk&&/^Je ne sais pas$/.test(t))return`<svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CI.dk}</svg>`;if(!t||NOI.test(t))return"";const k=Object.keys(CSW).find(c=>t===c||t.startsWith(c+" "));if(k)return`<i class="ci sw" style="background:${CSW[k]}"></i>`;const r=CIR.find(([re])=>re.test(t));if(!r||!CI[r[1]])return"";return`<svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${r[2]?` style="transform:rotate(${r[2]}deg)"`:""}>${CI[r[1]]}</svg>`}
 // Pose les icônes sur toutes les réponses (boutons .chip et .qk), y compris après chaque mise à jour de l'écran.
 function icoDeco(root){(root||document).querySelectorAll(".chips .chip:not(.dk):not([data-cnt]):not([data-noico]),.qk>button:not([data-noico])").forEach(b=>{if(b.querySelector(".ci"))return;const h=icoOf(b.textContent,b.parentElement.classList.contains("qk"));if(h){b.insertAdjacentHTML("afterbegin",h);b.classList.add("hasci")}})}
 (function(){let q=0;const run=()=>{q=0;icoDeco()};const mo=new MutationObserver(()=>{if(!q)q=requestAnimationFrame(run)});const go=()=>{icoDeco();mo.observe(document.body,{childList:true,subtree:true})};if(document.body)go();else addEventListener("DOMContentLoaded",go)})();
 (function(){const s=document.createElement('style');s.textContent='\n/* Icônes des réponses */\n.ci{width:1.3em;height:1.3em;flex:none;color:var(--mint-ink,#8A6A2F);vertical-align:-.3em;margin-right:.5em;display:inline-block}\n.ci.sw{border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),0 1px 2px rgba(0,0,0,.12);width:1.1em;height:1.1em;vertical-align:-.18em}\n';document.head.appendChild(s)})();
+
+// Icônes 18/11 (Cyril : « il manque pas mal d'icônes… casser un peu les angles ») :
+// nouveau radiateur, chauffage, équipements, garder/changer, accès, carreaux, faïence ; angles adoucis partout.
+Object.assign(CI,{
+ radiateur:'<rect x="4" y="5.5" width="2.8" height="12.5" rx="1.4"/><rect x="8.4" y="5.5" width="2.8" height="12.5" rx="1.4"/><rect x="12.8" y="5.5" width="2.8" height="12.5" rx="1.4"/><rect x="17.2" y="5.5" width="2.8" height="12.5" rx="1.4"/><path d="M5.4 18v1.8M18.6 18v1.8"/>',
+ radelec:'<rect x="3.5" y="5.5" width="17" height="11" rx="2.4"/><path d="M7 9h10M7 12.5h10" stroke-opacity=".5"/><path d="M16.5 16.5v1.8a1.7 1.7 0 0 0 1.7 1.7h2.3"/>',
+ plancher:'<path d="M3.5 20h17"/><path d="M6 16.5h11.2a1.75 1.75 0 0 0 0-3.5H6.8a1.75 1.75 0 0 1 0-3.5h10.4a1.75 1.75 0 0 0 0-3.5H6"/>',
+ poele:'<rect x="5.5" y="8.5" width="13" height="10.5" rx="2.4"/><rect x="8.5" y="11.5" width="7" height="4.8" rx="1.2"/><path d="M12 8.5V3.5M8 19v1.5M16 19v1.5"/><path d="M12 15.4c-.9-.5-.7-1.6 0-2.2.7.6.9 1.7 0 2.2z" fill="currentColor" stroke="none"/>',
+ nochauf:'<path d="M10 13.6V6a2 2 0 0 1 4 0v7.6a3.6 3.6 0 1 1-4 0z"/><path d="M4.5 19.5 19.5 4.5"/>',
+ clim:'<rect x="3" y="5.5" width="18" height="8.5" rx="3"/><path d="M6.5 11h11" stroke-opacity=".55"/><path d="M8.5 17.2 7.6 19.5M12 17.4v2.4M15.5 17.2l.9 2.3"/>',
+ douche:'<path d="M6 20.5V8.5a3.5 3.5 0 0 1 3.5-3.5h1"/><path d="M9 7.5h4.5a1.5 1.5 0 0 1 0 3H9a1.5 1.5 0 0 1 0-3z"/><path d="M10 13.5v.6M12.5 14v.6M10.5 16.5v.6M13 17v.6"/><path d="M3.5 20.5h17"/>',
+ baignoire:'<path d="M3.5 12h17v2.5a4.5 4.5 0 0 1-4.5 4.5H8a4.5 4.5 0 0 1-4.5-4.5z"/><path d="M6.5 12V6.8a2 2 0 0 1 3.8-.8M7.5 19l-.8 1.5M16.5 19l.8 1.5"/>',
+ vasque:'<path d="M4 9.5h16l-.8 2.6a1.5 1.5 0 0 1-1.4 1H6.2a1.5 1.5 0 0 1-1.4-1z"/><rect x="5.5" y="13" width="13" height="7" rx="1.8"/><path d="M12 9.5V6.5h2.5M10.5 16.5h3"/>',
+ lavelinge:'<rect x="4.5" y="3.5" width="15" height="17" rx="2.4"/><circle cx="12" cy="13" r="4"/><path d="M7.5 6.5h3M16 6.5h.01"/>',
+ ceau:'<rect x="7" y="3" width="10" height="15.5" rx="5"/><path d="M10 18.5v2.5M14 18.5v2.5"/><path d="M12 8.5c1.2 1.5 2 2.6 2 3.6a2 2 0 0 1-4 0c0-1 .8-2.1 2-3.6z"/>',
+ seche:'<rect x="5.5" y="3.5" width="13" height="17" rx="2.4"/><path d="M8.5 7.5h7M8.5 11h7M8.5 14.5h7" stroke-opacity=".6"/>',
+ hotte:'<path d="M10 3.5h4v5h-4z"/><path d="M10 8.5 5 14.5h14l-5-6"/><path d="M7 17.5h10" stroke-opacity=".5"/>',
+ miroir:'<rect x="6" y="3.5" width="12" height="15" rx="6"/><path d="M9.5 9l2-2M9.5 12l4-4" stroke-opacity=".5"/><path d="M9 21h6"/>',
+ renfort:'<path d="M4.5 3.5v17"/><rect x="4.5" y="7.5" width="15" height="3" rx="1.2"/><path d="M7.5 10.5v6.5l6-6.5"/>',
+ garde:'<path d="M12 3.5 19 6v5.6c0 4.2-3 7.3-7 8.9-4-1.6-7-4.7-7-8.9V6z"/><path d="m9 12 2.2 2.2L15.2 10"/>',
+ outil:'<path d="M14.6 4.2a4.2 4.2 0 0 0-4.9 5.5L4.6 14.8a2 2 0 0 0 2.8 2.8l5.1-5.1a4.2 4.2 0 0 0 5.5-4.9l-2.5 2.5-2.4-.6-.6-2.4z"/>',
+ certaines:'<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M12 4v16M4 12h16"/><rect x="5.6" y="5.6" width="4.8" height="4.8" rx="1" fill="currentColor" fill-opacity=".22" stroke="none"/>',
+ parking:'<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M10 16.5V8h2.8a2.6 2.6 0 0 1 0 5.2H10"/>',
+ voiture:'<path d="M4.5 16v-3c0-.6.2-1.2.5-1.7l1.7-2.9a2 2 0 0 1 1.7-.9h7.2a2 2 0 0 1 1.7.9l1.7 2.9c.3.5.5 1.1.5 1.7v3a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z"/><path d="M5 11.5h14M7.5 17v1.8M16.5 17v1.8"/><path d="M8 14h.01M16 14h.01"/>',
+ facile:'<path d="M3.5 12h10.5M10.5 8.5 14 12l-3.5 3.5"/><rect x="16.5" y="4" width="4" height="16" rx="1.4"/>',
+ difficile:'<path d="M3.5 20h4.5v-4h4v-4h4V8h4.5"/><path d="M6 4.5v5M6 12.5h.01"/>',
+ dedans:'<path d="M4 11 12 4.5 20 11"/><path d="M6 9.5v10h12v-10"/><path d="M8.6 12v7.5M15.4 12v7.5" stroke-width="2.6" stroke-opacity=".55"/>',
+ dehors:'<path d="M4 11 12 4.5 20 11"/><path d="M6.5 9.5v10h11v-10"/><path d="M3.8 12.5v7M20.2 12.5v7" stroke-width="2.6" stroke-opacity=".55"/>',
+ faience:'<rect x="4" y="3.5" width="16" height="17" rx="2.4"/><path d="M4 12h16M4 16.2h16M9.3 12v8.5M14.7 12v8.5"/>',
+ faiPlafond:'<rect x="4" y="3.5" width="16" height="17" rx="2.4"/><path d="M4 7.8h16M4 12h16M4 16.2h16M9.3 3.5v17M14.7 3.5v17"/>',
+ credence:'<rect x="4" y="3.5" width="16" height="17" rx="2.4"/><path d="M4 9.5h16M4 14h16M9.3 9.5V14M14.7 9.5V14"/>',
+ carC:'<rect x="5" y="5" width="14" height="14" rx="2.4"/><path d="M5 12h14M12 5v14" stroke-opacity=".35"/>',
+ carR:'<rect x="7.5" y="3.5" width="9" height="17" rx="2.2"/><path d="M7.5 12h9" stroke-opacity=".35"/>',
+ carL:'<rect x="3.5" y="9" width="17" height="6" rx="2"/><path d="M9 9v6M15 9v6" stroke-opacity=".35"/>',
+ poseDroite:'<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M4 12h16M12 4v16"/>',
+ poseDecalee:'<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M4 9.3h16M4 14.6h16M12 4v5.3M8 9.3v5.3M16 9.3v5.3M12 14.6V20"/>',
+ poseDiag:'<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M4 12 12 4M4 20 20 4M12 20l8-8"/>',
+ sansSol:'<path d="M3.5 18h17" stroke-dasharray="2.2 2.4"/><path d="M12 5v8.5M8.5 10 12 13.5l3.5-3.5"/>',
+ fR:'<rect x="4" y="6" width="16" height="12" rx="2"/>',
+ parquet:'<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M4 8h16M4 12h16M4 16h16M10 4v4M15 8v4M8 12v4M14 16v4"/>',
+ stratifie:'<rect x="4" y="4" width="16" height="16" rx="2.4"/><path d="M4 9.3h16M4 14.6h16M13 4v5.3M7 9.3v5.3M16 14.6V20"/>'
+});
+// Angles adoucis : tout rectangle trop pointu reçoit un arrondi proportionné.
+Object.keys(CI).forEach(k=>{CI[k]=CI[k].replace(/<rect([^>]*?)\/>/g,(m,a)=>{const w=+(a.match(/width="([\d.]+)"/)||[])[1]||0,h=+(a.match(/height="([\d.]+)"/)||[])[1]||0,r=+(a.match(/rx="([\d.]+)"/)||[0,0])[1],want=Math.min(2.4,Math.max(1,Math.min(w,h)*.18));if(r>=want)return m;a=a.replace(/\s?rx="[\d.]+"/,"");return`<rect${a} rx="${+want.toFixed(1)}"/>`})});
+// Règles 18/11, prioritaires (placées devant les anciennes).
+CIR.unshift(
+ [/^Radiateurs? électriques?/,"radelec"],[/^Radiateurs? à eau/,"radiateur"],[/^Plancher chauffant$|^Chauffage au sol/,"plancher"],[/^Poêle/,"poele"],[/^Pas de chauffage/,"nochauf"],[/^Clim/,"clim"],
+ [/^Douche/,"douche"],[/^Baignoire/,"baignoire"],[/^(Meuble vasque|Lave-mains)/,"vasque"],[/^(Lave-linge|Buanderie)/,"lavelinge"],[/^Chauffe-eau/,"ceau"],[/^Sèche-serviettes/,"seche"],[/^Hotte/,"hotte"],[/^Miroir/,"miroir"],[/^Renfort/,"renfort"],
+ [/^(On (la|le|les) garde|On garde|On n'y touche pas|Non, (on )?garde|Reste comme il est|Garder)/,"garde"],[/^On (la|le|les) change|^À changer/,"remplacer"],[/^Elle est à créer|^À créer/,"creer"],[/^Il n'y a pas encore de sol/,"sansSol"],
+ [/^Tout est à (re)?faire/,"renover"],[/^Quelques prises/,"prise"],[/^Quelques changements/,"outil"],[/^Partout où/,"tout"],[/^Dans certaines pièces/,"certaines"],
+ [/^Place privée/,"parking"],[/^Dans la rue, payant/,"euro"],[/^Dans la rue/,"voiture"],[/^Facile$/,"facile"],[/^Difficile$/,"difficile"],
+ [/^Par l'intérieur|^Intérieur$/,"dedans"],[/^Par l'extérieur|^Extérieur$/,"dehors"],[/^À isoler$/,"isolation"],[/^Sur de l'ancien/,"ancien"],[/^(Sur ossature|Ossature|oss$|Cloison standard)/,"montants"],[/^Remplace une ancienne/,"depose"],[/^Sous la toiture/,"combles"],
+ [/^Sol souple|^Lino/,"vinyle"],[/^Oui, à poser/,"faience"],[/^Non, pas de/,"non"],[/^Jusqu'au plafond/,"faiPlafond"],[/^À mi-hauteur/,"faience"],[/^Une crédence/,"credence"],
+ [/^(\d+) × \1$/,"carC"],[/^20 × 120$/,"carL"],[/^(30 × 60|30 × 90|25 × 40|60 × 120|20 × 60|40 × 120)$/,"carR"],[/^Droite$/,"poseDroite"],[/^Décalée$/,"poseDecalee"],[/^Diagonale$/,"poseDiag"],
+ [/^\d+([,.]\d+)? mm$/,"regle"],[/^Je ne sais pas encore/,"dk"]);

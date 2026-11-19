@@ -169,7 +169,7 @@ function compte(){var art=lsG(KA)||{};
   b.disabled=true;$('#verr').textContent='';api('/espace/mot-de-passe',{method:'POST',body:{ancien:$('#vo').value,nouveau:v}}).then(function(x){lsS(KJ,x.jeton);fermer();toast2('Mot de passe changé','Vos autres appareils sont déconnectés.')},function(e){b.disabled=false;$('#verr').textContent=e.message})});
  $('#vpart').addEventListener('click',function(){var b=this;if(!b.dataset.ok){b.dataset.ok=1;b.textContent='Touchez encore pour confirmer';return}
   b.disabled=true;api('/espace/deconnexion-partout',{method:'POST'}).then(function(x){lsS(KJ,x.jeton);fermer();toast2('C\'est fait','Vos autres appareils sont déconnectés.')},function(e){b.disabled=false;$('#verr').textContent=e.message})});
- $('#vsort').addEventListener('click',function(){var b=this;if(!b.dataset.ok){b.dataset.ok=1;b.textContent='Touchez encore pour vous déconnecter';return}fermer();lsS(KA,null);deconnecter(false)});
+ $('#vsort').addEventListener('click',function(){var b=this;if(!b.dataset.ok){b.dataset.ok=1;b.textContent='Touchez encore pour vous déconnecter';return}fermer();lsS(KA,null);if(window.PCProfil)PCProfil.pose(null);deconnecter(false)});
 }
 (function(){var m=document.getElementById('menu');if(!m)return;
  m.addEventListener('click',function(){setTimeout(function(){var t=document.getElementById('x-t');if(!t||t.textContent!=='Votre espace'||!lsG(KJ)||document.getElementById('v-compte'))return;
@@ -215,7 +215,7 @@ function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){retur
  if(art.prenom){var hl=$('#hello');if(hl)hl.textContent='Bonjour '+art.prenom+'.';var ph=$('#phrase');if(ph)ph.textContent=a.length?(a.length===1?'Une demande attend votre validation. Le calcul est fait, il ne manque que votre œil.':a.length+' demandes attendent votre validation. Les calculs sont faits.'):'Aucune demande en attente : tout est à jour.'}
 }
 function charger(){if(!lsG(KJ))return;charge=Date.now();
- api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{},av=JSON.stringify(ka.menus||{});ka.options=x.artisan.options;if(x.artisan.menus)ka.menus=x.artisan.menus;if(x.artisan.effectif!==undefined)ka.effectif=x.artisan.effectif;lsS(KA,ka);if(av!==JSON.stringify(ka.menus)&&window.PCMenus)window.PCMenus.applique()}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
+ api('/espace/demandes').then(function(x){x._le=new Date().toISOString();LISTE=x;if(x.artisan&&x.artisan.options){var ka=lsG(KA)||{},av=JSON.stringify(ka.menus||{});ka.options=x.artisan.options;if(x.artisan.menus)ka.menus=x.artisan.menus;if(x.artisan.effectif!==undefined)ka.effectif=x.artisan.effectif;if(x.artisan.activite!==undefined)ka.activite=x.artisan.activite;if(x.artisan.profil!==undefined)ka.profil=x.artisan.profil;lsS(KA,ka);if(window.PCProfil)PCProfil.pose(ka);if(av!==JSON.stringify(ka.menus)&&window.PCMenus)window.PCMenus.applique()}ETAPES=x.etapes||[];lsS(KL,x);rendre()},
   function(e){var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();var vd=$('#vd');if(vd&&lsG(KJ))vd.insertAdjacentHTML('afterbegin','<div class="verr" style="margin-bottom:10px">'+esc(e.message)+'</div>')})}
 
 /* ---------- une demande ---------- */
@@ -278,7 +278,7 @@ var COUR=null;
    Les retouches de l'artisan restent sur cet appareil (une sauvegarde par client). */
 var VPNEW=false;
 function voirPlan(nouveau){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan,pm=lsG(clePm());if(!P&&!pm&&!nouveau)return;var k=COUR.contact||{},nom=k.nom||'le client',moi=!P;VPNEW=moi;
- ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=56&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
+ ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=57&chantier=c-'+encodeURIComponent(k.id||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
  if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||'',nouveau:VPNEW},'*')}
@@ -668,7 +668,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 function bandeauExemple(sel,txt){var s=$(sel);if(!s||s.querySelector('.vexemple'))return;var d=document.createElement('div');d.className='vexemple';d.innerHTML=txt;s.insertBefore(d,s.firstChild)}
 function demarrer(){var art=lsG(KA)||{};document.documentElement.classList.add('pcvrai');var vco=$('#vco');if(vco)vco.remove();
  var chip=$('.chip-demo');if(chip)chip.textContent='EN DIRECT';
- var br=$('.brand small');if(br&&art.entreprise)br.textContent='Devis & Chantiers · '+art.entreprise;
+ var br=$('.brand small');if(br&&art.entreprise)br.textContent='Devis & Chantiers · '+art.entreprise;if(window.PCProfil)PCProfil.pose(art);
  var col=$('#v-devis .grid2 .col');if(col&&!$('#vd')){var v=document.createElement('div');v.id='vd';col.insertBefore(v,col.firstChild)}
  var td=$('#todo');if(td&&!$('#va')){var a=document.createElement('div');a.id='va';td.parentNode.insertBefore(a,td)}
  var ex='<b>Exemple de démonstration.</b> Ici rien n\'est encore branché : seules vos demandes (Accueil, Clients et Devis) sont réelles.';
@@ -693,7 +693,7 @@ window.PCV={nouveauDevis:function(k,t){nouveauDevis(k,t)},api:function(c,o){retu
 if(AP){var bd=document.createElement('div');bd.id='vapercu';bd.setAttribute('role','status');bd.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);padding:8px 8px 8px 14px;border-radius:14px;font:600 13px var(--f);display:flex;gap:10px;align-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);max-width:calc(100% - 24px)';
  bd.innerHTML='<span id="vapn" style="overflow:hidden;text-overflow:ellipsis">Aperçu (lecture seule)</span><button type="button" style="flex:none;border:0;border-radius:10px;padding:6px 10px;font:700 13px var(--f);background:rgba(255,255,255,.18);color:inherit;cursor:pointer">Quitter</button>';
  document.body.appendChild(bd);bd.querySelector('button').addEventListener('click',quitterApercu);
- api('/espace/moi').then(function(x){if(!x||!x.artisan)return;lsS(KA,x.artisan);document.getElementById('vapn').textContent='Aperçu : '+x.artisan.entreprise+' (lecture seule)';if(window.PCMenus)window.PCMenus.applique()}).catch(function(){})}
+ api('/espace/moi').then(function(x){if(!x||!x.artisan)return;lsS(KA,x.artisan);if(window.PCProfil)PCProfil.pose(x.artisan);document.getElementById('vapn').textContent='Aperçu : '+x.artisan.entreprise+' (lecture seule)';if(window.PCMenus)window.PCMenus.applique()}).catch(function(){})}
 if(lsG(KJ))demarrer();else proposer();
 (function(){var m=/[#&]invit=([A-Za-z0-9_-]{20,80})/.exec(location.hash);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
  setTimeout(function(){choisir({invit:m[1]})},lsG(KJ)?300:1200)})();

@@ -73,6 +73,18 @@ var css=
 '.pc-court .logo .g>svg .pcd{transform-box:fill-box;transform-origin:center;animation:pcPoint .35s cubic-bezier(.45,0,.25,1) .75s both}'+'@keyframes pcTourne{0%,45%{opacity:0;transform:none}55%,57%{opacity:1;transform:none;animation-timing-function:cubic-bezier(.5,0,.5,1)}63%{transform:scale(.72)}66%{transform:scale(.72);animation-timing-function:cubic-bezier(.3,0,.2,1)}73%{transform:scale(1.08);animation-timing-function:cubic-bezier(.4,0,.4,1)}80%,100%{opacity:1;transform:none}}@keyframes pcTige{0%,10%{transform:scaleY(0);animation-timing-function:cubic-bezier(.45,0,.25,1)}42%{transform:scaleY(1)}46%{transform:scaleY(1);animation-timing-function:cubic-bezier(.45,0,.25,1)}60%,100%{transform:scaleY(.558)}}@keyframes pcTete{0%,10%{opacity:1;transform:translateY(var(--hy)) scale(.5);animation-timing-function:cubic-bezier(.45,0,.25,1)}42%{transform:none}52%{opacity:1;transform:none}56%,100%{opacity:0;transform:none}}@keyframes pcFlotte{0%{transform:translateY(3px) scale(.96);animation-timing-function:cubic-bezier(.33,0,.2,1)}12%,100%{transform:none}}@keyframes pcVoile{0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}24%,100%{opacity:1}}@keyframes pcPousse{0%{transform:none}25%{transform:scaleY(.86)}50%{transform:none}75%{transform:scaleY(.86)}100%{transform:none}}.pcb>.pcj,.pcb>.pch{transform-box:fill-box;animation-name:pcPousse;animation-duration:inherit;animation-delay:inherit;animation-timing-function:cubic-bezier(.37,0,.63,1);animation-fill-mode:both}.pcb>.pcj{transform-origin:50% 43%}.pcb>.pch{transform-origin:50% 39%}.pc-court .brand>svg .pcb,.pc-court .logo .g>svg .pcb{transform-box:fill-box;transform-origin:50% 50%;animation:pcTourne 4.4s linear 0s both}.pc-court .brand>svg .pcr,.pc-court .logo .g>svg .pcr{transform-box:fill-box;transform-origin:center;animation:pcFlotte 4.4s linear 0s both}.pc-court .brand>svg .pcv,.pc-court .logo .g>svg .pcv{animation:pcVoile 4.4s linear 0s both}'+'#pc-ouv .pen{display:none}#pc-ouv .pcb{transform-box:fill-box;transform-origin:50% 50%;animation:pcTourne 4.4s linear 2.4s both}#pc-ouv .pcr{transform-box:fill-box;transform-origin:center;animation:pcFlotte 4.4s linear 2.4s both}#pc-ouv .pcv{animation:pcVoile 4.4s linear 2.4s both}';
 var st=d.createElement('style');st.textContent=css;d.head.appendChild(st);
 window.PC_OUV_MS=0;
+/* nom du profil (ARCHI / PRO / TEAM) en exposant à côté de PROCLIK : il arrive à la fin de l'ouverture (Cyril, 18/11). Même règle que profil.js. */
+function profilMot(){var a=null;try{a=JSON.parse(sessionStorage.getItem('ap:pc-vrai-artisan')||'null')||JSON.parse(localStorage.getItem('pc-vrai-artisan')||'null')}catch(e){}
+ if(!a)return window.PC_PROFIL_DEMO||'';var M={archi:'ARCHI',pro:'PRO',team:'TEAM'};if(a.profil&&M[a.profil])return M[a.profil];if(/archi/i.test(String(a.activite||'')))return 'ARCHI';return (+a.effectif||0)>=2?'TEAM':'PRO'}
+function profilSup(del){var m=profilMot();if(!m||site||vitrine)return '';return '<sup class="pfx" style="--pd:'+del+'s">'+m.split('').map(function(c,i){return '<b style="--i:'+i+'">'+c+'</b>'}).join('')+'</sup>'}
+var stp=d.createElement('style');stp.textContent=
+'#pc-ouk .pfx,#pc-ouv .pfx{position:relative;display:inline-block;font-size:7.5px;font-weight:700;letter-spacing:.2em;line-height:1;color:var(--ml);vertical-align:top;margin:-.1em -.2em 0 .1em}'+
+'#pc-ouk .pfx b,#pc-ouv .pfx b{font-weight:inherit;display:inline-block;opacity:0;animation:pfLettre .6s cubic-bezier(.2,.8,.2,1) calc(var(--pd) + var(--i) * 70ms) forwards}'+
+/* une petite étincelle laiton qui s'allume au bout du mot, puis s'éteint */
+'#pc-ouk .pfx::after,#pc-ouv .pfx::after{content:"";position:absolute;right:-7px;top:-5px;width:7px;height:7px;background:var(--mlc,#E2C68C);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);transform:scale(0);animation:pfEclat .7s cubic-bezier(.3,0,.3,1) calc(var(--pd) + .45s) forwards}'+
+'@keyframes pfLettre{from{opacity:0;transform:translateY(-7px) scale(1.35);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}'+
+'@keyframes pfEclat{0%{transform:scale(0) rotate(0)}45%{transform:scale(1.25) rotate(45deg)}100%{transform:scale(0) rotate(90deg)}}';
+d.head.appendChild(stp);
 /* la goutte (logo du 9/11) : une goutte liquide monte du petit bout de l'anneau, se détache et devient le point laiton (comme sur la planche validée).
    Ajoutée en dessous de l'anneau net, puis retirée à la fin : le logo posé reste exactement le même. */
 function goutte(svg,del){
@@ -96,7 +108,7 @@ if(reduit&&!site)return;
 /* Espace : à chaque ouverture (et au retour dans l'appli après une pause), une courte ouverture plein écran (~2,3 s)
    qui cache la page pendant qu'elle se met en place (plus d'écran qui saute). Cyril, 3/11. */
 if(!site&&!vitrine){
- var K='#pc-ouk{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .45s ease}'+
+ var K='#pc-ouk{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .7s cubic-bezier(.4,0,.2,1)}'+
  ':root[data-theme="dark"] #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}'+
  '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}}'+
  '#pc-ouk.fin{opacity:0;pointer-events:none}'+
@@ -116,20 +128,21 @@ if(!site&&!vitrine){
  '#pc-ouk:not(.go),#pc-ouk:not(.go) *{animation-play-state:paused!important}'+
  '@media (prefers-reduced-motion:reduce){#pc-ouk *{animation-duration:.01s!important;animation-delay:0s!important}}';
  var stk=d.createElement('style');stk.textContent=K;d.head.appendChild(stk);
- var DUK=reduit?700:5000;
+ /* déjà ouverte : la même courte ouverture, jouée 1,5 fois plus vite (~3,3 s au lieu de 5 s) ; 2,2 était trop rapide (Cyril, 19/11). */
+ var VITE=1.5,DUK=reduit?700:Math.round(5000/VITE);
  /* on attend que la page ait fini de se charger (ou 1,5 s au plus) pour lancer l'animation : sinon l'iPhone, occupé à charger, la fait saccader au tout début */
  function pret(cb){var ok=false;function go(){if(ok)return;ok=true;requestAnimationFrame(function(){requestAnimationFrame(cb)})}if(d.readyState==='complete')go();else{window.addEventListener('load',go);setTimeout(go,1500)}}
  function couvre(){
   var a=d.getElementById('pc-ouk');if(a)a.remove();
   var o=d.createElement('div');o.id='pc-ouk';o.setAttribute('aria-hidden','true');
   o.innerHTML='<div class="lk"><span class="gk"><svg viewBox="18 6.5 76 76"><g class="pcv"><path class="pcf pcr" d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" style="fill:var(--fg);stroke:none"/><g class="pcb l"><circle class="pcf pcg" cx="56.0" cy="42.82" r="4.71" style="fill:var(--ml);stroke:none"/></g></g></svg></span><span class="f"></span><div class="n">'+
-   'PROCLIK'.split('').map(function(c,i){return '<i style="--i:'+i+'">'+c+'</i>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
+   'PROCLIK'.split('').map(function(c,i){return '<i style="--i:'+i+'">'+c+'</i>'}).join('')+profilSup(1.95)+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
   (d.body||root).appendChild(o);
   goutte(o.querySelector('.gk svg'),.05);
   /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
   var lk=o.querySelector('.lk'),gk=o.querySelector('.gk');gk.style.setProperty('--dx',((lk.offsetWidth-gk.offsetWidth)/2)+'px');
-  var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},500)}
-  o.addEventListener('click',fin);pret(function(){o.classList.add('go');setTimeout(fin,DUK)});
+  var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},750)}
+  o.addEventListener('click',fin);pret(function(){o.classList.add('go');try{if(o.getAnimations)o.getAnimations({subtree:true}).forEach(function(an){an.playbackRate=VITE})}catch(e){}setTimeout(fin,DUK)});
  }
  if(court){window.PC_OUV_MS=DUK;couvre()}
  /* retour dans l'appli après au moins 30 s ailleurs : on rejoue la courte ouverture */
@@ -141,7 +154,7 @@ if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;var gl=function()
 
 var o=d.createElement('div');o.id='pc-ouv';o.setAttribute('aria-hidden','true');if(!site)o.className='espace';
 o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></b></i></div><div class="g"></div><div class="lock"><span class="pbox"><svg class="ouvp" viewBox="10 4 80 92"><g class="big"><g class="pcv"><path class="pcf pcr" d="M24.50 50.00A25.50 25.50 0 1 1 75.50 50.00A25.50 25.50 0 1 1 24.50 50.00ZM57.73 67.72A19.34 19.34 0 1 0 42.27 67.72A3.92 3.92 0 0 0 47.76 64.13L47.76 61.21A2.24 2.24 0 0 1 52.24 61.21L52.24 64.13A3.92 3.92 0 0 0 57.73 67.72Z" style="fill:var(--fg,#1B2440);stroke:none"/><g class="pcb l"><circle class="pcf pcg" cx="50.0" cy="48.32" r="4.71" style="fill:var(--ml);stroke:none"/></g></g><g class="penw"><path class="pen" d="M0 0 h0.01"/></g></g></svg></span><span class="filet"></span><div class="nom">'+
- 'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
+ 'PROCLIK'.split('').map(function(c,i){return '<span class="lt" style="--i:'+i+'">'+c+'</span>'}).join('')+profilSup(7.95)+'<small>VOTRE COMMERCE EN UN CLIC</small></div></div>';
 (d.body||root).appendChild(o);
 goutte(o.querySelector('.ouvp'),2.4);
 if(!site)window.PC_OUV_MS=10450;
