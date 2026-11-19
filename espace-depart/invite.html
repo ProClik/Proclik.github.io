@@ -84,6 +84,11 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .acces svg{width:16px;height:16px}
 .offre{display:flex;align-items:center;gap:10px;padding:8px 10px;text-decoration:none;color:var(--n1-fg);border-radius:18px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent);width:100%;text-align:left}
 .offre .r{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--n1-laiton);background:color-mix(in srgb,var(--n1-laiton) 13%,transparent);flex:none}
+.offw{position:relative}.offw .offre{padding-right:44px}
+.offx{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;font-size:20px;line-height:1;color:var(--n1-muted);display:grid;place-items:center}
+.offw .offre>svg{display:none}
+.offp{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:40;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--n1-laiton);background:var(--n1-bg);box-shadow:var(--n1-pk),inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent)}
+.offp svg{width:20px;height:20px}.offp[hidden],.offw[hidden]{display:none}
 .offre .ot{flex:1;min-width:0}.offre .r{width:30px!important;height:30px!important}.offre .r svg{width:16px;height:16px}.offre>svg{width:16px;height:16px;flex:none;color:var(--n1-muted)}.offre b{font-size:13px!important;line-height:1.3}.offre small{font-size:12px!important;color:var(--n1-laiton)!important;font-weight:700;margin-top:1px!important}
 .ex{width:100%;text-decoration:none;color:var(--n1-fg)}.ex .exi{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--n1-laiton);background:color-mix(in srgb,var(--n1-laiton) 13%,transparent)}.ex .exi svg{width:15px;height:15px}
 .offre b{display:block;font-size:14.5px}.offre small{display:block;font-size:12.5px;color:var(--n1-muted);margin-top:2px;line-height:1.35}
@@ -229,7 +234,12 @@ function lienEx(){return 'index.html?exemple='+encodeURIComponent(moi.ic||'autre
 function btnEx(){return '<a class="b2 pk ex" href="'+lienEx()+'"><span class="exi">'+icM(moi.ic)+'</span>'+esc(metLib())+'</a>'}
 function offre(){if(J.filter(function(j){return j[0]<AUJ}).length<2)return '';
  /* une seule petite ligne, discrète, pour ne pas gêner (Cyril 19/11) */
- return '<a class="offre" href="'+lienEx()+'"><span class="r">'+icM(moi.ic)+'</span><span class="ot"><b>Vous aimez cet Espace ? Vous n\'avez encore rien vu…</b><small>'+esc(metLib())+'</small></span>'+IC.chev+'</a>'}
+ /* « × » pour la cacher : il ne reste qu'une petite pastille dans le coin, pour la retrouver (Cyril 19/11) */
+ var KO='pc-inv-offre-cachee-'+moi.id,cache=!!lit(KO);
+ if(!window.__offB){window.__offB=1;document.addEventListener('click',function(ev){var x=ev.target.closest&&ev.target.closest('#offx,#offp');if(!x)return;ev.preventDefault();
+  var c=x.id==='offx';ecrit(KO,c?1:0);var w=$('#offw'),pp=$('#offp');if(w)w.hidden=c;if(pp)pp.hidden=!c;if(!c&&w)w.scrollIntoView({block:'center',behavior:'smooth'})})}
+ return '<div class="offw" id="offw"'+(cache?' hidden':'')+'><a class="offre" href="'+lienEx()+'"><span class="r">'+icM(moi.ic)+'</span><span class="ot"><b>Vous aimez cet Espace ? Vous n\'avez encore rien vu…</b><small>'+esc(metLib())+'</small></span>'+IC.chev+'</a><button type="button" class="offx" id="offx" aria-label="Cacher">×</button></div>'+
+  '<button type="button" class="offp" id="offp" aria-label="'+esc(metLib())+'"'+(cache?'':' hidden')+'>'+icM(moi.ic)+'</button>'}
 
 /* ---------- son chantier ---------- */
 function plan(){return '<svg class="plan" viewBox="0 0 160 100" aria-label="Plan du local"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
