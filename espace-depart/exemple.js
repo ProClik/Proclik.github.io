@@ -16,6 +16,7 @@ document.documentElement.classList.add('pc-ex');
    Les plus longs passent d'abord ; la version en minuscule est ajoutée toute seule. */
 var R={
  elec:{
+  '1 rouleau de 150 m':'1 lot de 10','1 sac de 25 kg':'1 sac de 5 kg',
   'Ossature':'Tableau','Isolation':'Appareillage','commandes@placo-dauphine.example':'commandes@elec-dauphine.example',
   'Faux plafond sur ossature métallique, plaques BA13':'Rénovation électrique : saignées, gaines et câbles',
   'Bandes et joints, prêt à peindre (2 faces)':'Appareillage posé et raccordé',
@@ -76,6 +77,7 @@ var R={
   'ossature':'saignées','plaques':'câblage','bandes et joints':'appareillage'
  },
  plomb:{
+  '1 rouleau de 150 m':'2 u','1 sac de 25 kg':'1 pot de 250 ml',
   'Ossature':'Évacuation','Isolation':'Chauffe-eau','commandes@placo-dauphine.example':'commandes@plomberie-dauphine.example',
   'Faux plafond sur ossature métallique, plaques BA13':'Réseau d\'eau en multicouche, alimentation et évacuation',
   'Bandes et joints, prêt à peindre (2 faces)':'Appareils posés et raccordés',
@@ -135,6 +137,7 @@ var R={
   'ossature':'dépose','plaques':'réseau','bandes et joints':'pose des appareils'
  },
  peint:{
+  '1 rouleau de 150 m':'4 bâches',
   'Ossature':'Préparation','Isolation':'Façade','commandes@placo-dauphine.example':'commandes@peintures-dauphine.example',
   'Faux plafond sur ossature métallique, plaques BA13':'Peinture des murs et plafonds, 2 couches, finition velours',
   'Bandes et joints, prêt à peindre (2 faces)':'Enduit de lissage et ponçage',
