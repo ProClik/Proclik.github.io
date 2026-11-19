@@ -341,3 +341,18 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-sech.ent b{font-size:15px;color:var(--n1-nuit)}
 .cp-sech .cp-mini{width:24px;height:24px;border-radius:7px;background:var(--n1-teinte);display:inline-grid;place-items:center;color:var(--n1-nuit)}
 .cp-sech .cp-mini svg{width:15px;height:15px}
+
+/* réserves en petites cartes (Cyril 19/11 : « un peu brouillon ») */
+.cp-rc2{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-top:8px;padding:12px 12px 12px 14px;border:0;border-radius:16px;background:var(--rs,var(--n1-bg));box-shadow:var(--up-s,var(--up));color:inherit;overflow:hidden}
+.cp-rc2::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--n1-alert)}
+.cp-rc2.wa::before{background:var(--n1-warn)}.cp-rc2.ok::before{background:var(--n1-ok)}
+.cp-rc2 .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.cp-rc2 .tx>b{font-size:14.5px;line-height:1.3}
+.cp-rc2 .cp-ent{font-size:13px}
+.cp-l3{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px}
+.cp-st{font-size:12px;font-weight:800}.cp-st.al{color:var(--n1-alert)}.cp-st.wa{color:color-mix(in srgb,var(--n1-warn) 80%,#000)}.cp-st.ok{color:var(--n1-ok)}
+.cp-rc2 .rsvm{align-self:flex-start}
+.cp-sec{margin-top:16px}.cp-sech{padding:0 2px}
+.cp-pld{margin:4px 0 2px}.cp-pld summary{list-style:none;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;background:var(--n1-teinte);font:700 13px Manrope,sans-serif;color:var(--n1-nuit);cursor:pointer}
+.cp-pld summary::-webkit-details-marker{display:none}.cp-pld summary svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.cp-pld[open] summary{margin-bottom:8px}
