@@ -94,6 +94,16 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .cases input{width:100%;min-width:0;aspect-ratio:1/1.15;border:0;border-radius:13px;background:var(--n1-bg);box-shadow:var(--n1-in);text-align:center;font-size:22px;font-weight:800;outline:none;padding:0}
 .cases input:focus{box-shadow:var(--n1-in),inset 0 0 0 2px var(--n1-laiton)}
 .lien{font-size:13px;font-weight:700;color:var(--n1-nuit);margin-top:12px;display:inline-block}
+.note{margin:0 0 16px;padding:14px;border-radius:18px;background:var(--n1-teinte)}
+.note>b{display:block;font-size:15px;margin-bottom:10px}
+.note p{margin:10px 0;font-size:13.5px;color:var(--n1-muted)}.note p.ok{color:var(--n1-ok);font-weight:700}
+.note textarea{width:100%;border:0;border-radius:14px;padding:11px 13px;font-size:15px;background:var(--n1-bg);box-shadow:var(--n1-in);resize:none;outline:none}
+.stars{display:flex;justify-content:center;gap:6px}
+.stars button{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--n1-muted)}
+.stars svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.stars button[aria-pressed="true"]{color:var(--n1-laiton)}.stars button[aria-pressed="true"] svg{fill:var(--n1-laiton)}
+.fin-off{text-align:left;padding:15px;border-radius:18px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-laiton) 45%,transparent);display:grid;gap:8px}
+.fin-off b{font-size:17px;line-height:1.25}.fin-off p{margin:0;font-size:13.5px;text-align:left}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,16px);z-index:50;background:var(--n1-nuit);color:var(--n1-nuit-fg);padding:12px 16px;border-radius:14px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .demo{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--n1-muted);background:var(--n1-teinte);border-radius:99px;padding:3px 9px}
@@ -150,7 +160,7 @@ var DEMO={n:'Cabinet Alpes Kiné',v:'Meylan',t:'Faux plafond 32 m² · local pro
 if(!ch||!ch.part)ch=Object.assign({},DEMO,ch||{},{part:(ch&&ch.part)||DEMO.part});
 var P=ch.part,moi=P.ent.filter(function(e){return e.id===EID})[0]||P.ent[0];
 var ARTISAN=(document.querySelector('#pc-id [data-k="entreprise"]')||{}).textContent||(window.PC_ENT&&PC_ENT.sous_compte)||'ProClik Test';
-var JOURS={'st-elec':[['2026-10-15','8 h – 12 h','Gaines et boîtiers'],['2026-10-19','8 h – 12 h','Spots de l\'accueil']],'st-plomb':[['2026-10-14','13 h – 17 h','Évacuation lavabo'],['2026-10-19','13 h – 16 h','Pose du lavabo']]};
+var JOURS={'st-elec':[['2026-10-14','13 h – 17 h','Saignées et gaines'],['2026-10-15','8 h – 12 h','Boîtiers et câbles'],['2026-10-19','8 h – 12 h','Spots de l\'accueil']],'st-plomb':[['2026-10-14','13 h – 17 h','Évacuation lavabo'],['2026-10-19','13 h – 16 h','Pose du lavabo']]};
 var J=(JOURS[moi.id]||[['2026-10-19','8 h – 17 h','Sur le chantier']]),AUJ='2026-10-16';
 var JC=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],MC=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 var dd=function(s){return new Date(s+'T12:00:00')};
@@ -174,10 +184,29 @@ function porte(){
  $('#entrer').addEventListener('click',function(){if(C.some(function(x){return !x.value})){toast('Tapez les 6 chiffres reçus par SMS');return}ecrit(cle,1);chantier()});
  C[0].focus();
 }
-function fini(){
- $('#app').innerHTML='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Le chantier est terminé</h1><p>'+esc(ARTISAN)+' a clôturé le chantier <b>'+esc(ch.n)+'</b>. Votre accès est fermé.<br>Le récapitulatif (décisions, plans, conversation) vous a été envoyé par e-mail.</p>'+offre()+'</div></div>';
+var ETOILE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+function etoiles(n,id){return '<div class="stars" id="'+id+'" role="radiogroup" aria-label="Note sur 5">'+[1,2,3,4,5].map(function(i){return '<button type="button" data-n="'+i+'" aria-label="'+i+' sur 5" aria-pressed="'+(i<=n)+'">'+ETOILE+'</button>'}).join('')+'</div>'}
+/* Fin du chantier (Cyril 19/11) : une note sur 5 pour ProClik, un avis Google si 4 ou 5, une remarque sinon, puis l'offre de fin de chantier */
+function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
+ var h='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Le chantier est terminé</h1><p>'+esc(ARTISAN)+' a clôturé le chantier <b>'+esc(ch.n)+'</b>. Merci pour votre travail !<br>Le récapitulatif (décisions, plans, conversation) vous a été envoyé par e-mail.</p>'+
+  '<div class="note"><b>Comment s\'est passé ce chantier avec ProClik ?</b>'+etoiles(note,'st')+'<div id="suite"></div></div>'+
+  '<div class="fin-off"><span class="dk">Pour la suite</span><b>Gardez tout ça pour vos propres chantiers</b><p>Votre planning, la conversation avec vos sous-traitants, vos devis et vos factures, au même endroit. Un avantage de fin de chantier vous attend pour démarrer.</p>'+
+  '<button class="go" id="essai">'+IC.home+'Avoir mon Espace ProClik</button></div>'+
+  '<p style="margin:14px 0 0;font-size:12.5px">Votre accès à ce chantier est fermé.</p></div></div>';
+ $('#app').innerHTML=h;
+ function suite(n){var S=$('#suite');
+  if(n>=4)S.innerHTML='<p class="ok">Merci ! Ça nous aide beaucoup.</p><button class="b2 pk" id="avis" style="width:100%">'+ETOILE.replace('<svg','<svg class="i"')+'Laisser un avis Google sur ProClik</button>';
+  else S.innerHTML='<p>Qu\'est-ce qui n\'a pas plu ? Votre message arrive directement chez ProClik.</p><textarea id="rq" rows="3" placeholder="Votre remarque…"></textarea><button class="b2 pk" id="rqok" style="width:100%;margin-top:8px">Envoyer ma remarque</button>';
+  var a=$('#avis');if(a)a.addEventListener('click',function(){toast('Ouverture de la page d\'avis Google (démo)')});
+  var r=$('#rqok');if(r)r.addEventListener('click',function(){S.innerHTML='<p class="ok">Merci, c\'est bien reçu. On vous répond rapidement.</p>'})}
+ [].forEach.call(document.querySelectorAll('#st [data-n]'),function(b){b.addEventListener('click',function(){var n=+b.dataset.n;ecrit('pc-inv-note-'+moi.id+'-'+CID,n);
+  [].forEach.call(document.querySelectorAll('#st [data-n]'),function(x){x.setAttribute('aria-pressed',String(+x.dataset.n<=n))});suite(n)})});
+ if(note)suite(note);
+ $('#essai').addEventListener('click',function(){toast('Cyril vous rappelle pour ouvrir votre Espace (démo)')});
 }
-function offre(){return '<button class="offre pk" onclick="this.querySelector(\'small\').textContent=\'Cyril vous rappelle pour en parler (démo).\'"><span class="r">'+IC.home+'</span><span style="flex:1;min-width:0"><b>Vos propres chantiers, aussi simplement ?</b><small>Avoir mon Espace ProClik : vos clients, devis, factures et planning.</small></span>'+IC.chev+'</button>'}
+/* Pendant le chantier : une seule petite offre, jamais avant son 2e passage */
+function offre(){if(J.filter(function(j){return j[0]<AUJ}).length<2)return '';
+ return '<button class="offre pk" id="offre"><span class="r">'+IC.home+'</span><span style="flex:1;min-width:0"><b>Ce planning et cette conversation, pour vos propres chantiers ?</b><small>Essayez votre Espace ProClik : vos clients, vos sous-traitants, vos devis et factures.</small></span>'+IC.chev+'</button>'}
 
 /* ---------- son chantier ---------- */
 function plan(){return '<svg class="plan" viewBox="0 0 160 100" aria-label="Plan du local"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
@@ -218,6 +247,7 @@ function chantier(){
  var th=$('#theme'),r=document.documentElement,icT=function(){th.innerHTML=r.getAttribute('data-theme')==='dark'?IC.soleil:IC.lune};icT();
  th.addEventListener('click',function(){var d=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',d);try{localStorage.setItem('pc-theme',d)}catch(e){}icT()});
  var jy=$('#jy');if(jy)jy.addEventListener('click',function(){jy.classList.add('ok');jy.innerHTML=IC.check+'C\'est noté';toast(ARTISAN+' voit que vous serez là')});
+ var of=$('#offre');if(of)of.addEventListener('click',function(){of.querySelector('small').textContent='Cyril vous rappelle pour en parler (démo).'});
  var it=$('#iti');if(it)it.addEventListener('click',function(){toast('Ouverture du GPS (démo)')});
  $('#appel').addEventListener('click',function(){toast('Appel de '+ARTISAN+' (démo)')});
  [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});

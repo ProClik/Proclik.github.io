@@ -518,7 +518,7 @@ function qui(c,de){if(de==='moi')return {n:'Vous',m:''};var e=part(c).ent.filter
 function ini(n){return String(n||'?').split(/\s+/).filter(function(w){return w&&!/^(du|de|des|la|le|les|et)$/i.test(w)}).map(function(w){return w[0]}).join('').slice(0,2).toUpperCase()}
 function msgHTML(c,x,i){var q=qui(c,x.de),moi=x.de==='moi',hh=String(x.h||'').split(' · '),n=part(c).ent.length,tous=n&&(x.lu||0)>=n;
  return '<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av" title="'+esc(q.m||'')+'">'+icEnt(q)+'</span>')+'<div class="cp-c">'+(moi?'':'<span class="cp-n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
-  '<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p>'+(x.epi?'':'<button type="button" class="cp-pin" data-cpepi="'+i+'" aria-label="Épingler comme décision" title="Épingler comme décision">'+IC.epingle+'</button>')+'</div>'+
+  '<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p>'+(x.epi||part(c).termine?'':'<button type="button" class="cp-pin" data-cpepi="'+i+'" aria-label="Épingler comme décision" title="Épingler comme décision">'+IC.epingle+'</button>')+'</div>'+
   '<span class="cp-h">'+esc(hh[1]||hh[0]||'')+' · <span class="'+(tous?'ok':'')+'">'+(tous?'✓✓ lu par tous':x.lu?'✓ lu par '+x.lu+' sur '+n:'✓ envoyé')+'</span>'+(x.epi?' · <span class="la">épinglé</span>':'')+'</span></div></div>'}
 function jourDe(h){return String(h||'').split(' · ')[0]}
 function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
@@ -526,8 +526,8 @@ function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
  if(!E.length)h+='<p class="hint" style="margin:4px 0 0">Invitez les entreprises qui travaillent ici. Elles reçoivent un lien par SMS, sans appli, et retrouvent tout au même endroit.</p>';
  var fin=accesFin(c),jf=joursAvant(fin);
  if(E.length&&!P.termine&&jf<=3)h+='<div class="cp-rap"><b>'+(jf<0?'L\'accès des entreprises est dépassé':'Le chantier se termine '+(jf===0?'aujourd\'hui':jf===1?'demain':dt(fin)))+'</b><small>Les entreprises gardent l\'accès jusqu\'au '+dt(fin)+'.</small><div class="cp-rb"><button type="button" class="btn" id="cp-pro">Prolonger d\'une semaine</button><button type="button" class="btn" id="cp-fin1">Chantier terminé</button></div></div>';
- E.forEach(function(e,i){var off=e.coupe||P.termine;h+='<button type="button" class="cp-e'+(off?' off':'')+'" data-cpe="'+i+'"><span class="cp-mi">'+icEnt(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+esc(e.m)+' · '+(off?'accès terminé':esc(e.vu||'invitation envoyée')+' · jusqu\'au '+dt(fin))+'</small></span><span class="cp-go">›</span></button>'});
- if(P.termine)h+='<p class="hint" style="margin:10px 0 0">Chantier terminé : les accès sont coupés, et chaque entreprise a reçu le récapitulatif par e-mail (décisions, plans, conversation).</p>';
+ E.forEach(function(e,i){var off=e.coupe||P.termine;h+='<button type="button" class="cp-e'+(off?' off':'')+'" data-cpe="'+i+'"><span class="cp-mi">'+icEnt(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+esc(e.m)+' · '+(off?'accès terminé'+(moyNote(e)?' · <span class="cp-moy">★ '+String(moyNote(e)).replace('.',',')+'</span>':P.termine?' · <span class="cp-moy">à noter</span>':''):esc(e.vu||'invitation envoyée')+' · jusqu\'au '+dt(fin))+'</small></span><span class="cp-go">›</span></button>'});
+ if(P.termine)h+='<p class="hint" style="margin:10px 0 0">Chantier terminé : les accès sont coupés, et chaque entreprise a reçu le récapitulatif par e-mail (décisions, plans, conversation). Touchez une entreprise pour lui donner votre note, que vous seul verrez.</p>';
  if(c.st!=='done'&&!P.termine)h+='<button type="button" class="btn go cf-go" id="cp-inv" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Inviter une entreprise</span></span></button>';
  if(E.length&&!P.termine)h+='<button type="button" class="btn" id="cp-voir" style="width:100%;margin-top:10px">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
  if(E.length&&!P.termine&&jf>3)h+='<button type="button" class="btn cp-fin" id="cp-fin2" style="width:100%;margin-top:10px">Chantier terminé</button>';
@@ -566,14 +566,23 @@ function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(wi
    e.code=codeNeuf();e.par=par;if(!d.hidden&&d.value)P.fin=d.value;
    P.ent.push(e);saveCH();attente('sms');X.xclose();
    recharger('equipe');X.toast('Invitation envoyée',e.n+' reçoit son lien par '+(par==='sms'?'SMS':'e-mail')+', valable jusqu\'au '+dt(accesFin(c))+' (démo).')})})}
+/* Note privée de l'architecte sur chaque entreprise, à la fin du chantier (Cyril 19/11) : visible par lui seul, jamais par l'entreprise */
+var CRIT=[['ponct','Ponctualité'],['propre','Propreté du chantier'],['trav','Qualité du travail']];
+var ETO=I('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>');
+function moyNote(e){var N=e.note||{},v=CRIT.map(function(k){return N[k[0]]||0}).filter(Boolean);return v.length?Math.round(v.reduce(function(a,b){return a+b},0)/v.length*10)/10:0}
+function noteHTML(e){var N=e.note||{};return '<div class="cp-nt"><p class="hint" style="margin:0 0 4px">Votre note, visible par vous seul. Elle vous aide à choisir pour le prochain chantier.</p>'+
+ CRIT.map(function(k){return '<div class="cp-nl"><span>'+k[1]+'</span><span class="cp-st">'+[1,2,3,4,5].map(function(i){return '<button type="button" data-cpn="'+k[0]+'" data-v="'+i+'" aria-label="'+k[1]+' : '+i+' sur 5" aria-pressed="'+(i<=(N[k[0]]||0))+'">'+ETO+'</button>'}).join('')+'</span></div>'}).join('')+'</div>'}
 /* La fiche d'une entreprise du chantier : son icône, renvoyer le lien, couper son accès */
 function ficheEnt(c,i){var P=part(c),e=P.ent[i];if(!e)return;var arm=0,off=e.coupe||P.termine;
  var h='<div class="cp-tete"><span class="cp-mi gros">'+icEnt(e)+'</span><div><b>'+esc(e.n)+'</b><small>'+esc(e.m)+'</small></div></div>'+
   '<p class="hint" style="margin:14px 0 6px">Icône du métier</p>'+icPicker(e.ic||metDe(e.m))+
   '<div class="cp-l" style="margin-top:14px"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>'+(off?'Accès terminé':'Accès jusqu\'au '+esc(dt(accesFin(c))))+'</b><small>Code personnel '+esc(e.code||'—')+' · lien envoyé par '+(e.par==='mail'?'e-mail':'SMS')+'</small></span></div>'+
+  (P.termine?'<p class="hint" style="margin:16px 0 6px">Comment s\'est passé le chantier avec '+esc(e.n)+' ?</p>'+noteHTML(e):'')+
   (off?'':'<button type="button" class="btn" id="cp-ren" style="width:100%;margin-top:10px">Renvoyer son lien</button><button type="button" class="btn cp-cut" id="cp-cut" style="width:100%;margin-top:10px">Couper son accès</button>');
  X.xopen(e.n,'Sur le chantier '+c.n,h,'<button class="btn go" data-xclose>Fermer</button>',function(){
   lierPicker(function(k){e.ic=k;saveCH();var t=$('.cp-tete .cp-mi');if(t)t.innerHTML=metSvg(k);recharger('equipe')});
+  $$('[data-cpn]').forEach(function(b){b.addEventListener('click',function(){e.note=e.note||{};e.note[b.dataset.cpn]=+b.dataset.v;saveCH();
+   $$('[data-cpn="'+b.dataset.cpn+'"]').forEach(function(x){x.setAttribute('aria-pressed',String(+x.dataset.v<=+b.dataset.v))});recharger('equipe')})});
   var r=$('#cp-ren');if(r)r.addEventListener('click',function(){X.toast('Lien renvoyé',e.n+' le reçoit par '+(e.par==='mail'?'e-mail':'SMS')+' (démo).')});
   var k=$('#cp-cut');if(k)k.addEventListener('click',function(){if(!arm){arm=1;k.textContent='Touchez encore pour couper';setTimeout(function(){if(k.isConnected){arm=0;k.textContent='Couper son accès'}},3500);return}
    e.coupe=1;saveCH();X.xclose();recharger('equipe');X.toast('Accès coupé',e.n+' ne peut plus ouvrir ce chantier.')})})}

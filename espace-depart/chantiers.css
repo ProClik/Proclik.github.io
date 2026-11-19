@@ -243,3 +243,11 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-seg .btn{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}
 .cp-seg .btn small{font-size:12px;font-weight:600;color:var(--muted)}
 .btn.cp-cut,#chx .btn.cp-fin{color:var(--n1-alert)!important}
+/* Note privée de l'architecte sur une entreprise (19/11) */
+.cp-nt{display:grid;gap:8px;padding:12px;border-radius:16px;background:var(--n1-teinte)}
+.cp-nl{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:14px;font-weight:700}
+.cp-st{display:flex;gap:4px}
+.cp-st button{width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--muted);cursor:pointer;padding:0}
+.cp-st svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.cp-st button[aria-pressed="true"]{color:var(--n1-laiton)}.cp-st button[aria-pressed="true"] svg{fill:var(--n1-laiton)}
+#chx .cp-moy{color:var(--n1-laiton);font-weight:800}
