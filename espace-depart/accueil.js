@@ -187,7 +187,7 @@
       (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":'<button type="button" class="af-plus" data-accv="planning">Tout le planning ›</button>')};
   /* « Le point du matin / du soir » : la journée racontée en deux phrases, un petit mot léger, et la seule chose à faire en premier */
   /* Trois façons de sublimer le point du jour, à essayer : ?point=1 (le ciel), 2 (l'arc du jour), 3 (le prochain en grand) */
-  var PV=(location.search.match(/[?&]point=([123])/)||[])[1]||"";
+  var PV=(location.search.match(/[?&]point=([23])/)||[])[1]||"";
   function nowMin(){if(forceM)return {matin:500,midi:750,soir:1140}[forceM];var d=new Date();return d.getHours()*60+d.getMinutes()}
   function duree(m){m=Math.max(0,Math.round(m));var h=Math.floor(m/60),n=m%60;return h?h+"\u00a0h"+(n?"\u00a0"+("0"+n).slice(-2):""):n+"\u00a0min"}
   /* l'arc du jour : de 6 h à 20 h, comme la course du soleil ; le point laiton = maintenant, chaque rendez-vous à sa place */
@@ -206,7 +206,7 @@
         big='<div class="pgr"><div class="pgr-h"><b>'+hTxt(tg.s)+'</b><small>'+qd+'</small></div><div class="pgr-t"><span class="pt-li">'+(JI[tg.k]||IC.agenda)+"</span><span><b>"+esc(tg.t)+"</b><small>"+esc(tg.w||"")+"</small></span>"+
           (!soir&&lieu(tg)&&tg.k!=="pc"?'<button type="button" class="pgr-go" data-gps="'+esc(lieu(tg))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</div></div>"}}
     var lignes=P.lignes||[];if(PV==="3")lignes=lignes.filter(function(x){return !x[1]});
-    return '<div class="pt'+(PV?" v"+PV:"")+" m-"+mm+'">'+(PV?'<span class="pt-ciel" aria-hidden="true"><i></i><i></i><i></i></span>':"")+'<div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir":midi?"Le point de midi":"Le point du matin")+"</small></div>"+
+    return '<div class="pt'+(PV?" v"+PV:"")+" m-"+mm+'">'+'<div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir":midi?"Le point de midi":"Le point du matin")+"</small></div>"+
       (PV==="2"?arc(L):"")+big+
       (lignes.length?'<ul class="pt-l">'+lignes.map(function(x){return '<li><span class="pt-li">'+x[0]+'</span>'+(x[1]?'<b class="pt-hh">'+x[1]+"</b>":"")+"<span>"+x[2]+"</span></li>"}).join("")+"</ul>":'<p class="pt-t">'+(P.html||"")+"</p>")+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
       (u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":midi?"Pendant la pause":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"")+"</div>"};
