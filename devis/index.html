@@ -839,7 +839,8 @@ function fsGo(){const pf=document.documentElement;try{const fs=pf.requestFullscr
 ["fullscreenchange","webkitfullscreenchange"].forEach(e=>document.addEventListener(e,fsUpd));
 document.addEventListener("click",e=>{const c=e.target.closest&&e.target.closest("button,.chip,[role=button]");if(!c)return;if(c.matches("#pf-fs,#fs-b")){fsGo();return}});
 /* Cyril 19/11 : plein écran dès la page d'accueil sur iPad / tablette. Les navigateurs exigent un toucher : on le lance au tout premier toucher n'importe où (sauf dans une case à écrire, pour ne pas gêner le clavier), une seule fois. */
-function fsFirst(e){if(fsGo.auto||!fsOk()||fsOn())return;const tg=e.target;if(tg&&tg.closest&&tg.closest("input,textarea,select,[contenteditable]"))return;fsGo.auto=1;fsGo()}
+/* 19/11 10h15 (Cyril : « quand je reviens en arrière le plein écran part et ne revient plus ») : on le relance à CHAQUE toucher tant qu'on n'y est pas, pas seulement la première fois. */
+function fsFirst(e){if(!fsOk()||fsOn())return;const tg=e.target;if(tg&&tg.closest&&tg.closest("input,textarea,select,[contenteditable]"))return;fsGo.auto=1;fsGo()}
 document.addEventListener("touchend",fsFirst,{passive:true});document.addEventListener("click",fsFirst);
 fsUpd();
 function pfSc(){try{if(!/iPhone|iPod/.test(navigator.userAgent)||navigator.standalone||matchMedia("(display-mode: standalone)").matches)return false;return window.top===window||/[?&]ps=1/.test(location.search)||pfScUpd.ps===true}catch(_){return false}}
