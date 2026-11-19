@@ -260,3 +260,26 @@ html body .tdb .ch-o-t.z{display:inline!important;color:var(--fg);font-weight:80
 @container tdb (max-width:640px){html body .tdb .sz-m .af{grid-template-columns:1fr}}
 html body .tdb .ch-o-t{font-size:12px;font-weight:700;color:var(--n1-muted,var(--muted))}
 @media (max-width:420px){html body .tdb .ch-o-t{display:none}}
+
+/* §18 Icônes de la journée et de « À faire » (Cyril, 19/11) : café pour commencer, fournisseur, chantier, visite… chaque moment a son icône */
+html body .tdb .jr-e{grid-template-columns:52px 36px minmax(0,1fr) auto}
+html body .tdb .jr::before{left:79px;top:22px;bottom:22px}
+html body .tdb .jr-p{--jc:var(--k-visit);display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:color-mix(in srgb,var(--jc) 15%,var(--rs));color:var(--jc)}
+html body .tdb .jr-p svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .jr-e.k-run .jr-p,html body .tdb .jr-e.k-plan .jr-p,html body .tdb .jr-e.k-done .jr-p{--jc:var(--k-run)}
+html body .tdb .jr-e.k-liv .jr-p{--jc:var(--k-liv)}html body .tdb .jr-e.k-pc .jr-p{--jc:var(--k-pc)}html body .tdb .jr-e.k-ent .jr-p,html body .tdb .jr-e.k-st .jr-p{--jc:var(--k-st)}
+html body .tdb .jr-e.k-devis .jr-p{--jc:var(--k-devis)}html body .tdb .jr-e.k-autre .jr-p{--jc:var(--k-autre)}
+html body .tdb .jr-e.k-cafe .jr-p,html body .tdb .jr-e.k-fin .jr-p{--jc:var(--n1-laiton)}
+html body .tdb .jr-e.k-cafe,html body .tdb .jr-e.k-fin{padding-top:4px;padding-bottom:4px}
+html body .tdb .jr-e.k-cafe .jr-t b,html body .tdb .jr-e.k-fin .jr-t b{font-size:14px;font-weight:700}
+html body .tdb .jr-e.ici .jr-p{background:var(--n1-nuit);color:#fff}
+:root[data-theme="dark"] body .tdb .jr-e.ici .jr-p{background:var(--fg);color:var(--rs)}
+/* À faire : une ligne par chose, chaque type avec son icône en couleur */
+html body .tdb .af,html body .tdb .sz-m .af{grid-template-columns:1fr}
+html body .tdb .af-b .afa-ic{--jc:var(--n1-nuit);background:color-mix(in srgb,var(--jc) 14%,var(--rs));box-shadow:none;color:var(--jc)}
+:root[data-theme="dark"] body .tdb .af-b.i-predevis .afa-ic{--jc:var(--fg)}
+html body .tdb .af-b.i-facture .afa-ic{--jc:#E26D6D}:root[data-theme="dark"] body .tdb .af-b.i-facture .afa-ic{--jc:#F09A9A}
+html body .tdb .af-b.i-fournisseur .afa-ic{--jc:var(--k-liv)}html body .tdb .af-b.i-depense .afa-ic{--jc:var(--k-autre)}
+html body .tdb .af-b.i-attente .afa-ic{--jc:var(--k-pc)}html body .tdb .af-b.i-chantier .afa-ic{--jc:var(--k-run)}html body .tdb .af-b.i-entretien .afa-ic{--jc:var(--k-st)}
+html body .tdb .afa-ic svg{width:19px;height:19px}
+@media (min-width:900px){html body .tdb .sz-m .af{grid-template-columns:1fr 1fr}}

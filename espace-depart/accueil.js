@@ -133,7 +133,7 @@
     if(!D.charge)return h+'<p class="vide">Chargement…</p>';
     if(!L.length)return h+'<div class="w-rien"><b>Tout est à jour</b><span>Rien à valider ni à envoyer.</span></div>';
     return h+'<div class="af">'+L.slice(0,max).map(function(x){
-      return '<button class="af-b t-'+x[4]+'" type="button" data-accv="'+x[5]+'"><span class="afa-ic">'+IC[x[1]]+"<i>"+x[0]+'</i></span><span class="afa-tx"><b>'+esc(x[2])+'</b><small><em>'+esc(x[3])+"</em>"+(x[6]?" · "+esc(x[6]):"")+"</small></span>"+'<span class="af-f">›</span></button>'}).join("")+
+      return '<button class="af-b t-'+x[4]+' i-'+x[1]+'" type="button" data-accv="'+x[5]+'"><span class="afa-ic">'+IC[x[1]]+"<i>"+x[0]+'</i></span><span class="afa-tx"><b>'+esc(x[2])+'</b><small><em>'+esc(x[3])+"</em>"+(x[6]?" · "+esc(x[6]):"")+"</small></span>"+'<span class="af-f">›</span></button>'}).join("")+
       (L.length>max?'<button class="af-plus" type="button" data-accv="devis">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":"")+"</div>"};
   /* Encaissé par mois (exemple) : de simples barres, faciles à lire d'un coup d'œil */
   var MOIS=[["Mai","mai",6100,9200],["Juin","juin",8400,12500],["Juil.","juillet",7200,7800],["Août","août",9600,13100],["Sept.","septembre",7900,11000],["Oct.","octobre",8640,14210]];
@@ -164,6 +164,13 @@
   function hTxt(s){var p=String(s||"").split(":");return (+p[0])+" h"+(p[1]&&p[1]!=="00"?" "+p[1]:"")}
   function lieu(e){return String(e.w||"").split(" · ")[0].trim()}
   function prochain(){var d=new Date(AUJ());for(var k=0;k<10;k++){d.setDate(d.getDate()+1);if(evs(iso(d)).length)return d}return null}
+  /* une icône par moment de la journée (Cyril, 19/11) : café pour commencer, fournisseur, chantier, visite… */
+  var JI={cafe:I('<path d="M5 10h11v4.5A4.5 4.5 0 0 1 11.5 19h-2A4.5 4.5 0 0 1 5 14.5z"/><path d="M16 11.5h1.5a2.2 2.2 0 0 1 0 4.4H16"/><path d="M8.5 3.5c-.6 1 .6 1.8 0 3M12 3.5c-.6 1 .6 1.8 0 3"/>'),
+    liv:IC.fournisseur,run:IC.chantier,plan:IC.chantier,done:IC.chantier,
+    visit:I('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>'),
+    pc:I('<path d="M5 5h14v10H10l-4 4v-4H5z"/>'),devis:IC.predevis,ent:IC.entretien||IC.chantier,autre:IC.agenda,st:IC.chantier,
+    fin:I('<path d="M4 11l8-6 8 6v8H4z"/><path d="M10 19v-5h4v5"/>')};
+  function jli(cl,ico,hh,b,sm,extra){return '<li class="jr-e '+cl+'"><span class="jr-h">'+hh+'</span><span class="jr-p" aria-hidden="true">'+ico+'</span><span class="jr-t">'+(extra||"")+"<b>"+b+"</b><small>"+sm+"</small></span></li>"}
   R.jour=function(t){var soir=moment()==="soir",d=soir?prochain():AUJ(),L=d?evs(iso(d)):[],max=t==="m"?2:4;
     var dem=d&&soir&&iso(d)===iso(new Date(AUJ().getTime()+864e5)),nom=d?d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):"";
     var titre=soir?(dem?"Demain":"Prochaine journée"):"Ma journée",sous=soir?nom:"";
@@ -172,9 +179,9 @@
     var h=tete("agenda",titre,sous?'<span class="w-sub">'+esc(sous)+"</span>":(L.length?'<span class="w-sub">'+L.length+" rendez-vous</span>":""));
     if(!L.length)return h+'<div class="w-rien"><b>'+(soir?"Rien de prévu pour l'instant":"Rien de prévu aujourd'hui")+"</b><span>"+(soir?"Un créneau tout neuf à offrir à un client.":"Une journée pour avancer les devis. Ou le rangement du camion.")+"</span></div>"+
       '<button type="button" class="af-plus" data-accv="planning">Ouvrir le planning ›</button>';
-    return h+'<ol class="jr">'+L.slice(0,max).map(function(e,k){var l=lieu(e),go=!soir&&l&&e.k!=="pc";
-      return '<li class="jr-e k-'+e.k+(k===ic?" ici":"")+(!soir&&ic>=0&&k<ic?" passe":"")+'"><span class="jr-h">'+hTxt(e.s)+'</span><span class="jr-p" aria-hidden="true"></span><span class="jr-t">'+(k===ic?'<em class="jr-n">'+(hm(e.s)<=nm?"En ce moment":"Ensuite")+"</em>":"")+"<b>"+esc(e.t)+"</b><small>"+esc(e.w||KN[e.k]||"")+"</small></span>"+
-        (go?'<button type="button" class="jr-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg><span>Y aller</span></button>':"")+"</li>"}).join("")+"</ol>"+
+    return h+'<ol class="jr">'+jli("k-cafe"+(!soir&&(ic>0||ic<0)?" passe":""),JI.cafe,"","Un café, et c'est parti",soir?"Pour bien commencer demain":"La journée commence")+L.slice(0,max).map(function(e,k){var l=lieu(e),go=!soir&&l&&e.k!=="pc";
+      return '<li class="jr-e k-'+e.k+(k===ic?" ici":"")+(!soir&&ic>=0&&k<ic?" passe":"")+'"><span class="jr-h">'+hTxt(e.s)+'</span><span class="jr-p" aria-hidden="true">'+(JI[e.k]||IC.agenda)+'</span><span class="jr-t">'+(k===ic?'<em class="jr-n">'+(hm(e.s)<=nm?"En ce moment":"Ensuite")+"</em>":"")+"<b>"+esc(e.t)+"</b><small>"+esc(e.w||KN[e.k]||"")+"</small></span>"+
+        (go?'<button type="button" class="jr-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg><span>Y aller</span></button>':"")+"</li>"}).join("")+(L.length<=max?jli("k-fin",JI.fin,"","Fin de journée","On range les outils, et à demain"):"")+"</ol>"+
       (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":'<button type="button" class="af-plus" data-accv="planning">Tout le planning ›</button>')};
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   R.chiffres=function(){var C=[["Encaissé","8 640 €","factures",0],["Signés","14 210 €","devis",0],["À encaisser","2 760 €","factures",1],["Envoyés","9 850 €","devis",0]];
