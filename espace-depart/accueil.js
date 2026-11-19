@@ -199,16 +199,23 @@
     return '<div class="pa" aria-hidden="true"><svg viewBox="0 0 300 90" preserveAspectRatio="none"><polyline class="pa-f" points="'+pts.join(" ")+'"/>'+(done.length>1?'<polyline class="pa-d" points="'+done.join(" ")+'"/>':"")+"</svg>"+
       L.map(function(e){return '<span class="pa-e k-'+e.k+(hm(e.e||e.s)<n?" fait":"")+'" style="'+pc(pos(hm(e.s)))+'">'+(JI[e.k]||IC.agenda)+"</span>"}).join("")+
       '<span class="pa-n" style="'+pc(pn)+'"></span><small class="pa-a">6 h</small><small class="pa-z">20 h</small></div>'}
-  R.point=function(t,D){var P=acc._pt||{},u=D.urgent,mm=moment(),soir=mm==="soir",midi=mm==="midi";
-    var L=evs(iso(AUJ())),n=nowMin(),nx=null;L.forEach(function(e){if(!nx&&hm(e.e||e.s)>n)nx=e});
-    var big="";if(PV==="3"){var nx2=null;if(midi)L.forEach(function(e){if(!nx2&&hm(e.s)>n)nx2=e});var tg=soir?(function(){var p=prochain();return p?evs(iso(p))[0]:null})():(nx2||nx);
-      if(tg){var enc=!soir&&hm(tg.s)<=n,qd=soir?"Demain":enc?"En ce moment, jusqu'à "+hTxt(tg.e):"Dans "+duree(hm(tg.s)-n);
-        big='<div class="pgr"><div class="pgr-h"><b>'+hTxt(tg.s)+'</b><small>'+qd+'</small></div><div class="pgr-t"><span class="pt-li">'+(JI[tg.k]||IC.agenda)+"</span><span><b>"+esc(tg.t)+"</b><small>"+esc(tg.w||"")+"</small></span>"+
-          (!soir&&lieu(tg)&&tg.k!=="pc"?'<button type="button" class="pgr-go" data-gps="'+esc(lieu(tg))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</div></div>"}}
-    var lignes=P.lignes||[];if(PV==="3")lignes=lignes.filter(function(x){return !x[1]});
-    return '<div class="pt'+(PV?" v"+PV:"")+" m-"+mm+'">'+'<div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir":midi?"Le point de midi":"Le point du matin")+"</small></div>"+
-      (PV==="2"?arc(L):"")+big+
-      (lignes.length?'<ul class="pt-l">'+lignes.map(function(x){return '<li><span class="pt-li">'+x[0]+'</span>'+(x[1]?'<b class="pt-hh">'+x[1]+"</b>":"")+"<span>"+x[2]+"</span></li>"}).join("")+"</ul>":'<p class="pt-t">'+(P.html||"")+"</p>")+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
+  /* Le point du jour = la frise de la journée (Cyril, 19/11) : une icône par moment, reliées par un fil, l'étape en cours cerclée de laiton.
+     Dessous : le moment en cours (ou le prochain) en clair avec « Y aller », ce qui attend, le petit mot et LE bouton. Le soir : la frise de demain. */
+  var FLAG=I('<path d="M6 21V4"/><path d="M6 4.5h11l-2.5 4 2.5 4H6"/>');
+  R.point=function(t,D){var P=acc._pt||{},u=D.urgent,mm=moment(),soir=mm==="soir",midi=mm==="midi",n=nowMin();
+    var jr=soir?prochain():AUJ(),L=jr?evs(iso(jr)):[],cur=-1,k;
+    if(!soir){for(k=0;k<L.length;k++){if(hm(L[k].e||L[k].s)>n&&!(midi&&hm(L[k].s)<=n&&k<L.length-1&&hm(L[k+1].s)-n<180)){cur=k;break}}if(cur<0)cur=L.length}
+    var F=[{ic:JI.cafe,h:"Café",cl:"fr-cafe"}].concat(L.slice(0,4).map(function(e){return {ic:JI[e.k]||IC.agenda,h:hTxt(e.s),cl:"k-"+e.k}})).concat([{ic:FLAG,h:"Fin",cl:"fr-fin"}]);
+    var ici=soir?0:cur+1;if(!soir&&cur>=L.length)ici=F.length-1;
+    var frise='<ol class="fr" aria-label="Votre journée">'+F.map(function(x,q){return '<li class="fr-e '+x.cl+(q<ici?" fait":q===ici?" ici":"")+'"><span class="fr-i">'+x.ic+"</span><small>"+x.h+"</small></li>"}).join("")+"</ol>";
+    var e=soir?L[0]:L[cur],foc="";
+    if(e){var enc=!soir&&hm(e.s)<=n,lab=soir?(iso(jr)===iso(new Date(AUJ().getTime()+864e5))?"Demain":jr.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+" · "+hTxt(e.s):enc?"En ce moment · jusqu'à "+hTxt(e.e):"Ensuite · "+hTxt(e.s)+" · dans "+duree(hm(e.s)-n);
+      foc='<div class="fo"><small>'+lab+"</small><div><span><b>"+esc(e.t)+"</b><em>"+esc(e.w||"")+"</em></span>"+
+        (!soir&&lieu(e)&&e.k!=="pc"?'<button type="button" class="fo-go" data-gps="'+esc(lieu(e))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</div></div>"}
+    else foc='<div class="fo"><small>'+(soir?"Demain":"Plus rien au planning")+"</small><div><span><b>"+(soir?"Rien de prévu pour l'instant":"La journée est bouclée")+"</b></span></div></div>";
+    var nv=0;(D.afaire||[]).forEach(function(x){if(x[4]!=="suivre")nv+=x[0]});
+    return '<div class="pt"><div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir · demain":midi?"Le point de midi":"Le point du matin")+"</small>"+(nv?'<span class="pt-nv">'+IC.predevis+nv+" à valider</span>":"")+"</div>"+
+      frise+foc+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
       (u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":midi?"Pendant la pause":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"")+"</div>"};
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   /* Devis signés et taux de réussite en tête (Cyril, 19/11 : « pour motiver »), puis trois montants avec leur icône */
