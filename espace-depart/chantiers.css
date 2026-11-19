@@ -278,6 +278,16 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-chp svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .cp-chp[aria-pressed="true"]{background:var(--n1-nuit);color:var(--n1-nuit-fg,#fff);box-shadow:none}.cp-chp[aria-pressed="true"] .cp-mini{color:inherit}
 .cp-phb{width:100%;padding:0;background:none}
+.cp-rs{align-items:center}
+.cp-vg{position:relative;width:46px;height:46px;flex:none;border-radius:13px;overflow:visible;display:grid;place-items:center;color:var(--n1-muted);box-shadow:0 2px 8px rgba(14,19,34,.12)}
+.cp-vg i{position:absolute;inset:0;border-radius:13px;background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.4),transparent 55%)}
+.cp-vg.vide{background:var(--n1-teinte);box-shadow:none;border:1.5px dashed color-mix(in srgb,var(--n1-muted) 40%,transparent)}
+.cp-vg>svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cp-vg .cp-rn{position:absolute;top:-5px;left:-5px;width:19px;height:19px;font-size:10px;box-shadow:0 0 0 2px var(--n1-calme)}
+.cp-vg em{position:absolute;bottom:3px;left:2px;right:2px;font:800 8.5px Manrope,sans-serif;font-style:normal;color:#fff;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.cp-ph{border-radius:18px}.cp-ph.on{box-shadow:0 2px 8px rgba(14,19,34,.15)}
+.cp-nts{display:grid;gap:6px;margin-bottom:8px}.cp-nts p{margin:0;padding:8px 11px;border-radius:12px;background:var(--n1-teinte);font-size:13.5px;line-height:1.4}.cp-nts small{display:block;font-size:11px;font-weight:700;color:var(--n1-muted)}
+#rf-t{flex:1;min-width:0;box-sizing:border-box;border:0;border-radius:18px;padding:11px 15px;font:inherit;font-size:15px;background:var(--n1-bg);box-shadow:var(--n1-in);color:inherit;resize:none;outline:none}
 .cp-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:110px;flex:1;border-radius:14px;border:1.5px dashed color-mix(in srgb,var(--n1-muted) 45%,transparent);color:var(--n1-muted)}
 .cp-ph svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .cp-ph small{font-size:12px;font-weight:700}
@@ -300,3 +310,5 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 #x-in .cp-w{display:flex;align-items:flex-end;gap:8px}
 #x-in .cp-ro{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--n1-nuit)}
 #x-in .cp-ro svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cp-chs[hidden]{display:none}
+.cp-phs{flex-wrap:wrap}.cp-phs .cp-ph{flex:0 0 calc(50% - 5px)}

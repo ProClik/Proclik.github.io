@@ -654,8 +654,8 @@ var EQS=[['Thomas','Chef'],['Kevin','Plaquiste'],['Mathieu','Plaquiste'],['Lucas
 var IC_CLI=I('<circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.8 3.6-5.6 7-5.6s6.2 1.8 7 5.6"/>');
 function pieces(c){return PIECES[c.id]||[['Tout le chantier',8,8,144,84]]}
 function resL(c){var P=part(c);if(!P.res)P.res=c.id==='alpes'?[
-  {id:'r1',t:'Un spot de l\'accueil clignote',ent:'st-elec',pc:'Accueil',st:'ouv',par:'cli',d:'ven. 16/10',ph:1},
-  {id:'r2',t:'Joint du lavabo à refaire : il fuit un peu',ent:'st-plomb',pc:'Accueil',st:'corr',par:'moi',d:'mer. 14/10',ph:1,dc:'ven. 16/10'},
+  {id:'r1',t:'Un spot de l\'accueil clignote',ent:'st-elec',pc:'Accueil',st:'ouv',par:'cli',d:'ven. 16/10',ph:1,notes:[['ven. 16/10 · 8 h 05','Mme Garnier : le spot juste au-dessus du comptoir.'],['ven. 16/10 · 9 h 20','Élec Belledonne passe lundi matin avec un transformateur neuf.']]},
+  {id:'r2',t:'Joint du lavabo à refaire : il fuit un peu',ent:'st-plomb',pc:'Accueil',st:'corr',par:'moi',d:'mer. 14/10',ph:1,dc:'ven. 16/10',notes:[['ven. 16/10 · 10 h 40','Plomberie du Vercors : joint silicone refait, sec dans 24 h.']]},
   {id:'r3',t:'Bande de plafond qui se décolle au-dessus de la porte',ent:'sal:Kevin',pc:'Couloir',st:'ouv',par:'moi',d:'ven. 16/10',ph:1}]:[];return P.res}
 function cliDe(c){var P=part(c);if(P.cli===undefined)P.cli=c.id==='alpes'?{n:'Mme Garnier',code:'H8R3',vu:'vu hier',commun:0,nl:1,msgs:[
   {de:'cli',t:'Bonjour, les patients demandent si l\'accueil sera ouvert lundi ?',h:'jeu. 15/10 · 12 h 40'},
@@ -674,11 +674,15 @@ function planRes(c,sel){if(!PIECES[c.id])return '';var Pz=pieces(c),R=resL(c);
   Pz.map(function(p){return (sel===p[0]?'<rect x="'+(p[1]+3)+'" y="'+(p[2]+3)+'" width="'+(p[3]-6)+'" height="'+(p[4]-6)+'" rx="3" class="cp-plz"/>':'')+'<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-6)+'" text-anchor="middle" class="cp-plt">'+esc(p[0])+'</text>'}).join('')+
   R.map(function(r,i){var p=Pz.filter(function(x){return x[0]===r.pc})[0];if(!p)return '';var k=R.filter(function(y,j){return j<i&&y.pc===r.pc}).length;var x=p[1]+p[3]/2-6+k*13,y=p[2]+p[4]/2-5;
    return '<g class="cp-pin2 '+RST[r.st][1]+'"><circle cx="'+x+'" cy="'+y+'" r="6"/><text x="'+x+'" y="'+(y+2.6)+'" text-anchor="middle">'+(i+1)+'</text></g>'}).join('')+'</svg>'}
-function photoT(lab,on){return '<span class="cp-ph'+(on?' on':'')+'">'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
+/* vignettes photo des réserves (Cyril 19/11 : coins arrondis, on touche la photo pour ouvrir la fiche) */
+var PHG=['linear-gradient(140deg,#C9B79C,#7E6A52)','linear-gradient(140deg,#9FB3C8,#506680)','linear-gradient(140deg,#C7C2B8,#7D776C)','linear-gradient(140deg,#B8A6C4,#6B5A7D)','linear-gradient(140deg,#A9C2B0,#5B7563)'];
+function vign(r,i,s){return '<span class="cp-vg'+(r.ph?'':' vide')+'" style="'+(r.ph?'background:'+PHG[i%PHG.length]:'')+'">'+(r.ph?'<i></i>':IC.photo)+'<b class="cp-rn '+s+'">'+(i+1)+'</b>'+(r.st!=='ouv'?'<em>+ après</em>':'')+'</span>'}
+function photoT(lab,on,g){return '<span class="cp-ph'+(on?' on':'')+'"'+(on&&g?' style="background:'+g+'"':'')+'>'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
+function photoT0(lab,on){return '<span class="cp-ph'+(on?' on':'')+'">'+(on?'<i></i>':IC.photo)+'<small>'+esc(lab)+'</small></span>'}
 function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c);
  var h='<div class="card" id="cp-res"><div class="row" style="margin-bottom:8px"><b>Réserves</b><span style="font-size:12px;color:var(--muted)">'+(R.length?(n?n+' en cours':'toutes levées ✓'):'aucune')+'</span></div>'+planRes(c);
  if(!R.length)h+='<p class="hint" style="margin:4px 0 0">Un défaut à reprendre ? Une photo, une phrase, et celui qui doit corriger est prévenu par SMS.</p>';
- R.forEach(function(r,i){var e=entDe(c,r.ent),s=RST[r.st];h+='<button type="button" class="cp-rs" data-cprs="'+i+'"><span class="cp-rn '+s[1]+'">'+(i+1)+'</span><span class="tx"><b>'+esc(r.t)+'</b><small><span class="cp-mini">'+icQ(e)+'</span>'+esc(e.n)+' · '+esc(r.pc)+(r.par==='cli'?' · signalée par le client':'')+'</small><span class="cp-pill '+s[1]+'">'+s[0]+'</span></span><span class="cp-go">›</span></button>'});
+ R.forEach(function(r,i){var e=entDe(c,r.ent),s=RST[r.st];h+='<button type="button" class="cp-rs" data-cprs="'+i+'">'+vign(r,i,s[1])+'<span class="tx"><b>'+esc(r.t)+'</b><small><span class="cp-mini">'+icQ(e)+'</span>'+esc(e.n)+' · '+esc(r.pc)+(r.par==='cli'?' · signalée par le client':'')+'</small><span class="cp-pill '+s[1]+'">'+s[0]+'</span></span><span class="cp-go">›</span></button>'});
  if(!P.termine||n)h+='<button type="button" class="btn go cf-go" id="cp-sig" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Signaler un problème</span></span></button>';
  if(P.recep)h+='<button type="button" class="cp-l cp-pvb" id="cp-pv" style="width:100%;margin-top:10px"><span class="r">'+IC.docs+'</span><span class="tx"><b>Réception signée le '+esc(dt(P.recep.d))+'</b><small>Par '+esc(P.recep.qui)+' · '+(P.recep.n?P.recep.n+' réserve'+(P.recep.n>1?'s':'')+' notée'+(P.recep.n>1?'s':''):'sans réserve')+' · voir le procès-verbal</small></span><span class="cp-go">›</span></button>';
  else if(!P.termine&&c.st!=='done')h+='<button type="button" class="btn" id="cp-rec" style="width:100%;margin-top:10px">'+I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')+'<span>Réception avec '+esc(cli?cli.n:'le client')+'</span></button>';
@@ -702,7 +706,11 @@ function signaler(c,pc0,retour){var F={pc:pc0||'',ent:'',ph:0},Pz=pieces(c);if(P
 function ficheRes(c,i){var r=resL(c)[i];if(!r)return;var e=entDe(c,r.ent),s=RST[r.st];
  var h=planRes(c,r.pc)+'<div class="cp-tete" style="margin-top:12px"><span class="cp-mi gros">'+icQ(e)+'</span><div><b>'+esc(r.t)+'</b><small>'+esc(e.n)+' · '+esc(r.pc)+'</small></div></div>'+
   '<p style="margin:10px 0"><span class="cp-pill '+s[1]+'">'+s[0]+'</span></p>'+
-  '<div class="cp-phs">'+photoT('Avant · '+r.d,r.ph)+photoT(r.st==='ouv'?'Après : pas encore':'Après · '+(r.dc||jour()),r.st!=='ouv')+'</div>'+
+  '<div class="cp-phs">'+photoT('Avant · '+r.d,r.ph,PHG[i%PHG.length])+photoT(r.st==='ouv'?'Après : pas encore':'Après · '+(r.dc||jour()),r.st!=='ouv',PHG[(i+2)%PHG.length])+'</div>'+
+  ((r.phx||[]).length?'<div class="cp-phs" style="margin-top:10px">'+r.phx.map(function(x,j){return photoT('De '+x[0]+' · '+x[1],1,PHG[(i+j+3)%PHG.length])}).join('')+'</div>':'')+
+  (r.ent&&r.st!=='val'?'<div class="cp-l" style="margin-top:12px"><span class="r">'+icQ(e)+'</span><span class="tx"><b>Qui s\'en occupe : '+esc(e.n)+'</b><small>'+esc(e.m||'')+'</small></span><button type="button" class="lnk" id="rf-chg">Changer</button></div><div class="cp-chs" id="rf-qui" hidden style="margin-top:8px">'+quiChoix(c).map(function(q){return '<button type="button" class="cp-chp" data-rfent="'+esc(q[0])+'" aria-pressed="'+(q[0]===r.ent)+'"><span class="cp-mini">'+icQ(q[1])+'</span>'+esc(q[1].n)+'</button>'}).join('')+'</div>':'')+
+  '<p class="hint" style="margin:14px 0 6px">Notes</p>'+((r.notes||[]).length?'<div class="cp-nts">'+r.notes.map(function(n){return '<p><small>'+esc(n[0])+'</small>'+esc(n[1])+'</p>'}).join('')+'</div>':'')+
+  (r.st!=='val'?'<div class="cp-w"><textarea id="rf-t" rows="1" placeholder="Ajouter une note…"></textarea><button type="button" class="cp-ro pk" id="rf-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro pk" id="rf-add" aria-label="Ajouter la note">'+IC.plus+'</button></div>':'')+
   (!r.ent?'<p class="hint" style="margin:12px 0 6px">Signalée par le client : qui doit corriger ?</p><div class="cp-chs">'+quiChoix(c).map(function(q){return '<button type="button" class="cp-chp" data-rfent="'+esc(q[0])+'"><span class="cp-mini">'+icQ(q[1])+'</span>'+esc(q[1].n)+'</button>'}).join('')+'</div>':'')+
   (e.sal?'<a class="lnk" style="display:inline-block;margin-top:10px" href="invite.html?s='+encodeURIComponent(e.n)+'&ch='+encodeURIComponent(c.id)+'" target="_blank" rel="noopener">Voir la page de '+esc(e.n)+'</a>':'')+
   '<p class="hint" style="margin:10px 0 0">Signalée le '+esc(r.d)+' par '+(r.par==='cli'?esc(entDe(c,'cli').n):'vous')+'.'+(r.st==='corr'?' '+esc(e.n)+' dit que c\'est corrigé : regardez la photo, puis validez.':r.st==='val'?' Validée par vous.':'')+'</p>';
@@ -712,6 +720,8 @@ function ficheRes(c,i){var r=resL(c)[i];if(!r)return;var e=entDe(c,r.ent),s=RST[
   var ok=$('#rf-ok');if(ok)ok.addEventListener('click',function(){r.st='val';saveCH();X.xclose();recharger('equipe','#cp-res');X.toast('Réserve levée',resOuv(c)?'Encore '+resOuv(c)+' en cours.':'Toutes les réserves sont levées.')});
   var no=$('#rf-non');if(no)no.addEventListener('click',function(){r.st='ouv';saveCH();X.xclose();recharger('equipe','#cp-res');X.toast('Renvoyée à '+e.n,'Il est prévenu par SMS (démo).')});
   var fa=$('#rf-fait');if(fa)fa.addEventListener('click',function(){r.st='val';r.dc=jour();saveCH();X.xclose();recharger('equipe','#cp-res');X.toast('Réserve levée','')});
+  var ch=$('#rf-chg');if(ch)ch.addEventListener('click',function(){$('#rf-qui').hidden=!$('#rf-qui').hidden});
+  var tn=$('#rf-t');if(tn){dictee2($('#rf-mic'),tn);$('#rf-add').addEventListener('click',function(){var v=(tn.value||'').trim();if(!v){tn.focus();return}r.notes=r.notes||[];r.notes.push([maint(),v]);saveCH();ficheRes(c,i)})}
   $$('[data-rfent]').forEach(function(b){b.addEventListener('click',function(){r.ent=b.dataset.rfent;saveCH();var q=entDe(c,r.ent);X.xclose();recharger('equipe','#cp-res');X.toast('Réserve confiée à '+q.n,r.ent==='moi'?'':'Prévenu par SMS (démo).')})});
   var rl=$('#rf-rel');if(rl)rl.addEventListener('click',function(){X.toast('Relance envoyée',e.n+' reçoit un SMS (démo).')})})}
 /* Réception : le tour du chantier avec le client, pièce par pièce, puis sa signature */

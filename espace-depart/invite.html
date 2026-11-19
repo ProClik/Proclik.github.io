@@ -125,6 +125,10 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .res .ic.al{color:var(--n1-alert)}
 .rs{display:flex;gap:10px;align-items:flex-start;padding:10px 2px;border-top:1px solid var(--n1-line)}
 .rs .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}.rs b{font-size:14px;line-height:1.3}.rs small{font-size:12px;color:var(--n1-muted)}
+.vg{position:relative;width:46px;height:46px;flex:none;border-radius:13px;display:grid;place-items:center;color:var(--n1-muted);box-shadow:0 2px 8px rgba(14,19,34,.12)}
+.vg.vide{background:var(--n1-teinte);box-shadow:none;border:1.5px dashed color-mix(in srgb,var(--n1-muted) 40%,transparent)}.vg svg{width:18px;height:18px}
+.vg .rn{position:absolute;top:-5px;left:-5px;width:19px;height:19px;font-size:10px;margin:0;box-shadow:0 0 0 2px var(--n1-calme)}
+.rs{align-items:center}.rs .fx{margin-top:2px}
 .rn{width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;margin-top:1px}
 .rn.al,.pin.al circle{background:var(--n1-alert);fill:var(--n1-alert)}.rn.wa,.pin.wa circle{background:var(--n1-warn);fill:var(--n1-warn)}.rn.ok,.pin.ok circle{background:var(--n1-ok);fill:var(--n1-ok)}
 .pin circle{stroke:var(--n1-bg);stroke-width:1.5}.pin text{font:800 6.5px Manrope,sans-serif;fill:#fff}.plt{font:700 6.5px Manrope,sans-serif;fill:var(--n1-muted)}
@@ -292,7 +296,8 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
  '<section class="card monte res" id="cres"><h2><span class="ic">'+IC.flag+'</span>Un souci ? Les réserves<span class="sp"></span><small>'+(R.length?(o?o+' en cours':'toutes levées'):'aucune')+'</small></h2>'+
   (PZ.length>1?'<svg class="plan" viewBox="0 0 160 100" aria-label="Plan avec les réserves"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
    PZ.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-6)+'" text-anchor="middle" class="plt">'+esc(p[0])+'</text>'}).join('')+pins(R)+'</svg>':'')+
-  R.map(function(r,i){var q=quiM(r.ent);return '<div class="rs"><span class="rn '+RST[r.st][1]+'">'+(i+1)+'</span><div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · '+esc(q.n)+'</small><span class="pill '+RST[r.st][1]+'">'+RST[r.st][0]+'</span></div></div>'}).join('')+
+  R.map(function(r,i){var q=quiM(r.ent),nx=(r.phx||[]).length;return '<div class="rs">'+vgn(r,i)+'<div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · '+esc(r.ent?q.n:ARTISAN+' choisit qui corrige')+(nx?' · '+nx+' photo'+(nx>1?'s':'')+' ajoutée'+(nx>1?'s':''):'')+'</small><span class="pill '+RST[r.st][1]+'">'+RST[r.st][0]+'</span>'+
+   (r.st!=='val'?'<button class="b2 pk fx" data-addph="'+i+'">'+IC.photo+'Ajouter une photo</button>':'')+'</div></div>'}).join('')+
   '<div id="sig"></div>'+(P.recep?'':'<button class="go" id="sg" style="margin-top:12px">'+IC.flag+'Signaler un problème</button>')+
   (P.recep?'<button class="ln" data-doc="Procès-verbal de réception" style="margin-top:12px"><span class="r">'+IC.docs+'</span><span class="tx"><b>Réception signée le '+esc(dt(P.recep.d))+'</b><small>Le procès-verbal, avec '+(P.recep.n||'aucune')+' réserve'+(P.recep.n>1?'s':'')+'</small></span>'+IC.chev+'</button>':'')+'</section>'+
  '</div><div class="col">'+
@@ -308,6 +313,7 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
  var th=$('#theme'),rt=document.documentElement,icT=function(){th.innerHTML=rt.getAttribute('data-theme')==='dark'?IC.soleil:IC.lune};icT();
  th.addEventListener('click',function(){var d=rt.getAttribute('data-theme')==='dark'?'light':'dark';rt.setAttribute('data-theme',d);try{localStorage.setItem('pc-theme',d)}catch(e){}icT()});
  [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});
+ [].forEach.call(document.querySelectorAll('[data-addph]'),function(b){b.addEventListener('click',function(){var r=P.res[+b.dataset.addph],d=new Date();r.phx=r.phx||[];r.phx.push([k.n,JC[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)]);sauver();toast('Photo ajoutée : '+ARTISAN+' la voit dans la réserve');client()})});
  var sg=$('#sg');if(sg)sg.addEventListener('click',function(){var F={pc:PZ.length===1?PZ[0][0]:'',ph:0};sg.hidden=true;
   $('#sig').innerHTML='<div class="sigf"><button class="phb" id="sph">'+IC.photo+'<span>Prendre une photo</span></button><textarea id="st" rows="2" placeholder="Ce qui ne va pas, en une phrase…"></textarea>'+
    (PZ.length>1?'<p class="muted" style="font-size:13px;margin:4px 0 6px">Où ?</p><div class="chs">'+PZ.map(function(p){return '<button class="b2 pk" data-pc="'+esc(p[0])+'" aria-pressed="false">'+esc(p[0])+'</button>'}).join('')+'</div>':'')+
@@ -325,6 +331,9 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
 /* TRÈS PRIVÉ (Cyril 19/11) : qui lit la conversation commune, juste au-dessus de la case */
 function luC(){var L=[ARTISAN].concat(P.ent.filter(function(e){return !e.coupe&&e.id!==moi.id}).map(function(e){return e.n}));if(P.cli&&P.cli.commun&&moi.id!=='cli')L.push(P.cli.n+' (client)');
  return '<p class="lu">'+IC.lock+'<span>Lu par : vous, '+esc(L.join(', '))+'</span></p>'}
+/* vignette aux coins arrondis, numéro dessus ; le client peut ajouter des photos à une réserve (Cyril 19/11) */
+var PHG=['linear-gradient(140deg,#C9B79C,#7E6A52)','linear-gradient(140deg,#9FB3C8,#506680)','linear-gradient(140deg,#C7C2B8,#7D776C)','linear-gradient(140deg,#B8A6C4,#6B5A7D)','linear-gradient(140deg,#A9C2B0,#5B7563)'];
+function vgn(r,i){return '<span class="vg'+(r.ph?'':' vide')+'" style="'+(r.ph?'background:'+PHG[i%PHG.length]:'')+'">'+(r.ph?'':IC.photo)+'<b class="rn '+RST[r.st][1]+'">'+(i+1)+'</b></span>'}
 function cmsgs(L){var dj='';return L.map(function(x){var j=String(x.h||'').split(' · ')[0],sep=j!==dj?'<div class="j"><span>'+esc(j)+'</span></div>':'';dj=j;var mien=x.de==='cli',q=quiM(x.de);
  return sep+'<div class="m'+(mien?' moi':'')+'">'+(mien?'':'<span class="av">'+icM(q.ic)+'</span>')+'<div class="c">'+(mien?'':'<span class="n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
   '<p class="bu">'+esc(x.t)+'</p><span class="h">'+esc(String(x.h||'').split(' · ')[1]||'')+'</span></div></div>'}).join('')}
