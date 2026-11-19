@@ -37,6 +37,7 @@
     ok:I('<path d="M5 12l5 5 9-10"/>'),
     moins:I('<path d="M6 12h12"/>'),plus:I('<path d="M12 6v12M6 12h12"/>'),
     taille:I('<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>'),
+    entretien:I('<rect x="3" y="5" width="18" height="8" rx="2.5"/><path d="M6.5 10h11"/><path d="M8 16.5c0 1.3-1 1.6-1 3M12 16.5c0 1.3-1 1.6-1 3M16 16.5c0 1.3-1 1.6-1 3"/>'),
     grille:I('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>')};
 
   /* ---------- les blocs disponibles : nom, tailles possibles (s petit 1×1, m large 2×1, l grand 2×2, h haut 1×2) ---------- */
@@ -85,6 +86,8 @@
   /* ---------- données (démo ou vraies demandes) ---------- */
   function nbBadge(id){var b=$(id);return b&&!b.hidden?+b.textContent||0:0}
   var pl=function(n,un,plus){return n>1?plus:un};
+  /* Contrats d'entretien (entretiens.js) : « Entretien à prévoir » */
+  function entRow(){var P=window.PCENT;if(!P||!P.on())return [0];var L=P.urgents();return [L.length,"entretien",pl(L.length,"Entretien","Entretiens"),"à prévoir","valider","entretiens",L[0]?L[0].nom:""]}
   function donnees(){
     if(vrai()){
       var L=null;try{L=JSON.parse(localStorage.getItem("pc-vrai-liste")||"null")}catch(e){}
@@ -96,6 +99,7 @@
       return {charge:!!L,total:D.length,urgent:u,afaire:[[a.length,"predevis","Pré-devis","à valider","valider","devis",a[0]?a[0].client:""],
         [f.length,"fournisseur","Prix fournisseur","attendu"+(f.length>1?"s":""),"suivre","devis",f[0]?f[0].client:""],
         [nbBadge("#badge-d"),"depense",pl(nbBadge("#badge-d"),"Dépense","Dépenses"),"à ranger","ranger","depenses",""],
+        entRow(),
         [o.length,"attente",pl(o.length,"Autre demande","Autres demandes"),"en cours","suivre","devis",""]]}}
     var X=window.PCX||{},DD=X.D||[],CH=X.CH||{};
     var av=nbBadge("#badge")||DD.filter(function(d){return d.statut==="todo"}).length;
@@ -107,6 +111,7 @@
         [nf,"facture",pl(nf,"Facture","Factures"),"à envoyer","envoyer","factures","préparée pour vous"],
         [fo,"fournisseur","Prix fournisseur",fo>1?"ont changé":"a changé","valider","devis","M. Martin · 2 fenêtres PVC"],
         [nd,"depense",pl(nd,"Dépense","Dépenses"),"à ranger","ranger","depenses","ticket sans chantier"],
+        entRow(),
         [sr,"attente",pl(sr,"Devis envoyé","Devis envoyés"),"sans réponse","suivre","devis",""],
         [ch,"chantier",pl(ch,"Chantier","Chantiers"),"en cours","suivre","chantiers",""]]}}
   function phase(nom){nom=String(nom||"");return /factur|pay|solde|termin|clos/i.test(nom)?2:/chantier|accept|sign|acompte|travaux|planif/i.test(nom)?1:0}
@@ -163,7 +168,7 @@
       MOIS.map(function(x,k){return '<button type="button" data-pk class="bar'+(k===sel?" on":"")+(k===5?" cour":"")+'" data-mois="'+k+'" aria-label="'+x[1]+" : "+eur0(x[2])+'"><span class="bar-v">'+(x[2]/1000).toLocaleString("fr-FR",{maximumFractionDigits:1})+' k</span><span class="bar-f"><span style="height:'+(x[2]/max*100).toFixed(1)+'%"></span></span><span class="bar-m">'+x[0]+"</span></button>"}).join("")+
       "</div></div>"};
   /* Agenda : la semaine en pastilles, puis les rendez-vous du jour choisi (exemple du Planning) */
-  var JS=["Lun","Mar","Mer","Jeu","Ven","Sam"],KN={run:"Chantier",plan:"Chantier prévu",done:"Chantier",visit:"Visite",pc:"Point ProClik",free:"Libre"};
+  var JS=["Lun","Mar","Mer","Jeu","Ven","Sam"],KN={ent:"Entretien",run:"Chantier",plan:"Chantier prévu",done:"Chantier",visit:"Visite",pc:"Point ProClik",free:"Libre"};
   function evs(iso){var E=(window.PCX&&PCX.EV)||[];return E.filter(function(e){return e.d===iso&&e.k!=="free"}).sort(function(a,b){return a.s<b.s?-1:1})}
   var iso=function(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)};
   R.agenda=function(t){var auj=new Date(2026,9,16),lun=new Date(auj);lun.setDate(auj.getDate()-((auj.getDay()+6)%7));
@@ -372,6 +377,7 @@
     if((el=e.target.closest("[data-chouv]"))){var idc=el.dataset.chouv,nc=$("#nb-chantiers")||$("#tt-chantiers");if(nc)nc.click();setTimeout(function(){if(window.PCCH)PCCH.ouvrir(idc)},120);return}
     if((el=e.target.closest("[data-jour]"))){acc._jour=el.dataset.jour;acc._h=null;return rendre()}
     if((el=e.target.closest("[data-nv]"))){var q=$$(".pcq button",ancien)[+el.dataset.nv];if(q)q.click();return}
+    if((el=e.target.closest("[data-accv=entretiens]"))){var tc=$("#nb-clients")||$("#tt-clients");if(tc)tc.click();var sg=$('[data-clseg="ent"]');if(sg)sg.click();return}
     if((el=e.target.closest("[data-accv]"))){var n=$("#nb-"+el.dataset.accv)||$("#tt-"+el.dataset.accv);if(n)n.click();return}
     if(e.target.closest("[data-accdemo]")){var t=$("#todo [data-open]");if(t)t.click()}
     else if(e.target.closest("[data-acctout]")){var d=$("#nb-devis")||$("#tt-devis");if(d)d.click()}
@@ -421,6 +427,7 @@
   if(hello){salut();new MutationObserver(salut).observe(hello,{childList:true,characterData:true,subtree:true})}
   rendre();
   // vrai.js réécrit sa liste à chaque chargement, et les pastilles des onglets bougent : on suit le mouvement.
+  document.addEventListener("pc-ent",function(){acc._h=null;plusTard()});
   new MutationObserver(plusTard).observe(ancien,{childList:true,subtree:true});
   var etatV=vrai();
   new MutationObserver(function(){var v=vrai();if(v!==etatV){etatV=v;acc._h=null;rendre()}}).observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
