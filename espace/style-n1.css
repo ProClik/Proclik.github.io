@@ -346,3 +346,42 @@ html body .tdb .cm-c{gap:2px}
 html body .tdb .cm-ic{display:grid;place-items:center;width:28px;height:28px;margin-bottom:4px;border-radius:9px;background:var(--n1-teinte);color:var(--n1-fg,var(--fg))}
 html body .tdb .cm-ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:420px){html body .tdb .cm-c b{font-size:15px}}
+
+/* §21 « Le point du jour » sublimé (Cyril, 19/11 : « la partie la plus importante quand on ouvre l'appli »). Trois versions à essayer (?point=1|2|3) :
+   1 le ciel (lumière qui change matin / midi / soir + trame de plan), 2 l'arc du jour (point laiton = maintenant), 3 le prochain rendez-vous en grand */
+html body .tdb .w[data-w=point]{position:relative;overflow:hidden}
+html body .tdb .pt-ciel{position:absolute;inset:0;pointer-events:none;border-radius:inherit;overflow:hidden;
+  background-image:radial-gradient(color-mix(in srgb,var(--n1-nuit-fg) 9%,transparent) 1px,transparent 1.2px);background-size:18px 18px}
+html body .tdb .pt-ciel i{position:absolute;border-radius:50%;display:block}
+html body .tdb .pt-ciel i:nth-child(1){width:300px;height:300px;top:-150px;right:-110px;background:radial-gradient(closest-side,color-mix(in srgb,var(--n1-laiton) 42%,transparent),transparent)}
+html body .tdb .m-midi .pt-ciel i:nth-child(1){width:420px;height:300px;top:-170px;right:auto;left:50%;margin-left:-210px;background:radial-gradient(closest-side,color-mix(in srgb,var(--n1-laiton) 50%,transparent),transparent)}
+html body .tdb .m-soir .pt-ciel i:nth-child(1){top:auto;bottom:-170px;right:auto;left:-120px;background:radial-gradient(closest-side,color-mix(in srgb,var(--n1-laiton) 26%,transparent),transparent)}
+html body .tdb .m-soir .pt-ciel i:nth-child(2){width:2px;height:2px;top:18%;right:12%;background:var(--n1-nuit-fg);opacity:.75;
+  box-shadow:-40px 22px 0 0 color-mix(in srgb,var(--n1-nuit-fg) 60%,transparent),-95px 6px 0 -.3px var(--n1-nuit-fg),-150px 30px 0 0 color-mix(in srgb,var(--n1-nuit-fg) 50%,transparent),-20px 60px 0 -.3px var(--n1-nuit-fg),-210px 14px 0 0 color-mix(in srgb,var(--n1-nuit-fg) 45%,transparent)}
+html body .tdb .pt.v1,html body .tdb .pt.v2,html body .tdb .pt.v3{position:relative}
+html body .tdb .pt.v1>*:not(.pt-ciel),html body .tdb .pt.v2>*:not(.pt-ciel),html body .tdb .pt.v3>*:not(.pt-ciel){position:relative;z-index:1}
+html body .tdb .pt[class*=" v"] .pt-ciel{inset:-18px}
+/* 2 : l'arc du jour */
+html body .tdb .pa{position:relative;aspect-ratio:300/90;margin:6px 4px 4px}
+html body .tdb .pa svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+html body .tdb .pa-f{fill:none;stroke:color-mix(in srgb,var(--n1-nuit-fg) 30%,transparent);stroke-width:1.6;stroke-dasharray:2 5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+html body .tdb .pa-d{fill:none;stroke:var(--n1-laiton);stroke-width:2.4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+html body .tdb .pa-e{position:absolute;display:grid;place-items:center;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:var(--n1-nuit);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--n1-nuit-fg) 45%,transparent);color:var(--n1-nuit-fg)}
+html body .tdb .pa-e.fait{opacity:.5}
+html body .tdb .pa-e svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+html body .tdb .pa-n{position:absolute;width:14px;height:14px;transform:translate(-50%,-50%);border-radius:50%;background:var(--n1-laiton);box-shadow:0 0 0 5px color-mix(in srgb,var(--n1-laiton) 28%,transparent);animation:paN 2.6s ease-in-out infinite}
+@keyframes paN{50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--n1-laiton) 10%,transparent)}}
+@media (prefers-reduced-motion:reduce){html body .tdb .pa-n{animation:none}}
+html body .tdb .pa-a,html body .tdb .pa-z{position:absolute;bottom:-4px;font-size:11px;font-weight:700;opacity:.6}
+html body .tdb .pa-a{left:0}html body .tdb .pa-z{right:0}
+/* 3 : le prochain rendez-vous en grand */
+html body .tdb .pgr{display:grid;gap:10px;padding-bottom:14px;border-bottom:1px solid color-mix(in srgb,var(--n1-nuit-fg) 14%,transparent)}
+html body .tdb .pgr-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+html body .tdb .pgr-h b{font-size:48px;line-height:1;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+html body .tdb .pgr-h small{font-size:14px;font-weight:800;color:var(--n1-laiton)}
+html body .tdb .pgr-t{display:flex;align-items:center;gap:12px;min-width:0}
+html body .tdb .pgr-t>span:nth-child(2){display:grid;gap:1px;min-width:0;flex:1}
+html body .tdb .pgr-t b{font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .pgr-t small{font-size:13px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .tdb .pgr-go{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:color-mix(in srgb,var(--n1-nuit-fg) 13%,transparent);color:var(--n1-nuit-fg);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+html body .tdb .pgr-go svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}

@@ -176,7 +176,7 @@
   R.jour=function(t){var soir=moment()==="soir",d=soir?prochain():AUJ(),L=d?evs(iso(d)):[],max=t==="m"?2:4;
     var dem=d&&soir&&iso(d)===iso(new Date(AUJ().getTime()+864e5)),nom=d?d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):"";
     var titre=soir?(dem?"Demain":"Prochaine journée"):"Ma journée",sous=soir?nom:"";
-    var now=new Date(),nm=now.getHours()*60+now.getMinutes(),ic=-1;
+    var nm=nowMin(),ic=-1;
     if(!soir)L.forEach(function(e,k){if(ic<0&&hm(e.e||e.s)>nm)ic=k});
     var h=tete("agenda",titre,sous?'<span class="w-sub">'+esc(sous)+"</span>":(L.length?'<span class="w-sub">'+L.length+" rendez-vous</span>":""));
     if(!L.length)return h+'<div class="w-rien"><b>'+(soir?"Rien de prévu pour l'instant":"Rien de prévu aujourd'hui")+"</b><span>"+(soir?"Un créneau tout neuf à offrir à un client.":"Une journée pour avancer les devis. Ou le rangement du camion.")+"</span></div>"+
@@ -186,9 +186,29 @@
         (go?'<button type="button" class="jr-go" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg><span>Y aller</span></button>':"")+"</li>"}).join("")+(L.length<=max?jli("k-fin",JI.fin,"","Fin de journée","On range les outils, et à demain"):"")+"</ol>"+
       (L.length>max?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":'<button type="button" class="af-plus" data-accv="planning">Tout le planning ›</button>')};
   /* « Le point du matin / du soir » : la journée racontée en deux phrases, un petit mot léger, et la seule chose à faire en premier */
+  /* Trois façons de sublimer le point du jour, à essayer : ?point=1 (le ciel), 2 (l'arc du jour), 3 (le prochain en grand) */
+  var PV=(location.search.match(/[?&]point=([123])/)||[])[1]||"";
+  function nowMin(){if(forceM)return {matin:500,midi:750,soir:1140}[forceM];var d=new Date();return d.getHours()*60+d.getMinutes()}
+  function duree(m){m=Math.max(0,Math.round(m));var h=Math.floor(m/60),n=m%60;return h?h+"\u00a0h"+(n?"\u00a0"+("0"+n).slice(-2):""):n+"\u00a0min"}
+  /* l'arc du jour : de 6 h à 20 h, comme la course du soleil ; le point laiton = maintenant, chaque rendez-vous à sa place */
+  function arc(L){var A=360,Z=1200,P0=[4,86],P1=[150,-26],P2=[296,86];
+    function pos(m){var t=Math.min(1,Math.max(0,(m-A)/(Z-A))),u=1-t;return [u*u*P0[0]+2*u*t*P1[0]+t*t*P2[0],u*u*P0[1]+2*u*t*P1[1]+t*t*P2[1]]}
+    var n=nowMin(),pts=[],k;for(k=0;k<=40;k++){var q=pos(A+(Z-A)*k/40);pts.push(q[0].toFixed(1)+","+q[1].toFixed(1))}
+    var done=[];for(k=0;k<=40;k++){var mm2=A+(Z-A)*k/40;if(mm2>n)break;var q2=pos(mm2);done.push(q2[0].toFixed(1)+","+q2[1].toFixed(1))}
+    var pn=pos(n),pc=function(p){return 'left:'+(p[0]/300*100).toFixed(2)+'%;top:'+(p[1]/90*100).toFixed(2)+'%'};
+    return '<div class="pa" aria-hidden="true"><svg viewBox="0 0 300 90" preserveAspectRatio="none"><polyline class="pa-f" points="'+pts.join(" ")+'"/>'+(done.length>1?'<polyline class="pa-d" points="'+done.join(" ")+'"/>':"")+"</svg>"+
+      L.map(function(e){return '<span class="pa-e k-'+e.k+(hm(e.e||e.s)<n?" fait":"")+'" style="'+pc(pos(hm(e.s)))+'">'+(JI[e.k]||IC.agenda)+"</span>"}).join("")+
+      '<span class="pa-n" style="'+pc(pn)+'"></span><small class="pa-a">6 h</small><small class="pa-z">20 h</small></div>'}
   R.point=function(t,D){var P=acc._pt||{},u=D.urgent,mm=moment(),soir=mm==="soir",midi=mm==="midi";
-    return '<div class="pt"><div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir":midi?"Le point de midi":"Le point du matin")+"</small></div>"+
-      (P.lignes?'<ul class="pt-l">'+P.lignes.map(function(x){return '<li><span class="pt-li">'+x[0]+'</span>'+(x[1]?'<b class="pt-hh">'+x[1]+"</b>":"")+"<span>"+x[2]+"</span></li>"}).join("")+"</ul>":'<p class="pt-t">'+(P.html||"")+"</p>")+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
+    var L=evs(iso(AUJ())),n=nowMin(),nx=null;L.forEach(function(e){if(!nx&&hm(e.e||e.s)>n)nx=e});
+    var big="";if(PV==="3"){var nx2=null;if(midi)L.forEach(function(e){if(!nx2&&hm(e.s)>n)nx2=e});var tg=soir?(function(){var p=prochain();return p?evs(iso(p))[0]:null})():(nx2||nx);
+      if(tg){var enc=!soir&&hm(tg.s)<=n,qd=soir?"Demain":enc?"En ce moment, jusqu'à "+hTxt(tg.e):"Dans "+duree(hm(tg.s)-n);
+        big='<div class="pgr"><div class="pgr-h"><b>'+hTxt(tg.s)+'</b><small>'+qd+'</small></div><div class="pgr-t"><span class="pt-li">'+(JI[tg.k]||IC.agenda)+"</span><span><b>"+esc(tg.t)+"</b><small>"+esc(tg.w||"")+"</small></span>"+
+          (!soir&&lieu(tg)&&tg.k!=="pc"?'<button type="button" class="pgr-go" data-gps="'+esc(lieu(tg))+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L20 4l-7.5 16-2-6.5z"/></svg>Y aller</button>':"")+"</div></div>"}}
+    var lignes=P.lignes||[];if(PV==="3")lignes=lignes.filter(function(x){return !x[1]});
+    return '<div class="pt'+(PV?" v"+PV:"")+" m-"+mm+'">'+(PV?'<span class="pt-ciel" aria-hidden="true"><i></i><i></i><i></i></span>':"")+'<div class="pt-h"><span class="pt-ic">'+(soir?LUNE:midi?MIDI:SOLEIL)+"</span><small>"+(soir?"Le point du soir":midi?"Le point de midi":"Le point du matin")+"</small></div>"+
+      (PV==="2"?arc(L):"")+big+
+      (lignes.length?'<ul class="pt-l">'+lignes.map(function(x){return '<li><span class="pt-li">'+x[0]+'</span>'+(x[1]?'<b class="pt-hh">'+x[1]+"</b>":"")+"<span>"+x[2]+"</span></li>"}).join("")+"</ul>":'<p class="pt-t">'+(P.html||"")+"</p>")+(P.mot?'<p class="pt-mot">'+esc(P.mot)+"</p>":"")+
       (u?'<button type="button" class="pt-go" '+u.attr+'><span><small>'+(soir?"À valider ce soir":midi?"Pendant la pause":"Pour commencer")+" · "+esc(String(u.qui).split(" · ")[0])+'</small><b>Vérifier le pré-devis</b></span><i aria-hidden="true">→</i></button>':"")+"</div>"};
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   /* Devis signés et taux de réussite en tête (Cyril, 19/11 : « pour motiver »), puis trois montants avec leur icône */
@@ -341,7 +361,7 @@
     if(soir){var pq=prochain(),Lq=pq?evs(iso(pq)):[];Lg.push(vl);
       if(Lq.length){var qj=iso(pq)===iso(new Date(j.getTime()+864e5))?"Demain":pq.toLocaleDateString("fr-FR",{weekday:"long"}).replace(/^./,function(c){return c.toUpperCase()});
         Lq.slice(0,1).forEach(function(e,k){Lg.push([JI[e.k]||IC.agenda,hTxt(e.s),(k?"":qj+" · ")+esc(e.t)])})}}
-    else{var nm2=new Date().getHours()*60+new Date().getMinutes(),i2=0;L.forEach(function(e,k){if(!i2&&hm(m==="midi"?e.s:(e.e||e.s))>nm2)i2=k+1});i2=i2?i2-1:0;
+    else{var nm2=nowMin(),i2=0;L.forEach(function(e,k){if(!i2&&hm(m==="midi"?e.s:(e.e||e.s))>nm2)i2=k+1});i2=i2?i2-1:0;
       L.slice(i2,i2+1).forEach(function(e){Lg.push([JI[e.k]||IC.agenda,hTxt(e.s),esc(e.t)+(lieu(e)&&e.k!=="pc"?' <small>'+esc(lieu(e))+"</small>":"")])});if(!L.length)Lg.push([IC.agenda,"","Rien de prévu au planning"]);Lg.push(vl)}
     acc._pt={html:h2,lignes:Lg,mot:mo[jd%mo.length]};acc.classList.toggle("acc-pro",etat.p==="auto");document.documentElement.classList.toggle("acc-pro-on",etat.p==="auto");salut()}
   // Salutation comme la planche : « Bonsoir » après 18 h, sans point final
