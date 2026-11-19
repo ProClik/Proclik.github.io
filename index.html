@@ -686,6 +686,25 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
  .duo.duo .f1{margin-right:-11vw}
  .duo.duo .f3{margin-left:-11vw}
 }
+
+/* PRO / TEAM / ARCHI : Voir plus + galerie de vrais écrans */
+.esp3 .e3-plus{all:unset;box-sizing:border-box;cursor:pointer;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:9px 14px 9px 16px;border-radius:999px;font-weight:700;font-size:14px;color:var(--fg);background:var(--bg);box-shadow:0 0 0 1px var(--line),0 1px 2px rgba(14,19,34,.06);transition:transform .25s,background .25s}
+.esp3 .e3-plus:hover{transform:translateY(-1px)}.esp3 .e3-plus:focus-visible{outline:2px solid var(--laiton);outline-offset:2px}
+.esp3 .e3-plus svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;color:var(--laiton)}
+.gal .vw-in{background:#0E1322}
+.gal .vw-in img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transform:scale(.985);transition:opacity .4s,transform .5s cubic-bezier(.2,.9,.2,1)}
+.gal .vw-in img.on{opacity:1;transform:none}
+.gal .vw-ch button.op{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--laiton) 60%,transparent)}
+.gal .vw-ch button small{margin-left:6px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--laiton)}
+.gal .vw-ch button[aria-selected=true] small{color:var(--laiton)}
+.gal .gal-c{font-size:14px;color:var(--fg);text-align:center;max-width:46ch;line-height:1.45;min-height:2.9em}
+.gal .gal-c span{display:block;font-size:12px;color:var(--muted)}
+.gal .gal-c b.op{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--laiton)}
+@media (prefers-reduced-motion:reduce){.gal .vw-in img{transition:none}}
+.gal .vw-ch{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none;width:100%;padding:2px 4px 4px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
+.gal .vw-ch::-webkit-scrollbar{display:none}
+.gal .vw-ch button{flex:none}
+body:has(.mod:not([hidden])) .h-cta{display:none}
 /* === Modernisation (aperçu 19/11) === */
 .univers::before{content:"";position:absolute;inset:-40px -2vw;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
 .univers{isolation:isolate}
@@ -912,13 +931,13 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
       <div class="g">
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span><div><span class="nom">PRO</span><span class="qui">Vous travaillez seul</span></div></div>
           <ul><li>Les demandes arrivent <b>rangées, avec le plan du client</b></li><li><b>Devis et factures conformes</b> en quelques touches</li><li><b>Agenda synchronisé</b> et carte de vos chantiers</li><li>Clients, dépenses et <b>chiffre d'affaires</b> au même endroit</li><li>Chaque matin, <b>le point du jour</b>. Et tout se dicte</li><li><b>Carte de visite virtuelle</b> avec votre QR code</li></ul>
-          <div class="px">À partir de <b>49 €</b> HT par mois</div></div>
+          <div class="px">À partir de <b>49 €</b> HT par mois</div><button type="button" class="pas e3-plus" data-k="p1" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5a6 6 0 0 1 12 0"/><circle cx="16.5" cy="7" r="2.6"/><path d="M15.5 13.2A5.2 5.2 0 0 1 21 18.5"/></svg></span><div><span class="nom">TEAM</span><span class="qui">Vous êtes plusieurs</span></div></div>
           <ul><li>Tout ce que fait PRO, <b>pour toute l'équipe</b></li><li><b>Le planning de l'équipe</b> : qui est sur quel chantier, quel jour</li><li><b>Chantier partagé dans le forfait</b>, SMS compris : conversation avec vos salariés</li><li>Vos sous-traitants et votre client : <b>accès gratuit le temps du chantier</b></li><li><b>Réserves sur le plan</b>, corrigées par vos équipes puis validées</li></ul>
-          <div class="px">À partir de <b>149 €</b> HT par mois</div></div>
+          <div class="px">À partir de <b>149 €</b> HT par mois</div><button type="button" class="pas e3-plus" data-k="p2" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 20V10l6-5 6 5v10"/><path d="M10 20v-5h4v5"/></svg></span><div><span class="nom">ARCHI</span><span class="qui">Vous menez le chantier des autres</span></div></div>
           <ul><li><b>Chantier partagé dans le forfait</b>, SMS compris : invitez les entreprises par un lien, rien à installer</li><li>Entreprises et client, s'il le souhaite : <b>accès gratuit à leur espace privé le temps du chantier</b></li><li>Chacune <b>ne voit que ce qui la concerne</b></li><li><b>Réserves sur le plan, réception signée</b> et son PV</li></ul>
-          <div class="px">À partir de <b>99 €</b> HT par mois<small>Jusqu'à 3 chantiers en cours (10 entreprises chacun). De 4 à 8 : 149 €, de 9 à 15 : 199 €, au-delà : sur devis.</small></div></div>
+          <div class="px">À partir de <b>99 €</b> HT par mois<small>Jusqu'à 3 chantiers en cours (10 entreprises chacun). De 4 à 8 : 149 €, de 9 à 15 : 199 €, au-delà : sur devis.</small></div><button type="button" class="pas e3-plus" data-k="p3" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
       </div>
     </div>
     <!-- cartes Espace / Site + Espace / Options retirées 19/11 : tout est dans la calculette -->
@@ -1056,6 +1075,36 @@ document.querySelectorAll('.onglets button').forEach(b=>b.addEventListener('clic
 
 
 (function(){
+  var GAL={
+   p1:[['Le point du jour','v-accueil','Chaque matin, votre journée et ce qui reste à valider.'],
+       ['Les demandes, avec le plan','e-predevis','La demande arrive rangée, avec le plan dessiné par le client.'],
+       ['Devis','v-devis','Vos devis en quelques touches, prêts à envoyer.'],
+       ['Factures conformes','v-factures','Acomptes, factures, payées : tout est suivi.'],
+       ['Agenda','v-planning','Votre semaine, synchronisée avec votre téléphone.'],
+       ['Carte des chantiers','e-carte','Vos chantiers, devis et visites sur la carte.'],
+       ['Clients','v-clients','Toutes vos fiches clients au même endroit.'],
+       ['Dépenses','v-f-depenses','Photo du ticket ou dictée, rangée par chantier.'],
+       ['Cliky','v-cliky-devis','Le pré-devis préparé pour vous, vous validez.',1],
+       ['Chantier partagé','e-conversation','La conversation du chantier, avec vos invités.',1],
+       ['Réservation','v-resa','Vos clients réservent un créneau et paient l’acompte.',1],
+       ['Réseaux sociaux','v-reseaux','Vos posts préparés, vous publiez.',1]],
+   p2:[['Planning de l’équipe','e-pl-equipe','Qui est sur quel chantier, quel jour.'],
+       ['Le chantier','v-chantier','Tout le chantier sur un écran : travaux, planning, finances.'],
+       ['Conversation','e-conversation','Vos salariés et sous-traitants au même endroit, SMS compris.'],
+       ['Vos invités','e-entreprises','Sous-traitants et client invités par un lien.'],
+       ['Côté sous-traitant','e-page-entreprise2','Ce qu’il voit : ses réserves et ses jours sur le chantier.'],
+       ['Réserves sur le plan','v-reserves','Chaque réserve placée sur le plan, corrigée puis validée.'],
+       ['Cliky','v-cliky-mat','La liste du matériel prête pour le fournisseur.',1],
+       ['Réservation','v-resa','Vos clients réservent un créneau et paient l’acompte.',1]],
+   p3:[['Vos entreprises','e-entreprises','Invitez les entreprises du chantier par un lien.'],
+       ['Côté entreprise','e-page-entreprise2','Chacune voit ses réserves et ses jours, rien d’autre.'],
+       ['Côté client','e-page-client','Votre client suit l’avancement, s’il le souhaite.'],
+       ['Conversation privée','e-conv-client','Une conversation à part avec le client.'],
+       ['Réserves sur le plan','e-page-client2','Les réserves placées sur le plan, avec photos.'],
+       ['Réception','e-reception','La réception pièce par pièce, avec le client.'],
+       ['Signature et PV','e-signature','Le client signe sur l’écran, le PV est prêt.'],
+       ['Cliky','v-cliky-devis','Le pré-devis préparé pour vous, vous validez.',1]]
+  };
   var D={
    s1:['Exemples','Votre site sur mesure','Un site léger et soigné, aux couleurs de votre métier. Touchez un nom pour passer d’un exemple à l’autre, puis faites défiler la page comme un client.',['Aux couleurs de votre entreprise','Rapide sur téléphone, simple à lire','Relié à votre Espace et à vos devis'],'sites'],
    a1:['Exemples','Carte de visite virtuelle','Une page à votre nom qui tient sur un seul écran. Touchez un métier pour voir sa carte, puis essayez-la avec votre doigt.',['Présentation, zone et horaires','Devis et rendez-vous sans changer de page','QR code pour le camion et vos devis'],'carte'],
@@ -1071,6 +1120,9 @@ document.querySelectorAll('.onglets button').forEach(b=>b.addEventListener('clic
    c6:['Compris','Plans chez le client','Dessinez le plan sur place, même avant d’avoir créé la fiche du client.',['« Plus tard » si vous n’avez pas le temps : le plan est gardé','Rattaché au client ensuite','Tous vos plans au même endroit'],['v-plan']],
    c7:['Compris','Votre GPS','Google Maps, Waze ou Plans d’Apple : l’Espace ouvre celui que vous préférez.',['Depuis la fiche client, le chantier ou le planning','Le dernier choisi passe en premier','Un appui, vous êtes en route'],['v-f-gps']],
    c8:['Compris','Votre accueil','Votre écran d’accueil se range comme celui de votre téléphone.',['Des blocs à déplacer du doigt','Trois dispositions toutes prêtes','Chiffres, journée, choses à faire : vous choisissez'],['v-f-accueil']],
+   p1:['Espace PRO','PRO · vous travaillez seul','Tout votre métier dans une seule appli : les demandes, les devis, les factures, l’agenda et vos chiffres.',['Les demandes arrivent rangées, avec le plan du client','Devis et factures conformes en quelques touches','Agenda synchronisé et carte de vos chantiers','Clients, dépenses et chiffre d’affaires au même endroit','Chaque matin, le point du jour. Et tout se dicte'],'galerie'],
+   p2:['Espace TEAM','TEAM · vous êtes plusieurs','Tout ce que fait PRO, pour toute l’équipe, avec le chantier partagé dans le forfait.',['Le planning de l’équipe : qui est sur quel chantier, quel jour','Chantier partagé et SMS compris','Sous-traitants et client : accès gratuit le temps du chantier','Réserves sur le plan, corrigées puis validées'],'galerie'],
+   p3:['Espace ARCHI','ARCHI · vous menez le chantier des autres','Le chantier partagé avec toutes les entreprises et votre client, jusqu’à la réception signée.',['Chantier partagé dans le forfait, SMS compris','Entreprises et client : accès gratuit à leur espace privé','Chacun ne voit que ce qui le concerne','Réserves sur le plan, réception signée et son PV'],'galerie'],
    o1:['En option','Cliky, l’IA ProClik','Votre assistant de bureau. Il prépare le travail avec vos habitudes de chantier, vous vérifiez et vous validez.',['Pré-devis prêt dès que la demande arrive','Vos habitudes par métier : isolation, cloisons, sols, carrelage, équipements…','Liste du matériel du chantier, prête pour le fournisseur','Factures fournisseur lues, prix et marge réelle à jour','Journée de chantier, trajets et votre vrai rythme'],['v-cliky-devis', 'v-devis']],
    b4:['Compris','Contrats d’entretien','Clim, pompe à chaleur : vos contrats d’entretien notés dans la fiche du client, et plus rien d’oublié.',['Rappel au client un mois avant','Relance s’il ne répond pas, puis « à appeler »','Rendez-vous d’entretien dans votre planning'],['v-f-entretiens']],
    o6:['En option','Chantier partagé','Invitez vos entreprises, vos salariés et votre client sur le chantier. Pour eux, rien à installer : un lien suffit. Option pour PRO : 39 € HT par mois, SMS compris, 2 chantiers partagés en cours avec 5 invités chacun. Déjà dans le forfait TEAM et ARCHI.',['Conversation de chantier, ce qui est décidé reste épinglé','Réserves posées sur le plan, corrigées puis validées','Réception pièce par pièce, signée à l’écran, avec son PV','Architectes : chaque entreprise ne voit que ce qui la concerne'],['v-reserves', 'v-conv']],
@@ -1137,12 +1189,26 @@ document.querySelectorAll('.onglets button').forEach(b=>b.addEventListener('clic
     mod.querySelector('.mod-v').animate([{opacity:inverse?1:0},{opacity:inverse?0:1}],{duration:inverse?360:500,fill:'forwards'});
     k.onfinish=fin;
   }
+  function galerie(host,k){
+    var L=GAL[k],n=0;
+    host.innerHTML='<div class="vw tel gal"><div class="vw-fr"><div class="vw-ph"><div class="vw-in">'+L.map(function(x,i){return '<img decoding="async" alt="'+x[0]+', dans le vrai Espace" src="vitrine/'+x[1]+'.jpg"'+(i?'':' class="on"')+'>'}).join('')+'</div></div><button type="button" class="vw-ar l" aria-label="Précédent"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button><button type="button" class="vw-ar r" aria-label="Suivant"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="vw-ch" role="tablist">'+L.map(function(x,i){return '<button type="button" role="tab" data-i="'+i+'"'+(x[3]?' class="op"':'')+'>'+x[0]+(x[3]?'<small>Option</small>':'')+'</button>'}).join('')+'</div><p class="vw-n gal-c"></p></div>';
+    var ch=host.querySelector('.vw-ch'),im=[].slice.call(host.querySelectorAll('.vw-in img')),cap=host.querySelector('.gal-c');
+    function va(i){n=(i+L.length)%L.length;im.forEach(function(m,j){m.classList.toggle('on',j===n)});[].forEach.call(ch.children,function(b,j){b.setAttribute('aria-selected',j===n)});
+      var sb=ch.children[n];if(ch.scrollWidth>ch.clientWidth)ch.scrollTo({left:sb.offsetLeft-(ch.clientWidth-sb.offsetWidth)/2,behavior:reduit?'auto':'smooth'});
+      cap.innerHTML=(L[n][3]?'<b class="op">Option</b> ':'')+L[n][2]+' <span>Vrai écran, client fictif.</span>'}
+    ch.addEventListener('click',function(e){var b=e.target.closest('button');if(b)va(+b.dataset.i)});
+    [].forEach.call(host.querySelectorAll('.vw-ar'),function(a){a.addEventListener('click',function(){va(n+(a.classList.contains('r')?1:-1))})});
+    var x0=null;host.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+    host.addEventListener('touchend',function(e){if(x0==null)return;var d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>45)va(n+(d<0?1:-1));x0=null});
+    mod._va=va;mod._n=function(){return n};va(0);
+  }
   function ouvre(btn){
     var d=D[btn.dataset.k];if(!d)return;src=btn;
     document.getElementById('mod-k').textContent=d[0];document.getElementById('mod-k').className='k in'+(d[0]==='En option'?' o':'');vis.innerHTML='';
     document.getElementById('mod-t').textContent=d[1];document.getElementById('mod-p').textContent=d[2];
     document.getElementById('mod-l').innerHTML=d[3].map(function(x){return '<li>'+x+'</li>'}).join('');
-    mod.classList.toggle('large',d[4]==='sites');
+    mod.classList.toggle('large',d[4]==='sites'||d[4]==='galerie');
+    if(d[4]==='galerie')galerie(vis,btn.dataset.k);else
     if(d[4]==='carte'||d[4]==='sites')viewer(vis,d[4],+btn.dataset.i||0,btn.dataset.m||'');
     else if(Array.isArray(d[4]))vis.innerHTML='<div class="tels n'+d[4].length+'">'+d[4].map(function(f){return '<div class="tel-c"><img decoding="async" loading="lazy" src="vitrine/'+f+'.jpg" alt=""></div>'}).join('')+'</div>';
     else if(btn.dataset.k==='a3')vis.innerHTML='<div class="vis-dicte"><div class="gros-ic">'+btn.querySelector('svg').outerHTML+'</div><div class="onde"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bulle">« Ajouter 3 fenêtres PVC au devis Durand »</div></div>';
