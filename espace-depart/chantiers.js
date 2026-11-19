@@ -179,6 +179,7 @@ function resume(c){var a=avc(c),f=cfin(c),o=dos(c),reel=(c.reel||[]).reduce(func
  if(!c.fin.ht)T.push(['docs','+','Créer le devis de ce chantier']);
  else if(!c.fin.ac&&!(c.docs||[]).some(function(d){return d.ty==='ac'}))T.push(['fin','€','Facture d\'acompte à préparer']);
  if(a>=100&&f.rest&&!c.soldeCree)T.push(['fin','€','Facture de solde à préparer']);
+ var P0=c.part;if(P0&&!P0.termine&&P0.ent.some(function(e){return !e.coupe})){var jf=joursAvant(accesFin(c));if(jf<=3)T.push(['equipe','!',jf<0?'Accès des entreprises dépassé : prolonger ou terminer':'Accès des entreprises jusqu\'au '+dt(accesFin(c))+' : on prolonge ?'])}
  var nl=nonLus(c);if(nl)T.push(['equipe',nl,nl>1?'Nouveaux messages des entreprises':'Nouveau message d\'une entreprise']);
  var Lv=liv(c).filter(function(x){return !x.passe});if(Lv.length)T.push(['four',Lv.length,'Livraison'+(Lv.length>1?'s':'')+' prévue'+(Lv.length>1?'s':'')+' · '+Lv[0].quand]);
  var suite=c.st==='done'?'Chantier terminé.':a>=100?'Travaux finis : la facture de solde peut partir.':c.ouv.filter(function(x){return x[2]<100})[0];
@@ -421,7 +422,7 @@ function sousTraitants(c,av){var P=window.PCPLAN&&PCPLAN.st;if(!P)return '';var 
  var h='<div class="card" id="ch-st"><div class="row" style="margin-bottom:8px"><b>Sous-traitants</b><span style="font-size:12px;color:var(--muted)">'+(ids.length?ids.length+(ids.length>1?' viennent':' vient'):'personne de prévu')+'</span></div>';
  if(!ids.length)h+='<p class="hint" style="margin:4px 0 0">Un électricien, un plombier qui vient ? Ajoutez ses jours : il les reçoit par SMS, sans appli.</p>';
  ids.forEach(function(id){var t=P.de(id),J=P.jours(id,c.id);if(!t)return;
-  h+='<div style="padding:10px 0;border-bottom:1px solid var(--line,rgba(127,127,127,.18))"><div style="display:flex;gap:10px;align-items:flex-start"><i style="flex:none;width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--k-st)"></i><span style="min-width:0"><b>'+esc(t.n)+'</b><br><small style="color:var(--muted)">'+esc(t.m)+' · '+J.map(function(e){var d=new Date(e.d+'T12:00:00');return JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]}).join(', ')+'</small></span></div>'+
+  h+='<div style="padding:10px 0;border-bottom:1px solid var(--line,rgba(127,127,127,.18))"><div style="display:flex;gap:10px;align-items:flex-start"><span class="cp-mi" title="'+esc(t.m)+'">'+metSvg(metDe(t.m))+'</span><span style="min-width:0"><b>'+esc(t.n)+'</b><br><small style="color:var(--muted)">'+esc(t.m)+' · '+J.map(function(e){var d=new Date(e.d+'T12:00:00');return JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]}).join(', ')+'</small></span></div>'+
    '<button type="button" class="btn" data-stsms="'+esc(id)+'" style="width:100%;margin-top:8px">Lui envoyer ses jours par SMS</button></div>'});
  if(c.st!=='done')h+='<button type="button" class="btn" id="ch-stadd" style="width:100%;margin-top:12px">Faire venir un sous-traitant</button>';
  return h+'</div>'}
@@ -482,26 +483,54 @@ function lier(c){var id=c.id;
    Elles reçoivent un lien par SMS, sans appli : elles voient leurs jours, le plan, les documents et la conversation, jamais les prix.
    Tout le monde lit la même conversation ; ce qui est décidé est épinglé en haut. Ici tout est en démonstration : rien n'est envoyé. */
 function part(c){if(c.part)return c.part;
- c.part=c.id==='alpes'?{ent:[{id:'st-elec',n:'Élec Belledonne',m:'Électricien',vu:'vu ce matin'},{id:'st-plomb',n:'Plomberie du Vercors',m:'Plombier',vu:'vu hier'}],
+ c.part=c.id==='alpes'?{ent:[{id:'st-elec',n:'Élec Belledonne',m:'Électricien',ic:'elec',vu:'vu ce matin',code:'7K4M',par:'sms'},{id:'st-plomb',n:'Plomberie du Vercors',m:'Plombier',ic:'plomb',vu:'vu hier',code:'Q2P9',par:'mail'}],
   msgs:[{de:'moi',t:'Faux plafond : dalles 60 × 60 blanches, validé avec le client.',h:'lun. 12/10 · 9 h 05',epi:1,lu:2},
    {de:'st-elec',t:'Je passe jeudi pour les spots. Le plafond doit être fermé côté accueil avant.',h:'mer. 14/10 · 18 h 20',lu:2},
    {de:'st-plomb',t:'Rien au plafond pour moi, je viens seulement pour le lavabo de l\'accueil.',h:'jeu. 15/10 · 8 h 10',lu:2}],nl:2}
   :{ent:[],msgs:[],nl:0};
  return c.part}
+/* Icône du métier (Cyril 19/11) : choisie toute seule d'après le métier tapé, modifiable ; la même partout (conversation, planning, chantier) */
+var MET=[
+ ['elec','Électricité',/elec|élec/i,'<path d="M13 3 6 13.5h5L10 21l7-10.5h-5z"/>'],
+ ['plomb','Plomberie',/plomb|sanit/i,'<path d="M12 3.5s5.5 6.2 5.5 10.2A5.5 5.5 0 0 1 6.5 13.7C6.5 9.7 12 3.5 12 3.5z"/>'],
+ ['placo','Plâtrerie',/pl[aâ]tr|placo|plaqu|isol|cloison/i,'<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M10 4v16M14 4v16"/>'],
+ ['peint','Peinture',/peint|d[ée]co/i,'<rect x="4" y="4" width="13" height="6" rx="1.5"/><path d="M17 7h2.5v5H11v3"/><rect x="9.5" y="15" width="3" height="6" rx="1"/>'],
+ ['carre','Carrelage',/carrel|fa[iï]enc/i,'<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 12h16M12 4v16"/>'],
+ ['menu','Menuiserie',/menuis|fen[eê]tr|porte|bois/i,'<path d="M6 21V4h12v17M3.5 21h17"/><circle cx="14.8" cy="12.5" r=".9" fill="currentColor"/>'],
+ ['maco','Maçonnerie',/ma[cç]on|gros/i,'<path d="M3 8h18M3 13h18M3 18h18M8 8v5M15 8v5M11 13v5M18 13v5M5 13v5"/><path d="M3 4h18v16H3z"/>'],
+ ['clim','Chauffage, clim',/clim|chauff|pompe|ventil/i,'<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.5 12 7l2.5-2.5M9.5 19.5 12 17l2.5 2.5"/>'],
+ ['toit','Toiture',/toit|couvr|charpent|zing/i,'<path d="M3 13 12 5l9 8"/><path d="M6 11v8h12v-8"/>'],
+ ['sol','Sols',/sol|parquet|moquet|lino/i,'<path d="M3 17 9 7h12l-6 10z"/><path d="M7 10.5h12M5 14h12"/>'],
+ ['archi','Architecte',/archi|ma[iî]tre|bureau/i,'<path d="M4 20 12 4l8 16"/><path d="M7.5 13h9"/>'],
+ ['autre','Autre',/./,'<path d="M14.5 5.5a4 4 0 0 0-5 5L4 16v4h4l5.5-5.5a4 4 0 0 0 5-5L16 12l-4-4z"/>']];
+function metDe(m){for(var i=0;i<MET.length-1;i++)if(MET[i][2].test(m||''))return MET[i][0];return 'autre'}
+function metSvg(k){var x=MET.filter(function(y){return y[0]===k})[0]||MET[MET.length-1];return I(x[3])}
+function icEnt(e){return metSvg(e&&(e.ic||metDe(e.m)))}
+/* Accès des entreprises : un code par entreprise, valable jusqu'à la date choisie (fin du chantier par défaut) */
+function addJ(iso,n){var d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return X.iso(d)}
+function auj(){return X.iso(X.TODAY||new Date())}
+function finCh(c){return c.d2||(c.id==='alpes'?'2026-10-19':addJ(auj(),30))}
+function accesFin(c){var P=part(c);if(!P.fin)P.fin=finCh(c);return P.fin}
+function codeNeuf(){var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];return r}
+function joursAvant(iso){return Math.round((new Date(iso+'T12:00:00')-new Date(auj()+'T12:00:00'))/864e5)}
 function nonLus(c){return c.part?c.part.nl||0:(c.id==='alpes'?2:0)}
 function qui(c,de){if(de==='moi')return {n:'Vous',m:''};var e=part(c).ent.filter(function(x){return x.id===de})[0];return e||{n:'Entreprise',m:''}}
 function ini(n){return String(n||'?').split(/\s+/).filter(function(w){return w&&!/^(du|de|des|la|le|les|et)$/i.test(w)}).map(function(w){return w[0]}).join('').slice(0,2).toUpperCase()}
 function msgHTML(c,x,i){var q=qui(c,x.de),moi=x.de==='moi',hh=String(x.h||'').split(' · '),n=part(c).ent.length,tous=n&&(x.lu||0)>=n;
- return '<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av">'+esc(ini(q.n))+'</span>')+'<div class="cp-c">'+(moi?'':'<span class="cp-n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
+ return '<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av" title="'+esc(q.m||'')+'">'+icEnt(q)+'</span>')+'<div class="cp-c">'+(moi?'':'<span class="cp-n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
   '<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p>'+(x.epi?'':'<button type="button" class="cp-pin" data-cpepi="'+i+'" aria-label="Épingler comme décision" title="Épingler comme décision">'+IC.epingle+'</button>')+'</div>'+
   '<span class="cp-h">'+esc(hh[1]||hh[0]||'')+' · <span class="'+(tous?'ok':'')+'">'+(tous?'✓✓ lu par tous':x.lu?'✓ lu par '+x.lu+' sur '+n:'✓ envoyé')+'</span>'+(x.epi?' · <span class="la">épinglé</span>':'')+'</span></div></div>'}
 function jourDe(h){return String(h||'').split(' · ')[0]}
 function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
  var h='<div class="card" id="cp-ent"><div class="row" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b><span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span></div>';
  if(!E.length)h+='<p class="hint" style="margin:4px 0 0">Invitez les entreprises qui travaillent ici. Elles reçoivent un lien par SMS, sans appli, et retrouvent tout au même endroit.</p>';
- E.forEach(function(e){h+='<div class="cp-e"><i></i><span class="tx"><b>'+esc(e.n)+'</b><small>'+esc(e.m)+' · '+esc(e.vu||'invitation envoyée')+'</small></span></div>'});
- if(c.st!=='done')h+='<button type="button" class="btn go cf-go" id="cp-inv" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Inviter une entreprise</span></span></button>';
- if(E.length)h+='<button type="button" class="btn" id="cp-voir" style="width:100%;margin-top:10px">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
+ var fin=accesFin(c),jf=joursAvant(fin);
+ if(E.length&&!P.termine&&jf<=3)h+='<div class="cp-rap"><b>'+(jf<0?'L\'accès des entreprises est dépassé':'Le chantier se termine '+(jf===0?'aujourd\'hui':jf===1?'demain':dt(fin)))+'</b><small>Les entreprises gardent l\'accès jusqu\'au '+dt(fin)+'.</small><div class="cp-rb"><button type="button" class="btn" id="cp-pro">Prolonger d\'une semaine</button><button type="button" class="btn" id="cp-fin1">Chantier terminé</button></div></div>';
+ E.forEach(function(e,i){var off=e.coupe||P.termine;h+='<button type="button" class="cp-e'+(off?' off':'')+'" data-cpe="'+i+'"><span class="cp-mi">'+icEnt(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+esc(e.m)+' · '+(off?'accès terminé':esc(e.vu||'invitation envoyée')+' · jusqu\'au '+dt(fin))+'</small></span><span class="cp-go">›</span></button>'});
+ if(P.termine)h+='<p class="hint" style="margin:10px 0 0">Chantier terminé : les accès sont coupés, et chaque entreprise a reçu le récapitulatif par e-mail (décisions, plans, conversation).</p>';
+ if(c.st!=='done'&&!P.termine)h+='<button type="button" class="btn go cf-go" id="cp-inv" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Inviter une entreprise</span></span></button>';
+ if(E.length&&!P.termine)h+='<button type="button" class="btn" id="cp-voir" style="width:100%;margin-top:10px">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
+ if(E.length&&!P.termine&&jf>3)h+='<button type="button" class="btn cp-fin" id="cp-fin2" style="width:100%;margin-top:10px">Chantier terminé</button>';
  h+='</div>';
  if(E.length){
   var ord=M.map(function(x,i){return [x,i]}),epi=ord.filter(function(y){return y[0].epi}),aut=ord.filter(function(y){return !y[0].epi});
@@ -511,20 +540,43 @@ function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
   h+='<div class="card" id="cp-fil">'+(window.PCTAG?PCTAG('conversation'):'')+''+
    (dec.length?'<div class="cp-dec"><span class="cp-dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(qui(c,x.de).n)+' · '+esc(jourDe(x.h))+'</small></p>'}).join('')+'</div>':'')+
    '<div class="cp-fil">'+fil+'</div>'+
-   '<div class="cp-w"><textarea id="cp-t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button type="button" class="cp-ro pk" id="cp-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro go" id="cp-send" aria-label="Envoyer à tous">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>'+
-   '<p class="hint" style="margin:10px 2px 0">Touchez '+IC.epingle.replace('<svg','<svg class="cp-ih"')+' sur un message pour le garder dans « Ce qui est décidé ».</p></div>';}
+   (P.termine?'<p class="hint" style="margin:0">Chantier terminé : la conversation est archivée, plus personne ne peut écrire.</p>':'<div class="cp-w"><textarea id="cp-t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button type="button" class="cp-ro pk" id="cp-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro go" id="cp-send" aria-label="Envoyer à tous">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+
+   (P.termine?'':'<p class="hint" style="margin:10px 2px 0">Touchez '+IC.epingle.replace('<svg','<svg class="cp-ih"')+' sur un message pour le garder dans « Ce qui est décidé ».</p>')+'</div>';}
  return h}
-function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(window.PCPLAN&&PCPLAN.st?PCPLAN.st.tous():[]).filter(function(t){return deja.indexOf(t.id)<0}),sel=S[0]?S[0].id:'autre';
- var h=(S.length?'<p class="hint" style="margin:0 0 8px">Vos sous-traitants</p><div class="cp-ch">'+S.map(function(t,i){return '<button type="button" class="btn" data-cpst="'+esc(t.id)+'" aria-pressed="'+(i===0)+'"><b>'+esc(t.n)+'</b><small>'+esc(t.m)+'</small></button>'}).join('')+'<button type="button" class="btn" data-cpst="autre" aria-pressed="false"><b>Une autre entreprise</b><small>Pas encore dans vos contacts</small></button></div>':'')+
-  '<div id="cp-autre"'+(S.length?' hidden':'')+'><label class="field">Nom de l\'entreprise<input id="cp-n" placeholder="Ex. Carrelages du Guiers"></label><label class="field">Son métier<input id="cp-m" placeholder="Ex. Carreleur"></label><label class="field">Téléphone portable<input id="cp-tel" inputmode="tel" placeholder="06 12 34 56 78"></label></div>'+
-  '<p class="hint" style="margin:12px 0 0">Elle verra ses jours, le plan, les documents et la conversation de ce chantier. Jamais vos prix, vos devis ni vos autres chantiers.</p>';
+function icPicker(sel){return '<div class="cp-ics" role="radiogroup" aria-label="Icône du métier">'+MET.map(function(x){return '<button type="button" class="cp-ic" data-cpic="'+x[0]+'" aria-pressed="'+(x[0]===sel)+'" title="'+esc(x[1])+'">'+I(x[3])+'<small>'+esc(x[1].split(',')[0])+'</small></button>'}).join('')+'</div>'}
+function lierPicker(cb){$$('[data-cpic]').forEach(function(b){b.addEventListener('click',function(){$$('[data-cpic]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});cb(b.dataset.cpic)})})}
+function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(window.PCPLAN&&PCPLAN.st?PCPLAN.st.tous():[]).filter(function(t){return deja.indexOf(t.id)<0}),sel=S[0]?S[0].id:'autre',ic='autre',par='sms',ic0=0,fin=accesFin(c);
+ var h=(S.length?'<p class="hint" style="margin:0 0 8px">Vos sous-traitants</p><div class="cp-ch">'+S.map(function(t,i){return '<button type="button" class="btn" data-cpst="'+esc(t.id)+'" aria-pressed="'+(i===0)+'"><span class="cp-mi">'+metSvg(metDe(t.m))+'</span><span><b>'+esc(t.n)+'</b><small>'+esc(t.m)+'</small></span></button>'}).join('')+'<button type="button" class="btn" data-cpst="autre" aria-pressed="false"><span class="cp-mi">'+IC.plus+'</span><span><b>Une autre entreprise</b><small>Pas encore dans vos contacts</small></span></button></div>':'')+
+  '<div id="cp-autre"'+(S.length?' hidden':'')+'><label class="field">Nom de l\'entreprise<input id="cp-n" placeholder="Ex. Carrelages du Guiers"></label><label class="field">Son métier<input id="cp-m" placeholder="Ex. Carreleur"></label>'+
+  '<p class="hint" style="margin:2px 0 6px">Son icône : elle se choisit d\'après le métier, touchez pour changer</p>'+icPicker(ic)+
+  '<label class="field" style="margin-top:12px">Téléphone portable<input id="cp-tel" inputmode="tel" placeholder="06 12 34 56 78"></label><label class="field">E-mail<input id="cp-mail" inputmode="email" placeholder="contact@entreprise.fr"></label></div>'+
+  '<p class="hint" style="margin:14px 0 6px">Envoyer son lien par</p><div class="cp-seg"><button type="button" class="btn" data-cppar="sms" aria-pressed="true"><span>SMS</span><small>sur son portable</small></button><button type="button" class="btn" data-cppar="mail" aria-pressed="false"><span>E-mail</span><small>dans sa boîte mail</small></button></div>'+
+  '<p class="hint" style="margin:14px 0 6px">Accès jusqu\'au</p><div class="cp-seg"><button type="button" class="btn" data-cpfin="ch" aria-pressed="true"><span>Fin du chantier</span><small>'+esc(dt(fin))+'</small></button><button type="button" class="btn" data-cpfin="autre" aria-pressed="false"><span>Autre date</span><small>à choisir</small></button></div>'+
+  '<input type="date" id="cp-d" value="'+fin+'" hidden style="margin-top:8px">'+
+  '<p class="hint" style="margin:14px 0 0">Le lien contient son code personnel : elle n\'a rien à taper. Elle voit ses jours, le plan, les documents et la conversation de ce chantier, jamais vos prix ni vos autres chantiers. À la fin, son accès se coupe tout seul.</p>';
  X.xopen('Inviter une entreprise',c.n+' · '+c.v,h,'<button class="btn" data-xclose>Annuler</button><button class="btn go" id="cp-ok">Envoyer l\'invitation</button>',function(){
   $$('[data-cpst]').forEach(function(b){b.addEventListener('click',function(){sel=b.dataset.cpst;$$('[data-cpst]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});$('#cp-autre').hidden=sel!=='autre'})});
-  $('#cp-ok').addEventListener('click',function(){var e;
-   if(sel==='autre'){var n=($('#cp-n').value||'').trim();if(!n){X.toast('Le nom de l\'entreprise','Il manque pour envoyer l\'invitation.');return}e={id:'cp'+Date.now().toString(36),n:n,m:($('#cp-m').value||'').trim()||'Entreprise'}}
-   else{var t=PCPLAN.st.de(sel);e={id:t.id,n:t.n,m:t.m}}
-   P.ent.push(e);saveCH();attente('sms');if(X.xclose)X.xclose();else{var x=$('[data-xclose]');if(x)x.click()}
-   recharger('equipe');X.toast('Invitation envoyée',e.n+' reçoit un lien par SMS (démo).')})})}
+  lierPicker(function(k){ic=k;ic0=1});
+  var m=$('#cp-m');m.addEventListener('input',function(){if(ic0)return;ic=metDe(m.value);$$('[data-cpic]').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.cpic===ic))})});
+  $$('[data-cppar]').forEach(function(b){b.addEventListener('click',function(){par=b.dataset.cppar;$$('[data-cppar]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})})});
+  $$('[data-cpfin]').forEach(function(b){b.addEventListener('click',function(){$$('[data-cpfin]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});$('#cp-d').hidden=b.dataset.cpfin!=='autre'})});
+  $('#cp-ok').addEventListener('click',function(){var e,d=$('#cp-d');
+   if(sel==='autre'){var n=($('#cp-n').value||'').trim();if(!n){X.toast('Le nom de l\'entreprise','Il manque pour envoyer l\'invitation.');return}e={id:'cp'+Date.now().toString(36),n:n,m:($('#cp-m').value||'').trim()||'Entreprise',ic:ic}}
+   else{var t=PCPLAN.st.de(sel);e={id:t.id,n:t.n,m:t.m,ic:metDe(t.m)}}
+   e.code=codeNeuf();e.par=par;if(!d.hidden&&d.value)P.fin=d.value;
+   P.ent.push(e);saveCH();attente('sms');X.xclose();
+   recharger('equipe');X.toast('Invitation envoyée',e.n+' reçoit son lien par '+(par==='sms'?'SMS':'e-mail')+', valable jusqu\'au '+dt(accesFin(c))+' (démo).')})})}
+/* La fiche d'une entreprise du chantier : son icône, renvoyer le lien, couper son accès */
+function ficheEnt(c,i){var P=part(c),e=P.ent[i];if(!e)return;var arm=0,off=e.coupe||P.termine;
+ var h='<div class="cp-tete"><span class="cp-mi gros">'+icEnt(e)+'</span><div><b>'+esc(e.n)+'</b><small>'+esc(e.m)+'</small></div></div>'+
+  '<p class="hint" style="margin:14px 0 6px">Icône du métier</p>'+icPicker(e.ic||metDe(e.m))+
+  '<div class="cp-l" style="margin-top:14px"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>'+(off?'Accès terminé':'Accès jusqu\'au '+esc(dt(accesFin(c))))+'</b><small>Code personnel '+esc(e.code||'—')+' · lien envoyé par '+(e.par==='mail'?'e-mail':'SMS')+'</small></span></div>'+
+  (off?'':'<button type="button" class="btn" id="cp-ren" style="width:100%;margin-top:10px">Renvoyer son lien</button><button type="button" class="btn cp-cut" id="cp-cut" style="width:100%;margin-top:10px">Couper son accès</button>');
+ X.xopen(e.n,'Sur le chantier '+c.n,h,'<button class="btn go" data-xclose>Fermer</button>',function(){
+  lierPicker(function(k){e.ic=k;saveCH();var t=$('.cp-tete .cp-mi');if(t)t.innerHTML=metSvg(k);recharger('equipe')});
+  var r=$('#cp-ren');if(r)r.addEventListener('click',function(){X.toast('Lien renvoyé',e.n+' le reçoit par '+(e.par==='mail'?'e-mail':'SMS')+' (démo).')});
+  var k=$('#cp-cut');if(k)k.addEventListener('click',function(){if(!arm){arm=1;k.textContent='Touchez encore pour couper';setTimeout(function(){if(k.isConnected){arm=0;k.textContent='Couper son accès'}},3500);return}
+   e.coupe=1;saveCH();X.xclose();recharger('equipe');X.toast('Accès coupé',e.n+' ne peut plus ouvrir ce chantier.')})})}
 function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PCPLAN.st&&PCPLAN.st.jours?PCPLAN.st.jours(e.id,c.id):[];
  var j=J.length?J.map(function(x){var d=new Date(x.d+'T12:00:00');return JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]}).join(', '):'à caler avec vous';
  var der=P.msgs[P.msgs.length-1];
@@ -537,6 +589,10 @@ function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PC
 function lierEquipe(c){
  var b=$('#cp-inv');if(b)b.addEventListener('click',function(){inviter(c)});
  var v=$('#cp-voir');if(v)v.addEventListener('click',function(){apercu(c)});
+ $$('#chx [data-cpe]').forEach(function(b){b.addEventListener('click',function(){ficheEnt(c,+b.dataset.cpe)})});
+ var pr=$('#cp-pro');if(pr)pr.addEventListener('click',function(){var P=part(c);P.fin=addJ(accesFin(c)<auj()?auj():accesFin(c),7);saveCH();recharger('equipe');X.toast('Accès prolongé','Jusqu\'au '+dt(P.fin)+'. Les entreprises sont prévenues (démo).')});
+ $$('#chx #cp-fin1,#chx #cp-fin2').forEach(function(f){var arm=0;f.addEventListener('click',function(){if(!arm){arm=1;f.textContent='Touchez encore : couper tous les accès';setTimeout(function(){if(f.isConnected){arm=0;f.textContent='Chantier terminé'}},3500);return}
+  part(c).termine=1;saveCH();recharger('equipe');X.toast('Chantier terminé','Accès coupés. Chaque entreprise reçoit le récapitulatif par e-mail (démo).')})});
  $$('#chx [data-cpepi]').forEach(function(x){x.addEventListener('click',function(){part(c).msgs[+x.dataset.cpepi].epi=1;saveCH();recharger('equipe','#cp-fil');X.toast('Épinglé','Le message reste en haut de la conversation.')})});
  var t=$('#cp-t'),m=$('#cp-mic');if(t&&m)dictee2(m,t);
  if(t)t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
@@ -569,7 +625,7 @@ function nouveau(){var CC=clientsChoix(),K=CC.map(function(x){return x.k}),CI={}
   $('#nc-ok').addEventListener('click',function(){garder();if(!NC.t.trim()){$('#nc-t').focus();return}creer(NC);NC=null;});});}
 function dt(s){var d=new Date(s+'T12:00:00');return isNaN(d)?'':d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'numeric'})}
 function creer(n){var o=dos({dos:n.cli}),id='c'+Date.now().toString(36);
- CH[id]={id:id,dos:n.cli,n:o?o.n:'Client',v:n.v||(o&&o.v)||'',t:n.t.trim(),st:'start',dv:'',dates:(n.d1?dt(n.d1)+(n.d2&&n.d2!==n.d1?' → '+dt(n.d2):''):'dates à fixer'),
+ CH[id]={id:id,dos:n.cli,n:o?o.n:'Client',v:n.v||(o&&o.v)||'',t:n.t.trim(),st:'start',dv:'',d1:n.d1||'',d2:n.d2||n.d1||'',dates:(n.d1?dt(n.d1)+(n.d2&&n.d2!==n.d1?' → '+dt(n.d2):''):'dates à fixer'),
   ouv:[['Travaux',100,0]],fin:{ht:0,tva:10,ac:0},four:[],fst:{},prev:0,reel:[],notes:[],ph:[],docs:[],avis:{on:true,quand:'lendemain'}};
  if(o){o.k='chantier';o.ch=id}saveCH();
  if(window.PCPLAN&&PCPLAN.chantier&&n.d1)PCPLAN.chantier(CH[id],n.d1,n.d2||n.d1);

@@ -215,3 +215,31 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 #chx .cp-ro.go{background:var(--n1-nuit);color:var(--n1-nuit-fg);box-shadow:var(--n1-go-sh)}
 #chx .cp-ro svg{width:20px;height:20px}
 #chx #cp-mic.on{box-shadow:inset 0 0 0 2px var(--n1-laiton);color:var(--n1-laiton)}
+/* Icône du métier + accès des entreprises (Cyril 19/11) */
+.cp-mi{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--n1-teinte);color:var(--n1-nuit)}
+.cp-mi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cp-mi.gros{width:48px;height:48px}.cp-mi.gros svg{width:24px;height:24px}
+#chx .cp-av svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#chx button.cp-e{width:100%;background:none;border:0;border-bottom:1px solid var(--line,rgba(127,127,127,.18));font:inherit;color:inherit;text-align:left;cursor:pointer;padding:10px 0}
+#chx .cp-e .tx{flex:1}#chx .cp-go{color:var(--muted);font-size:20px;padding:0 4px}
+#chx .cp-e.off{opacity:.5}
+#chx .cp-rap{border-radius:16px;padding:12px;margin:2px 0 8px;background:color-mix(in srgb,var(--n1-warn) 11%,var(--n1-calme));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--n1-warn) 35%,transparent)}
+#chx .cp-rap b{display:block;font-size:14.5px}#chx .cp-rap small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+#chx .cp-rb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#chx .cp-fin,.cp-cut{color:var(--n1-alert)}
+.cp-ics{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.cp-ic{aspect-ratio:1;border:0;border-radius:14px;display:grid;place-items:center;background:var(--n1-bg);box-shadow:var(--n1-pk);color:var(--n1-nuit);cursor:pointer;max-width:56px;width:100%;justify-self:center}
+.cp-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cp-ic[aria-pressed="true"]{background:var(--n1-nuit);color:var(--n1-nuit-fg);box-shadow:var(--n1-go-sh)}
+.cp-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cp-seg .btn[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit)}
+.cp-ch .btn{flex-direction:row!important;align-items:center!important;gap:10px}
+.cp-ch .btn>span:last-child{display:flex;flex-direction:column}
+.cp-tete{display:flex;align-items:center;gap:12px}.cp-tete b{display:block;font-size:17px}.cp-tete small{color:var(--muted)}
+.cp-ic{aspect-ratio:auto;max-width:none;padding:9px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit}
+.cp-ic small{font-size:10px;font-weight:700;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-ics{grid-template-columns:repeat(4,1fr)}
+@media (min-width:600px){.cp-ics{grid-template-columns:repeat(6,1fr)}}
+.cp-seg .btn{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}
+.cp-seg .btn small{font-size:12px;font-weight:600;color:var(--muted)}
+.btn.cp-cut,#chx .btn.cp-fin{color:var(--n1-alert)!important}
