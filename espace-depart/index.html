@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><script src="entreprise.js?v=1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
+<!doctype html><html lang="fr"><head><script src="entreprise.js?v=3"></script><script src="exemple.js?v=1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
 <title>ProClik</title>
 <meta name="apple-mobile-web-app-title" content="ProClik"><meta name="application-name" content="ProClik">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -736,12 +736,13 @@ window.PCID=(function(){
  if(el){o._st='ok';Array.prototype.forEach.call(el.querySelectorAll('[data-k]'),function(s){var v=(s.textContent||'').trim(),k=s.getAttribute('data-k');if(v.indexOf('{{')>=0){o._raw++;v=''}else if(v)o._lu++;o[k]=v;});}
  if(o._raw)o._st='brut';
  for(var k in D){o['_'+k]=!!o[k];if(!o[k])o[k]=D[k];}
+ if(window.PC_EX){o.entreprise=PC_EX.nom;o._entreprise=true}
  if(!/^(https?:\/\/|data:image\/)/.test(o.logo))o.logo='';
  if(!/^#[0-9a-fA-F]{3,8}$/.test(o.couleur))o.couleur='';
  o.initiales=o.entreprise.split(/[\s-]+/).filter(Boolean).slice(0,2).map(function(w){return w[0].toUpperCase()}).join('');
  return o;})();
 (function(I){
- var P=[['Dupont Rénovation',I.entreprise],['tarifs.dupont@proclik.fr',I.email_tarifs],['[Adresse]',I.adresse],['[Téléphone]',I.telephone],['SIRET [numéro]','SIRET '+I.siret],['TVA [numéro]','TVA '+I.tva],['Julien',I.prenom]].filter(function(p){return p[0]!==p[1]});
+ var P=[['Dupont Rénovation',I.entreprise],['tarifs.dupont@proclik.fr',I.email_tarifs],['[Adresse]',I.adresse],['[Téléphone]',I.telephone],['SIRET [numéro]','SIRET '+I.siret],['TVA [numéro]','TVA '+I.tva],['Julien',I.prenom]].concat(window.PC_EX?PC_EX.R:[]).filter(function(p){return p[0]!==p[1]});
  var R=document.documentElement;if(I.couleur)R.style.setProperty('--pc-cli',I.couleur);
  var done=new WeakMap();
  function fixText(n){if(done.get(n)===n.data)return;var t=n.data,u=t;for(var i=0;i<P.length;i++)if(u.indexOf(P[i][0])>=0)u=u.split(P[i][0]).join('\u0000'+i+'\u0000');if(u!==t){u=u.replace(/\u0000(\d+)\u0000/g,function(m,i){return P[+i][1]});n.data=u;}done.set(n,n.data);}
@@ -1689,21 +1690,21 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 </script>
 
 <script src="config.js?v=2"></script>
-<script src="options.js?v=2"></script>
+<script src="options.js?v=3"></script>
 <script src="profil.js?v=1"></script><script src="vrai.js?v=78"></script>
 <link rel="stylesheet" href="relief.css?v=18">
 <link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=13"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
-<script src="accueil.js?v=12"></script>
+<script src="accueil.js?v=32"></script>
 <link rel="stylesheet" href="clients.css?v=5">
 <script src="gps.js?v=1"></script>
-<script src="clients.js?v=9"></script>
+<script src="clients.js?v=10"></script>
 <link rel="stylesheet" href="devis.css?v=3">
 <script src="devis.js?v=7"></script>
 <script src="commandes.js?v=2"></script>
-<link rel="stylesheet" href="chantiers.css?v=3">
-<script src="chantiers.js?v=11"></script><script src="journee.js?v=11"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=2"></script>
+<link rel="stylesheet" href="chantiers.css?v=18">
+<script src="photos-demo.js?v=3"></script><script src="chantiers.js?v=27"></script><script src="journee.js?v=11"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=2"></script>
 <script src="planning-ajout.js?v=3"></script>
 <script src="equipe.js?v=1"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
@@ -1721,10 +1722,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="familles.js?v=7"></script>
 <link rel="stylesheet" href="reglages.css?v=1">
 <script src="reglages.js?v=7"></script>
-<script src="mes-options.js?v=5"></script>
+<script src="mes-options.js?v=6"></script>
 <script src="fige.js?v=3"></script>
 <link rel="stylesheet" href="poussoir.css?v=1">
 <script src="poussoir.js?v=2"></script>
-<script src="titres.js?v=2"></script>
+<script src="titres.js?v=3"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=6"></script>
-<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="style-n1.css?v=11"><script src="couleurs.js?v=3"></script>
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="style-n1.css?v=47"><script src="couleurs.js?v=3"></script>

@@ -12,9 +12,16 @@ window.PC_ENT={
  /* les fonctions de l'Espace : true = présente, false = retirée pour ce client.
     Les options payantes (Cliky, Réservation, SMS…) restent réglées par l'abonnement, dans Mes options. */
  modules:{
-  equipe:true          /* planning de l'équipe : qui est sur quel chantier, chaque jour */
+  equipe:true,         /* planning de l'équipe : qui est sur quel chantier, chaque jour */
+  conversation:true    /* conversation de chantier avec les entreprises invitées : option GRATUITE, à partir de 2 personnes (Cyril 19/11) */
  }
 };
+/* Espace d'exemple (lien « Voir mon Espace d'électricien » de la page invitée, Cyril 19/11) :
+   rangé à part et vidé à chaque ouverture, pour que rien ne soit gardé. */
+(function(){try{var q=new URLSearchParams(location.search);if(!q.get('exemple'))return;
+ window.PC_ENT.id='exemple';window.PC_ENT.sous_compte=(q.get('nom')||'Votre entreprise').slice(0,60);
+ var P='pc@exemple:',L=[],i;for(i=0;i<localStorage.length;i++){var y=localStorage.key(i);if(y&&y.indexOf(P)===0)L.push(y)}L.forEach(function(y){localStorage.removeItem(y)});
+}catch(e){}})();
 /* Rangement à part : chaque clé gardée sur l'appareil est préfixée par l'identifiant de l'entreprise. */
 (function(){try{var P='pc@'+window.PC_ENT.id+':',S=Storage.prototype;if(S.__pcEnt)return;S.__pcEnt=1;
  var g=S.getItem,s=S.setItem,r=S.removeItem,k=S.key;

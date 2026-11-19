@@ -13,6 +13,7 @@ var O={
  assistant:{n:'Assistant du site',i:I('<path d="M4 5h16v11H9l-5 4z"/><path d="M12 8.5v4M10 10.5h4"/>')},
  image:{n:'Votre image',i:I('<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.3-1.7-.4-1 .2-2.3 1.4-2.3H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r="1.2" fill="currentColor" stroke="none"/>')},
  equipe:{n:'Équipe',i:I('<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.6a6 6 0 0 1 3 5.4"/>')},
+ conversation:{n:'Conversation de chantier',i:I('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>')},
  reseaux:{n:'Réseaux sociaux',i:I('<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>')}
 };
 var lit=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
