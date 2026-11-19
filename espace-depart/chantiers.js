@@ -686,7 +686,7 @@ var RSEC={corr:['À valider par vous','Corrigées : regardez la photo et validez
 function resJours(r){var m=/(\d{1,2})\/(\d{1,2})/.exec(r.d||'');if(!m)return 0;var d=new Date(2026,+m[2]-1,+m[1],12),t=X.TODAY?new Date(X.TODAY):new Date();return Math.max(0,Math.round((t-d)/864e5))}
 function resAge(r){if(r.st==='val')return '';var j=resJours(r),lab=r.st==='corr'?'corrigée, à vous de valider':j?'depuis '+j+' jour'+(j>1?'s':''):'signalée aujourd\'hui';return '<span class="cp-age'+(r.st==='ouv'&&j>=7?' tard':'')+'">'+lab+'</span>'}
 function resRow(c,r,i,tri){var e=entDe(c,r.ent),s=RST[r.st];
- return '<button type="button" class="cp-rs" data-cprs="'+i+'">'+PCPH.vg(r,i,'cp-rn '+s[1])+'<span class="tx"><b>'+esc(r.t)+'</b><small>'+(tri!=='qui'?'<span class="cp-mini">'+icQ(e)+'</span>'+esc(e.n):'')+(tri!=='qui'&&tri!=='piece'?' · ':'')+(tri!=='piece'?esc(r.pc):'')+(r.par==='cli'?' · par le client':'')+'</small>'+
+ return '<button type="button" class="cp-rs" data-cprs="'+i+'">'+PCPH.vg(r,i,'cp-rn '+s[1])+'<span class="tx"><b>'+esc(r.t)+'</b><small class="cp-meta">'+(tri!=='qui'?'<span class="cp-ent"><span class="cp-mini">'+icQ(e)+'</span>'+esc(e.n)+'</span>':'')+(tri!=='piece'?'<span class="pcpi cp-pc">'+PCPH.piece(r.pc)+esc(r.pc)+'</span>':'')+(r.par==='cli'?'<span class="cp-pc">par le client</span>':'')+'</small>'+
   (tri==='etat'?resAge(r):'<span class="cp-ln"><span class="cp-pill '+s[1]+'">'+s[0]+'</span>'+(r.st==='ouv'?resAge(r):'')+'</span>')+'</span>'+PCPH.mini(r)+'<span class="cp-go">›</span></button>'}
 function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c),tri=X.lsGet('pc-res-tri','etat'),nv=R.filter(function(r){return r.st==='val'}).length;
  var h='<div class="card" id="cp-res"><div class="row" style="margin-bottom:6px"><b>Réserves</b><span style="font-size:12px;color:var(--muted)">'+(R.length?(n?nv+' levée'+(nv>1?'s':'')+' sur '+R.length:'toutes levées ✓'):'aucune')+'</span></div>';
@@ -701,7 +701,7 @@ function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c),tri=X.lsGet
  else ['corr','ouv','val'].forEach(function(k){var L=I2.filter(function(i){return R[i].st===k});if(L.length)G.push({k:k,t:RSEC[k][0],s:RSEC[k][1],c:RSEC[k][2],L:L})});
  G.forEach(function(g){g.L.sort(function(a,b){return RORD[R[a].st]-RORD[R[b].st]||resJours(R[b])-resJours(R[a])});
   var lv=g.L.filter(function(i){return R[i].st==='val'}),vis=tri==='etat'&&g.k==='val'?[]:g.L.filter(function(i){return R[i].st!=='val'}),cach=tri==='etat'&&g.k==='val'?g.L:lv;
-  h+='<div class="cp-sec'+(g.c?' '+g.c:'')+'"><div class="cp-sech">'+(g.ic?'<span class="cp-mini">'+g.ic+'</span>':'')+'<b>'+esc(g.t)+'</b><span class="n">'+g.L.length+'</span>'+(g.s?'<small>'+esc(g.s)+'</small>':'')+'</div>'+
+  h+='<div class="cp-sec'+(g.c?' '+g.c:'')+'"><div class="cp-sech'+(tri==='qui'?' ent':'')+'">'+(g.ic?'<span class="cp-mini">'+g.ic+'</span>':tri==='piece'?'<span class="cp-mini pcpi">'+PCPH.piece(g.k)+'</span>':'')+'<b>'+esc(g.t)+'</b><span class="n">'+g.L.length+'</span>'+(g.s?'<small>'+esc(g.s)+'</small>':'')+'</div>'+
    vis.map(function(i){return resRow(c,R[i],i,tri)}).join('')+
    (cach.length?'<button type="button" class="cp-more" data-rmore>'+(vis.length?'+ '+cach.length+' levée'+(cach.length>1?'s':''):'Voir '+(cach.length>1?'les '+cach.length+' réserves levées':'la réserve levée'))+'</button><div hidden data-rmz>'+cach.map(function(i){return resRow(c,R[i],i,tri)}).join('')+'</div>':'')+'</div>'});
  h+='';

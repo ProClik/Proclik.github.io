@@ -31,11 +31,23 @@ var css='.rsvi{position:relative;width:40px;height:40px;flex:none;border-radius:
  '.rsvm{position:relative;width:26px;height:26px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-muted) 22%,var(--n1-teinte));color:var(--n1-muted);align-self:center}'+
  '.rsvm>svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}'+
  '.rsvm .rsvn{position:absolute;top:-5px;right:-6px;min-width:15px;height:15px;padding:0 3px;box-sizing:border-box;border-radius:8px;background:var(--n1-nuit);color:var(--n1-nuit-fg);font:800 9px/15px Manrope,sans-serif;font-style:normal;text-align:center}'+
+ '.pcpi{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.pcpi svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}'+
  '.rsvf{position:relative;flex:0 0 calc(50% - 5px);min-height:110px;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-muted) 22%,var(--n1-teinte));color:var(--n1-muted)}'+
  '.rsvf>svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin-bottom:18px}'+
  '.rsvf small{position:absolute;left:0;right:0;bottom:0;padding:6px 10px 8px;font-size:11.5px;font-weight:700;color:var(--n1-muted)}'+
  '.rsvok{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--n1-ok,#3F8F5E);display:grid;place-items:center}.rsvok svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}';
 function addCss(){if(document.getElementById('rsvi-css'))return;var s=document.createElement('style');s.id='rsvi-css';s.textContent=css;document.head.appendChild(s)}
 if(document.head)addCss();else document.addEventListener('DOMContentLoaded',addCss);
-window.PCPH={kind:kind,nb:nbPh,vg:vg,ico:ico,mini:mini,grand:grand};
+/* icône de pièce (Cyril 19/11 : « met un icône sur les pièces »), mêmes dessins que le formulaire */
+var PC=[[/accueil|boutique|magasin|comptoir/i,'<path d="M4 9.5 5.5 5h13L20 9.5"/><path d="M4 9.5c0 1.5 1.3 2.5 2.7 2.5S9.3 11 9.3 9.5c0 1.5 1.3 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.3 2.5 2.6 2.5S20 11 20 9.5"/><path d="M5.5 12v8h13v-8M10 20v-4.5h4V20"/>'],
+ [/s[ée]jour|salon|attente|pi[eè]ce de vie/i,'<path d="M5 12V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3.5 13a1.5 1.5 0 0 1 3 0v1.5h11V13a1.5 1.5 0 0 1 3 0v4.5h-17zM6 17.5V19M18 17.5V19"/>'],
+ [/cuisine/i,'<path d="M5 11h14v2.5a6 6 0 0 1-6 6h-2a6 6 0 0 1-6-6z"/><path d="M3.5 11h17M9 8c0-1.2 1-1.2 1-2.4M13 8c0-1.2 1-1.2 1-2.4"/>'],
+ [/chambre|cabinet|soin/i,'<path d="M3.5 18.5V6M3.5 14h17v4.5M20.5 14v-2a2.5 2.5 0 0 0-2.5-2.5h-7V14"/><circle cx="7.5" cy="11.2" r="1.7"/>'],
+ [/bain|sdb|douche|wc|toilette|sanitaire/i,'<path d="M4 12h16v2a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M6 12V6a2 2 0 0 1 3.6-1.2M8 19l-1 1.5M16 19l1 1.5"/>'],
+ [/couloir|entr[ée]e|d[ée]gagement|palier|hall/i,'<rect x="6.5" y="3.5" width="11" height="17" rx="1"/><path d="M14.5 12.5h.01"/><path d="M3.5 20.5h17"/>'],
+ [/bureau/i,'<rect x="4" y="4.5" width="16" height="10.5" rx="1.2"/><path d="M9 19.5h6M12 15v4.5"/>'],
+ [/garage|cave|atelier/i,'<path d="M3.5 10 12 4.5 20.5 10V20H3.5z"/><path d="M7 20v-7.5h10V20M7 15h10M7 17.5h10"/>'],
+ [/./,'<path d="M4 11 12 4.5 20 11"/><path d="M6 9.5V19.5h12V9.5"/><path d="M10 19.5v-5h4v5"/>']];
+function piece(n){for(var j=0;j<PC.length;j++)if(PC[j][0].test(n||''))return svg(PC[j][1]);return ''}
+window.PCPH={piece:piece,kind:kind,nb:nbPh,vg:vg,ico:ico,mini:mini,grand:grand};
 })();

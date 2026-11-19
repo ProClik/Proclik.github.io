@@ -332,3 +332,12 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 #x-in .cp-ro svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .cp-chs[hidden]{display:none}
 .cp-phs{flex-wrap:wrap}.cp-phs .cp-ph{flex:0 0 calc(50% - 5px)}
+
+/* noms d'entreprise bien visibles, icône de pièce (Cyril 19/11) */
+.cp-rs small.cp-meta{flex-wrap:wrap;gap:4px 10px}
+.cp-ent{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;color:var(--n1-nuit)}
+.cp-ent .cp-mini{width:20px;height:20px;border-radius:6px;background:var(--n1-teinte);display:inline-grid;place-items:center}
+.cp-pc{color:var(--n1-muted);font-weight:600}
+.cp-sech.ent b{font-size:15px;color:var(--n1-nuit)}
+.cp-sech .cp-mini{width:24px;height:24px;border-radius:7px;background:var(--n1-teinte);display:inline-grid;place-items:center;color:var(--n1-nuit)}
+.cp-sech .cp-mini svg{width:15px;height:15px}
