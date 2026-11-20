@@ -1368,6 +1368,47 @@ main>section:not(.hero) h2 .or{display:inline}
  .h-nc-t b{white-space:nowrap}
 }
 
+/* ===== 20/11 : plus d'écran noir dans les téléphones + blocs variés ===== */
+.sc-ph img,.zv-ph img,.gp img{background-color:#F6F7F9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sc-ph img,:root:not([data-theme="light"]) .zv-ph img,:root:not([data-theme="light"]) .gp img{background-color:#1F2638}}
+:root[data-theme="dark"] .sc-ph img,:root[data-theme="dark"] .zv-ph img,:root[data-theme="dark"] .gp img{background-color:#1F2638}
+.fx-ph::before{content:"";position:absolute;inset:8px;border-radius:29px;background:#F6F7F9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fx-ph::before{background:#1F2638}}
+:root[data-theme="dark"] .fx-ph::before{background:#1F2638}
+.sc-ph img{transition:opacity .6s ease}.sc-ph img.att{opacity:0}
+/* Pourquoi en mosaïque, Étapes en zigzag (ordinateur et iPad) */
+@media (min-width:761px){
+ .scn:not(.scn-e){grid-template-columns:1.15fr 1fr;grid-template-rows:auto auto;gap:22px}
+ .scn:not(.scn-e)>.sc:first-child{grid-row:1/3}
+ .scn:not(.scn-e)>.sc:first-child .sc-st{height:auto;flex:1;min-height:520px}
+ .scn:not(.scn-e)>.sc:first-child .sc-ph{width:236px;top:52px}
+ .scn:not(.scn-e)>.sc:first-child .sc-ph img{height:470px}
+ .scn:not(.scn-e)>.sc:first-child h3{font-size:28px}
+ .scn:not(.scn-e)>.sc:not(:first-child){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:22px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-st{height:280px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-ph{width:150px;top:30px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-ph img{height:300px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-nc{left:6%;right:6%;max-width:none}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-nc.h{top:16px}.scn:not(.scn-e)>.sc:not(:first-child) .sc-nc.b{bottom:18px}
+ .scn:not(.scn-e) .sc-ch{inset:auto 5% 18px 5%}.scn:not(.scn-e) .sc-ch p{font-size:13px}
+ .scn.scn-e{grid-template-columns:1fr;gap:34px;counter-reset:sce}
+ .scn.scn-e>.sc{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:center;gap:56px;counter-increment:sce}
+ .scn.scn-e>.sc:nth-child(2) .sc-st{order:2}
+ .scn.scn-e .sc-st{height:340px}
+ .scn.scn-e figcaption{position:relative;padding-top:64px}
+ .scn.scn-e figcaption::before{content:"0" counter(sce);position:absolute;left:4px;top:-6px;font-size:72px;font-weight:800;letter-spacing:-.05em;line-height:1;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--laiton) 70%,transparent)}
+ .scn.scn-e .sc-k{display:none}.scn.scn-e figcaption{padding-top:76px}
+ .scn.scn-e h3{font-size:30px;letter-spacing:-.025em}
+ .scn.scn-e p{font-size:17px;max-width:34ch}
+}
+
+/* Vos données : déclaration centrée, façon grande marque */
+#securite .wrap{text-align:center}
+#securite .num{justify-content:center}
+#securite h2{margin-left:auto;margin-right:auto}
+#securite .lead,#securite h2+p{margin-left:auto;margin-right:auto}
+@media (min-width:701px){#securite .trois.sec{max-width:980px;margin-left:auto;margin-right:auto;text-align:left}}
+
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
@@ -1453,9 +1494,9 @@ main>section:not(.hero) h2 .or{display:inline}
   <h2 class="pc">Moins de papiers, <span class="or">plus de chantier.</span></h2>
   <h2 class="cl">Pourquoi nous confier <span class="or">votre projet.</span></h2>
   <div class="scn pc">
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:100%;--r:-3deg"><img class="j" src="vitrine/f/a2.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/a2-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l5 1.2a2 2 0 0 1 1.5 2.4L17.6 18a3 3 0 0 1-2.9 2.2H11a3 3 0 0 1-2.3-1L5.5 15a1.4 1.4 0 0 1 2-2L9 14.5"/></svg></span><span class="h-nc-t"><small>Un seul bouton</small><b>Valider le pré-devis</b><span>Et c'est parti</span></span></div></div><figcaption><small class="sc-k">Rien à apprendre</small><h3>Un gros bouton par étape.</h3><p>Si vous savez envoyer un SMS, vous savez vous en servir.</p></figcaption></figure>
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:0deg"><img class="j" src="vitrine/f/o1.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/o1-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc h"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h4"/></svg></span><span class="h-nc-t"><small>ProClik · à l'instant</small><b>Nouvelle demande</b><span>Mme Durand, avec son plan</span></span></div></div><figcaption><small class="sc-k">Fini le soir au bureau</small><h3>Les demandes arrivent rangées.</h3><p>Les devis et les factures se font en quelques touches.</p></figcaption></figure>
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph flou" style="--y:0%;--r:3deg"><img class="j" src="vitrine/f/c7.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/c7-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-ch"><p class="moi">J'ai une question sur un devis</p><p class="pc"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H10l-4 3v-3H5z"/></svg></span>On regarde ça ensemble, tout de suite.</p></div></div><figcaption><small class="sc-k">Jamais seul</small><h3>Une vraie personne répond.</h3><p>L'installation et la prise en main se font avec vous.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:100%;--r:-3deg"><img class="j" fetchpriority="low" src="vitrine/f/a2.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/a2-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l5 1.2a2 2 0 0 1 1.5 2.4L17.6 18a3 3 0 0 1-2.9 2.2H11a3 3 0 0 1-2.3-1L5.5 15a1.4 1.4 0 0 1 2-2L9 14.5"/></svg></span><span class="h-nc-t"><small>Un seul bouton</small><b>Valider le pré-devis</b><span>Et c'est parti</span></span></div></div><figcaption><small class="sc-k">Rien à apprendre</small><h3>Un gros bouton par étape.</h3><p>Si vous savez envoyer un SMS, vous savez vous en servir.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:0deg"><img class="j" fetchpriority="low" src="vitrine/f/o1.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/o1-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc h"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h4"/></svg></span><span class="h-nc-t"><small>ProClik · à l'instant</small><b>Nouvelle demande</b><span>Mme Durand, avec son plan</span></span></div></div><figcaption><small class="sc-k">Fini le soir au bureau</small><h3>Les demandes arrivent rangées.</h3><p>Les devis et les factures se font en quelques touches.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph flou" style="--y:0%;--r:3deg"><img class="j" fetchpriority="low" src="vitrine/f/c7.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/c7-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-ch"><p class="moi">J'ai une question sur un devis</p><p class="pc"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H10l-4 3v-3H5z"/></svg></span>On regarde ça ensemble, tout de suite.</p></div></div><figcaption><small class="sc-k">Jamais seul</small><h3>Une vraie personne répond.</h3><p>L'installation et la prise en main se font avec vous.</p></figcaption></figure>
   </div>
   <div class="trois cl">
     <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg></span><h3>Artisan local</h3><p>Exemple : installé à Voiron, interventions dans le Pays voironnais.</p></div>
@@ -1470,9 +1511,9 @@ main>section:not(.hero) h2 .or{display:inline}
   <h2 class="pc">Prêt en <span class="or">trois étapes.</span></h2>
   <h2 class="cl">Votre projet en <span class="or">trois étapes.</span></h2>
   <div class="scn scn-e pc">
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><svg class="sc-cafe" viewBox="0 0 240 170"><path class="vp v1" d="M86 76c-7-9 7-15 0-25"/><path class="vp v2" d="M100 76c-7-9 7-15 0-25"/><path class="vp v3" d="M162 82c-7-9 7-15 0-25"/><path class="dc" d="M64 88h50v26a20 20 0 0 1-20 20h-10a20 20 0 0 1-20-20z"/><path class="ln" d="M114 96a10 10 0 0 1 0 20"/><path class="ln" d="M54 142h70"/><path class="nv" d="M140 94h46v22a18 18 0 0 1-18 18h-10a18 18 0 0 1-18-18z"/><path class="ln" d="M140 101a9 9 0 0 0 0 18"/><path class="ln" d="M130 142h66"/></svg><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10.5a2.5 2.5 0 0 1 0 5"/></svg></span><span class="h-nc-t"><small>Étape 1</small><b>On se rencontre</b><span>Chez vous ou au téléphone</span></span></div></div><figcaption><small class="sc-k">Étape 1</small><h3>On se rencontre</h3><p>Autour d'un café, on regarde ce qui vous prend du temps.</p></figcaption></figure>
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:-3deg"><img src="vitrine/v-accueil.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc h"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="h-nc-t"><small>Étape 2</small><b>Votre Espace est prêt</b><span>Vos produits, vos prix</span></span></div></div><figcaption><small class="sc-k">Étape 2</small><h3>On prépare tout</h3><p>Votre Espace, vos produits, vos prix. Rien à installer.</p></figcaption></figure>
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:3deg"><img src="vitrine/v-formulaire.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="h-nc-t"><small>Étape 3</small><b>Nouvelle demande</b><span>Votre client a décrit ses travaux</span></span></div></div><figcaption><small class="sc-k">Étape 3</small><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><svg class="sc-cafe" viewBox="0 0 240 170"><path class="vp v1" d="M86 76c-7-9 7-15 0-25"/><path class="vp v2" d="M100 76c-7-9 7-15 0-25"/><path class="vp v3" d="M162 82c-7-9 7-15 0-25"/><path class="dc" d="M64 88h50v26a20 20 0 0 1-20 20h-10a20 20 0 0 1-20-20z"/><path class="ln" d="M114 96a10 10 0 0 1 0 20"/><path class="ln" d="M54 142h70"/><path class="nv" d="M140 94h46v22a18 18 0 0 1-18 18h-10a18 18 0 0 1-18-18z"/><path class="ln" d="M140 101a9 9 0 0 0 0 18"/><path class="ln" d="M130 142h66"/></svg><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10.5a2.5 2.5 0 0 1 0 5"/></svg></span><span class="h-nc-t"><small>Rendez-vous · confirmé</small><b>Autour d'un café</b><span>Chez vous ou au téléphone</span></span></div></div><figcaption><small class="sc-k">Étape 1</small><h3>On se rencontre</h3><p>Autour d'un café, on regarde ce qui vous prend du temps.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:-3deg"><img src="vitrine/v-accueil.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc h"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="h-nc-t"><small>ProClik · à l'instant</small><b>Votre Espace est prêt</b><span>Vos produits, vos prix</span></span></div></div><figcaption><small class="sc-k">Étape 2</small><h3>On prépare tout</h3><p>Votre Espace, vos produits, vos prix. Rien à installer.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:3deg"><img src="vitrine/v-formulaire.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="h-nc-t"><small>ProClik · à l'instant</small><b>Nouvelle demande</b><span>Votre client a décrit ses travaux</span></span></div></div><figcaption><small class="sc-k">Étape 3</small><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p></figcaption></figure>
   </div>
   <div class="etapes cl">
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><b class="n">Étape 1</b></div><h3>Décrivez vos travaux</h3><p>En ligne, en quelques minutes, avec des photos si vous le souhaitez.</p></div>
@@ -2137,4 +2178,11 @@ if(hn){var t0=hn.innerHTML;function txt(){hn.innerHTML=true?'<i></i><span>Touche
 function place(){if(innerWidth>520){nc.style.top='';return}var P=nc.offsetParent;if(!P)return;var pr=P.getBoundingClientRect(),z=P.offsetHeight?pr.height/P.offsetHeight:1,b=px.getBoundingClientRect().bottom+10;nc.style.top=((b-pr.top)/z)+'px'}
 place();addEventListener('resize',place);addEventListener('load',function(){place();setTimeout(place,400);setTimeout(place,1500)});if('ResizeObserver'in window)new ResizeObserver(place).observe(document.querySelector('.hero')||document.body);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(place)})();</script>
 <script>(function(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;var f=document.createElement('div');f.className='lu-fil';f.setAttribute('aria-hidden','true');document.body.appendChild(f);var t=0;function m(){t=0;var h=document.documentElement.scrollHeight-innerHeight;f.style.setProperty('--lu',h>0?Math.min(1,scrollY/h).toFixed(4):0)}addEventListener('scroll',function(){if(!t)t=requestAnimationFrame(m)},{passive:true});m()})();</script>
+<script>(function(){
+/* écrans des téléphones : apparition douce quand l'image est prête */
+[].forEach.call(document.querySelectorAll('.sc-ph img'),function(i){if(i.complete&&i.naturalWidth)return;i.classList.add('att');i.addEventListener('load',function(){i.classList.remove('att')});i.addEventListener('error',function(){i.classList.remove('att')})});
+/* préchargement des écrans des fonctions, quand la page est calme */
+function pre(){var d=document.documentElement.getAttribute('data-theme'),n=d?d==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+ 'a1 a2 a3 b1 b2 b4 c2 c3 c4 c5 c6 c7 c8 c9 c10 o1 o2 o3 o4 o5 o6'.split(' ').forEach(function(k,j){setTimeout(function(){var im=new Image();im.decoding='async';im.src='vitrine/f/'+k+(n?'-n':'')+'.jpg'},j*120)})}
+addEventListener('load',function(){setTimeout(function(){window.requestIdleCallback?requestIdleCallback(pre):pre()},1200)})})();</script>
 </body></html>
