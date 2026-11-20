@@ -905,6 +905,16 @@ body[data-et=b] .etapes.pc .et-n{display:block;order:-1;margin:-4px 0 4px;font-s
 body[data-et=b] .etapes.pc>div{display:flex;flex-direction:column}
 body[data-et=b] .etapes.pc .eh{order:-2}
 @media (hover:hover){body[data-et=b] .etapes.pc>div:hover .et-n{transform:translateX(6px)}}
+body[data-pq] .trois.pc .pq-moi{position:relative;align-items:center;padding-top:0}
+body[data-pq] .pq-halo{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--laiton) 30%,transparent),transparent 68%);animation:pqH 3.2s ease-in-out infinite}
+body[data-pq] .pq-logo{position:relative;display:grid;place-items:center;width:104px;height:104px;overflow:hidden;border-radius:50%;background:var(--calme);color:var(--fg);box-shadow:0 0 0 1px var(--line),0 20px 40px -18px rgba(14,19,34,.45)}
+body[data-pq] .pq-logo svg{width:92px;height:106px;margin-top:6px}
+body[data-pq] .pq-bul{position:absolute;left:calc(50% + 34px);top:calc(50% - 64px);display:flex;gap:4px;padding:10px 12px;border-radius:16px 16px 16px 4px;background:var(--nuit);box-shadow:0 10px 20px -10px rgba(14,19,34,.5)}
+body[data-pq] .pq-bul i{width:6px;height:6px;border-radius:50%;background:var(--nuit-fg);opacity:.35;animation:pqB 1.4s ease-in-out infinite}
+body[data-pq] .pq-bul i:nth-child(2){animation-delay:.18s}body[data-pq] .pq-bul i:nth-child(3){animation-delay:.36s}
+@keyframes pqH{0%,100%{transform:scale(.85);opacity:.7}50%{transform:scale(1.1);opacity:1}}
+@keyframes pqB{0%,60%,100%{opacity:.35;transform:none}30%{opacity:1;transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){body[data-pq] .pq-halo,body[data-pq] .pq-bul i{animation:none}}
 @media (max-width:760px){body[data-pq] .trois.pc .pq-f{height:170px;padding-top:20px;margin-bottom:16px}body[data-pq] .trois.pc .pq-f img{width:160px}body[data-et=a] .etapes.pc .et-f{grid-column:2;height:150px}body[data-et=a] .etapes.pc .et-f img{width:150px}
  body[data-et=b] .etapes.pc>div{display:grid}body[data-et=b] .etapes.pc .et-n{grid-column:2;grid-row:1;font-size:56px;margin:0}body[data-et=b] .etapes.pc h3,body[data-et=b] .etapes.pc p{grid-row:auto}}
 /* 13 fonctions incluses (20/11) : 2 rangées sur grand écran, 4 colonnes sur téléphone */
@@ -947,6 +957,7 @@ body[data-et=b] .etapes.pc .eh{order:-2}
 html.zv-ouv,html.zv-ouv body{overflow:hidden}
 .zv{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 14px) 0 calc(env(safe-area-inset-bottom) + 12px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);opacity:0;transition:opacity .3s ease}
 .zv.on{opacity:1}
+.zv[hidden],.gp[hidden]{display:none!important}
 body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
 .zv-tx{text-align:center}.zv-tx.in{animation:seE .35s ease both}
 .zv-u{display:none;list-style:none;margin:16px 0 0;padding:0;flex-direction:column;gap:9px}
@@ -1122,9 +1133,9 @@ body[data-e3=bc] .esp3 .e3-f img{box-shadow:0 0 0 6px #070a14,0 0 0 7px rgba(255
   <h2 class="pc">Moins de papiers, <span class="or">plus de chantier.</span></h2>
   <h2 class="cl">Pourquoi nous confier <span class="or">votre projet.</span></h2>
   <div class="trois pc">
-    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l5 1.2a2 2 0 0 1 1.5 2.4L17.6 18a3 3 0 0 1-2.9 2.2H11a3 3 0 0 1-2.3-1L5.5 15a1.4 1.4 0 0 1 2-2L9 14.5"/></svg></span><h3>Rien à apprendre</h3><p>Un gros bouton par étape. Si vous savez envoyer un SMS, vous savez vous en servir.</p><figure class="pq-f" aria-hidden="true"><img src="vitrine/v-accueil.jpg" alt="" loading="lazy" decoding="async"></figure></div>
-    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/><circle cx="17.7" cy="6.3" r="1.5" style="fill:var(--laiton);stroke:none"/></svg></span><h3>Fini le soir au bureau</h3><p>Les demandes arrivent rangées, les devis et les factures se font en quelques touches.</p><figure class="pq-f" aria-hidden="true"><img src="vitrine/v-factures.jpg" alt="" loading="lazy" decoding="async"></figure></div>
-    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span><h3>Jamais seul</h3><p>L'installation et la prise en main se font avec vous. Une vraie personne répond.</p><figure class="pq-f" aria-hidden="true"><img src="vitrine/e-conv-client.jpg" alt="" loading="lazy" decoding="async"></figure></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l5 1.2a2 2 0 0 1 1.5 2.4L17.6 18a3 3 0 0 1-2.9 2.2H11a3 3 0 0 1-2.3-1L5.5 15a1.4 1.4 0 0 1 2-2L9 14.5"/></svg></span><h3>Rien à apprendre</h3><p>Un gros bouton par étape. Si vous savez envoyer un SMS, vous savez vous en servir.</p><figure class="pq-f" aria-hidden="true"><img src="vitrine/v-clients.jpg" alt="" loading="lazy" decoding="async"></figure></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/><circle cx="17.7" cy="6.3" r="1.5" style="fill:var(--laiton);stroke:none"/></svg></span><h3>Fini le soir au bureau</h3><p>Les demandes arrivent rangées, les devis et les factures se font en quelques touches.</p><figure class="pq-f" aria-hidden="true"><img src="vitrine/e-predevis.jpg" alt="" loading="lazy" decoding="async"></figure></div>
+    <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.4A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span><h3>Jamais seul</h3><p>L'installation et la prise en main se font avec vous. Une vraie personne répond.</p><figure class="pq-f pq-moi" aria-hidden="true"><span class="pq-halo"></span><span class="pq-logo"><svg viewBox="16 -1.5 80 92"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg></span><span class="pq-bul"><i></i><i></i><i></i></span></figure></div>
   </div>
   <div class="trois cl">
     <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg></span><h3>Artisan local</h3><p>Exemple : installé à Voiron, interventions dans le Pays voironnais.</p></div>
