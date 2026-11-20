@@ -1166,10 +1166,12 @@ body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:100%!important;right
  body[data-et=d] .etapes.pc .et-d{height:190px}body[data-et=d] .et-d svg{height:165px}}
 @media (prefers-reduced-motion:reduce){.etapes.pc .et-d *{animation:none!important}.et-d .ck{stroke-dashoffset:0}.et-d .pg{transform:scaleX(.7)}.et-d .nt{transform:none;opacity:1}.et-d .bd{transform:scale(1)}.et-d .vp{opacity:.8}}
 /* 20/11 taille des appareils de l'accueil : variantes data-hz (B retenue) */
-@media (min-width:1000px){body[data-hz=b] .se-g{grid-template-columns:repeat(14,minmax(0,64px))!important;gap:8px 8px!important}
+@media (min-width:701px){body[data-hz=b] .hero{padding-top:0!important}body[data-hz=b] .hero h1{margin-top:-8px!important}}
+@media (min-width:1000px){body[data-hz=b] .se-g{grid-template-columns:repeat(14,minmax(0,74px))!important;gap:8px 6px!important}
+ body[data-hz=b] .se-h{transform:translateX(-118px)}body[data-hz=b] .legende.c{margin-top:-19px!important;transform:translate(158px,4px)}
  body[data-hz=b] .se-t{font-size:10.5px;gap:6px}body[data-hz=b] .se-t .ic{width:46px;height:46px;padding:12px;border-radius:14px}}
 @media (min-width:701px){
- body[data-hz=b] .univers .appareils{width:min(86%,1100px,calc((100svh - 355px) * 1.25))!important;margin-bottom:1.4%!important}
+ body[data-hz=b] .univers .appareils{width:min(86%,1100px,calc((100svh - var(--hzr,290px)) * 1.25))!important;margin-bottom:1.4%!important}
  body[data-hz=c] .univers .appareils{width:min(88%,1120px,calc((100svh - 330px) * 1.25))!important}
  body[data-hz=d] .univers .appareils{width:min(92%,1200px,calc((100svh - 230px) * 1.25))!important}
 }
