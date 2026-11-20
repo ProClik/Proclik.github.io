@@ -1475,7 +1475,7 @@ main>section:not(.hero) h2 .or{display:inline}
  .trois.sec{background:none!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
  .trois.sec>div{padding:14px 0!important}
  .c-ouvre{display:none}
- .calc.pli .c-ouvre{display:inline-flex;margin-top:14px}
+ .calc.pli .c-ouvre{display:flex;justify-content:center;width:100%;margin-top:16px;min-height:50px;border-radius:999px;background:var(--nuit)!important;color:var(--nuit-fg)!important;font-weight:700;border:0;box-shadow:0 10px 22px -12px rgba(14,19,34,.6)}
 }
 
 /* Téléphone (20/11, captures de Cyril) : contrôles segmentés nets, 3 Espaces en onglets */
@@ -1622,13 +1622,13 @@ main>section:not(.hero) h2 .or{display:inline}
       <button id="o-cli" role="tab" aria-selected="false" data-o="cli"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4.7"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky</button>
       <button id="o-res" role="tab" aria-selected="false" data-o="res"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="4.2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Réservation</button>
     </div>
-    <div class="vue" data-p="site"><div><h3>Votre client décrit ses travaux</h3><p>Une question à la fois, ou un plan dessiné du bout du doigt.</p><a class="btn" href="#demo">Essayer le formulaire</a></div>
+    <div class="vue" data-p="site"><div><h3>Votre client décrit ses travaux</h3><p>Une question à la fois, ou un plan dessiné du bout du doigt.</p><a class="btn" href="devis/#a=demo&amp;n=Menuiserie%20Martin&amp;pr=Julien" target="_blank" rel="noopener">Essayer le formulaire</a></div>
       <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-formulaire.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-murs.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-plan.jpg" alt=""></div></div></div>
-    <div class="vue" data-p="esp" hidden><div><h3>Tout votre travail, rangé</h3><p>Chaque matin, le point du jour vous dit quoi faire. Sur le chantier, vos entreprises et votre client suivent avec vous : conversation, réserves, réception signée.</p><a class="btn" href="#demo">Ouvrir l'Espace</a></div>
+    <div class="vue" data-p="esp" hidden><div><h3>Tout votre travail, rangé</h3><p>Chaque matin, le point du jour vous dit quoi faire. Sur le chantier, vos entreprises et votre client suivent avec vous : conversation, réserves, réception signée.</p><a class="btn" href="#demo" data-ouvre="p1">Ouvrir l'Espace</a></div>
       <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-accueil.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-chantier.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-reserves.jpg" alt=""></div></div></div>
-    <div class="vue" data-p="cli" hidden><div><h3>Le pré-devis prêt avant vous</h3><p>En option, Cliky prépare le pré-devis à partir de la demande et de vos habitudes de chantier. Vous vérifiez, vous corrigez une ligne, vous validez.</p><p>Dès le premier jour, une base de près de 600 produits. Ensuite, vos prix fournisseur, que Cliky tient à jour avec ses factures.</p><a class="btn" href="#demo">Voir un pré-devis</a></div>
+    <div class="vue" data-p="cli" hidden><div><h3>Le pré-devis prêt avant vous</h3><p>En option, Cliky prépare le pré-devis à partir de la demande et de vos habitudes de chantier. Vous vérifiez, vous corrigez une ligne, vous validez.</p><p>Dès le premier jour, une base de près de 600 produits. Ensuite, vos prix fournisseur, que Cliky tient à jour avec ses factures.</p><a class="btn" href="#demo" data-ouvre="o1">Voir un pré-devis</a></div>
       <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-cliky-base.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-cliky-devis.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-cliky-mat.jpg" alt=""></div></div></div>
-    <div class="vue" data-p="res" hidden><div><h3>Vos clients réservent seuls</h3><p>En option, vos clients choisissent un créneau libre et peuvent payer un acompte.</p><a class="btn" href="#demo">Essayer la réservation</a></div>
+    <div class="vue" data-p="res" hidden><div><h3>Vos clients réservent seuls</h3><p>En option, vos clients choisissent un créneau libre et peuvent payer un acompte.</p><a class="btn" href="reservation/" target="_blank" rel="noopener">Essayer la réservation</a></div>
       <div class="duo"><span class="ex">Vrais écrans · exemple</span><div class="f f1"><img decoding="async" loading="lazy" src="vitrine/v-resa.jpg" alt=""></div><div class="f f2"><img decoding="async" loading="lazy" src="vitrine/v-reservation.jpg" alt=""></div><div class="f f3"><img decoding="async" loading="lazy" src="vitrine/v-planning.jpg" alt=""></div></div></div>
     <p class="note">Les démos sont les vraies pages, en mode démonstration : rien n'est envoyé.</p>
   </div>
@@ -2281,4 +2281,10 @@ var t=document.createElement('div');t.className='e3-tabs';t.setAttribute('role',
 cs.forEach(function(c,i){var n=c.querySelector('.nom'),px=c.querySelector('.px b'),b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.innerHTML=(n?n.getAttribute('aria-label'):'')+'<small>'+(px?px.textContent:'')+'</small>';
 b.addEventListener('click',function(){cs.forEach(function(x,j){x.classList.toggle('vis',j===i);t.children[j].classList.toggle('on',j===i);t.children[j].setAttribute('aria-selected',j===i?'true':'false')})});t.appendChild(b)});
 g.parentNode.insertBefore(t,g);e.classList.add('tb');t.children[0].click()})();</script>
+<script>(function(){
+/* démos : les boutons ouvrent quelque chose (20/11) */
+[].forEach.call(document.querySelectorAll('[data-ouvre]'),function(a){a.addEventListener('click',function(e){var k=a.dataset.ouvre,t=document.querySelector('button[aria-haspopup="dialog"][data-k="'+k+'"]');if(t){e.preventDefault();t.click()}})});
+/* téléphone : toucher une fonction ouvre son écran en grand */
+if(matchMedia('(max-width:700px)').matches){var p=document.querySelector('.fx-plus');[].forEach.call(document.querySelectorAll('.fx-r'),function(r){r.addEventListener('click',function(){if(!p)return;p.dataset.k=r.dataset.k;setTimeout(function(){p.click()},30)})})}
+})();</script>
 </body></html>
