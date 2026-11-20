@@ -92,8 +92,7 @@ function ligneVal(v){var s=STV[v.st]||STV.valide;return '<button class="cf-li" t
 var CUR=null,ARME='';
 function totaux(doc){var ht=0;doc.L.forEach(function(l){ht+=r2(l.q*l.p)});ht=r2(ht);var tv=r2(ht*doc.tva/100);return{ht:ht,tv:tv,ttc:r2(ht+tv)}}
 function pieces(doc){var P=[];doc.L.forEach(function(l){var p=l.pc||'Ensemble';if(P.indexOf(p)<0)P.push(p)});return P}
-function planMini(){return '<svg viewBox="0 0 120 80" aria-hidden="true" class="dv-mini"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 4h112v72H4z"/><path d="M62 4v40M4 44h58M90 4v40M62 44h54M36 44v32"/></g><path d="M44 44h12" stroke="var(--cx)" stroke-width="3"/>'+
- '<g font-family="Manrope,sans-serif" font-weight="700" font-size="8" fill="currentColor" text-anchor="middle"><text x="33" y="27">Séjour</text><text x="76" y="27">Cuisine</text><text x="103" y="27">Ch. 2</text><text x="20" y="63">Ch. 1</text><text x="76" y="63">Salle d\'eau</text></g></svg>'}
+function planMini(){/* même miniature que le vrai plan du client (plan-mini.js), jour et nuit */if(window.PC_PLAN_MINI)return window.PC_PLAN_MINI;return '<svg viewBox="0 0 120 80" aria-hidden="true" class="dv-mini"><path d="M4 4h112v72H4z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>'}
 function editeur(doc,mode,garder){CUR={doc:doc,mode:mode};var t=totaux(doc),fige=mode==='pre'&&!PRE(doc)&&!FOUR(doc),y=$('#x-in')?$('#x-in').scrollTop:0;
  var h='';
  if(mode!=='pre'){var K=Object.keys(DOS);h+='<div class="cf-form dv-qui"><label>Pour qui<select id="dv-c">'+K.map(function(k){return '<option value="'+k+'"'+(k===doc.cli?' selected':'')+'>'+esc(DOS[k].n)+'</option>'}).join('')+'</select></label>'+
