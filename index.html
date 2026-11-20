@@ -1498,6 +1498,44 @@ main>section:not(.hero) h2 .or{display:inline}
 }
 @keyframes e3In{from{opacity:0;transform:translateY(6px)}}
 
+.sc-ic{display:none}
+/* ===== TÉLÉPHONE façon inspirations de Cyril (20/11) : carte sombre, cartes claires arrondies, icônes rondes, pilules ===== */
+@media (max-width:700px){
+ .scn:not(.scn-e){grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .scn:not(.scn-e)>.sc:first-child{grid-column:1/-1;background:var(--nuit);border-radius:30px;overflow:hidden;padding-bottom:24px;gap:6px;box-shadow:0 24px 44px -26px rgba(14,19,34,.6)}
+ .scn:not(.scn-e)>.sc:first-child .sc-st{height:330px;border-radius:0;box-shadow:none;background:radial-gradient(70% 70% at 50% 100%,rgba(212,180,131,.35),transparent 72%)}
+ .scn:not(.scn-e)>.sc:first-child figcaption{padding:0 22px}
+ .scn:not(.scn-e)>.sc:first-child h3{color:var(--nuit-fg);font-size:26px}
+ .scn:not(.scn-e)>.sc:first-child p{color:color-mix(in srgb,var(--nuit-fg) 72%,transparent)}
+ .scn:not(.scn-e)>.sc:first-child .sc-k{color:#D4B483}
+ .scn:not(.scn-e)>.sc:not(:first-child){border-top:0!important;padding:18px 16px!important;border-radius:26px;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 14px 30px -24px rgba(14,19,34,.4)}
+ .scn:not(.scn-e)>.sc:not(:first-child) figcaption{padding:0}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--nuit);color:#D4B483;margin-bottom:14px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-k{font-size:10.5px;letter-spacing:.1em}
+ .scn:not(.scn-e)>.sc:not(:first-child) h3{font-size:17px;line-height:1.2}
+ .scn:not(.scn-e)>.sc:not(:first-child) p{font-size:13.5px;line-height:1.45}
+ /* Étapes : l'étape 1 en carte sombre, comme « la tâche du moment » */
+ .scn.scn-e>.sc:first-child figcaption{background:var(--nuit);border-radius:24px;padding:18px 18px 20px!important;box-shadow:0 20px 36px -24px rgba(14,19,34,.6)}
+ .scn.scn-e>.sc:first-child h3{color:var(--nuit-fg)}
+ .scn.scn-e>.sc:first-child p{color:color-mix(in srgb,var(--nuit-fg) 72%,transparent)}
+ .scn.scn-e>.sc:first-child::before{background:#D4B483;color:#0E1322}
+ .scn.scn-e>.sc:not(:first-child) figcaption{padding:4px 4px 0!important}
+ .scn.scn-e>.sc:not(:first-child)::before{background:var(--bg);color:var(--fg);box-shadow:0 0 0 2px var(--fg),0 0 0 6px var(--bg)}
+ /* Les petites choses : accès rapide en icônes rondes */
+ .fx-rs{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px 6px!important}
+ .fx-r{all:unset;cursor:pointer;display:flex!important;flex-direction:column;align-items:center;gap:7px;text-align:center;min-height:0!important;-webkit-tap-highlight-color:transparent}
+ .fx-r>svg.ic{width:56px!important;height:56px!important;padding:16px;box-sizing:border-box;border-radius:50%;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 10px 20px -14px rgba(14,19,34,.45);stroke:var(--fg)!important;fill:none}
+ .fx-r[aria-selected="true"]>svg.ic{background:var(--calme);color:inherit}
+ .fx-r>span b{font-size:11.5px!important;line-height:1.25;font-weight:700;color:var(--fg)}
+ .fx-r>span small{display:none!important}
+ .fx-r::before,.fx-r::after{display:none!important}
+ .fx-r,.fx-r[aria-selected="true"]{background:none!important;box-shadow:none!important;color:var(--fg)!important}
+ .fx-r[aria-selected="true"]>span b{color:var(--fg)!important}
+ /* Boutons principaux : pilule pleine largeur */
+ .vue .btn,#demo .vue .btn{display:flex;justify-content:center;width:100%;box-sizing:border-box;min-height:54px}
+}
+
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
@@ -1584,8 +1622,8 @@ main>section:not(.hero) h2 .or{display:inline}
   <h2 class="cl">Pourquoi nous confier <span class="or">votre projet.</span></h2>
   <div class="scn pc">
     <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:100%;--r:-3deg"><img class="j" fetchpriority="low" src="vitrine/f/a2.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/a2-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc b"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l5 1.2a2 2 0 0 1 1.5 2.4L17.6 18a3 3 0 0 1-2.9 2.2H11a3 3 0 0 1-2.3-1L5.5 15a1.4 1.4 0 0 1 2-2L9 14.5"/></svg></span><span class="h-nc-t"><small>Un seul bouton</small><b>Valider le pré-devis</b><span>Et c'est parti</span></span></div></div><figcaption><small class="sc-k">Rien à apprendre</small><h3>Un gros bouton par étape.</h3><p>Si vous savez envoyer un SMS, vous savez vous en servir.</p></figcaption></figure>
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:0deg"><img class="j" fetchpriority="low" src="vitrine/f/o1.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/o1-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc h"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h4"/></svg></span><span class="h-nc-t"><small>ProClik · à l'instant</small><b>Nouvelle demande</b><span>Mme Durand, avec son plan</span></span></div></div><figcaption><small class="sc-k">Fini le soir au bureau</small><h3>Les demandes arrivent rangées.</h3><p>Les devis et les factures se font en quelques touches.</p></figcaption></figure>
-    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph flou" style="--y:0%;--r:3deg"><img class="j" fetchpriority="low" src="vitrine/f/c7.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/c7-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-ch"><p class="moi">J'ai une question sur un devis</p><p class="pc"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H10l-4 3v-3H5z"/></svg></span>On regarde ça ensemble, tout de suite.</p></div></div><figcaption><small class="sc-k">Jamais seul</small><h3>Une vraie personne répond.</h3><p>L'installation et la prise en main se font avec vous.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph " style="--y:0%;--r:0deg"><img class="j" fetchpriority="low" src="vitrine/f/o1.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/o1-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-nc h"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h4"/></svg></span><span class="h-nc-t"><small>ProClik · à l'instant</small><b>Nouvelle demande</b><span>Mme Durand, avec son plan</span></span></div></div><figcaption><span class="sc-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/></svg></span><small class="sc-k">Fini le soir au bureau</small><h3>Les demandes arrivent rangées.</h3><p>Les devis et les factures se font en quelques touches.</p></figcaption></figure>
+    <figure class="sc"><div class="sc-st" aria-hidden="true"><div class="sc-ph flou" style="--y:0%;--r:3deg"><img class="j" fetchpriority="low" src="vitrine/f/c7.jpg" alt="" loading="lazy" decoding="async"><img class="n" src="vitrine/f/c7-n.jpg" alt="" loading="lazy" decoding="async"></div><div class="sc-ch"><p class="moi">J'ai une question sur un devis</p><p class="pc"><span class="h-nc-i"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H10l-4 3v-3H5z"/></svg></span>On regarde ça ensemble, tout de suite.</p></div></div><figcaption><span class="sc-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H10l-4 3v-3H5z"/></svg></span><small class="sc-k">Jamais seul</small><h3>Une vraie personne répond.</h3><p>L'installation et la prise en main se font avec vous.</p></figcaption></figure>
   </div>
   <div class="trois cl">
     <div><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg></span><h3>Artisan local</h3><p>Exemple : installé à Voiron, interventions dans le Pays voironnais.</p></div>
