@@ -1165,6 +1165,14 @@ body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:100%!important;right
 @media (max-width:760px){body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:50%!important;top:100%!important;width:2px!important;height:var(--g)!important;background:repeating-linear-gradient(180deg,var(--laiton) 0 5px,transparent 5px 9px)!important}
  body[data-et=d] .etapes.pc .et-d{height:190px}body[data-et=d] .et-d svg{height:165px}}
 @media (prefers-reduced-motion:reduce){.etapes.pc .et-d *{animation:none!important}.et-d .ck{stroke-dashoffset:0}.et-d .pg{transform:scaleX(.7)}.et-d .nt{transform:none;opacity:1}.et-d .bd{transform:scale(1)}.et-d .vp{opacity:.8}}
+/* 20/11 taille des appareils de l'accueil : variantes data-hz (essai) */
+@media (min-width:701px){
+ body[data-hz=b] .univers .appareils{width:min(86%,1100px,calc((100svh - 400px) * 1.25))!important}
+ body[data-hz=b] .se-g{grid-template-columns:repeat(14,minmax(0,64px))!important;gap:8px 8px!important}
+ body[data-hz=b] .se-t{font-size:10.5px;gap:6px}body[data-hz=b] .se-t .ic{width:46px;height:46px;padding:12px;border-radius:14px}
+ body[data-hz=c] .univers .appareils{width:min(88%,1120px,calc((100svh - 330px) * 1.25))!important}
+ body[data-hz=d] .univers .appareils{width:min(92%,1200px,calc((100svh - 230px) * 1.25))!important}
+}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
