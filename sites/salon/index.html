@@ -372,16 +372,17 @@ if(R)kick1();else kick();
 </script>
 <style id="lila-brume">
 /* Maison Lila : épuré, ciel pâle, grand nom en trait fin, panneau blanc */
-:root{--acc:#2F3B4C;--acc2:#B39A80;--bg:#EEF0F2;--surf:#FFFFFF;--encre:#2F3B4C;--gris:#7C8796;--trait:rgba(47,59,76,.16);--r:4px}
+:root{--acc:#2F3B4C;--acc2:#B39A80;--bg:#EEF0F2;--surf:#FFFFFF;--encre:#2F3B4C;--gris:#7C8796;--trait:rgba(47,59,76,.16);--r:22px}
 body{background:var(--bg);color:var(--encre)}
 h1,h2,h3{font-family:var(--f);font-weight:300;letter-spacing:-.02em}
 h1 b,h2 b{font-weight:500}
 section:nth-of-type(even){background:none}
 .ex{background:transparent;color:var(--gris)}
 .bar{background:rgba(238,240,242,.7);box-shadow:none;border-bottom:1px solid var(--trait)}
+.bar .btn{padding:9px 18px}
 .marque{font-weight:400;letter-spacing:.18em;text-transform:uppercase;font-size:14px}
 .marque b{background:var(--acc2)}
-.btn{background:var(--encre);color:#fff;border-radius:2px!important;font-weight:500;letter-spacing:.02em}
+.btn{background:var(--encre);color:#fff;border-radius:999px!important;font-weight:500;letter-spacing:.02em}
 .btn.sec{background:transparent;color:var(--encre);box-shadow:inset 0 0 0 1px var(--trait)}
 .k,.tete .k{font:500 11px/1.4 var(--f)!important;letter-spacing:.28em!important;text-transform:uppercase;color:var(--gris)!important}
 .hero{padding-top:28px}
@@ -395,9 +396,9 @@ section:nth-of-type(even){background:none}
 .hero .actions .btn{padding:15px 26px}
 /* le panneau blanc qui chevauche, comme sur l'image */
 .scene{margin-top:34px!important}
-.scene .carte{transform:none!important;width:100%!important;max-width:420px!important;background:#fff!important;border-radius:0!important;box-shadow:0 30px 60px -30px rgba(47,59,76,.35)!important;padding:20px 20px 20px 22px!important;border-left:1px solid var(--trait)}
+.scene .carte{transform:none!important;width:100%!important;max-width:420px!important;background:#fff!important;border-radius:24px!important;box-shadow:0 30px 60px -30px rgba(47,59,76,.35)!important;padding:20px 20px 20px 22px!important;border-left:1px solid var(--trait)}
 .scene .carte b{font-weight:500}
-.scene .carte .btn{border-radius:2px!important}
+.scene .carte .btn{border-radius:999px!important}
 .ouvert{background:none!important;color:var(--gris)!important;padding:0!important;letter-spacing:.2em;text-transform:uppercase;font-size:10px!important}
 /* prestations : lignes fines */
 .grille{grid-template-columns:1fr!important;gap:0;border-top:1px solid var(--trait)}
@@ -411,13 +412,15 @@ section:nth-of-type(even){background:none}
 .pre .l span{font-size:11px;letter-spacing:.14em;text-transform:uppercase}
 .tete h2{font-size:clamp(30px,7vw,48px)}
 /* réservation : blanc net, angles droits */
-.resa{background:#fff;border-radius:0}
-.resa .puces button,.opts button,.jours button,.heures button{background:var(--bg)!important;border-radius:2px!important}
+.resa{background:#fff;border-radius:28px}
+.resa .puces button{border-radius:999px!important}
+.resa .puces button,.opts button,.jours button,.heures button{background:var(--bg)!important;border-radius:14px!important}
 .resa .puces button[aria-pressed="true"],.jours button[aria-pressed="true"],.heures button[aria-pressed="true"]{background:var(--encre)!important;color:#fff!important}
-.recap{background:var(--bg)!important;border-radius:0!important}
-.avis figure{background:#fff!important;border-radius:0!important}
+.recap{background:var(--bg)!important;border-radius:22px!important}
+.avis figure{background:#fff!important;border-radius:22px!important}
 .etoiles{color:var(--acc2)}
-.venir>div:first-child,.carte2{border-radius:0!important}
+.venir>div:first-child,.carte2{border-radius:22px!important}
 footer{background:transparent}
 .bas .btn{width:100%}
+.resa .puces button{border-radius:999px!important}
 </style></body></html>
