@@ -1409,6 +1409,34 @@ main>section:not(.hero) h2 .or{display:inline}
 #securite .lead,#securite h2+p{margin-left:auto;margin-right:auto}
 @media (min-width:701px){#securite .trois.sec{max-width:980px;margin-left:auto;margin-right:auto;text-align:left}}
 
+/* Téléphone (20/11, Cyril « sur téléphone rien n'a changé ») : mosaïque, frise, déclaration */
+@media (max-width:760px){
+ .scn{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;margin:26px 0 0;padding:0;scroll-snap-type:none}
+ .scn>.sc{flex:none}
+ .scn:not(.scn-e){gap:22px}
+ .scn:not(.scn-e)>.sc:first-child .sc-st{height:430px}
+ .scn:not(.scn-e)>.sc:first-child .sc-ph{width:206px;top:46px}
+ .scn:not(.scn-e)>.sc:first-child .sc-ph img{height:420px}
+ .scn:not(.scn-e)>.sc:first-child h3{font-size:25px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-st{height:220px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-ph{left:26%;width:128px;top:26px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-ph img{height:262px}
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-nc{left:auto;right:4%;top:50%!important;bottom:auto!important;transform:translateY(-50%);max-width:56%}
+ .scn:not(.scn-e) .sc-ch{left:44%;right:4%;top:34px;bottom:auto;gap:8px}
+ .scn:not(.scn-e) .sc-ch p{font-size:12.5px;padding:9px 11px}
+ .scn:not(.scn-e) .sc-ch .pc{padding:8px 11px 8px 8px}
+ .scn.scn-e{display:block;position:relative;padding-left:40px;counter-reset:sce}
+ .scn.scn-e::before{content:"";position:absolute;left:13px;top:14px;bottom:40px;width:2px;border-radius:2px;background:linear-gradient(180deg,var(--laiton),color-mix(in srgb,var(--laiton) 20%,transparent))}
+ .scn.scn-e>.sc{position:relative;margin-bottom:34px;counter-increment:sce}
+ .scn.scn-e>.sc:last-child{margin-bottom:0}
+ .scn.scn-e>.sc::before{content:counter(sce);position:absolute;left:-40px;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;background:var(--nuit);color:var(--nuit-fg);box-shadow:0 0 0 5px var(--bg)}
+ .scn.scn-e .sc-st{height:250px}
+ .scn.scn-e .sc-ph{width:150px;top:32px}.scn.scn-e .sc-ph img{height:300px}
+ .scn.scn-e .sc-cafe{width:70%;top:38%}.scn.scn-e .sc-nc.b{bottom:16px}
+ .scn.scn-e h3{font-size:22px}
+ #securite .trois.sec{text-align:left}
+}
+
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
