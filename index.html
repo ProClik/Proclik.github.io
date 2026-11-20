@@ -1478,6 +1478,26 @@ main>section:not(.hero) h2 .or{display:inline}
  .calc.pli .c-ouvre{display:inline-flex;margin-top:14px}
 }
 
+/* Téléphone (20/11, captures de Cyril) : contrôles segmentés nets, 3 Espaces en onglets */
+@media (max-width:700px){
+ .onglets{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:18px;background:color-mix(in srgb,var(--fg) 6%,transparent);box-shadow:none}
+ .onglets button{flex-direction:column;justify-content:center;gap:4px!important;min-height:58px!important;padding:6px 2px!important;border-radius:14px!important;font-size:12.5px!important;box-shadow:none!important;background:none!important;color:var(--muted)!important;white-space:nowrap}
+ .onglets button[aria-selected="true"]{background:var(--nuit)!important;color:var(--nuit-fg)!important;box-shadow:0 6px 14px -8px rgba(14,19,34,.5)!important}
+ .onglets button .ic{width:20px!important;height:20px!important}
+ .c-ch{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;box-sizing:border-box;border-radius:16px!important;gap:4px!important;padding:4px!important}
+ .c-ch button{text-align:center;padding:0 6px!important;min-height:44px!important;display:flex!important;align-items:center;justify-content:center;border-radius:12px!important;font-size:13.5px!important}
+ .c-o .c-ck{top:50%!important;margin-top:-9px}
+ .c-ch[hidden]{display:none!important}
+ .e3-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin:14px 0 12px;border-radius:16px;background:color-mix(in srgb,var(--fg) 6%,transparent)}
+ .e3-tabs button{all:unset;cursor:pointer;text-align:center;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;font:800 13px var(--f);letter-spacing:.12em;color:var(--muted)}
+ .e3-tabs button small{font:600 11px var(--f);letter-spacing:0;opacity:.8;margin-top:1px}
+ .e3-tabs button.on{background:var(--nuit);color:var(--nuit-fg);box-shadow:0 6px 14px -8px rgba(14,19,34,.5)}
+ .esp3.tb .g{display:block!important;overflow:visible!important;margin:0!important;padding:0!important}
+ .esp3.tb .g>.c{display:none!important;width:auto!important;max-width:none!important;min-width:0!important;flex:none!important}
+ .esp3.tb .g>.c.vis{display:flex!important;animation:e3In .35s ease}
+}
+@keyframes e3In{from{opacity:0;transform:translateY(6px)}}
+
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
@@ -2256,4 +2276,9 @@ function pre(){var d=document.documentElement.getAttribute('data-theme'),n=d?d==
 addEventListener('load',function(){setTimeout(function(){window.requestIdleCallback?requestIdleCallback(pre):pre()},1200)})})();</script>
 <script>(function(){var b=document.querySelector('.h-cta');if(!b)return;var y=scrollY,t=0;addEventListener('scroll',function(){if(t)return;t=requestAnimationFrame(function(){t=0;var n=scrollY,d=n-y;if(Math.abs(d)<6)return;b.classList.toggle('desc',d>0&&n>200);y=n})},{passive:true})})();</script>
 <script>(function(){var c=document.getElementById('calc');if(!c||!matchMedia('(max-width:700px)').matches)return;c.classList.add('pli');var b=document.createElement('button');b.type='button';b.className='btn sec c-ouvre';b.textContent='Calculer mon prix';var t=c.querySelector('.c-top');t.insertAdjacentElement('afterend',b);b.addEventListener('click',function(){c.classList.remove('pli')})})();</script>
+<script>(function(){var e=document.querySelector('.esp3');if(!e||!matchMedia('(max-width:700px)').matches)return;var g=e.querySelector('.g'),cs=[].slice.call(g.querySelectorAll(':scope>.c'));if(cs.length<2)return;
+var t=document.createElement('div');t.className='e3-tabs';t.setAttribute('role','tablist');
+cs.forEach(function(c,i){var n=c.querySelector('.nom'),px=c.querySelector('.px b'),b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.innerHTML=(n?n.getAttribute('aria-label'):'')+'<small>'+(px?px.textContent:'')+'</small>';
+b.addEventListener('click',function(){cs.forEach(function(x,j){x.classList.toggle('vis',j===i);t.children[j].classList.toggle('on',j===i);t.children[j].setAttribute('aria-selected',j===i?'true':'false')})});t.appendChild(b)});
+g.parentNode.insertBefore(t,g);e.classList.add('tb');t.children[0].click()})();</script>
 </body></html>
