@@ -1307,6 +1307,21 @@ body[data-tx=c] .trois.pc>div>p .ess{font-size:24px!important;line-height:1.2!im
 @keyframes pqFlot{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 body[data-pq] .trois.pc .pq-f{box-shadow:none!important;border-radius:0!important;background:radial-gradient(closest-side,color-mix(in srgb,var(--laiton) 13%,transparent),transparent 78%)!important}
 
+/* ===== BEAUTÉ 2 (20/11) : bandes bleu nuit, grands titres ===== */
+main>section.bande{--bg:#141B30;--fg:#F1F3F9;--muted:#AEB6CC;--line:rgba(255,255,255,.10);--nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--laiton-tx:#D4B483;--laiton-sn:#80601F;--calme:#1F2740;--teinte:rgba(255,255,255,.05);--sh:0 10px 28px rgba(0,0,0,.35);
+ --n1-bg:#141B30;--n1-fg:#F1F3F9;--n1-muted:#AEB6CC;--n1-line:rgba(255,255,255,.08);--n1-nuit:#E8EAF2;--n1-nuit-fg:#0E1322;--n1-laiton:#D4B483;--n1-calme:#1F2740;--n1-calme-sh:0 10px 28px rgba(0,0,0,.35);
+ --n1-pk:0 1px 0 rgba(255,255,255,.06) inset,0 0 0 1px rgba(255,255,255,.08),0 8px 16px -8px rgba(0,0,0,.6);--n1-go-sh:0 8px 18px -6px rgba(0,0,0,.6);
+ color-scheme:dark;color:var(--fg);position:relative;isolation:isolate;border:0!important;
+ background:radial-gradient(60% 70% at 50% 0%,rgba(212,180,131,.16),transparent 70%),radial-gradient(50% 60% at 100% 100%,rgba(90,110,170,.18),transparent 70%),#141B30!important}
+main>section.bande::before,main>section.bande::after{display:none!important}
+main>section.bande+section{border-top:0!important}
+main>section.bande h2,main>section.bande h3{color:var(--fg)}
+main>section.bande .or{color:color-mix(in srgb,var(--fg) 55%,transparent)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) main>section.bande{background:radial-gradient(60% 70% at 50% 0%,rgba(212,180,131,.14),transparent 70%),#0B0F1C!important}}
+:root[data-theme="dark"] main>section.bande{background:radial-gradient(60% 70% at 50% 0%,rgba(212,180,131,.14),transparent 70%),#0B0F1C!important}
+main>section:not(.hero) h2{font-size:clamp(32px,4.4vw,58px)!important;line-height:1.04!important;letter-spacing:-.035em!important}
+main>section:not(.hero) h2 .or{display:inline}
+
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
@@ -1387,7 +1402,7 @@ body[data-pq] .trois.pc .pq-f{box-shadow:none!important;border-radius:0!importan
 
 
 <!-- 2. TROIS ATOUTS -->
-<section><div class="wrap">
+<section class="bande" id="pourquoi"><div class="wrap">
   <span class="num"><b>2</b>Pourquoi</span>
   <h2 class="pc">Moins de papiers, <span class="or">plus de chantier.</span></h2>
   <h2 class="cl">Pourquoi nous confier <span class="or">votre projet.</span></h2>
@@ -1574,7 +1589,7 @@ body[data-pq] .trois.pc .pq-f{box-shadow:none!important;border-radius:0!importan
 </div></section>
 
 <!-- 7. CONTACT -->
-<section id="contact" class="contact"><div class="wrap">
+<section id="contact" class="contact bande"><div class="wrap">
   <span class="num"><b>7</b>Contact</span>
   <svg class="cafe pc" viewBox="0 0 80 70" aria-hidden="true"><path class="vapeur" d="M30 22c-4-5 4-8 0-14M40 22c-4-5 4-8 0-14M50 22c-4-5 4-8 0-14"/><path d="M18 30h44v14a16 16 0 0 1-16 16H34a16 16 0 0 1-16-16z"/><path d="M62 34h4a7 7 0 0 1 0 14h-5"/><path d="M14 64h52"/></svg>
   <h2 class="pc">On en parle <span class="or">autour d'un café ?</span></h2>
