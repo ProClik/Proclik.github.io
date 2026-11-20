@@ -862,6 +862,11 @@ main>section:not(.hero) h2{font-weight:600!important;letter-spacing:-.045em!impo
 main>section:not(.hero) h2:not(.v-t h2){font-size:clamp(30px,3.9vw,50px)!important}
 main>section:not(.hero) h2 .or{box-shadow:none!important;color:color-mix(in srgb,var(--fg) 52%,transparent)}
 #contact h2{font-size:clamp(34px,4.8vw,60px)!important}
+/* Accueil : « L'Espace » + prix en une ligne (choix C, 20/11) */
+.dp.dpe{display:inline-flex!important;align-items:center;gap:0;margin:0!important;padding:5px 14px 5px 5px;border-radius:99px;font-size:13.5px;font-weight:600;color:var(--muted);box-shadow:0 0 0 1px var(--line);background:color-mix(in srgb,var(--calme) 60%,transparent);flex:none!important;transition:box-shadow .25s}
+.dp.dpe span{margin-right:9px;padding:4px 10px;border-radius:99px;background:var(--nuit);color:var(--nuit-fg);font-weight:800;font-size:12px;letter-spacing:.02em}
+.dp.dpe b{margin:0 .3em;color:var(--fg)}
+.dp.dpe:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--laiton) 50%,var(--line))}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -913,7 +918,7 @@ main>section:not(.hero) h2 .or{box-shadow:none!important;color:color-mix(in srgb
     <p class="sur">L'Espace ProClik</p>
     <h1 class="t2"><span class="l l1">Votre entreprise…</span><span class="l l2">une appli.</span></h1>
     <p class="lead">Site, devis, factures et agenda. Tout au même endroit.</p>
-    <div class="actions"><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
+    <div class="actions"><a class="dp dpe" href="#tarifs"><span>L’Espace</span>dès <b>49&nbsp;€&nbsp;HT</b>&nbsp;/&nbsp;mois</a></div>
 
     <div class="univers">
       <ul class="sat g"><li class="t"><span class="st-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="st-n">Compris<small>Dans tous les Espaces</small></span></li>
