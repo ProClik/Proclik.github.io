@@ -1923,7 +1923,7 @@ function gpOuvre(k,alt){if(!gp){gp=document.createElement('div');gp.className='g
  if(!gp.hidden){im.classList.remove('in');void im.offsetWidth;im.src='vitrine/'+IMG[k]+'.jpg';im.classList.add('in');return}
  im.src='vitrine/'+IMG[k]+'.jpg';gp.hidden=false;gpPlace();var fr=PH.getBoundingClientRect();phVoir(false);U.classList.add('gp-on');flip(gp,fr,gp.getBoundingClientRect())}
 function gpFerme(){if(!gp||gp.hidden)return;U.classList.remove('gp-on');flip(gp,PH.getBoundingClientRect(),gp.getBoundingClientRect(),true,function(){gp.hidden=true;phVoir(true);gp.getAnimations&&gp.getAnimations().forEach(function(a){a.cancel()})})}
-addEventListener('resize',function(){if(gp&&!gp.hidden)gpPlace()});
+addEventListener('resize',function(){if(gp&&!gp.hidden&&U.classList.contains('gp-on'))gpPlace()});
 function zvMontre(L,i,k,d,pts){if(!zv){zv=document.createElement('div');zv.className='zv';zv.hidden=true;zv.setAttribute('role','dialog');zv.setAttribute('aria-modal','true');
   zv.innerHTML='<button type="button" class="zv-x" aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="zv-c"><div class="zv-ph"><img alt=""></div><div class="zv-tx"><p class="zv-t"></p><p class="zv-d"></p><ul class="zv-u"></ul></div></div><div class="zv-g"></div>';
   document.body.appendChild(zv);zv.querySelector('.zv-x').addEventListener('click',function(){vide()});
