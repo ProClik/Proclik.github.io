@@ -705,8 +705,112 @@ html:root:root{--bg:var(--n1-bg);--fg:var(--n1-fg);--muted:var(--n1-muted);--nui
 .gal .vw-ch::-webkit-scrollbar{display:none}
 .gal .vw-ch button{flex:none}
 body:has(.mod:not([hidden])) .h-cta{display:none}
+
+/* Accueil : cartes « Compris » / « En option » retravaillées (19/11) */
+.univers ul.sat{background:var(--calme);border-radius:26px;padding:10px;gap:2px;box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 0 0 1px var(--line),0 26px 50px -34px rgba(14,19,34,.35);align-items:stretch!important;width:270px;position:relative;z-index:1}
+.univers ul.sat.d{box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 0 0 1px color-mix(in srgb,var(--laiton) 40%,var(--line)),0 26px 50px -34px rgba(14,19,34,.35)}
+.univers ul.sat li{display:block}
+.univers ul.sat li.t{display:flex;align-items:center;gap:11px;padding:8px 8px 12px;margin-bottom:4px;border-bottom:1px solid var(--line);text-transform:none;letter-spacing:0;color:var(--fg);font-size:inherit}
+.univers ul.sat li.t::after{display:none}
+.univers .st-i{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:var(--nuit);color:var(--nuit-fg)}
+.univers .sat.d .st-i{color:var(--laiton)}
+.univers .st-i svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.univers .st-n{display:flex;flex-direction:column;font-size:16px;font-weight:800;line-height:1.15}
+.univers .sat.d .st-n{color:var(--fg)}
+.univers .st-n small{font-size:12px;font-weight:600;color:var(--muted);margin:2px 0 0!important;display:block!important}
+.univers ul.sat .pas{width:100%;text-align:left;box-shadow:none!important;background:none;border-radius:14px;padding:8px 10px 8px 8px!important;font-size:14.5px!important;gap:11px!important;white-space:normal;line-height:1.25;transition:background .25s}
+.univers ul.sat .pas:hover,.univers ul.sat .pas:focus-visible{background:color-mix(in srgb,var(--fg) 5%,transparent);transform:none}
+.univers ul.sat .pas .ic{width:32px!important;height:32px!important;padding:7px!important;border-radius:10px;background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg);flex:none}
+.univers ul.sat.d .pas .ic{background:color-mix(in srgb,var(--laiton) 14%,transparent);color:var(--laiton)}
+.univers ul.sat .pas .chev{display:block!important;margin-left:auto;width:16px;height:16px;flex:none}
+.univers ul.sat li small.ia{display:inline;margin-left:2px}
+@media (prefers-reduced-motion:no-preference){.univers ul.sat{animation:entre .8s cubic-bezier(.2,.8,.2,1) both .3s}.univers ul.sat.g{--x:-18px}.univers ul.sat.d{--x:18px}.univers ul.sat li{animation:none}}
+@media (max-width:980px){
+ .univers ul.sat{width:auto;padding:6px;border-radius:20px}
+ .univers ul.sat li.t{padding:6px 6px 9px;gap:8px}
+ .univers .st-i{width:28px;height:28px;border-radius:9px}.univers .st-i svg{width:15px;height:15px}
+ .univers .st-n{font-size:14px}.univers .st-n small{display:none!important}
+ .univers ul.sat .pas{padding:6px 6px!important;font-size:12.5px!important;gap:8px!important;border-radius:11px}
+ .univers ul.sat .pas .ic{width:26px!important;height:26px!important;padding:5px!important;border-radius:8px}
+ .univers ul.sat .pas .chev{display:none!important}
+ .univers ul.sat li small.ia{display:none}
+}
+@media (min-width:700px){
+ main>section.hero{min-height:calc(100svh - var(--top-h,88px));display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}
+ main>section.hero>.wrap{width:100%}
+}
+/* bloc des sites, à sa place sous l'accueil */
+#sites{padding-block:clamp(28px,4vw,56px)!important}
+#sites::before{display:none}
+#sites .vitrine{margin:0 auto;max-width:980px}
+@media (max-width:699px){html.fit #sites .vitrine{display:grid}}
+
+/* Accueil plus grand (20/11) */
+@media (min-width:981px){
+ main>section.hero>.wrap{max-width:1440px}
+ .univers .appareils{max-width:none;width:calc(100% - 9%)}
+ .univers{gap:32px;margin-top:34px}
+}
+@media (min-width:700px) and (max-width:980px){.univers .appareils{width:94%}}
+
+/* Accueil : sélecteur Inclus / En option sous les écrans (20/11), body[data-cmp=sel-ecran] */
+body[data-cmp^=sel] .univers ul.sat{display:none!important}
+@media (min-width:981px){body[data-cmp^=sel] .univers{grid-template-columns:minmax(0,1fr)}
+ body[data-cmp^=sel] .univers .appareils{width:min(74%,980px,calc((100svh - 550px) * 1.25))}}
+@media (max-width:980px){body[data-cmp^=sel] .univers{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:700px) and (max-width:980px){body[data-cmp^=sel] .univers .appareils{width:min(80%,calc((100svh - 560px) * 1.25))}}
+.se-e:not(.cote){order:3}.se-h{order:4}
+/* 3. sélecteur */
+.se{display:none;grid-column:1/-1;flex-direction:column;align-items:center;gap:16px}
+body[data-cmp=sel-ecran] .se{display:flex}
+.se-s{display:flex;padding:4px;border-radius:99px;background:color-mix(in srgb,var(--fg) 7%,transparent)}
+.se-s button{all:unset;cursor:pointer;padding:10px 20px;border-radius:99px;font-weight:800;font-size:14.5px;color:var(--fg);transition:background .3s,color .3s}
+.se-s button[aria-pressed=true]{background:var(--nuit);color:var(--nuit-fg)}
+.se-s button.o[aria-pressed=true]{color:var(--laiton)}
+.se-g{display:grid;grid-template-columns:repeat(6,minmax(0,96px));gap:14px;justify-content:center}
+.se-t{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:12.5px;font-weight:700;line-height:1.2;color:var(--fg);animation:seIn .45s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--n) * 45ms)}
+.se-t .ic{width:58px;height:58px;padding:15px;border-radius:18px;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 12px 22px -14px rgba(14,19,34,.45);fill:none;stroke:currentColor;stroke-width:1.8;transition:transform .3s}
+.se.o .se-t .ic{color:var(--laiton);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 50%,transparent),0 12px 22px -14px rgba(14,19,34,.45)}
+.se-t:hover .ic{transform:translateY(-3px)}
+@keyframes seIn{from{opacity:0;transform:translateY(8px)}}
+@media (max-width:700px){.se-g{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;width:100%}.se-t .ic{width:50px;height:50px;padding:13px}}
+
+/* l'icône choisie change l'écran du téléphone + carte d'explication à côté */
+.se-t .se-x{display:none}
+.sx-st{position:absolute;inset:0;display:none;z-index:2}
+body[data-cmp=sel-ecran] .sx-st{display:block}
+.sx-st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .5s}
+.sx-st img.on{opacity:1}
+body[data-cmp=sel-ecran] .se-t[aria-current=true] .ic{background:var(--nuit);color:var(--nuit-fg);transform:translateY(-3px)}
+body[data-cmp=sel-ecran] .se.o .se-t[aria-current=true] .ic{color:var(--laiton)}
+.se-d{all:unset;display:none;cursor:pointer;font-size:14px;font-weight:700;color:var(--fg);align-items:center;gap:6px}
+.se-d svg{width:14px;height:14px;fill:none;stroke:var(--laiton);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+body[data-cmp=sel-ecran] .se-d{display:inline-flex}
+.se-e{display:none;width:min(760px,100%);box-sizing:border-box;padding:16px 20px;border-radius:20px;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 16px 30px -22px rgba(14,19,34,.45);text-align:left}
+body[data-cmp=sel-ecran] .se-e{display:block}
+.se-e.in{animation:seE .35s ease both}@keyframes seE{from{opacity:0;transform:translateY(6px)}}
+.se-e-t{margin:0;font-size:17px;font-weight:800;color:var(--fg)}
+.se-e-d{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--muted)}
+.se-e ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px}
+.se-e li{position:relative;padding-left:16px;font-size:13.5px;font-weight:600;color:var(--fg)}
+.se-e li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--nuit)}
+.se.o .se-e li::before{background:var(--laiton)}
+.se-e.cote{position:absolute;right:28px;translate:0 -50%;z-index:3}
+.se-e.cote ul{flex-direction:column;gap:7px}
+.se-e.cote::before{content:"";position:absolute;left:-7px;top:50%;width:12px;height:12px;background:var(--calme);box-shadow:-1px 1px 0 var(--line);transform:translateY(-50%) rotate(45deg)}
+@media (prefers-reduced-motion:reduce){.se-e.in{animation:none}}
+.se-e.vide{display:none!important}
+/* invitation à toucher : vague douce sur les icônes + petite phrase, jusqu'au premier toucher */
+.se-h{display:none;margin:0;font-size:13px;font-weight:600;color:var(--muted);align-items:center;gap:8px}
+.se-h i{width:7px;height:7px;border-radius:50%;background:var(--laiton);animation:seHp 2.4s ease-in-out infinite}
+body[data-cmp=sel-ecran] .se:not(.touche) .se-h{display:inline-flex}
+body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic{animation:seInv 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(1.4s + var(--n) * .16s)}
+@keyframes seInv{0%,14%,100%{translate:0 0}5%{translate:0 -5px;box-shadow:0 0 0 2px color-mix(in srgb,var(--laiton) 70%,transparent),0 12px 22px -12px rgba(14,19,34,.45)}}
+@keyframes seHp{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--laiton) 55%,transparent)}50%{box-shadow:0 0 0 6px transparent}}
+@media (hover:hover){body[data-cmp=sel-ecran] .se-t:hover .ic{translate:0 -3px;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 60%,transparent),0 12px 22px -12px rgba(14,19,34,.45)}}
+@media (prefers-reduced-motion:reduce){body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic,.se-h i{animation:none}}
 /* === Modernisation (aperçu 19/11) === */
-.univers::before{content:"";position:absolute;inset:-40px -2vw;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
+.univers::before{content:"";position:absolute;inset:-40px 0;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
 .univers{isolation:isolate}
 .h-ring{position:absolute;left:50%;top:50%;width:min(100%,560px);translate:-50% -50%;z-index:-1;pointer-events:none;overflow:visible}
 .h-ring circle{fill:none;stroke:var(--laiton);stroke-width:.35;opacity:.45}.h-ring .pt{fill:var(--laiton);stroke:none;opacity:.35}
@@ -767,7 +871,7 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
 .c-bas .btn{background:var(--nuit-fg);color:var(--nuit)}
 @media (max-width:560px){.c-bas .btn{width:100%;justify-content:center}}@media (max-width:760px){.c-opt{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.c-opt .c-o{padding:10px 30px 10px 10px;gap:9px;align-items:flex-start}.c-opt .c-i{width:30px;height:30px;flex:none}.c-opt .c-n{font-size:13.5px;line-height:1.25}.c-opt .c-n small{display:block;font-size:12px}.c-opt .c-ck{position:absolute;right:8px;top:10px;width:18px;height:18px}}
 @media (max-width:760px){.trois.sec{gap:10px}.trois.sec>div{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start;padding:16px}.trois.sec .pastille{grid-row:span 2;margin-bottom:0}.trois.sec h3{font-size:16.5px}.trois.sec p{margin-top:2px;font-size:14.5px}}
-</style><body data-v="pc">
+</style><body data-cmp="sel-ecran" data-v="pc">
 
 <header class="wrap top">
   <div class="logo pc"><svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg>ProClik</div>
@@ -781,16 +885,17 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
 </header>
 
 <main>
+
 <!-- 1. ACCUEIL -->
 <section class="hero"><div class="wrap">
   <div class="pc prod">
     <p class="sur">L'Espace ProClik</p>
     <h1>Tout votre métier.<br><span class="or">Une seule appli.</span></h1>
     <p class="lead">Votre site, vos demandes, vos devis et votre agenda, réunis dans une seule appli.</p>
-    <div class="actions"><a class="btn" href="#contact">Prendre rendez-vous</a><a class="btn sec" href="#demo">Essayer l'Espace</a><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
+    <div class="actions"><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
 
     <div class="univers">
-      <ul class="sat g"><li class="t">Compris</li>
+      <ul class="sat g"><li class="t"><span class="st-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="st-n">Compris<small>Dans tous les Espaces</small></span></li>
 <li class="a1"><button class="pas" type="button" id="p-a1" data-k="a1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3.7"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M14 10h4M14 13h3"/></svg>Carte de visite virtuelle<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="a2"><button class="pas" type="button" id="p-a2" data-k="a2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M4 12h9v8M13 4v8"/></svg>Formulaire et plan<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="a3"><button class="pas" type="button" id="p-a3" data-k="a3" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="4.7"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Tout se dicte<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
@@ -804,7 +909,7 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
         <div class="ipad"><div class="scr"><picture><source srcset="vitrine/ipad-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" fetchpriority="high" src="vitrine/ipad.jpg" alt="L'accueil de l'Espace sur iPad : le point du matin, la journée et ce qu'il reste à valider" width="1600" height="1112"></picture></div></div>
         <div class="iphone"><div class="scr"><picture><source srcset="vitrine/iphone-n.jpg" media="(prefers-color-scheme: dark)"><img decoding="async" fetchpriority="high" src="vitrine/iphone.jpg" alt="L'Espace sur téléphone" width="600" height="1298"></picture></div></div>
       </div>
-      <ul class="sat d"><li class="t">En option</li>
+      <ul class="sat d"><li class="t"><span class="st-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="st-n">En option<small>À ajouter quand vous voulez</small></span></li>
         <li class="o1 opt"><button class="pas" type="button" id="p-o1" data-k="o1" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="4.7"/><path d="M12 4v4M9 13h.01M15 13h.01"/></svg>Cliky<small class="ia">IA ProClik</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="o6 opt"><button class="pas" type="button" id="p-o6" data-k="o6" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9 20v-5h6v5"/><circle cx="12" cy="10" r="1.6"/></svg>Chantier partagé<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
         <li class="o2 opt"><button class="pas" type="button" id="p-o2" data-k="o2" aria-haspopup="dialog"><svg class="ic" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M4 10h16M9 14l2 2 4-4"/></svg>Réservation<small>et acompte</small><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>
@@ -814,12 +919,7 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
       </ul>
     </div>
     <p class="legende c"><span>Écrans d'exemple, clients fictifs</span></p>
-    <div class="vitrine" data-v="c">
-      <div class="v-l"><span class="v-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01M7 13h6M7 16h10"/></svg></span>
-      <div class="v-t"><small>Pour aller plus loin</small><h2>Votre site sur mesure</h2><p>Un vrai site à votre image, qui donne confiance et vous amène des clients. Créé avec vous, relié à votre Espace.</p></div></div>
-      <div class="v-car"><div class="v-st"><div class="v-card" data-i="0"><img src="sites/martin/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="1"><img src="sites/salon/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="2"><img src="sites/agence/vue.jpg" alt="" loading="lazy"></div></div><div class="v-ph"><img src="sites/martin/vue-m.jpg" alt="" loading="lazy"><img src="sites/salon/vue-m.jpg" alt="" loading="lazy"><img src="sites/agence/vue-m.jpg" alt="" loading="lazy"></div><div class="v-cap"><b></b><small></small></div></div>
-      <div class="v-pas" role="tablist"><button class="pas-s vp" type="button" data-k="s1" data-i="0" aria-haspopup="dialog" style="--c:#1E4657"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M12 3.5v17M5 12h14"/></svg></i><span>Menuiserie Martin<small>Menuisier</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="1" aria-haspopup="dialog" style="--c:#4A3243"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M8.7 7.7 20 17M8.7 16.3 20 7"/></svg></i><span>Maison Lila<small>Salon de coiffure</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="2" aria-haspopup="dialog" style="--c:#27325A"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-6 8 6v10zM10 20v-5h4v5"/></svg></i><span>Belledonne Immobilier<small>Agence immobilière</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-    </div>
+
   </div>
 
   <div class="cl">
@@ -836,6 +936,16 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
       <div class="et"><div class="tete"><span class="pastille"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><small>4</small><h3>Facture et garantie</h3></div></div><ul><li>Facture envoyée par mail</li><li>Garanties de la pose</li></ul></div>
     </div>
   </div>
+</div></section>
+
+<!-- SITES SUR MESURE (bloc à part, 19/11) -->
+<section id="sites" class="pc"><div class="wrap">
+    <div class="vitrine" data-v="c">
+      <div class="v-l"><span class="v-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="4.2"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01M7 13h6M7 16h10"/></svg></span>
+      <div class="v-t"><small>Pour aller plus loin</small><h2>Votre site sur mesure</h2><p>Un vrai site à votre image, qui donne confiance et vous amène des clients. Créé avec vous, relié à votre Espace.</p></div></div>
+      <div class="v-car"><div class="v-st"><div class="v-card" data-i="0"><img src="sites/martin/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="1"><img src="sites/salon/vue.jpg" alt="" loading="lazy"></div><div class="v-card" data-i="2"><img src="sites/agence/vue.jpg" alt="" loading="lazy"></div></div><div class="v-ph"><img src="sites/martin/vue-m.jpg" alt="" loading="lazy"><img src="sites/salon/vue-m.jpg" alt="" loading="lazy"><img src="sites/agence/vue-m.jpg" alt="" loading="lazy"></div><div class="v-cap"><b></b><small></small></div></div>
+      <div class="v-pas" role="tablist"><button class="pas-s vp" type="button" data-k="s1" data-i="0" aria-haspopup="dialog" style="--c:#1E4657"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M12 3.5v17M5 12h14"/></svg></i><span>Menuiserie Martin<small>Menuisier</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="1" aria-haspopup="dialog" style="--c:#4A3243"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="17.5" r="2.5"/><path d="M8.7 7.7 20 17M8.7 16.3 20 7"/></svg></i><span>Maison Lila<small>Salon de coiffure</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><button class="pas-s vp" type="button" data-k="s1" data-i="2" aria-haspopup="dialog" style="--c:#27325A"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-6 8 6v10zM10 20v-5h4v5"/></svg></i><span>Belledonne Immobilier<small>Agence immobilière</small></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+    </div>
 </div></section>
 
 <!-- 2. TROIS ATOUTS -->
@@ -905,10 +1015,10 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
 
 <!-- 4 bis. COMPRIS DANS TOUS LES ESPACES -->
 <section id="compris" class="pc"><div class="wrap">
-  <div class="fx" aria-label="Compris dans tous les Espaces">
+  <div class="fx" aria-label="Inclus dans tous les Espaces">
       <div class="fx-g">
         <div class="fx-l">
-          <span class="fx-k">Compris dans tous les Espaces</span>
+          <span class="fx-k">Inclus dans tous les Espaces</span>
           <h3>Les petites choses <span class="or">qui changent tout.</span></h3>
           <p>Pas des options : des fonctions que vous utiliserez chaque jour. Voici les vrais écrans.</p>
           <div class="fx-rs" role="tablist" aria-label="Fonctions comprises"><button type="button" class="fx-r" role="tab" aria-selected="true" data-k="b4" data-i="0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="8" rx="2.5"/><path d="M7 10h10M8 17c0 1.5 1 2 1 3M12 16v4M16 17c0 1.5-1 2-1 3"/></svg><span><b>Contrats d'entretien</b><small>Le client rappelé, rien d'oublié</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c2" data-i="1"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></svg><span><b>Prise de cotes</b><small>Sur place, une question à la fois</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c3" data-i="2"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h3"/></svg><span><b>Factures de situation</b><small>Rappelées au bon moment</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c4" data-i="3"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h10.2L20 8H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span><b>Commandes fournisseur</b><small>Prêtes en un appui</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c5" data-i="4"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="13" rx="3"/><path d="M4 10h16M8 15h3"/></svg><span><b>Dépenses</b><small>Photo du ticket ou dictée</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c6" data-i="5"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 12h8v8M12 4v4"/></svg><span><b>Plans chez le client</b><small>Dessinés sur place, gardés</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c7" data-i="6"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg><span><b>Votre GPS</b><small>Waze, Google ou Plans</small></span></button><button type="button" class="fx-r" role="tab" aria-selected="false" data-k="c8" data-i="7"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span><b>Votre accueil</b><small>Rangé comme votre téléphone</small></span></button></div>
@@ -1105,26 +1215,26 @@ document.querySelectorAll('.onglets button').forEach(b=>b.addEventListener('clic
        ['Signature et PV','e-signature','Le client signe sur l’écran, le PV est prêt.'],
        ['Cliky','v-cliky-devis','Le pré-devis préparé pour vous, vous validez.',1]]
   };
-  var D={
+  var D=window.PD={
    s1:['Exemples','Votre site sur mesure','Un site léger et soigné, aux couleurs de votre métier. Touchez un nom pour passer d’un exemple à l’autre, puis faites défiler la page comme un client.',['Aux couleurs de votre entreprise','Rapide sur téléphone, simple à lire','Relié à votre Espace et à vos devis'],'sites'],
    a1:['Exemples','Carte de visite virtuelle','Une page à votre nom qui tient sur un seul écran. Touchez un métier pour voir sa carte, puis essayez-la avec votre doigt.',['Présentation, zone et horaires','Devis et rendez-vous sans changer de page','QR code pour le camion et vos devis'],'carte'],
-   a2:['Compris','Formulaire et plan','Votre client décrit ses travaux pièce par pièce, ou dessine son plan du bout du doigt. Aucune question technique : le reste, c’est vous qui le voyez.',['Une question à la fois : les murs, le sol, le plafond, la faïence','Le toit se choisit en touchant le dessin','Photos et plan joints, tout arrive rangé dans votre Espace','Menuisiers : vos prises de cotes reprises dans le plan'],['v-murs', 'v-plan']],
-   a3:['Compris','Tout se dicte','Pas envie de taper ? Parlez. Le micro est toujours sous votre pouce.',['Notes de chantier','Lignes de devis','Dépenses et rappels']],
-   b1:['Compris','Agenda et carte des chantiers','Vos chantiers et rendez-vous arrivent tout seuls dans l’agenda de votre téléphone, et sur la carte.',['Google, Outlook ou iPhone','Tous vos chantiers sur une carte, GPS de votre choix','Planning de la semaine en un coup d’œil'],['v-planning', 'v-chantiers']],
-   b2:['Compris','Devis et factures conformes','Devis et factures conformes, faits en quelques touches, prêts pour la facture électronique.',['Facture d’acompte et facture finale','Payée, en attente ou en retard : vous le voyez','Vos produits et vos prix enregistrés'],['v-factures']],
-   b3:['Compris','Carte des chantiers','Tous vos chantiers sur une carte, avec l’itinéraire en un geste.',['Chantiers en cours et à venir','GPS de votre choix','Pratique pour organiser la tournée'],['v-chantiers']],
-   c2:['Compris','Prise de cotes','Menuisiers : vos cotes prises sur place, une question à la fois, le téléphone en main.',['Relevés rangés par chantier','Largeur et hauteur au millimètre','Reprises dans le plan du logement, sans rien retaper'],['v-f-cotes']],
-   c3:['Compris','Factures de situation','Sur les gros chantiers ou les chantiers longs, l’Espace vous rappelle de facturer l’avancement.',['Chaque fin de mois, toutes les 2 semaines ou à chaque palier de 25 %','Chantiers de plus de 15 jours, de plus de 5 000 € HT, ou tous','Vous réglez une fois, il s’en souvient'],['v-f-situation']],
-   c4:['Compris','Commandes fournisseur','Ce qui reste à prévoir dans les fournitures du chantier devient une commande en un appui.',['Vous cochez, vous choisissez le fournisseur et la livraison','Aussi depuis la fiche du chantier','Les livraisons apparaissent dans le planning et dans le chantier'],['v-f-commande']],
-   c5:['Compris','Dépenses','Toutes vos dépenses au même endroit : celles des chantiers et celles de tous les jours.',['Photo du ticket, ou vous tapez, ou vous dictez','Carburant, repas, outillage, achats de chantier','Avec Cliky, le ticket est lu tout seul'],['v-f-depenses']],
-   c6:['Compris','Plans chez le client','Dessinez le plan sur place, même avant d’avoir créé la fiche du client.',['« Plus tard » si vous n’avez pas le temps : le plan est gardé','Rattaché au client ensuite','Tous vos plans au même endroit'],['v-plan']],
-   c7:['Compris','Votre GPS','Google Maps, Waze ou Plans d’Apple : l’Espace ouvre celui que vous préférez.',['Depuis la fiche client, le chantier ou le planning','Le dernier choisi passe en premier','Un appui, vous êtes en route'],['v-f-gps']],
-   c8:['Compris','Votre accueil','Votre écran d’accueil se range comme celui de votre téléphone.',['Des blocs à déplacer du doigt','Trois dispositions toutes prêtes','Chiffres, journée, choses à faire : vous choisissez'],['v-f-accueil']],
+   a2:['Inclus','Formulaire et plan','Votre client décrit ses travaux pièce par pièce, ou dessine son plan du bout du doigt. Aucune question technique : le reste, c’est vous qui le voyez.',['Une question à la fois : les murs, le sol, le plafond, la faïence','Le toit se choisit en touchant le dessin','Photos et plan joints, tout arrive rangé dans votre Espace','Menuisiers : vos prises de cotes reprises dans le plan'],['v-murs', 'v-plan']],
+   a3:['Inclus','Tout se dicte','Pas envie de taper ? Parlez. Le micro est toujours sous votre pouce.',['Notes de chantier','Lignes de devis','Dépenses et rappels']],
+   b1:['Inclus','Agenda et carte des chantiers','Vos chantiers et rendez-vous arrivent tout seuls dans l’agenda de votre téléphone, et sur la carte.',['Google, Outlook ou iPhone','Tous vos chantiers sur une carte, GPS de votre choix','Planning de la semaine en un coup d’œil'],['v-planning', 'v-chantiers']],
+   b2:['Inclus','Devis et factures conformes','Devis et factures conformes, faits en quelques touches, prêts pour la facture électronique.',['Facture d’acompte et facture finale','Payée, en attente ou en retard : vous le voyez','Vos produits et vos prix enregistrés'],['v-factures']],
+   b3:['Inclus','Carte des chantiers','Tous vos chantiers sur une carte, avec l’itinéraire en un geste.',['Chantiers en cours et à venir','GPS de votre choix','Pratique pour organiser la tournée'],['v-chantiers']],
+   c2:['Inclus','Prise de cotes','Menuisiers : vos cotes prises sur place, une question à la fois, le téléphone en main.',['Relevés rangés par chantier','Largeur et hauteur au millimètre','Reprises dans le plan du logement, sans rien retaper'],['v-f-cotes']],
+   c3:['Inclus','Factures de situation','Sur les gros chantiers ou les chantiers longs, l’Espace vous rappelle de facturer l’avancement.',['Chaque fin de mois, toutes les 2 semaines ou à chaque palier de 25 %','Chantiers de plus de 15 jours, de plus de 5 000 € HT, ou tous','Vous réglez une fois, il s’en souvient'],['v-f-situation']],
+   c4:['Inclus','Commandes fournisseur','Ce qui reste à prévoir dans les fournitures du chantier devient une commande en un appui.',['Vous cochez, vous choisissez le fournisseur et la livraison','Aussi depuis la fiche du chantier','Les livraisons apparaissent dans le planning et dans le chantier'],['v-f-commande']],
+   c5:['Inclus','Dépenses','Toutes vos dépenses au même endroit : celles des chantiers et celles de tous les jours.',['Photo du ticket, ou vous tapez, ou vous dictez','Carburant, repas, outillage, achats de chantier','Avec Cliky, le ticket est lu tout seul'],['v-f-depenses']],
+   c6:['Inclus','Plans chez le client','Dessinez le plan sur place, même avant d’avoir créé la fiche du client.',['« Plus tard » si vous n’avez pas le temps : le plan est gardé','Rattaché au client ensuite','Tous vos plans au même endroit'],['v-plan']],
+   c7:['Inclus','Votre GPS','Google Maps, Waze ou Plans d’Apple : l’Espace ouvre celui que vous préférez.',['Depuis la fiche client, le chantier ou le planning','Le dernier choisi passe en premier','Un appui, vous êtes en route'],['v-f-gps']],
+   c8:['Inclus','Votre accueil','Votre écran d’accueil se range comme celui de votre téléphone.',['Des blocs à déplacer du doigt','Trois dispositions toutes prêtes','Chiffres, journée, choses à faire : vous choisissez'],['v-f-accueil']],
    p1:['Espace PRO','PRO · vous travaillez seul','Tout votre métier dans une seule appli : les demandes, les devis, les factures, l’agenda et vos chiffres.',['Les demandes arrivent rangées, avec le plan du client','Devis et factures conformes en quelques touches','Agenda synchronisé et carte de vos chantiers','Clients, dépenses et chiffre d’affaires au même endroit','Chaque matin, le point du jour. Et tout se dicte'],'galerie'],
    p2:['Espace TEAM','TEAM · vous êtes plusieurs','Tout ce que fait PRO, pour toute l’équipe, avec le chantier partagé dans le forfait.',['Le planning de l’équipe : qui est sur quel chantier, quel jour','Chantier partagé et SMS compris','Sous-traitants et client : accès gratuit le temps du chantier','Réserves sur le plan, corrigées puis validées'],'galerie'],
    p3:['Espace ARCHI','ARCHI · vous menez le chantier des autres','Le chantier partagé avec toutes les entreprises et votre client, jusqu’à la réception signée.',['Chantier partagé dans le forfait, SMS compris','Entreprises et client : accès gratuit à leur espace privé','Chacun ne voit que ce qui le concerne','Réserves sur le plan, réception signée et son PV'],'galerie'],
    o1:['En option','Cliky, l’IA ProClik','Votre assistant de bureau. Il prépare le travail avec vos habitudes de chantier, vous vérifiez et vous validez.',['Pré-devis prêt dès que la demande arrive','Vos habitudes par métier : isolation, cloisons, sols, carrelage, équipements…','Liste du matériel du chantier, prête pour le fournisseur','Factures fournisseur lues, prix et marge réelle à jour','Journée de chantier, trajets et votre vrai rythme'],['v-cliky-devis', 'v-devis']],
-   b4:['Compris','Contrats d’entretien','Clim, pompe à chaleur : vos contrats d’entretien notés dans la fiche du client, et plus rien d’oublié.',['Rappel au client un mois avant','Relance s’il ne répond pas, puis « à appeler »','Rendez-vous d’entretien dans votre planning'],['v-f-entretiens']],
+   b4:['Inclus','Contrats d’entretien','Clim, pompe à chaleur : vos contrats d’entretien notés dans la fiche du client, et plus rien d’oublié.',['Rappel au client un mois avant','Relance s’il ne répond pas, puis « à appeler »','Rendez-vous d’entretien dans votre planning'],['v-f-entretiens']],
    o6:['En option','Chantier partagé','Invitez vos entreprises, vos salariés et votre client sur le chantier. Pour eux, rien à installer : un lien suffit. Option pour PRO : 39 € HT par mois, SMS compris, 2 chantiers partagés en cours avec 5 invités chacun. Déjà dans le forfait TEAM et ARCHI.',['Conversation de chantier, ce qui est décidé reste épinglé','Réserves posées sur le plan, corrigées puis validées','Réception pièce par pièce, signée à l’écran, avec son PV','Architectes : chaque entreprise ne voit que ce qui la concerne'],['v-reserves', 'v-conv']],
    o2:['En option','Réservation','Vos clients choisissent un créneau libre, même quand vous êtes sur un chantier.',['Créneaux pris dans votre agenda','Acompte en ligne contre les rendez-vous oubliés','Rappel envoyé la veille'],['v-reservation']],
    o3:['En option','Avis Google','Après le chantier, votre client reçoit une demande d’avis au bon moment.',['Envoi automatique, le lendemain par défaut','Plus d’avis, plus de confiance','Vous gardez la main sur le moment']],
@@ -1382,4 +1492,23 @@ var b=document.querySelector('.h-cta'),h=document.querySelector('.hero'),c=docum
 function maj(){var on=!hv&&!cv&&document.body.dataset.v!=='cl';b.classList.toggle('on',on);b.setAttribute('aria-hidden',on?'false':'true');b.tabIndex=on?0:-1}
 new IntersectionObserver(function(e){hv=e[0].isIntersecting;maj()}).observe(h);
 new IntersectionObserver(function(e){cv=e[0].isIntersecting;maj()}).observe(c)})();</script>
+<script>(function(){var t=document.querySelector("header.top");if(!t)return;function f(){document.documentElement.style.setProperty("--top-h",Math.ceil(t.getBoundingClientRect().height)+"px")}f();addEventListener("resize",f)})();</script>
+<script>(function(){
+var U=document.querySelector('.univers');if(!U)return;var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function items(sel,o){return [].map.call(U.querySelectorAll(sel+' li:not(.t) .pas'),function(b){var sv=b.querySelector('svg.ic'),t='';[].forEach.call(b.childNodes,function(n){if(n.nodeType===3)t+=n.textContent});return {b:b,ic:sv?sv.outerHTML:'',t:t.trim(),o:o}})}
+var C=items('.sat.g',0),O=items('.sat.d',1),A=C.concat(O),AP=U.querySelector('.appareils');
+/* 3. sélecteur */
+var se=document.createElement('div');se.className='se';se.innerHTML='<div class="se-s" role="group"><button type="button" aria-pressed="true" data-o="0">Inclus</button><button type="button" class="o" aria-pressed="false" data-o="1">En option</button></div><div class="se-g"></div>';U.appendChild(se);
+var sg=se.querySelector('.se-g');function fill(o){var L=o?O:C;se.classList.toggle('o',!!o);[].forEach.call(se.querySelectorAll('.se-s button'),function(b){b.setAttribute('aria-pressed',b.dataset.o==o)});sg.innerHTML=L.map(function(x,i){return '<button type="button" class="se-t" style="--n:'+i+'" data-i="'+i+'">'+x.ic+'<span>'+x.t+'<span class="se-x">'+(SX[x.b.dataset.k]||'')+'</span></span></button>'}).join('');[].forEach.call(sg.children,function(b,i){b.addEventListener('click',function(){if(document.body.dataset.cmp==='sel-ecran'){se.classList.add('touche');if(b.getAttribute('aria-current')==='true')vide();else montre(L,i)}else L[i].b.click()})});vide()}
+var SX={a1:'Votre page à votre nom, avec QR code.',a2:'Le client décrit ou dessine ses travaux.',a3:'Vous parlez, c’est écrit.',b1:'Synchronisé avec votre téléphone.',b2:'En quelques touches, prêts à envoyer.',b4:'Le client rappelé, rien d’oublié.',o1:'Le pré-devis préparé, vous validez.',o6:'Une conversation par chantier, SMS compris.',o2:'Créneau et acompte en ligne.',o3:'La demande d’avis au bon moment.',o4:'Vos chantiers publiés sans quitter l’Espace.',o5:'Les bonnes infos au bon moment.'};
+var IMG={a1:'v-accueil',a2:'e-predevis',a3:'v-f-depenses',b1:'v-planning',b2:'v-factures',b4:'v-f-entretiens',o1:'v-cliky-devis',o6:'e-conversation',o2:'v-resa',o3:'v-chantier',o4:'v-reseaux',o5:'e-conv-client'};
+var ph2=U.querySelector('.iphone .scr'),sx=document.createElement('div');sx.className='sx-st';var KS=Object.keys(IMG);sx.innerHTML=KS.map(function(k){return '<img alt="" loading="lazy" decoding="async" data-k="'+k+'" src="vitrine/'+IMG[k]+'.jpg">'}).join('');if(ph2)ph2.appendChild(sx);
+var cur=null,ex=document.createElement('div');ex.className='se-e';ex.setAttribute('aria-live','polite');se.insertBefore(ex,se.querySelector('.se-g'));var hn=document.createElement('p');hn.className='se-h';hn.innerHTML='<i></i>Touchez une icône pour la voir à l’écran';se.appendChild(hn);
+function exPos(){var ap=U.querySelector('.appareils');if(!ap)return;var w=U.clientWidth,aw=ap.offsetWidth,free=(w-aw)/2-110;if(innerWidth>980&&free>=230){ex.classList.add('cote');ex.style.width=Math.min(330,free)+'px';ex.style.top=(ap.offsetTop+ap.offsetHeight/2)+'px'}else{ex.classList.remove('cote');ex.style.width='';ex.style.top=''}}
+addEventListener('resize',exPos);if('ResizeObserver'in window)new ResizeObserver(exPos).observe(U);
+function vide(){cur=null;ex.classList.add('vide');[].forEach.call(sx.children,function(m){m.classList.remove('on')});[].forEach.call(sg.children,function(b){b.setAttribute('aria-current','false')})}
+function montre(L,i){ex.classList.remove('vide');var k=L[i].b.dataset.k;cur=L[i].b;var d=(window.PD||{})[k]||[];var pts=Array.isArray(d[3])?d[3]:[];
+ex.classList.remove('in');void ex.offsetWidth;ex.innerHTML='<p class="se-e-t">'+(d[1]||L[i].t)+'</p><p class="se-e-d">'+(d[2]||'')+'</p>'+(pts.length?'<ul>'+pts.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ul>':'');ex.classList.add('in');if(ex.classList.contains('cote')===false)exPos();[].forEach.call(sx.children,function(m){m.classList.toggle('on',m.dataset.k===k)});[].forEach.call(sg.children,function(b,j){b.setAttribute('aria-current',j===i)})}
+se.querySelector('.se-s').addEventListener('click',function(e){var b=e.target.closest('button');if(b)fill(+b.dataset.o)});fill(0);
+})();</script>
 </body></html>
