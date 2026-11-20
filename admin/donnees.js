@@ -42,8 +42,15 @@ function telecharger(id,nom,b,envoyer){if(b)b.disabled=true;api('/admin/sauvegar
   else toast('Fichier téléchargé : rangez-le dans iCloud ou sur un disque')},function(e){if(b)b.disabled=false;toast(e.message)})}
 function sauv(id){var Z=$('#fsauv');if(!Z||!id)return;Z.innerHTML='<h2>Sauvegardes</h2><p class="mu" style="margin:0">Chargement…</p>';
  api('/admin/sauvegardes',{method:'POST',body:{client:id}}).then(function(j){rendreSauv(Z,id,j)},function(e){Z.innerHTML='<h2>Sauvegardes</h2><p class="err">'+esc(e.message)+'</p>'})}
+function etatSauv(j){var v=j.voyant||{},e=j.etat||{},h='<div style="margin:0 0 10px">';
+ if(v.ok)h+='<span class="pill ok">● Tout va bien</span>';else if(v.attente)h+='<span class="pill w">● Première sauvegarde cette nuit</span>';else h+='<span class="pill al">● À régler</span>';
+ if(e.nuit)h+='<div class="mu" style="margin-top:6px">Dernière sauvegarde : '+quand(Date.parse(e.nuit.le))+(e.nuit.ok?' · '+poids(e.nuit.taille||0):' · <b style="color:var(--n1-alert)">ratée</b>')+'</div>';
+ if(j.second)h+='<div class="mu">2e copie chez Scaleway (chaque semaine) : '+(e.second?quand(Date.parse(e.second.le))+(e.second.ok?' · OK':' · <b style="color:var(--n1-alert)">ratée</b>'):'la première part cette nuit')+'</div>';
+ else h+='<div class="mu">2e copie chez Scaleway : pas encore branchée (voir Réglages).</div>';
+ (v.ok||v.attente?[]:v.problemes||[]).forEach(function(p){h+='<div class="err" style="margin-top:4px">'+esc(p)+'</div>'});
+ return h+'</div>'}
 function rendreSauv(Z,id,j){var L=j.sauvegardes||[];
- var h='<h2>Sauvegardes</h2>'+(j.coffre?'<p class="mu" style="margin:0 0 10px">Chaque nuit à 3 h, tout son Espace est copié dans le coffre. On garde 30 nuits, le 1er de chaque mois pendant un an, et la 1re nuit de chaque année pour toujours.</p>':'<p class="err" style="margin:0 0 10px">Le coffre de sauvegarde n\'est pas encore créé dans Cloudflare : pas de sauvegarde de nuit pour l\'instant. Le téléchargement marche déjà.</p>')+
+ var h='<h2>Sauvegardes</h2>'+etatSauv(j)+(j.coffre?'<p class="mu" style="margin:0 0 10px">Chaque nuit à 3 h, tout son Espace est copié dans le coffre. On garde 30 nuits, le 1er de chaque mois pendant un an, et la 1re nuit de chaque année pour toujours.</p>':'<p class="err" style="margin:0 0 10px">Le coffre de sauvegarde n\'est pas encore créé dans Cloudflare : pas de sauvegarde de nuit pour l\'instant. Le téléchargement marche déjà.</p>')+
   '<div class="ck-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button type="button" class="btn go" data-sv="env">Envoyer au client</button><button type="button" class="btn" data-sv="dl">Télécharger tout son Espace</button>'+(j.coffre?'<button type="button" class="btn" data-sv="now">Sauvegarder maintenant</button>':'')+'<label class="btn" style="cursor:pointer">Remettre depuis un fichier<input type="file" accept="application/json,.json" data-sv="fic" hidden></label></div>';
  if(j.coffre)h+=L.length?'<details class="ck"><summary>'+L.length+' sauvegarde'+(L.length>1?'s':'')+' · la plus récente : '+esc(jourDe(L[0].nom))+'</summary>'+L.map(function(x){return '<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--li)"><span>'+esc(jourDe(x.nom))+genre(x.nom)+' · <span class="mu">'+poids(x.taille)+'</span></span><span style="display:flex;gap:6px"><button type="button" class="btn" data-svdl="'+esc(x.nom)+'">Télécharger</button><button type="button" class="btn" data-svenv="'+esc(x.nom)+'">Envoyer</button><button type="button" class="btn" data-svret="'+esc(x.nom)+'">Tout remettre à cette date</button></span></div>'}).join('')+'</details>':'<p class="mu">Première sauvegarde cette nuit.</p>';
  Z.innerHTML=h;
@@ -55,6 +62,7 @@ function rendreSauv(Z,id,j){var L=j.sauvegardes||[];
   if(b.dataset.svret){if(!b.dataset.ok){b.dataset.ok=1;var o=b.textContent;b.textContent='Sûr ? Tout son Espace revient à cette date. Touchez encore';setTimeout(function(){if(b.dataset.ok){delete b.dataset.ok;b.textContent=o}},5000);return}
    b.disabled=true;api('/admin/sauvegarde/remettre',{method:'POST',body:{client:id,nom:b.dataset.svret}}).then(function(r){toast('Espace remis ('+r.remises+' éléments). La situation d\'avant est gardée.');sauv(id);fiche(id)},function(er){b.disabled=false;toast(er.message)})}};
  var fi=Z.querySelector('[data-sv="fic"]');if(fi)fi.onchange=function(){var x=fi.files&&fi.files[0];if(!x)return;var r=new FileReader();r.onload=function(){var f;try{f=JSON.parse(r.result)}catch(er){toast('Ce fichier n\'est pas une sauvegarde ProClik');return}
+  if(f&&f.proclik==='sauvegarde chiffrée'){fi.value='';return chiffre(Z,id,f)}
   if(!f||f.client!==id){toast('Ce fichier n\'est pas une sauvegarde de ce client');return}
   if(!confirmer2(fi))return;api('/admin/sauvegarde/remettre',{method:'POST',body:{client:id,fichier:f}}).then(function(rr){toast('Espace remis depuis le fichier ('+rr.remises+' éléments)');sauv(id);fiche(id)},function(er){toast(er.message)})};r.readAsText(x)}}
 /* « Envoyer au client » (Cyril 20/11, choix « e-mail auto avec lien sécurisé ») : le mail part du GHL de ProClik vers son
@@ -64,6 +72,22 @@ function envoyerMail(id,nom,b){var c=CLIENT[id]||{};
  delete b.dataset.ok;b.textContent=b.dataset.o||b.textContent;b.disabled=true;
  api('/admin/sauvegarde/envoyer',{method:'POST',body:{client:id,nom:nom||undefined}}).then(function(r){b.disabled=false;toast('E-mail envoyé à '+r.email+' (lien valable 7 jours)');sauv(id)},
   function(e){b.disabled=false;if(/pas encore branché/.test(e.message))return telecharger(id,nom,b,true);toast(e.message)})}
+/* Copie chiffrée (2e copie Scaleway) : la phrase secrète est tapée ici et ne quitte jamais l'iPad. */
+function b64u(x){return Uint8Array.from(atob(x),function(c){return c.charCodeAt(0)})}
+function dechiffrer(f,phrase){var C=crypto.subtle,te=new TextEncoder();
+ return C.importKey('raw',te.encode(phrase),'PBKDF2',false,['deriveKey']).then(function(k){return C.deriveKey({name:'PBKDF2',salt:b64u(f.sel),iterations:100000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt'])})
+  .then(function(k){return C.decrypt({name:'AES-GCM',iv:b64u(f.iv)},k,b64u(f.data))}).then(function(b){return JSON.parse(new TextDecoder().decode(b))})}
+function chiffre(Z,id,f){var d=document.createElement('div');d.className='res';d.style.marginTop='10px';
+ d.innerHTML='<p style="margin:0 0 8px"><b>Copie chiffrée (Scaleway)</b><br><span class="mu">Tapez votre phrase secrète pour l\'ouvrir. Elle reste sur cet appareil.</span></p><input class="t" type="password" autocomplete="off" aria-label="Phrase secrète" style="margin-bottom:8px"><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn go">Ouvrir</button><button type="button" class="btn">Annuler</button></div>';
+ Z.appendChild(d);var inp=d.querySelector('input'),bs=d.querySelectorAll('button');inp.focus();
+ bs[1].onclick=function(){d.remove()};
+ bs[0].onclick=function(){var b=this;b.disabled=true;dechiffrer(f,inp.value).then(function(x){
+   if(!x||x.client!==id){b.disabled=false;toast('Cette copie n\'est pas celle de ce client');return}
+   d.innerHTML='<p style="margin:0 0 8px"><b>Copie ouverte</b> · du '+esc(jourDe((x.le||'').slice(0,10)))+'</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn go">Tout remettre depuis cette copie</button><button type="button" class="btn">Annuler</button></div>';
+   var r=d.querySelectorAll('button');r[1].onclick=function(){d.remove()};
+   r[0].onclick=function(){var bb=this;if(!bb.dataset.ok){bb.dataset.ok=1;bb.textContent='Sûr ? Tout son Espace revient à cette copie. Touchez encore';return}
+    bb.disabled=true;api('/admin/sauvegarde/remettre',{method:'POST',body:{client:id,fichier:x}}).then(function(rr){toast('Espace remis depuis la copie chiffrée ('+rr.remises+' éléments)');sauv(id);fiche(id)},function(er){bb.disabled=false;toast(er.message)})}},
+  function(){b.disabled=false;toast('Phrase secrète incorrecte')})}}
 /* Fichier choisi : deuxième geste demandé par un petit bandeau (pas de fenêtre du navigateur). */
 function confirmer2(fi){var lab=fi.parentNode;if(lab.dataset.ok){delete lab.dataset.ok;return true}lab.dataset.ok=1;toast('Choisissez le fichier une 2e fois pour confirmer la remise');fi.value='';setTimeout(function(){delete lab.dataset.ok},8000);return false}
 window.PCDonnees={fiche:function(id,c){if(c)CLIENT[id]=c;sauv(id);fiche(id)}};
