@@ -1179,11 +1179,11 @@ body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:100%!important;right
 @media (max-width:700px){
  body[data-cmp=sel-ecran] .univers .se>.se-g{display:none!important}
  body[data-cmp=sel-ecran] .se-s button[aria-pressed=true]{background:none!important;color:var(--fg)!important;box-shadow:none!important}
- body[data-cmp=sel-ecran] .se-s{position:relative;padding:5px;gap:6px;background:var(--calme);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 55%,transparent),0 14px 28px -16px rgba(14,19,34,.5)}
- body[data-cmp=sel-ecran] .se-s button{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;font-size:15.5px;background:color-mix(in srgb,var(--fg) 6%,transparent)!important}
- body[data-cmp=sel-ecran] .se-s button::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.6}
+ body[data-cmp=sel-ecran] .se-s{position:relative;padding:3px;gap:2px;background:var(--calme);box-shadow:0 0 0 1px color-mix(in srgb,var(--laiton) 40%,transparent),0 8px 18px -12px rgba(14,19,34,.4)}
+ body[data-cmp=sel-ecran] .se-s button{display:inline-flex;align-items:center;gap:6px;padding:8px 14px 8px 16px;font-size:14px;min-height:0;background:transparent!important}
+ body[data-cmp=sel-ecran] .se-s button::after{content:"";width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.55}
  body[data-cmp=sel-ecran] .se-s button.o{color:var(--laiton)!important}
- body[data-cmp=sel-ecran] .se-s::before{content:"";position:absolute;inset:-6px;border-radius:99px;border:2px solid var(--laiton);opacity:0;pointer-events:none;animation:flRing 2.4s ease-out infinite 1.2s}
+ body[data-cmp=sel-ecran] .se-s::before{content:"";position:absolute;inset:-4px;border-radius:99px;border:1.5px solid var(--laiton);opacity:0;pointer-events:none;animation:flRing 2.4s ease-out infinite 1.2s}
  body[data-cmp=sel-ecran] .se.vu-fl .se-s::before{animation:none}
  body[data-cmp=sel-ecran] .se-h b{color:var(--fg)}
 }
@@ -1903,7 +1903,7 @@ var ph2=U.querySelector('.iphone .scr'),sx=document.createElement('div');sx.clas
 var cur=null,ex=document.createElement('div');ex.className='se-e';ex.setAttribute('aria-live','polite');se.insertBefore(ex,se.querySelector('.se-g'));var hn=document.createElement('p');hn.className='se-h';hn.innerHTML='<i></i>Touchez une icône pour la voir à l’écran';se.appendChild(hn);
 function exPos(){var ap=U.querySelector('.appareils');if(!ap)return;var w=U.clientWidth,aw=ap.offsetWidth,free=(w-aw)/2-110;if((innerWidth>980&&free>=230)||document.body.classList.contains('pan-on')){ex.classList.add('cote');ex.style.width=Math.min(330,free)+'px';ex.style.top=(ap.offsetTop+ap.offsetHeight/2)+'px'}else{ex.classList.remove('cote');ex.style.width='';ex.style.top=''}}
 addEventListener('resize',exPos);if('ResizeObserver'in window)new ResizeObserver(exPos).observe(U);
-function vide(){cur=null;ex.classList.add('vide');if(window.pcZoom)pcZoom(null);[].forEach.call(sx.children,function(m){m.classList.remove('on')});[].forEach.call(sg.children,function(b){b.setAttribute('aria-current','false')})}
+window.seVide=function(){vide()};function vide(){cur=null;ex.classList.add('vide');if(window.pcZoom)pcZoom(null);[].forEach.call(sx.children,function(m){m.classList.remove('on')});[].forEach.call(sg.children,function(b){b.setAttribute('aria-current','false')})}
 function montre(L,i){ex.classList.remove('vide');var k=L[i].b.dataset.k;cur=L[i].b;var d=(window.PD||{})[k]||[];var pts=Array.isArray(d[3])?d[3]:[];
 ex.classList.remove('in');void ex.offsetWidth;ex.innerHTML='<p class="se-e-t">'+(d[1]||L[i].t)+'</p><p class="se-e-d">'+(d[2]||'')+'</p>'+(pts.length?'<ul>'+pts.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ul>':'');ex.classList.add('in');if(ex.classList.contains('cote')===false)exPos();[].forEach.call(sx.children,function(m){m.classList.toggle('on',m.dataset.k===k)});[].forEach.call(sg.children,function(b,j){b.setAttribute('aria-current',j===i)});if(window.pcZoom)pcZoom(L,i,k,d,pts)}
 
@@ -1967,7 +1967,7 @@ function panOuvre(o){if(!pan){pan=document.createElement('div');pan.className='s
  pan.querySelector('b').textContent=o?'En option':'Inclus dans votre Espace';pan.querySelector('small').textContent=o?'À ajouter quand vous voulez':'Dans tous les Espaces, sans supplément';pan.classList.toggle('o',!!o);
  if(!mark.parentNode)sg.parentNode.insertBefore(mark,sg);pan.querySelector('.se-pan-g').appendChild(sg);if(ex){if(!exMark.parentNode)ex.parentNode.insertBefore(exMark,ex);pan.appendChild(ex)}
  document.body.classList.add('pan-on');var was=!pan.hidden;pan.hidden=false;panPlace();if(!was){pan.classList.remove('on');requestAnimationFrame(function(){requestAnimationFrame(function(){pan.classList.add('on')})})}se.classList.add('vu-fl')}
-function panFerme(){if(!pan||pan.hidden)return;var nc0=document.querySelector('.univers .h-nc');if(nc0)nc0.classList.remove('cache');if(window.pcZoom)pcZoom(null);pan.classList.remove('on');document.body.classList.remove('pan-on');setTimeout(function(){pan.hidden=true;if(mark.parentNode)mark.parentNode.insertBefore(sg,mark);if(ex&&exMark.parentNode)exMark.parentNode.insertBefore(ex,exMark);dispatchEvent(new Event('resize'))},320)}
+function panFerme(){if(!pan||pan.hidden)return;if(window.seVide)seVide();var nc0=document.querySelector('.univers .h-nc');if(nc0)nc0.classList.remove('cache');if(window.pcZoom)pcZoom(null);pan.classList.remove('on');document.body.classList.remove('pan-on');setTimeout(function(){pan.hidden=true;if(mark.parentNode)mark.parentNode.insertBefore(sg,mark);if(ex&&exMark.parentNode)exMark.parentNode.insertBefore(ex,exMark);dispatchEvent(new Event('resize'))},320)}
 addEventListener('resize',panPlace);addEventListener('keydown',function(e){if(e.key==='Escape')panFerme()});
 sw.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(M.matches)ouvre(+b.dataset.o);else if(W.matches)panOuvre(+b.dataset.o)});
 fl.querySelector('.se-fl-f').addEventListener('click',ferme);fl.querySelector('.se-fl-x').addEventListener('click',ferme);
