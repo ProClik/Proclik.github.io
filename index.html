@@ -2025,4 +2025,7 @@ M.addEventListener&&M.addEventListener('change',function(){if(!M.matches)ferme()
 var y0=0;fl.querySelector('.se-fl-c').addEventListener('touchstart',function(e){y0=e.touches[0].clientY},{passive:true});fl.querySelector('.se-fl-c').addEventListener('touchend',function(e){if(e.changedTouches[0].clientY-y0>70)ferme()},{passive:true});
 if(hn){var t0=hn.innerHTML;function txt(){hn.innerHTML=true?'<i></i><span>Touchez <b>Inclus</b> ou <b>En option</b> pour voir les fonctions</span>':t0}txt();M.addEventListener&&M.addEventListener('change',txt)}
 })();</script>
+<script>/* 20/11 (Cyril) : sur téléphone, la bulle Cliky se cale juste sous le prix, au-dessus du téléphone */(function(){var nc=document.querySelector('.univers .h-nc2'),px=document.querySelector('.hero .dpe');if(!nc||!px)return;
+function place(){if(innerWidth>520){nc.style.top='';return}var P=nc.offsetParent;if(!P)return;var pr=P.getBoundingClientRect(),z=P.offsetHeight?pr.height/P.offsetHeight:1,b=px.getBoundingClientRect().bottom+10;nc.style.top=((b-pr.top)/z)+'px'}
+place();addEventListener('resize',place);addEventListener('load',function(){place();setTimeout(place,400);setTimeout(place,1500)});if('ResizeObserver'in window)new ResizeObserver(place).observe(document.querySelector('.hero')||document.body);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(place)})();</script>
 </body></html>
