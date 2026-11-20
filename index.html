@@ -1092,6 +1092,12 @@ body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
 .esp3 .c::before{display:none}
 .esp3 .c{background:linear-gradient(180deg,color-mix(in srgb,var(--laiton) 9%,var(--calme)),var(--calme) 42%);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 45%,transparent),0 2px 0 rgba(255,255,255,.6) inset,0 40px 70px -40px rgba(14,19,34,.55)}
 @media (hover:hover){.esp3 .c:hover{transform:translateY(-6px)}}
+/* 20/11 Pourquoi : titres et textes plus soignés */
+body[data-pq] .trois.pc>div{padding-bottom:30px}
+body[data-pq] .trois.pc>div h3{position:relative;font-size:21px;font-weight:700;letter-spacing:-.015em;line-height:1.2;margin:4px 0 10px;padding-top:16px}
+body[data-pq] .trois.pc>div h3::before{content:"";position:absolute;left:0;top:0;width:28px;height:3px;border-radius:2px;background:var(--laiton)}
+body[data-pq] .trois.pc>div>p{font-size:15.5px;line-height:1.6;color:var(--muted);max-width:32ch;margin:0}
+@media (max-width:760px){body[data-pq] .trois.pc>div h3{font-size:19.5px}}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
