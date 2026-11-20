@@ -802,11 +802,11 @@ body[data-cmp=bandeau] .bx{display:flex}
 @media (prefers-reduced-motion:reduce){.bx-l{animation:none;flex-wrap:wrap;width:auto}.bx-l [aria-hidden]{display:none}.cx-s{transition:none}}
 
 /* Nouvelles pistes accueil (20/11) : ecrans | orbite | selecteur */
-body[data-cmp=ecrans] .univers ul.sat,body[data-cmp=orbite] .univers ul.sat,body[data-cmp=selecteur] .univers ul.sat{display:none!important}
-@media (min-width:981px){body:is([data-cmp=ecrans],[data-cmp=orbite],[data-cmp=selecteur]) .univers{grid-template-columns:minmax(0,1fr)}
+body[data-cmp=ecrans] .univers ul.sat,body[data-cmp=orbite] .univers ul.sat,body[data-cmp^=sel] .univers ul.sat{display:none!important}
+@media (min-width:981px){body:is([data-cmp=ecrans],[data-cmp=orbite],[data-cmp^=sel]) .univers{grid-template-columns:minmax(0,1fr)}
  body:is([data-cmp=ecrans],[data-cmp=orbite]) .univers .appareils{width:min(74%,1000px,calc((100svh - 360px) * 1.25))}
- body[data-cmp=selecteur] .univers .appareils{width:min(74%,980px,calc((100svh - 480px) * 1.25))}}
-@media (max-width:980px){body:is([data-cmp=ecrans],[data-cmp=orbite],[data-cmp=selecteur]) .univers{grid-template-columns:minmax(0,1fr)}body[data-cmp=ecrans] .univers .appareils{width:88%}body[data-cmp=orbite] .univers .appareils{width:70%}}
+ body[data-cmp^=sel] .univers .appareils{width:min(74%,980px,calc((100svh - 550px) * 1.25))}}
+@media (max-width:980px){body:is([data-cmp=ecrans],[data-cmp=orbite],[data-cmp^=sel]) .univers{grid-template-columns:minmax(0,1fr)}body[data-cmp=ecrans] .univers .appareils{width:88%}body[data-cmp=orbite] .univers .appareils{width:70%}}
 /* 1. les écrans racontent */
 .ec-st{position:absolute;inset:0;display:none}
 body[data-cmp=ecrans] .ec-st{display:block}
@@ -835,7 +835,7 @@ body[data-cmp=orbite] .or-lg{display:flex}
 .or-lg i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:var(--calme);box-shadow:0 0 0 1.5px var(--fg)}.or-lg .o i{box-shadow:0 0 0 1.5px var(--laiton)}
 /* 3. sélecteur */
 .se{display:none;grid-column:1/-1;flex-direction:column;align-items:center;gap:16px}
-body[data-cmp=selecteur] .se{display:flex}
+body[data-cmp=selecteur] .se,body[data-cmp=sel-ecran] .se,body[data-cmp=sel-cartes] .se{display:flex}
 .se-s{display:flex;padding:4px;border-radius:99px;background:color-mix(in srgb,var(--fg) 7%,transparent)}
 .se-s button{all:unset;cursor:pointer;padding:10px 20px;border-radius:99px;font-weight:800;font-size:14.5px;color:var(--fg);transition:background .3s,color .3s}
 .se-s button[aria-pressed=true]{background:var(--nuit);color:var(--nuit-fg)}
@@ -847,6 +847,47 @@ body[data-cmp=selecteur] .se{display:flex}
 .se-t:hover .ic{transform:translateY(-3px)}
 @keyframes seIn{from{opacity:0;transform:translateY(8px)}}
 @media (max-width:700px){.se-g{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;width:100%}.se-t .ic{width:50px;height:50px;padding:13px}}
+
+/* Variantes du sélecteur (20/11) : sel-ecran | sel-dock | sel-cartes */
+/* 3b : l'icône choisie change l'écran du téléphone */
+.sx-st{position:absolute;inset:0;display:none;z-index:2}
+body[data-cmp=sel-ecran] .sx-st{display:block}
+.sx-st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .5s}
+.sx-st img.on{opacity:1}
+body[data-cmp=sel-ecran] .se-t[aria-current=true] .ic{background:var(--nuit);color:var(--nuit-fg);transform:translateY(-3px)}
+body[data-cmp=sel-ecran] .se.o .se-t[aria-current=true] .ic{color:var(--laiton)}
+.se-d{all:unset;display:none;cursor:pointer;font-size:14px;font-weight:700;color:var(--fg);align-items:center;gap:6px}
+.se-d svg{width:14px;height:14px;fill:none;stroke:var(--laiton);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+body[data-cmp=sel-ecran] .se-d{display:inline-flex}
+/* 3c : dock façon Mac */
+.dk{display:none;grid-column:1/-1;justify-content:center}
+body[data-cmp=sel-dock] .dk{display:flex}
+.dk-b{display:flex;align-items:flex-end;gap:6px;padding:10px 14px 12px;border-radius:26px;background:color-mix(in srgb,var(--calme) 80%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 0 0 1px var(--line),0 24px 44px -24px rgba(14,19,34,.45)}
+.dk-g{display:flex;flex-direction:column;align-items:center;gap:8px}
+.dk-g>small{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.dk-g.o>small{color:var(--laiton)}
+.dk-r{display:flex;gap:6px;align-items:flex-end}
+.dk-sep{width:1px;align-self:stretch;margin:22px 8px 4px;background:var(--line)}
+.dk-i{all:unset;cursor:pointer;position:relative;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:var(--bg);box-shadow:0 0 0 1px var(--line);transition:width .25s,height .25s,transform .25s;transform-origin:bottom center}
+.dk-g.o .dk-i{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 50%,transparent)}
+.dk-i .ic{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;color:var(--fg)}.dk-g.o .dk-i .ic{color:var(--laiton)}
+.dk-i:hover{width:66px;height:66px;z-index:2}
+.dk-i:hover+.dk-i,.dk-i:has(+.dk-i:hover){width:57px;height:57px}
+.dk-i span{position:absolute;bottom:calc(100% + 10px);left:50%;translate:-50% 4px;white-space:nowrap;padding:6px 10px;border-radius:10px;background:var(--nuit);color:var(--nuit-fg);font-size:12px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,translate .25s}
+.dk-i:hover span,.dk-i:focus-visible span{opacity:1;translate:-50% 0}
+@media (max-width:700px){.dk-b{flex-direction:column;align-items:stretch;gap:10px;width:100%;padding:12px}.dk-sep{display:none}.dk-r{flex-wrap:wrap;justify-content:center}.dk-i{width:44px;height:44px}.dk-i:hover{transform:none}}
+/* 3d : petites cartes avec une phrase */
+@media (min-width:981px){body[data-cmp=sel-cartes] .univers .appareils{width:min(74%,980px,calc((100svh - 580px) * 1.25))}}
+body[data-cmp=sel-cartes] .se-g{grid-template-columns:repeat(6,minmax(0,190px));gap:12px}
+body[data-cmp=sel-cartes] .se-t{flex-direction:column;align-items:flex-start;text-align:left;gap:12px;padding:12px;border-radius:18px;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 12px 22px -16px rgba(14,19,34,.4);font-size:14px}
+body[data-cmp=sel-cartes] .se.o .se-t{box-shadow:0 0 0 1px color-mix(in srgb,var(--laiton) 45%,var(--line)),0 12px 22px -16px rgba(14,19,34,.4)}
+body[data-cmp=sel-cartes] .se-t .ic{width:38px;height:38px;padding:9px;border-radius:12px;flex:none;box-shadow:none;background:color-mix(in srgb,var(--fg) 6%,transparent)}
+body[data-cmp=sel-cartes] .se.o .se-t .ic{background:color-mix(in srgb,var(--laiton) 14%,transparent);box-shadow:none}
+.se-t .se-x{display:none}
+body[data-cmp=sel-cartes] .se-t .se-x{display:block;font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.35;margin-top:3px}
+body[data-cmp=sel-cartes] .se-t>span{display:block}
+@media (max-width:980px){body[data-cmp=sel-cartes] .se-g{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}}
+@media (max-width:700px){body[data-cmp=sel-cartes] .se-g{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}}
+@media (max-width:520px){body[data-cmp=sel-cartes] .se-g{grid-template-columns:repeat(2,minmax(0,1fr))}body[data-cmp=sel-cartes] .se-t{flex-direction:row;align-items:center;padding:10px}body[data-cmp=sel-cartes] .se-t .se-x{display:none}}
 /* === Modernisation (aperçu 19/11) === */
 .univers::before{content:"";position:absolute;inset:-40px 0;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
 .univers{isolation:isolate}
@@ -1583,7 +1624,14 @@ OI.forEach(function(e,i){e.addEventListener('click',function(){A[i].b.click()})}
 var lg=document.createElement('p');lg.className='or-lg';lg.innerHTML='<span><i></i>Compris</span><span class="o"><i></i>En option</span><span>Touchez une icône</span>';U.appendChild(lg);
 /* 3. sélecteur */
 var se=document.createElement('div');se.className='se';se.innerHTML='<div class="se-s" role="group"><button type="button" aria-pressed="true" data-o="0">Compris</button><button type="button" class="o" aria-pressed="false" data-o="1">En option</button></div><div class="se-g"></div>';U.appendChild(se);
-var sg=se.querySelector('.se-g');function fill(o){var L=o?O:C;se.classList.toggle('o',!!o);[].forEach.call(se.querySelectorAll('.se-s button'),function(b){b.setAttribute('aria-pressed',b.dataset.o==o)});sg.innerHTML=L.map(function(x,i){return '<button type="button" class="se-t" style="--n:'+i+'" data-i="'+i+'">'+x.ic+x.t+'</button>'}).join('');[].forEach.call(sg.children,function(b,i){b.addEventListener('click',function(){L[i].b.click()})})}
+var sg=se.querySelector('.se-g');function fill(o){var L=o?O:C;se.classList.toggle('o',!!o);[].forEach.call(se.querySelectorAll('.se-s button'),function(b){b.setAttribute('aria-pressed',b.dataset.o==o)});sg.innerHTML=L.map(function(x,i){return '<button type="button" class="se-t" style="--n:'+i+'" data-i="'+i+'">'+x.ic+'<span>'+x.t+'<span class="se-x">'+(SX[x.b.dataset.k]||'')+'</span></span></button>'}).join('');[].forEach.call(sg.children,function(b,i){b.addEventListener('click',function(){if(document.body.dataset.cmp==='sel-ecran'){montre(L,i)}else L[i].b.click()})});montre(L,0)}
+var SX={a1:'Votre page à votre nom, avec QR code.',a2:'Le client décrit ou dessine ses travaux.',a3:'Vous parlez, c’est écrit.',b1:'Synchronisé avec votre téléphone.',b2:'En quelques touches, prêts à envoyer.',b4:'Le client rappelé, rien d’oublié.',o1:'Le pré-devis préparé, vous validez.',o6:'Une conversation par chantier, SMS compris.',o2:'Créneau et acompte en ligne.',o3:'La demande d’avis au bon moment.',o4:'Vos chantiers publiés sans quitter l’Espace.',o5:'Les bonnes infos au bon moment.'};
+var IMG={a1:'v-accueil',a2:'e-predevis',a3:'v-f-depenses',b1:'v-planning',b2:'v-factures',b4:'v-f-entretiens',o1:'v-cliky-devis',o6:'e-conversation',o2:'v-resa',o3:'v-chantier',o4:'v-reseaux',o5:'e-conv-client'};
+var ph2=U.querySelector('.iphone .scr'),sx=document.createElement('div');sx.className='sx-st';var KS=Object.keys(IMG);sx.innerHTML=KS.map(function(k){return '<img alt="" loading="lazy" decoding="async" data-k="'+k+'" src="vitrine/'+IMG[k]+'.jpg">'}).join('');if(ph2)ph2.appendChild(sx);
+var cur=null,dd=document.createElement('button');dd.type='button';dd.className='se-d';dd.innerHTML='Voir en détail<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';se.appendChild(dd);dd.addEventListener('click',function(){if(cur)cur.click()});
+function montre(L,i){var k=L[i].b.dataset.k;cur=L[i].b;[].forEach.call(sx.children,function(m){m.classList.toggle('on',m.dataset.k===k)});[].forEach.call(sg.children,function(b,j){b.setAttribute('aria-current',j===i)})}
+var dk=document.createElement('div');dk.className='dk';function grp(L,o){return '<div class="dk-g'+(o?' o':'')+'"><small>'+(o?'En option':'Compris')+'</small><div class="dk-r">'+L.map(function(x,i){return '<button type="button" class="dk-i" data-o="'+o+'" data-i="'+i+'">'+x.ic+'<span>'+x.t+'</span></button>'}).join('')+'</div></div>'}
+dk.innerHTML='<div class="dk-b">'+grp(C,0)+'<i class="dk-sep"></i>'+grp(O,1)+'</div>';U.appendChild(dk);[].forEach.call(dk.querySelectorAll('.dk-i'),function(b){b.addEventListener('click',function(){(b.dataset.o==='1'?O:C)[+b.dataset.i].b.click()})});
 se.querySelector('.se-s').addEventListener('click',function(e){var b=e.target.closest('button');if(b)fill(+b.dataset.o)});fill(0);
 })();</script>
 </body></html>
