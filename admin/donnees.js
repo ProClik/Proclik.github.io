@@ -27,18 +27,30 @@ function rendre(Z,id,j){var T=j.tiroirs||[];
    Tout remettre : la situation actuelle est d'abord sauvegardée, donc on peut revenir en arrière. */
 function jourDe(n){var m=/(\d{4})-(\d\d)-(\d\d)/.exec(n);if(!m)return n;var d=new Date(+m[1],+m[2]-1,+m[3]);return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
 function genre(n){return /^avant-remise/.test(n)?' <small class="mu">(situation juste avant une remise)</small>':/^manuel/.test(n)?' <small class="mu">(faite à la main)</small>':''}
-function telecharger(id,nom,b){if(b)b.disabled=true;api('/admin/sauvegarde/telecharger',{method:'POST',body:{client:id,nom:nom||undefined}}).then(function(j){
-  var u=URL.createObjectURL(new Blob([JSON.stringify(j.fichier,null,1)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='espace-'+id+'-'+(nom?nom.replace(/\.json$/,''):new Date().toISOString().slice(0,10))+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);
-  if(b)b.disabled=false;toast('Fichier téléchargé : rangez-le dans iCloud ou sur un disque')},function(e){if(b)b.disabled=false;toast(e.message)})}
+/* envoyer=true (Cyril 20/11 : « lui envoyer en un clic ») : la feuille de partage de l'iPad/iPhone s'ouvre avec le fichier
+   déjà joint (Mail, Messages, AirDrop…). Ailleurs : le fichier est téléchargé et Mail s'ouvre avec l'adresse du client. */
+var CLIENT={};
+function telecharger(id,nom,b,envoyer){if(b)b.disabled=true;api('/admin/sauvegarde/telecharger',{method:'POST',body:{client:id,nom:nom||undefined}}).then(function(j){
+  var nomF='espace-'+id+'-'+(nom?nom.replace(/\.json$/,''):new Date().toISOString().slice(0,10))+'.json',texte=JSON.stringify(j.fichier,null,1),c=CLIENT[id]||{};
+  var objet='Sauvegarde de votre Espace ProClik',mot='Bonjour'+(c.prenom?' '+c.prenom:'')+',\n\nVoici la sauvegarde complète de votre Espace ProClik (chantiers, planning, dépenses, clients…), en un seul fichier. Gardez-le précieusement.\n\nCyril, ProClik';
+  if(envoyer){var F=null;try{F=new File([texte],nomF,{type:'application/json'})}catch(e){}
+   if(F&&navigator.canShare&&navigator.canShare({files:[F]})){if(b)b.disabled=false;
+    return navigator.share({files:[F],title:objet,text:mot}).then(function(){toast('Sauvegarde envoyée')},function(e){if(e&&e.name!=='AbortError')toast('Envoi impossible : '+e.message)})}}
+  var u=URL.createObjectURL(new Blob([texte],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download=nomF;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);
+  if(b)b.disabled=false;
+  if(envoyer){location.href='mailto:'+encodeURIComponent(c.email||'')+'?subject='+encodeURIComponent(objet)+'&body='+encodeURIComponent(mot+'\n\n(Fichier joint : '+nomF+')');toast('Fichier téléchargé : joignez-le au mail qui s\'ouvre')}
+  else toast('Fichier téléchargé : rangez-le dans iCloud ou sur un disque')},function(e){if(b)b.disabled=false;toast(e.message)})}
 function sauv(id){var Z=$('#fsauv');if(!Z||!id)return;Z.innerHTML='<h2>Sauvegardes</h2><p class="mu" style="margin:0">Chargement…</p>';
  api('/admin/sauvegardes',{method:'POST',body:{client:id}}).then(function(j){rendreSauv(Z,id,j)},function(e){Z.innerHTML='<h2>Sauvegardes</h2><p class="err">'+esc(e.message)+'</p>'})}
 function rendreSauv(Z,id,j){var L=j.sauvegardes||[];
  var h='<h2>Sauvegardes</h2>'+(j.coffre?'<p class="mu" style="margin:0 0 10px">Chaque nuit à 3 h, tout son Espace est copié dans le coffre. On garde 30 nuits, et le 1er de chaque mois pendant un an.</p>':'<p class="err" style="margin:0 0 10px">Le coffre de sauvegarde n\'est pas encore créé dans Cloudflare : pas de sauvegarde de nuit pour l\'instant. Le téléchargement marche déjà.</p>')+
-  '<div class="ck-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button type="button" class="btn" data-sv="dl">Télécharger tout son Espace</button>'+(j.coffre?'<button type="button" class="btn" data-sv="now">Sauvegarder maintenant</button>':'')+'<label class="btn" style="cursor:pointer">Remettre depuis un fichier<input type="file" accept="application/json,.json" data-sv="fic" hidden></label></div>';
- if(j.coffre)h+=L.length?'<details class="ck"><summary>'+L.length+' sauvegarde'+(L.length>1?'s':'')+' · la plus récente : '+esc(jourDe(L[0].nom))+'</summary>'+L.map(function(x){return '<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--li)"><span>'+esc(jourDe(x.nom))+genre(x.nom)+' · <span class="mu">'+poids(x.taille)+'</span></span><span style="display:flex;gap:6px"><button type="button" class="btn" data-svdl="'+esc(x.nom)+'">Télécharger</button><button type="button" class="btn" data-svret="'+esc(x.nom)+'">Tout remettre à cette date</button></span></div>'}).join('')+'</details>':'<p class="mu">Première sauvegarde cette nuit.</p>';
+  '<div class="ck-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button type="button" class="btn go" data-sv="env">Envoyer au client</button><button type="button" class="btn" data-sv="dl">Télécharger tout son Espace</button>'+(j.coffre?'<button type="button" class="btn" data-sv="now">Sauvegarder maintenant</button>':'')+'<label class="btn" style="cursor:pointer">Remettre depuis un fichier<input type="file" accept="application/json,.json" data-sv="fic" hidden></label></div>';
+ if(j.coffre)h+=L.length?'<details class="ck"><summary>'+L.length+' sauvegarde'+(L.length>1?'s':'')+' · la plus récente : '+esc(jourDe(L[0].nom))+'</summary>'+L.map(function(x){return '<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--li)"><span>'+esc(jourDe(x.nom))+genre(x.nom)+' · <span class="mu">'+poids(x.taille)+'</span></span><span style="display:flex;gap:6px"><button type="button" class="btn" data-svdl="'+esc(x.nom)+'">Télécharger</button><button type="button" class="btn" data-svenv="'+esc(x.nom)+'">Envoyer</button><button type="button" class="btn" data-svret="'+esc(x.nom)+'">Tout remettre à cette date</button></span></div>'}).join('')+'</details>':'<p class="mu">Première sauvegarde cette nuit.</p>';
  Z.innerHTML=h;
  Z.onclick=function(e){var b=e.target.closest('button');if(!b)return;
   if(b.dataset.sv==='dl')return telecharger(id,null,b);
+  if(b.dataset.sv==='env')return telecharger(id,null,b,true);
+  if(b.dataset.svenv)return telecharger(id,b.dataset.svenv,b,true);
   if(b.dataset.svdl)return telecharger(id,b.dataset.svdl,b);
   if(b.dataset.sv==='now'){b.disabled=true;api('/admin/sauvegarde/maintenant',{method:'POST',body:{client:id}}).then(function(){toast('Sauvegarde faite');sauv(id)},function(er){b.disabled=false;toast(er.message)});return}
   if(b.dataset.svret){if(!b.dataset.ok){b.dataset.ok=1;var o=b.textContent;b.textContent='Sûr ? Tout son Espace revient à cette date. Touchez encore';setTimeout(function(){if(b.dataset.ok){delete b.dataset.ok;b.textContent=o}},5000);return}
@@ -48,5 +60,5 @@ function rendreSauv(Z,id,j){var L=j.sauvegardes||[];
   if(!confirmer2(fi))return;api('/admin/sauvegarde/remettre',{method:'POST',body:{client:id,fichier:f}}).then(function(rr){toast('Espace remis depuis le fichier ('+rr.remises+' éléments)');sauv(id);fiche(id)},function(er){toast(er.message)})};r.readAsText(x)}}
 /* Fichier choisi : deuxième geste demandé par un petit bandeau (pas de fenêtre du navigateur). */
 function confirmer2(fi){var lab=fi.parentNode;if(lab.dataset.ok){delete lab.dataset.ok;return true}lab.dataset.ok=1;toast('Choisissez le fichier une 2e fois pour confirmer la remise');fi.value='';setTimeout(function(){delete lab.dataset.ok},8000);return false}
-window.PCDonnees={fiche:function(id){sauv(id);fiche(id)}};
+window.PCDonnees={fiche:function(id,c){if(c)CLIENT[id]=c;sauv(id);fiche(id)}};
 })();

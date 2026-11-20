@@ -192,7 +192,7 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
   h+='<div class="card"><h2>Archiver</h2><p class="mu" style="margin:0 0 10px">'+(c.archive?'Ce client est archivé : accès coupé, rien n\'est effacé.':'Le client part (ou fin de contrat) : accès coupé, fiche gardée. Rien n\'est effacé, vous pouvez le ressortir.')+'</p><button class="btn sm al" type="button" data-act="archiver">'+(c.archive?'Sortir des archives':'Archiver ce client')+'</button></div>';
  }
  $('#fiche').innerHTML=h;
- if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);if(window.PCDonnees)PCDonnees.fiche(c.id);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
+ if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);if(window.PCDonnees)PCDonnees.fiche(c.id,c);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
  $('#fsave').addEventListener('click',function(){var b=this,o={};[].forEach.call(document.querySelectorAll('[data-opt]'),function(x){o[x.dataset.opt]=x.checked});
   var body={entreprise:$('#fe').value,prenom:$('#fp').value,activite:$('#fact').value,email:$('#fm').value,locationId:$('#fl').value,vfCompte:$('#fv').value,tva:Number(String($('#ft').value).replace(',','.')),acomptePourcent:Number(String($('#fa').value).replace(',','.')),options:o};
   var mn={};[].forEach.call(document.querySelectorAll('[data-menu]'),function(x){mn[x.dataset.menu]=x.checked});body.menus=mn;body.effectif=Number($('#fn').value)||null;body.profil=$('#fpr').value;
@@ -333,6 +333,6 @@ if(!S){vue('login');$('#aerr').textContent='Adresse du service ProClik absente.'
 else if(lj())charger().then(function(){if(!lj())vue('login')});else vue('login');
 })();
 </script>
-<script src="cliky.js?v=3"></script><script src="donnees.js?v=2"></script>
+<script src="cliky.js?v=3"></script><script src="donnees.js?v=3"></script>
 </body>
 </html>
