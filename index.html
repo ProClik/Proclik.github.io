@@ -859,6 +859,19 @@ body[data-cmp=sel-ecran] .se.o .se-t[aria-current=true] .ic{color:var(--laiton)}
 .se-d{all:unset;display:none;cursor:pointer;font-size:14px;font-weight:700;color:var(--fg);align-items:center;gap:6px}
 .se-d svg{width:14px;height:14px;fill:none;stroke:var(--laiton);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 body[data-cmp=sel-ecran] .se-d{display:inline-flex}
+.se-e{display:none;width:min(760px,100%);box-sizing:border-box;padding:16px 20px;border-radius:20px;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 16px 30px -22px rgba(14,19,34,.45);text-align:left}
+body[data-cmp=sel-ecran] .se-e{display:block}
+.se-e.in{animation:seE .35s ease both}@keyframes seE{from{opacity:0;transform:translateY(6px)}}
+.se-e-t{margin:0;font-size:17px;font-weight:800;color:var(--fg)}
+.se-e-d{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--muted)}
+.se-e ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px}
+.se-e li{position:relative;padding-left:16px;font-size:13.5px;font-weight:600;color:var(--fg)}
+.se-e li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--nuit)}
+.se.o .se-e li::before{background:var(--laiton)}
+.se-e.cote{position:absolute;right:28px;translate:0 -50%;z-index:3}
+.se-e.cote ul{flex-direction:column;gap:7px}
+.se-e.cote::before{content:"";position:absolute;left:-7px;top:50%;width:12px;height:12px;background:var(--calme);box-shadow:-1px 1px 0 var(--line);transform:translateY(-50%) rotate(45deg)}
+@media (prefers-reduced-motion:reduce){.se-e.in{animation:none}}
 /* 3c : dock façon Mac */
 .dk{display:none;grid-column:1/-1;justify-content:center}
 body[data-cmp=sel-dock] .dk{display:flex}
@@ -950,7 +963,7 @@ body[data-cmp=sel-cartes] .se-t>span{display:block}
 .c-bas .btn{background:var(--nuit-fg);color:var(--nuit)}
 @media (max-width:560px){.c-bas .btn{width:100%;justify-content:center}}@media (max-width:760px){.c-opt{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.c-opt .c-o{padding:10px 30px 10px 10px;gap:9px;align-items:flex-start}.c-opt .c-i{width:30px;height:30px;flex:none}.c-opt .c-n{font-size:13.5px;line-height:1.25}.c-opt .c-n small{display:block;font-size:12px}.c-opt .c-ck{position:absolute;right:8px;top:10px;width:18px;height:18px}}
 @media (max-width:760px){.trois.sec{gap:10px}.trois.sec>div{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start;padding:16px}.trois.sec .pastille{grid-row:span 2;margin-bottom:0}.trois.sec h3{font-size:16.5px}.trois.sec p{margin-top:2px;font-size:14.5px}}
-</style><body data-cmp="liste" data-v="pc">
+</style><body data-cmp="sel-ecran" data-v="pc">
 
 <header class="wrap top">
   <div class="logo pc"><svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg>ProClik</div>
@@ -1294,7 +1307,7 @@ document.querySelectorAll('.onglets button').forEach(b=>b.addEventListener('clic
        ['Signature et PV','e-signature','Le client signe sur l’écran, le PV est prêt.'],
        ['Cliky','v-cliky-devis','Le pré-devis préparé pour vous, vous validez.',1]]
   };
-  var D={
+  var D=window.PD={
    s1:['Exemples','Votre site sur mesure','Un site léger et soigné, aux couleurs de votre métier. Touchez un nom pour passer d’un exemple à l’autre, puis faites défiler la page comme un client.',['Aux couleurs de votre entreprise','Rapide sur téléphone, simple à lire','Relié à votre Espace et à vos devis'],'sites'],
    a1:['Exemples','Carte de visite virtuelle','Une page à votre nom qui tient sur un seul écran. Touchez un métier pour voir sa carte, puis essayez-la avec votre doigt.',['Présentation, zone et horaires','Devis et rendez-vous sans changer de page','QR code pour le camion et vos devis'],'carte'],
    a2:['Compris','Formulaire et plan','Votre client décrit ses travaux pièce par pièce, ou dessine son plan du bout du doigt. Aucune question technique : le reste, c’est vous qui le voyez.',['Une question à la fois : les murs, le sol, le plafond, la faïence','Le toit se choisit en touchant le dessin','Photos et plan joints, tout arrive rangé dans votre Espace','Menuisiers : vos prises de cotes reprises dans le plan'],['v-murs', 'v-plan']],
@@ -1628,8 +1641,12 @@ var sg=se.querySelector('.se-g');function fill(o){var L=o?O:C;se.classList.toggl
 var SX={a1:'Votre page à votre nom, avec QR code.',a2:'Le client décrit ou dessine ses travaux.',a3:'Vous parlez, c’est écrit.',b1:'Synchronisé avec votre téléphone.',b2:'En quelques touches, prêts à envoyer.',b4:'Le client rappelé, rien d’oublié.',o1:'Le pré-devis préparé, vous validez.',o6:'Une conversation par chantier, SMS compris.',o2:'Créneau et acompte en ligne.',o3:'La demande d’avis au bon moment.',o4:'Vos chantiers publiés sans quitter l’Espace.',o5:'Les bonnes infos au bon moment.'};
 var IMG={a1:'v-accueil',a2:'e-predevis',a3:'v-f-depenses',b1:'v-planning',b2:'v-factures',b4:'v-f-entretiens',o1:'v-cliky-devis',o6:'e-conversation',o2:'v-resa',o3:'v-chantier',o4:'v-reseaux',o5:'e-conv-client'};
 var ph2=U.querySelector('.iphone .scr'),sx=document.createElement('div');sx.className='sx-st';var KS=Object.keys(IMG);sx.innerHTML=KS.map(function(k){return '<img alt="" loading="lazy" decoding="async" data-k="'+k+'" src="vitrine/'+IMG[k]+'.jpg">'}).join('');if(ph2)ph2.appendChild(sx);
-var cur=null,dd=document.createElement('button');dd.type='button';dd.className='se-d';dd.innerHTML='Voir en détail<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';se.appendChild(dd);dd.addEventListener('click',function(){if(cur)cur.click()});
-function montre(L,i){var k=L[i].b.dataset.k;cur=L[i].b;[].forEach.call(sx.children,function(m){m.classList.toggle('on',m.dataset.k===k)});[].forEach.call(sg.children,function(b,j){b.setAttribute('aria-current',j===i)})}
+var cur=null,ex=document.createElement('div');ex.className='se-e';ex.setAttribute('aria-live','polite');se.insertBefore(ex,se.querySelector('.se-g'));
+function exPos(){var ap=U.querySelector('.appareils');if(!ap)return;var w=U.clientWidth,aw=ap.offsetWidth,free=(w-aw)/2-110;if(innerWidth>980&&free>=230){ex.classList.add('cote');ex.style.width=Math.min(330,free)+'px';ex.style.top=(ap.offsetTop+ap.offsetHeight/2)+'px'}else{ex.classList.remove('cote');ex.style.width='';ex.style.top=''}}
+addEventListener('resize',exPos);if('ResizeObserver'in window)new ResizeObserver(exPos).observe(U);
+var dd=document.createElement('button');dd.type='button';dd.className='se-d';dd.innerHTML='Voir en détail<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';dd.addEventListener('click',function(){if(cur)cur.click()});
+function montre(L,i){var k=L[i].b.dataset.k;cur=L[i].b;var d=(window.PD||{})[k]||[];var pts=Array.isArray(d[3])?d[3]:[];
+ex.classList.remove('in');void ex.offsetWidth;ex.innerHTML='<p class="se-e-t">'+(d[1]||L[i].t)+'</p><p class="se-e-d">'+(d[2]||'')+'</p>'+(pts.length?'<ul>'+pts.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ul>':'');ex.classList.add('in');if(ex.classList.contains('cote')===false)exPos();[].forEach.call(sx.children,function(m){m.classList.toggle('on',m.dataset.k===k)});[].forEach.call(sg.children,function(b,j){b.setAttribute('aria-current',j===i)})}
 var dk=document.createElement('div');dk.className='dk';function grp(L,o){return '<div class="dk-g'+(o?' o':'')+'"><small>'+(o?'En option':'Compris')+'</small><div class="dk-r">'+L.map(function(x,i){return '<button type="button" class="dk-i" data-o="'+o+'" data-i="'+i+'">'+x.ic+'<span>'+x.t+'</span></button>'}).join('')+'</div></div>'}
 dk.innerHTML='<div class="dk-b">'+grp(C,0)+'<i class="dk-sep"></i>'+grp(O,1)+'</div>';U.appendChild(dk);[].forEach.call(dk.querySelectorAll('.dk-i'),function(b){b.addEventListener('click',function(){(b.dataset.o==='1'?O:C)[+b.dataset.i].b.click()})});
 se.querySelector('.se-s').addEventListener('click',function(e){var b=e.target.closest('button');if(b)fill(+b.dataset.o)});fill(0);
