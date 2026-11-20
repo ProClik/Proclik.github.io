@@ -1122,6 +1122,49 @@ body[data-pq] .trois.pc>div>h3,body[data-pq] .trois.pc>div>p{padding-left:14px;p
 body[data-pq] .trois.pc>div>span.pastille+*{}
 body[data-pq] .trois.pc>div>h3,body[data-pq] .trois.pc>div>p{text-align:center!important;margin-left:auto!important;margin-right:auto!important}
 body[data-pq] .trois.pc>div>p{align-items:center}
+/* 20/11 Comment ça marche : cartes dessinées + animation (data-et=d) */
+.et-d{display:none}
+body[data-et=d] .etapes.pc{--g:22px}
+body[data-et=d] .etapes.pc>div{display:flex!important;flex-direction:column;align-items:center;text-align:center;padding:14px 14px 30px!important;border-radius:24px;background:linear-gradient(180deg,color-mix(in srgb,var(--laiton) 5%,var(--calme)),var(--calme) 60%)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--laiton) 30%,transparent),0 18px 40px -22px rgba(14,19,34,.45),0 4px 10px -6px rgba(14,19,34,.18)!important;transition:transform .4s cubic-bezier(.2,.9,.2,1)}
+body[data-et=d] .etapes.pc .pastille,body[data-et=d] .etapes.pc .et-f,body[data-et=d] .etapes.pc .et-n{display:none!important}
+body[data-et=d] .etapes.pc .eh{display:block!important;order:1;margin:22px 0 6px!important}
+body[data-et=d] .etapes.pc .eh b.n{display:block!important;margin:0!important;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--laiton)}
+body[data-et=d] .etapes.pc h3{order:2;font-size:22px!important;margin:0 0 8px;padding:0 14px}
+body[data-et=d] .etapes.pc p{order:3;max-width:30ch;margin:0 auto;padding:0 14px;color:var(--muted)}
+body[data-et=d] .etapes.pc .et-d{display:flex;order:0;align-self:stretch;justify-content:center;align-items:center;height:220px;border-radius:18px;background:color-mix(in srgb,var(--fg) 4%,var(--calme));background-image:radial-gradient(color-mix(in srgb,var(--fg) 10%,transparent) 1px,transparent 1.2px);background-size:16px 16px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 7%,transparent);margin:0}
+body[data-et=d] .et-d svg{height:190px;width:auto;max-width:100%;overflow:visible;transition:transform .5s cubic-bezier(.2,.9,.2,1)}
+@media (hover:hover){body[data-et=d] .etapes.pc>div:hover{transform:translateY(-4px)}body[data-et=d] .etapes.pc>div:hover .et-d svg{transform:scale(1.04)}}
+.et-d .dc{fill:var(--calme);stroke:var(--fg);stroke-width:2.5}.et-d .d2{opacity:.5}
+.et-d .nv{fill:#1B2440;stroke:var(--fg);stroke-width:2.5}
+.et-d .ln{fill:none;stroke:var(--fg);stroke-width:2.5;stroke-linecap:round}.et-d .th{stroke-width:2}
+.et-d .l1{fill:color-mix(in srgb,var(--fg) 70%,transparent)}.et-d .l2{fill:color-mix(in srgb,var(--fg) 16%,transparent)}
+.et-d .bx{fill:none;stroke:var(--fg);stroke-width:2}
+.et-d .ck{fill:none;stroke:var(--laiton);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:14}
+.et-d .pg{fill:var(--laiton);transform-box:fill-box;transform-origin:left center;transform:scaleX(0)}
+.et-d .vp{fill:none;stroke:var(--laiton);stroke-width:3;stroke-linecap:round;opacity:0}
+.et-d .bl{fill:none;stroke:var(--laiton);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.et-d .ok{fill:var(--laiton);stroke:var(--calme);stroke-width:3}.et-d text{fill:#fff;font:700 14px Manrope,system-ui,sans-serif}
+.et-d .bd{transform-box:fill-box;transform-origin:center;transform:scale(0)}
+.et-d .nt{transform:translateY(-14px);opacity:0}
+/* animations, lancées quand la partie apparaît */
+.etapes.pc.vu .et-d .vp{animation:etV 3s ease-in-out infinite}.etapes.pc.vu .et-d .v2{animation-delay:.6s}.etapes.pc.vu .et-d .v3{animation-delay:1.2s}
+@keyframes etV{0%{opacity:0;transform:translateY(8px)}30%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+.etapes.pc.vu .et-d .ck{animation:etC 4.5s ease infinite}.etapes.pc.vu .et-d .c2{animation-delay:.5s}.etapes.pc.vu .et-d .c3{animation-delay:1s}
+@keyframes etC{0%,8%{stroke-dashoffset:14}22%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.etapes.pc.vu .et-d .pg{animation:etP 4.5s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes etP{0%,5%{transform:scaleX(0)}60%,85%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+.etapes.pc.vu .et-d .nt{animation:etN 4.5s cubic-bezier(.2,.9,.2,1) infinite}
+@keyframes etN{0%,6%{transform:translateY(-14px);opacity:0}18%,88%{transform:none;opacity:1}100%{transform:none;opacity:0}}
+.etapes.pc.vu .et-d .bd{animation:etB 4.5s cubic-bezier(.3,1.6,.5,1) infinite}
+@keyframes etB{0%,22%{transform:scale(0)}32%,88%{transform:scale(1)}100%{transform:scale(0)}}
+/* arrivée des cartes l'une après l'autre + fil laiton entre elles */
+body[data-et=d] .etapes.pc.rv>div{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.9,.2,1)}
+body[data-et=d] .etapes.pc.rv.vu>div{opacity:1;transform:none}
+body[data-et=d] .etapes.pc.rv.vu>div:nth-child(2){transition-delay:.35s}body[data-et=d] .etapes.pc.rv.vu>div:nth-child(3){transition-delay:.7s}
+body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:100%!important;right:auto!important;width:var(--g)!important;top:124px!important;height:2px!important;z-index:2;background:repeating-linear-gradient(90deg,var(--laiton) 0 5px,transparent 5px 9px)!important;transition:transform .6s ease .9s!important}
+@media (max-width:760px){body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:50%!important;top:100%!important;width:2px!important;height:var(--g)!important;background:repeating-linear-gradient(180deg,var(--laiton) 0 5px,transparent 5px 9px)!important}
+ body[data-et=d] .etapes.pc .et-d{height:190px}body[data-et=d] .et-d svg{height:165px}}
+@media (prefers-reduced-motion:reduce){.etapes.pc .et-d *{animation:none!important}.et-d .ck{stroke-dashoffset:0}.et-d .pg{transform:scaleX(.7)}.et-d .nt{transform:none;opacity:1}.et-d .bd{transform:scale(1)}.et-d .vp{opacity:.8}}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -1152,7 +1195,7 @@ body[data-pq] .trois.pc>div>p{align-items:center}
 .c-bas .btn{background:var(--nuit-fg);color:var(--nuit)}
 @media (max-width:560px){.c-bas .btn{width:100%;justify-content:center}}@media (max-width:760px){.c-opt{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.c-opt .c-o{padding:10px 30px 10px 10px;gap:9px;align-items:flex-start}.c-opt .c-i{width:30px;height:30px;flex:none}.c-opt .c-n{font-size:13.5px;line-height:1.25}.c-opt .c-n small{display:block;font-size:12px}.c-opt .c-ck{position:absolute;right:8px;top:10px;width:18px;height:18px}}
 @media (max-width:760px){.trois.sec{gap:10px}.trois.sec>div{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start;padding:16px}.trois.sec .pastille{grid-row:span 2;margin-bottom:0}.trois.sec h3{font-size:16.5px}.trois.sec p{margin-top:2px;font-size:14.5px}}
-</style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c">
+</style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d">
 
 <header class="wrap top">
   <div class="logo pc"><svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" fill="var(--laiton)"/></svg>ProClik</div>
@@ -1260,9 +1303,9 @@ body[data-pq] .trois.pc>div>p{align-items:center}
   <h2 class="pc">Prêt en <span class="or">trois étapes.</span></h2>
   <h2 class="cl">Votre projet en <span class="or">trois étapes.</span></h2>
   <div class="etapes pc">
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10h1.5a2 2 0 0 1 0 4H16M8 3v2M11 3v2"/></svg></span><b class="n">Étape 1</b></div><h3>On se rencontre</h3><p>Autour d'un café, on regarde votre métier et ce qui vous prend du temps.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-planning.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">01</span></div>
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></span><b class="n">Étape 2</b></div><h3>On prépare tout</h3><p>Votre site, votre Espace, vos produits et vos prix. Vous n'avez rien à installer.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-cliky-base.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">02</span></div>
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg></span><b class="n">Étape 3</b></div><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/e-predevis.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">03</span></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10h1.5a2 2 0 0 1 0 4H16M8 3v2M11 3v2"/></svg></span><b class="n">Étape 1</b></div><h3>On se rencontre</h3><p>Autour d'un café, on regarde votre métier et ce qui vous prend du temps.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-planning.jpg" alt="" loading="lazy" decoding="async"></figure><figure class="et-d" aria-hidden="true"><svg viewBox="0 0 240 170"><path class="vp v1" d="M86 76c-7-9 7-15 0-25"/><path class="vp v2" d="M100 76c-7-9 7-15 0-25"/><path class="vp v3" d="M162 82c-7-9 7-15 0-25"/><path class="dc" d="M64 88h50v26a20 20 0 0 1-20 20h-10a20 20 0 0 1-20-20z"/><path class="ln" d="M114 96a10 10 0 0 1 0 20"/><path class="ln" d="M54 142h70"/><path class="nv" d="M140 94h46v22a18 18 0 0 1-18 18h-10a18 18 0 0 1-18-18z"/><path class="ln" d="M140 101a9 9 0 0 0 0 18"/><path class="ln" d="M130 142h66"/></svg></figure><span class="et-n" aria-hidden="true">01</span></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></span><b class="n">Étape 2</b></div><h3>On prépare tout</h3><p>Votre site, votre Espace, vos produits et vos prix. Vous n'avez rien à installer.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-cliky-base.jpg" alt="" loading="lazy" decoding="async"></figure><figure class="et-d" aria-hidden="true"><svg viewBox="0 0 240 170"><rect class="dc" x="46" y="18" width="148" height="136" rx="18"/><circle class="l2" cx="64" cy="34" r="3.5"/><circle class="l2" cx="76" cy="34" r="3.5"/><circle class="l2" cx="88" cy="34" r="3.5"/><path class="ln th" d="M46 46h148"/><circle class="bx" cx="70" cy="68" r="8"/><path class="ck c1" d="M66 68l3 3 6-6"/><rect class="l1" x="86" y="65" width="62" height="6" rx="3"/><circle class="bx" cx="70" cy="92" r="8"/><path class="ck c2" d="M66 92l3 3 6-6"/><rect class="l2" x="86" y="89" width="80" height="6" rx="3"/><circle class="bx" cx="70" cy="116" r="8"/><path class="ck c3" d="M66 116l3 3 6-6"/><rect class="l2" x="86" y="113" width="54" height="6" rx="3"/><rect class="l2" x="62" y="136" width="116" height="6" rx="3"/><rect class="pg" x="62" y="136" width="116" height="6" rx="3"/></svg></figure><span class="et-n" aria-hidden="true">02</span></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg></span><b class="n">Étape 3</b></div><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/e-predevis.jpg" alt="" loading="lazy" decoding="async"></figure><figure class="et-d" aria-hidden="true"><svg viewBox="0 0 240 170"><rect class="dc d2" x="58" y="30" width="124" height="48" rx="14"/><g class="nt"><rect class="dc" x="38" y="62" width="164" height="70" rx="18"/><circle class="nv" cx="74" cy="97" r="18"/><path class="bl" d="M68 103h12M70 103v-6a4 4 0 0 1 8 0v6M74 106v1.5"/><rect class="l1" x="102" y="84" width="62" height="7" rx="3.5"/><rect class="l2" x="102" y="99" width="80" height="5" rx="2.5"/><rect class="l2" x="102" y="110" width="52" height="5" rx="2.5"/></g><g class="bd"><circle class="ok" cx="200" cy="64" r="13"/><text x="200" y="69" text-anchor="middle">1</text></g></svg></figure><span class="et-n" aria-hidden="true">03</span></div>
   </div>
   <div class="etapes cl">
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><b class="n">Étape 1</b></div><h3>Décrivez vos travaux</h3><p>En ligne, en quelques minutes, avec des photos si vous le souhaitez.</p></div>
