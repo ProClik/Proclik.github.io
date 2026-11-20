@@ -756,7 +756,7 @@ body:has(.mod:not([hidden])) .h-cta{display:none}
 /* Accueil : sélecteur Inclus / En option sous les écrans (20/11), body[data-cmp=sel-ecran] */
 body[data-cmp^=sel] .univers ul.sat{display:none!important}
 @media (min-width:981px){body[data-cmp^=sel] .univers{grid-template-columns:minmax(0,1fr)}
- body[data-cmp^=sel] .univers .appareils{width:min(74%,980px,calc((100svh - 550px) * 1.25))}}
+ body[data-cmp^=sel] .univers .appareils{width:min(74%,980px,calc((100svh - 562px) * 1.25))}}
 @media (max-width:980px){body[data-cmp^=sel] .univers{grid-template-columns:minmax(0,1fr)}}
 @media (min-width:700px) and (max-width:980px){body[data-cmp^=sel] .univers .appareils{width:min(80%,calc((100svh - 560px) * 1.25))}}
 .se-e:not(.cote){order:3}.se-h{order:4}
@@ -841,6 +841,20 @@ body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic{animation:seInv 6s cubic-bez
  .h-cta i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--nuit-fg) 14%,transparent)}
  .h-cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 }
+/* Titre de l'accueil (20/11) : titre fondu sur deux lignes, apparition douce */
+.hero .prod .sur{display:none!important}
+.hero h1.t2{font-weight:600!important;letter-spacing:-.05em!important;line-height:1.02!important;white-space:normal!important;position:relative}
+html.fit .hero h1.t2,.hero h1.t2{font-size:clamp(32px,min(4.1vw,6.3vh),58px)!important}
+.hero h1.t2 .l{display:block;padding-bottom:.06em;-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1.t2 .l1{background-image:linear-gradient(180deg,var(--fg) 40%,color-mix(in srgb,var(--fg) 82%,transparent))}
+.hero h1.t2 .l2{background-image:linear-gradient(180deg,color-mix(in srgb,var(--fg) 78%,transparent),color-mix(in srgb,var(--fg) 42%,transparent))}
+.hero h1.t2~.lead{font-size:clamp(14.5px,1.3vw,16px)!important;max-width:460px!important;margin-top:12px!important;line-height:1.45}
+.hero .prod{position:relative}
+.hero .prod::before{content:"";position:absolute;left:50%;top:-30px;width:min(760px,96vw);height:300px;translate:-50% 0;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,color-mix(in srgb,var(--laiton) 13%,transparent),transparent)}
+.hero h1.t2 .l,.hero h1.t2~.lead{animation:t2In 1s cubic-bezier(.2,.8,.2,1) both}
+.hero h1.t2 .l1{animation-delay:.12s}.hero h1.t2 .l2{animation-delay:.3s}.hero h1.t2~.lead{animation-delay:.5s}
+@keyframes t2In{from{opacity:0;filter:blur(10px);transform:translateY(14px)}}
+@media (prefers-reduced-motion:reduce){.hero h1.t2 .l,.hero h1.t2~.lead{animation:none}}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -890,8 +904,8 @@ body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic{animation:seInv 6s cubic-bez
 <section class="hero"><div class="wrap">
   <div class="pc prod">
     <p class="sur">L'Espace ProClik</p>
-    <h1>Tout votre métier.<br><span class="or">Une seule appli.</span></h1>
-    <p class="lead">Votre site, vos demandes, vos devis et votre agenda, réunis dans une seule appli.</p>
+    <h1 class="t2"><span class="l l1">Votre entreprise…</span><span class="l l2">une appli.</span></h1>
+    <p class="lead">Site, devis, factures et agenda. Tout au même endroit.</p>
     <div class="actions"><a class="dp" href="#tarifs">Dès <b>49 € HT</b> / mois</a></div>
 
     <div class="univers">
