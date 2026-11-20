@@ -205,7 +205,7 @@ if(m==3||m==4||m==5||(m==6&&j<21))return"printemps";
 if(m<9||(m==9&&j<23))return"ete";return"automne"}
 var LITE=matchMedia("(hover:none),(max-width:899px)").matches,c=document.getElementById("fond"),x=c.getContext("2d"),R=matchMedia("(prefers-reduced-motion: reduce)").matches,W=0,H=0,dpr=1,vis=true,run=false,t0=performance.now(),last=t0,
 DEMO=/[?&]demo/.test(location.search),SA=saison(),p=0,pt=0,sv=0,lastY=scrollY,mx=.5,tx=.5,PS=[],L=1400,RH=2000,now=0,dtS=.016,wrap;
-var TINT={salon:"linear-gradient(180deg,#F8EBE6 0%,#F4E2DC 70%,#F8EBE6 100%)",agence:"linear-gradient(180deg,#D9E4F3 0%,#E6ECF5 50%,#F3EADF 100%)",martin:"linear-gradient(180deg,#F6F0E4,#F2EADA 100%)"}[T];
+var TINT={salon:"linear-gradient(180deg,#F8EBE6 0%,#F4E2DC 70%,#F8EBE6 100%)",agence:"linear-gradient(180deg,#DCE7DC 0%,#E9EEE6 55%,#F3EEE4 100%)",martin:"linear-gradient(180deg,#F6F0E4,#F2EADA 100%)"}[T];
 function rnd(a,b){return a+Math.random()*(b-a)}
 function ease(u){u=u<0?0:u>1?1:u;return u*u*(3-2*u)}
 function cl(u,a,b){return u<a?a:u>b?b:u}
@@ -317,4 +317,14 @@ addEventListener("scroll",function(){if(R)kick1();else if(!run)kick()},{passive:
 if(R)kick1();else kick();
 })();
 </script>
-</body></html>
+<style id="sauge">
+/* Belledonne : vert sauge pastel, pour se distinguer de la coiffure (ciel pâle) et de la menuiserie (sable) */
+:root{--acc:#2F4A3E;--acc2:#C4A574;--bg:#E9EEE6;--surf:#FFFFFF;--encre:#1F2A24;--gris:#66706A;--trait:rgba(47,74,62,.15);--r:22px}
+body{background:var(--bg)}
+section:nth-of-type(even){background:linear-gradient(180deg,#E1E9DE,#E9EEE6)}
+.bar{background:rgba(233,238,230,.82)}
+.degr{background:linear-gradient(90deg,#2F4A3E,#6F8F78);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn,a.btn,button.btn{border-radius:999px!important}
+.btn.sec{color:var(--acc);box-shadow:inset 0 0 0 1.5px rgba(47,74,62,.3)}
+.k,.tete .k{color:#6F8F78!important;letter-spacing:.06em}
+</style></body></html>
