@@ -1437,6 +1437,47 @@ main>section:not(.hero) h2 .or{display:inline}
  #securite .trois.sec{text-align:left}
 }
 
+/* Téléphone, blocs adaptés (20/11, captures de Cyril) : plus de cartes dans les cartes, options en liste, bouton qui s'efface */
+@media (max-width:700px){
+ .fx,.vue,.calc{background:none!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important;border-radius:0!important;border:0!important}
+ .fx::before,.fx::after,.vue::before,.vue::after,.calc::before,.calc::after{display:none!important}
+ .c-opt{grid-template-columns:minmax(0,1fr)!important;gap:6px!important}
+ .c-o{align-items:center!important;padding:9px 44px 9px 9px!important;min-height:56px}
+ .c-o .c-n{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px;font-size:15px}
+ .c-o .c-n small{font-size:13px}
+ .fx-r{min-height:52px}
+ .fx-r b,.fx-r strong{font-size:14px}
+ .esp3 .c{padding-top:20px!important;padding-bottom:18px!important}
+ .esp3 .c .px b{font-size:38px!important}
+ .h-cta{min-height:46px!important;font-size:15px!important;padding-left:18px!important}
+ .h-cta.desc{transform:translateY(150%)!important;opacity:0!important;pointer-events:none!important}
+}
+
+/* ===== TÉLÉPHONE ÉPURÉ (20/11, Cyril : « trop brouillon, les blocs sont de trop ») ===== */
+@media (max-width:700px){
+ /* Pourquoi : une seule grande scène, puis deux lignes simples */
+ .scn:not(.scn-e)>.sc:not(:first-child) .sc-st{display:none}
+ .scn:not(.scn-e)>.sc:not(:first-child){border-top:1px solid color-mix(in srgb,var(--fg) 10%,transparent);padding-top:18px}
+ .scn:not(.scn-e)>.sc:first-child .sc-st{height:400px}
+ /* Étapes : frise de texte, sans images */
+ .scn.scn-e .sc-st{display:none}
+ .scn.scn-e>.sc{margin-bottom:26px}
+ .scn.scn-e figcaption{padding:2px 0 0}
+ .scn.scn-e .sc-k{display:none}
+ .scn.scn-e h3{margin-top:0;font-size:20px}
+ .scn.scn-e::before{bottom:auto;height:calc(100% - 60px)}
+ /* Démo : titre, phrase, bouton (les écrans s'ouvrent en essayant) */
+ #demo .duo,#demo .ex{display:none!important}
+ /* Fonctions : la liste seule, l'écran s'ouvre au toucher */
+ #compris .fx-d{display:none!important}
+ /* Calculette repliée */
+ .calc.pli>*:not(.c-top):not(.c-ouvre){display:none!important}
+ .trois.sec{background:none!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
+ .trois.sec>div{padding:14px 0!important}
+ .c-ouvre{display:none}
+ .calc.pli .c-ouvre{display:inline-flex;margin-top:14px}
+}
+
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
@@ -2213,4 +2254,6 @@ place();addEventListener('resize',place);addEventListener('load',function(){plac
 function pre(){var d=document.documentElement.getAttribute('data-theme'),n=d?d==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
  'a1 a2 a3 b1 b2 b4 c2 c3 c4 c5 c6 c7 c8 c9 c10 o1 o2 o3 o4 o5 o6'.split(' ').forEach(function(k,j){setTimeout(function(){var im=new Image();im.decoding='async';im.src='vitrine/f/'+k+(n?'-n':'')+'.jpg'},j*120)})}
 addEventListener('load',function(){setTimeout(function(){window.requestIdleCallback?requestIdleCallback(pre):pre()},1200)})})();</script>
+<script>(function(){var b=document.querySelector('.h-cta');if(!b)return;var y=scrollY,t=0;addEventListener('scroll',function(){if(t)return;t=requestAnimationFrame(function(){t=0;var n=scrollY,d=n-y;if(Math.abs(d)<6)return;b.classList.toggle('desc',d>0&&n>200);y=n})},{passive:true})})();</script>
+<script>(function(){var c=document.getElementById('calc');if(!c||!matchMedia('(max-width:700px)').matches)return;c.classList.add('pli');var b=document.createElement('button');b.type='button';b.className='btn sec c-ouvre';b.textContent='Calculer mon prix';var t=c.querySelector('.c-top');t.insertAdjacentElement('afterend',b);b.addEventListener('click',function(){c.classList.remove('pli')})})();</script>
 </body></html>
