@@ -1033,11 +1033,11 @@ body[data-pq] .pq-ill svg{height:226px}
 .univers.zm .ipad{opacity:.14;filter:blur(2px) saturate(.6);transform:scale(.96)}
 .univers.zm .h-nc,.univers.zm .h-ring{opacity:0}
 html.zv-ouv,html.zv-ouv body{overflow:hidden}
-.zv{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 14px) 0 calc(env(safe-area-inset-bottom) + 12px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);opacity:0;transition:opacity .3s ease}
+.zv{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 14px) 0 calc(env(safe-area-inset-bottom) + 12px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);opacity:0;transition:opacity .55s ease}
 .zv.on{opacity:1}
 .zv[hidden],.gp[hidden]{display:none!important}
 body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
-.zv-tx{text-align:center}.zv-tx.in{animation:seE .35s ease both}
+.zv-tx{text-align:center}.zv-tx.in{animation:seE .6s ease both}
 .zv-u{display:none;list-style:none;margin:16px 0 0;padding:0;flex-direction:column;gap:9px}
 .zv-u li{position:relative;padding-left:28px;font-size:15px;line-height:1.4;color:var(--fg);font-weight:500}
 .zv-u li::before{content:"";position:absolute;left:0;top:.1em;width:18px;height:18px;border-radius:50%;background:color-mix(in srgb,var(--laiton) 18%,transparent)}
@@ -1047,7 +1047,7 @@ body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
 .zv-c{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 20px 0;box-sizing:border-box;width:100%;max-width:560px}
 .zv-ph{flex:0 1 auto;min-height:0;height:min(64svh,620px);aspect-ratio:1/2.0686;box-sizing:border-box;background:#0E1322;box-shadow:0 40px 70px -30px rgba(14,19,34,.6)}
 .zv.sortie{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:background .4s,backdrop-filter .4s}
-.zv>.zv-x,.zv .zv-tx,.zv .zv-g{transition:opacity .3s}.zv.sortie>.zv-x,.zv.sortie .zv-tx,.zv.sortie .zv-g{opacity:0}
+.zv>.zv-x,.zv .zv-tx,.zv .zv-g{transition:opacity .5s}.zv.sortie>.zv-x,.zv.sortie .zv-tx,.zv.sortie .zv-g{opacity:0}
 .zv.sortie .zv-ph{box-shadow:none}
 .gp{position:absolute;z-index:6;box-sizing:border-box;background:#0E1322;box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 12%,transparent),0 50px 90px -30px rgba(14,19,34,.6)}
 .gp img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
@@ -1175,6 +1175,35 @@ body[data-et=d] .etapes.pc>div:not(:last-child)::after{left:100%!important;right
  body[data-hz=c] .univers .appareils{width:min(88%,1120px,calc((100svh - 330px) * 1.25))!important}
  body[data-hz=d] .univers .appareils{width:min(92%,1200px,calc((100svh - 230px) * 1.25))!important}
 }
+/* 20/11 téléphone : feuille des fonctions */
+@media (max-width:700px){
+ body[data-cmp=sel-ecran] .univers .se>.se-g{display:none!important}
+ body[data-cmp=sel-ecran] .se-s button[aria-pressed=true]{background:none!important;color:var(--fg)!important;box-shadow:none!important}
+ body[data-cmp=sel-ecran] .se-s{position:relative;padding:5px;gap:6px;background:var(--calme);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 55%,transparent),0 14px 28px -16px rgba(14,19,34,.5)}
+ body[data-cmp=sel-ecran] .se-s button{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;font-size:15.5px;background:color-mix(in srgb,var(--fg) 6%,transparent)!important}
+ body[data-cmp=sel-ecran] .se-s button::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.6}
+ body[data-cmp=sel-ecran] .se-s button.o{color:var(--laiton)!important}
+ body[data-cmp=sel-ecran] .se-s::before{content:"";position:absolute;inset:-6px;border-radius:99px;border:2px solid var(--laiton);opacity:0;pointer-events:none;animation:flRing 2.4s ease-out infinite 1.2s}
+ body[data-cmp=sel-ecran] .se.vu-fl .se-s::before{animation:none}
+ body[data-cmp=sel-ecran] .se-h b{color:var(--fg)}
+}
+@keyframes flRing{0%{opacity:.7;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.12,1.35)}}
+.se-fl[hidden]{display:none!important}
+.se-fl{position:fixed;inset:0;z-index:90}
+.se-fl-f{position:absolute;inset:0;background:rgba(14,19,34,.45);opacity:0;transition:opacity .3s}
+.se-fl.on .se-fl-f{opacity:1}
+.se-fl-c{position:absolute;left:0;right:0;bottom:0;max-height:86vh;overflow:auto;background:var(--calme);border-radius:26px 26px 0 0;padding:10px 16px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(14,19,34,.5);transform:translateY(100%);transition:transform .38s cubic-bezier(.2,.9,.2,1)}
+.se-fl.on .se-fl-c{transform:none}
+.se-fl-p{width:44px;height:5px;border-radius:3px;margin:0 auto 12px;background:color-mix(in srgb,var(--fg) 20%,transparent)}
+.se-fl-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 4px 16px}
+.se-fl-h b{display:block;font-size:19px;font-weight:800;letter-spacing:-.01em}.se-fl.o .se-fl-h b{color:var(--laiton)}
+.se-fl-h small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.se-fl-x{all:unset;cursor:pointer;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--fg) 7%,transparent)}
+.se-fl-x svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.se-fl .se-g{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px 6px!important;width:100%}
+.se-fl .se-t{font-size:11.5px}.se-fl .se-t .ic{width:52px;height:52px;padding:14px}
+html.fl-on,html.fl-on body{overflow:hidden}
+@media (max-width:700px){body[data-hz=b] .univers .appareils{width:94%!important;margin-left:0!important;margin-right:4%!important;max-width:none!important}body[data-hz=b] .univers .iphone{width:31%;right:-5%}}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -1858,7 +1887,7 @@ var zv=null,zL=null;
 var PH=U.querySelector('.iphone'),gp=null;
 function flip(el,from,to,back,done){var sx=from.width/to.width,sy=from.height/to.height,dx=from.left-to.left,dy=from.top-to.top;
  var k=[{transformOrigin:'0 0',transform:'translate('+dx+'px,'+dy+'px) scale('+sx+','+sy+')'},{transformOrigin:'0 0',transform:'translate(0,0) scale(1,1)'}];if(back)k.reverse();
- if(RM||!el.animate){if(done)done();return}var a=el.animate(k,{duration:back?480:700,easing:'cubic-bezier(.22,.9,.22,1)',fill:back?'forwards':'none'});if(done)a.onfinish=done}
+ if(RM||!el.animate){if(done)done();return}var a=el.animate(k,{duration:back?750:1150,easing:'cubic-bezier(.33,.85,.25,1)',fill:back?'forwards':'none'});if(done)a.onfinish=done}
 function cadre(el,w){var r=w*.174,pd=w*.0407;el.style.borderRadius=r+'px';el.style.padding=pd+'px';var im=el.querySelector('img');if(im)im.style.borderRadius=(w*.139)+'px'}
 function phVoir(v){if(PH)PH.style.visibility=v?'':'hidden'}
 function zvFerme(){if(!zv||!zv.classList.contains('on'))return;var ph=zv.querySelector('.zv-ph');zv.classList.add('sortie');document.documentElement.classList.remove('zv-ouv');
@@ -1898,4 +1927,20 @@ addEventListener('scroll',function f(){if(scrollY>40){clearTimeout(tm);sortir();
 })();
 })();</script>
 <script>(function(){var e=document.querySelector('.esp3');if(!e)return;if(!('IntersectionObserver'in window)){e.classList.add('vu');return}var o=new IntersectionObserver(function(x){if(x[0].isIntersecting){e.classList.add('vu');o.disconnect()}},{threshold:.25});o.observe(e)})();</script>
+<script>/* 20/11 téléphone : icônes rangées dans Inclus / En option (feuille) */
+(function(){var se=document.querySelector('.univers .se');if(!se)return;var sw=se.querySelector('.se-s'),sg=se.querySelector('.se-g'),hn=se.querySelector('.se-h');var M=matchMedia('(max-width:700px)');
+var fl=document.createElement('div');fl.className='se-fl';fl.hidden=true;fl.setAttribute('role','dialog');fl.setAttribute('aria-modal','true');
+fl.innerHTML='<div class="se-fl-f"></div><div class="se-fl-c"><div class="se-fl-p"></div><div class="se-fl-h"><div><b></b><small></small></div><button type="button" class="se-fl-x" aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="se-fl-g"></div></div>';document.body.appendChild(fl);
+var box=fl.querySelector('.se-fl-g'),mark=document.createComment('se-g');
+function ouvre(o){fl.querySelector('.se-fl-h b').textContent=o?'En option':'Inclus dans votre Espace';fl.querySelector('.se-fl-h small').textContent=o?'À ajouter quand vous voulez':'Dans tous les Espaces, sans supplément';fl.classList.toggle('o',!!o);
+ if(!mark.parentNode)sg.parentNode.insertBefore(mark,sg);box.appendChild(sg);fl.hidden=false;document.documentElement.classList.add('fl-on');requestAnimationFrame(function(){requestAnimationFrame(function(){fl.classList.add('on')})});se.classList.add('vu-fl')}
+function ferme(){if(fl.hidden)return;fl.classList.remove('on');document.documentElement.classList.remove('fl-on');setTimeout(function(){fl.hidden=true;if(mark.parentNode)mark.parentNode.insertBefore(sg,mark)},320)}
+sw.addEventListener('click',function(e){var b=e.target.closest('button');if(b&&M.matches)ouvre(+b.dataset.o)});
+fl.querySelector('.se-fl-f').addEventListener('click',ferme);fl.querySelector('.se-fl-x').addEventListener('click',ferme);
+box.addEventListener('click',function(e){if(e.target.closest('.se-t'))setTimeout(ferme,0)});
+addEventListener('keydown',function(e){if(e.key==='Escape')ferme()});
+M.addEventListener&&M.addEventListener('change',function(){if(!M.matches)ferme()});
+var y0=0;fl.querySelector('.se-fl-c').addEventListener('touchstart',function(e){y0=e.touches[0].clientY},{passive:true});fl.querySelector('.se-fl-c').addEventListener('touchend',function(e){if(e.changedTouches[0].clientY-y0>70)ferme()},{passive:true});
+if(hn){var t0=hn.innerHTML;function txt(){hn.innerHTML=M.matches?'<i></i><span>Touchez <b>Inclus</b> ou <b>En option</b> pour voir les fonctions</span>':t0}txt();M.addEventListener&&M.addEventListener('change',txt)}
+})();</script>
 </body></html>
