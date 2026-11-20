@@ -17,13 +17,13 @@
 /* Mise en page : 7 bandes pleine largeur, contenu centré 1080px, un seul bouton fort par écran */
 :root{
   --bg:#ECEEF2;--fg:#0E1322;--muted:#565E73;--line:rgba(14,19,34,.10);
-  --nuit:#1B2440;--nuit-fg:#fff;--laiton:#A8823F;--calme:color-mix(in srgb,#fff 60%,var(--bg));
+  --nuit:#1B2440;--nuit-fg:#fff;--laiton:#A8823F;--laiton-tx:#80601F;--laiton-sn:#D4B483;--calme:color-mix(in srgb,#fff 60%,var(--bg));
   --sh:0 1px 2px rgba(14,19,34,.06),0 10px 28px rgba(14,19,34,.07);
   --teinte:color-mix(in srgb,var(--nuit) 6%,transparent);
   --f:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.10);--nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--calme:#262D40;--sh:0 10px 28px rgba(0,0,0,.35);--teinte:rgba(255,255,255,.05);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.10);--nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--calme:#262D40;--sh:0 10px 28px rgba(0,0,0,.35);--teinte:rgba(255,255,255,.05);color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.10);--nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--laiton-tx:#D4B483;--laiton-sn:#80601F;--calme:#262D40;--sh:0 10px 28px rgba(0,0,0,.35);--teinte:rgba(255,255,255,.05);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1E2433;--fg:#F1F3F9;--muted:#B5BDD3;--line:rgba(255,255,255,.10);--nuit:#E8EAF2;--nuit-fg:#0E1322;--laiton:#D4B483;--laiton-tx:#D4B483;--laiton-sn:#80601F;--calme:#262D40;--sh:0 10px 28px rgba(0,0,0,.35);--teinte:rgba(255,255,255,.05);color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--f);font-size:16px;line-height:1.55;margin:0}
 h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.02em}
@@ -1263,6 +1263,22 @@ body[data-hz] .se-pan .se-t{font-size:10.5px;gap:5px;line-height:1.15}body[data-
 /* 20/11 (Cyril) : Inclus et En option bien différents : Inclus plein bleu nuit + coche, Option cerclé laiton + « + » */body[data-cmp=sel-ecran] .se-s{gap:6px;background:transparent;box-shadow:none}body[data-cmp=sel-ecran] .se-s button{gap:6px;padding:6px 14px 6px 10px;transition:background .25s,color .25s,box-shadow .25s,opacity .25s}body[data-cmp=sel-ecran] .se-s button::after{display:none}.se-si{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}body[data-cmp=sel-ecran] .se-s button[data-o="0"]{background:var(--nuit)!important;color:var(--nuit-fg)!important;box-shadow:0 6px 14px -8px rgba(14,19,34,.55)!important}body[data-cmp=sel-ecran] .se-s button[data-o="1"]{background:var(--calme)!important;color:var(--laiton)!important;box-shadow:inset 0 0 0 1.5px var(--laiton),0 6px 14px -10px rgba(14,19,34,.35)!important}body[data-cmp=sel-ecran] .se-s button[aria-pressed=false]{opacity:.62}body[data-cmp=sel-ecran] .se-s button[aria-pressed=false]:hover{opacity:.9}body[data-cmp=sel-ecran] .se-s button[data-o="1"][aria-pressed=true]{background:color-mix(in srgb,var(--laiton) 16%,var(--calme))!important}
 /* 20/11 (Cyril) : 2e bulle, Cliky annonce le pré-devis prêt */.h-nc.h-nc2{left:auto;right:-8%;top:-3%;bottom:auto;animation:ncIn .7s 3.2s cubic-bezier(.2,.9,.2,1.2) both,ncFl 5s 4s ease-in-out infinite}@media (max-width:520px){.h-nc.h-nc2{right:-4%;top:25%}}
 /* 20/11 (Cyril, iPhone 13) : sur téléphone, l'accueil remplit l'écran (rien en dessous) et des bulles plus petites */@media (max-width:699px){main>section.hero{min-height:calc(100svh - var(--top-h,64px));display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}}@media (max-width:520px){.h-nc{padding:5px 9px 5px 5px;gap:6px;border-radius:12px}.h-nc-i{width:24px;height:24px;border-radius:8px}.h-nc-i svg{width:13px;height:13px}.h-nc-t small{font-size:8.5px}.h-nc-t b{font-size:11px}.h-nc-t span{font-size:9.5px}.h-nc:not(.h-nc2){left:-4%}}
+/* 20/11 revue (ui-ux-pro-max) LOT 1 lisibilité : laiton de TEXTE assez foncé en jour (contraste ≥ 4,5), laiton sur bloc inversé, petits textes ≥ 12 px, zones de toucher ≥ 44 px */
+.tag,.sur,.v-t small,.etapes b.n,.esp3 .nom,.fx-k,#rdv .ex-r .ex,#rdv .demo-r,.prix .m sup,main>section:not(.hero) .num,main>section:not(.hero) .num b,.gal .vw-ch button small,.gal .gal-c b.op,body[data-tx=c] .trois.pc>div h3,body[data-et=d] .etapes.pc .eh b.n,.c-sur,body[data-cmp=sel-ecran] .se-s button[data-o="1"]{color:var(--laiton-tx)!important}
+.vitrine .v-t small,.c-g b{color:var(--laiton-sn)!important}
+main>section:not(.hero) .num,.fx-k{font-size:12.5px!important}.duo .ex{font-size:12px!important}
+.c-ch button,.e3-plus{min-height:44px!important}.hero .dpe{min-height:40px}
+body[data-cmp=sel-ecran] .se-s button{position:relative}body[data-cmp=sel-ecran] .se-s button::after{content:""!important;display:block!important;position:absolute;inset:-6px -3px;border:0!important;width:auto!important;height:auto!important;transform:none!important;opacity:0!important}
+/* 20/11 revue LOT 2 : une seule famille de cartes, de grands panneaux et d'icônes sur tout le site */
+:root{--carte-fond:linear-gradient(180deg,color-mix(in srgb,var(--laiton) 5%,var(--calme)),var(--calme) 60%);--carte-ombre:0 0 0 1px color-mix(in srgb,var(--laiton) 30%,transparent),0 1px 0 rgba(255,255,255,.6) inset,0 18px 40px -22px rgba(14,19,34,.45),0 4px 10px -6px rgba(14,19,34,.18);--panneau-ombre:0 1px 0 rgba(255,255,255,.7) inset,0 0 0 1px color-mix(in srgb,var(--fg) 10%,transparent),0 24px 48px -36px rgba(14,19,34,.28)}
+.trois.sec>div{background:var(--carte-fond)!important;box-shadow:var(--carte-ombre)!important;border-radius:24px!important;transition:transform .4s cubic-bezier(.2,.9,.2,1)}
+@media (hover:hover){.trois.sec>div:hover{transform:translateY(-4px)}}
+.calc{border-radius:28px!important;box-shadow:var(--panneau-ombre)!important}
+.trois.sec .pastille,.faq .qi{border-radius:12px!important;background:color-mix(in srgb,var(--laiton) 16%,transparent)!important;box-shadow:none!important;color:var(--laiton)!important}
+.trois.sec .pastille{width:40px!important;height:40px!important}
+.faq .qi{width:32px!important;height:32px!important}
+@media (prefers-reduced-motion:reduce){.trois.sec>div{transition:none}.trois.sec>div:hover{transform:none}}
+.fx-l h3 .or,.vue h3 .or{box-shadow:none!important;color:color-mix(in srgb,var(--fg) 52%,transparent)}
 </style><body data-cmp="sel-ecran" data-v="pc" data-pq="a" data-tx="c" data-et="d" data-hz="b">
 
 <header class="wrap top">
