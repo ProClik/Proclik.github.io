@@ -38,6 +38,7 @@
     moins:I('<path d="M6 12h12"/>'),plus:I('<path d="M12 6v12M6 12h12"/>'),
     taille:I('<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>'),
     entretien:I('<rect x="3" y="5" width="18" height="8" rx="2.5"/><path d="M6.5 10h11"/><path d="M8 16.5c0 1.3-1 1.6-1 3M12 16.5c0 1.3-1 1.6-1 3M16 16.5c0 1.3-1 1.6-1 3"/>'),
+    musique:I('<path d="M9 18V5.5l11-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'),
     grille:I('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>')};
 
   /* ---------- les blocs disponibles : nom, tailles possibles (s petit 1×1, m large 2×1, l grand 2×2, h haut 1×2) ---------- */
@@ -56,6 +57,7 @@
     aencaisser:{n:"À encaisser",d:"Les factures pas encore payées",t:["s"],ic:"facture"},
     envoyes:{n:"Devis envoyés",d:"Les devis qui attendent la réponse du client",t:["s"],ic:"attente"},
     reseaux:{n:"Réseaux sociaux",d:"Votre prochaine publication et vos messages",t:["m","s"],ic:"grille",opt:"reseaux"},
+    musique:{n:"Musique",d:"Votre playlist Spotify, lancée d'un geste",t:["m","s"],ic:"musique"},
     avis:{n:"Avis Google",d:"Votre note et les derniers avis",t:["s","m"],ic:"signe",opt:"avis"}
   };
   /* Les trois dispositions proposées à Cyril (même blocs, rangés autrement) */
@@ -79,7 +81,10 @@
     try{var o=JSON.parse(localStorage.getItem(CLE)||"null");if(o&&o.L&&o.L.length!=null)return {p:o.p||"",L:o.L.filter(function(x){return W[x[0]]&&W[x[0]].t.indexOf(x[1])>=0})}}catch(e){}
     return {p:"auto",L:AUTO.matin.slice()}}
   var etat=lire();
-  function liste(){return etat.p==="auto"?AUTO[moment()]:etat.L}
+  /* maquette (Cyril, 20/11) : ?musique=1 montre le bloc Musique sous « Le point du jour », sans rien enregistrer */
+  var essaiMz=/[?&]musique=1/.test(location.search);
+  function liste(){var L=etat.p==="auto"?AUTO[moment()]:etat.L;
+    if(essaiMz&&!L.some(function(x){return x[0]==="musique"})){L=L.slice();L.splice(1,0,["musique","m"])}return L}
   function fige(){if(etat.p==="auto")etat.L=AUTO[moment()].map(function(x){return x.slice()})}
   function garder(){if(essai)return;try{localStorage.setItem(CLE,JSON.stringify(etat))}catch(e){}}
 
@@ -295,6 +300,53 @@
   R.avis=function(t){var tag=window.PCTAG?PCTAG("avis"):"";
     return tag+'<div class="av"><b>4,8 <span class="et">★★★★★</span></b><small>23 avis'+(t==="m"?" · dernier : « Travail propre, délais tenus »":"")+"</small></div>"};
 
+  /* ---------- « Musique » (maquette, Cyril 20/11) ----------
+     Ce que Spotify permet sans accord particulier : un lien qui ouvre l'appli Spotify, et son lecteur officiel tel quel.
+     Donc : la playlist de l'artisan en grand, « Écouter » ouvre Spotify (pause et morceau suivant se font ensuite depuis
+     l'écran verrouillé, comme d'habitude), et « Lecteur ici » affiche le lecteur officiel de Spotify, sans le modifier.
+     Pas de pilotage depuis l'Espace (interdit dans un service payant sans accord écrit de Spotify).
+     La playlist est gardée sur l'appareil (pc-musique). Nom et pochette : petit service public de Spotify (oEmbed). */
+  var MZ="pc-musique";
+  function mzLire(){try{return JSON.parse(localStorage.getItem(MZ)||"null")}catch(e){return null}}
+  function mzGarder(o){try{if(o)localStorage.setItem(MZ,JSON.stringify(o));else localStorage.removeItem(MZ)}catch(e){}}
+  function mzLien(t){var m=String(t||"").match(/(?:open\.spotify\.com\/(?:intl-[a-z]+\/)?|spotify:)(playlist|album|artist|show)[\/:]([A-Za-z0-9]{10,40})/);return m?{type:m[1],id:m[2]}:null}
+  var MZT={playlist:"Playlist",album:"Album",artist:"Artiste",show:"Podcast"};
+  function mzInfos(o){if(!o||o.nom||o._cherche)return;o._cherche=1;
+    fetch("https://open.spotify.com/oembed?url="+encodeURIComponent("https://open.spotify.com/"+o.type+"/"+o.id)).then(function(r){return r.ok?r.json():null}).then(function(j){
+      var c=mzLire();if(!j||!c||c.id!==o.id)return;c.nom=j.title||"";c.img=j.thumbnail_url||"";mzGarder(c);acc._h=null;rendre()}).catch(function(){})}
+  var PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>';
+  R.musique=function(t){var o=mzLire(),lec=acc._mzlec;
+    if(!o){if(t==="s")return tete("musique","Musique")+'<button type="button" class="mz-vide" data-mzchg><span class="mz-pochette">'+IC.musique+"</span><b>Choisir ma musique</b></button>";
+      return '<div class="pt mz">'+hd(IC.musique,"Musique",pil("","Spotify",""))+'<div class="fo"><small>Pas encore de musique</small><div><span class="mz-pochette">'+IC.musique+'</span><span><b>Votre playlist ici</b><em>À choisir une seule fois</em></span></div>'+
+        '<div class="fo-b"><button type="button" class="fo-go mz-go" data-mzchg>'+IC.plus+"Choisir ma playlist</button></div></div></div>"}
+    mzInfos(o);var url="https://open.spotify.com/"+o.type+"/"+o.id,nom=o.nom||"Ma musique",pch=o.img?'<img class="mz-pochette" src="'+esc(o.img)+'" alt="">':'<span class="mz-pochette">'+IC.musique+"</span>";
+    if(t==="s")return tete("musique","Musique")+'<a class="mz-s" href="'+esc(url)+'" target="_blank" rel="noopener">'+pch+"<b>"+esc(nom)+'</b><span class="mz-lire">'+PLAY+"Écouter</span></a>";
+    return '<div class="pt mz">'+hd(IC.musique,"Musique",'<button type="button" class="pt-nv pt-dv" data-mzchg><span>Changer</span>'+CHV+"</button>")+
+      '<div class="fo"><small>'+(MZT[o.type]||"Playlist")+' · Spotify</small><div>'+pch+"<span><b>"+esc(nom)+"</b><em>"+(lec?"Le lecteur de Spotify, juste en dessous":"S'ouvre dans l'appli Spotify")+"</em></span></div>"+
+      (lec?'<iframe class="mz-lec" title="Lecteur Spotify" src="https://open.spotify.com/embed/'+o.type+"/"+o.id+'" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>':"")+
+      '<div class="fo-b"><button type="button" class="fo-go mz-go" data-mzlire="'+esc(url)+'">'+PLAY+"Écouter</button>"+
+      '<button type="button" class="fo-go mz-sec" data-mzlec aria-pressed="'+!!lec+'">'+(lec?"Fermer le lecteur":"Lecteur ici")+"</button></div></div>"+
+      '<p class="mz-pied">Pause et morceau suivant : depuis l\'écran verrouillé, comme d\'habitude.</p></div>'};
+  /* la petite fenêtre « Ma musique » : coller le lien copié dans Spotify, rien d'autre */
+  var mzF=document.createElement("div");mzF.className="tdb-f mz-f";mzF.hidden=true;document.body.appendChild(mzF);
+  function mzOuvre(){var o=mzLire();
+    mzF.innerHTML='<div class="tdb-fd" role="dialog" aria-modal="true" aria-label="Ma musique"><div class="tdb-fh"><b>Ma musique</b><button type="button" class="btn" data-mzfin>Fermer</button></div>'+
+      '<ol class="mz-et"><li><span>1</span><p>Dans <b>Spotify</b>, ouvrez la playlist que vous aimez écouter.</p></li><li><span>2</span><p>Touchez <b>⋯</b>, puis <b>Partager</b>, puis <b>Copier le lien</b>.</p></li><li><span>3</span><p>Revenez ici et touchez <b>Coller le lien</b>.</p></li></ol>'+
+      '<button type="button" class="btn go mz-coller" data-mzcol>Coller le lien</button>'+
+      '<label class="mz-champ"><small>Ou tapez-le ici</small><input type="url" inputmode="url" autocomplete="off" placeholder="https://open.spotify.com/playlist/…" value="'+(o?esc("https://open.spotify.com/"+o.type+"/"+o.id):"")+'"></label>'+
+      '<p class="mz-err" hidden>Ce lien ne ressemble pas à un lien Spotify. Copiez-le depuis « Partager » dans Spotify.</p>'+
+      '<div class="mz-bas">'+(o?'<button type="button" class="btn" data-mzsup>Retirer la musique</button>':"")+'<button type="button" class="btn go" data-mzok>C\'est bon</button></div></div>';
+    mzF.hidden=false;requestAnimationFrame(function(){mzF.classList.add("ouv")})}
+  function mzFerme(){mzF.classList.remove("ouv");setTimeout(function(){mzF.hidden=true},300)}
+  function mzPrend(txt){var l=mzLien(txt),err=$(".mz-err",mzF);if(!l){err.hidden=false;return}
+    var o=mzLire();mzGarder(o&&o.id===l.id?o:{type:l.type,id:l.id});acc._mzlec=0;acc._h=null;rendre();mzFerme()}
+  mzF.addEventListener("click",function(e){
+    if(e.target===mzF||e.target.closest("[data-mzfin]"))return mzFerme();
+    if(e.target.closest("[data-mzsup]")){mzGarder(null);acc._h=null;rendre();return mzFerme()}
+    if(e.target.closest("[data-mzok]"))return mzPrend($("input",mzF).value);
+    if(e.target.closest("[data-mzcol]")){var ip=$("input",mzF);
+      if(navigator.clipboard&&navigator.clipboard.readText)navigator.clipboard.readText().then(function(t){ip.value=t;mzPrend(t)}).catch(function(){ip.focus()});else ip.focus()}});
+
   /* ---------- la grille ---------- */
   var edition=false;
   function bloc(x,D){var w=W[x[0]];return '<section class="w sz-'+x[1]+(w.opt?" w-opt":"")+'" data-w="'+x[0]+'" data-t="'+x[1]+'" aria-label="'+esc(w.n)+'">'+
@@ -372,6 +424,9 @@
     if(e.target.closest("[data-tdbajout]"))return ouvreFeuille();
     if((el=e.target.closest("[data-wx]"))){var w=el.closest(".w");flip(w,function(){etat.L=etat.L.filter(function(x){return x[0]!==w.dataset.w});etat.p="";garder();acc._h=null;rendre()});return}
     if((el=e.target.closest("[data-ws]"))){var b=el.closest(".w"),T=W[b.dataset.w].t;etat.L.forEach(function(x){if(x[0]===b.dataset.w)x[1]=T[(T.indexOf(x[1])+1)%T.length]});etat.p="";garder();flip(null,function(){acc._h=null;rendre()});return}
+    if(e.target.closest("[data-mzchg]"))return mzOuvre();
+    if((el=e.target.closest("[data-mzlire]"))){window.open(el.dataset.mzlire,"_blank","noopener");return}
+    if(e.target.closest("[data-mzlec]")){acc._mzlec=!acc._mzlec;acc._h=null;return rendre()}
     if((el=e.target.closest("[data-mois]"))){acc._mois=+el.dataset.mois;acc._h=null;return rendre()}
     if((el=e.target.closest("[data-fr]"))){acc._fr=+el.dataset.fr;acc._h=null;return rendre()}
     if((el=e.target.closest("[data-chouv]"))){var idc=el.dataset.chouv,nc=$("#nb-chantiers")||$("#tt-chantiers");if(nc)nc.click();setTimeout(function(){if(window.PCCH)PCCH.ouvrir(idc)},120);return}
@@ -382,7 +437,7 @@
     if(e.target.closest("[data-accdemo]")){var t=$("#todo [data-open]");if(t)t.click()}
     else if(e.target.closest("[data-acctout]")){var d=$("#nb-devis")||$("#tt-devis");if(d)d.click()}
   });
-  addEventListener("keydown",function(e){if(e.key==="Escape"){if(!feuille.hidden)fermeFeuille();else if(edition)editer(false)}});
+  addEventListener("keydown",function(e){if(e.key==="Escape"){if(!mzF.hidden)mzFerme();else if(!feuille.hidden)fermeFeuille();else if(edition)editer(false)}});
 
   /* ---------- le bloc « Bonjour » : la date, la journée en une phrase vraie, et un petit mot léger ---------- */
   var hello0=$("#hello"),hero=document.createElement("div");hero.className="acc-bj";
