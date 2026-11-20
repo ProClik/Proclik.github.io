@@ -806,11 +806,17 @@ body[data-cmp=sel-ecran] .se-e{display:block}
 .se-h{display:none;margin:0;font-size:13px;font-weight:600;color:var(--muted);align-items:center;gap:8px}
 .se-h i{width:7px;height:7px;border-radius:50%;background:var(--laiton);animation:seHp 2.4s ease-in-out infinite}
 body[data-cmp=sel-ecran] .se:not(.touche) .se-h{display:inline-flex}
-body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic{animation:seInv 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(1.4s + var(--n) * .16s)}
-@keyframes seInv{0%,14%,100%{translate:0 0}5%{translate:0 -5px;box-shadow:0 0 0 2px color-mix(in srgb,var(--laiton) 70%,transparent),0 12px 22px -12px rgba(14,19,34,.45)}}
+/* vague : on soulève le bouton (élément HTML) et l'anneau laiton est un calque à part, pour un rendu net sur iPad/Safari */
+.se-t{position:relative}
+.se-t::after{content:"";position:absolute;top:0;left:50%;width:58px;height:58px;margin-left:-29px;border-radius:18px;box-shadow:0 0 0 2px color-mix(in srgb,var(--laiton) 70%,transparent);opacity:0;pointer-events:none}
+@media (max-width:700px){.se-t::after{width:50px;height:50px;margin-left:-25px}}
+body[data-cmp=sel-ecran] .se:not(.touche) .se-t{animation:seInv 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(1.4s + var(--n) * .16s)}
+body[data-cmp=sel-ecran] .se:not(.touche) .se-t::after{animation:seRing 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(1.4s + var(--n) * .16s)}
+@keyframes seInv{0%,14%,100%{transform:translateY(0)}5%{transform:translateY(-5px)}}
+@keyframes seRing{0%,14%,100%{opacity:0}5%{opacity:1}}
 @keyframes seHp{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--laiton) 55%,transparent)}50%{box-shadow:0 0 0 6px transparent}}
 @media (hover:hover){body[data-cmp=sel-ecran] .se-t:hover .ic{translate:0 -3px;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--laiton) 60%,transparent),0 12px 22px -12px rgba(14,19,34,.45)}}
-@media (prefers-reduced-motion:reduce){body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic,.se-h i{animation:none}}
+@media (prefers-reduced-motion:reduce){body[data-cmp=sel-ecran] .se:not(.touche) .se-t,body[data-cmp=sel-ecran] .se:not(.touche) .se-t::after,.se-h i{animation:none}}
 /* === Modernisation (aperçu 19/11) === */
 .univers::before{content:"";position:absolute;inset:-40px 0;z-index:-1;pointer-events:none;background-image:linear-gradient(color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%);mask-image:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 75%)}
 .univers{isolation:isolate}
@@ -821,7 +827,7 @@ body[data-cmp=sel-ecran] .se:not(.touche) .se-t .ic{animation:seInv 6s cubic-bez
 .h-nc-i{width:36px;height:36px;flex:none;border-radius:11px;background:var(--nuit);color:var(--laiton);display:grid;place-items:center}
 .h-nc-i svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .h-nc-t{display:flex;flex-direction:column;line-height:1.2;min-width:0}
-.h-nc-t small{font-size:10.5px;color:var(--muted);font-weight:600}.h-nc-t b{font-size:13.5px;color:var(--fg)}.h-nc-t span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h-nc-t small{font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap}.h-nc-t b{font-size:13.5px;color:var(--fg);white-space:nowrap}.h-nc-t span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (prefers-reduced-motion:no-preference){
  .h-nc{animation:ncIn .7s 1.5s cubic-bezier(.2,.9,.2,1.2) both,ncFl 5s 2.2s ease-in-out infinite}
  .iphone{animation:phIn 1.2s .3s cubic-bezier(.2,.8,.2,1) both}
