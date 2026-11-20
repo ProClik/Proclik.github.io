@@ -32,9 +32,24 @@ function appel(chemin,o,garder){o=o||{};var h={Authorization:'Bearer '+jeton()};
  return fetch(SERVICE+chemin,{method:o.method||'GET',headers:h,body:o.body,cache:'no-store',keepalive:!!garder}).then(function(r){
   return r.json().catch(function(){return {}}).then(function(j){if(r.status===401||r.status===402||r.status===403)arret=1;if(!r.ok||j.ok===false)throw new Error(j.erreur||('Erreur '+r.status));return j})})}
 
+/* Photos rangées à part (Cyril 20/11 : « Ok pour … les photos ») : chaque photo écrite dans un tiroir part UNE fois
+   au coffre du service (POST /espace/photo) ; le tiroir ne garde que son adresse, ici comme dans le service.
+   Ça libère la place de l'appareil et du compte. Si le service ne peut pas la prendre, la photo reste comme avant. */
+var PHOTO=/data:image\/[a-z]+;base64,[A-Za-z0-9+\/=]{20000,}/g,PHM='pc-sync-ph';
+function emprunte(x){var h=2166136261;for(var i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}return x.length+':'+(h>>>0).toString(36)}
+function photosDehors(v){var L=v&&v.indexOf('data:image/')>=0?(v.match(PHOTO)||[]):[];if(!L.length)return Promise.resolve(v);
+ var M=lit(PHM)||{},u={};L=L.filter(function(x){if(u[x])return false;u[x]=1;return true});
+ return L.reduce(function(p,x){return p.then(function(){var e=emprunte(x);if(M[e])return;
+   return appel('/espace/photo',{method:'POST',body:JSON.stringify({img:x})}).then(function(r){if(r&&r.url){M[e]=r.url;calme++;try{set0.call(ls,PHM,JSON.stringify(M))}catch(er){}calme--}},function(){})})},Promise.resolve())
+  .then(function(){return v.replace(PHOTO,function(x){return M[emprunte(x)]||x})})}
+
 /* Envoi de ce qui a changé, un tiroir après l'autre. */
 function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale});if(!L.length)return;
- enCours=1;var k=L[0],v=ls.getItem(k),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
+ enCours=1;var k=L[0],v0=ls.getItem(k);
+ if(garder&&v0&&PHOTO.test(v0)){PHOTO.lastIndex=0;enCours=0;return}/* des photos à ranger : à la prochaine ouverture */PHOTO.lastIndex=0;
+ if(garder)return poste(k,v0,true);
+ photosDehors(v0).then(function(v){if(v!==v0&&ls.getItem(k)===v0){calme++;try{set0.call(ls,k,v)}catch(e){}calme--}poste(k,v,false)},function(){poste(k,v0,false)})}
+function poste(k,v,garder){var m=meta(),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
  if(garder&&corps.length>60000){enCours=0;return}/* trop gros pour partir pendant la fermeture : part à la prochaine ouverture */
  appel('/espace/donnees',{method:'POST',body:corps},garder).then(function(r){var m2=meta();m2.k[k]=m2.k[k]||{};m2.k[k].maj=r.maj;
    if(ls.getItem(k)===v)delete m2.k[k].sale;ecrisMeta(m2);enCours=0;etat('ok');envoyer()},
