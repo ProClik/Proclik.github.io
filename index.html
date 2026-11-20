@@ -810,8 +810,8 @@ body[data-cmp=sel-ecran] .se:not(.touche) .se-h{display:inline-flex}
 .se-t{position:relative}
 .se-t::after{content:"";position:absolute;top:0;left:50%;width:58px;height:58px;margin-left:-29px;border-radius:18px;box-shadow:0 0 0 2px color-mix(in srgb,var(--laiton) 70%,transparent);opacity:0;pointer-events:none}
 @media (max-width:700px){.se-t::after{width:50px;height:50px;margin-left:-25px}}
-body[data-cmp=sel-ecran] .se:not(.touche) .se-t{animation:seInv 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(1.4s + var(--n) * .16s)}
-body[data-cmp=sel-ecran] .se:not(.touche) .se-t::after{animation:seRing 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(1.4s + var(--n) * .16s)}
+body[data-cmp=sel-ecran] .se.pret:not(.touche) .se-t{animation:seInv 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(.6s + var(--n) * .16s)}
+body[data-cmp=sel-ecran] .se.pret:not(.touche) .se-t::after{animation:seRing 6s cubic-bezier(.3,.7,.3,1) infinite;animation-delay:calc(.6s + var(--n) * .16s)}
 @keyframes seInv{0%,14%,100%{transform:translateY(0)}5%{transform:translateY(-5px)}}
 @keyframes seRing{0%,14%,100%{opacity:0}5%{opacity:1}}
 @keyframes seHp{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--laiton) 55%,transparent)}50%{box-shadow:0 0 0 6px transparent}}
@@ -929,6 +929,14 @@ body[data-et=b] .etapes.pc .eh{position:absolute;top:22px;left:26px}
 .esp3 .px .apd{display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--muted)}
 .esp3 .px b{margin-left:0}
 @media (min-width:761px){.esp3 .qui{min-height:2.4em}}
+/* Arrivée (20/11) : le temps de lire le haut, puis le sélecteur apparaît et les icônes sortent de « Inclus » */
+.se.att .se-s,.se.att .se-g,.se.att .se-h{opacity:0;pointer-events:none}
+.se.att .se-t{animation:none}
+.se.sort .se-s{animation:seSw .6s cubic-bezier(.2,.9,.2,1) both}
+.se.sort .se-t{animation:seSort .8s cubic-bezier(.2,.9,.25,1) both;animation-delay:calc(.35s + var(--n) * 55ms)}
+.se.sort .se-h{animation:seSw .6s ease both;animation-delay:1.5s}
+@keyframes seSw{from{opacity:0;transform:translateY(10px) scale(.96)}}
+@keyframes seSort{0%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.25)}35%{opacity:1}100%{opacity:1;transform:none}}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -1607,5 +1615,13 @@ function vide(){cur=null;ex.classList.add('vide');[].forEach.call(sx.children,fu
 function montre(L,i){ex.classList.remove('vide');var k=L[i].b.dataset.k;cur=L[i].b;var d=(window.PD||{})[k]||[];var pts=Array.isArray(d[3])?d[3]:[];
 ex.classList.remove('in');void ex.offsetWidth;ex.innerHTML='<p class="se-e-t">'+(d[1]||L[i].t)+'</p><p class="se-e-d">'+(d[2]||'')+'</p>'+(pts.length?'<ul>'+pts.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ul>':'');ex.classList.add('in');if(ex.classList.contains('cote')===false)exPos();[].forEach.call(sx.children,function(m){m.classList.toggle('on',m.dataset.k===k)});[].forEach.call(sg.children,function(b,j){b.setAttribute('aria-current',j===i)})}
 se.querySelector('.se-s').addEventListener('click',function(e){var b=e.target.closest('button');if(b)fill(+b.dataset.o)});fill(0);
+(function(){if(RM||!('animate'in se)){se.classList.add('pret');return}se.classList.add('att');var fini=false;
+function sortir(){if(fini)return;fini=true;var bi=se.querySelector('.se-s button[data-o="0"]').getBoundingClientRect(),cx=bi.left+bi.width/2,cy=bi.top+bi.height/2;
+[].forEach.call(sg.children,function(t){var r=t.getBoundingClientRect();t.style.setProperty('--dx',Math.round(cx-(r.left+r.width/2))+'px');t.style.setProperty('--dy',Math.round(cy-(r.top+30))+'px')});
+se.classList.remove('att');se.classList.add('sort');setTimeout(function(){se.classList.remove('sort');[].forEach.call(sg.children,function(t){t.style.removeProperty('--dx');t.style.removeProperty('--dy')});se.classList.add('pret')},1400+sg.children.length*55)}
+var tm=setTimeout(sortir,2600);
+/* si le visiteur fait défiler ou touche avant, on montre tout de suite */
+addEventListener('scroll',function f(){if(scrollY>40){clearTimeout(tm);sortir();removeEventListener('scroll',f)}},{passive:true});
+})();
 })();</script>
 </body></html>
