@@ -981,6 +981,26 @@ body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
 @media (min-width:900px) and (min-aspect-ratio:1/1){.zv-c{flex-direction:row;gap:56px;max-width:1000px;padding:20px 40px 0}.zv-ph{height:min(70svh,760px)}.zv-tx{text-align:left;max-width:380px}.zv-tx .zv-t,.zv-tx .zv-d{text-align:left}.zv-t{font-size:30px;font-weight:600;letter-spacing:-.035em;margin:0}.zv-d{font-size:16.5px;-webkit-line-clamp:unset;margin-top:10px;line-height:1.5}.zv-u{display:flex}}
 .zv-ph{box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 14%,transparent),0 40px 70px -30px rgba(14,19,34,.6)}
 @media (prefers-reduced-motion:reduce){.zv,.zv-ph,.univers .iphone,.univers .ipad{transition:none}}
+/* Cartes Espaces plus en valeur (20/11, propositions) : body[data-e3=b|c|bc] */
+.e3-f{display:none}
+/* B : un vrai écran en tête de chaque carte */
+body[data-e3*=b] .esp3 .e3-f{display:flex;justify-content:center;order:-1;margin:-24px -24px 22px;height:200px;padding-top:26px;overflow:hidden;background:radial-gradient(120% 90% at 50% 100%,color-mix(in srgb,var(--laiton) 22%,transparent),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--fg) 4%,transparent),transparent)}
+body[data-e3*=b] .esp3 .e3-f img{width:190px;height:auto;align-self:flex-start;border-radius:28px 28px 0 0;box-shadow:0 0 0 6px #0E1322,0 0 0 7px color-mix(in srgb,var(--fg) 12%,transparent),0 -6px 40px -8px rgba(14,19,34,.35);transition:transform .5s cubic-bezier(.2,.9,.2,1)}
+@media (hover:hover){body[data-e3*=b] .esp3 .c:hover .e3-f img{transform:translateY(-10px)}}
+body[data-e3*=b] .esp3 .c::before{display:none}
+/* C : la tête de chaque carte en bleu nuit, le prix en grand */
+body[data-e3*=c] .esp3 .h{margin:-24px -24px 0;padding:24px 24px 0;background:var(--nuit);color:var(--nuit-fg)}
+body[data-e3*=c] .esp3 .px{margin:0 -24px 4px;padding:18px 24px 22px;background:var(--nuit);border-bottom:0;color:color-mix(in srgb,var(--nuit-fg) 70%,transparent)}
+body[data-e3*=c] .esp3 .px b{color:var(--nuit-fg)}
+body[data-e3*=c] .esp3 .px .apd,body[data-e3*=c] .esp3 .px small{color:color-mix(in srgb,var(--nuit-fg) 65%,transparent)}
+body[data-e3*=c] .esp3 .qui{color:var(--nuit-fg)}
+body[data-e3*=c] .esp3 .nom{color:var(--laiton)}
+body[data-e3*=c] .esp3 .h .pastille{background:color-mix(in srgb,var(--nuit-fg) 10%,transparent);color:var(--nuit-fg);box-shadow:none}
+body[data-e3*=c] .esp3 .c::before{display:none}
+body[data-e3*=c] .esp3 .c>ul{margin-top:20px}
+body[data-e3=bc] .esp3 .e3-f{margin-bottom:0;background:radial-gradient(120% 90% at 50% 100%,color-mix(in srgb,var(--laiton) 30%,transparent),transparent 70%),var(--nuit)}
+body[data-e3=bc] .esp3 .e3-f img{box-shadow:0 0 0 6px #070a14,0 0 0 7px rgba(255,255,255,.14),0 -6px 40px -8px rgba(0,0,0,.5)}
+@media (max-width:760px){body[data-e3*=b] .esp3 .e3-f{height:160px}body[data-e3*=b] .esp3 .e3-f img{width:160px}}
 </style>
 
 <style>.calc{margin-top:22px;padding:22px;border-radius:26px;background:var(--calme);box-shadow:var(--sh);display:flex;flex-direction:column;gap:16px}
@@ -1189,13 +1209,13 @@ body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
       <div class="g">
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span><div><span class="nom">PRO</span><span class="qui">Vous travaillez seul</span></div></div>
           <ul><li>Les demandes arrivent <b>rangées, avec le plan du client</b></li><li><b>Devis et factures conformes</b> en quelques touches</li><li><b>Agenda synchronisé</b> et carte de vos chantiers</li><li>Clients, dépenses et <b>chiffre d'affaires</b> au même endroit</li><li>Chaque matin, <b>le point du jour</b>. Et tout se dicte</li><li><b>Carte de visite virtuelle</b> avec votre QR code</li></ul>
-          <div class="px"><span class="apd">À partir de</span><b>49 €</b> HT par mois</div><button type="button" class="pas e3-plus" data-k="p1" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+          <div class="px"><span class="apd">À partir de</span><b>49 €</b> HT par mois</div><figure class="e3-f" aria-hidden="true"><img src="vitrine/v-accueil.jpg" alt="" loading="lazy" decoding="async"></figure><button type="button" class="pas e3-plus" data-k="p1" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 20V10l6-5 6 5v10"/><path d="M10 20v-5h4v5"/></svg></span><div><span class="nom">ARCHI</span><span class="qui">Vous menez le chantier des autres</span></div></div>
           <ul><li><b>Chantier partagé dans le forfait</b> : une conversation avec les entreprises et votre client, invités par un simple lien, rien à installer</li><li><b>Le planning du chantier</b> : chaque entreprise sait quand elle intervient</li><li><b>Tous les documents au même endroit</b>, visibles seulement par ceux que vous autorisez</li><li>Entreprises et client, s'il le souhaite : <b>accès gratuit à leur espace privé le temps du chantier</b></li><li>Chacune <b>ne voit que ce qui la concerne</b></li><li><b>Réserves sur le plan, réception signée</b> et son PV</li></ul>
-          <div class="px"><span class="apd">À partir de</span><b>99 €</b> HT par mois<small>Jusqu'à 3 chantiers en cours (10 entreprises chacun). De 4 à 8 : 149 €, de 9 à 15 : 199 €, au-delà : sur devis.</small></div><button type="button" class="pas e3-plus" data-k="p3" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+          <div class="px"><span class="apd">À partir de</span><b>99 €</b> HT par mois<small>Jusqu'à 3 chantiers en cours (10 entreprises chacun). De 4 à 8 : 149 €, de 9 à 15 : 199 €, au-delà : sur devis.</small></div><figure class="e3-f" aria-hidden="true"><img src="vitrine/e-entreprises.jpg" alt="" loading="lazy" decoding="async"></figure><button type="button" class="pas e3-plus" data-k="p3" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
         <div class="c"><div class="h"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5a6 6 0 0 1 12 0"/><circle cx="16.5" cy="7" r="2.6"/><path d="M15.5 13.2A5.2 5.2 0 0 1 21 18.5"/></svg></span><div><span class="nom">TEAM</span><span class="qui">Vous êtes plusieurs</span></div></div>
           <ul><li>Tout ce que fait PRO, <b>pour toute l'équipe</b></li><li><b>Le planning de l'équipe</b> : qui est sur quel chantier, quel jour</li><li><b>Chantier partagé dans le forfait</b> : une conversation avec vos salariés, les entreprises invitées par un simple lien, rien à installer</li><li>Vos sous-traitants et votre client : <b>accès gratuit le temps du chantier</b></li><li><b>Réserves sur le plan</b>, corrigées par vos équipes puis validées</li></ul>
-          <div class="px"><span class="apd">À partir de</span><b>149 €</b> HT par mois</div><button type="button" class="pas e3-plus" data-k="p2" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+          <div class="px"><span class="apd">À partir de</span><b>149 €</b> HT par mois</div><figure class="e3-f" aria-hidden="true"><img src="vitrine/e-pl-equipe.jpg" alt="" loading="lazy" decoding="async"></figure><button type="button" class="pas e3-plus" data-k="p2" aria-haspopup="dialog"><span>Voir plus</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
       </div>
     </div>
     <!-- cartes Espace / Site + Espace / Options retirées 19/11 : tout est dans la calculette -->
