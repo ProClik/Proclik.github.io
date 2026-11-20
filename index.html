@@ -876,36 +876,37 @@ main>section:not(.hero) h2 .or{box-shadow:none!important;color:color-mix(in srgb
 /* Pourquoi / Étapes plus vivants (20/11, propositions) : body[data-pq=a|b], body[data-et=a|b] */
 .pq-f,.et-f,.et-n{display:none}
 .pq-f img,.et-f img{display:block;width:100%;height:auto}
-/* Pourquoi A : chaque carte laisse dépasser un vrai écran */
-body[data-pq] .trois.pc>div{display:flex!important;flex-direction:column;align-items:flex-start;gap:8px;overflow:hidden;padding-bottom:0!important;transition:transform .35s cubic-bezier(.2,.9,.2,1),box-shadow .35s}
-body[data-pq] .trois.pc>div .pastille{margin-bottom:6px}
-body[data-pq] .trois.pc .pq-f{display:block;margin:18px auto 0;width:min(78%,250px);height:190px;overflow:hidden;border-radius:26px 26px 0 0;box-shadow:0 0 0 6px var(--nuit),0 -10px 30px -12px rgba(14,19,34,.35);transform:translateY(14px);transition:transform .45s cubic-bezier(.2,.9,.2,1)}
-body[data-pq] .trois.pc>div:hover{transform:translateY(-4px)}
-body[data-pq] .trois.pc>div:hover .pq-f{transform:translateY(4px)}
-/* Pourquoi B : en mosaïque, la première carte en grand, bleu nuit */
-@media (min-width:761px){body[data-pq=b] .trois.pc{grid-template-columns:1.15fr 1fr;grid-template-rows:auto auto}
+/* Pourquoi A : chaque carte s'ouvre sur un vrai écran */
+body[data-pq] .trois.pc>div{display:flex!important;flex-direction:column;align-items:stretch;gap:6px;overflow:hidden;transition:transform .4s cubic-bezier(.2,.9,.2,1),box-shadow .4s}
+body[data-pq] .trois.pc>div h3,body[data-pq] .trois.pc>div p{align-self:auto;text-align:left}
+body[data-pq] .trois.pc .pq-f{display:flex;justify-content:center;order:-1;margin:-26px -26px 20px;height:230px;padding-top:28px;overflow:hidden;background:radial-gradient(120% 90% at 50% 100%,color-mix(in srgb,var(--laiton) 22%,transparent),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--fg) 4%,transparent),transparent)}
+body[data-pq] .trois.pc .pq-f img{width:200px;height:auto;align-self:flex-start;border-radius:28px 28px 0 0;box-shadow:0 0 0 6px #0E1322,0 0 0 7px color-mix(in srgb,var(--fg) 12%,transparent),0 -6px 40px -8px rgba(14,19,34,.35);transition:transform .5s cubic-bezier(.2,.9,.2,1)}
+body[data-pq] .trois.pc .pastille{display:none}
+@media (hover:hover){body[data-pq] .trois.pc>div:hover{transform:translateY(-5px)}body[data-pq] .trois.pc>div:hover .pq-f img{transform:translateY(-10px)}}
+/* Pourquoi B : la première carte en grand, bleu nuit */
+@media (min-width:761px){body[data-pq=b] .trois.pc{grid-template-columns:1.2fr 1fr;grid-template-rows:1fr 1fr}
  body[data-pq=b] .trois.pc>div:first-child{grid-row:1/3;background:var(--nuit)!important;color:var(--nuit-fg)}
- body[data-pq=b] .trois.pc>div:first-child p{color:color-mix(in srgb,var(--nuit-fg) 72%,transparent)}
- body[data-pq=b] .trois.pc>div:first-child .pastille{color:var(--laiton)}
- body[data-pq=b] .trois.pc>div:first-child h3{font-size:26px}
- body[data-pq=b] .trois.pc>div:first-child .pq-f{height:auto;flex:1;min-height:260px;width:min(70%,300px);box-shadow:0 0 0 6px #0b0f1c,0 -10px 40px -10px rgba(0,0,0,.5)}
- body[data-pq=b] .trois.pc>div:not(:first-child){display:grid!important;grid-template-columns:1fr 150px;column-gap:18px;padding-bottom:0!important}
- body[data-pq=b] .trois.pc>div:not(:first-child)>*:not(.pq-f){grid-column:1}
- body[data-pq=b] .trois.pc>div:not(:first-child) .pq-f{grid-column:2;grid-row:1/5;width:150px;height:170px;margin:0;align-self:end}}
-/* Étapes A : un vrai écran en haut de chaque étape, trait laiton qui se dessine */
-body[data-et] .etapes.pc>div{overflow:hidden;transition:transform .35s cubic-bezier(.2,.9,.2,1)}
-body[data-et] .etapes.pc>div:hover{transform:translateY(-4px)}
-body[data-et=a] .etapes.pc .et-f{display:block;margin:-26px -26px 18px;height:170px;overflow:hidden;background:linear-gradient(180deg,color-mix(in srgb,var(--laiton) 14%,transparent),transparent);display:flex;justify-content:center;padding-top:22px}
-body[data-et=a] .etapes.pc .et-f img{width:160px;border-radius:22px 22px 0 0;box-shadow:0 0 0 5px var(--nuit),0 -8px 26px -10px rgba(14,19,34,.4);transition:transform .45s cubic-bezier(.2,.9,.2,1)}
-body[data-et=a] .etapes.pc>div:hover .et-f img{transform:translateY(-6px)}
-body[data-et=a] .etapes.pc>div{display:flex;flex-direction:column}
-body[data-et=a] .etapes.pc .et-f{order:-1}
+ body[data-pq=b] .trois.pc>div:first-child h3{color:var(--nuit-fg);font-size:28px;letter-spacing:-.03em}
+ body[data-pq=b] .trois.pc>div:first-child p{color:color-mix(in srgb,var(--nuit-fg) 70%,transparent);font-size:17px}
+ body[data-pq=b] .trois.pc>div:first-child .pq-f{flex:1;height:auto;min-height:330px;background:radial-gradient(120% 90% at 50% 100%,color-mix(in srgb,var(--laiton) 30%,transparent),transparent 70%)}
+ body[data-pq=b] .trois.pc>div:first-child .pq-f img{width:250px;box-shadow:0 0 0 6px #070a14,0 0 0 7px rgba(255,255,255,.14),0 -6px 50px -6px rgba(0,0,0,.6)}
+ body[data-pq=b] .trois.pc>div:not(:first-child){display:grid!important;grid-template-columns:1fr 170px;grid-template-rows:auto 1fr;column-gap:22px;padding-bottom:0}
+ body[data-pq=b] .trois.pc>div:not(:first-child) h3{grid-column:1;grid-row:1;padding-top:6px}
+ body[data-pq=b] .trois.pc>div:not(:first-child) p{grid-column:1;grid-row:2}
+ body[data-pq=b] .trois.pc>div:not(:first-child) .pq-f{grid-column:2;grid-row:1/3;margin:0 -26px 0 0;height:auto;min-height:200px;padding-top:18px;align-self:stretch}
+ body[data-pq=b] .trois.pc>div:not(:first-child) .pq-f img{width:150px;border-radius:22px 22px 0 0;box-shadow:0 0 0 5px #0E1322,0 -6px 30px -8px rgba(14,19,34,.35)}}
+/* Étapes A : un vrai écran sous chaque étape */
+body[data-et=a] .etapes.pc .et-f{display:flex;justify-content:center;margin-top:20px;height:210px;padding-top:24px;overflow:hidden;border-radius:22px;background:radial-gradient(120% 90% at 50% 100%,color-mix(in srgb,var(--laiton) 20%,transparent),transparent 70%),var(--calme);box-shadow:0 0 0 1px var(--line);transition:transform .4s cubic-bezier(.2,.9,.2,1)}
+body[data-et=a] .etapes.pc .et-f img{width:180px;align-self:flex-start;border-radius:24px 24px 0 0;box-shadow:0 0 0 6px #0E1322,0 0 0 7px color-mix(in srgb,var(--fg) 12%,transparent),0 -6px 30px -8px rgba(14,19,34,.35);transition:transform .5s cubic-bezier(.2,.9,.2,1)}
+@media (hover:hover){body[data-et=a] .etapes.pc>div:hover .et-f img{transform:translateY(-10px)}}
 /* Étapes B : grands chiffres 01 02 03 */
-body[data-et=b] .etapes.pc>div{position:relative;padding-top:86px!important}
-body[data-et=b] .etapes.pc .et-n{display:block;position:absolute;top:8px;right:18px;font-size:96px;font-weight:700;letter-spacing:-.06em;line-height:1;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--laiton) 70%,transparent);transition:transform .45s cubic-bezier(.2,.9,.2,1)}
-body[data-et=b] .etapes.pc>div:hover .et-n{transform:translateY(-4px) scale(1.04);color:color-mix(in srgb,var(--laiton) 14%,transparent)}
-body[data-et=b] .etapes.pc .eh{position:absolute;top:22px;left:26px}
-@media (max-width:760px){body[data-et=b] .etapes.pc .et-n{font-size:72px}body[data-et=b] .etapes.pc>div{padding-top:70px!important}}
+body[data-et=b] .etapes.pc .eh b.n{display:none}
+body[data-et=b] .etapes.pc .et-n{display:block;order:-1;margin:-4px 0 4px;font-size:clamp(64px,7vw,104px);font-weight:700;letter-spacing:-.06em;line-height:.95;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--laiton) 75%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--laiton) 22%,transparent),transparent 80%);-webkit-background-clip:text;background-clip:text;transition:transform .45s cubic-bezier(.2,.9,.2,1)}
+body[data-et=b] .etapes.pc>div{display:flex;flex-direction:column}
+body[data-et=b] .etapes.pc .eh{order:-2}
+@media (hover:hover){body[data-et=b] .etapes.pc>div:hover .et-n{transform:translateX(6px)}}
+@media (max-width:760px){body[data-pq] .trois.pc .pq-f{height:170px;padding-top:20px;margin-bottom:16px}body[data-pq] .trois.pc .pq-f img{width:160px}body[data-et=a] .etapes.pc .et-f{grid-column:2;height:150px}body[data-et=a] .etapes.pc .et-f img{width:150px}
+ body[data-et=b] .etapes.pc>div{display:grid}body[data-et=b] .etapes.pc .et-n{grid-column:2;grid-row:1;font-size:56px;margin:0}body[data-et=b] .etapes.pc h3,body[data-et=b] .etapes.pc p{grid-row:auto}}
 /* 13 fonctions incluses (20/11) : 2 rangées sur grand écran, 4 colonnes sur téléphone */
 @media (min-width:701px){body[data-cmp=sel-ecran] .se-g{grid-template-columns:repeat(7,minmax(0,92px));gap:12px 14px}}
 @media (max-width:700px){body[data-cmp=sel-ecran] .se-g{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 6px}body[data-cmp=sel-ecran] .se-g>.se-t{flex:0 0 calc((100% - 18px)/4)}body[data-cmp=sel-ecran] .se-t{font-size:11.5px}body[data-cmp=sel-ecran] .se-t .ic{width:46px;height:46px;padding:12px}}
@@ -946,7 +947,7 @@ body[data-et=b] .etapes.pc .eh{position:absolute;top:22px;left:26px}
 html.zv-ouv,html.zv-ouv body{overflow:hidden}
 .zv{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 14px) 0 calc(env(safe-area-inset-bottom) + 12px);background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);opacity:0;transition:opacity .3s ease}
 .zv.on{opacity:1}
-body[data-cmp=sel-ecran] .se-e{display:none!important}
+body[data-cmp=sel-ecran] .se-e:not(.cote){display:none!important}
 .zv-tx{text-align:center}.zv-tx.in{animation:seE .35s ease both}
 .zv-u{display:none;list-style:none;margin:16px 0 0;padding:0;flex-direction:column;gap:9px}
 .zv-u li{position:relative;padding-left:28px;font-size:15px;line-height:1.4;color:var(--fg);font-weight:500}
@@ -955,9 +956,17 @@ body[data-cmp=sel-ecran] .se-e{display:none!important}
 .zv-x{all:unset;cursor:pointer;position:absolute;top:calc(env(safe-area-inset-top) + 12px);right:14px;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:var(--calme);box-shadow:0 0 0 1px var(--line),0 8px 18px -10px rgba(14,19,34,.4);z-index:2}
 .zv-x svg{width:18px;height:18px;fill:none;stroke:var(--fg);stroke-width:2.2;stroke-linecap:round}
 .zv-c{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 20px 0;box-sizing:border-box;width:100%;max-width:560px}
-.zv-ph{flex:0 1 auto;min-height:0;height:min(64svh,620px);aspect-ratio:600/1298;padding:1.3%;box-sizing:border-box;border-radius:9% / 4.2%;background:#0E1322;box-shadow:0 40px 70px -30px rgba(14,19,34,.6);transform:scale(.8) translateY(30px);transition:transform .5s cubic-bezier(.2,.9,.2,1)}
-.zv.on .zv-ph{transform:none}
-.zv-ph img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:8% / 3.7%}
+.zv-ph{flex:0 1 auto;min-height:0;height:min(64svh,620px);aspect-ratio:1/2.0686;box-sizing:border-box;background:#0E1322;box-shadow:0 40px 70px -30px rgba(14,19,34,.6)}
+.zv.sortie{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:background .4s,backdrop-filter .4s}
+.zv>.zv-x,.zv .zv-tx,.zv .zv-g{transition:opacity .3s}.zv.sortie>.zv-x,.zv.sortie .zv-tx,.zv.sortie .zv-g{opacity:0}
+.zv.sortie .zv-ph{box-shadow:none}
+.gp{position:absolute;z-index:6;box-sizing:border-box;background:#0E1322;box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 12%,transparent),0 50px 90px -30px rgba(14,19,34,.6)}
+.gp img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.gp img.in{animation:zvIm .35s ease both}
+.univers.gp-on .h-nc{opacity:0;transition:opacity .4s}
+.se-e.cote{right:auto!important;left:28px}
+.se-e.cote::before{left:auto!important;right:-7px;box-shadow:1px -1px 0 var(--line)!important}
+.zv-ph img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
 .zv-ph img.in{animation:zvIm .35s ease both}@keyframes zvIm{from{opacity:.2}}
 .zv-t{margin:14px 0 0;font-size:18px;font-weight:700;letter-spacing:-.02em;color:var(--fg);text-align:center}
 .zv-d{margin:4px 0 0;font-size:14px;line-height:1.4;color:var(--muted);text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -1110,9 +1119,9 @@ body[data-cmp=sel-ecran] .se-e{display:none!important}
   <h2 class="pc">Prêt en <span class="or">trois étapes.</span></h2>
   <h2 class="cl">Votre projet en <span class="or">trois étapes.</span></h2>
   <div class="etapes pc">
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10h1.5a2 2 0 0 1 0 4H16M8 3v2M11 3v2"/></svg></span><b class="n">Étape 1</b></div><h3>On se rencontre</h3><p>Autour d'un café, on regarde votre métier et ce qui vous prend du temps.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-resa.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">01</span></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10h1.5a2 2 0 0 1 0 4H16M8 3v2M11 3v2"/></svg></span><b class="n">Étape 1</b></div><h3>On se rencontre</h3><p>Autour d'un café, on regarde votre métier et ce qui vous prend du temps.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-planning.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">01</span></div>
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></span><b class="n">Étape 2</b></div><h3>On prépare tout</h3><p>Votre site, votre Espace, vos produits et vos prix. Vous n'avez rien à installer.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-cliky-base.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">02</span></div>
-    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg></span><b class="n">Étape 3</b></div><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/v-accueil.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">03</span></div>
+    <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="4.2"/><path d="M11 18h2"/></svg></span><b class="n">Étape 3</b></div><h3>Vous recevez des demandes</h3><p>On vous montre l'Espace sur votre téléphone, et on reste là après.</p><figure class="et-f" aria-hidden="true"><img src="vitrine/e-predevis.jpg" alt="" loading="lazy" decoding="async"></figure><span class="et-n" aria-hidden="true">03</span></div>
   </div>
   <div class="etapes cl">
     <div><div class="eh"><span class="pastille"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></span><b class="n">Étape 1</b></div><h3>Décrivez vos travaux</h3><p>En ligne, en quelques minutes, avec des photos si vous le souhaitez.</p></div>
@@ -1652,7 +1661,22 @@ ex.classList.remove('in');void ex.offsetWidth;ex.innerHTML='<p class="se-e-t">'+
 
 /* 20/11 : au toucher, le téléphone grossit. Grand écran : en place, la tablette s'efface, l'explication à côté. Petit écran : le téléphone en grand, les autres icônes en bas. */
 var zv=null,zL=null;
-function zvFerme(){if(!zv)return;zv.classList.remove('on');document.documentElement.classList.remove('zv-ouv');setTimeout(function(){if(zv&&!zv.classList.contains('on'))zv.hidden=true},350)}
+var PH=U.querySelector('.iphone'),gp=null;
+function flip(el,from,to,back,done){var sx=from.width/to.width,sy=from.height/to.height,dx=from.left-to.left,dy=from.top-to.top;
+ var k=[{transformOrigin:'0 0',transform:'translate('+dx+'px,'+dy+'px) scale('+sx+','+sy+')'},{transformOrigin:'0 0',transform:'translate(0,0) scale(1,1)'}];if(back)k.reverse();
+ if(RM||!el.animate){if(done)done();return}var a=el.animate(k,{duration:back?480:700,easing:'cubic-bezier(.22,.9,.22,1)',fill:back?'forwards':'none'});if(done)a.onfinish=done}
+function cadre(el,w){var r=w*.174,pd=w*.0407;el.style.borderRadius=r+'px';el.style.padding=pd+'px';var im=el.querySelector('img');if(im)im.style.borderRadius=(w*.139)+'px'}
+function phVoir(v){if(PH)PH.style.visibility=v?'':'hidden'}
+function zvFerme(){if(!zv||!zv.classList.contains('on'))return;var ph=zv.querySelector('.zv-ph');zv.classList.add('sortie');document.documentElement.classList.remove('zv-ouv');
+ flip(ph,PH.getBoundingClientRect(),ph.getBoundingClientRect(),true,function(){zv.classList.remove('on','sortie');zv.hidden=true;phVoir(true);ph.getAnimations&&ph.getAnimations().forEach(function(a){a.cancel()})})}
+function gpPlace(){var ur=U.getBoundingClientRect(),ar=AP.getBoundingClientRect(),y0=70,y1=Math.min(innerHeight-16,sg.getBoundingClientRect().top-14),h=Math.max(360,Math.min(innerHeight*.74,720,y1-y0)),w=h/2.0686,top=Math.max(y0,Math.min(ar.top+ar.height/2-h/2,y1-h));
+ gp.style.width=w+'px';gp.style.height=h+'px';cadre(gp,w);gp.style.left=(innerWidth-Math.max(24,(innerWidth-U.clientWidth)/2)-w-ur.left)+'px';gp.style.top=(top-ur.top)+'px'}
+function gpOuvre(k,alt){if(!gp){gp=document.createElement('div');gp.className='gp';gp.hidden=true;gp.innerHTML='<img alt="">';U.appendChild(gp)}
+ var im=gp.querySelector('img');im.alt=alt;
+ if(!gp.hidden){im.classList.remove('in');void im.offsetWidth;im.src='vitrine/'+IMG[k]+'.jpg';im.classList.add('in');return}
+ im.src='vitrine/'+IMG[k]+'.jpg';gp.hidden=false;gpPlace();var fr=PH.getBoundingClientRect();phVoir(false);U.classList.add('gp-on');flip(gp,fr,gp.getBoundingClientRect())}
+function gpFerme(){if(!gp||gp.hidden)return;U.classList.remove('gp-on');flip(gp,PH.getBoundingClientRect(),gp.getBoundingClientRect(),true,function(){gp.hidden=true;phVoir(true);gp.getAnimations&&gp.getAnimations().forEach(function(a){a.cancel()})})}
+addEventListener('resize',function(){if(gp&&!gp.hidden)gpPlace()});
 function zvMontre(L,i,k,d,pts){if(!zv){zv=document.createElement('div');zv.className='zv';zv.hidden=true;zv.setAttribute('role','dialog');zv.setAttribute('aria-modal','true');
   zv.innerHTML='<button type="button" class="zv-x" aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="zv-c"><div class="zv-ph"><img alt=""></div><div class="zv-tx"><p class="zv-t"></p><p class="zv-d"></p><ul class="zv-u"></ul></div></div><div class="zv-g"></div>';
   document.body.appendChild(zv);zv.querySelector('.zv-x').addEventListener('click',function(){vide()});
@@ -1665,10 +1689,10 @@ function zvMontre(L,i,k,d,pts){if(!zv){zv=document.createElement('div');zv.class
  zv.querySelector('.zv-t').textContent=d[1]||L[i].t;zv.querySelector('.zv-d').textContent=d[2]||'';zv.querySelector('.zv-u').innerHTML=(pts||[]).map(function(x){return '<li>'+x+'</li>'}).join('');var tx=zv.querySelector('.zv-tx');tx.classList.remove('in');void tx.offsetWidth;tx.classList.add('in');
  [].forEach.call(zv.querySelectorAll('.zv-g button'),function(b,j){b.setAttribute('aria-current',j===i)});
  var cb=zv.querySelectorAll('.zv-g button')[i];
- if(!dejaOuvert){zv.hidden=false;document.documentElement.classList.add('zv-ouv');void zv.offsetWidth;zv.classList.add('on');setTimeout(function(){zv.querySelector('.zv-x').focus({preventScroll:true})},50)}
+ if(!dejaOuvert){var fr=PH.getBoundingClientRect();zv.hidden=false;document.documentElement.classList.add('zv-ouv');void zv.offsetWidth;zv.classList.add('on');phVoir(false);var ph=zv.querySelector('.zv-ph');cadre(ph,ph.getBoundingClientRect().width);flip(ph,fr,ph.getBoundingClientRect());setTimeout(function(){zv.querySelector('.zv-x').focus({preventScroll:true})},50)}
  if(cb)cb.scrollIntoView({block:'nearest',inline:'center',behavior:dejaOuvert?'smooth':'auto'})}
-window.pcZoom=function(L,i,k,d){if(!L){zvFerme();return}
- zvMontre(L,i,k,d,arguments[4]||[])};
+window.pcZoom=function(L,i,k,d){if(!L){zvFerme();gpFerme();return}
+ if(ex.classList.contains('cote')){zvFerme();gpOuvre(k,(d[1]||L[i].t)+', dans le vrai Espace')}else{gpFerme();zvMontre(L,i,k,d,arguments[4]||[])}};
 se.querySelector('.se-s').addEventListener('click',function(e){var b=e.target.closest('button');if(b)fill(+b.dataset.o)});fill(0);
 (function(){if(RM||!('animate'in se)){se.classList.add('pret');return}se.classList.add('att');var fini=false;
 function sortir(){if(fini)return;fini=true;var bi=se.querySelector('.se-s button[data-o="0"]').getBoundingClientRect(),cx=bi.left+bi.width/2,cy=bi.top+bi.height/2;
