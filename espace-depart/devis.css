@@ -11,7 +11,7 @@ html body .cf .dv-seg button{position:relative;display:flex;flex-direction:colum
 /* Le plan en tête du pré-devis */
 .dv-plan{display:flex;align-items:center;gap:14px}
 .dv-plan-m{flex:none;width:40%;max-width:180px;padding:8px;border-radius:14px;background:var(--cx);box-shadow:var(--in)}
-.dv-plan-m svg{display:block;width:100%;height:auto;color:var(--fg)}.dv-plan-m svg.dv-mini{opacity:.8}.dv-plan-m:has(svg.pm-j){padding:0;background:none;box-shadow:none}.dv-plan-m svg.pm-j,.dv-plan-m svg.pm-n{border-radius:10px}.dv-plan-m svg.pm-n,html[data-theme=dark] .dv-plan-m svg.pm-j{display:none}html[data-theme=dark] .dv-plan-m svg.pm-n{display:block}
+.dv-plan-m svg{display:block;width:100%;height:auto;color:var(--fg);opacity:.8}
 .dv-plan-t{display:grid;gap:4px;min-width:0}.dv-plan-t b{font-size:15px}.dv-plan-t small{font-size:12.5px;color:var(--muted)}
 .dv-plan-t .btn{margin-top:6px;display:inline-flex;align-items:center;gap:8px;justify-self:start}
 .dv-plan-t svg,.dv-add svg,.cf-main svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:var(--accx)}
