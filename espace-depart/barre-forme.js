@@ -51,6 +51,9 @@ bar.addEventListener("click",function(e){var b=e.target.closest("[data-f2b]");if
 /* ---------- le panneau « Tout l'Espace » ---------- */
 var scrim=d.createElement("div");scrim.className="f2 f2ms";scrim.hidden=true;
 var pan=d.createElement("div");pan.className="f2 f2m";pan.id="f2m";pan.hidden=true;pan.setAttribute("role","dialog");pan.setAttribute("aria-label","Tout l'Espace");
+var mic=d.createElement("button");mic.type="button";mic.className="f2 f2mic";mic.hidden=true;mic.setAttribute("aria-label","Parler à ProClik (dictée)");mic.innerHTML=I.mic;
+/* règle Cyril (28/10) : micro toujours accessible, bulle centrée au-dessus du menu sur téléphone */
+mic.addEventListener("click",function(){ferme();setTimeout(function(){agit("micro")},120)});
 var ouvert=false,q="";
 function horsBarre(){var bas=innerWidth<900?B.bas():(B.cote?B.cote():[]);return function(v){return bas.indexOf(v)<0&&dispo(v)}}
 function groupes(){var ok=horsBarre(),vus={};
@@ -66,7 +69,7 @@ function scanner(){var b=$("#nb-cliky");if(!b||b.hidden)return "";var ic=$(".ico
   return '<button type="button" class="f2m-sc" data-f2m="cliky"><span class="rond">'+(ic?ic.innerHTML:"")+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+I.d+"</button>"}
 function contenu(){var G=groupes(),h="";
   h+='<div class="tete"><b>Tout l\'Espace</b><button type="button" class="xr" data-f2m="x" aria-label="Fermer">'+I.x+"</button></div>";
-  h+='<label class="cherche">'+I.loupe+'<input type="search" id="f2m-q" autocomplete="off" enterkeyhint="go" placeholder="Chercher ou dire un écran…"><button type="button" class="mic2" id="f2m-mic" aria-label="Dire un écran">'+I.mic+"</button></label>";
+  h+='<label class="cherche">'+I.loupe+'<input type="search" id="f2m-q" autocomplete="off" enterkeyhint="go" placeholder="Chercher ou dire un écran…"><button type="button" class="mic2" id="f2m-mic" aria-label="Dire le nom d\'un écran">'+I.mic+"</button></label>";
   h+='<div class="defile">'+scanner();
   var a=G[0],b=G[1];
   if(a.v.length&&b.v.length&&a.v.length<=2&&b.v.length<=3)h+='<div class="duo2">'+bloc(a," g2")+bloc(b," g3")+"</div>";
@@ -94,17 +97,17 @@ pan.addEventListener("click",function(e){var b=e.target.closest("[data-f2m]");if
 scrim.addEventListener("click",ferme);
 d.addEventListener("keydown",function(e){if(e.key==="Escape"&&ouvert)ferme()});
 
-function ouvre(){if(ouvert)return;ouvert=true;q="";contenu();scrim.hidden=false;pan.hidden=false;pan.setAttribute("aria-modal","true");
-  root.classList.add("f2m-on");requestAnimationFrame(function(){pan.classList.add("in");scrim.classList.add("in")});barre();
+function ouvre(){if(ouvert)return;ouvert=true;q="";contenu();scrim.hidden=false;pan.hidden=false;mic.hidden=false;pan.setAttribute("aria-modal","true");
+  root.classList.add("f2m-on");requestAnimationFrame(function(){pan.classList.add("in");scrim.classList.add("in");mic.classList.add("in")});barre();
   try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}}
-function ferme(){if(!ouvert)return;ouvert=false;pan.classList.remove("in");scrim.classList.remove("in");root.classList.remove("f2m-on");pan.removeAttribute("aria-modal");
-  setTimeout(function(){if(!ouvert){pan.hidden=true;scrim.hidden=true}},220);barre()}
+function ferme(){if(!ouvert)return;ouvert=false;pan.classList.remove("in");scrim.classList.remove("in");mic.classList.remove("in");root.classList.remove("f2m-on");pan.removeAttribute("aria-modal");
+  setTimeout(function(){if(!ouvert){pan.hidden=true;scrim.hidden=true;mic.hidden=true}},220);barre()}
 
 /* le galet du menu de côté (iPad/PC, familles.js) et tout ce qui appelait l'ancien panneau ouvrent maintenant celui-ci */
 B.ouvre=ouvre;B.ferme=ferme;B.ouvert=function(){return ouvert};
 var app0=B.applique;B.applique=function(){var r=app0.apply(this,arguments);barre();if(ouvert)contenu();return r};
 
-d.body.appendChild(scrim);d.body.appendChild(pan);d.body.appendChild(bar);
+d.body.appendChild(scrim);d.body.appendChild(pan);d.body.appendChild(mic);d.body.appendChild(bar);
 barre();
 var nav=$("nav.nav");new MutationObserver(function(){barre()}).observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-selected","hidden"],childList:true,characterData:true});
 setInterval(barre,3000);
