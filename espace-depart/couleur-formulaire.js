@@ -12,7 +12,7 @@ var lsS=function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 var toast=function(a,b){if(X&&X.toast)X.toast(a,b)};
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))SERVICE='';
 var C=[['nuit','Bleu nuit','#1B2440','#EFEBE2'],['sapin','Sapin','#2F4A3E','#A9CDB8'],['canard','Canard','#1F5560','#94CBD3'],['ardoise','Ardoise','#3A5470','#B3C7DE'],['noyer','Noyer','#4A3A2E','#D8C3B0'],['encre','Encre','#17181D','#FFFFFF']];
-var FC=new URL('../espace/fc/',location.href).href;
+var FC=new URL('fc/',location.href).href;
 var info=function(k){for(var i=0;i<C.length;i++)if(C[i][0]===k)return C[i];return C[0]};
 var espaceCoul=function(){var k=lsG('pc-couleur-espace','nuit');return info(k)[0]};
 var reg=function(){var r=lsG('pc-form-coul',null)||{};return {suivre:r.suivre!==false,choix:info(r.choix||'nuit')[0]}};
@@ -28,7 +28,7 @@ function ouvrir(){
   var r=reg();
   function rend(){
     $$('[data-fc]').forEach(function(b){var k=b.getAttribute('data-fc');b.setAttribute('aria-checked',String(k==='espace'?r.suivre:(!r.suivre&&r.choix===k)))});
-    var c=info(affichee(r));['j','n'].forEach(function(t){var im=$('#fc-im-'+t);if(im)im.src=FC+c[0]+'-'+t+'.jpg'});
+    var c=info(affichee(r));['j','n'].forEach(function(t){var im=$('#fc-im-'+t);if(im)im.src=FC+c[0]+'-'+t+'.jpg?v=2'});
     var t=$('#fc-nom');if(t)t.textContent=(r.suivre?'Comme mon Espace · ':'')+c[1];
   }
   X.xopen('Couleur de mon formulaire','Ce que voient vos clients quand ils demandent un devis',
