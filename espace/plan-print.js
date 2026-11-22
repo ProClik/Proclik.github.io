@@ -49,7 +49,8 @@ function sheet(o){const P=K(),f=P.F(),S=P.segs(),R=f.rooms||[];
    let la=true;if(sg.kind==="mur"){try{const m=P.inward(sg);la=(sg.b[0]-sg.a[0])*m[1]-(sg.b[1]-sg.a[1])*m[0]>0}catch(x){}}
    const w=(e.w!=null?e.w:d.dw||60)/100,p=Math.max(.05,(e.p!=null?e.p:d.dp||0)/100),xc=e.x/100,s1=la?xc-w/2:L-xc-w/2,A=[sg.a[0]+u[0]*s1,sg.a[1]+u[1]*s1],B=[A[0]+u[0]*w,A[1]+u[1]*w];
    s+=`<polygon class="ouv${e.t==="rt"?" dsh":""}" points="${[A,B,[B[0]+n[0]*p,B[1]+n[1]*p],[A[0]+n[0]*p,A[1]+n[1]*p]].map(Pp).join(" ")}"/>`})});
-  R.forEach(r=>(r.eqp||[]).forEach(e=>{if(e.t!=="cp")return;const w=(e.w||200)/100,l=(e.l||40)/100;s+=`<rect class="ouv dsh" x="${X(e.x-w/2)}" y="${Y(e.y-l/2)}" width="${n3(w*M)}" height="${n3(l*M)}"/>`}))}catch(x){}
+  R.forEach(r=>(r.eqp||[]).forEach(e=>{if(e.t!=="zb")return;const w=(e.w||200)/100,l=(e.l||150)/100,hz=(((f.H||2.5)*100-(e.hh!=null?e.hh:20))/100).toFixed(2).replace(".",",");s+=`<rect class="zb" x="${X(e.x-w/2)}" y="${Y(e.y-l/2)}" width="${n3(w*M)}" height="${n3(l*M)}"/><text class="zbt" x="${X(e.x)}" y="${n3(Y(e.y+l/2)-1.6)}">Plafond à ${hz} m</text>`}));
+  R.forEach(r=>(r.eqp||[]).forEach(e=>{if(e.t!=="cp")return;const w=(e.w||200)/100,l=(e.l||15)/100;s+=`<rect class="ouv dsh" x="${X(e.x-w/2)}" y="${Y(e.y-l/2)}" width="${n3(w*M)}" height="${n3(l*M)}"/>`}))}catch(x){}
  /* noms et surfaces */
  R.forEach(r=>{let cx=0,cy=0;r.pts.forEach(p=>{cx+=p[0];cy+=p[1]});cx/=r.pts.length;cy/=r.pts.length;const rv=(r.sol&&r.sol.revet)||"";s+=`<text class="nm" x="${X(cx)}" y="${Y(cy)}">${esc(r.nom||"Pièce")}</text><text class="sf" x="${X(cx)}" y="${n3(Y(cy)+4.6)}">${f1(area(r.pts))} m²${rv&&!/sais pas/i.test(rv)?" · "+esc(rv):""}</text>`});
  /* chaînes de cotes : en haut et à gauche, sur tous les angles des pièces, puis la cote totale */
@@ -102,7 +103,7 @@ const CSS=`#pp{position:fixed;inset:0;z-index:60;background:#D9DDE4;display:flex
 #pp-svg .batt{stroke:#1B2440;stroke-width:.45}#pp-svg .arc{fill:none;stroke:#5B6579;stroke-width:.22}
 #pp-svg .esc{fill:#fff;stroke:#1B2440;stroke-width:.35}#pp-svg .mar{stroke:#5B6579;stroke-width:.2;fill:none}#pp-svg .fo{fill:none;stroke:#1B2440;stroke-width:.35}#pp-svg .fo0{fill:#1B2440}
 #pp-svg .lame{stroke:#D6DAE1;stroke-width:.18;fill:none}#pp-svg .htl{stroke:#1B2440;stroke-width:.2}
-#pp-svg .ouv{fill:url(#pp-hv);stroke:#1B2440;stroke-width:.3}#pp-svg .ouv.dsh{stroke-dasharray:1.2 .9}
+#pp-svg .ouv{fill:url(#pp-hv);stroke:#1B2440;stroke-width:.3}#pp-svg .ouv.dsh{stroke-dasharray:1.2 .9}.zb{fill:rgba(94,139,168,.10);stroke:#5E8BA8;stroke-width:.35;stroke-dasharray:1.6 1}.zbt{font-size:2.8px;font-weight:700;fill:#3E6A88;text-anchor:middle}
 #pp-svg .cl{stroke:#5B6579;stroke-width:.22;fill:none}#pp-svg .tk{stroke:#1B2440;stroke-width:.4}
 #pp-svg text{font-family:Manrope,Inter,system-ui,sans-serif;fill:#0B1226}
 #pp-svg .ct{font-size:3.2px;font-weight:700;text-anchor:middle}#pp-svg .nm{font-size:4.4px;font-weight:800;text-anchor:middle}#pp-svg .sf{font-size:3.1px;fill:#5B6579;text-anchor:middle}

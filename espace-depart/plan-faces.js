@@ -25,18 +25,24 @@ const T={
  gs:{n:"Grille de soufflage (gainable)",h:230,f:"clim",w:40,hh:14},grp:{n:"Grille de reprise (gainable)",h:225,f:"clim",w:50,hh:24},
  liai:{n:"Passage des liaisons",h:230,f:"clim"},cond:{n:"Évacuation des condensats",h:200,f:"clim"},cmd:{n:"Commande murale clim",h:150,f:"clim"},
  /* Ouvrages (lot B9, 22/11) : rectangles à 3 cotes (largeur, hauteur, profondeur), dimensions de départ À CONFIRMER par Cyril. dh 0 = toute la hauteur. */
- cv:{n:"Caisson vertical",f:"placo",o:1,dw:30,dh:0,dp:30,pos:"sol"},rt:{n:"Retombée",f:"placo",o:1,dw:100,dh:30,dp:30,pos:"haut"},
- bwc:{n:"Bâti-support WC",f:"placo",o:1,dw:60,dh:115,dp:22,pos:"sol"},
- verr:{n:"Verrière",f:"menu",o:1,dw:120,dh:110,dp:0,pos:"al",al:100},verp:{n:"Verrière avec porte",f:"menu",o:1,dw:200,dh:0,dp:0,pos:"sol",porte:83}
+ cv:{n:"Caisson vertical",f:"placo",o:1,dw:15,dh:0,dp:15,pos:"sol"},rt:{n:"Retombée",f:"placo",o:1,dw:100,dh:15,dp:15,pos:"haut"},
+ bwc:{n:"Bâti-support WC",f:"placo",o:1,dw:60,dh:120,dp:25,pos:"sol"},
+ verr:{n:"Verrière",f:"menu",o:1,dw:120,dh:120,dp:0,pos:"al",al:100},verp:{n:"Verrière avec porte",f:"menu",o:1,dw:200,dh:0,dp:0,pos:"sol",porte:83}
 };
 /* Au plafond */
 const TP={
  spot:{n:"Spot encastré",f:"el"},pl:{n:"Point lumineux (plafonnier)",f:"el"},vmc:{n:"Bouche VMC",f:"el"},df:{n:"Détecteur de fumée",f:"el"},
  souf:{n:"Bouche de soufflage (gainable)",f:"clim"},rep:{n:"Grille de reprise (gainable)",f:"clim"},cas:{n:"Cassette clim au plafond",f:"clim"},
- cp:{n:"Caisson au plafond",f:"placo",o:1,dw:200,dl:40,dh:30}
+ cp:{n:"Caisson au plafond",f:"placo",o:1,dw:200,dl:15,dh:15},
+ /* Zone de plafond plus bas (Cyril 22/11) : hh = de combien elle descend sous le plafond ; affichée en hauteur depuis le sol */
+ zb:{n:"Plafond plus bas",f:"placo",o:1,zone:1,dw:200,dl:150,dh:20}
 };
 /* Ouvrages : dimensions réelles de l'élément (cm) */
 const isO=t=>!!((T[t]||TP[t]||{}).o);
+const hzT=(e,Hh)=>(Math.max(0,Hh-oD(e).hh)/100).toFixed(2).replace(".",",")+" m";
+/* Longueur de « joue » d'une zone plus basse (m) : les côtés du rectangle qui ne sont pas contre un mur */
+function joue(rm,e){if(!rm||!rm.pts||!e)return 0;const D=oD(e),w=D.w/100,l=D.l/100,x0=e.x-w/2,y0=e.y-l/2,x1=e.x+w/2,y1=e.y+l/2,P=rm.pts,dS=(p,a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy||1e-9,t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/L2));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy)},near=p=>P.some((a,i)=>dS(p,a,P[(i+1)%P.length])<.06);
+ let j=0;[[[x0,y0],[x1,y0]],[[x1,y0],[x1,y1]],[[x1,y1],[x0,y1]],[[x0,y1],[x0,y0]]].forEach(([a,b])=>{const m=[(a[0]+b[0])/2,(a[1]+b[1])/2];if(!(near(a)&&near(b)&&near(m)))j+=Math.hypot(b[0]-a[0],b[1]-a[1])});return Math.round(j*100)/100}
 const oD=e=>{const d=T[e.t]||TP[e.t]||{},Hh=H();const hh=e.hh!=null?e.hh:(d.dh||Hh);return{w:e.w!=null?e.w:d.dw,hh:Math.min(hh,Hh),p:e.p!=null?e.p:d.dp,l:e.l!=null?e.l:d.dl}};
 /* hauteur du milieu selon la position habituelle */
 const oH=(t,hh)=>{const d=T[t],Hh=H();return d.pos==="haut"?Hh-hh/2:d.pos==="al"?Math.min(Hh-hh/2,(d.al||0)+hh/2):hh/2};
@@ -222,12 +228,12 @@ function mini(){const rm=room(),w=wall(),xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=
 function svgPlaf(){const rm=room(),pts=rm.pts.map(p=>[p[0]*100,p[1]*100]),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)],w=b[2]-b[0],h=b[3]-b[1],M=Math.max(w,h),mg=M*.2,fs=M/24;
  let s=`<svg id="fx-psvg" viewBox="${b[0]-mg} ${b[1]-mg} ${w+mg*1.5} ${h+mg*1.5}" font-size="${fs}" role="img" aria-label="Plafond vu de dessus">${DEFS}<polygon class="pfond" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;if(V.net)s+=`<clipPath id="fx-pclip"><polygon points="${pts.map(p=>p.join(",")).join(" ")}"/></clipPath><g clip-path="url(#fx-pclip)">${netPlaf(rm,M)}</g>`;
  pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length];s+=`<line class="pmur" x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke-width="${M/60}"/>`});
- const E=(rm.eqp||[]).map((e,i)=>({e,i})).filter(o=>vis(o.e.t)),k=M/420,X=[],Y=[];
- E.forEach(({e,i})=>{const x=e.x*100,y=e.y*100;if(isO(e.t)){const D=oD(e);X.push(Math.round(x-D.w/2),Math.round(x+D.w/2));Y.push(Math.round(y-D.l/2),Math.round(y+D.l/2));s+=`<g class="sym ouvg st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><rect class="hit" x="${x-D.w/2-8}" y="${y-D.l/2-8}" width="${D.w+16}" height="${D.l+16}"/>${e.st==="faire"?`<rect class="halo" x="${x-D.w/2-6}" y="${y-D.l/2-6}" width="${D.w+12}" height="${D.l+12}" rx="6"/>`:""}<rect class="ouv dsh" x="${x-D.w/2}" y="${y-D.l/2}" width="${D.w}" height="${D.l}"/><text class="ck" font-size="${fs*.8}" x="${x}" y="${y+fs*.3}">−${Math.round(D.hh)}</text></g>`;return}X.push(Math.round(x));Y.push(Math.round(y));s+=`<g class="sym st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.4)}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.2)}"/>`:""}${symPlaf(e.t,x,y,Math.max(1,k))}</g>`});
+ const E=(rm.eqp||[]).map((e,i)=>({e,i})).filter(o=>vis(o.e.t)).sort((a,b)=>(b.e.t==="zb")-(a.e.t==="zb")),k=M/420,X=[],Y=[],Hh0=H();
+ E.forEach(({e,i})=>{const x=e.x*100,y=e.y*100;if(isO(e.t)){const D=oD(e);X.push(Math.round(x-D.w/2),Math.round(x+D.w/2));Y.push(Math.round(y-D.l/2),Math.round(y+D.l/2));s+=`<g class="sym ouvg st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><rect class="hit" x="${x-D.w/2-8}" y="${y-D.l/2-8}" width="${D.w+16}" height="${D.l+16}"/>${e.st==="faire"?`<rect class="halo" x="${x-D.w/2-6}" y="${y-D.l/2-6}" width="${D.w+12}" height="${D.l+12}" rx="6"/>`:""}<rect class="ouv dsh${e.t==="zb"?" zb":""}" x="${x-D.w/2}" y="${y-D.l/2}" width="${D.w}" height="${D.l}"/><text class="ck" font-size="${fs*.8}" x="${x}" y="${y+fs*.3}">${e.t==="zb"?"à "+hzT(e,Hh0):"−"+Math.round(D.hh)}</text></g>`;return}X.push(Math.round(x));Y.push(Math.round(y));s+=`<g class="sym st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.4)}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.2)}"/>`:""}${symPlaf(e.t,x,y,Math.max(1,k))}</g>`});
  s+=chain(X,b[0],b[2],b[1]-mg*.45,1,fs)+chain(Y,b[1],b[3],b[0]-mg*.45,0,fs);
  if(V.sel>=0&&rm.eqp&&rm.eqp[V.sel]){const e=rm.eqp[V.sel],D0=isO(e.t)?oD(e):null,x=e.x*100-(D0?D0.w/2:0),y=e.y*100-(D0?D0.l/2:0);s+=`<line class="cs" stroke-dasharray="6 5" x1="${b[0]}" y1="${y}" x2="${x}" y2="${y}"/><line class="cs" stroke-dasharray="6 5" x1="${x}" y1="${b[1]}" x2="${x}" y2="${y}"/>`+pill((b[0]+x)/2,y-fs*.9,Math.round(x-b[0])+" cm",fs)+pill(x+fs*2.6,(b[1]+y)/2,Math.round(y-b[1])+" cm",fs)}
  return s+"</svg>"}
-function symPlaf(t,x,y,k){if(t==="cp")return`<rect class="ouv dsh" x="${x-28*k}" y="${y-12*k}" width="${56*k}" height="${24*k}"/>`;const sq=(r,c,rx)=>`<rect class="${c}" x="${x-r*k}" y="${y-r*k}" width="${2*r*k}" height="${2*r*k}" rx="${(rx||5)*k}"/>`;
+function symPlaf(t,x,y,k){if(t==="zb")return`<rect class="ouv dsh zb" x="${x-30*k}" y="${y-22*k}" width="${60*k}" height="${44*k}"/><path class="pf-x" d="M${x} ${y-12*k}v${24*k}m${-6*k} ${-6*k}l${6*k} ${6*k}l${6*k} ${-6*k}" fill="none"/>`;if(t==="cp")return`<rect class="ouv dsh" x="${x-28*k}" y="${y-12*k}" width="${56*k}" height="${24*k}"/>`;const sq=(r,c,rx)=>`<rect class="${c}" x="${x-r*k}" y="${y-r*k}" width="${2*r*k}" height="${2*r*k}" rx="${(rx||5)*k}"/>`;
  if(t==="spot")return sq(13,"pf-spot",5)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${7*k}" fill="none"/><path class="pf-x" d="M${x-4.5*k} ${y-4.5*k}l${9*k} ${9*k}M${x+4.5*k} ${y-4.5*k}l${-9*k} ${9*k}"/>`;
  if(t==="pl")return sq(17,"pf-spot",6)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${10*k}" fill="none"/><circle class="pf-pl" cx="${x}" cy="${y}" r="${4.5*k}"/>`;
  if(t==="vmc")return sq(15,"pf-vmc",5)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${9*k}" fill="none"/><circle class="pf-x" cx="${x}" cy="${y}" r="${4*k}" fill="none"/>`;
@@ -373,7 +379,7 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx h3{font-size:15px;margin:16px 2px 6px}
 #fx .liste{display:grid;gap:6px}#fx .it{appearance:none;text-align:left;width:100%;display:flex;gap:10px;align-items:center;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:14px;padding:9px 12px;font:600 14px var(--f);cursor:pointer}
 #fx .it.on{border-color:#B8924F;box-shadow:inset 0 0 0 1.5px #B8924F}#fx .it b{display:block;font-weight:800}#fx .it small{color:var(--muted);font-size:12.5px}#fx .it .dt{flex:none;width:12px;height:12px;border-radius:4px;background:var(--muted)}
-#fx .it .dt.el{background:#B8924F}#fx .it .dt.eau{background:#2F7DE1}#fx .it .dt.clim{background:#0B8F7C}#fx .it .dt.placo{background:repeating-linear-gradient(45deg,var(--fg) 0 1.5px,transparent 1.5px 4px);border:1.5px solid var(--fg)}#fx .it .dt.menu{background:#DCE6EA;border:1.5px solid var(--fg)}#fx .ouv{fill:url(#fxhv);stroke:var(--ink);stroke-width:1.6}#fx .ouv.dsh{stroke-dasharray:8 6}#fx .s-O .ouvg .ouv{filter:url(#fxshs)}#fx .oumes{font-size:13px;color:var(--muted);margin:-2px 2px 8px}#fx .tile svg .ouv{stroke-width:2.4}#fx .it .dt.ouv{background:transparent;border:2px solid var(--fg)}
+#fx .it .dt.el{background:#B8924F}#fx .it .dt.eau{background:#2F7DE1}#fx .it .dt.clim{background:#0B8F7C}#fx .it .dt.placo{background:repeating-linear-gradient(45deg,var(--fg) 0 1.5px,transparent 1.5px 4px);border:1.5px solid var(--fg)}#fx .it .dt.menu{background:#DCE6EA;border:1.5px solid var(--fg)}#fx .ouv{fill:url(#fxhv);stroke:var(--ink);stroke-width:1.6}#fx .ouv.dsh{stroke-dasharray:8 6}#fx .ouv.zb{fill:rgba(94,139,168,.32);stroke:#5E8BA8;stroke-dasharray:10 6}#fx .s-O .ouvg .ouv{filter:url(#fxshs)}#fx .oumes{font-size:13px;color:var(--muted);margin:-2px 2px 8px}#fx .tile svg .ouv{stroke-width:2.4}#fx .it .dt.ouv{background:transparent;border:2px solid var(--fg)}
 #fx .add{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;margin:12px 0 0}#fx .add p{margin:0 0 6px;font-weight:800}#fx .add .qk2{margin-bottom:8px}
 #fx .muted{color:var(--muted)}#fx .note{font-size:12.5px;color:var(--muted);margin:6px 2px 0}
 #fx .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:0 0 10px}#fx .card p{margin:0 0 8px;font-weight:800}
@@ -476,7 +482,7 @@ function selHTML(e){const mur=V.tab==="mur",name=e.n||(mur?T[e.t]:TP[e.t]).n,b=m
  return`<div class="selb"><div class="snm"><i class="${e.st||"exist"}"></i><b>${esc(name)}</b></div>
  <div class="st3" role="group" aria-label="État">${[["exist","Déjà en place"],["faire","À faire"],["dk","Je ne sais pas"]].map(([k,t])=>`<button data-st3="${k}" aria-pressed="${(e.st||"exist")===k}">${t}</button>`).join("")}</div>
  <div class="cfs">${isO(e.t)?(()=>{const D=oD(e);return mur?f("w","Largeur",Math.round(D.w))+f("hh","Hauteur",Math.round(D.hh))+(T[e.t].f==="placo"?f("p","Profondeur",Math.round(D.p)):"")+f("xl","de l'angle",Math.round(e.x-D.w/2))+(T[e.t].pos==="sol"?"":f("hb","du sol",Math.round(e.h-D.hh/2)))
-   :f("w","Longueur",Math.round(D.w))+f("l","Largeur",Math.round(D.l))+f("hh","Retombée",Math.round(D.hh))+f("px","du mur de gauche",Math.round(e.x*100-D.w/2-b[0]))+f("py","du mur du haut",Math.round(e.y*100-D.l/2-b[1]))})():mur?f("h","du sol",Math.round(e.h))+f("x","de l'angle",Math.round(e.x)):f("px","du mur de gauche",Math.round(e.x*100-b[0]))+f("py","du mur du haut",Math.round(e.y*100-b[1]))}</div>${isO(e.t)&&!e.mes?`<div class="oumes">Dimensions habituelles : mesurez et corrigez.</div>`:""}
+   :f("w","Longueur",Math.round(D.w))+f("l","Largeur",Math.round(D.l))+(e.t==="zb"?f("hz","Hauteur du plafond",Math.round(H()-D.hh)):f("hh","Retombée",Math.round(D.hh)))+f("px","du mur de gauche",Math.round(e.x*100-D.w/2-b[0]))+f("py","du mur du haut",Math.round(e.y*100-D.l/2-b[1]))})():mur?f("h","du sol",Math.round(e.h))+f("x","de l'angle",Math.round(e.x)):f("px","du mur de gauche",Math.round(e.x*100-b[0]))+f("py","du mur du haut",Math.round(e.y*100-b[1]))}</div>${isO(e.t)&&!e.mes?`<div class="oumes">Dimensions habituelles : mesurez et corrigez.</div>`:""}
  ${M?`<div class="postes"><span>Sur la plaque <small>touchez un poste pour le changer</small></span><div class="pz">${M.map((t,k)=>`<button data-a="poste" data-k="${k}" aria-label="Poste ${k+1} : ${esc(MECA[t])}"><svg viewBox="-10 -10 20 20" aria-hidden="true"><rect class="bx" x="-9" y="-9" width="18" height="18" rx="4"/>${MG[t](0,0)}</svg><em>${esc(MN[t][0])}</em></button>`).join("")}${M.length<4?`<button class="pz-a" data-a="posteplus" aria-label="Ajouter un poste">＋</button>`:""}${M.length>1?`<button class="pz-a" data-a="postemoins" aria-label="Retirer le dernier poste">−</button>`:""}</div></div>`:""}
  <div class="rbs">${rb("photo","cam","Photo",{n:e.ph&&e.ph.length||0})}${rb("dup","dup",`Encore ${un(name)}`)}${rb("del","del","Enlever",{del:1})}${rb("desel","ok","OK",{go:1})}</div></div>`}
 function ctHTML(label){const e=curEl();if(e)return selHTML(e);
@@ -725,7 +731,7 @@ const un=n=>/^(Plaque|Prise|Arrivée|Évacuation|Applique|Bouche|Grille|Cassette
 /* Choix de l'élément : grandes tuiles avec le dessin, sans menus. */
 function icoE(e){const m=Math.max(28,18*(mods(e)||[1]).length+8),hh=H();return`<svg class="wide" viewBox="${-m/2} ${hh-e.h-14} ${m} 28" aria-hidden="true">${sym({...e,x:0},-1,14,false)}</svg>`}
 function icoMur(t){if(T[t].o){const d=T[t],w=d.dw,hh=d.dh||H(),m=Math.max(w,hh)+16,hh0=H();return`<svg viewBox="${-m/2} ${hh0-oH(t,hh)-m/2} ${m} ${m}" aria-hidden="true">${symO({t,x:0,h:oH(t,hh),w,hh},-1,false)}</svg>`}const d=T[t],m=Math.max(28,2*(HW[t]||9)+8,2*(HH[t]||9)+8,(d.w||0)+10,(d.hh||0)+10),hh=H();return`<svg viewBox="${-m/2} ${hh-d.h-m/2} ${m} ${m}" aria-hidden="true">${sym({t,x:0,h:d.h},-1,14,false)}</svg>`}
-function icoPlaf(t){const m=({spot:16,pl:20,vmc:18,df:18,souf:34,rep:28,cas:34})[t]||36;return`<svg viewBox="${-m} ${-m} ${2*m} ${2*m}" aria-hidden="true">${symPlaf(t,0,0,1)}</svg>`}
+function icoPlaf(t){const m=({zb:34,spot:16,pl:20,vmc:18,df:18,souf:34,rep:28,cas:34})[t]||36;return`<svg viewBox="${-m} ${-m} ${2*m} ${2*m}" aria-hidden="true">${symPlaf(t,0,0,1)}</svg>`}
 function pickHTML(){const F=fams(),mur=V.tab==="mur",TT=mur?T:TP,keys=Object.keys(TT).filter(k=>F.includes(TT[k].f)&&!TT[k].hide&&!(mur&&k==="ge"&&wall()&&wall().s.sh));const g={};keys.forEach(k=>{(g[TT[k].f]=g[TT[k].f]||[]).push(k)});const G=Object.keys(g);
  return`<div class="pick" role="dialog" aria-label="Que posez-vous ?"><div class="pk-in"><div class="pk-h"><b>${V.pick.at?"Que posez-vous ici ?":"Que posez-vous ?"}</b><button class="rd" data-a="pickx" aria-label="Fermer">✕</button></div>${G.map(f=>`${G.length>1?`<p>${FAM[f]}</p>`:""}<div class="tiles">${g[f].map(k=>`<button class="tile" data-put="${k}">${mur?icoMur(k):icoPlaf(k)}<span>${esc(TT[k].n)}</span></button>`).join("")}</div>`).join("")}${!mur&&F.includes("el")?`<p>Spots : bien répartis d'un coup</p><div class="tiles">${SPOTS.map(([t,c,r])=>`<button class="tile sm" data-grid="${c} × ${r}">${spotIco(c,r)}<span>${t}</span></button>`).join("")}</div>`:""}</div></div>`}
 
@@ -836,7 +842,7 @@ function put(t,at){const P=K();snap();
  if(V.tab==="mur"){const w=wall();if(!w)return;const L=Math.round(P.dist(w.s.a,w.s.b)*100),E=eqs(w.s),h=Math.min(H()-10,hdef(t));let x;
   if(at)x=R5(at.x);else{x=R5(L/2);for(let k=0;k<12&&E.some(e=>Math.abs(e.x-x)<25&&Math.abs(e.h-h)<25);k++)x=R5(L/2+(k%2?-1:1)*30*Math.ceil((k+1)/2))}
   if(T[t].o){const hh=Math.min(H(),T[t].dh||H()),w=Math.min(L,T[t].dw);E.push({t,n:T[t].n,x:Math.max(w/2,Math.min(L-w/2,x)),h:oH(t,hh),w,hh,p:T[t].dp||0,st:"faire"})}else E.push({t,n:T[t].n,x:Math.max(5,Math.min(L-5,x)),h,st:"faire"});V.sel=E.length-1}
- else{const rm=room(),b=bb(rm);rm.eqp=rm.eqp||[];const x=at?R5(at.x):R5((b[0]+b[2])/2),y=at?R5(at.y):R5((b[1]+b[3])/2);rm.eqp.push(TP[t].o?{t,n:TP[t].n,x:x/100,y:y/100,w:TP[t].dw,l:TP[t].dl,hh:TP[t].dh,st:"faire"}:{t,n:TP[t].n,x:x/100,y:y/100,st:"faire"});V.sel=rm.eqp.length-1}
+ else{const rm=room(),b=bb(rm);rm.eqp=rm.eqp||[];const x=at?R5(at.x):R5((b[0]+b[2])/2),y=at?R5(at.y):R5((b[1]+b[3])/2);rm.eqp.push(TP[t].o?{t,n:TP[t].n,x:x/100,y:y/100,w:TP[t].zone?R5((b[2]-b[0])/2):TP[t].dw,l:TP[t].zone?R5((b[3]-b[1])/2):TP[t].dl,hh:TP[t].dh,st:"faire"}:{t,n:TP[t].n,x:x/100,y:y/100,st:"faire"});V.sel=rm.eqp.length-1}
  save();render();focusBar();toast(at?"Posé. Glissez-le pour ajuster.":"Posé : glissez-le à sa place")}
 function grid(txt){const [c,r]=txt.split("×").map(v=>parseInt(v,10)),rm=room(),b=bb(rm),w=b[2]-b[0],h=b[3]-b[1];snap();rm.eqp=(rm.eqp||[]).filter(x=>x.t!=="spot"&&x.t!=="pl");
  for(let j=0;j<r;j++)for(let i=0;i<c;i++)rm.eqp.push({t:c*r===1?"pl":"spot",n:c*r===1?TP.pl.n:TP.spot.n,x:R5(b[0]+w*(i+.5)/c)/100,y:R5(b[1]+h*(j+.5)/r)/100,st:"faire"});
@@ -849,7 +855,7 @@ function onChange(ev){const i=ev.target;if(!V)return;
   if(n==="w"){e.w=Math.max(5,Math.min(L,v));e.x=Math.min(L-e.w/2,lft+e.w/2)}if(n==="hh"){e.hh=Math.max(5,Math.min(Hh,v));e.h=T[e.t].pos==="haut"?Hh-e.hh/2:Math.min(Hh-e.hh/2,bot+e.hh/2)}if(n==="p")e.p=Math.max(0,Math.min(300,v));
   if(n==="xl")e.x=Math.max(0,Math.min(L-D.w,v))+D.w/2;if(n==="hb")e.h=Math.max(0,Math.min(Hh-D.hh,v))+D.hh/2;save();return render()}
  if(V.tab==="plaf"&&(room().eqp||[])[V.sel]&&isO(room().eqp[V.sel].t)){const rm=room(),e=rm.eqp[V.sel],b=bb(rm),D=oD(e);e.mes=1;
-  if(n==="w")e.w=Math.max(5,Math.min(2000,v));if(n==="l")e.l=Math.max(5,Math.min(2000,v));if(n==="hh")e.hh=Math.max(1,Math.min(H(),v));
+  if(n==="w")e.w=Math.max(5,Math.min(2000,v));if(n==="l")e.l=Math.max(5,Math.min(2000,v));if(n==="hh")e.hh=Math.max(1,Math.min(H(),v));if(n==="hz")e.hh=Math.max(1,Math.min(H()-100,H()-v));
   if(n==="px")e.x=(b[0]+v+D.w/2)/100;if(n==="py")e.y=(b[1]+v+D.l/2)/100;save();return render()}
  if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[V.sel];if(!e)return;const L=Math.round(K().dist(w.s.a,w.s.b)*100);if(n==="h")e.h=Math.max(0,Math.min(H(),v));if(n==="x")e.x=Math.max(0,Math.min(L,v))}
  else{const rm=room(),e=(rm.eqp||[])[V.sel],b=bb(rm);if(!e)return;if(n==="px")e.x=Math.max(b[0],Math.min(b[2],b[0]+v))/100;if(n==="py")e.y=Math.max(b[1],Math.min(b[3],b[1]+v))/100}
@@ -895,5 +901,5 @@ function inject(){const P=K(),SH=P&&P.SH,body=$("sh-body");if(!SH||!body||body.q
 addEventListener("keydown",e=>{if(e.key==="Escape"&&V)close()});
 function wait(n){if(K())return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
-window.PKFACES={open,close,metiers,setMetiers,compo,mods,rtype,T};
+window.PKFACES={open,close,metiers,setMetiers,compo,mods,rtype,T,TP,joue,oD};
 })();
