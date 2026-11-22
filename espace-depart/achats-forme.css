@@ -1,0 +1,68 @@
+/* Lot 8 : Achats à la forme des maquettes du 21/11 (va avec achats-forme.js). Seulement sous html.f2on. */
+html.f2on body:not(#z) #v-prix:not(#z)>.row>h2,html.f2on body:not(#z) #v-prix:not(#z) .tip,html.f2on body:not(#z) #v-prix:not(#z) .f2a-cache,html.f2on body:not(#z) #v-prix:not(#z) .cf-go,html.f2on body:not(#z) #v-prix:not(#z) .is-soon,html.f2on body:not(#z) #v-prix:not(#z) #a-prix .sec-h>span,html.f2on body:not(#z) #v-prix:not(#z) #newdp,html.f2on body:not(#z) #v-prix:not(#z) .f2a-vide{display:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 12px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-ey{font-size:13px;color:var(--z-mut);font-weight:500;min-height:16px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-t h2{font-size:30px!important;font-weight:800!important;letter-spacing:-.02em;margin:0!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-plus{width:46px;height:46px;border-radius:50%;border:0;background:var(--z-nuit);color:var(--z-sur);display:grid;place-items:center;flex:0 0 46px;box-shadow:var(--z-ombre-s);cursor:pointer}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-plus svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+html.f2on body:not(#z) #v-prix:not(#z)>.row{margin-bottom:14px!important}
+html.f2on body:not(#z) #v-prix:not(#z) #achseg>button .f2a-n{font-size:11px;opacity:.75;margin-left:6px;font-weight:600}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-sh{margin:6px 0 10px!important}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-sh h2,html.f2on body:not(#z) #v-prix:not(#z) .sec-h h2{font-size:17px!important;font-weight:700!important}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-hero{display:flex!important;flex-direction:column;gap:4px;padding:16px 16px 14px!important;border-radius:22px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;margin-bottom:18px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-src{font-size:12.5px;color:var(--z-mut)}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-l{display:flex;align-items:baseline;gap:6px;margin-top:6px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--z-fg)}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-bt{font-size:24px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-u{font-size:14px;color:var(--z-mut)}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-qui{font-size:16px;font-weight:700;color:var(--z-fg);margin-top:4px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-det{font-size:12.5px;color:var(--z-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-go{margin-top:12px;width:100%;min-height:50px;border-radius:999px!important;justify-content:center}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-go::before,html.f2on body:not(#z) #v-prix:not(#z) .f2a-go::after{display:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist,html.f2on body:not(#z) #v-prix:not(#z) .cf-l{background:none!important;box-shadow:none!important;border:0!important;padding:0!important}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button,html.f2on body:not(#z) #v-prix:not(#z) .cf-l>.cf-li{display:flex!important;align-items:center;gap:12px;padding:12px 2px!important;border:0!important;border-bottom:1px solid var(--z-line)!important;background:none!important;box-shadow:none!important;border-radius:0!important;width:100%;text-align:left}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button:last-child,html.f2on body:not(#z) #v-prix:not(#z) .cf-l>.cf-li:last-child{border-bottom:0!important}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button .pill,html.f2on body:not(#z) #v-prix:not(#z) #dplist>button::after{display:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button .av,html.f2on body:not(#z) #v-prix:not(#z) .cf-av.f2a-ini{width:40px!important;height:40px!important;flex:0 0 40px;border-radius:50%!important;background:var(--z-tile2)!important;color:var(--z-fg)!important;display:grid!important;place-items:center;font-size:13px!important;font-weight:700!important;box-shadow:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button .tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button .tx b{font-size:15px}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button .tx small{font-size:12.5px;color:var(--z-mut)}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button::after{content:none}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-st{display:flex!important;align-items:center;gap:6px;color:var(--z-fg)!important}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--z-mut);flex:0 0 7px}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-wait::before{background:#C9832B}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-recu::before{background:var(--z-nuit)}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-done::before{background:#3E8E5A}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-tip,html.f2on body:not(#z) #v-prix:not(#z) .f2a-hp,html.f2on body:not(#z) #v-prix:not(#z) .f2a-ha{font-size:12.5px!important;color:var(--z-mut)!important;margin:10px 2px 18px!important}
+/* Mes prix : la liste d'abord, le bouton, puis « Ajouter un tarif » */
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .grid2{display:flex!important;flex-direction:column;gap:6px}
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .grid2>.col:first-child{order:2}
+html.f2on body:not(#z) #v-prix:not(#z) #upd{background:var(--z-tile)!important;border-radius:22px!important;box-shadow:var(--z-ombre)!important;border:0!important;padding:4px 16px!important}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd{display:grid!important;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 0!important;border-bottom:1px solid var(--z-line);cursor:pointer}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd:last-child{border-bottom:0}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd>div:first-child b{font-size:14.5px}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd>div:first-child small{font-size:12px;color:var(--z-mut)}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd>div:first-child small b{font-weight:500!important;color:var(--z-mut)!important}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd .ch{text-align:right;font-size:14.5px}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd .ch s{color:var(--z-mut);font-size:12.5px;margin-right:2px}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd .ch .up{color:#C9832B;font-size:11.5px;font-weight:600}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd .ac{display:none!important;grid-column:1/-1;gap:8px;margin-top:8px}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd.f2a-ouv .ac{display:flex!important}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd.done{opacity:.6;cursor:default}
+html.f2on body:not(#z) #v-prix:not(#z) #okall{width:100%;min-height:52px;border-radius:999px!important;margin-top:14px;justify-content:center}
+html.f2on body:not(#z) #v-prix:not(#z) #okall::before,html.f2on body:not(#z) #v-prix:not(#z) #okall::after{display:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .adds{display:flex!important;justify-content:space-around;gap:10px;background:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .adds button{display:flex!important;flex-direction:column;align-items:center;gap:8px;background:none!important;box-shadow:none!important;border:0!important;font-size:13px;color:var(--z-fg);padding:4px!important;min-width:76px}
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .adds button span{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--z-tile);box-shadow:var(--z-ombre-s)}
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .adds button svg{width:22px;height:22px;fill:none;stroke:var(--z-fg);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html.f2on body:not(#z) #v-prix:not(#z) #a-prix .grid2>.col:first-child>.card{background:none!important;box-shadow:none!important;border:0!important;padding:0 2px!important;font-size:12.5px!important}
+/* Commandes */
+html.f2on body:not(#z) #v-prix:not(#z) .cf-l>.cf-li .cf-av:not(.f2a-ini){width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:var(--z-tile2)!important;box-shadow:none!important}
+html.f2on body:not(#z) #v-prix:not(#z) .cf-l .pill{background:none!important;box-shadow:none!important;padding:0!important;font-size:12.5px!important}
+html.f2on body:not(#z) #v-prix:not(#z) #dplist>button.f2a-cache,html.f2on body:not(#z) #v-prix:not(#z) .cf-l>.f2a-cache,html.f2on body:not(#z) #v-prix:not(#z) #a-prix .hint:not(.f2a-hp):not(.f2a-ha){display:none!important}
+html.f2on body:not(#z) #v-prix:not(#z)>.row{flex-direction:column!important;align-items:stretch!important}
+html.f2on body:not(#z) #v-prix:not(#z)>.row>.f2a-hd{order:-1;margin:4px 0 2px}
+html.f2on body:not(#z) #v-prix:not(#z) #upd .upd>div:first-child small b{font-size:inherit!important;display:inline!important}
+html.f2on body:not(#z) #v-prix:not(#z) .f2a-hd{order:5!important;grid-column:1/-1}
+html.f2on body:not(#z) #v-prix:not(#z) :is(#f2a-hero4,#f2a-heroc) .card.f2a-hero{background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;padding:16px!important;border-radius:22px!important;margin-bottom:18px!important}
