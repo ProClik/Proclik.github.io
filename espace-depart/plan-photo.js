@@ -158,7 +158,7 @@ function boot(){const P=K();if(!P||P.CL)return;ensure();prendParent();addEventLi
 function prendParent(){let f=null;try{f=parent!==window&&parent.PC_PLAN_PHOTO;if(f)parent.PC_PLAN_PHOTO=null}catch(e){}if(!f)return;
  if(!ckOn()){toast("Avec l'option Cliky : il lit la photo d'un plan et le dessine pour vous (Réglages › Mes options)");return}
  if(!api()){toast("En démo, Cliky ne lit pas les photos de plan");return}setTimeout(()=>envoyer(f),300)}
-if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
+function wait(n){if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
 window.PKPHOTO={choisir,_poser:x=>{LU={...x,nv:0};poser()},_montrer:x=>{LU={...x,nv:0};resultat()}};
 })();
