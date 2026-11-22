@@ -50,3 +50,19 @@ html body .opp.acts .r>button.x[data-oppo="ok"]{background:var(--pe-nuit)!import
 /* Lot 4 (22/11) : téléphone, fiche de la pièce à mi-hauteur sous le plan zoomé */
 html body #sheet.mi{max-height:44vh!important;top:auto!important}
 html body:has(#sheet.mi:not([hidden])) #clbanner{display:none!important}
+/* Lot 3b (22/11) : longueur du mur en bouton + pavé numérique en bas */
+html body .opp.acts .rs-len b{font:800 16px Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;line-height:22px}
+html body .opp.acts .pad{display:flex;flex-direction:column;gap:10px;padding:6px 0 4px}
+html body .opp.acts .pd-h{display:flex;align-items:center;gap:12px;padding-right:6px}
+html body .opp.acts .pd-out{font:800 26px Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--fg);white-space:nowrap}
+html body .opp.acts .pd-out output.fresh{background:color-mix(in srgb,var(--laiton) 18%,transparent);border-radius:6px;padding:0 4px}
+html body .opp.acts .pd-k{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+html body .opp.acts .pd-k button{height:48px;border-radius:14px;background:var(--bg)!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;font:700 20px Manrope,system-ui,sans-serif}
+html body .opp.acts .pd-f{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+html body .opp.acts .pd-f button:not(.rs-ok){display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 12px;border-radius:14px;background:none!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;font:600 14px Manrope,system-ui,sans-serif}
+html body .opp.acts .pd-f .rs-ok{margin-left:auto;padding:0 18px}
+@media (min-width:700px){html body .opp.acts:has(.pad){left:50%!important;right:auto!important;width:420px!important;transform:translateX(-50%)}}
+html body .opp.acts .pd-x{width:40px;height:40px;border-radius:20px;background:none!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;font-size:15px;flex:none}
+@media (max-width:520px){html body .opp.acts .pd-k button{height:42px}html body .opp.acts .pd-out{font-size:22px}}
+/* Téléphone couché : le pavé passe en colonne à gauche (à la place de la consigne), le plan reste visible à droite */
+@media (orientation:landscape) and (max-height:520px){html body .opp.acts:has(.pad){right:auto!important;left:max(8px,env(safe-area-inset-left,0px))!important;top:8px!important;bottom:8px!important;width:290px!important;transform:none!important;overflow:auto;padding:8px 10px!important;border-radius:18px!important}html body .opp.acts .pad{gap:6px;padding:0}html body .opp.acts .pd-h small{display:none}html body .opp.acts .pd-out{font-size:20px}html body .opp.acts .pd-k{gap:5px}html body .opp.acts .pd-k button{height:38px;font-size:18px}html body .opp.acts .pd-f button:not(.rs-ok),html body .opp.acts .pd-f .rs-ok{height:38px}}
