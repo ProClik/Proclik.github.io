@@ -130,3 +130,28 @@ html.f2on.f2pg body #xsheet .pl-ph :is(svg,span,small){color:var(--z-fg)!importa
 html.f2on.f2pg body #xsheet .pl-ph svg{background:none!important;box-shadow:none!important}
 #welcome .pi-scene .ce{width:100%}
 #xsheet .ce-ap img{height:min(440px,50dvh)}
+html.f2on.f2fi body #xsheet .sheet-foot .f2x{display:none!important}
+html.f2on.f2fi body #xsheet #x-s .f2pre{color:var(--z-mut)}
+/* fiche client : identité sans carte, actions en ronds avec le mot dessous (maquette fiche-client) */
+html.f2on.f2fi body #xsheet .cl-fiche{background:none!important;box-shadow:none!important;padding:0!important}
+html.f2on.f2fi body #xsheet .cl-fiche .cl-id b{display:none}
+html.f2on.f2fi body #xsheet .cl-fiche .kv{background:var(--z-tile);border-radius:22px;padding:14px 16px;box-shadow:var(--z-ombre);margin-top:10px}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z){display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px;background:none!important;box-shadow:none!important}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z) .btn{display:flex!important;flex-direction:column;align-items:center;gap:6px;background:none!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important;height:auto!important;font-size:12px!important;font-weight:500!important;color:var(--z-fg)!important}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z) .btn svg{width:48px!important;height:48px!important;padding:14px;border-radius:50%;background:var(--z-tile);box-shadow:var(--z-ombre-s);box-sizing:border-box;stroke:currentColor;fill:none}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z) .btn:disabled{opacity:.4}
+html.f2on.f2nb body #xsheet .sheet-foot .btn{white-space:nowrap;font-size:15.5px!important}
+html.f2on.f2pg body #xsheet .btn.go::before{display:none!important}
+
+/* fiche chantier (maquette fiche-chantier) : retour en texte coloré, grand titre, menu d'icônes en ronds à plat, cartes en tuiles */
+html.f2on body:not(#z) #v-chantiers:not(#z) #ch-back{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important;color:var(--z-nuit)!important;font-size:16px!important;font-weight:600!important;margin:4px 0 12px!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .sec-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx h2.ti{font-size:28px!important;font-weight:800!important;letter-spacing:-.03em;line-height:1.12;color:var(--z-fg)!important;margin:0!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .sec-h .pill{flex:none;background:var(--z-tile)!important;color:var(--z-fg)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;font-size:12px!important;font-weight:600!important;padding:6px 12px!important;border-radius:16px!important;margin-top:4px}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .lead{color:var(--z-mut)!important;font-size:13.5px!important;margin:6px 0 16px!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:14px 4px!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important;display:flex!important;flex-direction:column;align-items:center;gap:6px;font-size:11.5px!important;font-weight:500!important;color:var(--z-fg)!important;position:relative;grid-column:auto!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button svg{width:48px!important;height:48px!important;padding:14px;box-sizing:border-box;border-radius:50%;background:var(--z-tile);box-shadow:var(--z-ombre-s);color:var(--z-fg)}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button[aria-selected="true"] svg,html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button.on svg{background:var(--z-nuit);color:var(--z-sur)}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-pane .card{background:var(--z-tile)!important;border:0!important;border-radius:24px!important;box-shadow:var(--z-ombre)!important;padding:16px 18px!important;margin-top:14px}
+html.f2on body:not(#z) #v-chantiers:not(#z) .tip{background:var(--z-tile)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;border-radius:18px!important}
