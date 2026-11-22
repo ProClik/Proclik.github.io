@@ -1,0 +1,49 @@
+/* Lot 3 du nouvel Espace (maquettes figées du 21/11) : Réglages, Cadences, Véhicules, Équipe, Mes plans en VRAIE PAGE,
+   Mes options et Réseaux au même style. html.f2pg est posé par ecrans-forme.js quand une de ces pages est ouverte. Variables --z-* : ecrans-forme.css. */
+html.f2on.f2pg body #xsheet.sheet{top:0!important;bottom:0!important;max-height:none!important;height:100%!important;border-radius:0!important;background:var(--z-bg)!important;box-shadow:none!important;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 0 0!important;color:var(--z-fg);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+html.f2on.f2pg body #xscrim{background:transparent!important}
+html.f2on.f2pg body #xsheet .grab{display:none!important}
+html.f2on.f2pg body #xsheet .xhead{padding:8px 20px 6px!important;align-items:flex-start!important;border:0!important;background:none!important}
+html.f2on.f2pg body #xsheet .xhead>div{display:flex;flex-direction:column}
+html.f2on.f2pg body #xsheet #x-t{order:2;font-size:30px!important;font-weight:800!important;letter-spacing:-.03em!important;color:var(--z-fg)!important;margin:0!important;line-height:1.1}
+html.f2on.f2pg body #xsheet #x-s{order:1;font-size:13px!important;color:var(--z-mut)!important;font-weight:500!important;margin:0 0 2px!important}
+html.f2on.f2pg body #xsheet #x-back{order:0}
+html.f2on.f2pg body #xsheet #x-back:not([hidden]){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;min-height:0!important;margin:0 0 8px!important;color:var(--z-nuit)!important;font-size:15px!important;font-weight:600!important}
+html.f2on.f2pg body #xsheet .xclose{width:36px!important;height:36px!important;border-radius:50%!important;background:var(--z-tile)!important;border:0!important;box-shadow:var(--z-ombre-s)!important;color:var(--z-fg)!important;font-size:18px!important;margin-top:18px}
+html.f2on.f2pg body #xsheet .sheet-in{padding:8px 20px calc(120px + env(safe-area-inset-bottom,0px))!important;background:none!important}
+html.f2on.f2pg body #xsheet .sheet-foot{position:fixed;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom,0px));padding:0 20px!important;background:none!important;border:0!important;box-shadow:none!important;pointer-events:none}
+html.f2on.f2pg body #xsheet .sheet-foot>*{pointer-events:auto}
+html.f2on.f2pg body #xsheet .sheet-foot.f2fin{display:none!important}
+html.f2on.f2pg body #xsheet .sheet-in{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}
+html.f2on.f2pg body #xsheet .sheet-foot:not(.f2fin)~*{}
+/* la barre du bas reste au-dessus de la page */
+@media (max-width:899px){html.f2on.f2pg .f2.f2b{z-index:36}}
+/* contenu des pages : cartes en tuiles, titres de section simples, boutons pleins en pilule */
+html.f2on.f2pg body #xsheet :is(.card,.vh,.cad-c){background:var(--z-tile)!important;border:0!important;border-radius:22px!important;box-shadow:var(--z-ombre)!important}
+html.f2on[data-theme="dark"].f2pg body #xsheet :is(.card,.vh,.cad-c){box-shadow:none!important}
+html.f2on.f2pg body #xsheet .card .card{box-shadow:none!important;background:transparent!important}
+html.f2on.f2pg body #xsheet :is(h3,.xsec>h3){font-size:19px!important;font-weight:700!important;letter-spacing:-.02em;color:var(--z-fg)!important;text-transform:none!important;margin:22px 2px 10px!important}
+html.f2on.f2pg body #xsheet .card.menu>button,html.f2on.f2pg body #xsheet .card>button{border-bottom:1px solid var(--z-line)!important;background:transparent!important;box-shadow:none!important}
+html.f2on.f2pg body #xsheet .card>button:last-child{border-bottom:0!important}
+html.f2on.f2pg body #xsheet .btn.go{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-radius:26px!important;box-shadow:none!important;border:0!important}
+html.f2on.f2pg body #xsheet .btn.go::after,html.f2on.f2pg body #xsheet .btn.go .lab::after{display:none!important}
+html.f2on.f2pg body #xsheet :is(input,textarea,select){background:var(--z-tile2)!important;border:0!important;box-shadow:none!important;border-radius:16px!important;color:var(--z-fg)!important}
+html.f2on.f2pg body #xsheet .hint,html.f2on.f2pg body #xsheet p{color:var(--z-mut)}
+/* « Un problème ? Une idée ? » en carte pleine, comme la maquette */
+html.f2on.f2pg body #xsheet #rg-pb{background:var(--z-nuit)!important;color:var(--z-sur)!important;border:0!important;box-shadow:none!important;border-radius:22px!important}
+html.f2on.f2pg body #xsheet #rg-pb *{color:inherit!important}
+html.f2on.f2pg body #xsheet #rg-pb :is(small,span:not(:first-child)){opacity:.8}
+
+/* Mes options : panneau en verre, titre en grand */
+html.f2on body .mo-boite{background:color-mix(in srgb,var(--z-bg) 92%,transparent)!important;-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 30px 60px -24px rgba(0,0,0,.35)!important;border-radius:30px!important}
+html.f2on body .mo-tt b{font-size:24px!important;font-weight:800!important;letter-spacing:-.02em;color:var(--z-fg)!important}
+html.f2on body .mo-tt span{color:var(--z-mut)!important}
+
+/* Réseaux sociaux : même ossature que les autres écrans */
+html.f2on body:not(#z) #v-reseaux:not(#z){color:var(--z-fg)}
+html.f2on body:not(#z) #v-reseaux:not(#z) :is(h2.tecr-h,.rs-t h2,h2:first-of-type){font-size:30px!important;font-weight:800!important;letter-spacing:-.03em}
+html.f2on body:not(#z) #v-reseaux:not(#z) .card{background:var(--z-tile)!important;border:0!important;box-shadow:var(--z-ombre)!important;border-radius:22px!important}
+html.f2on body:not(#z) #v-reseaux:not(#z) .btn.go{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-radius:26px!important;box-shadow:none!important}
+html.f2on body:not(#z) #v-reseaux:not(#z) .btn.go::after{display:none!important}
+html.f2on.f2pg body #xsheet .jr-ok:has(>[data-cadfin]:only-child){display:none!important}
