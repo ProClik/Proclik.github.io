@@ -11,7 +11,7 @@
 <script src="plan-faces.js?v=25" defer></script>
 <script src="plan-reseaux.js?v=8" defer></script>
 <script src="plan-notes.js?v=4" defer></script>
-<script src="plan-photo.js?v=3" defer></script>
+<script src="plan-photo.js?v=4" defer></script>
 <script src="plan-res2d.js?v=1" defer></script>
 <script src="plan-ouvrages.js?v=3" defer></script>
 <script src="plan-print.js?v=3" defer></script>
@@ -754,7 +754,9 @@ function draw(){{const b=$("v-toit");if(b){const ok=!!roofGeo()&&ST.fi===ST.floo
   (OP.get(sg.a)||[]).forEach(o=>{const P=[sg.a[0]+ux*o.p,sg.a[1]+uy*o.p],Q=[sg.a[0]+ux*(o.p+o.w),sg.a[1]+uy*(o.p+o.w)];if(o.k==="porte"&&o.t==="Châssis galandage"){s+=`<polygon points="${quad(P,Q,nx,ny,-sg.t/2-.01,sg.t/2+td+.01)}" fill="url(#sol${sg.ri})" pointer-events="none"/><line x1="${P[0]}" y1="${P[1]}" x2="${P[0]-ux*o.w*.95}" y2="${P[1]-uy*o.w*.95}" stroke="${k["--hot"]}" stroke-width="${u*.14}" stroke-dasharray="${u*.35} ${u*.2}" pointer-events="none"/><line x1="${P[0]}" y1="${P[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${k["--fg"]}" stroke-width="${u*.07}" stroke-dasharray="${u*.15} ${u*.15}" pointer-events="none"/>`;return}
    s+=`<polygon points="${quad(P,Q,nx,ny,-sg.t/2-.01,sg.t/2+td+.01)}" fill="url(#sol${sg.ri})" pointer-events="none"/>`;
    if(o.k==="fenetre"||o.k==="pf")s+=`<g pointer-events="none"><polygon points="${quad(P,Q,nx,ny,-sg.t/2,sg.t/2)}" fill="${k["--surface"]}" stroke="${k["--win"]}" stroke-width="${u*.06}"/><line x1="${P[0]}" y1="${P[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${k["--win"]}" stroke-width="${u*.05}"/></g>`;
-   if(o.k==="porte"||o.k==="pf"){const E=[P[0]+nx*o.w,P[1]+ny*o.w];s+=`<g pointer-events="none"><line x1="${P[0]}" y1="${P[1]}" x2="${E[0]}" y2="${E[1]}" stroke="${k["--fg"]}" stroke-width="${u*.09}"/><path d="M${E[0]} ${E[1]} A${o.w} ${o.w} 0 0 ${ux*ny-uy*nx>0?0:1} ${Q[0]} ${Q[1]}" fill="none" stroke="${k["--muted"]}" stroke-width="${u*.05}" stroke-dasharray="${u*.2} ${u*.15}"/></g>`}})});
+   /* baie coulissante : deux vantaux qui se chevauchent au lieu d'un grand battant (Cyril 22/11, plans lus par Cliky) */
+   if(o.k==="pf"&&o.ouv==="Coulissant"){const M=[(P[0]+Q[0])/2,(P[1]+Q[1])/2],e=sg.t/4,c=o.w*.06;s+=`<g pointer-events="none" stroke="${k["--fg"]}" stroke-width="${u*.07}"><line x1="${P[0]+nx*e}" y1="${P[1]+ny*e}" x2="${M[0]+ux*c+nx*e}" y2="${M[1]+uy*c+ny*e}"/><line x1="${M[0]-ux*c-nx*e}" y1="${M[1]-uy*c-ny*e}" x2="${Q[0]-nx*e}" y2="${Q[1]-ny*e}"/></g>`}
+   else if(o.k==="porte"||(o.k==="pf"&&o.ouv!=="Fixe")){const E=[P[0]+nx*o.w,P[1]+ny*o.w];s+=`<g pointer-events="none"><line x1="${P[0]}" y1="${P[1]}" x2="${E[0]}" y2="${E[1]}" stroke="${k["--fg"]}" stroke-width="${u*.09}"/><path d="M${E[0]} ${E[1]} A${o.w} ${o.w} 0 0 ${ux*ny-uy*nx>0?0:1} ${Q[0]} ${Q[1]}" fill="none" stroke="${k["--muted"]}" stroke-width="${u*.05}" stroke-dasharray="${u*.2} ${u*.15}"/></g>`}})});
  S.forEach(sg=>{const t=TD.get(sg.a);if(!t)return;const L=dist(sg.a,sg.b);if(L<.05)return;s+=`<line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="${k["--hot"]}" stroke-width="${Math.max(u*.42,.1)}" stroke-opacity=".42" stroke-linecap="round" pointer-events="none"/>`});
  if(CL&&ST.mode==="todo")S.forEach(sg=>{if(TD.get(sg.a))return;s+=`<line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="${k["--hot"]}" stroke-width="${u*.18}" stroke-dasharray="${u*.5} ${u*.4}" stroke-opacity=".6" pointer-events="none"/>`});
  S.forEach((sg,x)=>{if(x===shSeg&&!(CL&&SH))s+=`<line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="${k["--hot"]}" stroke-width="${u*.9}" stroke-opacity=".35" stroke-linecap="round" pointer-events="none"/>`;
