@@ -8,6 +8,7 @@
 <script src="boutons-icones.js?v=3" defer></script>
 <script src="icones.js?v=3" defer></script>
 <script src="loupe.js?v=3" defer></script>
+<script src="../espace/plan-notes.js?v=2" defer></script>
 <style>
 /* Layout : onglets étages et pièces, grande planche (plan 2D ou vue 3D) avec barres flottantes, fiches en bas d'écran, liste des cotes par pièce, total pour Cliky. */
 :root{
@@ -825,9 +826,9 @@ function finishTrace(){const T=ST.trace;if(!T||T.length<3){ST.trace=null;draw();
 function endClo(){if(ST.cur&&ST.cur.length<2){R().clos.pop()}ST.cur=null;draw();rows()}
 const HIST=[],REDO=[];
 function snapState(){const cp=x=>x?x.map(y=>({...y})):null,sp=p=>({p:p.slice(),t:TD.get(p),c:COMP.get(p)?{...COMP.get(p)}:null,o:cp(OP.get(p)),n:NT.get(p),ph:cp(PH.get(p)),e:cp(EQ.get(p)),r:RPR.get(p)?RPR.get(p).slice():null});
- return{fi:ST.fi,ri:ST.ri,comb:{...ST.comb},cn:NT.get(ST.comb),cph:cp(PH.get(ST.comb)),floors:ST.floors.map(f=>({nom:f.nom,H:f.H,hdk:f.hdk,hok:f.hok,dal:{...dal(f)},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(rm=>({nom:rm.nom,sol:{...rm.sol},zn:(rm.zn||[]).map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...z.sol}})),n:NT.get(rm),ph:cp(PH.get(rm)),eqp:cp(rm.eqp),clim:rm.clim?{...rm.clim}:null,eqAuto:rm.eqAuto?{...rm.eqAuto}:null,pts:rm.pts.map(sp),clos:rm.clos.map(c=>c.map(sp))}))}))}}
+ return{fi:ST.fi,ri:ST.ri,comb:{...ST.comb},cn:NT.get(ST.comb),cph:cp(PH.get(ST.comb)),floors:ST.floors.map(f=>({nom:f.nom,H:f.H,hdk:f.hdk,hok:f.hok,notes:f.notes&&f.notes.length?f.notes.map(n=>({...n})):null,dal:{...dal(f)},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(rm=>({nom:rm.nom,sol:{...rm.sol},zn:(rm.zn||[]).map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...z.sol}})),n:NT.get(rm),ph:cp(PH.get(rm)),eqp:cp(rm.eqp),clim:rm.clim?{...rm.clim}:null,eqAuto:rm.eqAuto?{...rm.eqAuto}:null,pts:rm.pts.map(sp),clos:rm.clos.map(c=>c.map(sp))}))}))}}
 function loadState(S){COMP.clear();NT.clear();PH.clear();OP.clear();TD.clear();EQ.clear();RPR.clear();const cp=x=>x.map(y=>({...y})),lp=q=>{const p=q.p.slice();if(q.t)TD.set(p,q.t);if(q.c)COMP.set(p,{...q.c});if(q.o)OP.set(p,cp(q.o));if(q.n)NT.set(p,q.n);if(q.ph)PH.set(p,cp(q.ph));if(q.e)EQ.set(p,cp(q.e));if(q.r&&q.r.length)RPR.set(p,q.r.slice());return p};
- ST.floors=S.floors.map(f=>({nom:f.nom,H:f.H,...(f.hdk?{hdk:true}:{}),...(f.hok?{hok:true}:{}),dal:{...f.dal},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(r=>{const rm={nom:r.nom,sol:{...r.sol},...(r.zn&&r.zn.length?{zn:r.zn.map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...SOLDEF,...z.sol}}))}:{}),pts:r.pts.map(lp),clos:r.clos.map(c=>c.map(lp)),...(r.eqp&&r.eqp.length?{eqp:cp(r.eqp)}:{}),...(r.clim?{clim:{...r.clim}}:{}),...(r.eqAuto?{eqAuto:{...r.eqAuto}}:{})};if(r.n)NT.set(rm,r.n);if(r.ph)PH.set(rm,cp(r.ph));return rm})}));
+ ST.floors=S.floors.map(f=>({nom:f.nom,H:f.H,...(f.notes?{notes:f.notes.map(n=>({...n}))}:{}),...(f.hdk?{hdk:true}:{}),...(f.hok?{hok:true}:{}),dal:{...f.dal},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(r=>{const rm={nom:r.nom,sol:{...r.sol},...(r.zn&&r.zn.length?{zn:r.zn.map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...SOLDEF,...z.sol}}))}:{}),pts:r.pts.map(lp),clos:r.clos.map(c=>c.map(lp)),...(r.eqp&&r.eqp.length?{eqp:cp(r.eqp)}:{}),...(r.clim?{clim:{...r.clim}}:{}),...(r.eqAuto?{eqAuto:{...r.eqAuto}}:{})};if(r.n)NT.set(rm,r.n);if(r.ph)PH.set(rm,cp(r.ph));return rm})}));
  ST.comb={...S.comb};if(S.cn)NT.set(ST.comb,S.cn);if(S.cph)PH.set(ST.comb,cp(S.cph));ST.fi=Math.min(S.fi,ST.floors.length-1);ST.ri=Math.max(0,Math.min(S.ri,F().rooms.length-1))}
 function hist(){NOSAVE=false;HIST.push(snapState());if(HIST.length>60)HIST.shift();REDO.length=0;udBtns();if(CL&&!GD)setTimeout(()=>{if(!SH&&!PD&&!TST.warn)toast("C'est fait.","↶ Annuler",()=>undo(),3500)},0)}
 function udBtns(){const u=$("t-undo"),r=$("t-redo");if(u)u.disabled=!HIST.length&&!(ST.trace&&ST.trace.length)&&!ST.cur;if(r)r.disabled=!REDO.length}
@@ -1785,6 +1786,7 @@ function toitExport(){const g=roofGeo(),c=ST.comb;if(!g)return null;const m=comb
 function exportPlan(){if(CL)ST.floors.forEach((f,i)=>syncFoot(i));if(CL)try{cloAuto()}catch(e){}const R=exportPlan0();try{ST.floors.forEach((f,fi)=>{const Rf=R.floors[fi];if(!Rf)return;const S=segs(f);f.rooms.forEach((rm,ri)=>{const P=Rf.pieces[ri];if(!P)return;const ms=S.filter(x=>x.kind==="mur"&&x.ri===ri);(P.murs||[]).forEach((m,i)=>{const e=ms[i]&&EQ.get(ms[i].a);if(e&&e.length)m.equipements=e.map(o=>({...o,a_faire:o.st==="faire"}))});if(!CL)(P.cloisons_a_creer||[]).forEach((c,ci)=>{const cl=rm.clos[ci];if(!cl)return;const L=cl.slice(0,-1).map(a=>{const e=EQ.get(a);return e&&e.length?e.map(o=>({...o,a_faire:o.st==="faire"})):null});if(L.some(Boolean))c.equipements_par_longueur=L});if(rm.eqp&&rm.eqp.length)P.plafond_equipements=rm.eqp.map(o=>({...o,a_faire:o.st==="faire"}));if(rm.clim)P.climatisation={...rm.clim}})})}catch(e){}
  // 18/11 : géométrie simple pour les murs vus de face (devis/murs.html) : segments avec ouvertures, pièces = zones nommées.
  try{R.reperes=repExport()}catch(e){}try{R.geo=ST.floors.map(f=>({nom:f.nom,H:f.H,segs:segs(f).map(x=>({a:x.a.map(r2),b:x.b.map(r2),k:x.kind,ops:(OP.get(x.a)||[]).map(o=>({k:o.k,w:o.w,h:o.h,p:o.p,al:o.al||0}))})),rooms:f.rooms.flatMap((rm,ri)=>{const Z=zinfo(rm);return Z?Z.map(({poly,z},i)=>({nom:z?z.nom:"Pièce "+(i+1),ri,zi:i,pts:poly.map(p=>p.map(r2))})):[{nom:rm.nom,ri,zi:null,pts:rm.pts.map(p=>p.map(r2))}]})}))}catch(e){}
+ /* remarques du client sur le plan (Cyril 22/11) */try{ST.floors.forEach((f,fi)=>{const L=(f.notes||[]).filter(n=>n.txt);if(L.length&&R.floors[fi])R.floors[fi].notes_client=L.map(n=>({x:+n.x.toFixed(2),y:+n.y.toFixed(2),t:n.t,w:n.w,txt:n.txt,d:n.d}))})}catch(e){}
  return R}
 // Faïence murale (formulaire « Vos murs », Cyril 18/11) : une entrée par pièce ou par zone, additionnées pour le calcul (pc.faience).
 function faiExport(rm){const L=Object.values(rm.fai||{}),S=L.reduce((a,x)=>a+(+x.surface_m2||0),0);if(!L.length)return{};
@@ -1880,6 +1882,6 @@ if(GD){document.documentElement.classList.add("gd");
  setTimeout(()=>{ST.cam=null;fit();all();if(n>1){fit();ST.cam={x:VB.x,y:VB.y,w:VB.w}}setTimeout(()=>gdRun(n),450)},500)}
 
 /* Accès étroit pour la vue « murs de face / plafond » de l'artisan (espace/plan-faces.js). */
-try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,undo,redo,vtxN,canU:()=>HIST.length>0,canR:()=>REDO.length>0,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
+try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,undo,redo,vtxN,pt,pxM,setMode,autosave,canU:()=>HIST.length>0,canR:()=>REDO.length>0,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
 })();
 </script>
