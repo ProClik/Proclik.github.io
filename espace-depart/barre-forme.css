@@ -93,3 +93,10 @@
 }
 :root[data-theme="dark"] .f2.f2mic{background:#2A2E3A}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2.f2mic{background:#2A2E3A}}
+/* 23/11 (Cyril) : la barre du bas descend près du bas du téléphone (moins d'espace sous elle), et plus de saccade quand on tire plus bas que le bas */
+@media (max-width:899px){
+  .f2.f2b{bottom:max(10px,calc(env(safe-area-inset-bottom,0px) - 10px))!important}
+  .f2.f2mic{bottom:calc(88px + max(10px,calc(env(safe-area-inset-bottom,0px) - 10px)))!important}
+  html.f2bar body .app{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+}
+html.f2on,html.f2on body{overscroll-behavior-y:none}
