@@ -8,7 +8,7 @@
 <script src="../devis/boutons-icones.js?v=3" defer></script>
 <script src="../devis/icones.js?v=2" defer></script>
 <script src="../devis/loupe.js?v=2" defer></script>
-<script src="plan-faces.js?v=20" defer></script>
+<script src="plan-faces.js?v=21" defer></script>
 <script src="plan-reseaux.js?v=7" defer></script>
 <style>
 /* Layout : onglets étages et pièces, grande planche (plan 2D ou vue 3D) avec barres flottantes, fiches en bas d'écran, liste des cotes par pièce, total pour Cliky. */
@@ -846,9 +846,9 @@ function finishTrace(){const T=ST.trace;if(!T||T.length<3){ST.trace=null;draw();
 function endClo(){if(ST.cur&&ST.cur.length<2){R().clos.pop()}ST.cur=null;draw();rows()}
 const HIST=[],REDO=[];
 function snapState(){const cp=x=>x?x.map(y=>({...y})):null,sp=p=>({p:p.slice(),t:TD.get(p),c:COMP.get(p)?{...COMP.get(p)}:null,o:cp(OP.get(p)),n:NT.get(p),ph:cp(PH.get(p)),e:cp(EQ.get(p))});
- return{fi:ST.fi,ri:ST.ri,comb:{...ST.comb},cn:NT.get(ST.comb),cph:cp(PH.get(ST.comb)),floors:ST.floors.map(f=>({nom:f.nom,H:f.H,hdk:f.hdk,hok:f.hok,dal:{...dal(f)},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(rm=>({nom:rm.nom,sol:{...rm.sol},zn:(rm.zn||[]).map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...z.sol}})),n:NT.get(rm),ph:cp(PH.get(rm)),eqp:cp(rm.eqp),clim:rm.clim?{...rm.clim}:null,pts:rm.pts.map(sp),clos:rm.clos.map(c=>c.map(sp))}))}))}}
+ return{fi:ST.fi,ri:ST.ri,comb:{...ST.comb},cn:NT.get(ST.comb),cph:cp(PH.get(ST.comb)),floors:ST.floors.map(f=>({nom:f.nom,H:f.H,hdk:f.hdk,hok:f.hok,dal:{...dal(f)},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(rm=>({nom:rm.nom,sol:{...rm.sol},zn:(rm.zn||[]).map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...z.sol}})),n:NT.get(rm),ph:cp(PH.get(rm)),eqp:cp(rm.eqp),clim:rm.clim?{...rm.clim}:null,eqAuto:rm.eqAuto?{...rm.eqAuto}:null,pts:rm.pts.map(sp),clos:rm.clos.map(c=>c.map(sp))}))}))}}
 function loadState(S){COMP.clear();NT.clear();PH.clear();OP.clear();TD.clear();EQ.clear();const cp=x=>x.map(y=>({...y})),lp=q=>{const p=q.p.slice();if(q.t)TD.set(p,q.t);if(q.c)COMP.set(p,{...q.c});if(q.o)OP.set(p,cp(q.o));if(q.n)NT.set(p,q.n);if(q.ph)PH.set(p,cp(q.ph));if(q.e)EQ.set(p,cp(q.e));return p};
- ST.floors=S.floors.map(f=>({nom:f.nom,H:f.H,...(f.hdk?{hdk:true}:{}),...(f.hok?{hok:true}:{}),dal:{...f.dal},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(r=>{const rm={nom:r.nom,sol:{...r.sol},...(r.zn&&r.zn.length?{zn:r.zn.map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...SOLDEF,...z.sol}}))}:{}),pts:r.pts.map(lp),clos:r.clos.map(c=>c.map(lp)),...(r.eqp&&r.eqp.length?{eqp:cp(r.eqp)}:{}),...(r.clim?{clim:{...r.clim}}:{})};if(r.n)NT.set(rm,r.n);if(r.ph)PH.set(rm,cp(r.ph));return rm})}));
+ ST.floors=S.floors.map(f=>({nom:f.nom,H:f.H,...(f.hdk?{hdk:true}:{}),...(f.hok?{hok:true}:{}),dal:{...f.dal},esc:(f.esc||[]).map(e=>({...e,c:e.c.slice()})),rooms:f.rooms.map(r=>{const rm={nom:r.nom,sol:{...r.sol},...(r.zn&&r.zn.length?{zn:r.zn.map(z=>({pt:z.pt.slice(),nom:z.nom,sol:{...SOLDEF,...z.sol}}))}:{}),pts:r.pts.map(lp),clos:r.clos.map(c=>c.map(lp)),...(r.eqp&&r.eqp.length?{eqp:cp(r.eqp)}:{}),...(r.clim?{clim:{...r.clim}}:{}),...(r.eqAuto?{eqAuto:{...r.eqAuto}}:{})};if(r.n)NT.set(rm,r.n);if(r.ph)PH.set(rm,cp(r.ph));return rm})}));
  ST.comb={...S.comb};if(S.cn)NT.set(ST.comb,S.cn);if(S.cph)PH.set(ST.comb,cp(S.cph));ST.fi=Math.min(S.fi,ST.floors.length-1);ST.ri=Math.max(0,Math.min(S.ri,F().rooms.length-1))}
 function hist(){NOSAVE=false;HIST.push(snapState());if(HIST.length>60)HIST.shift();REDO.length=0;udBtns();if(CL&&!GD)setTimeout(()=>{if(!SH&&!PD&&!TST.warn)toast("C'est fait.","↶ Annuler",()=>undo(),3500)},0)}
 function udBtns(){const u=$("t-undo"),r=$("t-redo");if(u)u.disabled=!HIST.length&&!(ST.trace&&ST.trace.length)&&!ST.cur;if(r)r.disabled=!REDO.length}
@@ -1271,9 +1271,11 @@ function chkList(){if(CL)return[];const S=segs(),R=[],DK="Je ne sais pas",seen=n
    else if(!opExt(sg)&&o.poseporte===DK)P("Pose du bloc-porte")});
   const w=`${sg.rm.nom} · ${segName(sg)}`;
   if(sg.kind==="mur"&&TD.get(sg.a)==="À vérifier"&&!seen.has(sg.a)){seen.add(sg.a);R.push({t:"seg",x,q:"Travaux sur ce mur",w})}
+  /* éléments posés sur le mur vu de face (prises, arrivées d'eau…) marqués « Je ne sais pas » (Cyril 21/11) */(EQ.get(sg.a)||[]).forEach((e,i)=>{if(e.st==="dk")R.push({t:"eq",x,i,q:e.n||"Élément",w})});
   if(sg.kind==="clo"){const m=COMP.get(sg.a)||{},d=m.dk||{};if(m.etat==="Déjà en place")return;if(d.peau)R.push({t:"seg",x,q:"BA13 par face",w});if(d.plaque)R.push({t:"seg",x,q:"Plaque",w});if(m.porteQ===DK)R.push({t:"seg",x,q:"Porte",w})}});
- F().rooms.forEach((rm,ri)=>{const s=rm.sol||{};if(s.pf==="À refaire")PFG.forEach(([g,lab])=>{if(s[g]===DK)R.push({t:"room",ri,q:lab,w:rm.nom})})});return R}
+ F().rooms.forEach((rm,ri)=>{(rm.eqp||[]).forEach((e,i)=>{if(e.st==="dk")R.push({t:"eqp",ri,i,q:e.n||"Élément au plafond",w:rm.nom})});const s=rm.sol||{};if(s.pf==="À refaire")PFG.forEach(([g,lab])=>{if(s[g]===DK)R.push({t:"room",ri,q:lab,w:rm.nom})})});return R}
 function chkGo(k){const L=CHK||[];if(k<0)return;if(k>=L.length){CHK=null;closeSheet();say(null,"Tout est vérifié ✓ Il ne reste rien à regarder sur ce plan.");return}const it=L[k],d=k>=(chkGo.k||0)?1:-1;chkGo.k=k;
+ if((it.t==="eq"||it.t==="eqp")&&window.PKFACES){CHK=null;closeSheet(true);const sg=it.t==="eq"?segs()[it.x]:null;PKFACES.open(it.t==="eq"?{tab:"mur",ri:sg?F().rooms.indexOf(sg.rm):0,wa:sg&&sg.a,sel:it.i}:{tab:"plaf",ri:it.ri,sel:it.i});return}
  if(it.t==="op")openOp(it.x,it.i);else if(it.t==="seg")openWall(it.x);else openRoom(it.ri);if(!SH)return;SH.chk=k;SH.wz=it.q;SH.wzDir=d;renderSheet();draw()}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#chk-btn")){CHK=chkList();chkGo.k=0;if(CHK.length)chkGo(0)}});
 function chkBtn(){const b=$("chk-btn");if(!b)return;const n=CL?0:chkList().length;if(!CL&&chkBtn.n!==n){chkBtn.n=n;try{if(parent!==window)parent.postMessage({type:"proclik-plan-chk",n},"*")}catch(e){}}b.hidden=!n;b.innerHTML=`<i></i>À vérifier <b>${n}</b>`}
@@ -1833,6 +1835,6 @@ if(GD){document.documentElement.classList.add("gd");
  setTimeout(()=>{ST.cam=null;fit();all();if(n>1){fit();ST.cam={x:VB.x,y:VB.y,w:VB.w}}setTimeout(()=>gdRun(n),450)},500)}
 
 /* Accès étroit pour la vue « murs de face / plafond » de l'artisan (espace/plan-faces.js). */
-try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
+try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,undo,redo,vtxN,canU:()=>HIST.length>0,canR:()=>REDO.length>0,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
 })();
 </script>
