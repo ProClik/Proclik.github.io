@@ -462,7 +462,7 @@ html.leger body #cl-now .cn-i{padding:5px 14px 5px 5px}html.leger body #cl-now .
 #clb-t b .bravo{display:inline-block;vertical-align:-5px;margin-right:6px}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="plan-relief.css?v=22">
-<link rel="stylesheet" href="plan-e2.css?v=13">
+<link rel="stylesheet" href="plan-e2.css?v=16">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client");if(/[?&]client/.test(location.search)&&/[?&]leger/.test(location.search))document.documentElement.classList.add("leger");document.addEventListener("click",e=>{const m=e.target.closest&&e.target.closest("#cl-more");if(!m)return;const on=document.documentElement.classList.toggle("tous");m.setAttribute("aria-pressed",on);m.textContent=on?"✕ Moins d'outils":"⋯ Autres outils"})}catch(e){}</script>
 
 <div class="wrap">
@@ -849,7 +849,7 @@ if(CL)try{const bn=$("clbanner"),x=document.createElement("button"),o=document.c
  const set=h=>{pl();document.documentElement.classList.toggle("clhide",h);o.classList.remove("nouv");o._t=$("clb-t").textContent;try{sessionStorage.setItem("pk-clhide",h?"1":"")}catch(e){}try{clLayout()}catch(e){}dispatchEvent(new Event("resize"))};
  x.onclick=()=>set(true);o.onclick=()=>set(false);try{if(sessionStorage.getItem("pk-clhide"))document.documentElement.classList.add("clhide")}catch(e){}
  o._t=$("clb-t").textContent;new MutationObserver(()=>{const c=$("clb-t").textContent;if(c!==o._t){o._t=c;if(document.documentElement.classList.contains("clhide"))set(false)}}).observe($("clb-t"),{childList:true,characterData:true,subtree:true})}catch(e){}
-/* téléphone couché : client ET Espace (lot 5, 22/11) */{addEventListener("resize",lsPos);try{new MutationObserver(lsPos).observe($("floors"),{childList:true,subtree:true})}catch(e){}setTimeout(lsPos,0)}
+/* consigne sur une ligne : la toucher montre le texte complet (22/11) */try{$("clb-t").addEventListener("click",()=>$("clbanner").classList.toggle("cl-ouvert"));new MutationObserver(()=>$("clbanner").classList.remove("cl-ouvert")).observe($("clb-t"),{childList:true,characterData:true,subtree:true})}catch(e){}/* téléphone couché : client ET Espace (lot 5, 22/11) */{addEventListener("resize",lsPos);try{new MutationObserver(lsPos).observe($("floors"),{childList:true,subtree:true})}catch(e){}setTimeout(lsPos,0)}
 function camFrom(W,mx,my,s){tutStop();const r=svg.getBoundingClientRect(),w=Math.max(2.5,Math.min(60,r.width*s));s=w/r.width;ST.cam={x:W[0]-mx*s,y:W[1]-my*s,w};draw()}
 function pzStart(){const r=svg.getBoundingClientRect(),P=[...PTR.values()];if(!P.length)return;const s=VB.w/r.width;let mx,my,d=0;if(P.length>1){mx=(P[0].x+P[1].x)/2-r.left;my=(P[0].y+P[1].y)/2-r.top;d=Math.hypot(P[0].x-P[1].x,P[0].y-P[1].y)||1}else{mx=P[0].x-r.left;my=P[0].y-r.top}PZ={s0:s,d0:d,W:[VB.x+mx*s,VB.y+my*s]}}
 function pzMove(){if(CL&&clStepOnly())return;const r=svg.getBoundingClientRect(),P=[...PTR.values()];if(!PZ||!P.length)return;let s=PZ.s0,mx,my;if(P.length>1&&PZ.d0){s=PZ.s0*PZ.d0/(Math.hypot(P[0].x-P[1].x,P[0].y-P[1].y)||1);mx=(P[0].x+P[1].x)/2-r.left;my=(P[0].y+P[1].y)/2-r.top}else{mx=P[0].x-r.left;my=P[0].y-r.top}camFrom(PZ.W,mx,my,s)}
