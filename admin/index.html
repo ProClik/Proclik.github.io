@@ -97,7 +97,7 @@ textarea.t{min-height:0;font:inherit;font-size:16px}
   <button class="btn sm" id="voirarch" type="button" style="width:100%" hidden></button>
  </div>
  <div id="p-messages" hidden><div id="messages"></div></div>
- <div id="p-apprend" hidden><div id="apprend"></div></div>
+ <div id="p-apprend" hidden><div id="banc"></div><div id="apprend"></div></div>
  <div id="p-journal" hidden><div class="card" id="journal"></div></div>
  <div id="p-reglages" hidden><div id="reglages"></div></div>
 </section>
@@ -163,7 +163,7 @@ $('#retour').addEventListener('click',function(){COUR=null;vue('liste');rendreLi
 $('#nouveau').addEventListener('click',function(){COUR=null;fiche(null);vue('fiche')});
 document.querySelector('.tabs').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(!b)return;
  [].forEach.call(document.querySelectorAll('[data-tab]'),function(x){x.setAttribute('aria-selected',x===b)});
- ['clients','messages','apprend','journal','reglages'].forEach(function(t){$('#p-'+t).hidden=b.dataset.tab!==t});if(b.dataset.tab==='apprend')apprend();if(b.dataset.tab==='journal')journal();if(b.dataset.tab==='messages')messages();if(b.dataset.tab==='reglages')reglages()});
+ ['clients','messages','apprend','journal','reglages'].forEach(function(t){$('#p-'+t).hidden=b.dataset.tab!==t});if(b.dataset.tab==='apprend'){apprend();if(window.PCBANC)PCBANC()}if(b.dataset.tab==='journal')journal();if(b.dataset.tab==='messages')messages();if(b.dataset.tab==='reglages')reglages()});
 
 /* ---------- fiche ---------- */
 function champ(id,lab,val,type,aide){return '<label class="f" for="'+id+'">'+lab+'</label><input class="t" id="'+id+'" type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'"'+(type==='email'?' autocapitalize="off" autocorrect="off"':'')+(type==='number'?' inputmode="decimal"':'')+'>'+(aide?'<div class="mu" style="margin-top:4px">'+aide+'</div>':'')}
@@ -351,6 +351,6 @@ if(!S){vue('login');$('#aerr').textContent='Adresse du service ProClik absente.'
 else if(lj())charger().then(function(){if(!lj())vue('login')});else vue('login');
 })();
 </script>
-<script src="cliky.js?v=3"></script><script src="donnees.js?v=2"></script>
+<script src="cliky.js?v=3"></script><script src="banc.js?v=1"></script><script src="donnees.js?v=2"></script>
 </body>
 </html>
