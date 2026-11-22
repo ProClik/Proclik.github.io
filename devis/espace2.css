@@ -183,14 +183,14 @@ html body .cards{gap:10px!important}
 html body .cards .card{min-height:104px}
 html body .cards .card>svg{background:transparent!important;padding:0!important;width:28px!important;height:28px!important}
 /* Réponses : lignes fines de 58 px, rond à cocher à droite, une seule coche */
-html body .lq .chips:not(.pics){display:flex!important;flex-direction:column!important;gap:8px!important}
-html body .lq .chip:not(.pic){min-height:58px!important;height:auto!important;max-height:72px;padding:0 52px 0 16px!important;justify-content:flex-start!important;text-align:left!important;border:1px solid var(--e2-line)!important;background:var(--e2-bg)!important;position:relative;font-size:16.5px!important;width:100%!important;display:flex!important;align-items:center;gap:12px;flex:none!important}
-html body .lq .chip:not(.pic):not(.dk)::after{content:"";position:absolute;right:16px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;border:2px solid var(--e2-faint);box-sizing:border-box}
-html body .lq .chip[aria-pressed="true"]{border:1.5px solid var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 10%,var(--e2-tile))!important}
-html body .lq .chip:not(.pic):not(.dk)[aria-pressed="true"]::after{border:0;background:var(--e2-laiton) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
-html body .lq .chip.hasci[aria-pressed="true"] .ci{background:none!important}
-html body .lq .chip.hasci[aria-pressed="true"] .ci>*{display:inline-block!important}
-html body .lq .chip.dk{justify-content:center!important;padding:0 16px!important;background:transparent!important;border-style:dashed!important}
+html body .lq .chips:not(.pics), html body[data-cur="finition"] #app .q .chips:not(.pics){display:flex!important;flex-direction:column!important;gap:8px!important}
+html body .lq .chip:not(.pic), html body[data-cur="finition"] #app .q .chip:not(.pic){min-height:58px!important;height:auto!important;max-height:72px;padding:0 52px 0 16px!important;justify-content:flex-start!important;text-align:left!important;border:1px solid var(--e2-line)!important;background:var(--e2-bg)!important;position:relative;font-size:16.5px!important;width:100%!important;display:flex!important;align-items:center;gap:12px;flex:none!important}
+html body .lq .chip:not(.pic):not(.dk)::after, html body[data-cur="finition"] #app .q .chip:not(.pic):not(.dk)::after{content:"";position:absolute;right:16px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;border:2px solid var(--e2-faint);box-sizing:border-box}
+html body .lq .chip[aria-pressed="true"], html body[data-cur="finition"] #app .q .chip[aria-pressed="true"]{border:1.5px solid var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 10%,var(--e2-tile))!important}
+html body .lq .chip:not(.pic):not(.dk)[aria-pressed="true"]::after, html body[data-cur="finition"] #app .q .chip:not(.pic):not(.dk)[aria-pressed="true"]::after{border:0;background:var(--e2-laiton) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
+html body .lq .chip.hasci[aria-pressed="true"] .ci, html body[data-cur="finition"] #app .q .chip.hasci[aria-pressed="true"] .ci{background:none!important}
+html body .lq .chip.hasci[aria-pressed="true"] .ci>*, html body[data-cur="finition"] #app .q .chip.hasci[aria-pressed="true"] .ci>*{display:inline-block!important}
+html body .lq .chip.dk, html body[data-cur="finition"] #app .q .chip.dk{justify-content:center!important;padding:0 16px!important;background:transparent!important;border-style:dashed!important}
 /* Continuer : pilule pleine, juste le mot */
 html body .btn.go::before,html body .btn.go::after{display:none!important;content:none!important}
 /* Récapitulatif : « Voir tout » */

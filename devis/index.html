@@ -327,7 +327,7 @@ html body #pf-form,html body #pf-later{display:none!important}
 @media (orientation:landscape) and (max-height:520px){#planfull .pf-bar:not(:has(#pf-done.fin)){display:none}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
-<link rel="stylesheet" href="espace2.css?v=4">
+<link rel="stylesheet" href="espace2.css?v=5">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -654,6 +654,8 @@ const D={
   {k:"ou",t:"multi",l:"Où se trouvent les travaux ?",h:"Plusieurs choix possibles, cochez tout ce qui est concerné.",o:["Rez-de-chaussée","Étage(s)","Sous-sol","Combles",DK],sh:i=>i.type==="Maison"||!i.type||i.type===DK},
   {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK},
   {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1},
+  // 22/11 (Cyril) : la hauteur sous plafond est demandée ici, plus dans le plan (pas pour combles / sous la toiture : le plan ne la demande pas).
+  {k:"hsp",t:"chips",l:"Du sol au plafond, vos pièces font environ…",h:"Le plus courant : 2,50 m. Une estimation suffit.",o:["2,40 m","2,50 m","2,60 m","2,70 m","3,00 m",DK],sh:()=>TRV("cloison","doublage","plafond")&&!(S.travaux||[]).some(k=>k==="combles"||k==="rampants")},
   // 18/11 (Cyril) : le client répond le plus possible AVANT le plan, pour que le plan et les murs de face arrivent presque remplis.
   {k:"pcs",t:"multi",l:"Dans quelles pièces sont les travaux ?",h:"Plusieurs choix possibles. Vous ne passerez que dans celles-là.",o:["Cuisine","Salle de bain","WC","Chambre(s)","Séjour","Entrée / couloir","Bureau","Buanderie",DK],sh:()=>TRV(...TPCS,"portes")},
   {k:"nch",t:"step",l:"Combien de chambres ?",h:"Pour les nommer à votre place sur le plan.",min:1,max:8,sh:i=>TRV(...TPCS,"portes")&&(i.pcs||[]).includes("Chambre(s)")},
@@ -879,7 +881,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn" data-openplan="1">${n?"Modifier mon plan":"Dessiner mon plan"}</button>
  <ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul></div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(fsOk()&&!fsOn())fsGo();if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=59");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;setTimeout(fsUpd,500);if(pfSc()){document.documentElement.classList.add("pfsc");if(window.top===window)document.documentElement.classList.add("pfsc-top");else document.body.style.overflow="hidden";pfScUpd.h0=innerHeight;pfScUpd.y=0;pfScUpd()}else document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(fsOk()&&!fsOn())fsGo();if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=60");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;setTimeout(fsUpd,500);if(pfSc()){document.documentElement.classList.add("pfsc");if(window.top===window)document.documentElement.classList.add("pfsc-top");else document.body.style.overflow="hidden";pfScUpd.h0=innerHeight;pfScUpd.y=0;pfScUpd()}else document.body.style.overflow="hidden";updSub()}
 /* Cyril 19/11 : sur iPhone (Safari, page ouverte directement), les barres de Safari se rétrécissent quand on fait glisser la page.
    Le plan garde ses gestes ; une petite poignée en bas sert à faire glisser la page. Dans un cadre (site de l'artisan) Safari ne le permet pas. */
 /* Dans le cadre de la page GHL : le glisser sur la poignée passe à la page GHL (qui doit être un peu plus haute que l'écran, voir le bloc GHL v2) ;
@@ -929,7 +931,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
-const LQ=[["cp","commune"],["type"],["mur"],["isocote"],["age"],["occupe"],["ou","niveau","ascenseur"],["pcs"],["nch"],["cuis"],["sdb"],["sdbeq"],["elec"],["plomb"],["chauf"],["sols"],["plafs"],["parking","acces"]];
+const LQ=[["cp","commune"],["type"],["mur"],["isocote"],["age"],["occupe"],["ou","niveau","ascenseur"],["hsp"],["pcs"],["nch"],["cuis"],["sdb"],["sdbeq"],["elec"],["plomb"],["chauf"],["sols"],["plafs"],["parking","acces"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
@@ -1247,7 +1249,7 @@ addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mfr
  if(d.type==="proclik-murs"){S.murs=d.murs;if(d.sols){S.sols=d.sols;/* sols et plafonds pièce par pièce : renvoyés au plan, qui garde le même calcul (Cyril 18/11) */const pf=document.getElementById("pframe");try{if(pf&&pf.contentWindow)pf.contentWindow.postMessage({type:"proclik-plan-sols",sols:d.sols},"*")}catch(x){}}save()}
  if(d.type==="proclik-murs-finish"){document.getElementById("mursfull").hidden=true;document.body.style.overflow="";render()}});
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
- if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),ou:(S.logement||{}).ou||[],ltype:(S.logement||{}).type||"",rep:{elec:(S.logement||{}).elec||"",plomb:(S.logement||{}).plomb||"",sdb:(S.logement||{}).sdb||"",cuis:(S.logement||{}).cuis||""},toit:S.travaux.includes("rampants")?{forme:R.forme==="Pentes + plafond plat"?"2 pentes":(R.forme||null),hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2"),ft:R.ft||null,ftc:R.ftc||null,ftsz:R.ftsz||null,ftetat:R.ftetat||null}:null},"*");return}
+ if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],prenom:PRE(),ou:(S.logement||{}).ou||[],ltype:(S.logement||{}).type||"",hsp:(S.logement||{}).hsp||"",pcs:(S.logement||{}).pcs||[],nch:(S.logement||{}).nch||0,rep:{elec:(S.logement||{}).elec||"",plomb:(S.logement||{}).plomb||"",sdb:(S.logement||{}).sdb||"",cuis:(S.logement||{}).cuis||""},toit:S.travaux.includes("rampants")?{forme:R.forme==="Pentes + plafond plat"?"2 pentes":(R.forme||null),hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2"),ft:R.ft||null,ftc:R.ftc||null,ftsz:R.ftsz||null,ftetat:R.ftetat||null}:null},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
  if(d.type==="proclik-plan-sheet")return;
  if(d.type==="proclik-plan-trav"&&Array.isArray(d.travaux)){d.travaux.forEach(k=>{if(TRAVAUX.some(t=>t[0]===k)&&!S.travaux.includes(k))S.travaux.push(k)});save();return}

@@ -296,3 +296,5 @@ html body #clbanner #clb-b.okgo:not([hidden]):active{box-shadow:inset 0 3px 8px 
 @media (orientation:landscape) and (max-height:560px){html.client body #clbanner #clb-b.okgo:not([hidden]){min-height:42px;font-size:14.5px;padding:8px 12px}}
 /* Un seul bouton qui pulse : quand « C'est bon » est là, l'outil de l'étape reste visible mais calme. */
 html body #clbanner:has(#clb-b.okgo:not([hidden])) #clb-go{animation:none}
+/* 22/11 : pièces cochées dans le formulaire, proposées en premier */
+html body .qk button.rn-w{outline:1.5px solid var(--fg);outline-offset:-1.5px;font-weight:700}
