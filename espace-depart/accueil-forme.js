@@ -189,11 +189,13 @@ var fiPlan=null;
 function deposer(){
   X.xopen("Cliky","Une photo, une image ou un PDF : choisissez ce qu'il crée",
     '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Les prix d\'un fournisseur</b><small>Facture, devis, bon de livraison ou tarif : Cliky met vos prix à jour et range l\'achat dans le chantier</small></span></button>'+
+    '<button type="button" data-f2dc="prix"><span class="f2dc-i">'+ic("euro")+'</span><span><b>Chercher un prix</b><small>Chez le fournisseur : le prix de votre base en un mot (« BA13 », « laine »…)</small></span></button>'+
     '<button type="button" data-f2dc="plan"><span class="f2dc-i">'+ic("plan")+'</span><span><b>Un plan</b><small>D\'architecte, de vente ou un croquis : Cliky le dessine, pièce par pièce</small></span></button>'+
     '<button type="button" data-f2dc="mur"><span class="f2dc-i">'+ic("photo")+'</span><span><b>Un mur vu de face</b><small>Ouvrez le plan du client, touchez le mur, puis « Photo » : Cliky note ce qui est déjà en place</small></span></button></div>',
     '<button class="btn" data-xclose style="width:100%">Annuler</button>',function(){
       $$("[data-f2dc]").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.f2dc;
         if(k==="four"){X.xclose();if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");return}
+        if(k==="prix"){X.xclose();nav("produits");setTimeout(function(){var q=$("#pr-q")||$("#pr-qc");if(q){q.scrollIntoView({block:"center"});q.focus()}},350);return}
         if(k==="plan"){
           if(!fiPlan){fiPlan=d.createElement("input");fiPlan.type="file";fiPlan.accept="image/*,application/pdf";fiPlan.hidden=true;d.body.appendChild(fiPlan);
             fiPlan.addEventListener("change",function(){var f=fiPlan.files&&fiPlan.files[0];fiPlan.value="";if(!f)return;window.PC_PLAN_PHOTO=f;X.xclose();
