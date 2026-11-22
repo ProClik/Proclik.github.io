@@ -206,3 +206,16 @@ html body .card:active,html body .chip:active,html body .btn:active{transform:sc
 :root[data-coul="noyer"]{--e2-nuit:#4A3A2E}:root[data-coul="noyer"][data-theme="dark"]{--e2-nuit:#D8C3B0}
 :root[data-coul="encre"]{--e2-nuit:#17181D}:root[data-coul="encre"][data-theme="dark"]{--e2-nuit:#FFFFFF}
 :root[data-coul][data-theme="dark"]{--e2-sur:#141927}
+/* 22/11 avis A à Z : fine barre d'avancement qui bouge à chaque écran (sous l'étape), question en grand titre */
+html body #prog .progress{display:block!important;height:4px;margin:6px 0 2px;background:var(--e2-line,rgba(0,0,0,.08));border-radius:4px;overflow:hidden}
+html body #prog .progress b{display:block;height:100%;background:var(--e2-nuit);border-radius:4px;transition:width .45s cubic-bezier(.22,1,.36,1)}
+html body .lq.qt>.q:first-child>.lab{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html body .lq.qt>.q:first-child{padding-top:14px}
+html body .cards .card>span{display:block!important;font-size:13px!important;color:var(--e2-mut)!important;line-height:1.3;margin-top:-6px;text-align:left}
+html body .cards .card{min-height:0!important}
+html body .porte-m{display:block;width:180px;height:auto;margin:6px auto 10px;color:var(--e2-fg)}
+html body .step-meta,html body .step-meta .cheer{font-size:13.5px!important}
+/* iPad/PC : coordonnées sur 2 colonnes, tout tient sur un écran */
+@media (min-width:700px){html body[data-cur="contact"] #app>section{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
+ html body[data-cur="contact"] #app>section>*{grid-column:1/-1}
+ html body[data-cur="contact"] #app>section>.q:has(input[type=text],input[type=tel],input[type=email]){grid-column:auto}}
