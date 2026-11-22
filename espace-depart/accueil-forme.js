@@ -106,7 +106,7 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
      et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
-  if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+CKI+'</span><span class="x"><b>Cliky</b><span>Photo, image ou PDF : il crée pour vous</span></span>'+ic("d")+"</button>";
+  if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+CKI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
 
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   if(B.jour){var L=J.L;
@@ -186,16 +186,35 @@ function perso(){var B=blocs(),N=[["jour","Ma journée"],["afaire","À faire"],[
    Plan : la photo est prise ici, un nouveau plan s'ouvre et Cliky la lit tout de suite (plan-photo.js).
    Mur : la photo se rattache à un mur, donc on ouvre ses plans et on touche le mur. */
 var fiPlan=null;
+function prixTxt(p){var v=Number(p.p!=null?p.p:(p.pu!=null?p.pu:p.pc));if(!isFinite(v)||v<=0)return "";
+  return v.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" € HT"+(p.u?" / "+p.u:"")}
+function scResultats(t){var r=$("#sc-r");if(!r)return;t=(t||"").trim();
+  if(!t){r.innerHTML="";r.hidden=true;return}
+  var L=(window.PCPROD&&PCPROD.chercher)?PCPROD.chercher(t):[];var sa=function(x){return String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()},qq=sa(t);L=L.map(function(p,i){return {p:p,i:i,r:(sa(p.d).indexOf(qq)>=0?0:2)+(p.k==="prestation"?1:0)}}).sort(function(a,b){return a.r-b.r||a.i-b.i}).map(function(o){return o.p});r.hidden=false;
+  if(!L.length){r.innerHTML='<p class="sc-vide">Rien pour « '+esc(t)+' » dans votre base. Scannez le tarif ou la facture du fournisseur : Cliky l\'ajoute.</p>';return}
+  r.innerHTML=L.slice(0,6).map(function(p){var ico=(PCPROD.iconeDe?PCPROD.iconeDe(p):"");
+    return '<button type="button" class="sc-l" data-sc-c="'+esc(p.c||"")+'"><span class="sc-i">'+ico+'</span><span class="sc-d">'+esc(p.d)+(p.ex?'<small>Exemple</small>':"")+'</span><b>'+prixTxt(p)+"</b></button>"}).join("")+
+    (L.length>6?'<button type="button" class="sc-tout" data-sc-tout>Voir les '+L.length+" résultats</button>":"")}
 function deposer(){
-  X.xopen("Cliky","Une photo, un PDF ou un mot : Cliky s'occupe du reste",
+  X.xopen("Scanner","Cherchez un prix, ou prenez une photo : Cliky s'occupe du reste",
+    '<div class="f2sc"><label class="sc-q"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="sc-q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Un produit, un prix… « BA13 »"><button type="button" class="sc-mic" id="sc-mic" aria-label="Dicter">'+ic("mic")+'</button></label><div class="sc-r" id="sc-r" hidden></div></div>'+
+    '<p class="f2sc-t">Ou prenez une photo</p>'+
     '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Les prix d\'un fournisseur</b><small>Facture, devis, bon de livraison ou tarif : Cliky met vos prix à jour et range l\'achat dans le chantier</small></span></button>'+
-    '<button type="button" data-f2dc="prix"><span class="f2dc-i">'+ic("euro")+'</span><span><b>Chercher un prix</b><small>Chez le fournisseur : le prix de votre base en un mot (« BA13 », « laine »…)</small></span></button>'+
     '<button type="button" data-f2dc="plan"><span class="f2dc-i">'+ic("plan")+'</span><span><b>Un plan</b><small>D\'architecte, de vente ou un croquis : Cliky le dessine, pièce par pièce</small></span></button>'+
     '<button type="button" data-f2dc="mur"><span class="f2dc-i">'+ic("photo")+'</span><span><b>Un mur vu de face</b><small>Ouvrez le plan du client, touchez le mur, puis « Photo » : Cliky note ce qui est déjà en place</small></span></button></div>',
-    '<button class="btn" data-xclose style="width:100%">Annuler</button>',function(){
+    '<button class="btn" data-xclose style="width:100%">Fermer</button>',function(){
+      var qi=$("#sc-q");if(qi){qi.addEventListener("input",function(){scResultats(qi.value)})}
+      var r=$("#sc-r");if(r)r.addEventListener("click",function(e){if(e.target.closest("[data-sc-tout],[data-sc-c]")){var t=qi?qi.value:"";X.xclose();nav("produits");
+        setTimeout(function(){var q=$("#pr-q");if(q){q.value=t;q.dispatchEvent(new Event("input",{bubbles:true}))}},350)}});
+      var SR=window.SpeechRecognition||window.webkitSpeechRecognition,mic=$("#sc-mic"),ec=null;
+      if(mic)mic.addEventListener("click",function(){
+        if(!SR){X.toast("Dictée","Touchez le micro du clavier, en bas à côté de la barre d\'espace.");qi.focus();return}
+        if(ec){ec.stop();return}
+        ec=new SR();ec.lang="fr-FR";ec.interimResults=true;mic.classList.add("on");
+        ec.onresult=function(ev){var t="";for(var i=0;i<ev.results.length;i++)t+=ev.results[i][0].transcript;qi.value=t.replace(/[.?!]$/,"");scResultats(qi.value)};
+        ec.onend=ec.onerror=function(){mic.classList.remove("on");ec=null};try{ec.start()}catch(e){ec=null;mic.classList.remove("on")}});
       $$("[data-f2dc]").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.f2dc;
         if(k==="four"){X.xclose();if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");return}
-        if(k==="prix"){X.xclose();nav("produits");setTimeout(function(){var q=$("#pr-q")||$("#pr-qc");if(q){q.scrollIntoView({block:"center"});q.focus()}},350);return}
         if(k==="plan"){
           if(!fiPlan){fiPlan=d.createElement("input");fiPlan.type="file";fiPlan.accept="image/*,application/pdf";fiPlan.hidden=true;d.body.appendChild(fiPlan);
             fiPlan.addEventListener("change",function(){var f=fiPlan.files&&fiPlan.files[0];fiPlan.value="";if(!f)return;window.PC_PLAN_PHOTO=f;X.xclose();
@@ -365,10 +384,10 @@ function auDebut(){var t=new Date(),j=t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t
     var w=$("#welcome"),occupe=$("#pc-ouv")||$("#pc-ouk")||(w&&!w.hidden)||$(".x-scrim.on,#x.on,.sheet.on")||!visible();
     if(occupe)return setTimeout(guette,400);lsS("pc-f2-pj",j);pjOuvre(null)})()}
 
-/* l'entrée « Cliky » du menu (barre du bas, panneau du galet, menu de côté), seulement avec l'option */
+/* l'entrée « Scanner » (mode Cliky) du menu (barre du bas, panneau du galet, menu de côté), seulement avec l'option */
 function entreeMenu(){var nav=$("nav.nav");if(!nav)return;var b=$("#nb-cliky"),ch=false;
   if(!b){b=d.createElement("button");b.type="button";b.id="nb-cliky";b.setAttribute("data-pbx","");b.setAttribute("data-opt","cliky");
-    b.innerHTML='<span class="ico" aria-hidden="true">'+CKI.replace(' class="i"',"")+"</span>Cliky";b.addEventListener("click",function(e){e.preventDefault();e.stopImmediatePropagation();deposer()});nav.appendChild(b);ch=true}
+    b.innerHTML='<span class="ico" aria-hidden="true">'+CKI.replace(' class="i"',"")+"</span>Scanner";b.addEventListener("click",function(e){e.preventDefault();e.stopImmediatePropagation();deposer()});nav.appendChild(b);ch=true}
   var h=!clikyOn();if(b.hidden!==h){b.hidden=h;ch=true}
   if(ch&&window.PCBarre&&PCBarre.applique)PCBarre.applique()}
 entreeMenu();setInterval(entreeMenu,3000);
