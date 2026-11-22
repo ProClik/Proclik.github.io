@@ -1,0 +1,125 @@
+/* Lot 1 du nouvel Espace (maquettes figées du 21/11, FIGE-21-11) : Planning, Clients, Devis, Factures.
+   Seulement l'aspect : le contenu, les boutons et les données restent ceux de l'Espace. Actif avec html.f2on (accueil-forme.js), ?forme=0 = ancien. */
+html.f2on{--z-bg:#F3F3F1;--z-tile:#FBFBFA;--z-tile2:#EEEEEB;--z-fg:#17181D;--z-mut:#737680;--z-faint:#A9ABB2;--z-line:rgba(23,24,29,.07);
+ --z-nuit:var(--f2-act-j,#1B2440);--z-sur:var(--f2-sur-j,#FFFFFF);--z-laiton:#A8823F;--z-rose:#E26D6D;
+ --z-ombre:0 1px 2px rgba(23,24,29,.04),0 10px 26px -18px rgba(23,24,29,.28);--z-ombre-s:0 1px 2px rgba(23,24,29,.05),0 6px 14px -10px rgba(23,24,29,.35);--z-dash:color-mix(in srgb,#17181D 16%,transparent)}
+html.f2on[data-theme="dark"]{--z-bg:#0F1117;--z-tile:#1F232D;--z-tile2:#2A2E3A;--z-fg:#F0F1F4;--z-mut:#A2A6B2;--z-faint:#666B78;--z-line:rgba(255,255,255,.07);
+ --z-nuit:var(--f2-act-n,#EFEBE2);--z-sur:var(--f2-sur-n,#1B2440);--z-laiton:#D4B483;--z-rose:#F09A9A;--z-ombre:none;--z-ombre-s:none;--z-dash:rgba(255,255,255,.16)}
+@media (prefers-color-scheme:dark){html.f2on:not([data-theme="light"]){--z-bg:#0F1117;--z-tile:#1F232D;--z-tile2:#2A2E3A;--z-fg:#F0F1F4;--z-mut:#A2A6B2;--z-faint:#666B78;--z-line:rgba(255,255,255,.07);
+ --z-nuit:var(--f2-act-n,#EFEBE2);--z-sur:var(--f2-sur-n,#1B2440);--z-laiton:#D4B483;--z-rose:#F09A9A;--z-ombre:none;--z-ombre-s:none;--z-dash:rgba(255,255,255,.16)}}
+
+/* ---------- commun aux écrans du lot : fond, titre de page, pilules d'affichage, bouton + rond ---------- */
+html.f2on body,html.f2on body .app{background:var(--z-bg)!important}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z){color:var(--z-fg);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) h2.tecr-h{font-size:30px!important;font-weight:800!important;letter-spacing:-.03em;color:var(--z-fg)!important;margin:4px 0 0!important}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) h2.tecr-h .tecr{display:none!important}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;gap:5px!important;display:flex!important;overflow-x:auto;scrollbar-width:none}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a::-webkit-scrollbar{display:none}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a>button{height:36px!important;padding:0 12px!important;flex:0 0 auto!important;border-radius:18px!important;font-size:13.5px!important;font-weight:600!important;color:var(--z-mut)!important;background:transparent!important;box-shadow:none!important;border:1px solid var(--z-line)!important;white-space:nowrap}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a>button[aria-selected="true"]{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-color:transparent!important}
+
+/* ---------- Planning ---------- */
+html.f2on body #v-planning #ev-add{width:46px!important;height:46px!important;min-width:0!important;min-height:0!important;padding:0!important;border-radius:50%!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:var(--z-ombre-s)!important;display:grid!important;place-items:center;margin-left:auto}
+html.f2on body #v-planning #ev-add .lab{display:contents}
+html.f2on body #v-planning #ev-add .lab>span:not(.ic){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+html.f2on body #v-planning #ev-add .ic{background:none!important;box-shadow:none!important;width:auto;height:auto;color:inherit}
+html.f2on body #v-planning #ev-add svg{width:20px;height:20px;stroke:currentColor}
+html.f2on body #v-planning #ev-add::after,html.f2on body #v-planning #ev-add::before,html.f2on body #v-planning #ev-add .lab::after,html.f2on body #v-planning #ev-add .lab::before,html.f2on body #v-planning #ev-add .ic::after,html.f2on body #v-planning #ev-add .ic::before{display:none!important;content:none!important}
+html.f2on body #v-planning .row.fl-a{align-items:center}
+html.f2on body #v-planning .cal-top h3{font-size:15px!important;font-weight:600!important;color:var(--z-mut)!important;letter-spacing:0}
+html.f2on body #v-planning .cal-top h3 span{color:var(--z-mut)!important}
+html.f2on body #v-planning .cal-nav button{background:var(--z-tile)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;color:var(--z-fg)!important;border-radius:18px!important;height:36px!important;min-width:36px}
+/* semaine : les jours en pastilles, les colonnes en tuiles, les évènements en cartes avec la pastille de couleur */
+html.f2on body #v-planning .wkc{background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}
+html.f2on body #v-planning .wkc-h{border:0!important;gap:4px;margin-bottom:6px}
+html.f2on body #v-planning .wkc-h>div:not(:first-child){background:var(--z-tile)!important;border-radius:16px!important;padding:7px 0 6px!important;color:var(--z-mut)!important;text-transform:none!important;letter-spacing:0!important;font-size:11px!important;font-weight:600!important;box-shadow:var(--z-ombre-s);gap:1px!important}
+html.f2on body #v-planning .wkc-h>div b{background:none!important;box-shadow:none!important;color:var(--z-fg)!important;font-size:18px!important;font-weight:700!important;width:auto!important;height:auto!important;line-height:1.2}
+html.f2on body #v-planning .wkc-h>div small.f2n{font-size:9.5px;font-weight:600;color:var(--z-mut)}
+html.f2on body #v-planning .wkc-h>div.tdy{background:var(--z-nuit)!important;color:color-mix(in srgb,var(--z-sur) 75%,transparent)!important}
+html.f2on body #v-planning .wkc-h>div.tdy b{color:var(--z-sur)!important}
+html.f2on body #v-planning .wkc-h>div.tdy small.f2n{color:var(--z-laiton)}
+html.f2on body #v-planning .wkc-b{gap:4px}
+html.f2on body #v-planning .wkc-col{border:0!important;background:var(--z-tile)!important;border-radius:14px}
+html.f2on body #v-planning .wkc-col.tdy{background:color-mix(in srgb,var(--z-nuit) 6%,var(--z-tile))!important}
+html.f2on body #v-planning .wkc-line{border-top-color:var(--z-line)!important;opacity:.6}
+html.f2on body #v-planning .wkc-hr{font-family:inherit!important;color:var(--z-faint)!important;font-size:10.5px!important}
+html.f2on body #v-planning .wkc-col .ev{left:2px!important;right:2px!important;border-radius:12px!important;padding:6px 6px 5px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;color:var(--z-fg)!important}
+html.f2on[data-theme="dark"] body #v-planning .wkc-col .ev:not(.free){background:#2A2E3A!important}
+html.f2on body #v-planning .wkc-col .ev::before{left:6px!important;top:7px!important;bottom:auto!important;width:7px!important;height:7px!important;border-radius:50%!important;background:var(--c)!important}
+html.f2on body #v-planning .wkc-col .ev b{color:var(--z-fg)!important;font-size:10.5px!important;font-weight:700!important;padding-top:10px;display:block}
+html.f2on body #v-planning .wkc-col .ev small{color:var(--z-mut)!important;font-size:9.5px!important;font-family:inherit!important}
+html.f2on body #v-planning .wkc-col .ev:is(.court,.f2c) b{padding-top:0;padding-left:10px}
+html.f2on body #v-planning .wkc-col .ev.f2c small{padding-left:10px}
+html.f2on body #v-planning .wkc-col .ev b{hyphens:manual!important;-webkit-hyphens:manual!important;overflow-wrap:normal!important;word-break:normal!important}
+html.f2on body #v-planning .wkc-col .ev:is(.court,.f2c) b{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;display:block!important;-webkit-line-clamp:unset!important;line-height:1.15!important}
+html.f2on body #v-planning .wkc-col .ev.court{padding-top:0!important;padding-bottom:0!important;display:flex!important;align-items:center}
+html.f2on body #v-planning .wkc-col .ev.court b{font-size:9.5px!important}
+html.f2on body #v-planning .wkc-col .ev.court::before{top:50%!important;margin-top:-3.5px}
+html.f2on body #v-planning .wkc-col .ev.f2c::before{top:10px!important}
+html.f2on body #v-planning .wkc-col .ev.free{background:transparent!important;box-shadow:none!important;border:1.5px dashed var(--z-dash)!important}
+html.f2on body #v-planning .wkc-col .ev.free b{color:var(--z-mut)!important;padding-top:0;font-weight:600!important}
+html.f2on body #v-planning .wkc-col .ev.free::before{display:none!important}
+html.f2on body #v-planning .wkc-col .ev.tent{border:1.5px dashed color-mix(in srgb,var(--c) 60%,transparent)!important}
+html.f2on body #v-planning .wkc-col .ev.f2en{background:var(--z-nuit)!important}
+html.f2on body #v-planning .wkc-col .ev.f2en b{color:var(--z-sur)!important}
+html.f2on body #v-planning .wkc-col .ev.f2en small{color:color-mix(in srgb,var(--z-sur) 70%,transparent)!important}
+html.f2on body #v-planning .wkc-col .ev.sel{outline:2px solid var(--z-nuit);outline-offset:1px}
+/* mois et jour : mêmes tuiles */
+html.f2on body #v-planning :is(.mo,.dyc,.card){background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;border-radius:22px!important}
+html.f2on body #v-planning .mo-g .tdy .n{background:var(--z-nuit)!important;color:var(--z-sur)!important}
+html.f2on body #v-planning .cal-key .seg{background:var(--z-tile2)!important;box-shadow:none!important}
+
+/* ---------- Clients, Devis, Factures : même ossature (titre, + rond, pilules, carte vedette, listes) ---------- */
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf{position:relative}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-top{padding-right:58px;min-height:52px;align-items:flex-end!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-n{font-size:13px!important;color:var(--z-mut)!important;font-weight:500!important}
+/* le gros bouton « Ajouter / Créer / Nouvelle » devient le + rond en haut à droite (il garde son texte pour la lecture d'écran) */
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a{position:absolute!important;top:2px;right:0;z-index:2;width:46px!important;height:46px!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:50%!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:var(--z-ombre-s)!important;display:grid!important;place-items:center;order:-1}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab{display:contents}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab>span:not(.ic){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .ic{background:none!important;box-shadow:none!important;width:auto!important;height:auto!important;color:inherit!important;margin:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a svg{width:20px;height:20px;stroke:currentColor}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a :is(.ic svg:not(:first-child)){display:none}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a::before,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a::after,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab::after,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab::before{display:none!important;content:none!important}
+/* les tuiles de tri deviennent des pilules « À suivre 7 » */
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button{display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:6px!important;grid-template:none!important;min-height:0!important;height:36px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>*{position:static!important;margin:0!important;line-height:1.1!important;transform:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button[aria-selected="true"]>:is(span,b){color:var(--z-sur)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button:not([aria-selected="true"])>:is(span,b){color:var(--z-mut)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>:is(svg,em,i){display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>span{font-size:13.5px!important;font-weight:600!important;color:inherit!important;position:static!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>b.tm-n{font-size:12px!important;font-weight:600!important;opacity:.75;color:inherit!important;position:static!important;line-height:1}
+/* recherche */
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-cherche{height:52px!important;border-radius:26px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;padding:0 18px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-cherche input{font-size:15px!important;background:none!important;border:0!important;box-shadow:none!important;color:var(--z-fg)!important}
+/* carte vedette (à valider ce soir, à envoyer) */
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .card.cf-hero{background:var(--z-tile)!important;border:0!important;border-radius:28px!important;padding:22px 20px 20px!important;box-shadow:0 2px 4px rgba(23,24,29,.04),0 22px 40px -24px rgba(23,24,29,.4)!important}
+html.f2on[data-theme="dark"] body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .card.cf-hero{box-shadow:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero small{color:var(--z-mut)!important;text-transform:none!important;letter-spacing:0!important;font-weight:600!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero b{font-size:46px!important;font-weight:700!important;letter-spacing:-.04em!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go{border-radius:26px!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:none!important;min-height:52px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go .ic{display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go .lab{justify-content:center}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go::after{display:none!important}
+/* titres de bloc et listes à plat, séparées d'un trait fin */
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .bk{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .sec-h h2.ti{font-size:19px!important;font-weight:700!important;letter-spacing:-.02em;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .sec-h h2.ti .ti-ic{display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .sec-h>span{background:none!important;box-shadow:none!important;padding:0!important;color:var(--z-mut)!important;font-weight:500!important;font-size:13px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .card:not(.cf-hero){background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-l .cf-li{background:transparent!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--z-line)!important;border-radius:0!important;padding:13px 2px!important;margin:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-l .cf-li:last-child{border-bottom:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-av{width:40px!important;height:40px!important;border-radius:50%!important;background:var(--z-tile2)!important;box-shadow:none!important;color:var(--z-fg)!important;font-size:13px!important;font-weight:700!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-av svg{width:17px;height:17px;color:var(--z-mut)}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx b{font-size:16px!important;font-weight:600!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx small{color:var(--z-mut)!important;font-size:13px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx small.cf-et{color:var(--z-fg)!important;font-weight:500!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx small.cf-et.on{color:var(--z-fg)!important;font-weight:600!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .go{color:var(--z-faint)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-m b{font-size:15px!important;font-weight:600!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-m .pill{background:none!important;box-shadow:none!important;padding:0!important;font-size:12px!important;font-weight:500!important;color:var(--z-mut)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-m .pill:is(.todo,.warn,.rouge,.alerte){color:var(--z-rose)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .hint{background:none!important;box-shadow:none!important;padding:0 2px!important;color:var(--z-mut)!important;font-size:13px!important;border:0!important}
+html.f2on body #v-factures .cf-badge{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;color:var(--z-mut)!important;font-size:13px!important;font-weight:500!important;min-height:0!important}
+html.f2on body #v-factures .cf-badge svg{width:14px;height:14px}
+html.f2on body #v-factures .cf-top{flex-wrap:wrap!important}
