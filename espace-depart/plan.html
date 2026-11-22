@@ -13,6 +13,7 @@
 <script src="plan-notes.js?v=1" defer></script>
 <script src="plan-res2d.js?v=1" defer></script>
 <script src="plan-ouvrages.js?v=1" defer></script>
+<script src="plan-print.js?v=1" defer></script>
 <style>
 /* Layout : onglets étages et pièces, grande planche (plan 2D ou vue 3D) avec barres flottantes, fiches en bas d'écran, liste des cotes par pièce, total pour Cliky. */
 :root{
@@ -1839,6 +1840,6 @@ if(GD){document.documentElement.classList.add("gd");
  setTimeout(()=>{ST.cam=null;fit();all();if(n>1){fit();ST.cam={x:VB.x,y:VB.y,w:VB.w}}setTimeout(()=>gdRun(n),450)},500)}
 
 /* Accès étroit pour la vue « murs de face / plafond » de l'artisan (espace/plan-faces.js). */
-try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,undo,redo,vtxN,canU:()=>HIST.length>0,canR:()=>REDO.length>0,pt,pxM,openWall,openOp,openRoom,setMode,bulle:t=>{try{bulle(t)}catch(e){}},autosave,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
+try{window.PKPLAN={ST,F,segs,inward,dist,OP,EQ,TD,escRect,escW,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,undo,redo,vtxN,canU:()=>HIST.length>0,canR:()=>REDO.length>0,pt,pxM,openWall,openOp,openRoom,setMode,bulle:t=>{try{bulle(t)}catch(e){}},autosave,get SH(){return SH},get PD(){return PD},CL}}catch(e){}
 })();
 </script>
