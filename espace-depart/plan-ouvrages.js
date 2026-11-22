@@ -9,6 +9,7 @@ const K=()=>window.PKPLAN,$=id=>document.getElementById(id),NS="http://www.w3.or
 const MUR={cv:"Caisson",rt:"Retombée",bwc:"Bâti WC",verr:"Verrière",verp:"Verrière"},HAUT={rt:1};
 const CSS=`#ou-g .ou{fill:url(#ou-hv);stroke:var(--fg);vector-effect:non-scaling-stroke;stroke-width:1.4}
 #ou-g .ou.dsh{stroke-dasharray:6 4;fill-opacity:.7}
+#ou-g .zb{fill:rgba(94,139,168,.10);stroke:#5E8BA8;vector-effect:non-scaling-stroke;stroke-width:1.4;stroke-dasharray:8 5}
 #ou-g .hv{stroke:var(--fg);stroke-width:.012;opacity:.55}
 #ou-g .vr{fill:var(--surface,#fff);stroke:var(--fg);vector-effect:non-scaling-stroke;stroke-width:1.2}
 #ou-g .vl{stroke:#5E8BA8;vector-effect:non-scaling-stroke;stroke-width:1.6}
@@ -33,6 +34,8 @@ function draw(){const P=K(),svg=$("svg");if(!P||!svg||P.CL)return;let g=svg.quer
    const m=[(A[0]+B[0])/2+n[0]*(Math.max(p,.05)+fs*1.1),(A[1]+B[1])/2+n[1]*(Math.max(p,.05)+fs*1.1)];
    s+=`<text x="${f2(m[0])}" y="${f2(m[1]+fs*.35)}" font-size="${f2(fs)}" text-anchor="middle">${MUR[e.t]}</text>`})});
  /* caissons au plafond : pointillés */
+ /* zones de plafond plus bas (22/11) : rectangle bleu en pointillés + hauteur depuis le sol */
+ const Hc=H();P.F().rooms.forEach(rm=>(rm.eqp||[]).forEach(e=>{if(e.t!=="zb")return;const w=(e.w||200)/100,l=(e.l||150)/100,hz=((Hc-(e.hh!=null?e.hh:20))/100).toFixed(2).replace(".",",");s+=`<rect class="zb" x="${f2(e.x-w/2)}" y="${f2(e.y-l/2)}" width="${f2(w)}" height="${f2(l)}"/><text x="${f2(e.x)}" y="${f2(e.y+fs*.35)}" font-size="${f2(fs)}" text-anchor="middle">Plafond à ${hz} m</text>`}));
  P.F().rooms.forEach(rm=>(rm.eqp||[]).forEach(e=>{if(e.t!=="cp")return;const w=(e.w||200)/100,l=(e.l||15)/100;s+=`<rect class="ou dsh" x="${f2(e.x-w/2)}" y="${f2(e.y-l/2)}" width="${f2(w)}" height="${f2(l)}"/><text x="${f2(e.x)}" y="${f2(e.y+l/2+fs*1.2)}" font-size="${f2(fs)}" text-anchor="middle">Caisson −${Math.round(e.hh||15)}</text>`}));
  if(!s)return;g=document.createElementNS(NS,"g");g.id="ou-g";g.setAttribute("pointer-events","none");
  g.setAttribute("stroke-width",f2(fs*.3));g.innerHTML=`<defs><pattern id="ou-hv" width=".07" height=".07" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="hv" x1="0" y1="0" x2="0" y2=".07"/></pattern></defs>`+s;
