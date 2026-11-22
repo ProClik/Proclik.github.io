@@ -12,6 +12,7 @@ var lsS=function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 var toast=function(a,b){if(X&&X.toast)X.toast(a,b)};
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))SERVICE='';
 var C=[['nuit','Bleu nuit','#1B2440','#EFEBE2'],['sapin','Sapin','#2F4A3E','#A9CDB8'],['canard','Canard','#1F5560','#94CBD3'],['ardoise','Ardoise','#3A5470','#B3C7DE'],['noyer','Noyer','#4A3A2E','#D8C3B0'],['encre','Encre','#17181D','#FFFFFF']];
+var FC=new URL('../espace/fc/',location.href).href;
 var info=function(k){for(var i=0;i<C.length;i++)if(C[i][0]===k)return C[i];return C[0]};
 var espaceCoul=function(){var k=lsG('pc-couleur-espace','nuit');return info(k)[0]};
 var reg=function(){var r=lsG('pc-form-coul',null)||{};return {suivre:r.suivre!==false,choix:info(r.choix||'nuit')[0]}};
@@ -27,18 +28,20 @@ function ouvrir(){
   var r=reg();
   function rend(){
     $$('[data-fc]').forEach(function(b){var k=b.getAttribute('data-fc');b.setAttribute('aria-checked',String(k==='espace'?r.suivre:(!r.suivre&&r.choix===k)))});
-    var c=info(affichee(r)),ap=$('#fc-ap');if(ap){ap.style.background=nuitActive()?c[3]:c[2];ap.style.color=nuitActive()?'#141927':'#fff'}
+    var c=info(affichee(r));['j','n'].forEach(function(t){var im=$('#fc-im-'+t);if(im)im.src=FC+c[0]+'-'+t+'.jpg'});
     var t=$('#fc-nom');if(t)t.textContent=(r.suivre?'Comme mon Espace · ':'')+c[1];
   }
   X.xopen('Couleur de mon formulaire','Ce que voient vos clients quand ils demandent un devis',
-   '<p class="rg-lead">Les boutons du formulaire prennent cette couleur. Le laiton reste la touche ProClik pour ce qui est choisi.</p>'+
+   '<div class="fc-apw"><figure><img id="fc-im-j" alt="Votre formulaire de jour"><figcaption>Jour</figcaption></figure><figure><img id="fc-im-n" alt="Votre formulaire de nuit"><figcaption>Nuit</figcaption></figure></div>'+
+   '<p class="fc-nomw">Votre formulaire · <b id="fc-nom"></b></p>'+
    '<div class="fc-l" role="radiogroup" aria-label="Couleur du formulaire">'+
    '<button type="button" role="radio" class="fc-esp" data-fc="espace"><span class="fc-rd" style="background:conic-gradient('+C.map(function(x,i){return x[2]+' '+(i*60)+'deg '+((i+1)*60)+'deg'}).join(',')+')"></span><span class="tx"><b>Comme mon Espace</b><small>Si vous changez la couleur de l\'Espace, le formulaire suit</small></span></button>'+
    '<div class="fc-g">'+C.map(function(x){return '<button type="button" role="radio" data-fc="'+x[0]+'"><span class="fc-rd" style="background:'+x[2]+'"></span><small>'+x[1]+'</small></button>'}).join('')+'</div></div>'+
-   '<div class="fc-apw" aria-hidden="true"><small>Aperçu sur le formulaire · <span id="fc-nom"></span></small><div class="fc-ap" id="fc-ap">Continuer</div></div>'+
+   '<button type="button" class="fc-autre" id="fc-autre">Une autre couleur ? Demandez-la, on vous la crée</button>'+
    '<button type="button" class="btn go" id="fc-ok" style="width:100%;margin-top:14px">Enregistrer</button>');
   rend();
   $$('[data-fc]').forEach(function(b){b.addEventListener('click',function(){var k=b.getAttribute('data-fc');if(k==='espace')r.suivre=true;else{r.suivre=false;r.choix=k}rend()})});
+  $('#fc-autre').addEventListener('click',function(){X.xclose();if(window.PCREG&&PCREG.ecrire)PCREG.ecrire('Je voudrais une autre couleur pour mon formulaire (et mon Espace) : ');});
   $('#fc-ok').addEventListener('click',function(){
     lsS('pc-form-coul',r);majLigne();
     envoyer().then(function(ok){X.xclose();toast('Couleur enregistrée',ok?'Votre formulaire la prend tout de suite.':'Gardée sur cet appareil : elle partira quand l\'Espace sera connecté.')});
