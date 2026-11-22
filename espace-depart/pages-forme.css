@@ -157,3 +157,26 @@ html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-pane .card{background:var(-
 html.f2on body:not(#z) #v-chantiers:not(#z) .tip{background:var(--z-tile)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;border-radius:18px!important}
 html.f2on.f2nb #xsheet #x-close{display:none!important}
 html.f2on #xsheet #pl-frame{background:transparent!important;border-radius:0!important}
+/* « Couleur de mon formulaire » à la forme de « Votre couleur » (22/11) : aperçus du vrai formulaire entier, ronds de couleur, choix entouré (plus de beige) */
+html.f2on .fc-apw{gap:12px;margin:0 0 6px}
+html.f2on .fc-apw figure{flex:0 1 auto;max-width:none;display:grid;gap:6px;justify-items:center}
+html.f2on .fc-apw img{width:auto;max-width:100%;height:min(330px,40dvh);aspect-ratio:390/844;object-fit:contain;border-radius:14px;box-shadow:0 0 0 1px var(--z-line),var(--z-ombre)!important;background:var(--z-tile2)}
+html.f2on .fc-apw figcaption{font-size:13px;color:var(--z-mut)}
+html.f2on .fc-nomw{text-align:center;color:var(--z-mut)}html.f2on .fc-nomw b{color:var(--z-fg)}
+html.f2on .fc-l [aria-checked]{border:0!important;background:none!important;box-shadow:none!important}
+html.f2on .fc-l .fc-esp{background:var(--z-tile)!important;border-radius:18px;box-shadow:var(--z-ombre-s)!important}
+html.f2on .fc-l .fc-esp[aria-checked="true"]{box-shadow:0 0 0 2px var(--z-fg)!important}
+html.f2on .fc-g{display:flex;justify-content:space-between;gap:6px;padding:6px 6px 0}
+html.f2on .fc-g button{padding:0!important;gap:8px;position:relative;min-width:0}
+html.f2on .fc-g button small{font-size:11.5px;color:var(--z-mut)}
+html.f2on .fc-g .fc-rd{width:42px;height:42px;position:relative;box-shadow:0 1px 2px rgba(23,24,29,.1),0 8px 18px -10px rgba(23,24,29,.4)}
+html.f2on .fc-g .fc-rd::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;transition:border-color .25s}
+html.f2on .fc-g button[aria-checked="true"] .fc-rd::after{border-color:var(--z-fg)}
+html.f2on .fc-g button[aria-checked="true"] small{color:var(--z-fg);font-weight:700}
+html.f2on #fc-autre{color:var(--z-nuit)}
+/* interrupteurs (Réglages, options) : à la couleur choisie pour l'Espace */
+html.f2on body .sw.on{background:var(--z-nuit)!important}
+html.f2on body .sw.on::after,html.f2on body .sw.on>i{background:var(--z-sur)!important}
+/* la couleur choisie (« Votre couleur ») remplace le bleu nuit partout : tout ce qui utilisait encore --n1-nuit la suit */
+html.f2on:root,html.f2on:root[data-theme="dark"],html.f2on:root[data-theme="light"]{--n1-nuit:var(--z-nuit);--n1-nuit-fg:var(--z-sur)}
+html.f2on body .mo-nv{background:var(--z-nuit)!important}
