@@ -6,7 +6,11 @@
    Aussi : la légende des matériaux quitte la barre du bas et passe dans l'aide « ? » (à côté du zoom). */
 (function(){
 "use strict";
-if(/[?&]client/.test(location.search))return;
+/* Côté client (plan du formulaire, Cyril 22/11) : « Une remarque » sur une pièce, un mur, une fenêtre, une porte
+   (« j'ai une verrière ici », « j'en voudrais une »…), pendant le plan ou à la fin. Texte ou dictée, pas de photo
+   (les photos ont leur étape dans le formulaire). Envoyées avec le plan (notes_client), vues dans l'Espace en épingles
+   claires marquées « Client » et reprises dans le pré-devis. */
+const CLI=/[?&]client/.test(location.search);
 const K=()=>window.PKPLAN,$=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const IC={mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',cam:'<path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',home:'<path d="M4 11l8-6.5 8 6.5M6.5 9.5V19h11V9.5"/>',nx:'<path d="M9 5l7 7-7 7"/>',note:'<path d="M6 3.5h9l4 4V20.5H6z"/><path d="M15 3.5v4h4M9 12h7M9 15.5h7"/>'};
@@ -82,7 +86,7 @@ function pins(){const svg=$("svg"),P=K();if(!svg||!P||!P.F)return;let g=svg.quer
  const k=P.pxM(1);g=document.createElementNS("http://www.w3.org/2000/svg","g");g.id="nt-g";g.setAttribute("pointer-events","none");let s="";
  const hl=(N&&N.cur)?N.cur:(N&&N.mode==="rep"&&L[N.rep[N.k]])?L[N.rep[N.k]]:null;
  if(hl){const e=hl.el||elOf(hl);if(e){if(e.t==="seg"||e.t==="op"){const sg=P.segs()[e.x];if(sg)s+=`<line class="nt-hl" x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke-width="${k*12}"/>`}else if(e.t==="room"){const rm=P.F().rooms[e.ri];if(rm)s+=`<polygon class="nt-hlr" points="${rm.pts.map(p=>p.join(",")).join(" ")}"/>`}}}
- L.forEach((n,i)=>{if(!on&&n.fait)return;const r=k*12,x=n.x,y=n.y;s+=`<g class="nt-pin${n.fait?" fait":""}" transform="translate(${x} ${y})"><path d="M0 0 C ${-r*.9} ${-r*1.1} ${-r*1.05} ${-r*1.5} ${-r*1.05} ${-r*2.05} A ${r*1.05} ${r*1.05} 0 1 1 ${r*1.05} ${-r*2.05} C ${r*1.05} ${-r*1.5} ${r*.9} ${-r*1.1} 0 0Z"/><text y="${-r*1.72}" font-size="${r*1.15}">${i+1}</text></g>`});
+ L.forEach((n,i)=>{if(!on&&n.fait)return;const r=k*12,x=n.x,y=n.y;s+=`<g class="nt-pin${n.fait?" fait":""}${n.cli&&!CLI?" cli":""}" transform="translate(${x} ${y})"><path d="M0 0 C ${-r*.9} ${-r*1.1} ${-r*1.05} ${-r*1.5} ${-r*1.05} ${-r*2.05} A ${r*1.05} ${r*1.05} 0 1 1 ${r*1.05} ${-r*2.05} C ${r*1.05} ${-r*1.5} ${r*.9} ${-r*1.1} 0 0Z"/><text y="${-r*1.72}" font-size="${r*1.15}">${n.cli&&!CLI?"C":i+1}</text></g>`});
  if(N&&N.cur&&N.cur.x!=null&&N.mode==="pose"){const r=k*12;s+=`<g class="nt-pin new" transform="translate(${N.cur.x} ${N.cur.y})"><circle r="${r*.45}"/></g>`}
  g.innerHTML=s;svg.appendChild(g)}
 let OBS=null;function watch(){const svg=$("svg");if(!svg||OBS)return;OBS=new MutationObserver(()=>{if(!svg.querySelector("#nt-g"))pins()});OBS.observe(svg,{childList:true})}
@@ -122,7 +126,11 @@ html.nt-on #cltools,html.nt-on #legend,html.nt-on #sheet,html.nt-on #opp,html.nt
 #nt-card .lnk{appearance:none;border:0;background:none;color:var(--muted);font:700 13.5px var(--f);text-decoration:underline;cursor:pointer;padding:8px 2px}
 #nt-card .lnk.del{color:#C0392B}
 #svg .nt-pin path{fill:#1B2440;stroke:#fff;stroke-width:1.5px;vector-effect:non-scaling-stroke}#svg .nt-pin text{fill:#fff;font-weight:800;text-anchor:middle;font-family:var(--f)}
-#svg .nt-pin.fait path{fill:#8A90A0}#svg .nt-pin.new circle{fill:#B8924F;stroke:#fff;stroke-width:2px;vector-effect:non-scaling-stroke}
+#svg .nt-pin.fait path{fill:#8A90A0}
+#svg .nt-pin.cli path{fill:#fff;stroke:#1B2440;stroke-width:2px}#svg .nt-pin.cli text{fill:#1B2440}:root[data-theme="dark"] #svg .nt-pin.cli path{fill:#1B2440;stroke:#F2EEE4}:root[data-theme="dark"] #svg .nt-pin.cli text{fill:#F2EEE4}
+#nt-cli{appearance:none;display:inline-flex;white-space:nowrap;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;font:800 14px var(--f);padding:0 14px;min-height:40px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.06)}#nt-cli svg{width:18px;height:18px}#nt-cli em{font-style:normal;background:var(--fg);color:var(--surface);border-radius:999px;min-width:20px;height:20px;display:inline-grid;place-items:center;font-size:12px;padding:0 5px}
+html.nt-on #nt-cli{background:var(--fg);color:var(--surface)}
+#nt-cliw{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:12px}html.nt-on #nt-cliw{display:none}#svg .nt-pin.new circle{fill:#B8924F;stroke:#fff;stroke-width:2px;vector-effect:non-scaling-stroke}
 :root[data-theme="dark"] #svg .nt-pin path{fill:#F2EEE4;stroke:#1B2440}:root[data-theme="dark"] #svg .nt-pin text{fill:#1B2440}
 #svg .nt-hl{stroke:#B8924F;stroke-linecap:round;opacity:.55;animation:nthl 1.4s ease-in-out infinite}#svg .nt-hlr{fill:#B8924F;opacity:.22;animation:nthl 1.4s ease-in-out infinite}
 @keyframes nthl{50%{opacity:.18}}
@@ -142,27 +150,30 @@ function overlay(on){let o=$("nt-ov");if(!on){if(o)o.remove();return}if(o)return
 function tap(e){const P=K(),p=P.pt(e);
  /* une épingle existante sous le doigt : on la rouvre */
  const L=notes(),r=P.pxM(22);const j=L.findIndex(n=>Math.hypot(n.x-p[0],n.y-p[1]+P.pxM(14))<r);if(j>=0){N={mode:"pose",cur:{...L[j],idx:j}};render();pins();return}
- const h=hit(p);if(!h){toast("Touchez un mur, une pièce, une porte ou le sol");return}
+ const h=hit(p);if(!h){toast(CLI?"Touchez une pièce, un mur, une fenêtre ou une porte":"Touchez un mur, une pièce, une porte ou le sol");return}
  if(N&&N.cur&&N.cur.idx==null&&String(N.cur.txt||"").trim())keep();
  N={mode:"pose",cur:{x:p[0],y:p[1],t:h.t,w:h.w,txt:"",el:h}};render();pins();setTimeout(()=>{const t=$("nt-tx");if(t&&matchMedia("(pointer:fine)").matches)t.focus()},60)}
 function keep(){const c=N&&N.cur;if(!c)return;const txt=String(c.txt||"").trim();if(!txt&&!(c.ph&&c.ph.length)){N.cur=null;return}
- const P=K();try{P.hist()}catch(e){}const L=notes(),o={x:c.x,y:c.y,t:c.t,w:c.w,txt,...(c.ph&&c.ph.length?{ph:c.ph}:{}),d:c.d||new Date().toISOString().slice(0,10)};if(c.fait)o.fait=1;
+ const P=K();try{P.hist()}catch(e){}const L=notes(),o={x:c.x,y:c.y,t:c.t,w:c.w,txt,...(c.ph&&c.ph.length?{ph:c.ph}:{}),d:c.d||new Date().toISOString().slice(0,10)};if(c.fait)o.fait=1;if(CLI||c.cli)o.cli=1;
  if(c.idx!=null)L[c.idx]=o;else L.push(o);N.cur=null;save()}
 function save(){const P=K();try{P.draw();P.notify();P.autosave&&P.autosave()}catch(e){}badge()}
-function badge(){const b=document.querySelector('.cltool[data-cl="notes"]');if(!b)return;const n=todo();let em=b.querySelector("em");if(!n){if(em)em.remove();return}if(!em){em=document.createElement("em");b.appendChild(em)}em.textContent=n}
+function badge(){cliBadge();const b=document.querySelector('.cltool[data-cl="notes"]');if(!b)return;const n=todo();let em=b.querySelector("em");if(!n){if(em)em.remove();return}if(!em){em=document.createElement("em");b.appendChild(em)}em.textContent=n}
 function render(){ensure();const c=$("nt-card");if(!N){c.hidden=true;return}c.hidden=false;const L=notes();let h='<i class="gr"></i>';
  if(N.mode==="rep"){const R=N.rep,k=N.k,n=L[R[k]];if(!n){N.mode="pose";return render()}const e=elOf(n);
-  h+=`<div class="hd"><span class="chip">Note ${k+1} sur ${R.length} · ${esc(n.w)}</span><span style="flex:1"></span><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div><div class="q">« ${esc(n.txt||"Voir la photo")} »</div>${n.ph&&n.ph.length?`<div class="phs">${n.ph.map(p=>`<img src="${p.u}" alt="">`).join("")}</div>`:""}
+  h+=`<div class="hd"><span class="chip">${n.cli?"Remarque du client":"Note"} ${k+1} sur ${R.length} · ${esc(n.w)}</span><span style="flex:1"></span><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div><div class="q">« ${esc(n.txt||"Voir la photo")} »</div>${n.ph&&n.ph.length?`<div class="phs">${n.ph.map(p=>`<img src="${p.u}" alt="">`).join("")}</div>`:""}
   <div class="row">${e?`<button class="go2" data-a="ouvre">${e.t==="room"?"Ouvrir la pièce":e.t==="op"?"Ouvrir "+(/porte/i.test(e.w)?"la porte":"la fenêtre"):"Ouvrir le mur"}</button>`:""}<button class="go2" data-a="tard">Plus tard</button></div>${ckBtn(n.txt,e)}<div class="row"><button class="go" data-a="fait">${k<R.length-1?"C'est fait, note suivante":"C'est fait"}</button></div>`}
  else if(N.cur){const c2=N.cur,np=(c2.ph||[]).length;
-  h+=`<div class="hd"><span class="chip">${esc(c2.w)}</span><span style="flex:1"></span><button class="rd" data-a="annule" aria-label="Fermer sans garder">${ico("x")}</button></div><textarea id="nt-tx" placeholder="Dites ou écrivez ce qu'il faut faire ici">${esc(c2.txt||"")}</textarea>
-  <div class="row"><button class="mic" data-a="mic" aria-label="Dicter la note">${ico("mic")}</button><button class="rd ph" data-a="photo" aria-label="Ajouter une photo">${ico("cam")}${np?`<em>${np}</em>`:""}</button><button class="go" data-a="range">Ranger la note</button></div><div id="nt-ckw">${ckBtn(c2.txt,c2.el||hit([c2.x,c2.y]))}</div>
-  ${c2.idx!=null?`<div class="row" style="justify-content:space-between"><button class="lnk" data-a="${c2.fait?"refaire":"faite"}">${c2.fait?"Remettre à reprendre":"Marquer comme faite"}</button><button class="lnk del" data-a="suppr">Supprimer la note</button></div>`:`<div class="cons"><i></i>Touchez un autre endroit pour une autre note.</div>`}`}
+  h+=`<div class="hd"><span class="chip">${esc(c2.w)}</span><span style="flex:1"></span><button class="rd" data-a="annule" aria-label="Fermer sans garder">${ico("x")}</button></div><textarea id="nt-tx" placeholder="${CLI?"Ex. : j'ai une verrière ici, ou j'en voudrais une":"Dites ou écrivez ce qu'il faut faire ici"}">${esc(c2.txt||"")}</textarea>
+  <div class="row"><button class="mic" data-a="mic" aria-label="Dicter la note">${ico("mic")}</button>${CLI?"":`<button class="rd ph" data-a="photo" aria-label="Ajouter une photo">${ico("cam")}${np?`<em>${np}</em>`:""}</button>`}<button class="go" data-a="range">${CLI?"Garder la remarque":"Ranger la note"}</button></div>${CLI?"":`<div id="nt-ckw">${ckBtn(c2.txt,c2.el||hit([c2.x,c2.y]))}</div>`}
+  ${c2.idx!=null?CLI?`<div class="row"><button class="lnk del" data-a="suppr">Supprimer la remarque</button></div>`:`<div class="row" style="justify-content:space-between"><button class="lnk" data-a="${c2.fait?"refaire":"faite"}">${c2.fait?"Remettre à reprendre":"Marquer comme faite"}</button><button class="lnk del" data-a="suppr">Supprimer la note</button></div>`:`<div class="cons"><i></i>${CLI?"Touchez un autre endroit pour une autre remarque.":"Touchez un autre endroit pour une autre note."}</div>`}`}
  else{const n=todo(),mine=L.map((x,i)=>({x,i}));
+  if(CLI){h+=`<div class="hd"><b>Vos remarques</b><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div><div class="cons"><i></i>Touchez une pièce, un mur, une fenêtre ou une porte, puis dites ce que vous voulez signaler. Par exemple : « j'ai une verrière ici », « j'en voudrais une ».</div>`;
+   if(mine.length)h+=`<div style="margin:8px 0 0">${mine.map(({x,i})=>`<button class="li" data-i="${i}"><i>${i+1}</i><span><b>${esc(x.w)}</b><small>${esc(x.txt)}</small></span></button>`).join("")}</div>`;
+   h+=`<div class="row"><button class="go" data-a="x">${mine.length?"C'est tout":"Fermer"}</button></div>`;c.innerHTML=h;fitBoard();return}
   h+=`<div class="hd"><b>Notes du chantier</b><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div>`;
   if(n)h+=`<button class="rep" data-a="reprendre">${ico("home")}<span><b>${n} note${n>1?"s":""} à reprendre</b><small>Une par une, l'endroit s'allume sur le plan</small></span>${ico("nx")}</button>`;
   h+=`<div class="cons"><i></i>Touchez un mur, une pièce, une porte ou le sol pour laisser une note.</div>`;
-  if(mine.length)h+=`<div style="margin:8px 0 0">${mine.map(({x,i})=>`<button class="li${x.fait?" fait":""}" data-i="${i}"><i>${i+1}</i><span><b>${esc(x.w)}</b><small>${esc(x.txt||(x.ph?"Photo":""))}</small></span></button>`).join("")}</div>`;
+  if(mine.length)h+=`<div style="margin:8px 0 0">${mine.map(({x,i})=>`<button class="li${x.fait?" fait":""}" data-i="${i}"><i>${x.cli?"C":i+1}</i><span><b>${x.cli?"Le client · ":""}${esc(x.w)}</b><small>${esc(x.txt||(x.ph?"Photo":""))}</small></span></button>`).join("")}</div>`;
   h+=`<div class="row"><button class="go" data-a="x">C'est bon pour aujourd'hui</button></div>`}
  c.innerHTML=h;fitBoard()}
 /* le plan reste visible au-dessus de la carte */
@@ -179,7 +190,7 @@ function onClick(e){const b=e.target.closest("button");if(!b||!N)return;const a=
  if(b.dataset.i!=null){const i=+b.dataset.i;N={mode:"pose",cur:{...L[i],idx:i}};render();pins();return}
  if(a==="x"){if(N.cur&&String(N.cur.txt||"").trim())keep();return stop()}
  if(a==="annule"){N.cur=null;render();pins();return}
- if(a==="range"){keep();render();pins();toast("Note rangée sur le plan");return}
+ if(a==="range"){keep();render();pins();toast(CLI?"Remarque gardée, elle partira avec votre plan":"Note rangée sur le plan");return}
  if(a==="mic")return mic();
  if(a==="cliky"){if(N.mode==="rep"){const n=L[N.rep[N.k]];return ckGo(n.txt,elOf(n))}const c=N.cur;return ckGo(c.txt,c.el||hit([c.x,c.y]))}
  if(a==="photo"){const f=$("nt-file");f&&f.click();return}
@@ -198,7 +209,12 @@ function aide(){const fit=$("z-fit");if(!fit||$("z-help"))return;const b=documen
  const d=document.createElement("div");d.id="nt-aide";d.hidden=true;d.innerHTML=`<b>Aide</b><ul><li>Un doigt déplace le plan, deux doigts zooment.</li><li>Touchez une pièce, un mur, une porte pour le régler.</li><li>Le cadenas fige le plan.</li></ul><b>Les couleurs des matériaux</b>`;const lg=$("legend");const bd=$("board");if(bd)bd.appendChild(d);
  b.addEventListener("click",e=>{e.stopPropagation();const on=d.hidden;d.hidden=!on;document.documentElement.classList.toggle("nt-aide",on);document.documentElement.classList.toggle("pro-leg",on);if(lg&&on)d.appendChild(lg)});
  document.addEventListener("pointerdown",e=>{if(!d.hidden&&!d.contains(e.target)&&e.target!==b){d.hidden=true;document.documentElement.classList.remove("nt-aide","pro-leg")}},true)}
-function boot(){const P=K();if(!P||P.CL)return;ensure();watch();aide();badge();pins();addEventListener("resize",fitBoard)}
+const CLICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg>';
+function cliBtn(){if($("nt-cli"))return;const b=$("board");if(!b)return;const w=document.createElement("div");w.id="nt-cliw";w.innerHTML=`<button id="nt-cli" type="button">${CLICO}<span>Une remarque</span></button>`;b.appendChild(w);
+ $("nt-cli").addEventListener("click",e=>{e.stopPropagation();toggle()});cliBadge();
+ /* toujours au-dessus de la barre d'outils quand elle est là */setInterval(()=>{const t=$("cltools"),bd=$("board");if(!t||!bd)return;const r=t.getBoundingClientRect(),q=bd.getBoundingClientRect(),cx=q.left+q.width/2,vis=r.height>0&&getComputedStyle(t).display!=="none"&&r.top<q.bottom&&r.left<cx&&r.right>cx;w.style.bottom=(vis?Math.max(12,q.bottom-r.top+10):12)+"px"},400)}
+function cliBadge(){const b=$("nt-cli");if(!b)return;let n=0;try{K().ST.floors.forEach(f=>(f.notes||[]).forEach(x=>{if(x.cli)n++}))}catch(e){}let em=b.querySelector("em");if(!n){if(em)em.remove();return}if(!em){em=document.createElement("em");b.appendChild(em)}em.textContent=n}
+function boot(){const P=K();if(!P)return;if(P.CL&&!CLI)return;ensure();watch();if(CLI){cliBtn();pins();addEventListener("resize",fitBoard);return}aide();badge();pins();addEventListener("resize",fitBoard)}
 function wait(n){if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
 window.PKNOTES={start,stop,toggle,todo,pins};
