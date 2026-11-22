@@ -85,7 +85,7 @@ function resultat(){const N=(LU.niveaux||[]);if(!N.length){card(`<div class="hd"
 
 /* ---------- Pose du plan lu ---------- */
 function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)return;const SOL=P.SOLDEF||{};
- const OPD={fenetre:{k:"fenetre",h:1.35,al:.9},porte_fenetre:{k:"pf",h:2.15,al:0},porte:{k:"porte",h:2.04,al:0}};
+ const OPD={fenetre:{k:"fenetre",h:1.35,al:.9},porte_fenetre:{k:"pf",h:2.15,al:0},baie_coulissante:{k:"pf",t:"Baie coulissante",ouv:"Coulissant",h:2.15,al:0},porte:{k:"porte",h:2.04,al:0}};
  const today=new Date().toISOString().slice(0,10);let first=true;
  const floors=N.map(nv=>{const rooms=nv.pieces.map(p=>({nom:p.nom,sol:{...SOL},pts:p.points.map((q,i)=>{const o=p.ouvertures.filter(x=>x.mur===i).map(x=>({...OPD[x.type],w:x.largeur_m,p:x.depuis_m}));return o.length?{p:[q[0],q[1]],o}:{p:[q[0],q[1]]}}),clos:[]}));
   /* les points douteux deviennent des notes « à reprendre », épinglées au milieu de leur pièce */
