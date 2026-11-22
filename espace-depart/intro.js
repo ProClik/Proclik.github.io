@@ -40,12 +40,16 @@ E=[
  {choix:1,
   h:'Comment préférez-vous l\'affichage ?',
   p:'Vous pourrez changer à tout moment dans les Réglages.'}
-];}
+];
+/* nouvel Espace : « Votre couleur » juste avant le choix de l'affichage (maquette du 21/11) */
+if(window.PCCouleur&&d.documentElement.classList.contains('f2on'))E.splice(E.length-1,0,{coul:1,
+  h:'Votre couleur',
+  p:'Touchez une couleur : l\'aperçu change tout de suite. Vous pourrez la changer quand vous voulez dans Réglages.'});}
 var box,i=0,mode='std',fini,sens='';
 function ap(gros){var r='';for(var k=0;k<(gros?5:8);k++)r+='<i class="'+(k===0?'c':k%3===1?'m':k%3===2?'s':'')+'"></i>';return r}
 function rend(){
  var e=E[i],der=i===E.length-1;
- var sc=e.choix?'<div class="pi-ch">'+
+ var sc=e.coul?window.PCCouleur.html():e.choix?'<div class="pi-ch">'+
    '<button class="pi-choix" data-m="std" aria-pressed="'+(mode==='std')+'"><span class="ap">'+ap(0)+'</span><b>Standard</b><small>Tous les détails</small><span class="rd"></span></button>'+
    '<button class="pi-choix gros" data-m="simple" aria-pressed="'+(mode==='simple')+'"><span class="ap">'+ap(1)+'</span><b>Simple</b><small>Plus gros, l\'essentiel</small><span class="rd"></span></button></div>':e.s;
  box.innerHTML='<div class="pi-w">'+
@@ -55,6 +59,7 @@ function rend(){
   '<div class="pi-bas"><button class="pi-ret" id="pi-ret" aria-label="Retour"'+(i?'':' hidden')+'><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>'+
   '<button class="btn go" id="pi-suiv">'+(i===0?'Découvrir':der?'C\'est parti':'Suivant')+'</button></div></div>';
  box.classList.remove('go','pi-av','pi-arr');void box.offsetWidth;
+ if(e.coul)window.PCCouleur.lie(box);
  if(window.PCGoutte)window.PCGoutte(box.querySelector('.pi-galet svg'),.35);
  if(sens)box.classList.add(sens);
  if(!d.getElementById('pc-ouv')&&!d.getElementById('pc-ouk'))box.classList.add('go');

@@ -55,7 +55,7 @@ var COUL={nuit:["#1B2440","#FFFFFF","#EFEBE2","#1B2440"],sapin:["#2F4A3E","#FFFF
   ardoise:["#3A5470","#FFFFFF","#B3C7DE","#141927"],noyer:["#4A3A2E","#FFFFFF","#D8C3B0","#141927"],encre:["#17181D","#FFFFFF","#FFFFFF","#141927"]};
 function couleur(){var c=COUL[lsG("pc-couleur-espace","nuit")]||COUL.nuit;
   root.style.setProperty("--f2-act-j",c[0]);root.style.setProperty("--f2-sur-j",c[1]);root.style.setProperty("--f2-act-n",c[2]);root.style.setProperty("--f2-sur-n",c[3])}
-couleur();addEventListener("storage",couleur);
+couleur();addEventListener("storage",couleur);window.PCF2Couleur=couleur;
 
 /* ---------- le cadre ---------- */
 root.classList.add("f2on");
@@ -78,6 +78,7 @@ function salut(){var h=$("#hello");return h?h.textContent.replace(/[.!]\s*$/,"")
 function eur2(n){return Number(n).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function debut(t){t=String(t||"");var p=t.split(" → "),m=(t.match(/\/\d{1,2}\s*$/)||[""])[0];return p[0]+(p[1]&&!/\//.test(p[0])?m:"")}
 function clikyOn(){return !!(window.PCOPT&&PCOPT.cliky)}
+var SCI='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5V6.5A2.5 2.5 0 0 1 6.5 4h2M15.5 4h2A2.5 2.5 0 0 1 20 6.5v2M20 15.5v2a2.5 2.5 0 0 1-2.5 2.5h-2M8.5 20h-2A2.5 2.5 0 0 1 4 17.5v-2"/><path d="M7 12h10"/></svg>';
 var CKI='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>';
 function pl(n,un,plus){return n>1?plus:un}
 function chDe(e){var C=X.CH||{},c=null;Object.keys(C).forEach(function(k){var y=C[k];if(!c&&y&&(y.id===(e.x&&e.x.ch)||y.n===e.t||(y.n&&String(e.t).indexOf(y.n)>=0)))c=y});return c}
@@ -106,7 +107,7 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
      et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
-  if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+CKI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
+  if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+SCI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
 
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   if(B.jour){var L=J.L;
@@ -388,7 +389,7 @@ function auDebut(){var t=new Date(),j=t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t
 /* l'entrée « Scanner » (mode Cliky) du menu (barre du bas, panneau du galet, menu de côté), seulement avec l'option */
 function entreeMenu(){var nav=$("nav.nav");if(!nav)return;var b=$("#nb-cliky"),ch=false;
   if(!b){b=d.createElement("button");b.type="button";b.id="nb-cliky";b.setAttribute("data-pbx","");b.setAttribute("data-opt","cliky");
-    b.innerHTML='<span class="ico" aria-hidden="true">'+CKI.replace(' class="i"',"")+"</span>Scanner";b.addEventListener("click",function(e){e.preventDefault();e.stopImmediatePropagation();deposer()});nav.appendChild(b);ch=true}
+    b.innerHTML='<span class="ico" aria-hidden="true">'+SCI.replace(' class="i"',"")+"</span>Scanner";b.addEventListener("click",function(e){e.preventDefault();e.stopImmediatePropagation();deposer()});nav.appendChild(b);ch=true}
   var h=!clikyOn();if(b.hidden!==h){b.hidden=h;ch=true}
   if(ch&&window.PCBarre&&PCBarre.applique)PCBarre.applique()}
 entreeMenu();setInterval(entreeMenu,3000);

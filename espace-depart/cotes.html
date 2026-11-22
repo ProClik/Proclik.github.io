@@ -269,7 +269,7 @@ body{padding:0!important;overflow:hidden;background:var(--bg)}
   .phone{height:auto;overflow:visible;max-width:none}
   .ph-h,.foot,.toast,.heard,.ph-b>.go,.ph-b>.ghost,.ph-b>p{display:none!important}
 }
-</style></head><body>
+</style><link rel="stylesheet" href="cotes-forme.css?v=3"><script src="cotes-forme.js?v=2"></script></head><body>
 <div class="phone" id="phone"></div>
 <script>
 (function(){
@@ -840,6 +840,8 @@ document.querySelectorAll('[role="tab"]').forEach(t=>t.addEventListener("click",
 
 /* départ : la cuisine en cours, à la question des largeurs, pour montrer le cœur de l'appli */
 render();
+/* pour cotes-forme.js (nouvel Espace : « Par pièce » dès 8 menuiseries) */
+window.PCCotes={S:S,render:render};
 })();
 </script>
 </body></html>

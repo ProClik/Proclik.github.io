@@ -1,0 +1,30 @@
+/* Plan de l'Espace (nouvel Espace, 22/11) : la consigne tient sur une ligne (deux au plus), comme dans le plan du formulaire client.
+   Toucher le texte = texte complet (cl-ouvert, déjà dans plan.html). « Masquer », « ▶ », « ? » et « À vérifier » en petits boutons au bout.
+   Chargé seulement par espace-depart/plan.html (l'ancien /espace/ ne change pas). Téléphone couché : rien ne change. */
+@media not all and (orientation:landscape) and (max-height:520px){
+ html.pro:not(.client) body #clbanner{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:6px!important;padding:8px 8px 8px 14px!important;min-height:0!important}
+ html.pro:not(.client) body #clbanner .pcl{display:none!important}
+ html.pro:not(.client) body #clbanner #clb-t{flex:1 1 auto!important;order:1;min-width:0;margin:0!important;font-size:14.5px!important;line-height:1.3!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+ html.pro:not(.client) body #clbanner.cl-ouvert #clb-t{-webkit-line-clamp:unset;display:block!important}
+ html.pro:not(.client) body #clbanner #clb-t>b,html.pro:not(.client) body #clbanner #clb-t>.gdots{display:none!important}
+ html.pro:not(.client) body #clbanner :is(#clb-v,#clb-h){flex:none;order:2;width:36px;height:36px;min-height:0!important;padding:0!important;border-radius:18px!important;display:inline-grid;place-items:center;font-size:15px}
+ html.pro:not(.client) body #clbanner #clb-v span{display:none}
+ html.pro:not(.client) body #clbanner #clb-v svg{width:13px;height:13px}
+ html.pro:not(.client) body #clbanner :is(#clb-x,#chk-btn,#clb-b){flex:none;order:2;width:auto!important;min-height:0!important;height:32px;padding:0 10px!important;margin:0!important;border-radius:16px!important;font-size:12px!important;white-space:nowrap}
+ html.pro:not(.client) body #clbanner #clb-x svg{display:none}
+}
+/* Lot 10 (maquette plan-espace.html) : onglets Plan / Les cotes / Pré-devis en pilules à plat (icône + mot sur une ligne),
+   « Annuler » / « Rétablir » écrits, pas de « ? » sur le plan (l'aide reste dans la consigne), le plan sans double cadre. */
+html.pro:not(.client) body .pro-menu{display:flex!important;gap:4px!important;padding:4px!important;border-radius:999px!important;background:var(--soft,rgba(27,36,64,.06))!important;box-shadow:none!important;border:0!important}
+html.pro:not(.client) body .pro-menu>button{flex:1 1 0;display:inline-flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:6px!important;min-height:40px!important;padding:0 8px!important;border-radius:999px!important;background:transparent!important;box-shadow:none!important;border:0!important;font-size:14px!important;font-weight:600!important;color:var(--muted)!important}
+html.pro:not(.client) body .pro-menu>button svg{width:17px!important;height:17px!important;margin:0!important}
+html.pro:not(.client) body .pro-menu>button[aria-selected="true"]{background:var(--paper,#fff)!important;color:var(--fg)!important;box-shadow:0 1px 2px rgba(23,24,29,.06),0 6px 14px -10px rgba(23,24,29,.35)!important}
+html.pro:not(.client)[data-theme="dark"] body .pro-menu>button[aria-selected="true"]{background:#2A2E3A!important}
+html.pro:not(.client) body #z-help{display:none!important}
+@media (min-width:430px){html.pro:not(.client) body .ud{width:auto!important;padding:0 10px!important;gap:5px;display:inline-flex!important;align-items:center;font-size:13.5px;font-weight:600;color:var(--muted)}
+html.pro:not(.client) body #t-undo::after{content:"Annuler"}
+html.pro:not(.client) body #t-redo::after{content:"Rétablir"}
+html.pro:not(.client) body .ud svg{width:16px!important;height:16px!important}}
+html.pro:not(.client) body .pro-menu>button{flex:1 1 auto!important;padding:0 6px!important;gap:5px!important;font-size:13.5px!important;white-space:nowrap}
+html.pro:not(.client) body .pro-menu>button span{overflow:visible!important;text-overflow:clip!important}
+html.pro:not(.client) body .pro-menu>button svg{width:15px!important;height:15px!important;flex:none}
