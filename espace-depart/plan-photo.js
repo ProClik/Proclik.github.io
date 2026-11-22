@@ -121,10 +121,11 @@ function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)
    clos:(p.cloisons||[]).map((c,ci)=>c.points.map((q,i)=>pt(p,q,i,ci,H))),...clim(p)}));
   /* les points douteux deviennent des notes « à reprendre », épinglées au milieu de leur pièce */
   const notes=[];let g=0;av.forEach(v=>{let p=nv.pieces.find(x=>x.nom===v.piece);if(!p&&v.piece){const t=v.piece.toLowerCase();p=nv.pieces.find(x=>x.nom.toLowerCase().includes(t)||t.includes(x.nom.toLowerCase()))}if(!p&&v.piece&&N.some(o=>o.pieces.some(x=>x.nom===v.piece)))return;if(!p&&!first)return;notes.push({pc:p||nv.pieces[0],t:"room",w:(p?p.nom:"Tout le logement")+" · lu sur la photo",txt:"Cliky : "+(!p&&v.piece?v.piece+" : ":"")+v.texte,d:today})});
-  /* les épingles d'une même pièce : en ligne SOUS le nom et la surface (Cyril 22/11 : elles cachaient le nom), centrées, dans la pièce */
-  const grp=new Map();notes.forEach(n=>{if(!grp.has(n.pc))grp.set(n.pc,[]);grp.get(n.pc).push(n)});
-  grp.forEach((L,pc)=>{const c=centre(pc.points),ys=pc.points.map(q=>q[1]),bas=Math.max(...ys),dy=Math.min(1.6,Math.max(.6,(bas-c[1])*.8)),pas=Math.min(.75,Math.max(.45,(Math.max(...pc.points.map(q=>q[0]))-Math.min(...pc.points.map(q=>q[0])))/(L.length+1)));
-   L.forEach((n,k)=>{let x=c[0]+(k-(L.length-1)/2)*pas,y=c[1]+dy;if(!dedans([x,y],pc.points)){x=c[0]+(k-(L.length-1)/2)*.45;y=c[1]+.5}n.x=+x.toFixed(2);n.y=+y.toFixed(2);delete n.pc})});
+  /* UNE épingle par pièce (Cyril 22/11 : plusieurs épingles, « ça fait brouillon ») : ses points en liste dans la note,
+     posée sous le nom et la surface de la pièce, pour ne pas les cacher */
+  const grp=new Map();notes.forEach(n=>{if(!grp.has(n.pc))grp.set(n.pc,[]);grp.get(n.pc).push(n)});notes.length=0;
+  grp.forEach((L,pc)=>{const c=centre(pc.points),bas=Math.max(...pc.points.map(q=>q[1])),dy=Math.min(1.6,Math.max(.6,(bas-c[1])*.8));let x=c[0],y=c[1]+dy;if(!dedans([x,y],pc.points))y=c[1]+.5;
+   const T=L.map(n=>n.txt.replace(/^Cliky : /,""));notes.push({x:+x.toFixed(2),y:+y.toFixed(2),t:"room",w:L[0].w,txt:"Cliky, à vérifier sur place :\n"+T.map(t=>"• "+t).join("\n"),d:today})});
   first=false;
   return{nom:nv.nom,H:nv.hauteur_m>0?nv.hauteur_m:2.5,...(nv.hauteur_m>0?{hok:true}:{hdk:true}),photo:1,ckl:{lu:{pieces:nv.pieces},le:today},...(notes.length?{notes}:{}),dal:{type:"Béton",ep:"20 cm"},esc:[],rooms}});
  try{P.hist()}catch(e){}
@@ -135,8 +136,8 @@ function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)
  try{P.all();P.autosave&&P.autosave();P.notify&&P.notify()}catch(e){}
  try{window.PKNOTES&&PKNOTES.pins()}catch(e){}
  try{P.say(null,"Plan lu par Cliky sur la photo : touchez « À vérifier » pour confirmer les fenêtres et les portes, puis « Notes » pour les mesures à prendre sur place.")}catch(e){}
- close();const n=floors.reduce((a,f)=>a+(f.notes||[]).length,0);
- setTimeout(()=>toast(n?`Plan posé. ${n} point${n>1?"s":""} à vérifier en note, fenêtres et portes dans « À vérifier »`:"Plan posé. Fenêtres et portes à confirmer dans « À vérifier »"),250)}
+ close();const n=av.length,np=floors.reduce((a,f)=>a+(f.notes||[]).length,0);
+ setTimeout(()=>toast(n?`Plan posé : ${n} point${n>1?"s":""} à vérifier, dans les ${np>1?np+" notes":"notes"} du plan`:"Plan posé. Fenêtres et portes à confirmer dans « À vérifier »"),250)}
 
 /* ---------- Écran ---------- */
 function card(h){let c=$("pf-card");c.innerHTML=`<div class="in" role="dialog" aria-modal="true" aria-label="Photo d'un plan">${h}</div>`;c.hidden=false}
