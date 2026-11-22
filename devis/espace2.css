@@ -221,3 +221,80 @@ html body .step-meta,html body .step-meta .cheer{font-size:13.5px!important}
  html body[data-cur="contact"] #app>section>.q:has(input[type=text],input[type=tel],input[type=email]){grid-column:auto}}
 /* Plan : plus de bouton « Plein écran » (décision 21/11 : on tourne le téléphone) */
 html body #pf-fs{display:none!important}
+/* 22/11 21h (Cyril : « le formulaire ne tient plus sur un écran, je ne veux pas défiler ») : téléphone, tout tient à l'écran.
+   Accueil resserré ; quand un écran déborde (classe tight posée par fitPage) : cartes de travaux en lignes compactes,
+   réponses en lignes de 46 px, longues listes (7 réponses et plus) sur deux colonnes. */
+@media (max-width:600px){
+ html body.intro .hero7 h1{font-size:28px!important;margin-top:4px!important;line-height:1.1}
+ html body.intro .hero7 .sub{font-size:14.5px!important;line-height:1.4!important}
+ html body.intro .hero7 .fil7{margin-top:12px!important}
+ html body.intro .hero7 .e2-conf{margin-top:6px!important}
+ html body.tight .cards{gap:8px!important}
+ html body.tight .cards .card{display:grid!important;grid-template-columns:22px minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center!important;align-content:start!important;padding:10px 28px 10px 12px!important}
+ html body.tight .cards .card>svg{width:22px!important;height:22px!important}
+ html body.tight .cards .card>b{font-size:15px!important}
+ html body.tight .cards .card>span{grid-column:1/-1;margin:0!important;font-size:12px!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:46px!important;font-size:16px!important}
+ html body.tight .lq .chips{gap:6px!important}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)){display:grid!important;grid-template-columns:1fr 1fr}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip:not(.pic){padding:0 34px 0 12px!important;font-size:14.5px!important}
+}
+@media (max-width:600px){
+ html body.intro .hero7 .fil7 li{padding:6px 0!important}
+ html body.intro .hero7 .carte7 input{min-height:50px!important}
+ html body.tight .cards{gap:6px!important}
+ html body.tight .cards .card{padding:8px 26px 8px 11px!important}
+ html body.tight .cards .card>b{font-size:14.5px!important}
+ /* deux colonnes : le rond de droite devient une petite coche dans le coin, le texte garde toute la place */
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip:not(.pic){padding:0 10px!important;gap:8px}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip:not(.pic):not(.dk)::after{width:16px!important;height:16px!important;right:6px!important;top:6px!important;margin-top:0!important}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip.dk{grid-column:1/-1}
+}
+/* écrans bas (iPhone dans Safari, petits téléphones) : on garde l'essentiel à l'écran */
+@media (max-width:600px) and (max-height:860px){
+ html body.intro .hero7 .e2-conf{font-size:11.5px!important;margin-top:4px!important}
+ html body.intro .hero7 .carte7 .mini7{margin-top:6px!important}
+}
+@media (max-width:600px) and (max-height:760px){
+ html body.intro .hero7 .sub{display:none!important}
+ html body.tight .cards .card>span{display:none!important}
+ html body.tight .cards .card{min-height:46px!important}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:42px!important}
+}
+@media (max-width:600px) and (max-height:860px){
+ html body.tight .lq .chips:not(:has(>.chip:nth-child(4))):has(>.chip:nth-child(2)){display:grid!important;grid-template-columns:1fr 1fr}
+ html body.tight .lq .chips:not(:has(>.chip:nth-child(4))) .chip.dk{grid-column:1/-1}
+ html body.tight .lq .chip.dk{min-height:38px!important}
+}
+@media (max-width:600px) and (max-height:700px){
+ html body.intro .wrap>footer,html body.intro .e2-pied{display:none!important}
+}
+@media (max-width:600px) and (max-height:700px){
+ html body.intro .foot{display:none!important}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:38px!important;font-size:15px!important}
+ html body.tight .lq .chip.dk{min-height:34px!important}
+ html body.tight .lq .chips{gap:5px!important}
+}
+@media (max-width:600px) and (max-height:860px){
+ html body.intro .hero7 .carte7{padding:14px 16px!important}
+ html body.intro .hero7 .carte7 .btn.go{min-height:54px!important}
+ html body.intro .hero7 .carte7 .lab{margin-bottom:6px!important}
+}
+@media (max-width:600px) and (max-height:760px){
+ html body.intro .hero7 h1{font-size:26px!important}
+ html body.intro .hero7 .fil7{margin-top:8px!important}
+ html body.intro .foot{display:none!important}
+}
+@media (max-width:600px) and (max-height:760px){
+ html body.intro .hero7 .fil7 li{padding:4px 0!important}
+ html body.intro .hero7 .carte7{margin-top:10px!important;padding:12px 14px!important}
+ html body.intro .hero7 .carte7 .btn.go{min-height:50px!important}
+ html body.intro .hero7 .carte7 input{height:46px!important}
+}
+@media (max-width:600px) and (max-height:860px){
+ html body.intro .hero7{padding-bottom:6px!important}
+ html body.intro .hero7 .e2-conf{margin-top:8px!important;margin-bottom:0!important}
+ html body.intro .hero7 h1{margin-bottom:8px!important}
+}
+@media (max-width:600px) and (max-height:860px){html body.intro .hero7{row-gap:12px!important}}
+@media (max-width:600px) and (max-height:760px){html body.intro .hero7{row-gap:6px!important}}
