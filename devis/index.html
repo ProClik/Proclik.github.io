@@ -634,6 +634,12 @@ const RSURF=r=>{r=r||S.rampants||{};const g=k=>r[k+"_dk"]?null:pn(r[k]);const L=
 const FAIDES=()=>S.travaux.some(k=>["doublage","combles","rampants"].includes(k));
 const FPLUS=()=>S.travaux.some(k=>PLAQUE.includes(k));
 
+// 22/11 (Cyril, avis A à Z) : une question du logement n'est posée que si elle sert aux travaux choisis.
+// « Autre projet » (ou rien de coché) : on pose tout, par sécurité.
+const TPCS=["cloison","doublage","plafond","sol","rampants"];
+function TRV(...k){const t=(typeof S!=="undefined"&&S.travaux)||[];return !t.length||t.includes("autre")||k.some(x=>t.includes(x))}
+// Réponses devenues inutiles (travaux changés) : retirées avant l'envoi pour ne pas fausser le chiffrage.
+function lqClean(){const o=S.logement;if(!o)return;D.logement.f.forEach(f=>{if(f.sh&&!f.sh(o)&&o[f.k]!==undefined)delete o[f.k]})}
 // Définition des étapes
 const D={
  travaux:{t:"Quels travaux souhaitez-vous ?",s:"Touchez tout ce qui vous concerne. On vous pose ensuite les bonnes questions.",cheer:"C'est parti !"},
@@ -641,7 +647,7 @@ const D={
   {k:"cp",t:"text",l:"Code postal",ph:"Ex. 38190",im:"numeric",req:1},
   {k:"commune",t:"text",cap:1,l:"Commune",ph:"Ex. Villard-Bonnot",req:1},
   {k:"type",t:"chips",l:"Type de logement",o:["Maison","Appartement","Local professionnel",DK]},
-  {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK]},
+  {k:"mur",t:"chips",l:"Type de mur",h:"Les murs qui donnent dehors.",o:["Agglos","Mur en pierre","Brique",DK],sh:()=>TRV("doublage","fenetres")},
   {k:"isocote",t:"chips",l:"Vous voulez isoler vos murs…",h:"Par l'intérieur : doublage dans les pièces. Par l'extérieur : sur les façades.",o:["Par l'intérieur","Par l'extérieur","Je ne sais pas encore"],sh:()=>S.travaux.includes("doublage")},
   {k:"age",t:"chips",l:"Le logement a-t-il plus de 2 ans ?",o:["Oui","Non",DK],h:"Pour vous appliquer la TVA à 10 % au lieu de 20 %."},
   {k:"occupe",t:"chips",l:"Sera-t-il habité pendant les travaux ?",o:["Oui","Non",DK]},
@@ -649,14 +655,14 @@ const D={
   {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK},
   {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1},
   // 18/11 (Cyril) : le client répond le plus possible AVANT le plan, pour que le plan et les murs de face arrivent presque remplis.
-  {k:"pcs",t:"multi",l:"Dans quelles pièces sont les travaux ?",h:"Plusieurs choix possibles. Vous ne passerez que dans celles-là.",o:["Cuisine","Salle de bain","WC","Chambre(s)","Séjour","Entrée / couloir","Bureau","Buanderie",DK]},
-  {k:"nch",t:"step",l:"Combien de chambres ?",h:"Pour les nommer à votre place sur le plan.",min:1,max:8,sh:i=>(i.pcs||[]).includes("Chambre(s)")},
-  {k:"cuis",t:"chips",l:"La cuisine…",o:["On la garde","On la change","Elle est à créer",DK],sh:i=>(i.pcs||[]).includes("Cuisine")},
-  {k:"sdb",t:"chips",l:"La salle de bain…",o:["On garde les équipements","On les change","Elle est à créer",DK],sh:i=>(i.pcs||[]).includes("Salle de bain")},
-  {k:"sdbeq",t:"multi",l:"Dans la salle de bain, il y aura…",h:"Cochez ce qu'il y aura après les travaux.",o:["Douche","Baignoire","Meuble vasque","WC","Sèche-serviettes","Lave-linge",DK],sh:i=>(i.pcs||[]).includes("Salle de bain")},
-  {k:"elec",t:"chips",l:"L'électricité de ces pièces…",h:"Prises, interrupteurs, éclairage.",o:["On n'y touche pas","Quelques prises à ajouter ou déplacer","Tout est à faire",DK]},
-  {k:"plomb",t:"chips",l:"Et la plomberie ?",h:"Arrivées d'eau et évacuations.",o:["On n'y touche pas","Quelques changements","Tout est à faire",DK],sh:i=>(i.pcs||[]).some(p=>/Cuisine|Salle de bain|WC|Buanderie/.test(p))},
-  {k:"chauf",t:"chips",l:"Comment est chauffé le logement ?",o:["Radiateurs électriques","Radiateurs à eau","Plancher chauffant","Poêle ou autre","Pas de chauffage ou clim",DK]},
+  {k:"pcs",t:"multi",l:"Dans quelles pièces sont les travaux ?",h:"Plusieurs choix possibles. Vous ne passerez que dans celles-là.",o:["Cuisine","Salle de bain","WC","Chambre(s)","Séjour","Entrée / couloir","Bureau","Buanderie",DK],sh:()=>TRV(...TPCS,"portes")},
+  {k:"nch",t:"step",l:"Combien de chambres ?",h:"Pour les nommer à votre place sur le plan.",min:1,max:8,sh:i=>TRV(...TPCS,"portes")&&(i.pcs||[]).includes("Chambre(s)")},
+  {k:"cuis",t:"chips",l:"La cuisine…",o:["On la garde","On la change","Elle est à créer",DK],sh:i=>TRV(...TPCS)&&(i.pcs||[]).includes("Cuisine")},
+  {k:"sdb",t:"chips",l:"La salle de bain…",o:["On garde les équipements","On les change","Elle est à créer",DK],sh:i=>TRV(...TPCS)&&(i.pcs||[]).includes("Salle de bain")},
+  {k:"sdbeq",t:"multi",l:"Dans la salle de bain, il y aura…",h:"Cochez ce qu'il y aura après les travaux.",o:["Douche","Baignoire","Meuble vasque","WC","Sèche-serviettes","Lave-linge",DK],sh:i=>TRV(...TPCS)&&(i.pcs||[]).includes("Salle de bain")},
+  {k:"elec",t:"chips",l:"L'électricité de ces pièces…",h:"Prises, interrupteurs, éclairage.",o:["On n'y touche pas","Quelques prises à ajouter ou déplacer","Tout est à faire",DK],sh:()=>TRV("cloison","doublage","plafond","rampants")},
+  {k:"plomb",t:"chips",l:"Et la plomberie ?",h:"Arrivées d'eau et évacuations.",o:["On n'y touche pas","Quelques changements","Tout est à faire",DK],sh:i=>TRV(...TPCS)&&(i.pcs||[]).some(p=>/Cuisine|Salle de bain|WC|Buanderie/.test(p))},
+  {k:"chauf",t:"chips",l:"Comment est chauffé le logement ?",o:["Radiateurs électriques","Radiateurs à eau","Plancher chauffant","Poêle ou autre","Pas de chauffage ou clim",DK],sh:()=>TRV("doublage","combles","rampants")},
 {k:"sols",t:"chips",l:"Les sols à changer, c'est…",h:"On vous demandera ensuite pièce par pièce, avec votre plan.",o:["Partout où il y a des travaux","Dans certaines pièces seulement",DK],sh:()=>(S.travaux||[]).includes("sol")},
 {k:"plafs",t:"chips",l:"Les plafonds à refaire, c'est…",h:"Pareil : pièce par pièce, après le plan.",o:["Partout où il y a des travaux","Dans certaines pièces seulement",DK],sh:()=>(S.travaux||[]).includes("plafond")},
   {k:"parking",t:"chips",l:"Où l'artisan peut-il se garer ?",o:["Place privée ou cour","Dans la rue, gratuit","Dans la rue, payant",DK]},
@@ -923,7 +929,7 @@ function planRooms(){const t=S.plan.trace,out=[];if(!t||!t.floors)return out;con
  t.floors.forEach(f=>(f.pieces||[]).forEach(p=>{const Z=p.zones&&p.zones.length>1?p.zones:[{nom:p.nom,points:p.points,surface_m2:p.surface_m2}];Z.forEach(z=>{const d=dim(z.points,+z.surface_m2||0);if(d)out.push({nom:(z.nom||z.label||p.nom)+(t.floors.length>1&&f.nom?" ("+f.nom+")":""),L:d[0],l:d[1],s:Math.round(d[2]*10)/10,H:f.hauteur_m||2.5})})}));return out}
 // Formulaire simple (Cyril 10/11) : « Je préfère décrire mes travaux » = une seule page (cases à cocher, description, pièces jointes) au lieu des questions mur par mur.
 // « Parlez-nous du logement » question par question (Cyril 11/11) : un écran par question, code postal et commune ensemble.
-const LQ=[["cp","commune"],["type"],["mur"],["isocote"],["age"],["occupe"],["ou","niveau","ascenseur"],["pcs"],["nch"],["cuis"],["sdb"],["sdbeq"],["elec"],["plomb"],["chauf"],["sols"],["plafs"],["parking"],["acces"]];
+const LQ=[["cp","commune"],["type"],["mur"],["isocote"],["age"],["occupe"],["ou","niveau","ascenseur"],["pcs"],["nch"],["cuis"],["sdb"],["sdbeq"],["elec"],["plomb"],["chauf"],["sols"],["plafs"],["parking","acces"]];
 function lqVis(){const o=S.logement;return LQ.map((g,i)=>[g,i]).filter(([g])=>D.logement.f.some(f=>g.includes(f.k)&&(!f.sh||f.sh(o))||(g.includes("niveau")&&!!o.type&&o.type!=="Maison"&&o.type!==DK))).map(x=>x[1])}
 function lqPos(){const v=lqVis();let i=v.indexOf(S.lq||0);if(i<0){i=v.findIndex(x=>x>(S.lq||0));if(i<0)i=v.length-1;S.lq=v[i]}return[i,v]}
 // 11/11 13h (Cyril) : « décrire mes travaux » = une étape par travail coché (Combien de… ? puis n°1, n°2…), plus la page unique.
@@ -1005,7 +1011,7 @@ function render(){
   {const q=iqKey();if(q&&q!=="0-0")h=h.replace(`<p class="sub">${esc(d.s)}</p>`,`<p class="sub"></p>`)}
   if(d.f&&cur==="logement"){const[i,v]=lqPos(),g=LQ[S.lq];h=h.replace(`<p class="sub">${esc(d.s)}</p>`,S.lq===0?`<p class="sub">${esc(d.s)}</p>`:"");
    // 22/11 (avis A à Z) : la question devient le grand titre, pour voir qu'on avance (le titre change à chaque écran).
-   const ff=S.lq!==0&&d.f.find(f=>g.includes(f.k)&&(!f.sh||f.sh(S.logement)));if(ff&&ff.l)h=h.replace(`<h1>${esc(d.t)}</h1>`,`<h1>${esc(ff.l).replace(/(\S*-\S*)/g,'<span style="white-space:nowrap">$1</span>')}</h1>`);
+   const GT={parking:"Pour venir chez vous"};let ff=S.lq!==0&&d.f.find(f=>g.includes(f.k)&&(!f.sh||f.sh(S.logement)));if(ff&&GT[g[0]]){h=h.replace(`<h1>${esc(d.t)}</h1>`,`<h1>${GT[g[0]]}</h1>`);ff=null}if(ff&&ff.l)h=h.replace(`<h1>${esc(d.t)}</h1>`,`<h1>${esc(ff.l).replace(/(\S*-\S*)/g,'<span style="white-space:nowrap">$1</span>')}</h1>`);
    h+=`<div class="lq${ff&&ff.l?" qt":""} ${render.dir<0?"lq-back":"lq-in"}" data-key="lq${S.lq}">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
   else if(d.f&&!(d.g&&d.g.cnt&&!(S[cur].n>0)))h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
   // Lot B (Cyril 17/11) : plus de « Ajouter une photo » sous chaque travail, tout est réuni dans l'étape Photos.
@@ -1219,8 +1225,8 @@ function go(dir){if(go.busy)return;const st=steps();let n=st.indexOf(cur);if(iqG
  if(dir>0&&cur==="plan"&&!S.plan.noWallOk&&tPieces().length){const M=tPieces().flatMap(p=>p.murs||[]),c=tPieces().reduce((a,p)=>a+(p.cloisons_a_creer||[]).length,0),miss=[];
   if(S.travaux.includes("doublage")&&!M.some(m=>m.travaux&&m.type==="mur extérieur"))miss.push("isoler des murs");if(S.travaux.includes("cloison")&&!c&&!M.some(m=>m.travaux&&m.type!=="mur extérieur"))miss.push("créer des cloisons");if(S.travaux.includes("plafond")&&!planStats().plaf.length)miss.push("refaire des plafonds");
   if(miss.length){confirmBig("Il manque des travaux sur le plan",`Vous souhaitez ${miss.join(", ").replace(/, ([^,]*)$/," et $1")}, mais rien n'est indiqué sur votre plan. ${S.murs?"Ouvrez le plan : « Travaux » puis les murs concernés ; sols et plafonds se disent dans « Vos murs », pièce par pièce.":"Ouvrez le plan : « Travaux » puis les murs concernés, et touchez chaque pièce dont le plafond est à refaire."} Sinon, l'artisan le précisera avec vous.`,"Continuer quand même",()=>{S.plan.noWallOk=true;save();go(1)},"Retour au plan");return}}
- if(dir>0){if(!validate())return;if(cur==="recap"&&!navigator.onLine){document.getElementById("err").textContent="Pas de connexion internet : votre demande est bien gardée sur cet appareil. Réessayez dès que le réseau revient.";return}if(cur==="recap"){if(SENDING)return;lastPayload=payload();if(CONFIG.demo){finish();return}sendReq(lastPayload);return}
-  cur=st[n+1];fitPage.p=fitPage.p||{};fitPage.p[cur]=0;fitAk0(cur);if(cur==="logement")S.lq=0;if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1];fitPage.p=fitPage.p||{};fitPage.p[cur]=99;fitAk0(cur);if(cur==="logement")S.lq=99}
+ if(dir>0){if(!validate())return;if(cur==="recap"&&!navigator.onLine){document.getElementById("err").textContent="Pas de connexion internet : votre demande est bien gardée sur cet appareil. Réessayez dès que le réseau revient.";return}if(cur==="recap"){if(SENDING)return;lqClean();lastPayload=payload();if(CONFIG.demo){finish();return}sendReq(lastPayload);return}
+  if(cur==="logement")lqClean();cur=st[n+1];fitPage.p=fitPage.p||{};fitPage.p[cur]=0;fitAk0(cur);if(cur==="logement")S.lq=0;if(cur==="plan"&&!tPieces().length){save();render();scrollTo(0,0);setTimeout(openPlan,250);return}}else{cur=n<=0?"intro":st[n-1];fitPage.p=fitPage.p||{};fitPage.p[cur]=99;fitAk0(cur);if(cur==="logement")S.lq=99}
  save();NAV9=dir;const RM9=matchMedia("(prefers-reduced-motion:reduce)").matches,sec9=document.querySelector("#app>section");
  const fin9=()=>{go.busy=0;render();NAV9=0;scrollTo({top:0,behavior:RM9?"auto":"smooth"})};
  if(RM9||!sec9||cur==="done"){fin9();return}go.busy=1;sec9.classList.add(dir>0?"s9o":"s9ob");setTimeout(fin9,150)}
