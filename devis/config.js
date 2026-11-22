@@ -3,7 +3,7 @@
 window.CLIKDEVIS_CONFIG = {
   artisan: "Aurélien",
   entreprise: "BRS",
-  nomComplet: "Bati Renov' Services", // nom affiché en haut du formulaire
+  nomComplet: "Atelier Exemple", // FICTIF : nom affiché en haut du formulaire (à remplacer par le vrai nom de l'entreprise)
   telephone: "01 99 00 00 00", // FICTIF (numéro réservé aux fictions) en attendant le vrai numéro de l'artisan ; vide = bouton « Aide » caché
   delai: "48 h",
   webhook: "COLLER_ICI_L_ADRESSE_DU_WEBHOOK_MAKE"
