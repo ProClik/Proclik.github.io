@@ -1,0 +1,338 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Présentation de l'Espace ProClik</title>
+<!-- Présentation animée figée le 21/11 (FIGE-21-11/presentation-animee.html), images rangées dans pres/.
+     Ouverte dans #welcome par presentation-forme.js (nouvel Espace) ; « Votre couleur » ajouté avant l'affichage ; la fin envoie {pcPres:'fin',mode} à l'Espace. -->
+<style>
+#coul{width:100%;max-width:360px}
+.ce{width:100%;display:grid;gap:14px}
+.ce-ap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}
+.ce-ap figure{margin:0;min-width:0;display:grid;gap:6px;text-align:center}
+.ce-ap img{width:100%;height:min(300px,34dvh);object-fit:cover;object-position:top center;border-radius:18px;box-shadow:0 0 0 1px var(--line),var(--sh2);display:block;background:var(--tile2)}
+.ce-ap figcaption{font-size:13px;color:var(--mut)}
+.ce-r{display:flex;justify-content:space-between;gap:6px;padding:6px 6px 0}
+.ce-r button{width:42px;height:42px;flex:none;border-radius:50%;position:relative;box-shadow:0 1px 2px rgba(23,24,29,.1),0 8px 18px -10px rgba(23,24,29,.4)}
+.ce-r button::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;transition:border-color .25s}
+.ce-r button[aria-checked="true"]::after{border-color:var(--fg)}
+.ce-nom{text-align:center;margin:0}.ce-nom b{display:block;font-size:16px;font-weight:700}.ce-nom span{display:block;font-size:13px;color:var(--mut);margin-top:2px}
+@media (max-height:720px){.ce-ap img{height:min(240px,28dvh)}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Mise en page : colonne façon téléphone ; en haut l'étape, au centre le VRAI écran de l'Espace dans un téléphone, en bas titre, texte, rond retour + pilule */
+:root{
+ --bg:#F3F3F1;--tile:#FBFBFA;--tile2:#EEEEEB;--fg:#17181D;--mut:#737680;--faint:#A9ABB2;
+ --nuit:#1B2440;--sur-nuit:#FFFFFF;--laiton:#A8823F;--line:rgba(23,24,29,.07);--creux:#F3F3F1;
+ --cadre:#17181D;--champ:#FBFBFA;--vj:block;--vn:none;
+ --sh:0 2px 4px rgba(23,24,29,.04),0 30px 50px -30px rgba(23,24,29,.45);
+ --sh2:0 1px 2px rgba(23,24,29,.05),0 10px 22px -14px rgba(23,24,29,.35);
+ --f:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --bg:#0F1117;--tile:#1F232D;--tile2:#2A2E39;--fg:#F0F1F4;--mut:#A2A6B2;--faint:#666B78;
+ --nuit:#EFEBE2;--sur-nuit:#1B2440;--laiton:#D4B483;--line:rgba(255,255,255,.07);--creux:#15181F;
+ --cadre:#2C303B;--champ:#1F232D;--vj:none;--vn:block;--sh:none;--sh2:none;color-scheme:dark}}
+:root[data-theme="dark"]{
+ --bg:#0F1117;--tile:#1F232D;--tile2:#2A2E39;--fg:#F0F1F4;--mut:#A2A6B2;--faint:#666B78;
+ --nuit:#EFEBE2;--sur-nuit:#1B2440;--laiton:#D4B483;--line:rgba(255,255,255,.07);--creux:#15181F;
+ --cadre:#2C303B;--champ:#1F232D;--vj:none;--vn:block;--sh:none;--sh2:none;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f);-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.app{height:100%;max-width:440px;margin:0 auto;display:flex;flex-direction:column;
+ padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:10px 18px;box-sizing:border-box}
+.haut{display:flex;align-items:center;justify-content:space-between;height:40px;flex-shrink:0}
+.seg{display:flex;gap:4px;flex:1;max-width:190px}
+.seg i{flex:1;height:4px;border-radius:2px;background:var(--tile2);overflow:hidden;position:relative}
+.seg i::after{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.seg i.f::after{transform:scaleX(1);opacity:.35}.seg i.on::after{transform:scaleX(1)}
+.passer{font-size:14.5px;font-weight:600;color:var(--mut);padding:8px 2px}
+.passer[hidden]{display:block!important;visibility:hidden}
+.vue{flex:1;overflow:hidden;margin:0 -20px;touch-action:pan-y;min-height:0}
+.piste{display:flex;height:100%;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.ecran{flex:0 0 100%;box-sizing:border-box;padding:0 20px;display:flex;flex-direction:column;min-height:0}
+.ill{flex:1;min-height:0;position:relative;display:flex;justify-content:center;padding-top:14px}
+.txt{padding-top:18px}
+.sur{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+h1{font-size:29px;font-weight:700;letter-spacing:-.035em;line-height:1.12;margin:0;text-wrap:balance}
+.txt p{font-size:15.5px;color:var(--mut);line-height:1.5;margin:10px 0 0;max-width:34ch}
+.bas{display:flex;gap:10px;margin-top:22px;flex-shrink:0}
+.rback{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--tile);box-shadow:var(--sh2);flex-shrink:0;transition:opacity .3s,transform .3s}
+.rback.cache{opacity:0;pointer-events:none;width:0;margin-right:-10px;transform:scale(.6)}
+.rback svg{width:22px;height:22px}
+.pill{flex:1;height:56px;border-radius:99px;background:var(--nuit);color:var(--sur-nuit);font-weight:700;font-size:16px}
+.pill:active,.rback:active{transform:scale(.97)}
+svg.ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* --- le téléphone : le vrai écran de l'Espace, coupé en bas par un fondu --- */
+.tel{--s:calc(var(--w) / 390);width:var(--w);height:100%;max-height:calc(844 * var(--s) + 14px);box-sizing:content-box;
+ border:7px solid var(--cadre);border-bottom:0;border-radius:44px 44px 0 0;overflow:hidden;position:relative;background:var(--bg);
+ -webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent)}
+.tel::before{content:"";position:absolute;top:calc(11 * var(--s));left:50%;width:calc(118 * var(--s));height:calc(34 * var(--s));transform:translateX(-50%);border-radius:99px;background:#000;z-index:4}
+.sb{position:absolute;left:0;right:0;top:0;height:calc(50 * var(--s));display:flex;align-items:center;justify-content:space-between;padding:0 calc(34 * var(--s)) 0 calc(40 * var(--s));box-sizing:border-box;font-size:calc(15 * var(--s));font-weight:700;color:var(--fg);background:var(--bg);z-index:3;letter-spacing:-.01em}
+.sb svg{height:calc(12 * var(--s));width:auto;fill:var(--fg)}
+.sb span{display:flex;gap:calc(5 * var(--s));align-items:center}
+.cnt{position:absolute;left:0;top:calc(50 * var(--s));width:100%;transform-origin:0 0}
+.cnt .lb{position:absolute;inset:0 0 auto;opacity:0}
+.joue .cnt .lb{animation:allume .45s 2.75s both}
+@keyframes allume{to{opacity:1}}
+.joue .zz{animation:zz 3.2s cubic-bezier(.55,0,.25,1) .8s both}
+@keyframes zz{0%{transform:translate(0,0) scale(1)}25%{transform:var(--zt)}62%{transform:var(--zt)}85%,100%{transform:var(--fin,var(--zt))}}
+.cnt img{width:100%;display:block}
+.cnt .j{display:var(--vj)}.cnt .n{display:var(--vn)}
+
+@keyframes telm{from{opacity:0;transform:translateY(60px)}}
+@keyframes monte{from{opacity:0;transform:translateY(14px)}}
+@keyframes fondu{from{opacity:0}}
+.joue .txt>*{animation:monte .6s cubic-bezier(.2,.8,.2,1) both}
+.joue .txt h1{animation-delay:.04s}.joue .txt p{animation-delay:.1s}
+
+/* le doigt qui touche */
+.tap{position:absolute;left:calc(var(--x) * var(--s));top:calc(var(--y) * var(--s));width:0;height:0;z-index:2}
+.tap i{position:absolute;left:-22px;top:-22px;width:44px;height:44px;border-radius:50%;background:color-mix(in srgb,var(--fg) 22%,transparent);opacity:0}
+.tap b{position:absolute;left:-22px;top:-22px;width:44px;height:44px;border-radius:50%;border:2px solid var(--fg);opacity:0;box-sizing:border-box}
+.joue .tap i{animation:doigt 1.2s var(--d,2s) both}
+.joue .tap b{animation:ond 1s calc(var(--d,2s) + .25s) ease-out both}
+@keyframes doigt{0%{opacity:0;transform:scale(1.6)}30%{opacity:1;transform:scale(.8)}55%{opacity:1;transform:scale(.8)}100%{opacity:0;transform:scale(.8)}}
+@keyframes ond{0%{opacity:.5;transform:scale(.6)}100%{opacity:0;transform:scale(1.9)}}
+
+/* 1 : l'accueil défile jusqu'aux chiffres */
+.joue .defile{animation:defile 2.8s cubic-bezier(.55,0,.25,1) .9s both}
+@keyframes defile{0%{transform:translate(0,0) scale(1)}55%,68%{transform:translate(0,calc(-1150 * var(--s))) scale(1)}100%{transform:translate(calc(-29 * var(--s)),calc(-1399 * var(--s))) scale(1.15)}}
+/* 5 : on s'approche du champ, la phrase s'écrit */
+.joue .zoom{animation:zoom 1.6s cubic-bezier(.45,0,.2,1) 1.4s both}
+.joue .t5 .tel{animation:fondu 1.2s both}
+@keyframes zoom{to{transform:translate(calc(-49 * var(--s)),calc(-108 * var(--s))) scale(1.25)}}
+.champ{position:absolute;left:calc(40 * var(--s));top:calc(234 * var(--s));width:calc(260 * var(--s));height:calc(40 * var(--s));background:var(--champ);
+ display:flex;align-items:center;padding-left:calc(14 * var(--s));box-sizing:border-box;font-size:calc(14 * var(--s));font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;z-index:2;border-radius:calc(20 * var(--s)) 0 0 calc(20 * var(--s))}
+.champ .cur{display:inline-block;width:1.5px;height:1.1em;background:var(--fg);margin-left:1px;animation:clig .9s steps(1) infinite}
+@keyframes clig{50%{opacity:0}}
+.micro{position:absolute;left:calc(329 * var(--s));top:calc(255 * var(--s));width:0;height:0;z-index:2}
+.micro i{position:absolute;left:calc(-22 * var(--s));top:calc(-22 * var(--s));width:calc(44 * var(--s));height:calc(44 * var(--s));border-radius:50%;border:1.5px solid var(--fg);box-sizing:border-box;opacity:0}
+.joue .micro i{animation:ond 1.6s ease-out 3s 3}
+.joue .micro i+i{animation-delay:3.8s}
+
+/* 7 Affichage (inchangé) */
+.ill.c{align-items:center;padding-top:0}
+.aff{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:340px}
+.aff button{border-radius:28px;background:var(--tile);padding:14px 14px 16px;box-shadow:var(--sh2);text-align:center;transition:box-shadow .3s}
+.aff .ec{height:116px;border-radius:18px;background:var(--creux);padding:14px 12px;display:flex;flex-direction:column;gap:7px;box-sizing:border-box}
+.aff .ec i{display:block;height:6px;border-radius:3px;background:var(--tile2)}
+.aff .ec.g i{height:13px;border-radius:7px}
+.aff .ec i.t{background:var(--fg);opacity:.7}
+.aff b{display:block;font-size:16px;font-weight:700;margin-top:12px}.aff small{font-size:12.5px;color:var(--mut)}
+.aff .rd{width:24px;height:24px;border-radius:50%;margin:10px auto 0;border:1.5px solid var(--line);display:grid;place-items:center;box-sizing:border-box;transition:background .25s,border-color .25s}
+.aff .rd svg{width:13px;height:13px;stroke:var(--sur-nuit);stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.aff [aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--fg),var(--sh2)}
+.aff [aria-pressed="true"] .rd{background:var(--nuit);border-color:var(--nuit)}
+.aff [aria-pressed="true"] .rd svg{opacity:1;stroke-dasharray:24;animation:trace .35s both}
+@keyframes trace{from{stroke-dashoffset:24}}
+.joue .aff button{animation:monte .5s both}.joue .aff button+button{animation-delay:.1s}
+
+
+/* --- v5 : un mouvement différent par écran, lent --- */
+.telw{position:relative;height:100%;display:flex;justify-content:center;perspective:900px}
+.telw .tel{transform-origin:50% 100%}
+.pop{position:absolute;left:calc(7px + var(--px) * var(--s));top:calc(7px + (50 + var(--py)) * var(--s));width:calc(var(--pw) * var(--s));height:calc(var(--ph) * var(--s));
+ overflow:visible;opacity:0;z-index:5;pointer-events:none;--s:calc(var(--w) / 390)}
+.pin{width:100%;height:100%;overflow:hidden;border-radius:calc(18 * var(--s));background:var(--bg);box-shadow:0 18px 40px -12px rgba(23,24,29,.35),0 0 0 1px var(--line)}
+.pin img{width:calc(390 * var(--s));max-width:none;margin-left:calc(var(--px) * var(--s) * -1);margin-top:calc(var(--py) * var(--s) * -1)}
+.pin .j{display:var(--vj)}.pin .n{display:var(--vn)}
+.telw{--w:252px}
+@media (max-height:720px){.telw{--w:224px}}@media (max-height:620px){.telw{--w:200px}}
+.tel{--w:inherit}
+.lb.push{transform:translateX(100%);opacity:1}
+.lb.sheet{transform:translateY(100%);opacity:1;box-shadow:0 -20px 40px -20px rgba(0,0,0,.3)}
+.ease{animation-timing-function:cubic-bezier(.45,0,.2,1)}
+/* 1 : on arrive en fondu, l'accueil défile doucement en deux temps, puis la carte des chiffres sort du téléphone */
+.joue .t1 .tel{animation:fondu 1.4s both}
+.joue .sc1{animation:defile5 4.2s cubic-bezier(.45,0,.2,1) 1.4s both}
+@keyframes defile5{0%{transform:translateY(0)}35%,52%{transform:translateY(calc(-560 * var(--s)))}100%{transform:translateY(calc(-1150 * var(--s)))}}
+.p1{top:calc(7px + (50 + 1318 - 1150) * var(--s))}
+.joue .p1{animation:sort1 1.4s cubic-bezier(.3,.7,.2,1) 5.8s both}
+@keyframes sort1{0%{opacity:0;transform:none}25%{opacity:1}100%{opacity:1;transform:translateY(calc(-30 * var(--s))) scale(1.14)}}
+/* 2 : le téléphone pivote, la ligne de Mme Durand se soulève, on touche, la fiche glisse depuis la droite */
+.joue .t2 .tel{animation:pivot 1.8s cubic-bezier(.3,.7,.2,1) both}
+@keyframes pivot{from{opacity:0;transform:rotateY(32deg) rotateX(8deg) translateX(40px)}}
+.joue .p2{animation:sort2 3s cubic-bezier(.3,.7,.2,1) 2s both}
+@keyframes sort2{0%{opacity:0;transform:none}15%{opacity:1}40%,70%{opacity:1;transform:translateX(calc(18 * var(--s))) scale(1.12)}100%{opacity:0;transform:none}}
+.joue .t2 .push{animation:pousse2 .9s cubic-bezier(.3,.7,.2,1) 4.4s both}
+@keyframes pousse2{to{transform:none}}
+/* 3 : le téléphone monte, la carte du pré-devis vient au premier plan, on touche Vérifier, le pré-devis monte comme une feuille */
+.joue .t3 .tel{animation:monte3 1.6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes monte3{from{opacity:0;transform:translateY(90px) scale(.92)}}
+.joue .p3{animation:sort3 3.2s cubic-bezier(.3,.7,.2,1) 2s both}
+@keyframes sort3{0%{opacity:0;transform:none}15%{opacity:1}40%,72%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:none}}
+.joue .t3 .sheet{animation:pousse2 1s cubic-bezier(.3,.7,.2,1) 4.7s both}
+/* 4 : le téléphone glisse de la droite, un doigt parcourt la semaine, s'arrête sur vendredi, la journée s'ouvre */
+.joue .t4 .tel{animation:glisse4 1.6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes glisse4{from{opacity:0;transform:translateX(120px)}}
+.glis{position:absolute;left:calc(90 * var(--s));top:calc(234 * var(--s));width:calc(40 * var(--s));height:calc(40 * var(--s));margin:calc(-20 * var(--s));border-radius:50%;background:color-mix(in srgb,var(--fg) 20%,transparent);opacity:0;z-index:2}
+.joue .glis{animation:glis 2.2s cubic-bezier(.45,0,.2,1) 1.9s both}
+@keyframes glis{0%{opacity:0;transform:scale(1.4)}15%{opacity:1;transform:none}85%{opacity:1;transform:translateX(calc(245 * var(--s)))}100%{opacity:0;transform:translateX(calc(245 * var(--s)))}}
+.lb.jour{opacity:0;transform-origin:calc(335 * var(--s)) calc(234 * var(--s))}
+.joue .t4 .jour{animation:jour4 1s cubic-bezier(.3,.7,.2,1) 4.5s both}
+@keyframes jour4{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes part{to{opacity:0;transform:scale(.9)}}
+.joue .t6 .push{animation:pousse2 1s cubic-bezier(.3,.7,.2,1) 5.4s both}
+
+/* v6 : plus de bulle, l'élément touché s'enfonce comme un vrai bouton */
+@keyframes presse{0%{transform:none}35%{transform:scale(.93);filter:brightness(.95)}100%{transform:none}}
+.joue .p2 .pin{animation:presse .55s cubic-bezier(.3,.7,.2,1) 3.5s both}
+.joue .p3 .pin{animation:presse .55s cubic-bezier(.3,.7,.2,1) 3.7s both}
+.joue .o1 .pin{animation:presse .55s cubic-bezier(.3,.7,.2,1) 4.6s both}
+.joue .p4{animation:sort4 2.6s cubic-bezier(.3,.7,.2,1) 2s both}
+@keyframes sort4{0%{opacity:0;transform:none}15%{opacity:1}40%,75%{opacity:1;transform:translateY(calc(-14 * var(--s))) scale(1.3)}100%{opacity:0;transform:none}}
+.joue .p4 .pin{animation:presse .55s cubic-bezier(.3,.7,.2,1) 3.7s both}
+.p4 .pin{border-radius:calc(20 * var(--s))}
+/* 6 : les options sortent du téléphone une à une et flottent à côté */
+.joue .t6 .tel{animation:fondu 1.2s both}
+.joue .o1{animation:o1 1.4s cubic-bezier(.3,.7,.2,1) 1.6s both,part .5s 5.3s forwards}
+.joue .o2{animation:o2 1.4s cubic-bezier(.3,.7,.2,1) 2.1s both,part .5s 5.3s forwards}
+.joue .o3{animation:o3 1.4s cubic-bezier(.3,.7,.2,1) 2.6s both,part .5s 5.3s forwards}
+@keyframes o1{0%{opacity:0;transform:none}20%{opacity:1}100%{opacity:1;transform:translate(calc(-100 * var(--s)),calc(-40 * var(--s))) scale(1)}}
+@keyframes o2{0%{opacity:0;transform:none}20%{opacity:1}100%{opacity:1;transform:translate(calc(268 * var(--s)),calc(20 * var(--s))) scale(1)}}
+@keyframes o3{0%{opacity:0;transform:none}20%{opacity:1}100%{opacity:1;transform:translate(calc(-269 * var(--s)),calc(150 * var(--s))) scale(1)}}
+.pop .tap{left:calc(var(--x) * var(--s));top:calc(var(--y) * var(--s))}
+
+@media (max-height:720px){h1{font-size:25px}.txt p{font-size:14.5px;margin-top:8px}.bas{margin-top:14px}.txt{padding-top:12px}}
+@media (max-height:620px){.txt p{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* v7 : projecteur. Le reste de l'écran s'efface doucement, l'élément reste net à sa place, puis s'enfonce */
+:root{--voile:rgba(243,243,241,.78);--trait:rgba(23,24,29,.22)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--voile:rgba(15,17,23,.72);--trait:rgba(240,241,244,.25)}}
+:root[data-theme="dark"]{--voile:rgba(15,17,23,.72);--trait:rgba(240,241,244,.25)}
+.spot{position:absolute;left:calc(var(--x) * var(--s));top:calc(var(--y) * var(--s));width:calc(var(--sw) * var(--s));height:calc(var(--sh) * var(--s));
+ border-radius:calc(var(--r) * var(--s));box-shadow:0 0 0 1.5px var(--trait),0 0 0 3000px var(--voile);opacity:0;z-index:2;pointer-events:none}
+@keyframes spot{0%{opacity:0}18%,80%{opacity:1}100%{opacity:0}}
+@keyframes spotf{to{opacity:1}}
+@keyframes appui{0%,45%{transform:none}60%{transform:scale(.96)}75%,100%{transform:none}}
+.joue .s1{animation:spotf 1.2s ease 5.8s both}
+.joue .s2{animation:spot 2.6s ease 2.2s both,appui 2.6s ease 2.2s both}
+.joue .s3{animation:spot 2.8s ease 2.2s both,appui 2.8s ease 2.2s both}
+.joue .s4{animation:spot 2.6s ease 2.2s both,appui 2.6s ease 2.2s both}
+.joue .s6{animation:spot 3.4s ease 2s both,appui 3.4s ease 2s both}
+.joue .t2 .push{animation:pousse2 .9s cubic-bezier(.3,.7,.2,1) 4.6s both}
+.joue .t3 .sheet{animation:pousse2 1s cubic-bezier(.3,.7,.2,1) 4.8s both}
+.joue .t4 .jour{animation:jour4 1s cubic-bezier(.3,.7,.2,1) 4.6s both}
+.joue .t6 .push{animation:pousse2 1s cubic-bezier(.3,.7,.2,1) 5.2s both}
+
+/* v8 finitions DA */
+:root{--halo:rgba(27,36,64,.10)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--halo:rgba(212,180,131,.07)}}
+:root[data-theme="dark"]{--halo:rgba(212,180,131,.07)}
+.joue .s5{animation:spotf 1s ease 1.4s both}
+.tel{border-width:6px;border-color:var(--cadre);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.telw::before{content:"";position:absolute;left:50%;top:18%;width:150%;height:80%;transform:translateX(-50%);background:radial-gradient(closest-side,var(--halo),transparent);pointer-events:none}
+.sur{font-size:11.5px;letter-spacing:.12em;margin-bottom:10px}
+h1{font-size:31px;letter-spacing:-.04em;line-height:1.08}
+h1 .l{display:block}
+.joue .txt h1{animation:none}
+.joue .txt h1 .l{animation:monte .7s cubic-bezier(.2,.8,.2,1) both}
+.joue .txt h1 .l+.l{animation-delay:.12s}
+.joue .txt p{animation-delay:.24s}
+.txt p{max-width:31ch}
+@media (max-height:720px){h1{font-size:27px}}
+</style>
+
+<div class="app">
+ <div class="haut"><div class="seg" id="seg"></div><button class="passer" id="passer" type="button">Passer</button></div>
+ <div class="vue" id="vue"><div class="piste" id="piste">
+
+  <section class="ecran">
+   <div class="ill"><div class="telw t1"><div class="tel"><div class="sb">9:41<span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.6"/><rect x="24" y="4" width="2" height="4" rx="1" fill-opacity=".4"/></svg></span></div><div class="cnt"><div class="sc1"><img class="j" alt="" src="pres/p01-a6b0.webp"><img class="n" alt="" src="pres/p02-1e2d.webp"><span class="spot s1" style="--x:30;--y:1318;--sw:330;--sh:324;--r:22"></span></div></div></div></div></div>
+   <div class="txt"><span class="sur">Bienvenue dans votre Espace</span><h1>Toute votre activité.<br>Une seule appli.</h1><p>Votre journée, ce qu’il reste à faire et vos chiffres, dès l’ouverture.</p></div>
+  </section>
+
+  <section class="ecran">
+   <div class="ill"><div class="telw t2"><div class="tel"><div class="sb">9:41<span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.6"/><rect x="24" y="4" width="2" height="4" rx="1" fill-opacity=".4"/></svg></span></div><div class="cnt"><img class="j" alt="" src="pres/p03-2c7b.webp"><img class="n" alt="" src="pres/p04-9df5.webp"><span class="spot s2" style="--x:22;--y:520;--sw:346;--sh:82;--r:16"></span><div class="lb push"><img class="j" alt="" src="pres/p05-5086.webp"><img class="n" alt="" src="pres/p06-5858.webp"></div></div></div></div></div>
+   <div class="txt"><span class="sur">Clients</span><h1>Chaque client,<br>sous la main.</h1><p>Une fiche par client : coordonnées, demandes, devis et factures.</p></div>
+  </section>
+
+  <section class="ecran">
+   <div class="ill"><div class="telw t3"><div class="tel"><div class="sb">9:41<span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.6"/><rect x="24" y="4" width="2" height="4" rx="1" fill-opacity=".4"/></svg></span></div><div class="cnt"><img class="j" alt="" src="pres/p07-968e.webp"><img class="n" alt="" src="pres/p08-b883.webp"><span class="spot s3" style="--x:24;--y:246;--sw:342;--sh:236;--r:26"></span><div class="lb sheet"><img class="j" alt="" src="pres/p09-f498.webp"><img class="n" alt="" src="pres/p10-4509.webp"></div></div></div></div></div>
+   <div class="txt"><span class="sur">Devis et factures</span><h1>Un devis,<br>en quelques gestes.</h1><p>Les totaux se calculent seuls. Accepté, il devient facture.</p></div>
+  </section>
+
+  <section class="ecran">
+   <div class="ill"><div class="telw t4"><div class="tel"><div class="sb">9:41<span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.6"/><rect x="24" y="4" width="2" height="4" rx="1" fill-opacity=".4"/></svg></span></div><div class="cnt"><div class="sc4"><img class="j" alt="" src="pres/p11-daae.webp"><img class="n" alt="" src="pres/p12-7f15.webp"><span class="spot s4" style="--x:304;--y:199;--sw:63;--sh:73;--r:20"></span></div><div class="lb jour"><img class="j" alt="" src="pres/p13-5784.webp"><img class="n" alt="" src="pres/p14-8b82.webp"></div></div></div></div></div>
+   <div class="txt"><span class="sur">Planning</span><h1>Votre semaine,<br>toujours à jour.</h1><p>Synchronisé avec l’agenda de votre téléphone.</p></div>
+  </section>
+
+  <section class="ecran">
+   <div class="ill"><div class="telw t5"><div class="tel"><div class="sb">9:41<span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.6"/><rect x="24" y="4" width="2" height="4" rx="1" fill-opacity=".4"/></svg></span></div><div class="cnt"><img class="j" alt="" src="pres/p01-a6b0.webp"><img class="n" alt="" src="pres/p02-1e2d.webp"><div class="champ" id="champ"></div><span class="spot s5" style="--x:31;--y:229;--sw:328;--sh:50;--r:25"></span></div></div></div></div>
+   <div class="txt"><span class="sur">Dictée</span><h1>Parlez,<br>c’est écrit.</h1><p>Une note, un rendez-vous, une ligne de devis : dites-le, ProClik le range.</p></div>
+  </section>
+
+  <section class="ecran">
+   <div class="ill"><div class="telw t6"><div class="tel"><div class="sb">9:41<span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.6"/><rect x="24" y="4" width="2" height="4" rx="1" fill-opacity=".4"/></svg></span></div><div class="cnt"><img class="j" alt="" src="pres/p15-bf81.webp"><img class="n" alt="" src="pres/p16-a25b.webp"><span class="spot s6" style="--x:24;--y:340;--sw:88;--sh:108;--r:20"></span><div class="lb push"><img class="j" alt="" src="pres/p17-f066.webp"><img class="n" alt="" src="pres/p18-b8a9.webp"></div></div></div></div></div>
+   <div class="txt"><span class="sur">Options</span><h1>Allez plus loin,<br>quand vous voulez.</h1><p>Chaque option vous montre ce qu’elle fait, avant de la demander.</p></div>
+  </section>
+
+  <section class="ecran" id="e-coul">
+   <div class="ill c"><div id="coul"></div></div>
+   <div class="txt"><span class="sur">À votre goût</span><h1>Votre couleur</h1><p>Touchez une couleur : l’aperçu change tout de suite. Vous pourrez la changer dans les Réglages.</p></div>
+  </section>
+
+  <section class="ecran">
+   <div class="ill c"><div class="aff">
+    <button type="button" data-m="std" aria-pressed="true"><div class="ec"><i class="t" style="width:40%;height:8px"></i><i></i><i style="width:80%"></i><i></i><i style="width:70%"></i><i></i><i style="width:60%"></i></div><b>Standard</b><small>Tous les détails</small><span class="rd"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+    <button type="button" data-m="simple" aria-pressed="false"><div class="ec g"><i class="t" style="width:50%"></i><i style="width:80%"></i><i style="width:65%"></i><i></i></div><b>Simple</b><small>Plus gros, l’essentiel</small><span class="rd"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>
+   </div></div>
+   <div class="txt"><span class="sur">Dernière étape</span><h1>Quel affichage<br>préférez-vous ?</h1><p>Vous pourrez changer à tout moment dans les Réglages.</p></div>
+  </section>
+
+ </div></div>
+ <div class="bas"><button class="rback cache" id="ret" type="button" aria-label="Retour"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="M15 5l-7 7 7 7"/></svg></button><button class="pill" id="suiv" type="button">Découvrir</button></div>
+</div>
+
+<script>
+(function(){
+/* Dans l'Espace (iframe de #welcome) : mêmes jour/nuit et couleur que l'Espace, écran « Votre couleur », la fin prévient l'Espace */
+var P=null;try{if(window.parent!==window&&parent.document)P=parent}catch(e){}
+var R=document.documentElement;
+function teinte(){if(!P)return;var pr=P.document.documentElement,cs=P.getComputedStyle(pr),th=pr.getAttribute('data-theme');
+ if(th)R.setAttribute('data-theme',th);else R.removeAttribute('data-theme');
+ var a=cs.getPropertyValue('--z-nuit').trim(),b=cs.getPropertyValue('--z-sur').trim();if(a)R.style.setProperty('--nuit',a);if(b)R.style.setProperty('--sur-nuit',b)}
+teinte();if(P)new P.MutationObserver(teinte).observe(P.document.documentElement,{attributes:true,attributeFilter:['data-theme','style','class']});
+var ec=document.getElementById('e-coul'),co=document.getElementById('coul');
+if(P&&P.PCCouleur&&co){co.innerHTML=P.PCCouleur.html();P.PCCouleur.lie(co);co.addEventListener('click',function(){setTimeout(teinte,60)})}else if(ec)ec.parentNode.removeChild(ec);
+var N=document.getElementById('piste').children.length,i=0,piste=document.getElementById('piste'),E=piste.children,seg=document.getElementById('seg');
+if(/[?&]m=simple/.test(location.search))[].forEach.call(document.querySelectorAll('.aff button'),function(x){x.setAttribute('aria-pressed',String(x.getAttribute('data-m')==='simple'))});
+function fin(){var b=document.querySelector('.aff [aria-pressed="true"]'),m=b?b.getAttribute('data-m'):'std';if(P)P.postMessage({pcPres:'fin',mode:m},'*');else va(0)}
+var calme=matchMedia('(prefers-reduced-motion: reduce)').matches;
+seg.innerHTML=Array(N+1).join('<i></i>');
+var champ=document.getElementById('champ'),PH='Rappeler Mme Durand demain à 9 h',tm=[];
+function stop(){tm.forEach(clearTimeout);tm=[]}
+function ecrit(){champ.style.visibility='hidden';champ.textContent='';
+ if(calme){champ.style.visibility='';champ.textContent=PH;return}
+ tm.push(setTimeout(function(){champ.style.visibility='';champ.innerHTML='<span class="cur"></span>'},2300));
+ PH.split('').forEach(function(c,k){tm.push(setTimeout(function(){champ.innerHTML=PH.slice(0,k+1)+'<span class="cur"></span>'},2500+k*70))})}
+function joue(){stop();for(var k=0;k<N;k++)E[k].classList.remove('joue');void piste.offsetWidth;E[i].classList.add('joue');if(i===4)ecrit()}
+function maj(){
+ piste.style.transform='translateX('+(-i*100)+'%)';
+ [].forEach.call(seg.children,function(s,k){s.className=k===i?'on':k<i?'f':''});
+ document.getElementById('ret').classList.toggle('cache',i===0);
+ document.getElementById('passer').hidden=i===N-1;
+ document.getElementById('suiv').textContent=i===0?'Découvrir':i===N-1?'C’est parti':'Suivant';
+ joue();
+}
+function va(k){i=Math.max(0,Math.min(N-1,k));maj()}
+document.getElementById('suiv').onclick=function(){i===N-1?fin():va(i+1)};
+document.getElementById('ret').onclick=function(){va(i-1)};
+document.getElementById('passer').onclick=function(){va(N-1)};
+[].forEach.call(document.querySelectorAll('.ill'),function(s){s.addEventListener('click',function(e){if(!e.target.closest('button'))joue()})});
+[].forEach.call(document.querySelectorAll('.aff button'),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll('.aff button'),function(x){x.setAttribute('aria-pressed',String(x===b))})}});
+var vue=document.getElementById('vue'),x0=null,y0=0,dx=0,horiz=null;
+vue.addEventListener('touchstart',function(e){var t=e.touches[0];x0=t.clientX;y0=t.clientY;dx=0;horiz=null},{passive:true});
+vue.addEventListener('touchmove',function(e){if(x0==null)return;var t=e.touches[0];dx=t.clientX-x0;var dy=t.clientY-y0;
+ if(horiz===null&&(Math.abs(dx)>8||Math.abs(dy)>8))horiz=Math.abs(dx)>Math.abs(dy);
+ if(horiz){if((i===0&&dx>0)||(i===N-1&&dx<0))dx/=3;piste.style.transition='none';piste.style.transform='translateX(calc('+(-i*100)+'% + '+dx+'px))'}},{passive:true});
+vue.addEventListener('touchend',function(){if(x0==null)return;x0=null;piste.style.transition='';
+ if(horiz&&Math.abs(dx)>50){va(dx<0?i+1:i-1)}else maj()},{passive:true});
+document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')va(i+1);if(e.key==='ArrowLeft')va(i-1)});
+[].forEach.call(document.querySelectorAll('.txt h1'),function(h){h.innerHTML=h.innerHTML.split('<br>').map(function(x){return '<span class="l">'+x+'</span>'}).join('')});
+maj();
+})();
+</script>
