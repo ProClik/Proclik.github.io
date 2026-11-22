@@ -8,12 +8,12 @@
 <script src="../devis/boutons-icones.js?v=3" defer></script>
 <script src="../devis/icones.js?v=2" defer></script>
 <script src="../devis/loupe.js?v=2" defer></script>
-<script src="plan-faces.js?v=23" defer></script>
+<script src="plan-faces.js?v=24" defer></script>
 <script src="plan-reseaux.js?v=8" defer></script>
-<script src="plan-notes.js?v=2" defer></script>
+<script src="plan-notes.js?v=3" defer></script>
 <script src="plan-res2d.js?v=1" defer></script>
-<script src="plan-ouvrages.js?v=1" defer></script>
-<script src="plan-print.js?v=1" defer></script>
+<script src="plan-ouvrages.js?v=2" defer></script>
+<script src="plan-print.js?v=2" defer></script>
 <style>
 /* Layout : onglets étages et pièces, grande planche (plan 2D ou vue 3D) avec barres flottantes, fiches en bas d'écran, liste des cotes par pièce, total pour Cliky. */
 :root{
@@ -483,6 +483,8 @@ html.pro.clhide #clbanner{display:none!important}
 html.pro .fl.mr{top:auto;bottom:96px}
 html.pro .wrap>#clbanner{order:0;margin:0}
 html.pro #clbanner #chk-btn{position:static;transform:none;margin-left:auto;min-height:38px;background:var(--mint)!important;color:var(--paper)!important}html.pro #clbanner #chk-btn[hidden]{display:none}
+/* Téléphone debout : cadenas + « ? » en haut à gauche, Annuler / Rétablir en icônes seules pour leur laisser la place (22/11) */
+@media (max-width:520px){html.pro .fl.tr .ud span{display:none}html.pro .fl.tr .ud{padding:0 10px}}
 @media (max-width:640px){html.pro #clbanner{flex-wrap:wrap;row-gap:8px;padding:10px 12px}html.pro #clbanner #clb-t{flex:1 1 calc(100% - 46px);font-size:14.5px}html.pro #clbanner #clb-b{order:2;margin-left:auto;padding:8px 16px}}
 </style>
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(!/[?&]client/.test(location.search)&&/[?&]attendre/.test(location.search))document.documentElement.classList.add("attendre","bloque");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client");else if(/[?&]embed/.test(location.search)){document.documentElement.classList.add("pro");document.documentElement.dataset.pv="plan"}}catch(e){}</script>

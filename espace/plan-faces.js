@@ -25,15 +25,15 @@ const T={
  gs:{n:"Grille de soufflage (gainable)",h:230,f:"clim",w:40,hh:14},grp:{n:"Grille de reprise (gainable)",h:225,f:"clim",w:50,hh:24},
  liai:{n:"Passage des liaisons",h:230,f:"clim"},cond:{n:"Évacuation des condensats",h:200,f:"clim"},cmd:{n:"Commande murale clim",h:150,f:"clim"},
  /* Ouvrages (lot B9, 22/11) : rectangles à 3 cotes (largeur, hauteur, profondeur), dimensions de départ À CONFIRMER par Cyril. dh 0 = toute la hauteur. */
- cv:{n:"Caisson vertical",f:"placo",o:1,dw:30,dh:0,dp:30,pos:"sol"},rt:{n:"Retombée",f:"placo",o:1,dw:100,dh:30,dp:30,pos:"haut"},
- bwc:{n:"Bâti-support WC",f:"placo",o:1,dw:60,dh:115,dp:22,pos:"sol"},
- verr:{n:"Verrière",f:"menu",o:1,dw:120,dh:110,dp:0,pos:"al",al:100},verp:{n:"Verrière avec porte",f:"menu",o:1,dw:200,dh:0,dp:0,pos:"sol",porte:83}
+ cv:{n:"Caisson vertical",f:"placo",o:1,dw:15,dh:0,dp:15,pos:"sol"},rt:{n:"Retombée",f:"placo",o:1,dw:100,dh:15,dp:15,pos:"haut"},
+ bwc:{n:"Bâti-support WC",f:"placo",o:1,dw:60,dh:120,dp:25,pos:"sol"},
+ verr:{n:"Verrière",f:"menu",o:1,dw:120,dh:120,dp:0,pos:"al",al:100},verp:{n:"Verrière avec porte",f:"menu",o:1,dw:200,dh:0,dp:0,pos:"sol",porte:83}
 };
 /* Au plafond */
 const TP={
  spot:{n:"Spot encastré",f:"el"},pl:{n:"Point lumineux (plafonnier)",f:"el"},vmc:{n:"Bouche VMC",f:"el"},df:{n:"Détecteur de fumée",f:"el"},
  souf:{n:"Bouche de soufflage (gainable)",f:"clim"},rep:{n:"Grille de reprise (gainable)",f:"clim"},cas:{n:"Cassette clim au plafond",f:"clim"},
- cp:{n:"Caisson au plafond",f:"placo",o:1,dw:200,dl:40,dh:30}
+ cp:{n:"Caisson au plafond",f:"placo",o:1,dw:200,dl:15,dh:15}
 };
 /* Ouvrages : dimensions réelles de l'élément (cm) */
 const isO=t=>!!((T[t]||TP[t]||{}).o);

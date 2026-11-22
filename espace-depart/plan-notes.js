@@ -73,7 +73,7 @@ function ckApply(txt,el){const P=K(),F=window.PKFACES,L=ckParse(txt),tg=ckTarget
  const pl=[];L.forEach(o=>{if(CK_PLAF[o.t])for(let k=0;k<o.q;k++)pl.push(o.t)});
  if(pl.length&&rm){const xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=>p[1]),b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];rm.eqp=rm.eqp||[];
   const byT={};pl.forEach(t=>byT[t]=(byT[t]||0)+1);Object.keys(byT).forEach(t=>{const q=byT[t],c=Math.ceil(Math.sqrt(q*(b[2]-b[0])/Math.max(.5,b[3]-b[1]))),r=Math.ceil(q/c);let i=0;
-   for(let j=0;j<r;j++)for(let k=0;k<c&&i<q;k++,i++){const x=b[0]+(b[2]-b[0])*(k+.5)/c,y=b[1]+(b[3]-b[1])*(j+.5)/r,e={t,n:(T[t]||{}).n||t,x:+x.toFixed(2),y:+y.toFixed(2),st:"faire",ck:1};if(t==="cp")Object.assign(e,{w:200,l:40,hh:30});rm.eqp.push(e);n++}})}
+   for(let j=0;j<r;j++)for(let k=0;k<c&&i<q;k++,i++){const x=b[0]+(b[2]-b[0])*(k+.5)/c,y=b[1]+(b[3]-b[1])*(j+.5)/r,e={t,n:(T[t]||{}).n||t,x:+x.toFixed(2),y:+y.toFixed(2),st:"faire",ck:1};if(t==="cp")Object.assign(e,{w:200,l:15,hh:15});rm.eqp.push(e);n++}})}
  save();return{n,tg,plaf:pl.length&&!mur.length}}
 /* bouton Cliky touché : pose, puis ouvre la vue de face pour vérifier */
 function ckGo(txt,el){if(!ckOn()){toast("Avec l'option Cliky : il pose les éléments de la note pour vous (Réglages › Mes options)");return}
@@ -205,7 +205,8 @@ function press(on){const b=document.querySelector('.cltool[data-cl="notes"]');if
 function toggle(){if(N)stop();else start()}
 function toast(t){let d=$("nt-toast");if(!d){d=document.createElement("div");d.id="nt-toast";d.style.cssText="position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:90;background:#1B2440;color:#fff;font:800 14px var(--f);padding:10px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:90vw;text-align:center";document.body.appendChild(d)}d.textContent=t;d.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{d.hidden=true},2400)}
 /* Aide « ? » à côté du zoom : les gestes + la légende des matériaux (sortie de la barre du bas, Cyril 21/11) */
-function aide(){const fit=$("z-fit");if(!fit||$("z-help"))return;const b=document.createElement("button");b.id="z-help";b.type="button";b.setAttribute("aria-label","Aide : gestes et couleurs");b.textContent="?";fit.after(b);
+/* « ? » en haut, juste à côté du cadenas « Figer » (décision 21/11, rappelée par Cyril le 22/11) ; sinon dans la colonne du zoom */
+function aide(){const fit=$("z-fit"),l0=$("p-lock"),lk=l0&&l0.getClientRects().length?l0:null;if((!fit&&!lk)||$("z-help"))return;const b=document.createElement("button");b.id="z-help";b.type="button";b.setAttribute("aria-label","Aide : gestes et couleurs");b.textContent="?";if(lk){b.className="pro-rond";b.style.cssText="font:800 18px var(--f);color:var(--fg)";lk.after(b)}else fit.after(b);
  const d=document.createElement("div");d.id="nt-aide";d.hidden=true;d.innerHTML=`<b>Aide</b><ul><li>Un doigt déplace le plan, deux doigts zooment.</li><li>Touchez une pièce, un mur, une porte pour le régler.</li><li>Le cadenas fige le plan.</li></ul><b>Les couleurs des matériaux</b>`;const lg=$("legend");const bd=$("board");if(bd)bd.appendChild(d);
  b.addEventListener("click",e=>{e.stopPropagation();const on=d.hidden;d.hidden=!on;document.documentElement.classList.toggle("nt-aide",on);document.documentElement.classList.toggle("pro-leg",on);if(lg&&on)d.appendChild(lg)});
  document.addEventListener("pointerdown",e=>{if(!d.hidden&&!d.contains(e.target)&&e.target!==b){d.hidden=true;document.documentElement.classList.remove("nt-aide","pro-leg")}},true)}
