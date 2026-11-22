@@ -88,8 +88,8 @@ html.f2on #welcome .pi-choix .ap i.c{background:var(--z-fg);opacity:.6}
 /* « Votre couleur » : aperçu Jour / Nuit, 6 ronds, le nom dessous (présentation et Réglages) */
 .ce{width:100%;display:grid;gap:16px}
 .ce-ap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}
-.ce-ap figure{margin:0;min-width:0;display:grid;gap:6px;justify-items:stretch;text-align:center}
-.ce-ap img{width:100%;height:min(330px,38dvh);object-fit:cover;object-position:top center;border-radius:18px;box-shadow:0 0 0 1px var(--z-line),var(--z-ombre);display:block;background:var(--z-tile2)}
+.ce-ap figure{margin:0;min-width:0;display:grid;gap:6px;justify-items:center;text-align:center}
+.ce-ap img{width:auto;max-width:100%;height:min(330px,38dvh);aspect-ratio:390/844;object-fit:contain;border-radius:14px;box-shadow:0 0 0 1px var(--z-line),var(--z-ombre);display:block;background:var(--z-tile2)}
 .ce-ap figcaption{font-size:13px;color:var(--z-mut)}
 .ce-r{display:flex;justify-content:space-between;gap:6px;padding:6px 6px 0}
 .ce-r button{width:44px;height:44px;flex:none;border-radius:50%;border:0;position:relative;cursor:pointer;box-shadow:0 1px 2px rgba(23,24,29,.1),0 8px 18px -10px rgba(23,24,29,.4)}
@@ -129,7 +129,7 @@ html.f2on.f2nb body #xsheet .sheet-foot::before{content:"";position:absolute;lef
 html.f2on.f2pg body #xsheet .pl-ph :is(svg,span,small){color:var(--z-fg)!important;stroke:currentColor}
 html.f2on.f2pg body #xsheet .pl-ph svg{background:none!important;box-shadow:none!important}
 #welcome .pi-scene .ce{width:100%}
-#xsheet .ce-ap img{height:min(440px,50dvh)}
+#xsheet .ce-ap img{width:100%;height:auto;max-height:52dvh;max-width:calc(52dvh * 390 / 844)}
 html.f2on.f2fi body #xsheet .sheet-foot .f2x{display:none!important}
 html.f2on.f2fi body #xsheet #x-s .f2pre{color:var(--z-mut)}
 /* fiche client : identité sans carte, actions en ronds avec le mot dessous (maquette fiche-client) */

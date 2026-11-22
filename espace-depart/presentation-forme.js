@@ -4,7 +4,7 @@
 (function(){"use strict";
 if(/[?&]forme=0\b/.test(location.search))return;
 var d=document,I=window.PCIntro;if(!I||!I.ouvre)return;
-var ancien=I.ouvre,SRC=new URL("presentation.html?v=1",d.currentScript?d.currentScript.src:location.href).href;
+var ancien=I.ouvre,SRC=new URL("presentation.html?v=2",d.currentScript?d.currentScript.src:location.href).href;
 I.ouvre=function(el,m,cb){if(!d.documentElement.classList.contains("f2on")||!el)return ancien.apply(this,arguments);
   el.classList.add("f2pres");el.innerHTML='<iframe class="f2pres-f" title="Présentation de votre Espace" src="'+SRC+'&m='+(m==="simple"?"simple":"std")+'"></iframe>';el.hidden=false;
   function fin(e){if(!e.data||e.data.pcPres!=="fin")return;var f=el.querySelector("iframe");if(!f||e.source!==f.contentWindow)return;

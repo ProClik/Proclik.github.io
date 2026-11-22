@@ -13,20 +13,20 @@ var info=function(k){for(var i=0;i<C.length;i++)if(C[i][0]===k)return C[i];retur
 var cle=function(){return info(lsG("pc-couleur-espace","nuit"))[0]};
 var IMG=new URL("apc/",d.currentScript?d.currentScript.src:location.href).href;
 function html(){var k=cle();
-  return '<div class="ce"><div class="ce-ap"><figure><img data-ce-im="j" alt="Aperçu de jour" src="'+IMG+k+'-j.jpg"><figcaption>Jour</figcaption></figure>'+
-    '<figure><img data-ce-im="n" alt="Aperçu de nuit" src="'+IMG+k+'-n.jpg"><figcaption>Nuit</figcaption></figure></div>'+
+  return '<div class="ce"><div class="ce-ap"><figure><img data-ce-im="j" alt="Aperçu de jour" src="'+IMG+k+'-j.jpg?v=2"><figcaption>Jour</figcaption></figure>'+
+    '<figure><img data-ce-im="n" alt="Aperçu de nuit" src="'+IMG+k+'-n.jpg?v=2"><figcaption>Nuit</figcaption></figure></div>'+
     '<div class="ce-r" role="radiogroup" aria-label="Couleur de l\'Espace">'+C.map(function(c){return '<button type="button" role="radio" data-ce="'+c[0]+'" aria-label="'+c[1]+'" aria-checked="'+(c[0]===k)+'" style="background:'+c[3]+'"></button>'}).join("")+'</div>'+
     '<p class="ce-nom"><b></b><span></span></p></div>'}
 function maj(el){var k=cle(),c=info(k);
   $$("[data-ce]",el).forEach(function(b){b.setAttribute("aria-checked",String(b.getAttribute("data-ce")===k))});
-  $$("[data-ce-im]",el).forEach(function(im){var s=IMG+k+"-"+im.getAttribute("data-ce-im")+".jpg";if(im.src!==s)im.src=s});
+  $$("[data-ce-im]",el).forEach(function(im){var s=IMG+k+"-"+im.getAttribute("data-ce-im")+".jpg?v=2";if(im.src!==s)im.src=s});
   var n=$(".ce-nom",el);if(n){$("b",n).textContent=c[1];$("span",n).textContent=c[2]}
   var l=$("#rg-ecoul small");if(l)l.textContent=c[1];var p=$("#rg-ecoul .ce-pt");if(p)p.style.background=c[3]}
 function choisir(k){lsS("pc-couleur-espace",info(k)[0]);if(window.PCF2Couleur)window.PCF2Couleur();
   if(window.PCFormCouleur&&PCFormCouleur.envoyer)PCFormCouleur.envoyer()}
 function lie(el){if(!el)return;maj(el);$$("[data-ce]",el).forEach(function(b){b.addEventListener("click",function(){choisir(b.getAttribute("data-ce"));maj(el)})});
   /* les 12 images d'aperçu arrivent d'avance, pour que le changement soit immédiat */
-  C.forEach(function(c){["j","n"].forEach(function(t){var i=new Image();i.src=IMG+c[0]+"-"+t+".jpg"})})}
+  C.forEach(function(c){["j","n"].forEach(function(t){var i=new Image();i.src=IMG+c[0]+"-"+t+".jpg?v=2"})})}
 function ouvre(){if(!X||!X.xopen)return;
   X.xopen("Votre couleur","Réglages",html()+'<p class="hint ce-h">Touchez une couleur : l\'aperçu change tout de suite. Les boutons et les actions de l\'Espace prennent cette couleur, de jour comme de nuit.</p>');
   lie($("#x-in"))}
