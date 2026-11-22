@@ -251,50 +251,97 @@ html body #pf-fs{display:none!important}
  html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip.dk{grid-column:1/-1}
 }
 /* écrans bas (iPhone dans Safari, petits téléphones) : on garde l'essentiel à l'écran */
-@media (max-width:600px) and (max-height:860px){
+@media (max-height:860px){
  html body.intro .hero7 .e2-conf{font-size:11.5px!important;margin-top:4px!important}
  html body.intro .hero7 .carte7 .mini7{margin-top:6px!important}
 }
-@media (max-width:600px) and (max-height:760px){
+@media (max-height:760px){
  html body.intro .hero7 .sub{display:none!important}
  html body.tight .cards .card>span{display:none!important}
  html body.tight .cards .card{min-height:46px!important}
  html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:42px!important}
 }
-@media (max-width:600px) and (max-height:860px){
+@media (max-height:860px){
  html body.tight .lq .chips:not(:has(>.chip:nth-child(4))):has(>.chip:nth-child(2)){display:grid!important;grid-template-columns:1fr 1fr}
  html body.tight .lq .chips:not(:has(>.chip:nth-child(4))) .chip.dk{grid-column:1/-1}
  html body.tight .lq .chip.dk{min-height:38px!important}
 }
-@media (max-width:600px) and (max-height:700px){
+@media (max-height:700px){
  html body.intro .wrap>footer,html body.intro .e2-pied{display:none!important}
 }
-@media (max-width:600px) and (max-height:700px){
+@media (max-height:700px){
  html body.intro .foot{display:none!important}
  html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:38px!important;font-size:15px!important}
  html body.tight .lq .chip.dk{min-height:34px!important}
  html body.tight .lq .chips{gap:5px!important}
 }
-@media (max-width:600px) and (max-height:860px){
+@media (max-height:860px){
  html body.intro .hero7 .carte7{padding:14px 16px!important}
  html body.intro .hero7 .carte7 .btn.go{min-height:54px!important}
  html body.intro .hero7 .carte7 .lab{margin-bottom:6px!important}
 }
-@media (max-width:600px) and (max-height:760px){
+@media (max-height:760px){
  html body.intro .hero7 h1{font-size:26px!important}
  html body.intro .hero7 .fil7{margin-top:8px!important}
  html body.intro .foot{display:none!important}
 }
-@media (max-width:600px) and (max-height:760px){
+@media (max-height:760px){
  html body.intro .hero7 .fil7 li{padding:4px 0!important}
  html body.intro .hero7 .carte7{margin-top:10px!important;padding:12px 14px!important}
  html body.intro .hero7 .carte7 .btn.go{min-height:50px!important}
  html body.intro .hero7 .carte7 input{height:46px!important}
 }
-@media (max-width:600px) and (max-height:860px){
+@media (max-height:860px){
  html body.intro .hero7{padding-bottom:6px!important}
  html body.intro .hero7 .e2-conf{margin-top:8px!important;margin-bottom:0!important}
  html body.intro .hero7 h1{margin-bottom:8px!important}
 }
-@media (max-width:600px) and (max-height:860px){html body.intro .hero7{row-gap:12px!important}}
-@media (max-width:600px) and (max-height:760px){html body.intro .hero7{row-gap:6px!important}}
+@media (max-height:860px){html body.intro .hero7{row-gap:12px!important}}
+@media (max-height:760px){html body.intro .hero7{row-gap:6px!important}}
+/* 22/11 23h50 (Cyril : « sur iPad non plus ») : iPad et ordinateur aussi, quand un écran déborde (classe tight) : réponses en colonnes */
+@media (min-width:601px){
+ html body.tight .lq .chips:has(>.chip:nth-child(4)){display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important}
+ html body.tight .lq .chips .chip.dk{grid-column:1/-1}
+ html body.tight .lq .chip:not(.pic){min-height:46px!important;font-size:16px!important}
+ html body.tight .cards .card>span{display:none!important}
+}
+@media (min-width:900px){html body.tight .lq .chips:has(>.chip:nth-child(7)){grid-template-columns:1fr 1fr 1fr}}
+/* Plan : le cadre du plan prend la hauteur libre de l'écran (iPad couché compris) ; plan plein écran ouvert = la page derrière ne défile pas */
+html body #pframe{height:min(620px,max(340px,calc(100dvh - 160px)))!important}
+html:has(#planfull:not([hidden])),html:has(#planfull:not([hidden])) body{overflow:hidden!important;height:100%!important}
+/* très petits écrans (iPhone SE dans Safari, iPad couché avec le clavier) : l'essentiel seulement */
+@media (max-height:620px){
+ html body.intro .hero7 h1{font-size:23px!important;margin-bottom:4px!important}
+ html body.intro .hero7 .fil7 li small,html body.intro .hero7 .fil7 li span>small{display:none!important}
+ html body.intro .hero7 .fil7 li{padding:3px 0!important}
+ html body.intro .hero7 .e2-conf,html body.intro .foot,html body.intro .wrap>footer,html body.intro .e2-pied{display:none!important}
+ html body.intro .hero7 .carte7 .btn.go{min-height:46px!important}
+ html body.intro .hero7 .carte7 input{height:42px!important;min-height:42px!important}
+ html body.tight #app>section>.sub{display:none!important}
+ html body.tight #app>section>h2,html body.tight #app>section>h1{font-size:23px!important;line-height:1.12!important;margin-bottom:6px!important}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:36px!important;font-size:14.5px!important}
+ html body.tight .lq .chip.dk{min-height:32px!important}
+ html body.tight .cards .card{min-height:40px!important;padding-block:6px!important}
+}
+@media (max-height:620px){
+ html body.intro .hero7{row-gap:4px!important}
+ html body.intro .hero7 .carte7{margin-top:6px!important;padding:10px 12px!important}
+ html body.intro .hero7 .carte7 .mini7{display:none!important}
+ html body.tight .lq .chips:has(>.chip:nth-child(6)){display:grid!important;grid-template-columns:1fr 1fr;gap:5px!important}
+ html body.tight .lq .chips .chip.dk{grid-column:1/-1}
+ html body.tight .lq .chips:has(>.chip:nth-child(6)) .chip:not(.pic){padding:0 10px!important}
+}
+@media (max-height:620px){
+ html body.tight .lq .chips:has(>.chip:nth-child(6)) .chip:not(.pic):not(.dk){padding:0 24px 0 10px!important;font-size:14px!important;line-height:1.15}
+ html body.tight .lq .chips:has(>.chip:nth-child(6)) .chip:not(.pic):not(.dk)::after{width:15px!important;height:15px!important;right:6px!important;top:6px!important;margin-top:0!important}
+ html body.tight .q{margin-top:6px!important}
+}
+@media (max-height:620px){
+ html body.tight #app .q>.hint,html body.tight #app .q>p.hint,html body.tight #app .lq>.hint,html body.tight #app .q>small{display:none!important}
+}
+@media (max-height:620px){
+ html body:not(.intro) .lq .chip:not(.pic){min-height:36px!important;font-size:14.5px!important}
+ html body:not(.intro) .lq .chip.dk{min-height:30px!important}
+ html body:not(.intro) .lq .chips{gap:4px!important}
+ html body:not(.intro) .lq .q>.lab,html body:not(.intro) .lq .ql{margin-bottom:4px!important}
+}
