@@ -150,3 +150,74 @@ html body .demo-badge{background:var(--e2-tile2)!important;color:var(--e2-mut)!i
   html body ol.fil7{max-width:none!important;width:auto!important;box-sizing:border-box}
   html body .hero7 .carte7{max-width:none!important;width:auto!important;margin-inline:0!important}
 }
+
+/* ===== Plus aéré, plus « premium » (Cyril 22/11 10h15) ===== */
+:root{--e2-line:color-mix(in srgb,var(--e2-fg) 7%,transparent)}
+/* En-tête : seulement « Aide » et « Aa » (affichage) ; démo en bas de page */
+html body #theme,html body header.top .demo-badge{display:none!important}
+html body .e2-tb{box-shadow:none!important;border:1px solid var(--e2-line)!important}
+html body .e2-rd{width:36px;padding:0!important;justify-content:center}
+html body .e2-demo{text-align:center;font-size:12px;color:var(--e2-faint);letter-spacing:.04em;margin:20px 0 6px}
+/* Affichage : petite fenêtre */
+html body #e2-aff{position:fixed;inset:0;z-index:60;background:rgba(10,12,18,.45);display:grid;place-items:end center;padding:16px}
+html body #e2-aff[hidden]{display:none}
+html body #e2-aff>div{width:min(460px,100%);background:var(--e2-tile);color:var(--e2-fg);border-radius:26px;padding:22px 20px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+html body #e2-aff h2{margin:0 0 12px;font-size:22px}
+html body #e2-aff .e2-opt{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:58px;padding:0 16px;margin-top:8px;border-radius:18px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-fg);font:700 16.5px Manrope,sans-serif;cursor:pointer}
+html body #e2-aff .e2-opt i{width:46px;height:28px;border-radius:99px;background:var(--e2-tile2);position:relative;flex:none;transition:background .2s}
+html body #e2-aff .e2-opt i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+html body #e2-aff .e2-opt[aria-pressed="true"] i{background:var(--e2-nuit)}
+html body #e2-aff .e2-opt[aria-pressed="true"] i::after{transform:translateX(18px);background:var(--e2-sur)}
+html body #e2-aff [data-e2x]{display:grid;place-items:center;width:100%;min-height:58px;margin-top:14px;border-radius:99px;border:0;background:var(--e2-nuit);color:var(--e2-sur);font:700 17px Manrope,sans-serif;cursor:pointer}
+/* À plat : plus d'ombres, un liseré très fin */
+html body .card,html body .lq,html body .chip,html body .carte7,html body .carte9,html body .item,html body .note,html body .drop,html body .recap>div,html body .rblock,html body .nav .btn.back,html body .e2-dic{box-shadow:none!important}
+html body .card,html body .lq,html body .carte7,html body .carte9,html body .drop,html body .recap>div,html body .rblock,html body .nav .btn.back,html body .e2-dic{border:1px solid var(--e2-line)!important}
+html body .card[aria-pressed="true"]{border:1.5px solid var(--e2-laiton)!important}
+/* Plus d'air, titres un poil plus fins */
+html body #app h1{font-weight:750!important;letter-spacing:-.028em;margin-top:14px!important;margin-bottom:8px!important}
+html body #app .sub{font-size:15.5px;margin-bottom:22px!important}
+html body .step-meta{color:var(--e2-mut)!important;font-weight:600}
+html body .step-meta #stepn{color:var(--e2-fg)}
+html body .hint.iqn{display:none!important}
+html body .cards{gap:10px!important}
+html body .cards .card{min-height:104px}
+html body .cards .card>svg{background:transparent!important;padding:0!important;width:28px!important;height:28px!important}
+/* Réponses : lignes fines de 58 px, rond à cocher à droite, une seule coche */
+html body .lq .chips:not(.pics), html body[data-cur="finition"] #app .q .chips:not(.pics){display:flex!important;flex-direction:column!important;gap:8px!important}
+html body .lq .chip:not(.pic), html body[data-cur="finition"] #app .q .chip:not(.pic){min-height:58px!important;height:auto!important;max-height:72px;padding:0 52px 0 16px!important;justify-content:flex-start!important;text-align:left!important;border:1px solid var(--e2-line)!important;background:var(--e2-bg)!important;position:relative;font-size:16.5px!important;width:100%!important;display:flex!important;align-items:center;gap:12px;flex:none!important}
+html body .lq .chip:not(.pic):not(.dk)::after, html body[data-cur="finition"] #app .q .chip:not(.pic):not(.dk)::after{content:"";position:absolute;right:16px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;border:2px solid var(--e2-faint);box-sizing:border-box}
+html body .lq .chip[aria-pressed="true"], html body[data-cur="finition"] #app .q .chip[aria-pressed="true"]{border:1.5px solid var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 10%,var(--e2-tile))!important}
+html body .lq .chip:not(.pic):not(.dk)[aria-pressed="true"]::after, html body[data-cur="finition"] #app .q .chip:not(.pic):not(.dk)[aria-pressed="true"]::after{border:0;background:var(--e2-laiton) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
+html body .lq .chip.hasci[aria-pressed="true"] .ci, html body[data-cur="finition"] #app .q .chip.hasci[aria-pressed="true"] .ci{background:none!important}
+html body .lq .chip.hasci[aria-pressed="true"] .ci>*, html body[data-cur="finition"] #app .q .chip.hasci[aria-pressed="true"] .ci>*{display:inline-block!important}
+html body .lq .chip.dk, html body[data-cur="finition"] #app .q .chip.dk{justify-content:center!important;padding:0 16px!important;background:transparent!important;border-style:dashed!important}
+/* Continuer : pilule pleine, juste le mot */
+html body .btn.go::before,html body .btn.go::after{display:none!important;content:none!important}
+/* Récapitulatif : « Voir tout » */
+html body .e2-voir{margin:8px 0 0;height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-nuit);font:700 14.5px Manrope,sans-serif;cursor:pointer}
+/* Toucher doux */
+html body .card,html body .chip,html body .btn{transition:transform .12s ease,background .15s,border-color .15s!important}
+html body .card:active,html body .chip:active,html body .btn:active{transform:scale(.975)}
+
+/* Couleur de l'Espace choisie par l'artisan (6 paires jour / nuit figées le 21/11) */
+:root[data-coul="sapin"]{--e2-nuit:#2F4A3E}:root[data-coul="sapin"][data-theme="dark"]{--e2-nuit:#A9CDB8}
+:root[data-coul="canard"]{--e2-nuit:#1F5560}:root[data-coul="canard"][data-theme="dark"]{--e2-nuit:#94CBD3}
+:root[data-coul="ardoise"]{--e2-nuit:#3A5470}:root[data-coul="ardoise"][data-theme="dark"]{--e2-nuit:#B3C7DE}
+:root[data-coul="noyer"]{--e2-nuit:#4A3A2E}:root[data-coul="noyer"][data-theme="dark"]{--e2-nuit:#D8C3B0}
+:root[data-coul="encre"]{--e2-nuit:#17181D}:root[data-coul="encre"][data-theme="dark"]{--e2-nuit:#FFFFFF}
+:root[data-coul][data-theme="dark"]{--e2-sur:#141927}
+/* 22/11 avis A à Z : fine barre d'avancement qui bouge à chaque écran (sous l'étape), question en grand titre */
+html body #prog .progress{display:block!important;height:4px;margin:6px 0 2px;background:var(--e2-line,rgba(0,0,0,.08));border-radius:4px;overflow:hidden}
+html body #prog .progress b{display:block;height:100%;background:var(--e2-nuit);border-radius:4px;transition:width .45s cubic-bezier(.22,1,.36,1)}
+html body .lq.qt>.q:first-child>.lab{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html body .lq.qt>.q:first-child{padding-top:14px}
+html body .cards .card>span{display:block!important;font-size:13px!important;color:var(--e2-mut)!important;line-height:1.3;margin-top:-6px;text-align:left}
+html body .cards .card{min-height:0!important}
+html body .porte-m{display:block;width:180px;height:auto;margin:6px auto 10px;color:var(--e2-fg)}
+html body .step-meta,html body .step-meta .cheer{font-size:13.5px!important}
+/* iPad/PC : coordonnées sur 2 colonnes, tout tient sur un écran */
+@media (min-width:700px){html body[data-cur="contact"] #app>section{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
+ html body[data-cur="contact"] #app>section>*{grid-column:1/-1}
+ html body[data-cur="contact"] #app>section>.q:has(input[type=text],input[type=tel],input[type=email]){grid-column:auto}}
+/* Plan : plus de bouton « Plein écran » (décision 21/11 : on tourne le téléphone) */
+html body #pf-fs{display:none!important}
