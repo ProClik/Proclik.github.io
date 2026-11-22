@@ -425,13 +425,14 @@ function reglagesHTML(){return '<div class="xsec" id="jr-reg"><h3>À activer ou 
  sw('jour','Journée de chantier','« J\'y vais », arrivée calculée, récap du soir à cocher. Les heures vont dans le coût du chantier.')+
  sw('hs','Heures sup de l\'équipe','Cliky vous demande le soir ou le lendemain. Récap du mois pour la paie.')+
  sw('cad','Mes cadences','Cliky apprend votre vrai rythme sur vos chantiers terminés et vous le propose dans les pré-devis. Vous choisissez à chaque fois.')+
+ sw('apprend','Aider Cliky à progresser','Quand vous corrigez un plan ou un mur lu sur photo, Cliky garde seulement la forme corrigée (pièces, cotes, fenêtres, prises), sans nom, adresse ni photo, pour moins se tromper ensuite.')+
  (REG.jour!==false?'<button type="button" class="btn" data-jrvh>Mes véhicules ('+(VEHS().length?VEHS().length+' · '+VEHS().map(function(v){return v.nom}).join(', '):'à ajouter')+')</button>':'')+
  (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+(REG.cad!==false?'<button type="button" class="btn" data-jrcad>Mes cadences ('+(Object.keys(CAD.ret).length?Object.keys(CAD.ret).map(nomType).join(', '):'en apprentissage')+')</button>':'')+'</div></div>'}
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-jrsw],[data-jreq],[data-jrvh]');if(!t)return;
  if(t.dataset.jreq!=null){HQ=null;return equipe()}
  if(t.dataset.jrvh!=null){if($('#jr-rc'))return mesVehicules(function(){RC.carb=null;RC.vehs=RC.vehs.filter(vehDe);if(!RC.vehs.length)RC.vehs=vehDefaut(CH[RC.id]);rcRendre()});return mesVehicules(null)}
  var k=t.dataset.jrsw;REG[k]=REG[k]===false;save();var r=$('#jr-reg');if(r)r.outerHTML=reglagesHTML();
- X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':k==='cad'?'Mes cadences':'Heures sup de l\'équipe');majPartout();majMenu()});
+ X.toast(REG[k]?'Activé':'Désactivé',k==='jour'?'Journée de chantier':k==='cad'?'Mes cadences':k==='apprend'?'Aider Cliky à progresser':'Heures sup de l\'équipe');majPartout();majMenu()});
 
 /* ---------- Étape C : vos cadences (Cyril, 17/11 10 h 30) ----------
    Cliky compare, chantier terminé par chantier terminé, les heures prévues et les heures passées (récaps du soir).
@@ -521,5 +522,5 @@ function entreesMenu(){var nav=$('nav.nav');if(!nav)return false;var ch=false;
  return ch}
 entreesMenu();
 function majMenu(){if(entreesMenu()&&window.PCBarre&&PCBarre.applique)PCBarre.applique()}
-window.PCJR={cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+window.PCJR={aide:function(){return REG.apprend!==false},cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();

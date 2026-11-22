@@ -103,6 +103,8 @@ function ckPhoto(txt,el,ph){const tg=ckTarget(el),api=ckApi();if(!tg||tg.room)re
  const u=String(ph[ph.length-1].u||""),f=u.slice(u.indexOf(",")+1);if(!f)return false;ckBusy(true);
  api("/espace/lire-photo",{method:"POST",body:{sorte:"mur",fichier:f,note:String(txt||"").slice(0,1500),mur:murInfo(tg.sg)}}).then(lu=>{ckBusy(false);
   const r=ckApplyLu({elements:(lu.elements||[]).map(o=>({...o})),plafond:lu.plafond||[]},tg);
+  /* ce que Cliky a laissé sur ce mur (avec ce qui y était déjà) : comparé à la version corrigée quand l'artisan enregistre, pour qu'il apprenne (Cyril 22/11) */
+  try{const P=K();if(P.CKL&&!P.CKL.has(tg.sg.a))P.CKL.set(tg.sg.a,{elements:(P.EQ.get(tg.sg.a)||[]).map(e=>({type:e.t,x_cm:e.x,h_cm:e.h}))});save()}catch(e){}
   /* ce que Cliky a remarqué (fissure, humidité…) s'ajoute à la note */
   if(lu.remarques&&lu.remarques.length&&N){const add=c=>{c.txt=(String(c.txt||"").trim()+"\nCliky : "+lu.remarques.join(" · ")).trim()};if(N.cur)add(N.cur);else if(N.mode==="rep"){const n=notes()[N.rep[N.k]];if(n)add(n)}}
   ckDone(r,lu.remarques)},e=>{ckBusy(false);const L=ckParse(txt);if(L.length){const r=ckApply(txt,el);toast((e&&e.message?e.message+". ":"")+"Cliky a posé ce que dit la note");if(r&&r.n)ckDone(r,null,1)}else toast(e&&e.message?e.message:"Cliky n'a pas pu lire la photo")});return true}
@@ -120,13 +122,15 @@ function pins(){const svg=$("svg"),P=K();if(!svg||!P||!P.F)return;let g=svg.quer
  const k=P.pxM(1);g=document.createElementNS("http://www.w3.org/2000/svg","g");g.id="nt-g";g.setAttribute("pointer-events","none");let s="";
  const hl=(N&&N.cur)?N.cur:(N&&N.mode==="rep"&&L[N.rep[N.k]])?L[N.rep[N.k]]:null;
  if(hl){const e=hl.el||elOf(hl);if(e){if(e.t==="seg"||e.t==="op"){const sg=P.segs()[e.x];if(sg)s+=`<line class="nt-hl" x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke-width="${k*12}"/>`}else if(e.t==="room"){const rm=P.F().rooms[e.ri];if(rm)s+=`<polygon class="nt-hlr" points="${rm.pts.map(p=>p.join(",")).join(" ")}"/>`}}}
- L.forEach((n,i)=>{if(!on&&n.fait)return;const r=k*12,x=n.x,y=n.y;s+=`<g class="nt-pin${n.fait?" fait":""}${n.cli&&!CLI?" cli":""}" transform="translate(${x} ${y})"><path d="M0 0 C ${-r*.9} ${-r*1.1} ${-r*1.05} ${-r*1.5} ${-r*1.05} ${-r*2.05} A ${r*1.05} ${r*1.05} 0 1 1 ${r*1.05} ${-r*2.05} C ${r*1.05} ${-r*1.5} ${r*.9} ${-r*1.1} 0 0Z"/><text y="${-r*1.72}" font-size="${r*1.15}">${n.cli&&!CLI?"C":i+1}</text></g>`});
+ L.forEach((n,i)=>{if(!on&&n.fait)return;const r=k*12,x=n.x,y=n.y;s+=`<g class="nt-pin${n.fait?" fait":""}${n.cli&&!CLI?" cli":""}" transform="translate(${x} ${y})"><path d="M0 0 C ${-r*.9} ${-r*1.1} ${-r*1.05} ${-r*1.5} ${-r*1.05} ${-r*2.05} A ${r*1.05} ${r*1.05} 0 1 1 ${r*1.05} ${-r*2.05} C ${r*1.05} ${-r*1.5} ${r*.9} ${-r*1.1} 0 0Z"/><text y="${-r*1.72}" font-size="${r*1.15}">${n.cli&&!CLI?"C":i+1}</text>${n.nb>0&&!n.fait?`<g class="nt-nb"><circle cx="${r*1.05}" cy="${-r*2.95}" r="${r*.85}"/><text x="${r*1.05}" y="${-r*2.95+r*.38}" font-size="${r*1.05}">${n.nb>9?"9+":n.nb}</text></g>`:""}</g>`});
  if(N&&N.cur&&N.cur.x!=null&&N.mode==="pose"){const r=k*12;s+=`<g class="nt-pin new" transform="translate(${N.cur.x} ${N.cur.y})"><circle r="${r*.45}"/></g>`}
  g.innerHTML=s;svg.appendChild(g)}
 let OBS=null;function watch(){const svg=$("svg");if(!svg||OBS)return;OBS=new MutationObserver(()=>{if(!svg.querySelector("#nt-g"))pins()});OBS.observe(svg,{childList:true})}
 
 /* ---------- Écran ---------- */
 const CSS=`
+/* pastille rouge : nombre de points à vérifier dans la note (plans lus par Cliky, Cyril 22/11) */
+.nt-pin .nt-nb circle{fill:#D63A3A!important;stroke:#fff!important;stroke-width:1.5px;vector-effect:non-scaling-stroke}.nt-pin .nt-nb text{fill:#fff!important;font-weight:800;text-anchor:middle}
 html.nt-on #cltools,html.nt-on #legend,html.nt-on #sheet,html.nt-on #opp,html.nt-on #clbanner{display:none!important}
 #nt-ov{position:absolute;inset:0;z-index:3;touch-action:none;cursor:crosshair}
 #nt-card{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--bg);border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(11,18,38,.16);padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));max-height:62vh;overflow:auto;font:500 15px/1.4 var(--f);color:var(--fg)}
