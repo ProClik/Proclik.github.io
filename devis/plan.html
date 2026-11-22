@@ -461,7 +461,7 @@ html.leger body #cl-now .cn-i{padding:5px 14px 5px 5px}html.leger body #cl-now .
 #repk .r .go{border:0;background:#1B2440;color:#fff;font-weight:800}
 #clb-t b .bravo{display:inline-block;vertical-align:-5px;margin-right:6px}
 </style>
-<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="plan-relief.css?v=21">
+<link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="plan-relief.css?v=22">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client");if(/[?&]client/.test(location.search)&&/[?&]leger/.test(location.search))document.documentElement.classList.add("leger");document.addEventListener("click",e=>{const m=e.target.closest&&e.target.closest("#cl-more");if(!m)return;const on=document.documentElement.classList.toggle("tous");m.setAttribute("aria-pressed",on);m.textContent=on?"✕ Moins d'outils":"⋯ Autres outils"})}catch(e){}</script>
 
 <div class="wrap">
@@ -949,7 +949,8 @@ function setLen(x,v){const sg=segs()[x];if(!sg||!(v>0))return;hist();if(CL){/* 1
  if(sg.kind==="mur"){const ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L,tb=b[0]*ux+b[1]*uy;sg.rm.pts.filter(p=>p!==a&&p[0]*ux+p[1]*uy>=tb-.01).forEach(p=>{p[0]=r2(p[0]+dx);p[1]=r2(p[1]+dy)})}
  else{const c=sg.rm.clos[sg.ci];for(let j=sg.j+1;j<c.length;j++){c[j][0]=r2(c[j][0]+dx);c[j][1]=r2(c[j][1]+dy)}}draw();rows()}
 function openEd(x){const sg=segs()[x];if(!sg)return;edSeg=x;draw();const lab=svg.querySelector(`[data-lab="${x}"] rect.pl`)||svg.querySelector(`[data-lab="${x}"]`),br=$("board").getBoundingClientRect(),ed=$("ed");ed.hidden=false;
- const r=lab?lab.getBoundingClientRect():br;let left=r.left-br.left+r.width/2-ed.offsetWidth/2,top=r.bottom-br.top+8;left=Math.max(6,Math.min(left,br.width-ed.offsetWidth-6));if(top+ed.offsetHeight>br.height-60)top=r.top-br.top-ed.offsetHeight-8;
+ const r=lab?lab.getBoundingClientRect():br;let left=r.left-br.left+r.width/2-ed.offsetWidth/2,top=r.bottom-br.top+8;left=Math.max(6,Math.min(left,br.width-ed.offsetWidth-6));
+ /* 23/11 : la bulle se met du côté extérieur de la cote (au-dessus pour un mur du haut), jamais sur le mur */const up=r.top-br.top-ed.offsetHeight-8;if((r.top+r.height/2-br.top<br.height/2&&up>=50)||top+ed.offsetHeight>br.height-60)top=up;
  ed.style.left=left+"px";ed.style.top=Math.max(50,top)+"px";const v=$("edv");v.value=fr(dist(sg.a,sg.b));v.placeholder="ex. deux soixante-quinze";if(!demo){v.focus();v.select()}say(null,`${sg.rm.nom} · ${segName(sg)} : tapez ou dictez la vraie mesure, puis ✓.`)}
 function closeEd(){edSeg=null;CD=null;EX=null;CCS=null;$("ed").hidden=true;$("ed").classList.remove("listen");draw()}
 let CD=null;
@@ -1009,7 +1010,7 @@ function kbText(){const v=$("edv");if(v)v.setAttribute("inputmode","text")}
 function voiceMsg(t){kbText();say(null,t||"Dictée : touchez la case, puis le micro 🎤 du clavier, et dites la mesure. Ou tapez-la.")}
 function startVoice(x){if(x!=null&&(edSeg!==x||$("ed").hidden))openEd(x);const ed=$("ed"),v=$("edv");if(ed.hidden)return;
  if(!SR){kbText();v.blur();v.focus();voiceMsg("Dictée : touchez le micro 🎤 du clavier et dites la mesure, par exemple « deux soixante-quinze ».");return}
- v.value="";v.placeholder="Dites la mesure…";
+ v.value="";v.placeholder="Dites-la…";
  try{rec=new SR();rec.lang="fr-FR";rec.interimResults=true;rec.continuous=false;heard="";let bad=false;ed.classList.add("listen");say(null,"J'écoute… dites la mesure, le mètre à la main.");
   rec.onresult=e=>{heard=[...e.results].map(r=>r[0].transcript).join(" ");v.value=heard};
   rec.onerror=e=>{bad=true;ed.classList.remove("listen");rec=null;v.focus();const er=e&&e.error;
@@ -1799,13 +1800,13 @@ function gdSeen(n,set){const k="pk-gd-"+n;try{if(set)localStorage.setItem(k,"1")
 function gdOpen(n){if(!CL||GD||!n||n>7)return;let w=$("gdw");if(!w){w=document.createElement("div");w.id="gdw";w.className="gdw";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.setAttribute("aria-label","Exemple");
   w.innerHTML='<div class="gd-in"><div class="gd-h"><b><small>Exemple · sur un plan modèle</small><span id="gd-t"></span></b><button type="button" id="gd-x" aria-label="Fermer l\'exemple">✕</button></div><p class="gd-c" id="gd-c" aria-live="polite"></p><iframe id="gd-if" title="Exemple animé" tabindex="-1"></iframe><div class="gd-f"><button type="button" class="re" id="gd-re">↻ Revoir</button><button type="button" class="ok" id="gd-ok">J\'ai compris, à moi !</button></div></div>';document.body.appendChild(w);
   const close=()=>{w.hidden=true;$("gd-if").src="about:blank"};addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-gd-cap"&&$("gd-c")){const c=$("gd-c");c.classList.add("out");clearTimeout(c._t);c._t=setTimeout(()=>{c.textContent=d.t||"";c.classList.remove("out")},300)}});$("gd-x").onclick=close;$("gd-ok").onclick=close;w.addEventListener("click",e=>{if(e.target===w)close()});$("gd-re").onclick=()=>gdOpen(+w.dataset.n)}
- w.dataset.n=n;gdSeen(n,1);$("gd-t").textContent=GDT[n]||"";$("gd-c").textContent="";const re=$("gd-re");re.disabled=true;setTimeout(()=>{re.disabled=false},2500);$("gd-if").src=location.pathname+"?client&embed&gd="+n+"&t="+Date.now();w.hidden=false;$("gd-ok").focus({preventScroll:true})}
+ {const lc=$("lvlc");if(lc)lc.hidden=true}w.dataset.n=n;gdSeen(n,1);$("gd-t").textContent=GDT[n]||"";$("gd-c").textContent="";const re=$("gd-re");re.disabled=true;setTimeout(()=>{re.disabled=false},2500);$("gd-if").src=location.pathname+"?client&embed&gd="+n+"&t="+Date.now();w.hidden=false;$("gd-ok").focus({preventScroll:true})}
 // La 1re fois qu'une étape devient l'étape en cours (rien d'autre d'ouvert), l'exemple s'ouvre tout seul.
 let GDQ=null;function gdMaybe(){if(!CL||GD||!READY)return;clearTimeout(GDQ);GDQ=setTimeout(()=>{const n=gStep();if(n>GN()||G.view||gdSeen(n))return;const v=$("clb-v");if(v){v.classList.add("pulse");clearTimeout(v._p);v._p=setTimeout(()=>v.classList.remove("pulse"),7000)}},900)}
 if(CL&&!GD){$("clb-v").addEventListener("click",e=>{e.stopPropagation();const n=gStep();gdOpen(n>GN()?gList()[0]||1:n)});$("in-ok").addEventListener("click",()=>setTimeout(gdMaybe,300))}
 // --- dans la petite fenêtre : le plan modèle et le doigt ---
-async function gdRun(n){const SP=1.8,wait=ms=>new Promise(r=>setTimeout(r,ms*SP)),raw=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";document.body.append(fg,cap);
- const B=()=>$("board").getBoundingClientRect();let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);fg.style.opacity="0";await raw(60);fg.style.opacity="1";await raw(500);
+async function gdRun(n){const SP=1.8,wait=ms=>new Promise(r=>setTimeout(r,ms*SP)),raw=ms=>new Promise(r=>setTimeout(r,ms)),fg=document.createElement("div"),cap=document.createElement("div");fg.id="gd-fg";cap.id="gd-cap";fg.style.opacity="0";fg.style.transition="none";document.body.append(fg,cap);
+ const B=()=>$("board").getBoundingClientRect();for(let i=0;i<40&&!(B().width>40);i++)await raw(50);let fx=B().left+B().width*.7,fy=B().top+B().height*.8;const put=(x,y)=>{fx=x;fy=y;fg.style.transform=`translate(${x}px,${y}px)`};put(fx,fy);fg.style.opacity="0";void fg.offsetWidth;fg.style.transition="";await raw(60);fg.style.opacity="1";await raw(500);
  const say2=t=>{cap.textContent=t;try{parent.postMessage({type:"proclik-gd-cap",t},"*")}catch(e){}};
  const P=q=>{const m=svg.getScreenCTM(),p=svg.createSVGPoint();p.x=q[0];p.y=q[1];const r=p.matrixTransform(m);return[r.x,r.y]};
  const ev=(el,type,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerId:7,pointerType:"touch",isPrimary:true}));

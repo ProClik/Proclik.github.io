@@ -345,3 +345,5 @@ html:has(#planfull:not([hidden])),html:has(#planfull:not([hidden])) body{overflo
  html body:not(.intro) .lq .chips{gap:4px!important}
  html body:not(.intro) .lq .q>.lab,html body:not(.intro) .lq .ql{margin-bottom:4px!important}
 }
+/* iPad en plein écran : le bouton × de Safari (en haut à gauche) ne cache plus le titre « Votre plan » */
+:root:fullscreen #planfull .pf-bar,:root:-webkit-full-screen #planfull .pf-bar{padding-left:84px!important}
