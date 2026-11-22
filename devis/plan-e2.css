@@ -66,3 +66,57 @@ html body .opp.acts .pd-x{width:40px;height:40px;border-radius:20px;background:n
 @media (max-width:520px){html body .opp.acts .pd-k button{height:42px}html body .opp.acts .pd-out{font-size:22px}}
 /* Téléphone couché : le pavé passe en colonne à gauche (à la place de la consigne), le plan reste visible à droite */
 @media (orientation:landscape) and (max-height:520px){html body .opp.acts:has(.pad){right:auto!important;left:max(8px,env(safe-area-inset-left,0px))!important;top:8px!important;bottom:8px!important;width:290px!important;transform:none!important;overflow:auto;padding:8px 10px!important;border-radius:18px!important}html body .opp.acts .pad{gap:6px;padding:0}html body .opp.acts .pd-h small{display:none}html body .opp.acts .pd-out{font-size:20px}html body .opp.acts .pd-k{gap:5px}html body .opp.acts .pd-k button{height:38px;font-size:18px}html body .opp.acts .pd-f button:not(.rs-ok),html body .opp.acts .pd-f .rs-ok{height:38px}}
+
+/* Lot 5 (22/11, maquette 21/11) : Espace, téléphone couché = même disposition que le formulaire client : outils en colonne à gauche, menu + étages + consigne en petite carte, plan en grand, Plan/3D/Figer, Annuler et zoom à droite. Règles reprises de plan-relief.css (html.client). */
+@media (orientation:landscape) and (max-height:520px){
+ html.pro:not(.client) body .wrap{display:grid!important;grid-template-columns:62px minmax(0,1fr);column-gap:6px;row-gap:0;align-items:start;align-content:start;padding:6px max(8px,env(safe-area-inset-right,0px)) 6px max(6px,env(safe-area-inset-left,0px))!important;max-width:none}
+ html.pro:not(.client) body .wrap>*{grid-column:1;min-width:0}
+ html.pro:not(.client) body .wrap>#board{grid-column:2;grid-row:1 / span 20}
+ html.pro:not(.client) body .board>svg{height:calc(100dvh - 12px)!important}
+ 
+ html.pro:not(.client) body #cltools{position:fixed;left:max(6px,env(safe-area-inset-left,0px));right:auto;top:6px;bottom:6px;width:58px;grid-template-columns:1fr;grid-auto-rows:1fr;gap:2px;padding:3px}
+ html.pro:not(.client) body .cltool{display:grid;justify-items:center;align-content:center;font-size:9.5px;padding:0;gap:0}
+ html.pro:not(.client) body .cltool svg{width:32px!important;height:32px!important;padding:6px!important}
+ html.pro:not(.client) body .cltool .lk{display:none!important}
+ html.pro:not(.client) body .cltool.add::before{left:auto;right:4px;top:2px}
+ 
+ 
+ html.pro:not(.client) body #floors{position:fixed;z-index:6;top:8px;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;box-sizing:border-box;flex-wrap:wrap;gap:4px;margin:0;padding:4px;border-radius:14px;background:var(--bg);box-shadow:var(--up-s)}
+ html.pro:not(.client) body #floors .chip{padding:5px 9px;font-size:11.5px;white-space:nowrap;box-shadow:none!important;background:transparent!important;border:0}
+ html.pro:not(.client) body #floors .chip[aria-pressed="true"]{background:var(--mint)!important;color:var(--paper)!important}
+ html.pro:not(.client) body #floors .chip.add{color:var(--muted);font-size:11px}
+ html.pro:not(.client) body #clbanner{position:fixed;z-index:6;top:var(--ls-bt,48px);left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;flex-wrap:wrap;row-gap:4px;gap:4px;padding:6px 9px;max-height:calc(100dvh - var(--ls-bt,48px) - 96px);overflow-y:auto;overscroll-behavior:contain}
+ html.pro:not(.client) body #clbanner #clb-t{flex:1 1 100%;font-size:12px;line-height:1.3}
+ html.pro:not(.client) body #clbanner .pcl{display:none}
+ html.pro:not(.client) body #clbanner #clb-v,html.pro:not(.client) body #clbanner #clb-h,html.pro:not(.client) body #clbanner #clb-p,html.pro:not(.client) body #clbanner #clb-b{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.pro:not(.client) body #clbanner #clb-b{margin-left:auto}
+ 
+ html.pro:not(.client) body #cltl{position:fixed;z-index:6;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);bottom:8px;width:200px;margin:0}
+ html.pro:not(.client) body #cltl ol{flex-direction:row;max-width:none;padding:0}
+ html.pro:not(.client) body #cltl li{flex:1;justify-content:center}
+ html.pro:not(.client) body #cltl .sh,html.pro:not(.client) body #cltl .lg{display:none!important}
+ html.pro:not(.client) body #cltl i{width:20px;height:20px;font-size:10px}
+ html.pro:not(.client) body #cltl li+li::before{display:block;top:10px;margin:0 10px}
+ html.pro:not(.client) body #cltl button{padding:2px}
+ html.pro:not(.client) body #cltrace{top:auto;bottom:40px;left:8px}
+ 
+ html.pro:not(.client) body #board .fl.tl{left:auto!important;right:8px!important;top:8px!important}
+ html.pro:not(.client) body #board .fl.tl .pill,html.pro:not(.client) body #board .fl.tr .pill{flex-direction:column}
+ html.pro:not(.client) body #board .fl.tr{top:78px!important;right:8px!important;left:auto!important}
+ html.pro:not(.client) body #board .fl.tl button,html.pro:not(.client) body #board .fl.tr button{font-size:11px!important;padding:5px 8px!important;min-width:50px;white-space:nowrap}
+ html.pro:not(.client) body #board .fl.mr{top:auto!important;bottom:8px!important;right:8px!important;transform:none!important}
+ html.pro:not(.client) body #board .fl.mr button{padding:4px 8px!important;min-height:0}
+ 
+ html.pro:not(.client) body #tut b{display:none!important}
+
+ html.pro:not(.client) body{margin:0}
+ html.pro:not(.client) body .wrap>nav.pro-menu{position:fixed;z-index:7;top:6px;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;box-sizing:border-box;margin:0;padding:3px;gap:2px;border-radius:14px}
+ html.pro:not(.client) body .wrap>nav.pro-menu button{min-height:30px!important;height:30px;padding:0 2px!important;font-size:11px!important;gap:0;white-space:nowrap;min-width:0;flex:1 1 0}
+ html.pro:not(.client) body .wrap>nav.pro-menu button svg{display:none}
+ html.pro:not(.client) body #floors{top:46px}
+ html.pro:not(.client) body #clbanner #chk-btn{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.pro:not(.client) body #clbanner #clb-x{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.pro:not(.client) body #board .fl.tl{flex-direction:column;align-items:flex-end}
+ html.pro:not(.client) body #board .fl.tr{top:auto!important;bottom:112px!important}
+}
+@media (orientation:landscape) and (max-height:520px){html body .opp.acts:not(:has(.pad)){left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px)!important;right:auto!important;width:min(560px,calc(100vw - 150px))!important;bottom:6px!important}}
