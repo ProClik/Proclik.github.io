@@ -193,10 +193,10 @@ function scResultats(t){var r=$("#sc-r");if(!r)return;t=(t||"").trim();
   var L=(window.PCPROD&&PCPROD.chercher)?PCPROD.chercher(t):[];var sa=function(x){return String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()},qq=sa(t);L=L.map(function(p,i){return {p:p,i:i,r:(sa(p.d).indexOf(qq)>=0?0:2)+(p.k==="prestation"?1:0)}}).sort(function(a,b){return a.r-b.r||a.i-b.i}).map(function(o){return o.p});r.hidden=false;
   if(!L.length){r.innerHTML='<p class="sc-vide">Rien pour « '+esc(t)+' » dans votre base. Scannez le tarif ou la facture du fournisseur : Cliky l\'ajoute.</p>';return}
   r.innerHTML=L.slice(0,6).map(function(p){var ico=(PCPROD.iconeDe?PCPROD.iconeDe(p):"");
-    return '<button type="button" class="sc-l" data-sc-c="'+esc(p.c||"")+'"><span class="sc-i">'+ico+'</span><span class="sc-d">'+esc(p.d)+(p.ex?'<small>Exemple</small>':"")+'</span><b>'+prixTxt(p)+"</b></button>"}).join("")+
+    return '<button type="button" class="sc-l" data-sc-c="'+esc(p.c||"")+'"><span class="sc-i">'+ico+'</span><span class="sc-d">'+esc(p.d)+(p.ex?'<small>Exemple</small>':"")+'</span><b>'+prixTxt(p)+'</b><span class="sc-crayon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16z"/></svg></span></button>'}).join("")+
     (L.length>6?'<button type="button" class="sc-tout" data-sc-tout>Voir les '+L.length+" résultats</button>":"")}
 function deposer(){
-  X.xopen("Scanner","Cherchez un prix, ou prenez une photo : Cliky s'occupe du reste",
+  X.xopen("Scanner","Cherchez un prix (touchez-le pour le changer), ou prenez une photo",
     '<div class="f2sc"><label class="sc-q"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="sc-q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Un produit, un prix… « BA13 »"><button type="button" class="sc-mic" id="sc-mic" aria-label="Dicter">'+ic("mic")+'</button></label><div class="sc-r" id="sc-r" hidden></div></div>'+
     '<p class="f2sc-t">Ou prenez une photo</p>'+
     '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Les prix d\'un fournisseur</b><small>Facture, devis, bon de livraison ou tarif : Cliky met vos prix à jour et range l\'achat dans le chantier</small></span></button>'+
@@ -204,7 +204,8 @@ function deposer(){
     '<button type="button" data-f2dc="mur"><span class="f2dc-i">'+ic("photo")+'</span><span><b>Un mur vu de face</b><small>Ouvrez le plan du client, touchez le mur, puis « Photo » : Cliky note ce qui est déjà en place</small></span></button></div>',
     '<button class="btn" data-xclose style="width:100%">Fermer</button>',function(){
       var qi=$("#sc-q");if(qi){qi.addEventListener("input",function(){scResultats(qi.value)})}
-      var r=$("#sc-r");if(r)r.addEventListener("click",function(e){if(e.target.closest("[data-sc-tout],[data-sc-c]")){var t=qi?qi.value:"";X.xclose();nav("produits");
+      var r=$("#sc-r");if(r)r.addEventListener("click",function(e){var l=e.target.closest("[data-sc-c]");if(l&&window.PCPROD&&PCPROD.editPrix){PCPROD.editPrix(l,l.getAttribute("data-sc-c"),function(){scResultats(qi?qi.value:"")});return}
+        if(e.target.closest("[data-sc-tout],[data-sc-c]")){var t=qi?qi.value:"";X.xclose();nav("produits");
         setTimeout(function(){var q=$("#pr-q");if(q){q.value=t;q.dispatchEvent(new Event("input",{bubbles:true}))}},350)}});
       var SR=window.SpeechRecognition||window.webkitSpeechRecognition,mic=$("#sc-mic"),ec=null;
       if(mic)mic.addEventListener("click",function(){

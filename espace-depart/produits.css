@@ -98,3 +98,15 @@
 .bc-fonew{justify-self:start;align-self:center}
 .bc-lab{margin:14px 0 2px;font-weight:700;font-size:14px}
 .bc-lp em.bc-cmp{color:var(--accx)}
+/* prix changé en direct sur la ligne (22/11) */
+.pr-li .pr-px{padding:6px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card,#fff)}
+.pr-ed{padding:12px 0;border-bottom:1px solid var(--line)}
+.cf-l>.pr-ed:last-child{border-bottom:0}
+.f2sc .pr-ed{padding:12px 14px;border:1.5px solid var(--n1-nuit,#1B2440);border-radius:16px;background:var(--card,#fff)}
+:root[data-theme="dark"] .f2sc .pr-ed{border-color:#EFEBE2}
+.pr-ed-n{display:block;font-size:15px;font-weight:700;margin-bottom:8px;color:var(--fg)}
+.pr-ed-l{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pr-ed-f{flex:1 1 100%;display:flex;align-items:center;gap:6px;min-height:48px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg,#fff)}
+.pr-ed-f input,.pr-ed-f input:focus{width:5.5em;min-width:0;border:0!important;background:none!important;box-shadow:none!important;font:inherit;font-size:20px;font-weight:700;color:var(--fg);outline:none;padding:0}
+.pr-ed-f span{font-size:13px;color:var(--muted);white-space:nowrap}
+.pr-ed .btn.sm{min-height:44px;flex:1 1 0;justify-content:center}
