@@ -125,7 +125,7 @@ function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)
      posée sous le nom et la surface de la pièce, pour ne pas les cacher */
   const grp=new Map();notes.forEach(n=>{if(!grp.has(n.pc))grp.set(n.pc,[]);grp.get(n.pc).push(n)});notes.length=0;
   grp.forEach((L,pc)=>{const c=centre(pc.points),bas=Math.max(...pc.points.map(q=>q[1])),dy=Math.min(1.6,Math.max(.6,(bas-c[1])*.8));let x=c[0],y=c[1]+dy;if(!dedans([x,y],pc.points))y=c[1]+.5;
-   const T=L.map(n=>n.txt.replace(/^Cliky : /,""));notes.push({x:+x.toFixed(2),y:+y.toFixed(2),t:"room",w:L[0].w,txt:"Cliky, à vérifier sur place :\n"+T.map(t=>"• "+t).join("\n"),d:today})});
+   const T=L.map(n=>n.txt.replace(/^Cliky : /,""));notes.push({x:+x.toFixed(2),y:+y.toFixed(2),t:"room",w:L[0].w,txt:"Cliky, à vérifier sur place :\n"+T.map(t=>"• "+t).join("\n"),nb:T.length,d:today})});
   first=false;
   return{nom:nv.nom,H:nv.hauteur_m>0?nv.hauteur_m:2.5,...(nv.hauteur_m>0?{hok:true}:{hdk:true}),photo:1,ckl:{lu:{pieces:nv.pieces},le:today},...(notes.length?{notes}:{}),dal:{type:"Béton",ep:"20 cm"},esc:[],rooms}});
  try{P.hist()}catch(e){}
