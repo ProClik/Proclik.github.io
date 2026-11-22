@@ -405,7 +405,7 @@ html body #sheet.wzon::before{display:none}
 
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="../devis/plan-relief.css?v=22">
-<link rel="stylesheet" href="../devis/plan-e2.css?v=16">
+<link rel="stylesheet" href="../devis/plan-e2.css?v=18">
 <style>
 /* ---------- Plan dans l'Espace (demande de Cyril, 02/11) : la même interface que le plan du formulaire ----------
    Le plan seul, à la taille de l'écran (plus de défilement qui le bouge), « Tracer » en haut à gauche, les outils en icônes en bas.
@@ -927,7 +927,7 @@ function ptrEnd(e,cancel){PTR.delete(e.pointerId);const D=PD;if(!D)return;
  if(D.type==="pan"||D.type==="pan0")return;const p=pt(e);
  if(D.type==="escrot"){const E=(F().esc||[])[D.i];if(E&&!ST.lock){hist();E.rot=((E.rot||0)+90)%360;escFit(E);if(SH&&SH.type==="esc")renderSheet();all();say(null,(E.forme===TRAP?"Trappe tournée":"Escalier tourné")+" d'un quart de tour ✓ Touchez encore pour continuer.")}return}
  if(D.type==="escadd"){addEsc(p);return}if(D.type==="esc"){openEsc(D.i);return}
- if(D.type==="lab"){if(D.lp){stopVoice();return}if(!demo){openPad(D.idx);return}openEd(D.idx);return}
+ if(D.type==="lab"){if(D.lp){stopVoice();return}if(!demo&&!GD){openPad(D.idx);return}openEd(D.idx);return}
  if(D.type==="draw"){preview=null;addPoint(p);return}
  if(!["op","opdrag","opd"].includes(D.type))hideOpp();
  if(D.type==="op"){selectOp(D.x,D.i);return}

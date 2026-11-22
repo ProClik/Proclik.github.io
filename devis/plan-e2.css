@@ -143,3 +143,5 @@ html body .opp.acts .pd-x{width:40px;height:40px;border-radius:20px;background:n
  html.client body #clbanner #clb-v span{display:none}
 }
 @media (min-width:700px) and (min-height:521px){html.client body #clbanner #clb-b.okgo:not([hidden]){left:50%!important;right:auto!important;width:min(420px,calc(100vw - 32px))!important;transform:translateX(-50%)}}
+html.client.gd body #clbanner #clb-b.okgo{display:none!important}
+html.client body:has(#gdw:not([hidden])) #clbanner #clb-b.okgo{display:none!important}
