@@ -3,6 +3,8 @@
 window.CLIKDEVIS_CONFIG = {
   artisan: "Aurélien",
   entreprise: "BRS",
+  nomComplet: "Bati Renov' Services", // nom affiché en haut du formulaire
+  telephone: "", // numéro de l'artisan pour le bouton « Aide » (vide = bouton caché)
   delai: "48 h",
   webhook: "COLLER_ICI_L_ADRESSE_DU_WEBHOOK_MAKE"
 };
