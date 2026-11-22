@@ -5,6 +5,7 @@ window.CLIKDEVIS_CONFIG = {
   entreprise: "BRS",
   nomComplet: "Atelier Exemple", // FICTIF : nom affiché en haut du formulaire (à remplacer par le vrai nom de l'entreprise)
   telephone: "01 99 00 00 00", // FICTIF (numéro réservé aux fictions) en attendant le vrai numéro de l'artisan ; vide = bouton « Aide » caché
+  couleur: "nuit", // couleur de l'Espace : nuit, sapin, canard, ardoise, noyer ou encre
   delai: "48 h",
   webhook: "COLLER_ICI_L_ADRESSE_DU_WEBHOOK_MAKE"
 };
