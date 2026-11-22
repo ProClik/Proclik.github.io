@@ -1,0 +1,15 @@
+/* Plan de l'Espace (nouvel Espace, 22/11) : la consigne tient sur une ligne (deux au plus), comme dans le plan du formulaire client.
+   Toucher le texte = texte complet (cl-ouvert, déjà dans plan.html). « Masquer », « ▶ », « ? » et « À vérifier » en petits boutons au bout.
+   Chargé seulement par espace-depart/plan.html (l'ancien /espace/ ne change pas). Téléphone couché : rien ne change. */
+@media not all and (orientation:landscape) and (max-height:520px){
+ html.pro:not(.client) body #clbanner{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:6px!important;padding:8px 8px 8px 14px!important;min-height:0!important}
+ html.pro:not(.client) body #clbanner .pcl{display:none!important}
+ html.pro:not(.client) body #clbanner #clb-t{flex:1 1 auto!important;order:1;min-width:0;margin:0!important;font-size:14.5px!important;line-height:1.3!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+ html.pro:not(.client) body #clbanner.cl-ouvert #clb-t{-webkit-line-clamp:unset;display:block!important}
+ html.pro:not(.client) body #clbanner #clb-t>b,html.pro:not(.client) body #clbanner #clb-t>.gdots{display:none!important}
+ html.pro:not(.client) body #clbanner :is(#clb-v,#clb-h){flex:none;order:2;width:36px;height:36px;min-height:0!important;padding:0!important;border-radius:18px!important;display:inline-grid;place-items:center;font-size:15px}
+ html.pro:not(.client) body #clbanner #clb-v span{display:none}
+ html.pro:not(.client) body #clbanner #clb-v svg{width:13px;height:13px}
+ html.pro:not(.client) body #clbanner :is(#clb-x,#chk-btn,#clb-b){flex:none;order:2;width:auto!important;min-height:0!important;height:32px;padding:0 10px!important;margin:0!important;border-radius:16px!important;font-size:12px!important;white-space:nowrap}
+ html.pro:not(.client) body #clbanner #clb-x svg{display:none}
+}
