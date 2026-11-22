@@ -10,13 +10,13 @@ html.f2on[data-theme="dark"]{--z-bg:#0F1117;--z-tile:#1F232D;--z-tile2:#2A2E3A;-
 
 /* ---------- commun aux écrans du lot : fond, titre de page, pilules d'affichage, bouton + rond ---------- */
 html.f2on body,html.f2on body .app{background:var(--z-bg)!important}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z){color:var(--z-fg);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) h2.tecr-h{font-size:30px!important;font-weight:800!important;letter-spacing:-.03em;color:var(--z-fg)!important;margin:4px 0 0!important}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) h2.tecr-h .tecr{display:none!important}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;gap:5px!important;display:flex!important;overflow-x:auto;scrollbar-width:none}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a::-webkit-scrollbar{display:none}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a>button{height:36px!important;padding:0 12px!important;flex:0 0 auto!important;border-radius:18px!important;font-size:13.5px!important;font-weight:600!important;color:var(--z-mut)!important;background:transparent!important;box-shadow:none!important;border:1px solid var(--z-line)!important;white-space:nowrap}
-html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures):not(#z) .seg.oi-a>button[aria-selected="true"]{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-color:transparent!important}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z){color:var(--z-fg);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) h2.tecr-h{font-size:30px!important;font-weight:800!important;letter-spacing:-.03em;color:var(--z-fg)!important;margin:4px 0 0!important}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) h2.tecr-h .tecr{display:none!important}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.oi-a{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;gap:5px!important;display:flex!important;overflow-x:auto;scrollbar-width:none}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.oi-a::-webkit-scrollbar{display:none}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.oi-a>button{height:36px!important;padding:0 12px!important;flex:0 0 auto!important;border-radius:18px!important;font-size:13.5px!important;font-weight:600!important;color:var(--z-mut)!important;background:transparent!important;box-shadow:none!important;border:1px solid var(--z-line)!important;white-space:nowrap}
+html.f2on body:not(#z) :is(#v-planning,#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.oi-a>button[aria-selected="true"]{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-color:transparent!important}
 
 /* ---------- Planning ---------- */
 html.f2on body #v-planning #ev-add{width:46px!important;height:46px!important;min-width:0!important;min-height:0!important;padding:0!important;border-radius:50%!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:var(--z-ombre-s)!important;display:grid!important;place-items:center;margin-left:auto}
@@ -70,56 +70,58 @@ html.f2on body #v-planning .mo-g .tdy .n{background:var(--z-nuit)!important;colo
 html.f2on body #v-planning .cal-key .seg{background:var(--z-tile2)!important;box-shadow:none!important}
 
 /* ---------- Clients, Devis, Factures : même ossature (titre, + rond, pilules, carte vedette, listes) ---------- */
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf{position:relative}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-top{padding-right:58px;min-height:52px;align-items:flex-end!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-n{font-size:13px!important;color:var(--z-mut)!important;font-weight:500!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf{position:relative}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-top{padding-right:58px;min-height:52px;align-items:flex-end!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-n{font-size:13px!important;color:var(--z-mut)!important;font-weight:500!important}
 /* le gros bouton « Ajouter / Créer / Nouvelle » devient le + rond en haut à droite (il garde son texte pour la lecture d'écran) */
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a{position:absolute!important;top:2px;right:0;z-index:2;width:46px!important;height:46px!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:50%!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:var(--z-ombre-s)!important;display:grid!important;place-items:center;order:-1}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab{display:contents}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab>span:not(.ic){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .ic{background:none!important;box-shadow:none!important;width:auto!important;height:auto!important;color:inherit!important;margin:0!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a svg{width:20px;height:20px;stroke:currentColor}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a :is(.ic svg:not(:first-child)){display:none}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a::before,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a::after,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab::after,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .btn.go.cf-go.oi-a .lab::before{display:none!important;content:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a{position:absolute!important;top:2px;right:0;z-index:2;width:46px!important;height:46px!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:50%!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:var(--z-ombre-s)!important;display:grid!important;place-items:center;order:-1}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a .lab{display:contents}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a .lab>span:not(.ic){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a .ic{background:none!important;box-shadow:none!important;width:auto!important;height:auto!important;color:inherit!important;margin:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a svg{width:20px;height:20px;stroke:currentColor}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a :is(.ic svg:not(:first-child)){display:none}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a::before,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a::after,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a .lab::after,html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .btn.go.cf-go.oi-a .lab::before{display:none!important;content:none!important}
 /* les tuiles de tri deviennent des pilules « À suivre 7 » */
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button{display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:6px!important;grid-template:none!important;min-height:0!important;height:36px!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>*{position:static!important;margin:0!important;line-height:1.1!important;transform:none!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button[aria-selected="true"]>:is(span,b){color:var(--z-sur)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button:not([aria-selected="true"])>:is(span,b){color:var(--z-mut)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>:is(svg,em,i){display:none!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>span{font-size:13.5px!important;font-weight:600!important;color:inherit!important;position:static!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .seg.tm>button>b.tm-n{font-size:12px!important;font-weight:600!important;opacity:.75;color:inherit!important;position:static!important;line-height:1}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button{display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:6px!important;grid-template:none!important;min-height:0!important;height:36px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button>*{position:static!important;margin:0!important;line-height:1.1!important;transform:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button[aria-selected="true"]>:is(span,b){color:var(--z-sur)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button:not([aria-selected="true"])>:is(span,b){color:var(--z-mut)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button>:is(svg,em,i){display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button>span{font-size:13.5px!important;font-weight:600!important;color:inherit!important;position:static!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .seg.tm>button>b.tm-n{font-size:12px!important;font-weight:600!important;opacity:.75;color:inherit!important;position:static!important;line-height:1}
 /* recherche */
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-cherche{height:52px!important;border-radius:26px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;padding:0 18px!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-cherche input{font-size:15px!important;background:none!important;border:0!important;box-shadow:none!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-cherche{height:52px!important;border-radius:26px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;padding:0 18px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-cherche input{font-size:15px!important;background:none!important;border:0!important;box-shadow:none!important;color:var(--z-fg)!important}
 /* carte vedette (à valider ce soir, à envoyer) */
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .card.cf-hero{background:var(--z-tile)!important;border:0!important;border-radius:28px!important;padding:22px 20px 20px!important;box-shadow:0 2px 4px rgba(23,24,29,.04),0 22px 40px -24px rgba(23,24,29,.4)!important}
-html.f2on[data-theme="dark"] body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .card.cf-hero{box-shadow:none!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero small{color:var(--z-mut)!important;text-transform:none!important;letter-spacing:0!important;font-weight:600!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero b{font-size:46px!important;font-weight:700!important;letter-spacing:-.04em!important;color:var(--z-fg)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go{border-radius:26px!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:none!important;min-height:52px!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go .ic{display:none!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go .lab{justify-content:center}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-hero .cf-go::after{display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .card.cf-hero{background:var(--z-tile)!important;border:0!important;border-radius:28px!important;padding:22px 20px 20px!important;box-shadow:0 2px 4px rgba(23,24,29,.04),0 22px 40px -24px rgba(23,24,29,.4)!important}
+html.f2on[data-theme="dark"] body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .card.cf-hero{box-shadow:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-hero small{color:var(--z-mut)!important;text-transform:none!important;letter-spacing:0!important;font-weight:600!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-hero b{font-size:46px!important;font-weight:700!important;letter-spacing:-.04em!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-hero .cf-go{border-radius:26px!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;box-shadow:none!important;min-height:52px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-hero .cf-go .ic{display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-hero .cf-go .lab{justify-content:center}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-hero .cf-go::after{display:none!important}
 /* titres de bloc et listes à plat, séparées d'un trait fin */
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .bk{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .sec-h h2.ti{font-size:19px!important;font-weight:700!important;letter-spacing:-.02em;color:var(--z-fg)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .sec-h h2.ti .ti-ic{display:none!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .sec-h>span{background:none!important;box-shadow:none!important;padding:0!important;color:var(--z-mut)!important;font-weight:500!important;font-size:13px!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .card:not(.cf-hero){background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-l .cf-li{background:transparent!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--z-line)!important;border-radius:0!important;padding:13px 2px!important;margin:0!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-l .cf-li:last-child{border-bottom:0!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-av{width:40px!important;height:40px!important;border-radius:50%!important;background:var(--z-tile2)!important;box-shadow:none!important;color:var(--z-fg)!important;font-size:13px!important;font-weight:700!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-av svg{width:17px;height:17px;color:var(--z-mut)}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx b{font-size:16px!important;font-weight:600!important;color:var(--z-fg)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx small{color:var(--z-mut)!important;font-size:13px!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx small.cf-et{color:var(--z-fg)!important;font-weight:500!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .tx small.cf-et.on{color:var(--z-fg)!important;font-weight:600!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-li .go{color:var(--z-faint)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-m b{font-size:15px!important;font-weight:600!important;color:var(--z-fg)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-m .pill{background:none!important;box-shadow:none!important;padding:0!important;font-size:12px!important;font-weight:500!important;color:var(--z-mut)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .cf-m .pill:is(.todo,.warn,.rouge,.alerte){color:var(--z-rose)!important}
-html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures):not(#z) .hint{background:none!important;box-shadow:none!important;padding:0 2px!important;color:var(--z-mut)!important;font-size:13px!important;border:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .bk{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .sec-h h2.ti{font-size:19px!important;font-weight:700!important;letter-spacing:-.02em;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .sec-h h2.ti .ti-ic{display:none!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .sec-h>span{background:none!important;box-shadow:none!important;padding:0!important;color:var(--z-mut)!important;font-weight:500!important;font-size:13px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .card:not(.cf-hero){background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-l .cf-li{background:transparent!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--z-line)!important;border-radius:0!important;padding:13px 2px!important;margin:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-l .cf-li:last-child{border-bottom:0!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-av{width:40px!important;height:40px!important;border-radius:50%!important;background:var(--z-tile2)!important;box-shadow:none!important;color:var(--z-fg)!important;font-size:13px!important;font-weight:700!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-av svg{width:17px;height:17px;color:var(--z-mut)}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-li .tx b{font-size:16px!important;font-weight:600!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-li .tx small{color:var(--z-mut)!important;font-size:13px!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-li .tx small.cf-et{color:var(--z-fg)!important;font-weight:500!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-li .tx small.cf-et.on{color:var(--z-fg)!important;font-weight:600!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-li .go{color:var(--z-faint)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-m b{font-size:15px!important;font-weight:600!important;color:var(--z-fg)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-m .pill{background:none!important;box-shadow:none!important;padding:0!important;font-size:12px!important;font-weight:500!important;color:var(--z-mut)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .cf-m .pill:is(.todo,.warn,.rouge,.alerte){color:var(--z-rose)!important}
+html.f2on body:not(#z) :is(#v-clients,#v-devis,#v-factures,#v-chantiers,#v-depenses,#v-prix,#v-produits):not(#z) .hint{background:none!important;box-shadow:none!important;padding:0 2px!important;color:var(--z-mut)!important;font-size:13px!important;border:0!important}
 html.f2on body #v-factures .cf-badge{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;color:var(--z-mut)!important;font-size:13px!important;font-weight:500!important;min-height:0!important}
 html.f2on body #v-factures .cf-badge svg{width:14px;height:14px}
 html.f2on body #v-factures .cf-top{flex-wrap:wrap!important}
+html.f2on body:not(#z) #v-produits:not(#z) .pr-q{height:52px!important;border-radius:26px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;padding:0 18px!important}
+html.f2on body:not(#z) #v-produits:not(#z) .pr-q input{background:none!important;border:0!important;box-shadow:none!important;font-size:15px!important;color:var(--z-fg)!important}
