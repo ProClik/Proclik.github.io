@@ -115,7 +115,11 @@ function ensure(){const st=document.createElement("style");st.textContent=CSS;do
   const pos=()=>{const v=vide()&&ckOn();if(b.hidden===v)b.hidden=!v;if(!v)return;/* au-dessus de la barre d'outils */const t=$("cltools"),q=bd.getBoundingClientRect();let y=14;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).display!=="none"&&r.top<q.bottom&&r.bottom>q.top)y=Math.max(14,q.bottom-r.top+12)}b.style.bottom=y+"px"};pos();setInterval(pos,500)}}
 function addAide(){const a=$("nt-aide");if(!a)return false;if(a.querySelector(".pf-open"))return true;const b=document.createElement("button");b.className="pf-open";b.type="button";b.innerHTML=PHI+"Partir d'une photo de plan";
  b.addEventListener("click",e=>{e.stopPropagation();a.hidden=true;document.documentElement.classList.remove("nt-aide","pro-leg");choisir()});const pp=a.querySelector(".pp-open");if(pp)pp.after(b);else a.insertBefore(b,a.firstChild.nextSibling);return true}
-function boot(){const P=K();if(!P||P.CL)return;ensure();let n=0;const t=setInterval(()=>{if((addAide()&&$("nt-aide").querySelector(".pp-open"))||++n>100)clearInterval(t)},150);addEventListener("keydown",e=>{const c=$("pf-card");if(e.key==="Escape"&&c&&!c.hidden&&!c.querySelector(".wait"))close()})}
+function boot(){const P=K();if(!P||P.CL)return;ensure();prendParent();addEventListener("message",e=>{if(e.data&&e.data.pcPlanPhoto)prendParent()});let n=0;const t=setInterval(()=>{if((addAide()&&$("nt-aide").querySelector(".pp-open"))||++n>100)clearInterval(t)},150);addEventListener("keydown",e=>{const c=$("pf-card");if(e.key==="Escape"&&c&&!c.hidden&&!c.querySelector(".wait"))close()})}
+/* photo choisie depuis l'Accueil (« Déposer un document » › « Un plan », Cyril 22/11) : le plan s'ouvre et Cliky lit tout de suite */
+function prendParent(){let f=null;try{f=parent!==window&&parent.PC_PLAN_PHOTO;if(f)parent.PC_PLAN_PHOTO=null}catch(e){}if(!f)return;
+ if(!ckOn()){toast("Avec l'option Cliky : il lit la photo d'un plan et le dessine pour vous (Réglages › Mes options)");return}
+ if(!api()){toast("En démo, Cliky ne lit pas les photos de plan");return}setTimeout(()=>envoyer(f),300)}
 function wait(n){if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
 window.PKPHOTO={choisir,_poser:x=>{LU={...x,nv:0};poser()},_montrer:x=>{LU={...x,nv:0};resultat()}};

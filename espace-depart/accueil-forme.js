@@ -103,7 +103,7 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Déposer un document (Cyril 22/11 : « bien trop compliqué à trouver ») : tout de suite, sans choisir le fournisseur d'abord, Cliky le lit */
-  h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+ic("photo")+'</span><span class="x"><b>Déposer un document</b><span>Facture, bon de livraison, devis fournisseur</span></span>'+ic("d")+"</button>";
+  h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+ic("photo")+'</span><span class="x"><b>Déposer un document</b><span>Facture, devis, bon de livraison, plan</span></span>'+ic("d")+"</button>";
 
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   if(B.jour){var L=J.L;
@@ -178,12 +178,32 @@ function perso(){var B=blocs(),N=[["jour","Ma journée"],["afaire","À faire"],[
     '<div class="f2perso">'+N.map(function(x){return '<button type="button" role="switch" aria-checked="'+(B[x[0]]!==false)+'" data-f2b="'+x[0]+'"><span>'+x[1]+'</span><i aria-hidden="true"></i></button>'}).join("")+"</div>",
     '<button class="btn go" data-xclose style="width:100%">C\'est bon</button>',function(){
       $$("[data-f2b]").forEach(function(b){b.addEventListener("click",function(){var on=b.getAttribute("aria-checked")!=="true";b.setAttribute("aria-checked",String(on));B[b.dataset.f2b]=on;lsS("pc-f2-blocs",B);CACHE.h=null;rendre()})})})}
+/* « Déposer un document » : un seul endroit pour tout ce qu'on photographie (Cyril 22/11 : « le chemin doit être plus simple et plus visible »).
+   Fournisseur : Cliky lit la facture, le devis, le bon ou le tarif (sans choisir le fournisseur d'abord).
+   Plan : la photo est prise ici, un nouveau plan s'ouvre et Cliky la lit tout de suite (plan-photo.js).
+   Mur : la photo se rattache à un mur, donc on ouvre ses plans et on touche le mur. */
+var fiPlan=null;
+function deposer(){
+  X.xopen("Déposer un document","Photo ou PDF : Cliky le lit pour vous",
+    '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Une facture, un devis ou un bon</b><small>De votre fournisseur. Cliky reporte les prix et le range dans le chantier</small></span></button>'+
+    '<button type="button" data-f2dc="plan"><span class="f2dc-i">'+ic("plan")+'</span><span><b>Un plan</b><small>D\'architecte, de vente ou un croquis. Cliky le dessine dans un nouveau plan</small></span></button>'+
+    '<button type="button" data-f2dc="mur"><span class="f2dc-i">'+ic("photo")+'</span><span><b>La photo d\'un mur</b><small>Ouvrez le plan du client, touchez le mur, puis « Photo »</small></span></button></div>',
+    '<button class="btn" data-xclose style="width:100%">Annuler</button>',function(){
+      $$("[data-f2dc]").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.f2dc;
+        if(k==="four"){X.xclose();if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");return}
+        if(k==="plan"){
+          if(!fiPlan){fiPlan=d.createElement("input");fiPlan.type="file";fiPlan.accept="image/*,application/pdf";fiPlan.hidden=true;d.body.appendChild(fiPlan);
+            fiPlan.addEventListener("change",function(){var f=fiPlan.files&&fiPlan.files[0];fiPlan.value="";if(!f)return;window.PC_PLAN_PHOTO=f;X.xclose();
+              var o=$('[data-openplan="Nouveau relevé"]');if(o)o.click();
+              var fr=$("#pcov-f");setTimeout(function(){try{if(fr&&fr.contentWindow)fr.contentWindow.postMessage({pcPlanPhoto:1},"*")}catch(e){}},700)})}
+          fiPlan.click();return}
+        if(k==="mur"){X.xclose();if(window.PCPLANS&&PCPLANS.liste)PCPLANS.liste();X.toast("La photo d'un mur","Ouvrez le plan du client, touchez le mur, puis « Photo » : Cliky la lit.")}})})})}
 function agir(el){var v;
   if((v=el.getAttribute("data-f2"))){
     if(v==="connexion"){var b=$("#vco button");if(b)b.click()}
     else if(v==="parler"){var s=$("#speak");if(s)s.click()}
     else if(v==="perso")perso();
-    else if(v==="doc"){if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");else X.toast("Pas encore disponible","Le dépôt de document arrive avec Cliky.")}
+    else if(v==="doc")deposer();
     return true}
   if((v=el.getAttribute("data-f2cree"))){cree(v);return true}
   if((v=el.getAttribute("data-chouv"))){nav("chantiers");apres(function(){if(window.PCCH)PCCH.ouvrir(v)});return true}

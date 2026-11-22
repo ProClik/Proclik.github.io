@@ -457,3 +457,11 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 .f2 .f2a .f2doc>svg.i{color:var(--mut);width:16px;height:16px}
 :root[data-theme="dark"] .f2 .f2a .f2doc{background:#1F232D;box-shadow:none}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a .f2doc{background:#1F232D;box-shadow:none}}
+/* fenêtre « Déposer un document » : 3 grands choix */
+.f2dc{display:grid;gap:10px}
+.f2dc button{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px;border-radius:20px;background:var(--card,#fff);border:1px solid var(--line);color:var(--fg);min-height:76px}
+.f2dc .f2dc-i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:var(--n1-nuit,#1B2440);color:#fff}
+:root[data-theme="dark"] .f2dc .f2dc-i{background:#EFEBE2;color:#1B2440}
+.f2dc .f2dc-i svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.f2dc b{display:block;font-size:15.5px;font-weight:700}
+.f2dc small{display:block;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.35}
