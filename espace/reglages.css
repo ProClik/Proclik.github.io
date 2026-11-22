@@ -77,8 +77,8 @@ html body .rg-grille button{display:flex;flex-direction:column;align-items:cente
 .fc-rd{width:34px;height:34px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(127,127,127,.25)}
 .fc-l [aria-checked="true"]{border-color:var(--n1-laiton,#A8823F);background:color-mix(in srgb,var(--n1-laiton,#A8823F) 10%,var(--n1-calme,var(--bg)))}
 .fc-apw{display:flex;gap:10px;justify-content:center;margin:0 0 4px}
-.fc-apw figure{margin:0;flex:1;max-width:170px;text-align:center}
-.fc-apw img{display:block;width:100%;aspect-ratio:390/600;object-fit:cover;object-position:top;border-radius:16px;box-shadow:0 0 0 4px #0E1322,0 12px 24px -14px rgba(0,0,0,.45);background:#888}
+.fc-apw figure{margin:0;flex:1;max-width:160px;text-align:center}
+.fc-apw img{display:block;width:100%;aspect-ratio:390/780;object-fit:contain;border-radius:16px;box-shadow:0 0 0 4px #0E1322,0 12px 24px -14px rgba(0,0,0,.45);background:#888}
 .fc-apw figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-weight:600}
 .fc-nomw{text-align:center;margin:2px 0 4px;color:var(--muted);font-size:13.5px}.fc-nomw b{color:var(--fg)}
 .fc-autre{display:block;width:100%;margin-top:4px;min-height:48px;border-radius:16px;border:1.5px dashed color-mix(in srgb,var(--fg) 22%,transparent);background:transparent;color:var(--fg);font:inherit;font-size:14.5px;font-weight:700;cursor:pointer}
