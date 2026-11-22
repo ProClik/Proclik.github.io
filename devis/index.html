@@ -327,7 +327,7 @@ html body #pf-form,html body #pf-later{display:none!important}
 @media (orientation:landscape) and (max-height:520px){#planfull .pf-bar:not(:has(#pf-done.fin)){display:none}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
-<link rel="stylesheet" href="espace2.css?v=6">
+<link rel="stylesheet" href="espace2.css?v=7">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -1169,7 +1169,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.tete9,.sub,.err,.hp,.qph,.iok"))}
 // Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
 const SM=()=>innerWidth<=600||(innerHeight<=520&&innerWidth>innerHeight);
-function fitPage(){const b=document.body,over=()=>{if(!SM()||["intro","done","plan","recap"].includes(cur)||iqKey())return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
+function fitPage(){const b=document.body,over=()=>{if(["intro","done","plan","recap"].includes(cur)||iqKey())return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
  cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
 // 17/11 (Cyril, lot A) : la partie affichée suit son CONTENU, pas son numéro. Quand une réponse raccourcit l'écran,
 // les parties sont recalculées : on retrouve la partie qui contient la question où l'on était (avant : on gardait le
