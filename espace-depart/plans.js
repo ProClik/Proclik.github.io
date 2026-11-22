@@ -14,6 +14,7 @@ function ecrire(L){try{localStorage.setItem(K,JSON.stringify(L))}catch(e){/* app
 function un(id){return lire().filter(function(p){return p.id===id})[0]}
 function garder(p){var L=lire().filter(function(x){return x.id!==p.id});L.unshift(p);ecrire(L.slice(0,200))}
 var ICO='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 12h7v8M11 4v5M15 12h5"/></svg>';
+var ICPH='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>';
 var ICPLUS='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 
 /* les clients de l'Espace : les vrais dans l'Espace réel, ceux de démonstration sinon */
@@ -29,11 +30,13 @@ function quand(t){var x=new Date(t);return isNaN(x)?'':x.toLocaleDateString('fr-
 
 /* la liste */
 function liste(){var L=lire();
- var h='<button type="button" class="btn go pl-new" data-plnew>'+ICPLUS+'<span>Nouveau plan</span></button>'+
+ /* Cyril 22/11 : « Photo d'un plan » aussi gros et visible que « Nouveau plan » : un seul toucher, Cliky dessine (client choisi après) */
+ var h='<div class="pl-2"><button type="button" class="btn go pl-new" data-plnew>'+ICPLUS+'<span>Dessiner un plan</span></button>'+
+  '<button type="button" class="btn go pl-new pl-ph" data-plphoto>'+ICPH+'<span>Photo d\'un plan<small>Cliky le dessine pour vous</small></span></button></div>'+
   (L.length?'<div class="card lst cf-l">'+L.map(function(p){var c=client(p.cli),M=manque(p);
    return '<button class="cf-li" type="button" data-plo="'+esc(p.id)+'"><span class="cf-av cf-doc">'+ICO+'</span><span class="tx"><b>'+esc(c?c.n:(p.nom||'Plan sans client'))+'</b><small>'+esc([c&&c.v,p.maj?'modifié le '+quand(p.maj):'créé le '+quand(p.cree)].filter(Boolean).join(' · '))+'</small>'+
     (M.length?'<small class="pl-manque">Manque '+esc(M.join(', '))+'</small>':'')+'</span><span class="go">›</span></button>'}).join('')+'</div>':
-   '<div class="card cf-rien"><b>Pas encore de plan</b><span>Pendant une visite : « Nouveau plan », vous dites pour quel client (ou plus tard), et vous dessinez.</span></div>')+
+   '<div class="card cf-rien"><b>Pas encore de plan</b><span>Pendant une visite : « Dessiner un plan ». Vous avez un plan sur papier ? « Photo d\'un plan » : Cliky le dessine.</span></div>')+
   '<p class="hint">Les plans dessinés par vos clients avec leur demande sont dans la demande, bouton « Plan ».</p>';
  X.xopen('Mes plans','Dessinés par vous',h,'',null);}
 
@@ -51,9 +54,9 @@ function pour(id,cli){var p=id&&un(id);if(!p){p={id:'pl'+Date.now().toString(36)
 
 /* le plan lui-même */
 var COUR=null;
-function ouvrirPlan(id){var p=un(id);if(!p)return;COUR=id;var c=client(p.cli),M=manque(p).filter(function(x){return x!=='le dessin'});
+function ouvrirPlan(id,photo){var p=un(id);if(!p)return;COUR=id;var c=client(p.cli),M=manque(p).filter(function(x){return x!=='le dessin'});
  X.xopen('📐 '+(c?c.n:'Plan sans client'),M.length?'Manque '+M.join(', ')+' : vous pourrez compléter plus tard':(c&&c.adr)||'',
-  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=65&chantier='+encodeURIComponent(p.id)+(c?'&cn='+encodeURIComponent(c.n):'')+'"></iframe>',
+  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=66&chantier='+encodeURIComponent(p.id)+(c?'&cn='+encodeURIComponent(c.n):'')+(photo?'&photo=1':'')+'"></iframe>',
   '<button class="btn" type="button" data-pllist>← Mes plans</button>'+(p.cli?'':'<button class="btn go" type="button" data-plcomp="'+esc(p.id)+'">Choisir le client</button>'),null);}
 addEventListener('message',function(e){var f=d.getElementById('pl-frame');if(!f||e.source!==f.contentWindow||!COUR)return;var m=e.data||{},p=un(COUR);if(!p)return;
  if(m.type==='proclik-plan-ready'){var c=client(p.cli);f.contentWindow.postMessage({type:'proclik-plan-load',plan:p.plan||null,nouveau:true,prenom:''},'*')}
@@ -65,9 +68,10 @@ function versPreDevis(p){var c=client(p.cli);if(!c||!c.vrai||!p.plan)return;try{
 function nouveauClient(id){if(!(X.cf&&X.cf.nouveauClient)){X.toast('Ajoutez le client dans Clients','Puis revenez choisir son nom ici.');return}
  X.cf.nouveauClient(function(k){if(k){if(X.cf.chargerVrais)X.cf.chargerVrais();setTimeout(function(){pour(id,k)},50)}else choisir(id)})}
 
-d.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-plnew],[data-plo],[data-plcli],[data-plnc],[data-pllater],[data-pllist],[data-plcomp]');if(!b)return;e.preventDefault();
+d.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-plnew],[data-plphoto],[data-plo],[data-plcli],[data-plnc],[data-pllater],[data-pllist],[data-plcomp]');if(!b)return;e.preventDefault();
  var a=function(n){return b.getAttribute(n)};
  if(b.hasAttribute('data-plnew'))choisir('');
+ else if(b.hasAttribute('data-plphoto')){var np={id:'pl'+Date.now().toString(36),cree:Date.now(),cli:null,plan:null};garder(np);ouvrirPlan(np.id,1)}
  else if(b.hasAttribute('data-plo'))ouvrirPlan(a('data-plo'));
  else if(b.hasAttribute('data-plcli'))pour(a('data-plid'),a('data-plcli'));
  else if(b.hasAttribute('data-plnc'))nouveauClient(a('data-plnc'));
@@ -80,7 +84,7 @@ function entree(){var nav=$('nav.nav');if(!nav||$('#nb-plans'))return;var b=d.cr
  b.innerHTML='<span class="ico" aria-hidden="true">'+ICO+'</span>Plans<span class="badge" hidden></span>';b.addEventListener('click',function(){liste()});nav.appendChild(b);
  majBadge();if(window.PCBarre&&PCBarre.applique)PCBarre.applique()}
 function majBadge(){var g=$('#nb-plans .badge');if(!g)return;var n=lire().filter(function(p){return !p.cli}).length;g.textContent=n;g.hidden=!n}
-var css=d.createElement('style');css.textContent='.pl-new{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 14px}.pl-new svg,.pl-nc svg{width:20px;height:20px}.pl-nc{display:flex;align-items:center;gap:8px;width:100%;margin:10px 0}.pl-q{display:grid;gap:6px}.pl-q span{font-weight:700;font-size:14px}.pl-q input{width:100%}.pl-manque{display:inline-block;margin-top:3px;color:var(--n1-laiton,#A8823F)!important;font-weight:700}';
+var css=d.createElement('style');css.textContent='.pl-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}.pl-2 .pl-new{margin:0;min-height:64px}.pl-ph span{display:grid;text-align:left;line-height:1.15}.pl-ph small{font-weight:600;font-size:12.5px;opacity:.8}@media (max-width:380px){.pl-2{grid-template-columns:1fr}}.pl-new{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 14px}.pl-new svg,.pl-nc svg{width:20px;height:20px}.pl-nc{display:flex;align-items:center;gap:8px;width:100%;margin:10px 0}.pl-q{display:grid;gap:6px}.pl-q span{font-weight:700;font-size:14px}.pl-q input{width:100%}.pl-manque{display:inline-block;margin-top:3px;color:var(--n1-laiton,#A8823F)!important;font-weight:700}';
 d.head.appendChild(css);
 entree();
 /* depuis un chantier : le plan de ce client (le sien s'il existe, sinon une copie du plan de sa demande à retoucher) */
@@ -88,5 +92,5 @@ function ouvrirPour(k,planDepart){var L=lire().filter(function(p){return p.cli==
  if(!p){p={id:'pl'+Date.now().toString(36),cree:Date.now(),cli:k,plan:planDepart||null};var c=client(k);if(c)p.nom=c.n;garder(p)}
  else if(!p.plan&&planDepart){p.plan=planDepart;garder(p)}
  ouvrirPlan(p.id)}
-window.PCPLANS={liste:liste,nouveau:function(){choisir('')},ouvrirPour:ouvrirPour};
+window.PCPLANS={liste:liste,nouveau:function(){choisir('')},photo:function(){var np={id:'pl'+Date.now().toString(36),cree:Date.now(),cli:null,plan:null};garder(np);ouvrirPlan(np.id,1)},ouvrirPour:ouvrirPour};
 })();
