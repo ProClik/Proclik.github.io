@@ -418,7 +418,7 @@ function open(o){ensure();const P=K();if(!P)return;const SH=P.SH;let ri=P.ST.ri|
  V={tab:o&&o.tab||tab,ri,wi:0,sel:-1,pick:null};
  if(SH&&SH.type==="seg"){const sg=P.segs()[SH.x];const k=walls().findIndex(w=>w.s.a===sg.a);if(k>=0)V.wi=k}
  if(o&&o.tab)V.tab=o.tab;
- if(o&&o.wa){const k=walls().findIndex(w=>w.s.a===o.wa);if(k>=0)V.wi=k}if(o&&o.sel!=null)V.sel=o.sel;
+ if(o&&o.wa){const k=walls().findIndex(w=>w.s.a===o.wa);if(k>=0)V.wi=k}if(o&&o.sel!=null)V.sel=o.sel;if(o&&o.calc)V.sheet="calc";
  try{P.closeSheet(true)}catch(e){}
  $("fx").hidden=false;document.documentElement.classList.add("fx-open");render();$("fx").scrollTop=0}
 function close(){$("fx").hidden=true;document.documentElement.classList.remove("fx-open");V=null;const P=K();try{P.draw();P.notify()}catch(e){}}
