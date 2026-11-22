@@ -40,8 +40,8 @@ input.t,select.t,textarea.t{display:block;width:100%;margin-top:4px;min-height:4
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .row>*{flex:1 1 160px}
 .err{color:var(--n1-alert);font-size:13.5px;min-height:18px;margin:8px 0 0}
-.tabs{display:flex;gap:6px;margin:0 0 14px}
-.tabs button{flex:1;min-height:42px;border:0;border-radius:14px;background:transparent;font-weight:700;color:var(--mu);cursor:pointer}
+.tabs{display:flex;gap:6px;margin:0 0 14px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto;white-space:nowrap;padding:0 12px;min-height:42px;border:0;border-radius:14px;background:transparent;font-weight:700;color:var(--mu);cursor:pointer}
 .tabs button[aria-selected=true]{background:var(--ca);color:var(--fg);box-shadow:var(--n1-pk)}
 .cl{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;border:0;background:transparent;padding:0;cursor:pointer}
 .cl .n{flex:1;min-width:0}
@@ -88,7 +88,7 @@ textarea.t{min-height:0;font:inherit;font-size:16px}
 
 <!-- liste -->
 <section id="v-liste" hidden>
- <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="clients">Clients</button><button role="tab" aria-selected="false" data-tab="messages">Messages</button><button role="tab" aria-selected="false" data-tab="journal">Journal</button><button role="tab" aria-selected="false" data-tab="reglages">Réglages</button></div>
+ <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="clients">Clients</button><button role="tab" aria-selected="false" data-tab="messages">Messages</button><button role="tab" aria-selected="false" data-tab="apprend">Cliky apprend</button><button role="tab" aria-selected="false" data-tab="journal">Journal</button><button role="tab" aria-selected="false" data-tab="reglages">Réglages</button></div>
  <div id="deuxfa-bandeau"></div>
  <div id="alertes-bandeau"></div>
  <div id="p-clients">
@@ -97,6 +97,7 @@ textarea.t{min-height:0;font:inherit;font-size:16px}
   <button class="btn sm" id="voirarch" type="button" style="width:100%" hidden></button>
  </div>
  <div id="p-messages" hidden><div id="messages"></div></div>
+ <div id="p-apprend" hidden><div id="apprend"></div></div>
  <div id="p-journal" hidden><div class="card" id="journal"></div></div>
  <div id="p-reglages" hidden><div id="reglages"></div></div>
 </section>
@@ -162,7 +163,7 @@ $('#retour').addEventListener('click',function(){COUR=null;vue('liste');rendreLi
 $('#nouveau').addEventListener('click',function(){COUR=null;fiche(null);vue('fiche')});
 document.querySelector('.tabs').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(!b)return;
  [].forEach.call(document.querySelectorAll('[data-tab]'),function(x){x.setAttribute('aria-selected',x===b)});
- ['clients','messages','journal','reglages'].forEach(function(t){$('#p-'+t).hidden=b.dataset.tab!==t});if(b.dataset.tab==='journal')journal();if(b.dataset.tab==='messages')messages();if(b.dataset.tab==='reglages')reglages()});
+ ['clients','messages','apprend','journal','reglages'].forEach(function(t){$('#p-'+t).hidden=b.dataset.tab!==t});if(b.dataset.tab==='apprend')apprend();if(b.dataset.tab==='journal')journal();if(b.dataset.tab==='messages')messages();if(b.dataset.tab==='reglages')reglages()});
 
 /* ---------- fiche ---------- */
 function champ(id,lab,val,type,aide){return '<label class="f" for="'+id+'">'+lab+'</label><input class="t" id="'+id+'" type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'"'+(type==='email'?' autocapitalize="off" autocorrect="off"':'')+(type==='number'?' inputmode="decimal"':'')+'>'+(aide?'<div class="mu" style="margin-top:4px">'+aide+'</div>':'')}
@@ -273,6 +274,23 @@ function reglages(){var R=$('#reglages');
   $('#d2v').onclick=function(){var v=this;v.disabled=true;api('/admin/2fa/valider',{method:'POST',body:{otp:$('#d2c').value.replace(/\D/g,'')}}).then(function(){toast('Double sécurité activée : reconnectez-vous');sj('');setTimeout(function(){vue('login')},1200)},function(e){$('#d2e').textContent=e.message}).then(function(){v.disabled=false})}
  },function(e){toast(e.message)}).then(function(){b.disabled=false})};
 }
+/* ---------- Cliky apprend (22/11) : les corrections des artisans, à valider avant qu'il les apprenne ---------- */
+function mini(P){if(!P||!P.length)return '<div class="mu">Rien</div>';var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;P.forEach(function(p){p.points.forEach(function(q){x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])})});
+ var m=.5,s='';P.forEach(function(p){s+='<polygon points="'+p.points.map(function(q){return q.join(',')}).join(' ')+'" fill="rgba(184,146,79,.12)" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/>';(p.cloisons||[]).forEach(function(c){s+='<polyline points="'+c.points.map(function(q){return q.join(',')}).join(' ')+'" fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"/>'})});
+ return '<svg viewBox="'+(x0-m)+' '+(y0-m)+' '+(x1-x0+2*m)+' '+(y1-y0+2*m)+'" style="width:100%;max-height:180px;display:block">'+s+'</svg>'}
+function apprend(){var M=$('#apprend');M.innerHTML='<div class="card mu">Chargement…</div>';
+ api('/admin/cliky-apprend').then(function(j){var C=j.cas||[];
+  var h='<div class="card"><h2>Cliky apprend</h2><p class="mu" style="margin:0">Quand un artisan corrige un plan ou un mur lu sur photo, la correction arrive ici (forme seule : ni nom, ni adresse, ni photo). Rien n\'est appris sans votre « Valider ». Ce que vous validez est ajouté à ce que Cliky relit avant chaque lecture.</p></div>';
+  if(!C.length){M.innerHTML=h+'<div class="card mu">Aucune correction pour l\'instant.</div>';return}
+  h+=C.map(function(c){var d=c.le?new Date(c.le).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'';
+   return '<div class="card"><h2>'+(c.sorte==='plan'?'Plan':'Mur'+(c.mur&&c.mur.piece?' · '+esc(c.mur.piece):''))+' <small class="mu">'+esc(d)+(c.statut==='valide'?' · appris':'')+'</small></h2>'+
+    (c.sorte==='plan'?'<div class="row"><div><div class="mu">Lu par Cliky</div>'+mini(c.lu)+'</div><div><div class="mu">Corrigé par l\'artisan</div>'+mini(c.corrige)+'</div></div>':'')+
+    (c.ecarts&&c.ecarts.length?'<ul style="margin:8px 0 0;padding-left:18px">'+c.ecarts.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'<p class="mu">Cliky avait tout bon : rien à apprendre.</p>')+
+    (c.statut==='valide'?'':'<div class="row" style="margin-top:10px"><button class="btn sm" type="button" data-ap="'+esc(c.id)+'" data-st="refuse">Refuser</button><button class="btn sm go" type="button" data-ap="'+esc(c.id)+'" data-st="valide"'+(c.ecarts&&c.ecarts.length?'':' disabled')+'>Valider : Cliky l\'apprend</button></div>')+'</div>'}).join('');
+  M.innerHTML=h;
+  [].forEach.call(M.querySelectorAll('[data-ap]'),function(b){b.onclick=function(){b.disabled=true;api('/admin/cliky-apprend',{method:'POST',body:{id:b.dataset.ap,statut:b.dataset.st}}).then(function(){toast(b.dataset.st==='valide'?'Cliky l\'a appris':'Correction refusée');apprend()},function(e){toast(e.message);b.disabled=false})}})
+ },function(e){M.innerHTML='<div class="card err">'+esc(e.message)+'</div>'})}
+
 /* ---------- messages des clients ---------- */
 function messages(){var M=$('#messages');M.innerHTML='<div class="card mu">Chargement…</div>';
  api('/admin/messages').then(function(j){var par={};j.messages.forEach(function(m){(par[m.a]=par[m.a]||{e:m.entreprise,L:[]}).L.push(m)});

@@ -28,7 +28,7 @@ const CSS=`
 :root[data-theme="dark"] #pf-card .hd .cki{background:#F2EEE4;color:#1B2440}
 #pf-card .pv{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px;margin:0 0 10px}#pf-card .pv svg{display:block;width:100%;height:auto;max-height:42vh}
 #pf-card .pv .r{fill:rgba(184,146,79,.10);stroke:var(--fg);stroke-width:2.2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
-#pf-card .pv .w{stroke:#2F7DE1;stroke-width:5;vector-effect:non-scaling-stroke;stroke-linecap:butt}#pf-card .pv .d{stroke:#B8924F;stroke-width:5;vector-effect:non-scaling-stroke}#pf-card .pv line.e{stroke:#7A8499;stroke-width:4;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}#pf-card .pv text.e{fill:#7A8499;font-weight:700}
+#pf-card .pv .w{stroke:#2F7DE1;stroke-width:5;vector-effect:non-scaling-stroke;stroke-linecap:butt}#pf-card .pv .d{stroke:#B8924F;stroke-width:5;vector-effect:non-scaling-stroke}#pf-card .pv polyline.c{fill:none;stroke:var(--fg,#0B1226);stroke-width:3;vector-effect:non-scaling-stroke;stroke-linecap:round}#pf-card .pv line.e{stroke:#7A8499;stroke-width:4;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}#pf-card .pv text.e{fill:#7A8499;font-weight:700}
 #pf-card .pv text{font-family:var(--f);font-weight:800;fill:var(--fg);text-anchor:middle}#pf-card .pv text.s{font-weight:600;fill:var(--muted)}
 #pf-card .tabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}#pf-card .tabs button{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font:800 13.5px var(--f);cursor:pointer;min-height:36px}#pf-card .tabs button[aria-pressed="true"]{background:#1B2440;color:#fff;border-color:#1B2440}
 :root[data-theme="dark"] #pf-card .tabs button[aria-pressed="true"]{background:#F2EEE4;color:#1B2440;border-color:#F2EEE4}
@@ -73,13 +73,15 @@ function envoyer(f){if(!f)return;card(`<div class="wait"><div class="sp" aria-hi
 /* ---------- Aperçu du plan lu ---------- */
 function apercu(nv){const R=nv.pieces;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;R.forEach(p=>p.points.forEach(q=>{x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])}));
  const m=Math.max(.6,(x1-x0)*.05),W=x1-x0+2*m,H=y1-y0+2*m,fs=Math.max(.22,Math.min(.42,Math.min(W,H)/16));let s="";
- R.forEach(p=>{s+=`<polygon class="r" points="${p.points.map(q=>q.join(",")).join(" ")}"/>`;p.ouvertures.forEach(o=>{const a=p.points[o.mur],b=p.points[(o.mur+1)%p.points.length],L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;
+ R.forEach(p=>{s+=`<polygon class="r" points="${p.points.map(q=>q.join(",")).join(" ")}"/>`;(p.cloisons||[]).forEach(c=>{s+=`<polyline class="c" points="${c.points.map(q=>q.join(",")).join(" ")}"/>`});p.ouvertures.forEach(o=>{const[a,b]=cote(p,o),L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;
   s+=`<line class="${o.type==="porte"?"d":"w"}" x1="${a[0]+ux*o.depuis_m}" y1="${a[1]+uy*o.depuis_m}" x2="${a[0]+ux*(o.depuis_m+o.largeur_m)}" y2="${a[1]+uy*(o.depuis_m+o.largeur_m)}"/>`});
   /* clims, verrières… : petit trait laiton contre le mur, côté pièce, avec son nom court */
-  (p.equipements||[]).forEach(o=>{const a=p.points[o.mur],b=p.points[(o.mur+1)%p.points.length],L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L,nx=-uy*.16,ny=ux*.16,m0=o.depuis_m,m1=o.depuis_m+o.largeur_m,mc=(m0+m1)/2;
+  (p.equipements||[]).forEach(o=>{const[a,b]=cote(p,o),L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L,nx=-uy*.16,ny=ux*.16,m0=o.depuis_m,m1=o.depuis_m+o.largeur_m,mc=(m0+m1)/2;
    s+=`<line class="e" x1="${a[0]+ux*m0+nx}" y1="${a[1]+uy*m0+ny}" x2="${a[0]+ux*m1+nx}" y2="${a[1]+uy*m1+ny}"/><text class="e" text-anchor="middle" x="${a[0]+ux*mc+nx*2.6}" y="${a[1]+uy*mc+ny*2.6}" font-size="${fs*.62}">${EQN[o.type]||""}</text>`})});
  R.forEach(p=>{const c=centre(p.points);s+=`<text x="${c[0]}" y="${c[1]}" font-size="${fs}">${esc(p.nom)}</text><text class="s" x="${c[0]}" y="${c[1]+fs*1.25}" font-size="${fs*.85}">${fr(aire(p.points))} m²</text>`});
  return`<svg viewBox="${x0-m} ${y0-m} ${W} ${H}" role="img" aria-label="Aperçu du plan lu par Cliky">${s}</svg>`}
+/* le côté où se trouve une ouverture ou un équipement : contour de la pièce, ou bout de cloison */
+function cote(p,o){const ci=o.cloison??-1,L=ci>=0&&p.cloisons&&p.cloisons[ci]?p.cloisons[ci].points:p.points;return[L[o.mur]||L[0],L[(o.mur+1)%L.length]||L[0]]}
 const EQN={split:"Clim",ge:"Groupe ext.",verr:"Verrière",verp:"Verrière",rad:"Radiateur",tab:"Tableau",cee:"Ballon"};
 function aire(P){let a=0;for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length];a+=p[0]*q[1]-q[0]*p[1]}return Math.abs(a/2)}
 function centre(P){let a=0,cx=0,cy=0;for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length],k=p[0]*q[1]-q[0]*p[1];a+=k;cx+=(p[0]+q[0])*k;cy+=(p[1]+q[1])*k}if(Math.abs(a)<1e-6)return[P[0][0],P[0][1]];return[cx/(3*a),cy/(3*a)]}
@@ -98,8 +100,8 @@ function resultat(){const N=(LU.niveaux||[]);if(!N.length){card(`<div class="hd"
 /* ---------- Pose du plan lu ---------- */
 /* clims, verrières… lues sur le plan → équipements du mur (même forme que la vue de face : x = centre en cm depuis le début du mur,
    le contour lu tourne dans le sens des aiguilles d'une montre, donc la gauche vue de la pièce = le début du mur) */
-function eqMur(p,i,H){const T=(window.PKFACES&&PKFACES.T)||{},Hh=Math.round(H*100),a=p.points[i],b=p.points[(i+1)%p.points.length],Lw=Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])*100);
- return(p.equipements||[]).filter(x=>x.mur===i&&T[x.type]).map(x=>{const d=T[x.type],xc=Math.round((x.depuis_m+x.largeur_m/2)*100);
+function eqMur(p,i,H,ci){const T=(window.PKFACES&&PKFACES.T)||{},Hh=Math.round(H*100),L=ci>=0?p.cloisons[ci].points:p.points,a=L[i],b=L[(i+1)%L.length],Lw=Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])*100);
+ return(p.equipements||[]).filter(x=>(x.cloison??-1)===ci&&x.mur===i&&T[x.type]).map(x=>{const d=T[x.type],xc=Math.round((x.depuis_m+x.largeur_m/2)*100);
   if(d.o){const w=Math.min(Lw,Math.round(x.largeur_m*100)||d.dw),hh=Math.min(Hh,Math.round((x.hauteur_m||0)*100)||d.dh||Hh);
    return{t:x.type,n:d.n,x:Math.max(w/2,Math.min(Lw-w/2,xc)),h:d.pos==="al"?Math.min(Hh-hh/2,(d.al||0)+hh/2):hh/2,w,hh,p:d.dp||0,st:"dk",ck:1,lu:1}}
   return{t:x.type,n:d.n||x.type,x:Math.max(5,Math.min(Lw-5,xc)),h:Math.max(5,Math.min(Hh-5,Math.round((x.hauteur_m||0)*100)||d.h||110)),st:"dk",ck:1,lu:1}})}
@@ -108,14 +110,18 @@ function clim(p){const n=(p.equipements||[]).filter(x=>x.type==="split").length;
 function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)return;const SOL=P.SOLDEF||{};
  const OPD={fenetre:{k:"fenetre",h:1.35,al:.9},porte_fenetre:{k:"pf",h:2.15,al:0},baie_coulissante:{k:"pf",t:"Baie coulissante",ouv:"Coulissant",h:2.15,al:0},porte:{k:"porte",h:2.04,al:0}};
  const today=new Date().toISOString().slice(0,10);let first=true;
- const floors=N.map(nv=>{const rooms=nv.pieces.map(p=>({nom:p.nom,sol:{...SOL},pts:p.points.map((q,i)=>{const o=p.ouvertures.filter(x=>x.mur===i).map(x=>{const d={...OPD[x.type],w:x.largeur_m,p:x.depuis_m};
+ /* un point du contour (ci = -1) ou d'un bout de cloison (ci = son numéro), avec les ouvertures et équipements du côté qui en part */
+ const pt=(p,q,i,ci,H)=>{const o=p.ouvertures.filter(x=>(x.cloison??-1)===ci&&x.mur===i).map(x=>{const d={...OPD[x.type],w:x.largeur_m,p:x.depuis_m};
    /* hauteur écrite (« 125 x 135 ») : on la garde ; une fenêtre garde son linteau à 2,25 m environ */
    if(x.hauteur_m>0){d.h=x.hauteur_m;if(d.k==="fenetre")d.al=Math.max(0,+(2.25-x.hauteur_m).toFixed(2))}return d});
-   const e=eqMur(p,i,nv.hauteur_m>0?nv.hauteur_m:2.5);const r={p:[q[0],q[1]]};if(o.length)r.o=o;if(e.length)r.e=e;return r}),clos:[],...clim(p)}));
+   const e=eqMur(p,i,H,ci);const r={p:[q[0],q[1]]};if(o.length)r.o=o;if(e.length)r.e=e;return r};
+ const floors=N.map(nv=>{const H=nv.hauteur_m>0?nv.hauteur_m:2.5,rooms=nv.pieces.map(p=>({nom:p.nom,sol:{...SOL},pts:p.points.map((q,i)=>pt(p,q,i,-1,H)),
+   /* bouts de cloison (qui ne ferment rien) : posés comme des cloisons du plan, à leur longueur */
+   clos:(p.cloisons||[]).map((c,ci)=>c.points.map((q,i)=>pt(p,q,i,ci,H))),...clim(p)}));
   /* les points douteux deviennent des notes « à reprendre », épinglées au milieu de leur pièce */
   const notes=[];let g=0;av.forEach(v=>{let p=nv.pieces.find(x=>x.nom===v.piece);if(!p&&v.piece){const t=v.piece.toLowerCase();p=nv.pieces.find(x=>x.nom.toLowerCase().includes(t)||t.includes(x.nom.toLowerCase()))}if(!p&&v.piece&&N.some(o=>o.pieces.some(x=>x.nom===v.piece)))return;if(!p&&!first)return;const c=centre((p||nv.pieces[0]).points);/* plusieurs notes au même endroit : décalées pour se voir */const dx=p?notes.filter(n=>n.w.indexOf(p.nom+" ·")===0).length*.9:(g++)*.9;notes.push({x:+(c[0]+dx).toFixed(2),y:+c[1].toFixed(2),t:"room",w:(p?p.nom:"Tout le logement")+" · lu sur la photo",txt:"Cliky : "+(!p&&v.piece?v.piece+" : ":"")+v.texte,d:today})});
   first=false;
-  return{nom:nv.nom,H:nv.hauteur_m>0?nv.hauteur_m:2.5,...(nv.hauteur_m>0?{hok:true}:{hdk:true}),photo:1,...(notes.length?{notes}:{}),dal:{type:"Béton",ep:"20 cm"},esc:[],rooms}});
+  return{nom:nv.nom,H:nv.hauteur_m>0?nv.hauteur_m:2.5,...(nv.hauteur_m>0?{hok:true}:{hdk:true}),photo:1,ckl:{lu:{pieces:nv.pieces},le:today},...(notes.length?{notes}:{}),dal:{type:"Béton",ep:"20 cm"},esc:[],rooms}});
  try{P.hist()}catch(e){}
  /* les familles posées (clim, menuiserie…) s'affichent dans la vue de face */
  try{const F=window.PKFACES,T=F.T||{},fam=new Set();N.forEach(n=>n.pieces.forEach(p=>(p.equipements||[]).forEach(x=>{if(T[x.type]&&T[x.type].f)fam.add(T[x.type].f)})));const M=F.metiers()||[],nm=[...new Set([...M,...fam])];if(nm.length!==M.length)F.setMetiers(nm)}catch(e){}

@@ -103,6 +103,8 @@ function ckPhoto(txt,el,ph){const tg=ckTarget(el),api=ckApi();if(!tg||tg.room)re
  const u=String(ph[ph.length-1].u||""),f=u.slice(u.indexOf(",")+1);if(!f)return false;ckBusy(true);
  api("/espace/lire-photo",{method:"POST",body:{sorte:"mur",fichier:f,note:String(txt||"").slice(0,1500),mur:murInfo(tg.sg)}}).then(lu=>{ckBusy(false);
   const r=ckApplyLu({elements:(lu.elements||[]).map(o=>({...o})),plafond:lu.plafond||[]},tg);
+  /* ce que Cliky a laissé sur ce mur (avec ce qui y était déjà) : comparé à la version corrigée quand l'artisan enregistre, pour qu'il apprenne (Cyril 22/11) */
+  try{const P=K();if(P.CKL&&!P.CKL.has(tg.sg.a))P.CKL.set(tg.sg.a,{elements:(P.EQ.get(tg.sg.a)||[]).map(e=>({type:e.t,x_cm:e.x,h_cm:e.h}))});save()}catch(e){}
   /* ce que Cliky a remarqué (fissure, humidité…) s'ajoute à la note */
   if(lu.remarques&&lu.remarques.length&&N){const add=c=>{c.txt=(String(c.txt||"").trim()+"\nCliky : "+lu.remarques.join(" · ")).trim()};if(N.cur)add(N.cur);else if(N.mode==="rep"){const n=notes()[N.rep[N.k]];if(n)add(n)}}
   ckDone(r,lu.remarques)},e=>{ckBusy(false);const L=ckParse(txt);if(L.length){const r=ckApply(txt,el);toast((e&&e.message?e.message+". ":"")+"Cliky a posé ce que dit la note");if(r&&r.n)ckDone(r,null,1)}else toast(e&&e.message?e.message:"Cliky n'a pas pu lire la photo")});return true}
