@@ -84,6 +84,7 @@ function apercu(nv){const R=nv.pieces;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;R.forEac
 function cote(p,o){const ci=o.cloison??-1,L=ci>=0&&p.cloisons&&p.cloisons[ci]?p.cloisons[ci].points:p.points;return[L[o.mur]||L[0],L[(o.mur+1)%L.length]||L[0]]}
 const EQN={split:"Clim",ge:"Groupe ext.",verr:"Verrière",verp:"Verrière",rad:"Radiateur",tab:"Tableau",cee:"Ballon"};
 function aire(P){let a=0;for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length];a+=p[0]*q[1]-q[0]*p[1]}return Math.abs(a/2)}
+function dedans(pt,p){let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++)if(((p[i][1]>pt[1])!==(p[j][1]>pt[1]))&&(pt[0]<(p[j][0]-p[i][0])*(pt[1]-p[i][1])/(p[j][1]-p[i][1])+p[i][0]))c=!c;return c}
 function centre(P){let a=0,cx=0,cy=0;for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length],k=p[0]*q[1]-q[0]*p[1];a+=k;cx+=(p[0]+q[0])*k;cy+=(p[1]+q[1])*k}if(Math.abs(a)<1e-6)return[P[0][0],P[0][1]];return[cx/(3*a),cy/(3*a)]}
 
 function resultat(){const N=(LU.niveaux||[]);if(!N.length){card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Cliky n'a trouvé aucune pièce</h3><p class="sub" style="margin:0">${esc(((LU.a_verifier||[])[0]||{}).texte||"Essayez une photo plus nette, prise bien en face.")}</p></div></div><div class="row"><button class="go2" data-pf="x">Fermer</button><button class="go" data-pf="re">Essayer une autre photo</button></div>`);return}
@@ -119,7 +120,11 @@ function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)
    /* bouts de cloison (qui ne ferment rien) : posés comme des cloisons du plan, à leur longueur */
    clos:(p.cloisons||[]).map((c,ci)=>c.points.map((q,i)=>pt(p,q,i,ci,H))),...clim(p)}));
   /* les points douteux deviennent des notes « à reprendre », épinglées au milieu de leur pièce */
-  const notes=[];let g=0;av.forEach(v=>{let p=nv.pieces.find(x=>x.nom===v.piece);if(!p&&v.piece){const t=v.piece.toLowerCase();p=nv.pieces.find(x=>x.nom.toLowerCase().includes(t)||t.includes(x.nom.toLowerCase()))}if(!p&&v.piece&&N.some(o=>o.pieces.some(x=>x.nom===v.piece)))return;if(!p&&!first)return;const c=centre((p||nv.pieces[0]).points);/* plusieurs notes au même endroit : décalées pour se voir */const dx=p?notes.filter(n=>n.w.indexOf(p.nom+" ·")===0).length*.9:(g++)*.9;notes.push({x:+(c[0]+dx).toFixed(2),y:+c[1].toFixed(2),t:"room",w:(p?p.nom:"Tout le logement")+" · lu sur la photo",txt:"Cliky : "+(!p&&v.piece?v.piece+" : ":"")+v.texte,d:today})});
+  const notes=[];let g=0;av.forEach(v=>{let p=nv.pieces.find(x=>x.nom===v.piece);if(!p&&v.piece){const t=v.piece.toLowerCase();p=nv.pieces.find(x=>x.nom.toLowerCase().includes(t)||t.includes(x.nom.toLowerCase()))}if(!p&&v.piece&&N.some(o=>o.pieces.some(x=>x.nom===v.piece)))return;if(!p&&!first)return;notes.push({pc:p||nv.pieces[0],t:"room",w:(p?p.nom:"Tout le logement")+" · lu sur la photo",txt:"Cliky : "+(!p&&v.piece?v.piece+" : ":"")+v.texte,d:today})});
+  /* les épingles d'une même pièce : en ligne SOUS le nom et la surface (Cyril 22/11 : elles cachaient le nom), centrées, dans la pièce */
+  const grp=new Map();notes.forEach(n=>{if(!grp.has(n.pc))grp.set(n.pc,[]);grp.get(n.pc).push(n)});
+  grp.forEach((L,pc)=>{const c=centre(pc.points),ys=pc.points.map(q=>q[1]),bas=Math.max(...ys),dy=Math.min(1.6,Math.max(.6,(bas-c[1])*.8)),pas=Math.min(.75,Math.max(.45,(Math.max(...pc.points.map(q=>q[0]))-Math.min(...pc.points.map(q=>q[0])))/(L.length+1)));
+   L.forEach((n,k)=>{let x=c[0]+(k-(L.length-1)/2)*pas,y=c[1]+dy;if(!dedans([x,y],pc.points)){x=c[0]+(k-(L.length-1)/2)*.45;y=c[1]+.5}n.x=+x.toFixed(2);n.y=+y.toFixed(2);delete n.pc})});
   first=false;
   return{nom:nv.nom,H:nv.hauteur_m>0?nv.hauteur_m:2.5,...(nv.hauteur_m>0?{hok:true}:{hdk:true}),photo:1,ckl:{lu:{pieces:nv.pieces},le:today},...(notes.length?{notes}:{}),dal:{type:"Béton",ep:"20 cm"},esc:[],rooms}});
  try{P.hist()}catch(e){}
