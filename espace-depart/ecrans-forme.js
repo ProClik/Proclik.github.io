@@ -12,12 +12,21 @@ suit();setInterval(suit,2000);
 
 /* Lot 3 : Réglages, Cadences, Véhicules, Équipe, Mes plans… s'ouvrent en VRAIE PAGE (maquettes du 21/11), plus en feuille du bas.
    La barre du bas reste visible ; « C'est bon / Fermer » du bas disparaît quand il ne fait que fermer (le × en haut reste). */
-var root=d.documentElement,PAGES={"Votre espace":"Réglages","Mes cadences":0,"Mes véhicules":0,"Mon équipe":0,"Mes plans":0,"Mes réglages":0,"Votre couleur":0};
-function page(){var x=$("#xsheet"),t=$("#x-t");if(t&&t.dataset.f2t&&t.textContent!==PAGES[t.dataset.f2t])delete t.dataset.f2t;
-  var on=!!(x&&t&&x.classList.contains("on")&&(PAGES.hasOwnProperty(t.textContent)||t.dataset.f2t));
-  if(on){var n=PAGES[t.textContent];if(n){t.dataset.f2t=t.textContent;t.textContent=n}
-    var f=$("#x-foot");if(f){var B=$$("button",f);f.classList.toggle("f2fin",!B.length||B.every(function(b){return b.hasAttribute("data-xclose")||/^(Fermer|C.est bon)\b/i.test(b.textContent.trim())}))}}
-  else if(t&&t.dataset.f2t&&!(x&&x.classList.contains("on"))){t.textContent=t.dataset.f2t;delete t.dataset.f2t}
+var root=d.documentElement,PAGES={"Votre espace":"Réglages","Mes cadences":0,"Mes véhicules":0,"Mon équipe":0,"Mes plans":0,"Mes réglages":0,"Votre couleur":0,"Pour quel client ?":0};
+/* nom affiché d'une page (undefined = pas une page) ; le plan dessiné (« 📐 Nom ») est une page sans barre du bas, comme la maquette */
+var PL=/^📐 /;
+function nom(s){if(PAGES.hasOwnProperty(s))return PAGES[s]||s;if(PL.test(s))return s.replace(PL,"");if($("#x-in #pl-frame"))return s.trim()}
+function retour(){var z=d.createElement("button");z.setAttribute("data-pllist","");z.hidden=true;d.body.appendChild(z);z.click();z.remove()}
+function page(){var x=$("#xsheet"),t=$("#x-t"),ouv=!!(x&&x.classList.contains("on"));
+  if(t&&t.dataset.f2t&&t.textContent!==t.dataset.f2n){delete t.dataset.f2t;delete t.dataset.f2n}
+  var orig=t&&(t.dataset.f2t||t.textContent),n=t&&nom(orig),on=!!(ouv&&n!==undefined);
+  if(on){if(n!==orig&&!t.dataset.f2t){t.dataset.f2t=orig;t.dataset.f2n=n;t.textContent=n}
+    var f=$("#x-foot");if(f){var B=$$("button",f).filter(function(b){return !b.hasAttribute("data-pllist")});f.classList.toggle("f2fin",!B.length||B.every(function(b){return b.hasAttribute("data-xclose")||/^(Fermer|C.est bon)\b/i.test(b.textContent.trim())}))}
+    /* plan et « Pour quel client ? » : « ‹ Mes plans » en haut en texte coloré, pas de barre du bas, le bouton d'action en bas */
+    var pl=!!$("#x-in #pl-frame")||orig==="Pour quel client ?",h=t.parentNode,bk=$("#f2bk");root.classList.toggle("f2nb",pl);
+    if(pl&&!bk){bk=d.createElement("button");bk.id="f2bk";bk.type="button";bk.textContent="‹ Mes plans";h.insertBefore(bk,h.firstChild);bk.addEventListener("click",retour)}
+    else if(!pl&&bk)bk.remove()}
+  else{if(t&&t.dataset.f2t&&!ouv){t.textContent=t.dataset.f2t;delete t.dataset.f2t;delete t.dataset.f2n}var b2=$("#f2bk");if(b2)b2.remove();root.classList.remove("f2nb")}
   root.classList.toggle("f2pg",on)}
 var xs=$("#xsheet");if(xs){new MutationObserver(page).observe(xs,{attributes:true,attributeFilter:["class"],childList:true,subtree:true,characterData:true})}
 /* toucher la barre du bas ferme la page ouverte par-dessus */
