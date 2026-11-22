@@ -1,0 +1,102 @@
+/* Formulaire au goût du nouvel Espace (Cyril 22/11, version 2 « regard de DA » pour des gens peu habitués aux applis).
+   Chargé APRÈS relief.css : ne change que l'apparence. Règles : textes plus grands et plus foncés, cases et boutons
+   de 60 px, cartes plates arrondies, laiton = seulement ce qui est choisi / l'étape en cours, bleu nuit = action. */
+:root{--e2-bg:#F3F3F1;--e2-tile:#FBFBFA;--e2-tile2:#EEEEEB;--e2-fg:#17181D;--e2-mut:#575A63;--e2-faint:#8A8D96;--e2-nuit:#1B2440;--e2-sur:#FFFFFF;--e2-laiton:#A8823F;--e2-ink:#17181D;--e2-onink:#F3F3F1;--e2-sh:0 10px 26px -20px rgba(0,0,0,.38);--e2-err:#8A5A12;--e2-errbg:#F6EBD6}
+:root[data-theme="dark"]{--e2-bg:#0F1117;--e2-tile:#191C24;--e2-tile2:#22252F;--e2-fg:#F0F1F4;--e2-mut:#B9BDC8;--e2-faint:#7A7E8A;--e2-nuit:#EFEBE2;--e2-sur:#1B2440;--e2-laiton:#D4B483;--e2-ink:#EFEBE2;--e2-onink:#17181D;--e2-sh:0 10px 26px -18px rgba(0,0,0,.7);--e2-err:#F0C98A;--e2-errbg:#2C2618}
+html body{--bg:var(--e2-bg);--surface:var(--e2-bg);--soft:var(--e2-tile);--fg:var(--e2-fg);--muted:var(--e2-mut);--go-bg:var(--e2-nuit);--go-fg:var(--e2-sur);--mint:var(--e2-nuit);--acc:var(--e2-nuit);
+  background:var(--e2-bg);color:var(--e2-fg)}
+
+/* En-tête : le nom de l'entreprise à la place du robot */
+html body header.top .logo{display:none}
+html body header.top .brand{gap:10px;font-size:15.5px;font-weight:700}
+html body .e2-av{width:40px;height:40px;border-radius:50%;background:var(--e2-nuit);color:var(--e2-sur);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;letter-spacing:.02em}
+html body header.top .brand small{font-size:13px;color:var(--e2-mut);font-weight:500}
+html body .e2-tb{height:36px;min-width:36px;padding:0 11px;border-radius:99px;border:0;background:var(--e2-tile);color:var(--e2-fg);font:700 13.5px Manrope,sans-serif;box-shadow:var(--e2-sh);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+html body .e2-tb[aria-pressed="true"]{background:var(--e2-nuit);color:var(--e2-sur)}
+html body .theme-b{background:var(--e2-tile)!important;box-shadow:var(--e2-sh)!important}
+
+/* Bouton « Aa » : textes plus grands pour ceux qui le souhaitent */
+html.e2-grand #app,html.e2-grand #prog{zoom:1.14}
+html.e2-grand .nav .btn{min-height:64px}
+
+/* Avancement en mots + barre fine */
+html body #prog .progress{height:5px;border-radius:5px;background:var(--e2-tile2);box-shadow:none}
+html body #prog .progress b{background:var(--e2-nuit);border-radius:5px}
+html body .step-meta{font-size:14px!important;color:var(--e2-fg)!important;font-weight:700}
+html body .step-meta .cheer{color:var(--e2-laiton)!important;font-weight:700;font-size:14px}
+
+/* Titres : sans icône devant, plus grands et lisibles */
+html body .gi9{display:none!important}
+html body #app h1{font-size:clamp(26px,7.4vw,32px);line-height:1.1;letter-spacing:-.02em;font-weight:800;text-wrap:balance}
+html body #app .sub{font-size:16px;line-height:1.45;color:var(--e2-mut)}
+html body .lab,html body .q>.lab{font-size:17px!important;font-weight:700;color:var(--e2-fg)}
+
+/* Cases à remplir : 60 px, fond doux, contour bleu nuit quand on écrit */
+html body input[type=text],html body input[type=tel],html body input[type=email],html body input[type=number],html body textarea,html body select{
+  min-height:58px;font-size:18px!important;border-radius:18px!important;background:var(--e2-tile2)!important;border:1.5px solid transparent!important;box-shadow:none!important;color:var(--e2-fg)}
+html body textarea{min-height:120px}
+html body input:focus,html body textarea:focus,html body select:focus{background:var(--e2-tile)!important;border-color:var(--e2-nuit)!important;outline:0}
+html body input::placeholder,html body textarea::placeholder{color:var(--e2-faint)}
+
+/* Cartes de choix : plates, un rond vide montre qu'on peut cocher, la carte choisie se teinte + coche laiton */
+html body .card{background:var(--e2-tile)!important;border-radius:22px!important;box-shadow:var(--e2-sh)!important;border:2px solid transparent!important;position:relative}
+html body .card b{font-size:16px!important}
+html body .card{padding-right:30px!important}
+html body .card:not([aria-pressed="true"])::after{content:"";position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;border:2px solid var(--e2-faint);box-sizing:border-box}
+html body .card[aria-pressed="true"]{border-color:var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 12%,var(--e2-tile))!important;box-shadow:var(--e2-sh)!important}
+html body .card[aria-pressed="true"]::after{background:var(--e2-laiton)!important;color:#fff!important;top:9px;right:9px;width:22px;height:22px}
+
+/* Pastilles de réponse : choisie = laiton */
+html body .chip[aria-pressed="true"],html body .chip.on,html body [data-v][aria-pressed="true"]{border-color:var(--e2-laiton)!important;box-shadow:0 0 0 2px var(--e2-laiton)!important}
+
+/* Blocs */
+html body .carte7,html body .carte9,html body .item,html body .note,html body .drop,html body .recap>div{background:var(--e2-tile)!important;box-shadow:var(--e2-sh)!important;border-radius:24px!important}
+
+/* Erreurs : en clair, douces, avec un repère */
+html body .err:not(:empty){display:flex;gap:8px;align-items:flex-start;color:var(--e2-err)!important;background:var(--e2-errbg);border-radius:14px;padding:10px 12px;font-size:15px!important;font-weight:600;line-height:1.35}
+html body .err:not(:empty)::before{content:"!";flex:none;width:20px;height:20px;border-radius:50%;background:var(--e2-err);color:var(--e2-errbg);display:grid;place-items:center;font-weight:800;font-size:13px;margin-top:1px}
+
+/* Bas de l'écran : Retour près du pouce + gros Continuer */
+html body .nav{background:linear-gradient(to top,var(--e2-bg) 72%,transparent)!important;border-top:0!important;box-shadow:none!important}
+html body .nav .btn{min-height:60px;font-size:17.5px!important;border-radius:99px!important}
+html body .nav .btn.back{background:var(--e2-tile)!important;color:var(--e2-fg)!important;box-shadow:var(--e2-sh)!important;border:0!important}
+html body .btn.go{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;min-height:60px;font-size:17.5px!important;border-radius:99px!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
+
+/* Dicter (champs où l'on écrit beaucoup) */
+html body .e2-dic{width:auto!important;justify-content:flex-start!important;margin-top:8px;height:44px;padding:0 16px 0 12px;border-radius:99px;border:0;background:var(--e2-tile);color:var(--e2-fg);box-shadow:var(--e2-sh);font:700 15px Manrope,sans-serif;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+html body .e2-dic svg{width:20px;height:20px;color:var(--e2-nuit)}
+html body .e2-dic.on{background:var(--e2-nuit);color:var(--e2-sur)}html body .e2-dic.on svg{color:var(--e2-sur)}
+html body .e2-dic-h{font-size:14px;color:var(--e2-mut);margin:6px 0 0}
+
+/* Accueil : confiance + reprise */
+html body .e2-conf{font-size:14px;color:var(--e2-mut);text-align:center;margin:12px 0 0;line-height:1.4}
+html body .e2-rep{font-size:14px;color:var(--e2-mut);text-align:center;margin:8px 0 0}
+
+/* Aide : petite fenêtre */
+html body #e2-aide{position:fixed;inset:0;z-index:60;background:rgba(10,12,18,.45);display:grid;place-items:end center;padding:16px}
+html body #e2-aide[hidden]{display:none}
+html body #e2-aide>div{width:min(460px,100%);background:var(--e2-tile);color:var(--e2-fg);border-radius:26px;padding:22px 20px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+html body #e2-aide h2{margin:0 0 6px;font-size:22px}html body #e2-aide p{margin:0 0 14px;color:var(--e2-mut);font-size:16px;line-height:1.45}
+html body #e2-aide .num{font-size:24px;font-weight:800;letter-spacing:.02em;margin:0 0 14px;color:var(--e2-fg);user-select:all}
+html body #e2-aide a.btn,html body #e2-aide button{display:grid;place-items:center;width:100%;min-height:58px;border-radius:99px;font:700 17px Manrope,sans-serif;text-decoration:none;border:0;margin-top:8px;cursor:pointer}
+html body #e2-aide a.btn{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
+html body #e2-aide button{background:var(--e2-tile2);color:var(--e2-fg)}
+
+/* Fin : quoi préparer */
+html body .e2-prep{text-align:left;margin:14px 0 0;padding:0 0 0 20px;font-size:15.5px;line-height:1.55;color:var(--e2-fg)}
+
+/* En-tête sur téléphone : nom sur une ligne, petits boutons serrés, badge démo discret */
+html body header.top .brand>div:not(.logo){min-width:0;display:flex;flex-direction:column}
+html body header.top .brand{min-width:0;flex:1 1 auto}
+html body #e2-nom,html body header.top .brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+html body header.top .brand small[hidden]{display:none!important}
+html body header.top .top-r{flex:none;gap:6px}
+@media (max-width:520px){
+  html body header.top{position:relative}
+  html body header.top .demo-badge{position:absolute;left:50%;top:-6px;transform:translateX(-50%);font-size:9.5px;padding:2px 8px;z-index:2}
+  html body header.top .brand{font-size:14.5px;gap:9px}
+  html body .e2-av{width:36px;height:36px;font-size:13px}
+  html body .e2-tb{padding:0 10px}
+  html body .step-meta .cheer{display:none}
+}
+html body .step-meta>span:first-child,html body .step-meta>b:first-child{min-width:0}
