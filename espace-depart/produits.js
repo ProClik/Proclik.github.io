@@ -233,7 +233,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
   if(!(pv>0)){var e2=$('#bc-p');if(e2)e2.focus();X.toast('Il manque le prix','Le prix HT, pour '+(c==='unité'?'une unité':'1 '+parCond({cond:c}))+'.');return}
   envoyerBC({ajout:{d:d,cond:c,u:uniteDe(c),prix:pv,f:FB.f||'Ajoutés par vous'}},['Article ajouté','Cliky le connaît dès le prochain pré-devis.'])}
 });
-function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="button" data-prod="'+esc(p.c)+'"><span class="cf-av pr-av'+(i?'':' vide')+'">'+(icone(i)||esc((p.d||'?').charAt(0).toUpperCase()))+'</span><span class="tx"><b>'+esc(p.d)+'</b><small>'+esc([p.x,famille(p)].filter(Boolean).join(' · '))+(p.ex?' · exemple':'')+'</small></span><span class="cf-m"><b>'+prix(p.p)+'</b><small>/ '+esc(p.u||'u')+'</small></span></button>'}
+function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="button" data-prod="'+esc(p.c)+'"><span class="cf-av pr-av'+(i?'':' vide')+'">'+(icone(i)||esc((p.d||'?').charAt(0).toUpperCase()))+'</span><span class="tx"><b>'+esc(p.d)+'</b><small>'+esc([p.x,famille(p)].filter(Boolean).join(' · '))+(p.ex?' · exemple':'')+'</small></span><span class="cf-m pr-px" data-prpx="'+esc(p.c)+'" title="Changer le prix"><b>'+prix(p.p)+'</b><small>/ '+esc(p.u||'u')+'</small></span></button>'}
 function vue(){var v=$('#v-produits');if(!v)return;
  var L=chercher(q),P=L.filter(function(p){return genre(p)===(seg==='cliky'?'produit':seg)}),nP=liste().filter(function(p){return genre(p)==='produit'}).length,nS=liste().length-nP;
  var h='<div class="row cf-top"><h2>Produits</h2><span class="cf-n">'+liste().length+' dans votre base</span></div>'+
@@ -312,8 +312,25 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 });
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="produits"]');if(t)vue()});
 
+/* ---------- prix changé en direct, sur la ligne (Cyril 22/11 : « modifier le prix directement sur le produit, même sans Cliky ») ---------- */
+function editPrix(row,c,fini){var p=liste().filter(function(x){return x.c===c})[0];if(!p||!row)return;
+ var ed=document.createElement('div');ed.className='pr-ed';
+ ed.innerHTML='<b class="pr-ed-n">'+esc(p.d)+'</b><div class="pr-ed-l"><label class="pr-ed-f"><input type="text" inputmode="decimal" autocomplete="off" value="'+(Math.round((+p.p||0)*100)/100).toFixed(2).replace('.',',')+'" aria-label="Prix HT"><span>€ HT / '+esc(p.u||'u')+'</span></label>'+
+  '<button type="button" class="btn sm" data-pred-x>Annuler</button><button type="button" class="btn sm go" data-pred-ok>OK</button></div>';
+ row.replaceWith(ed);var inp=ed.querySelector('input');inp.focus();try{inp.select()}catch(e){}
+ function fin(ch){if(fini)fini(ch);else vue()}
+ function ok(){var v=parseFloat(String(inp.value).replace(/\s/g,'').replace(',','.'));
+  if(!isFinite(v)||v<0){X&&X.toast('Prix à vérifier','Tapez un nombre, par exemple 11,40.');inp.focus();return}
+  var n={};for(var k in p)n[k]=p[k];n.p=Math.round(v*100)/100;ajouter(n);
+  X&&X.toast('Prix enregistré',p.d+' : '+prix(n.p)+' HT / '+(p.u||'u')+'. Vos prochains devis le prennent.');fin(true)}
+ ed.querySelector('[data-pred-ok]').addEventListener('click',ok);
+ ed.querySelector('[data-pred-x]').addEventListener('click',function(){fin(false)});
+ inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ok()}else if(e.key==='Escape')fin(false)})}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-prpx]');if(!t)return;
+ e.preventDefault();e.stopImmediatePropagation();editPrix(t.closest('.pr-li'),t.getAttribute('data-prpx'))},true);
+
 /* ---------- pour les autres écrans ---------- */
-window.PCPROD={deposer:function(contact){if(!X)return;chargerBC();deposer('',contact)},cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},
+window.PCPROD={deposer:function(contact){if(!X)return;chargerBC();deposer('',contact)},cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},editPrix:editPrix,
  creer:function(nom,rappel){if(!X)return;RAPPEL=typeof rappel==='function'?rappel:null;form(null,nom||'')}};
 vue();
 })();

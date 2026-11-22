@@ -307,7 +307,7 @@
       '<div class="tdb-pied">'+(D.total?'<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+(D.demo?"":D.total+" ")+"›</span></button>":"")+
       '<button type="button" class="tdb-perso" data-tdbperso>'+IC.grille+"<span>Personnaliser l'accueil</span></button></div>";
     if(acc._h===h)return;acc._h=h;var ib=$("#instb"),co=$("#vco");acc.innerHTML=h;acc.classList.toggle("edite",edition);
-    if(co)acc.insertBefore(co,acc.firstChild);if(ib)acc.appendChild(ib)}
+    if(co)acc.insertBefore(co,acc.firstChild);if(ib)acc.appendChild(ib);if(window.PCACC&&PCACC.apres)PCACC.apres(D)}
   function plusTard(){clearTimeout(rendre._t);rendre._t=setTimeout(rendre,60)}
 
   /* ---------- mode « personnaliser » ---------- */
@@ -425,6 +425,9 @@
   hello=$("#hello");
   function salut(){if(!hello)return;var hh=new Date().getHours(),t=hello.textContent,n=t.replace(/^Bon(jour|soir)\b/,(forceM?forceM==="soir":hh>=18||hh<5)?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
   if(hello){salut();new MutationObserver(salut).observe(hello,{childList:true,characterData:true,subtree:true})}
+  /* Nouvelle forme de l'Accueil (accueil-forme.js, Cyril 22/11) : elle lit les mêmes données */
+  window.PCACC={donnees:donnees,evs:evs,iso:iso,AUJ:AUJ,hTxt:hTxt,hm:hm,lieu:lieu,moment:moment,nowMin:nowMin,prochain:prochain,vrai:vrai,
+    refaire:function(){acc._h=null;rendre()},apres:null};
   rendre();
   // vrai.js réécrit sa liste à chaque chargement, et les pastilles des onglets bougent : on suit le mouvement.
   document.addEventListener("pc-ent",function(){acc._h=null;plusTard()});
