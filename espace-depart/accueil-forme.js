@@ -187,7 +187,7 @@ function perso(){var B=blocs(),N=[["jour","Ma journée"],["afaire","À faire"],[
    Mur : la photo se rattache à un mur, donc on ouvre ses plans et on touche le mur. */
 var fiPlan=null;
 function deposer(){
-  X.xopen("Cliky","Une photo, une image ou un PDF : choisissez ce qu'il crée",
+  X.xopen("Cliky","Une photo, un PDF ou un mot : Cliky s'occupe du reste",
     '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Les prix d\'un fournisseur</b><small>Facture, devis, bon de livraison ou tarif : Cliky met vos prix à jour et range l\'achat dans le chantier</small></span></button>'+
     '<button type="button" data-f2dc="prix"><span class="f2dc-i">'+ic("euro")+'</span><span><b>Chercher un prix</b><small>Chez le fournisseur : le prix de votre base en un mot (« BA13 », « laine »…)</small></span></button>'+
     '<button type="button" data-f2dc="plan"><span class="f2dc-i">'+ic("plan")+'</span><span><b>Un plan</b><small>D\'architecte, de vente ou un croquis : Cliky le dessine, pièce par pièce</small></span></button>'+
