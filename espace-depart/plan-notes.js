@@ -32,8 +32,8 @@ function elOf(n){return hit([n.x,n.y])}
 /* ---------- Note pré-mâchée par Cliky (lot B12, option Cliky) ----------
    Cliky lit la note (dictée ou écrite) et pose lui-même les éléments sur le mur ou dans la pièce : prises,
    interrupteurs, spots, arrivées d'eau, caissons, verrières… L'artisan vérifie dans la vue de face et valide.
-   Lecture faite ici sur l'appareil (mots du métier + nombres en lettres) ; la lecture d'une PHOTO du mur par Cliky
-   viendra avec la clé Claude du service (comme la photo d'un plan). */
+   Lecture de la note faite ici sur l'appareil (mots du métier + nombres en lettres). Si la note a une PHOTO d'un mur,
+   Cliky la lit par le service (clé Claude) : voir ckPhoto plus bas ; sans service, il pose ce que dit la note. */
 const CK_NB={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,douze:12};
 /* ordre important : le plus précis d'abord */
 const CK=[[/prises?\s+(?:de\s+)?(?:tv|t[ée]l[ée])/,"tv"],[/(?:prises?\s+)?(?:rj\s?45|internet|r[ée]seau)/,"rj"],[/prises?\s+32\s?a|prises?\s+(?:de\s+la\s+)?plaque/,"p32"],
@@ -53,9 +53,10 @@ function ckName(o){const F=window.PKFACES,d=F&&F.T&&F.T[o.t];const n={spot:"spot
 function ckTarget(el){if(!el)return null;const P=K(),S=P.segs();if(el.t==="seg"||el.t==="op"){const sg=S[el.x];return sg?{sg,ri:P.F().rooms.indexOf(sg.rm)}:null}if(el.t==="room"){const rm=P.F().rooms[el.ri];if(!rm)return null;
  const ws=S.filter(s=>s.rm===rm&&s.kind==="mur");const sg=ws.sort((a,b)=>P.dist(b.a,b.b)-P.dist(a.a,a.b))[0]||S.find(s=>s.rm===rm);return sg?{sg,ri:el.ri,room:1}:null}return null}
 const CKI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>';
-function ckBtn(txt,el){const L=ckParse(txt),tg=ckTarget(el);if(!L.length||!tg)return"";const on=ckOn();
+function ckBtn(txt,el,ph){const L=ckParse(txt),tg=ckTarget(el),vp=!!(ph&&ph.length&&tg&&!tg.room);if((!L.length&&!vp)||!tg)return"";const on=ckOn();
+ if(vp)return`<button class="ck${on?"":" off"}" data-a="cliky" id="nt-ck"><span class="cki">${CKI}</span><span><b>${on?"Cliky lit la photo et prépare ce mur":"Cliky peut lire la photo de ce mur"}</b><small>${L.length?esc(L.map(ckName).join(", "))+" + ce qu'il voit":"Prises, interrupteurs, radiateur… vus sur la photo"}${on?"":" · avec l'option Cliky"}</small></span></button>`;
  return`<button class="ck${on?"":" off"}" data-a="cliky" id="nt-ck"><span class="cki">${CKI}</span><span><b>${on?"Cliky prépare "+(tg.room?"la pièce":"ce mur"):"Cliky peut préparer "+(tg.room?"la pièce":"ce mur")}</b><small>${esc(L.map(ckName).join(", "))}${on?"":" · avec l'option Cliky"}</small></span></button>`}
-function ckUpd(){const c=N&&N.cur;if(!c)return;const w=$("nt-ckw");if(w)w.innerHTML=ckBtn(c.txt,c.el||hit([c.x,c.y]))}
+function ckUpd(){const c=N&&N.cur;if(!c)return;const w=$("nt-ckw");if(w)w.innerHTML=ckBtn(c.txt,c.el||hit([c.x,c.y]),c.ph)}
 function ckApply(txt,el){const P=K(),F=window.PKFACES,L=ckParse(txt),tg=ckTarget(el);if(!F||!L.length||!tg)return null;const T=F.T||{},Hh=Math.round(((P.F().H)||2.5)*100);
  try{P.hist()}catch(e){}
  /* les familles des éléments posés deviennent visibles (métiers) */try{const M=F.metiers()||[],need=new Set(L.map(o=>(T[o.t]||{}).f||(CK_PLAF[o.t]?(o.t==="cp"?"placo":"el"):null)).filter(Boolean));const nm=[...new Set([...M,...need])];if(nm.length!==M.length)F.setMetiers(nm)}catch(e){}
@@ -75,8 +76,41 @@ function ckApply(txt,el){const P=K(),F=window.PKFACES,L=ckParse(txt),tg=ckTarget
   const byT={};pl.forEach(t=>byT[t]=(byT[t]||0)+1);Object.keys(byT).forEach(t=>{const q=byT[t],c=Math.ceil(Math.sqrt(q*(b[2]-b[0])/Math.max(.5,b[3]-b[1]))),r=Math.ceil(q/c);let i=0;
    for(let j=0;j<r;j++)for(let k=0;k<c&&i<q;k++,i++){const x=b[0]+(b[2]-b[0])*(k+.5)/c,y=b[1]+(b[3]-b[1])*(j+.5)/r,e={t,n:(T[t]||{}).n||t,x:+x.toFixed(2),y:+y.toFixed(2),st:"faire",ck:1};if(t==="cp")Object.assign(e,{w:200,l:15,hh:15});rm.eqp.push(e);n++}})}
  save();return{n,tg,plaf:pl.length&&!mur.length}}
+/* ---------- Photo d'un mur lue par Cliky (C16 / B12, service /espace/lire-photo, clé Claude) ----------
+   Le mur est décrit à Cliky (largeur, hauteur, portes et fenêtres vues de la pièce) pour qu'il prenne l'échelle.
+   Il renvoie ce qu'il voit (déjà en place) et ce que la note demande (à faire) ; un doute = « Je ne sais pas ». */
+function murInfo(sg){const P=K(),Lw=Math.round(P.dist(sg.a,sg.b)*100),Hh=Math.round(((P.F().H)||2.5)*100);let la=true;if(sg.kind==="mur"){try{const m=P.inward(sg);la=(sg.b[0]-sg.a[0])*m[1]-(sg.b[1]-sg.a[1])*m[0]>0}catch(e){}}
+ const ouv=(P.OP.get(sg.a)||[]).map(o=>{const a=(o.p||0)*100,w=(o.w||.8)*100;let nm="Ouverture";try{nm=P.opName(o)}catch(e){}return{nom:nm,de_cm:Math.round(la?a:Lw-a-w),largeur_cm:Math.round(w),hauteur_cm:Math.round((o.h||2.04)*100),allege_cm:Math.round((o.al||0)*100)}});
+ return{largeur_cm:Lw,hauteur_cm:Hh,ouvertures:ouv}}
+function ckApi(){try{const V=parent!==window&&parent.PCV;if(V&&V.api)return V.api}catch(e){}return null}
+const ST_LU={en_place:"exist",a_faire:"faire",a_verifier:"dk"};
+function ckApplyLu(lu,tg){const P=K(),F=window.PKFACES,T=(F&&F.T)||{},sg=tg.sg,rm=sg.rm,Lw=Math.round(P.dist(sg.a,sg.b)*100),Hh=Math.round(((P.F().H)||2.5)*100);let n=0;
+ try{P.hist()}catch(e){}
+ let E=P.EQ.get(sg.a);if(!E){E=[];P.EQ.set(sg.a,E)}
+ const fam=new Set();(lu.elements||[]).forEach(o=>{const d=T[o.t||o.type];if(d&&d.f)fam.add(d.f)});if((lu.plafond||[]).length)fam.add("el");
+ try{const M=F.metiers()||[],nm=[...new Set([...M,...fam])];if(nm.length!==M.length)F.setMetiers(nm)}catch(e){}
+ (lu.elements||[]).forEach(o=>{const t=o.type,d=T[t];if(!d)return;let st=ST_LU[o.etat]||"dk";if(st==="exist"&&!o.sur)st="dk";
+  /* déjà sur le mur (même type à 15 cm près) : on ne double pas */if(E.some(e=>e.t===t&&Math.abs(e.x-o.x_cm)<15))return;
+  if(d.o){const hh=Math.min(Hh,d.dh||Hh),w=Math.min(Lw,d.dw);E.push({t,n:d.n,x:Math.max(w/2,Math.min(Lw-w/2,o.x_cm)),h:d.pos==="haut"?Hh-hh/2:d.pos==="al"?Math.min(Hh-hh/2,(d.al||0)+hh/2):hh/2,w,hh,p:d.dp||0,st,ck:1,lu:1})}
+  else E.push({t,n:d.n||t,x:Math.max(5,Math.min(Lw-5,o.x_cm)),h:Math.max(5,Math.min(Hh-5,o.h_cm)),st,ck:1,lu:1});n++});
+ let pl=0;if(rm&&(lu.plafond||[]).length){const xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=>p[1]),b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];rm.eqp=rm.eqp||[];
+  lu.plafond.forEach(o=>{const t=o.type,q=Math.min(20,o.nombre|0),have=rm.eqp.filter(e=>e.t===t).length;if(have>=q)return;const add=q-have,c=Math.ceil(Math.sqrt(add*(b[2]-b[0])/Math.max(.5,b[3]-b[1]))),r=Math.ceil(add/c);let i=0;
+   for(let j=0;j<r;j++)for(let k=0;k<c&&i<add;k++,i++){rm.eqp.push({t,n:(window.PKFACES&&PKFACES.TP&&PKFACES.TP[t]||{}).n||t,x:+(b[0]+(b[2]-b[0])*(k+.5)/c).toFixed(2),y:+(b[1]+(b[3]-b[1])*(j+.5)/r).toFixed(2),st:ST_LU[o.etat]||"dk",ck:1,lu:1});n++;pl++}})}
+ save();return{n,tg,plaf:pl&&n===pl}}
+function ckBusy(on){const b=$("nt-ck");if(!b)return;b.disabled=on;const t=b.querySelector("b");if(t&&on){b.dataset.t0=t.textContent;t.textContent="Cliky regarde la photo…"}else if(t&&b.dataset.t0)t.textContent=b.dataset.t0}
+function ckPhoto(txt,el,ph){const tg=ckTarget(el),api=ckApi();if(!tg||tg.room)return false;
+ if(!api){toast(/[?&]demo/.test(location.search)?"En démo, Cliky ne lit pas la photo : il pose ce que dit la note":"Ouvrez le plan depuis votre Espace pour que Cliky lise la photo");return false}
+ const u=String(ph[ph.length-1].u||""),f=u.slice(u.indexOf(",")+1);if(!f)return false;ckBusy(true);
+ api("/espace/lire-photo",{method:"POST",body:{sorte:"mur",fichier:f,note:String(txt||"").slice(0,1500),mur:murInfo(tg.sg)}}).then(lu=>{ckBusy(false);
+  const r=ckApplyLu({elements:(lu.elements||[]).map(o=>({...o})),plafond:lu.plafond||[]},tg);
+  /* ce que Cliky a remarqué (fissure, humidité…) s'ajoute à la note */
+  if(lu.remarques&&lu.remarques.length&&N){const add=c=>{c.txt=(String(c.txt||"").trim()+"\nCliky : "+lu.remarques.join(" · ")).trim()};if(N.cur)add(N.cur);else if(N.mode==="rep"){const n=notes()[N.rep[N.k]];if(n)add(n)}}
+  ckDone(r,lu.remarques)},e=>{ckBusy(false);const L=ckParse(txt);if(L.length){const r=ckApply(txt,el);toast((e&&e.message?e.message+". ":"")+"Cliky a posé ce que dit la note");if(r&&r.n)ckDone(r,null,1)}else toast(e&&e.message?e.message:"Cliky n'a pas pu lire la photo")});return true}
+function ckDone(r,rq,quiet){if(!r)return;const F=window.PKFACES;if(N&&N.cur&&(String(N.cur.txt||"").trim()||(N.cur.ph||[]).length))keep();stop(true);
+ try{F.open({ri:r.tg.ri,wa:r.tg.sg.a,tab:r.plaf?"plaf":"mur"})}catch(e){}if(!quiet)setTimeout(()=>toast(r.n?`Cliky a posé ${r.n} élément${r.n>1?"s":""} : vérifiez les places, puis OK`:"Cliky n'a rien trouvé à poser sur ce mur"+(rq&&rq.length?" (voir la note)":"")),300)}
 /* bouton Cliky touché : pose, puis ouvre la vue de face pour vérifier */
-function ckGo(txt,el){if(!ckOn()){toast("Avec l'option Cliky : il pose les éléments de la note pour vous (Réglages › Mes options)");return}
+function ckGo(txt,el,ph){if(!ckOn()){toast(ph&&ph.length?"Avec l'option Cliky : il lit la photo du mur et pose ce qu'il voit (Réglages › Mes options)":"Avec l'option Cliky : il pose les éléments de la note pour vous (Réglages › Mes options)");return}
+ if(ph&&ph.length&&ckPhoto(txt,el,ph))return;
  const r=ckApply(txt,el);if(!r||!r.n)return;const F=window.PKFACES;if(N&&N.cur&&String(N.cur.txt||"").trim())keep();stop(true);
  try{F.open({ri:r.tg.ri,wa:r.tg.sg.a,tab:r.plaf?"plaf":"mur"})}catch(e){}setTimeout(()=>toast(`Cliky a posé ${r.n} élément${r.n>1?"s":""} : vérifiez les places, puis OK`),300)}
 
@@ -161,10 +195,10 @@ function badge(){cliBadge();const b=document.querySelector('.cltool[data-cl="not
 function render(){ensure();const c=$("nt-card");if(!N){c.hidden=true;return}c.hidden=false;const L=notes();let h='<i class="gr"></i>';
  if(N.mode==="rep"){const R=N.rep,k=N.k,n=L[R[k]];if(!n){N.mode="pose";return render()}const e=elOf(n);
   h+=`<div class="hd"><span class="chip">${n.cli?"Remarque du client":"Note"} ${k+1} sur ${R.length} · ${esc(n.w)}</span><span style="flex:1"></span><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div><div class="q">« ${esc(n.txt||"Voir la photo")} »</div>${n.ph&&n.ph.length?`<div class="phs">${n.ph.map(p=>`<img src="${p.u}" alt="">`).join("")}</div>`:""}
-  <div class="row">${e?`<button class="go2" data-a="ouvre">${e.t==="room"?"Ouvrir la pièce":e.t==="op"?"Ouvrir "+(/porte/i.test(e.w)?"la porte":"la fenêtre"):"Ouvrir le mur"}</button>`:""}<button class="go2" data-a="tard">Plus tard</button></div>${ckBtn(n.txt,e)}<div class="row"><button class="go" data-a="fait">${k<R.length-1?"C'est fait, note suivante":"C'est fait"}</button></div>`}
+  <div class="row">${e?`<button class="go2" data-a="ouvre">${e.t==="room"?"Ouvrir la pièce":e.t==="op"?"Ouvrir "+(/porte/i.test(e.w)?"la porte":"la fenêtre"):"Ouvrir le mur"}</button>`:""}<button class="go2" data-a="tard">Plus tard</button></div>${ckBtn(n.txt,e,n.ph)}<div class="row"><button class="go" data-a="fait">${k<R.length-1?"C'est fait, note suivante":"C'est fait"}</button></div>`}
  else if(N.cur){const c2=N.cur,np=(c2.ph||[]).length;
   h+=`<div class="hd"><span class="chip">${esc(c2.w)}</span><span style="flex:1"></span><button class="rd" data-a="annule" aria-label="Fermer sans garder">${ico("x")}</button></div><textarea id="nt-tx" placeholder="${CLI?"Ex. : j'ai une verrière ici, ou j'en voudrais une":"Dites ou écrivez ce qu'il faut faire ici"}">${esc(c2.txt||"")}</textarea>
-  <div class="row"><button class="mic" data-a="mic" aria-label="Dicter la note">${ico("mic")}</button>${CLI?"":`<button class="rd ph" data-a="photo" aria-label="Ajouter une photo">${ico("cam")}${np?`<em>${np}</em>`:""}</button>`}<button class="go" data-a="range">${CLI?"Garder la remarque":"Ranger la note"}</button></div>${CLI?"":`<div id="nt-ckw">${ckBtn(c2.txt,c2.el||hit([c2.x,c2.y]))}</div>`}
+  <div class="row"><button class="mic" data-a="mic" aria-label="Dicter la note">${ico("mic")}</button>${CLI?"":`<button class="rd ph" data-a="photo" aria-label="Ajouter une photo">${ico("cam")}${np?`<em>${np}</em>`:""}</button>`}<button class="go" data-a="range">${CLI?"Garder la remarque":"Ranger la note"}</button></div>${CLI?"":`<div id="nt-ckw">${ckBtn(c2.txt,c2.el||hit([c2.x,c2.y]),c2.ph)}</div>`}
   ${c2.idx!=null?CLI?`<div class="row"><button class="lnk del" data-a="suppr">Supprimer la remarque</button></div>`:`<div class="row" style="justify-content:space-between"><button class="lnk" data-a="${c2.fait?"refaire":"faite"}">${c2.fait?"Remettre à reprendre":"Marquer comme faite"}</button><button class="lnk del" data-a="suppr">Supprimer la note</button></div>`:`<div class="cons"><i></i>${CLI?"Touchez un autre endroit pour une autre remarque.":"Touchez un autre endroit pour une autre note."}</div>`}`}
  else{const n=todo(),mine=L.map((x,i)=>({x,i}));
   if(CLI){h+=`<div class="hd"><b>Vos remarques</b><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div><div class="cons"><i></i>Touchez une pièce, un mur, une fenêtre ou une porte, puis dites ce que vous voulez signaler. Par exemple : « j'ai une verrière ici », « j'en voudrais une ».</div>`;
@@ -192,7 +226,7 @@ function onClick(e){const b=e.target.closest("button");if(!b||!N)return;const a=
  if(a==="annule"){N.cur=null;render();pins();return}
  if(a==="range"){keep();render();pins();toast(CLI?"Remarque gardée, elle partira avec votre plan":"Note rangée sur le plan");return}
  if(a==="mic")return mic();
- if(a==="cliky"){if(N.mode==="rep"){const n=L[N.rep[N.k]];return ckGo(n.txt,elOf(n))}const c=N.cur;return ckGo(c.txt,c.el||hit([c.x,c.y]))}
+ if(a==="cliky"){if(b.disabled)return;if(N.mode==="rep"){const n=L[N.rep[N.k]];return ckGo(n.txt,elOf(n),n.ph)}const c=N.cur;return ckGo(c.txt,c.el||hit([c.x,c.y]),c.ph)}
  if(a==="photo"){const f=$("nt-file");f&&f.click();return}
  if(a==="suppr"){const i=N.cur.idx;try{K().hist()}catch(e){}L.splice(i,1);N.cur=null;save();render();pins();return}
  if(a==="faite"||a==="refaire"){N.cur.fait=a==="faite"?1:0;keep();render();pins();return}
@@ -218,5 +252,5 @@ function cliBadge(){const b=$("nt-cli");if(!b)return;let n=0;try{K().ST.floors.f
 function boot(){const P=K();if(!P)return;if(P.CL&&!CLI)return;ensure();watch();if(CLI){cliBtn();pins();addEventListener("resize",fitBoard);return}aide();badge();pins();addEventListener("resize",fitBoard)}
 function wait(n){if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
-window.PKNOTES={start,stop,toggle,todo,pins};
+window.PKNOTES={start,stop,toggle,todo,pins,ckOn,toast};
 })();

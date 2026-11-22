@@ -1,0 +1,122 @@
+/* ProClik · Cliky lit la photo d'un plan (option Cliky, Cyril 22/11, point C16 de PLAN-A-BRANCHER.md).
+   L'artisan prend en photo un plan (d'architecte, de vente, ou un croquis à main levée) ou choisit un PDF :
+   Cliky le lit (service /espace/lire-photo, clé Claude) et propose un plan ProClik, pièce par pièce, avec ce qu'il a dû
+   déduire. « Mettre ce plan » : le plan est posé, chaque point douteux devient une note « à reprendre » épinglée dans
+   sa pièce, et les fenêtres/portes arrivent sans état (elles tombent dans « À vérifier »).
+   RÈGLE (Cyril) : rien de lu sur une photo ne part en commande ni en demande de prix fournisseur sans mesure sur place :
+   le niveau est marqué « lu sur photo » (export lu_sur_photo) et le pré-devis le rappelle.
+   Où : dans l'aide « ? » (« Partir d'une photo de plan ») et, tant que le plan est vide, un bouton sur le plan. */
+(function(){
+"use strict";
+if(/[?&]client/.test(location.search))return;
+const K=()=>window.PKPLAN,$=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fr=v=>String(Math.round(v*100)/100).replace(".",",");
+const toast=t=>{try{window.PKNOTES.toast(t)}catch(e){}};
+const ckOn=()=>{try{return window.PKNOTES.ckOn()}catch(e){return false}};
+const api=()=>{try{const V=parent!==window&&parent.PCV;if(V&&V.api)return V.api}catch(e){}return null};
+const CKI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>';
+const PHI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><path d="M8.5 16.5v-5h4v5M12.5 13.5h3"/></svg>';
+let LU=null;
+
+const CSS=`
+#pf-card{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(11,18,38,.38);padding:16px;padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
+#pf-card[hidden]{display:none}
+#pf-card .in{width:min(560px,100%);max-height:100%;overflow:auto;background:var(--bg);color:var(--fg);border-radius:22px;box-shadow:0 20px 60px rgba(11,18,38,.3);padding:18px 18px 16px;font:500 15px/1.45 var(--f)}
+#pf-card h3{margin:0 0 4px;font:800 19px/1.25 var(--f)}#pf-card .sub{color:var(--muted);margin:0 0 12px;font-size:14px}
+#pf-card .hd{display:flex;gap:12px;align-items:center;margin:0 0 10px}#pf-card .hd .cki{flex:none;width:42px;height:42px;border-radius:12px;background:#1B2440;color:#fff;display:grid;place-items:center}#pf-card .hd .cki svg{width:26px;height:26px}
+:root[data-theme="dark"] #pf-card .hd .cki{background:#F2EEE4;color:#1B2440}
+#pf-card .pv{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px;margin:0 0 10px}#pf-card .pv svg{display:block;width:100%;height:auto;max-height:42vh}
+#pf-card .pv .r{fill:rgba(184,146,79,.10);stroke:var(--fg);stroke-width:2.2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+#pf-card .pv .w{stroke:#2F7DE1;stroke-width:5;vector-effect:non-scaling-stroke;stroke-linecap:butt}#pf-card .pv .d{stroke:#B8924F;stroke-width:5;vector-effect:non-scaling-stroke}
+#pf-card .pv text{font-family:var(--f);font-weight:800;fill:var(--fg);text-anchor:middle}#pf-card .pv text.s{font-weight:600;fill:var(--muted)}
+#pf-card .tabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}#pf-card .tabs button{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font:800 13.5px var(--f);cursor:pointer;min-height:36px}#pf-card .tabs button[aria-pressed="true"]{background:#1B2440;color:#fff;border-color:#1B2440}
+:root[data-theme="dark"] #pf-card .tabs button[aria-pressed="true"]{background:#F2EEE4;color:#1B2440;border-color:#F2EEE4}
+#pf-card .ech{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);margin:0 0 8px}#pf-card .ech i{flex:none;width:7px;height:7px;border-radius:50%;background:#B8924F;margin-top:7px}
+#pf-card .av{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line)}#pf-card .av li{display:flex;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}#pf-card .av li b{flex:none;font-weight:800;min-width:0;max-width:40%}#pf-card .av li span{color:var(--fg)}
+#pf-card .av .ttl{display:block;font:800 14px var(--f);padding:10px 2px 4px;border:0}
+#pf-card .rule{background:rgba(184,146,79,.14);border-radius:12px;padding:9px 12px;font-size:13.5px;margin:0 0 12px}
+#pf-card .row{display:flex;gap:10px;flex-wrap:wrap}#pf-card .row.fin{position:sticky;bottom:-16px;background:var(--bg);margin:0 -18px -16px;padding:10px 18px 16px;box-shadow:0 -8px 14px -10px rgba(11,18,38,.25)}#pf-card .go{appearance:none;flex:1 1 200px;min-height:52px;border:0;border-radius:999px;background:#1B2440;color:#fff;font:800 16px var(--f);cursor:pointer;padding:0 18px}
+#pf-card .go2{appearance:none;flex:1 1 140px;min-height:52px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:800 15px var(--f);cursor:pointer;padding:0 16px}
+:root[data-theme="dark"] #pf-card .go{background:#F2EEE4;color:#1B2440}
+#pf-card .wait{display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 4px 6px}#pf-card .wait .sp{width:46px;height:46px;border-radius:50%;border:4px solid rgba(184,146,79,.25);border-top-color:#B8924F;animation:pfsp 1s linear infinite;margin:0 0 12px}
+@keyframes pfsp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#pf-card .wait .sp{animation-duration:3s}}
+#pf-ph{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:14px;appearance:none;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;font:800 14.5px var(--f);padding:0 16px 0 8px;min-height:46px;cursor:pointer;box-shadow:0 2px 10px rgba(11,18,38,.10)}
+#pf-ph .cki{width:32px;height:32px;border-radius:50%;background:#1B2440;color:#fff;display:grid;place-items:center}#pf-ph .cki svg{width:20px;height:20px}
+:root[data-theme="dark"] #pf-ph .cki{background:#F2EEE4;color:#1B2440}
+#pf-ph[hidden],html.nt-on #pf-ph{display:none}
+#nt-aide .pf-open{display:flex;align-items:center;gap:8px;width:100%;margin:8px 0 2px;appearance:none;border:1px solid var(--line,#0002);background:var(--surface,#fff);color:var(--fg,#0B1226);border-radius:12px;padding:10px 12px;font:800 15px var(--f,system-ui);min-height:44px;cursor:pointer}#nt-aide .pf-open svg{width:20px;height:20px}
+`;
+
+/* ---------- La photo : réduite sur l'appareil (≤ 2000 px, JPEG), un PDF part tel quel ---------- */
+function lireFichier(f){return new Promise((ok,ko)=>{const r=new FileReader();r.onerror=()=>ko(new Error("Fichier illisible"));
+ if(f.type==="application/pdf"){if(f.size>3.4*1024*1024)return ko(new Error("PDF trop lourd (3,5 Mo au plus) : prenez plutôt une photo de la page"));r.onload=()=>ok(String(r.result).slice(String(r.result).indexOf(",")+1));r.readAsDataURL(f);return}
+ if(!/^image\//.test(f.type))return ko(new Error("Choisissez une photo ou un PDF"));
+ r.onload=()=>{const im=new Image();im.onload=()=>{try{const s=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);const u=c.toDataURL("image/jpeg",.86);ok(u.slice(u.indexOf(",")+1))}catch(e){ko(new Error("Photo illisible"))}};im.onerror=()=>ko(new Error("Photo illisible"));im.src=r.result};r.readAsDataURL(f)})}
+
+function choisir(){if(!ckOn()){toast("Avec l'option Cliky : il lit la photo d'un plan et le dessine pour vous (Réglages › Mes options)");return}
+ if(!api()){toast(/[?&]demo/.test(location.search)?"En démo, Cliky ne lit pas les photos de plan":"Ouvrez le plan depuis votre Espace pour que Cliky lise la photo");return}
+ $("pf-file").click()}
+function envoyer(f){if(!f)return;card(`<div class="wait"><div class="sp" aria-hidden="true"></div><h3>Cliky lit votre plan…</h3><p class="sub">Ça prend souvent moins d'une minute. Gardez cet écran ouvert.</p></div>`);
+ lireFichier(f).then(d=>api()("/espace/lire-photo",{method:"POST",body:{sorte:"plan",fichier:d}})).then(x=>{LU={...x,nv:0};resultat()},e=>{
+  card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Cliky n'a pas pu lire ce plan</h3><p class="sub" style="margin:0">${esc(e&&e.message?e.message:"Erreur inconnue")}</p></div></div><div class="row"><button class="go2" data-pf="x">Fermer</button><button class="go" data-pf="re">Essayer une autre photo</button></div>`)})}
+
+/* ---------- Aperçu du plan lu ---------- */
+function apercu(nv){const R=nv.pieces;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;R.forEach(p=>p.points.forEach(q=>{x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])}));
+ const m=Math.max(.6,(x1-x0)*.05),W=x1-x0+2*m,H=y1-y0+2*m,fs=Math.max(.22,Math.min(.42,Math.min(W,H)/16));let s="";
+ R.forEach(p=>{s+=`<polygon class="r" points="${p.points.map(q=>q.join(",")).join(" ")}"/>`;p.ouvertures.forEach(o=>{const a=p.points[o.mur],b=p.points[(o.mur+1)%p.points.length],L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;
+  s+=`<line class="${o.type==="porte"?"d":"w"}" x1="${a[0]+ux*o.depuis_m}" y1="${a[1]+uy*o.depuis_m}" x2="${a[0]+ux*(o.depuis_m+o.largeur_m)}" y2="${a[1]+uy*(o.depuis_m+o.largeur_m)}"/>`})});
+ R.forEach(p=>{const c=centre(p.points);s+=`<text x="${c[0]}" y="${c[1]}" font-size="${fs}">${esc(p.nom)}</text><text class="s" x="${c[0]}" y="${c[1]+fs*1.25}" font-size="${fs*.85}">${fr(aire(p.points))} m²</text>`});
+ return`<svg viewBox="${x0-m} ${y0-m} ${W} ${H}" role="img" aria-label="Aperçu du plan lu par Cliky">${s}</svg>`}
+function aire(P){let a=0;for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length];a+=p[0]*q[1]-q[0]*p[1]}return Math.abs(a/2)}
+function centre(P){let a=0,cx=0,cy=0;for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length],k=p[0]*q[1]-q[0]*p[1];a+=k;cx+=(p[0]+q[0])*k;cy+=(p[1]+q[1])*k}if(Math.abs(a)<1e-6)return[P[0][0],P[0][1]];return[cx/(3*a),cy/(3*a)]}
+
+function resultat(){const N=(LU.niveaux||[]);if(!N.length){card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Cliky n'a trouvé aucune pièce</h3><p class="sub" style="margin:0">${esc(((LU.a_verifier||[])[0]||{}).texte||"Essayez une photo plus nette, prise bien en face.")}</p></div></div><div class="row"><button class="go2" data-pf="x">Fermer</button><button class="go" data-pf="re">Essayer une autre photo</button></div>`);return}
+ const nv=N[LU.nv]||N[0],np=N.reduce((a,n)=>a+n.pieces.length,0),no=N.reduce((a,n)=>a+n.pieces.reduce((b,p)=>b+p.ouvertures.length,0),0),av=LU.a_verifier||[];
+ const plein=!vide();
+ card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Cliky a lu ${np} pièce${np>1?"s":""}${N.length>1?` sur ${N.length} niveaux`:""}</h3><p class="sub" style="margin:0">${no} fenêtre${no>1?"s":""} et porte${no>1?"s":""} · vérifiez d'un coup d'œil</p></div></div>
+  ${N.length>1?`<div class="tabs">${N.map((n,i)=>`<button data-nv="${i}" aria-pressed="${i===LU.nv}">${esc(n.nom)}</button>`).join("")}</div>`:""}
+  <div class="pv">${apercu(nv)}</div>
+  ${LU.echelle?`<div class="ech"><i></i><span>${esc(LU.echelle)}</span></div>`:""}
+  ${av.length?`<ul class="av"><li class="ttl">À vérifier sur place (${av.length})</li>${av.map(v=>`<li>${v.piece?`<b>${esc(v.piece)}</b>`:""}<span>${esc(v.texte)}</span></li>`).join("")}</ul>`:""}
+  <div class="rule">Mesures lues sur une photo : elles servent au pré-devis. Rien ne part en commande ni chez le fournisseur avant de les avoir prises sur place.</div>
+  <div class="row fin"><button class="go2" data-pf="x">Annuler</button><button class="go" data-pf="ok">${plein?"Remplacer mon plan par celui-ci":"Mettre ce plan"}</button></div>`)}
+
+/* ---------- Pose du plan lu ---------- */
+function poser(){const P=K(),N=LU.niveaux||[],av=LU.a_verifier||[];if(!N.length)return;const SOL=P.SOLDEF||{};
+ const OPD={fenetre:{k:"fenetre",h:1.35,al:.9},porte_fenetre:{k:"pf",h:2.15,al:0},baie_coulissante:{k:"pf",t:"Baie coulissante",ouv:"Coulissant",h:2.15,al:0},porte:{k:"porte",h:2.04,al:0}};
+ const today=new Date().toISOString().slice(0,10);let first=true;
+ const floors=N.map(nv=>{const rooms=nv.pieces.map(p=>({nom:p.nom,sol:{...SOL},pts:p.points.map((q,i)=>{const o=p.ouvertures.filter(x=>x.mur===i).map(x=>({...OPD[x.type],w:x.largeur_m,p:x.depuis_m}));return o.length?{p:[q[0],q[1]],o}:{p:[q[0],q[1]]}}),clos:[]}));
+  /* les points douteux deviennent des notes « à reprendre », épinglées au milieu de leur pièce */
+  const notes=[];let g=0;av.forEach(v=>{let p=nv.pieces.find(x=>x.nom===v.piece);if(!p&&v.piece){const t=v.piece.toLowerCase();p=nv.pieces.find(x=>x.nom.toLowerCase().includes(t)||t.includes(x.nom.toLowerCase()))}if(!p&&v.piece&&N.some(o=>o.pieces.some(x=>x.nom===v.piece)))return;if(!p&&!first)return;const c=centre((p||nv.pieces[0]).points);/* plusieurs notes au même endroit : décalées pour se voir */const dx=p?notes.filter(n=>n.w.indexOf(p.nom+" ·")===0).length*.9:(g++)*.9;notes.push({x:+(c[0]+dx).toFixed(2),y:+c[1].toFixed(2),t:"room",w:(p?p.nom:"Tout le logement")+" · lu sur la photo",txt:"Cliky : "+(!p&&v.piece?v.piece+" : ":"")+v.texte,d:today})});
+  first=false;
+  return{nom:nv.nom,H:nv.hauteur_m>0?nv.hauteur_m:2.5,...(nv.hauteur_m>0?{hok:true}:{hdk:true}),photo:1,...(notes.length?{notes}:{}),dal:{type:"Béton",ep:"20 cm"},esc:[],rooms}});
+ try{P.hist()}catch(e){}
+ const S=P.snapState();S.floors=floors;S.fi=0;S.ri=0;
+ try{P.loadState(S);P.closeSheet&&P.closeSheet(true)}catch(e){toast("Le plan lu n'a pas pu être posé");return}
+ try{P.all();P.autosave&&P.autosave();P.notify&&P.notify()}catch(e){}
+ try{window.PKNOTES&&PKNOTES.pins()}catch(e){}
+ try{P.say(null,"Plan lu par Cliky sur la photo : touchez « À vérifier » pour confirmer les fenêtres et les portes, puis « Notes » pour les mesures à prendre sur place.")}catch(e){}
+ close();const n=floors.reduce((a,f)=>a+(f.notes||[]).length,0);
+ setTimeout(()=>toast(n?`Plan posé. ${n} point${n>1?"s":""} à vérifier en note, fenêtres et portes dans « À vérifier »`:"Plan posé. Fenêtres et portes à confirmer dans « À vérifier »"),250)}
+
+/* ---------- Écran ---------- */
+function card(h){let c=$("pf-card");c.innerHTML=`<div class="in" role="dialog" aria-modal="true" aria-label="Photo d'un plan">${h}</div>`;c.hidden=false}
+function close(){const c=$("pf-card");if(c){c.hidden=true;c.innerHTML=""}LU=null}
+/* plan neuf : rien, ou seulement la 1re pièce posée d'office (« Pièce 1 », sans fenêtre ni porte) */
+function vide(){try{const P=K(),R=[];P.ST.floors.forEach(f=>f.rooms.forEach(r=>R.push(r)));if(!R.length)return true;return R.length===1&&/^Pièce \d+$/.test(R[0].nom)&&!R[0].pts.some(q=>(P.OP.get(q)||[]).length)}catch(e){return false}}
+function ensure(){const st=document.createElement("style");st.textContent=CSS;document.head.appendChild(st);
+ const c=document.createElement("div");c.id="pf-card";c.hidden=true;document.body.appendChild(c);
+ c.addEventListener("click",e=>{if(e.target===c&&!c.querySelector(".wait"))return close();const b=e.target.closest("button");if(!b)return;if(b.dataset.nv!=null){LU.nv=+b.dataset.nv;return resultat()}const a=b.dataset.pf;if(a==="x")close();if(a==="re"){close();choisir()}if(a==="ok")poser()});
+ const fi=document.createElement("input");fi.type="file";fi.accept="image/*,application/pdf";fi.id="pf-file";fi.hidden=true;document.body.appendChild(fi);fi.addEventListener("change",()=>{const f=fi.files&&fi.files[0];fi.value="";envoyer(f)});
+ /* bouton sur le plan tant qu'il est vide */
+ const bd=$("board");if(bd){const b=document.createElement("button");b.id="pf-ph";b.type="button";b.innerHTML=`<span class="cki">${CKI}</span>Partir d'une photo de plan`;b.hidden=true;bd.appendChild(b);b.addEventListener("click",e=>{e.stopPropagation();choisir()});
+  const pos=()=>{const v=vide()&&ckOn();if(b.hidden===v)b.hidden=!v;if(!v)return;/* au-dessus de la barre d'outils */const t=$("cltools"),q=bd.getBoundingClientRect();let y=14;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).display!=="none"&&r.top<q.bottom&&r.bottom>q.top)y=Math.max(14,q.bottom-r.top+12)}b.style.bottom=y+"px"};pos();setInterval(pos,500)}}
+function addAide(){const a=$("nt-aide");if(!a)return false;if(a.querySelector(".pf-open"))return true;const b=document.createElement("button");b.className="pf-open";b.type="button";b.innerHTML=PHI+"Partir d'une photo de plan";
+ b.addEventListener("click",e=>{e.stopPropagation();a.hidden=true;document.documentElement.classList.remove("nt-aide","pro-leg");choisir()});const pp=a.querySelector(".pp-open");if(pp)pp.after(b);else a.insertBefore(b,a.firstChild.nextSibling);return true}
+function boot(){const P=K();if(!P||P.CL)return;ensure();let n=0;const t=setInterval(()=>{if((addAide()&&$("nt-aide").querySelector(".pp-open"))||++n>100)clearInterval(t)},150);addEventListener("keydown",e=>{const c=$("pf-card");if(e.key==="Escape"&&c&&!c.hidden&&!c.querySelector(".wait"))close()})}
+function wait(n){if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
+window.PKPHOTO={choisir,_poser:x=>{LU={...x,nv:0};poser()},_montrer:x=>{LU={...x,nv:0};resultat()}};
+})();
