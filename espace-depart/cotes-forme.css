@@ -83,3 +83,25 @@ html.f2on input:not([type=checkbox]):not([type=radio]){background:var(--z-tile2)
 html.f2on .ch:not(.one) button:has(>svg){flex-direction:column;align-items:flex-start;text-align:left;gap:10px;padding:16px}
 html.f2on .ch button>svg{width:44px!important;height:44px!important;padding:11px;border-radius:50%;background:var(--z-tile2);box-sizing:border-box}
 html.f2on .q p.h{font-size:14px}
+/* ---------- dès 8 menuiseries : par pièce ---------- */
+html.f2on .phone .f2hors{display:none!important}
+html.f2on .phone.f2pp:not(.f2p1) .list{display:none!important}
+html.f2on .phone.f2p1 .card.sum{display:none!important}
+html.f2on .f2pp-c{background:var(--z-tile);border-radius:24px;box-shadow:var(--z-ombre);padding:2px 16px;margin-bottom:12px}
+html.f2on .f2pc{display:flex;align-items:center;gap:12px;width:100%;padding:14px 0;border:0;border-bottom:1px solid var(--z-line);background:none;color:var(--z-fg);font:inherit;text-align:left;cursor:pointer}
+html.f2on .f2pc:last-child{border-bottom:0}
+html.f2on .f2pc-i{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--z-tile2);color:var(--z-fg)}
+html.f2on .f2pc-i svg{width:19px;height:19px}
+html.f2on .f2pc-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+html.f2on .f2pc-t b{font-size:15.5px;font-weight:600}
+html.f2on .f2pc-t small{font-size:12.5px;color:var(--z-mut)}
+html.f2on .f2pc em{font-style:normal;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+html.f2on .f2pc-ok{color:var(--z-ok)}
+html.f2on .f2pc-ok svg{width:15px;height:15px}
+html.f2on .f2pc-a{color:#C9832B}
+html.f2on .f2pc-a::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:2px}
+html.f2on .f2pc-go{font-style:normal;color:var(--z-mut);font-size:20px;margin-left:4px}
+html.f2on .f2bk{border:0;background:none;font:600 16px "Manrope",system-ui,sans-serif;color:var(--z-nuit);padding:6px 4px;margin-right:auto;cursor:pointer}
+html.f2on .phone.f2p1 .ph-h .f2brand,html.f2on .phone.f2p1 .ph-h svg.ring{display:none}
+html.f2on .phone.f2p1 .f2hd .exc{display:none}
+html.f2on .f2pp-l{padding-bottom:96px}

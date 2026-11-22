@@ -32,7 +32,35 @@ function liste(P){var b=$(".ph-b",P),sum=b&&$(".card.sum",b);P.classList.toggle(
     if(no&&sm)sm.textContent="n°"+no.textContent+(sm.textContent?" · "+sm.textContent:"");
     var r=d.createElement("span");r.className="f2r";if(dim)r.appendChild(dim);
     if(em){if(em.classList.contains("ok"))em.innerHTML=OK+"mesurée";r.appendChild(em)}
-    it.appendChild(r)})}
+    it.appendChild(r)});
+  pieces(P,b,hd)}
+/* Dès 8 menuiseries : « Par pièce » (maquettes cotes-pieces.html / cotes-piece.html). Toucher une pièce = sa page, « ‹ Prise de cotes ». */
+var PIECE=null,SEUIL=8;
+var PI={"Séjour":'<path d="M4 13v-2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/><path d="M3 13h18v4H3zM5 17v2M19 17v2"/>',"Cuisine":'<path d="M5 10h14v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2zM3 10h18M9 6v1.5M12 5v2.5M15 6v1.5"/>',
+  "Chambre":'<path d="M3 18V8M3 14h18v4M21 18v-4a3 3 0 0 0-3-3h-7v3"/><circle cx="7" cy="11.5" r="1.6"/>',"Salle de bain":'<path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0M7 19l-1 2M17 19l1 2"/>',
+  "WC":'<path d="M7 4h6v7H7zM5 11h12a5 5 0 0 1-5 5h-2l1 4H8l-1-4"/>',"Entrée":'<path d="M6 21V4h12v17M4 21h16"/><circle cx="15" cy="12.5" r=".9"/>',"Garage":'<path d="M3 20V9l9-5 9 5v11M7 20v-7h10v7M7 16h10"/>'};
+var PICO=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(PI[p]||PI["Entrée"])+'</svg>'};
+var escH=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function lesItems(){var C=window.PCCotes;return C&&C.S&&Array.isArray(C.S.items)?C.S.items:[]}
+function pieces(P,b,hd){var I=lesItems(),L=$(".list",b);if(!L)return;var on=I.length>=SEUIL;P.classList.toggle("f2pp",on);if(!on){PIECE=null;return}
+  var G={},ordre=[];I.slice().sort(function(a,c){return a.no-c.no}).forEach(function(it){var p=it.piece||"Sans pièce";if(!G[p]){G[p]=[];ordre.push(p)}G[p].push(it)});
+  if(PIECE&&!G[PIECE])PIECE=null;
+  $$(".item",L).forEach(function(it){var x=I[+it.getAttribute("data-i")];it.classList.toggle("f2hors",!!PIECE&&(!x||(x.piece||"Sans pièce")!==PIECE))});
+  P.classList.toggle("f2p1",!!PIECE);
+  var sec=$(".f2sec",b);
+  if(PIECE){var g=G[PIECE],r=g.filter(function(x){return !x.fini}).length;
+    hd.querySelector("small").textContent=g.length+" menuiserie"+(g.length>1?"s":"")+" · "+(r?r+" à mesurer":g.length>1?"toutes mesurées":"mesurée");
+    hd.querySelector("h1").textContent=PIECE;
+    if(!$(".f2bk",P)){var bk=d.createElement("button");bk.type="button";bk.className="f2bk";bk.textContent="‹ Prise de cotes";bk.addEventListener("click",function(){PIECE=null;rafr(P)});var hh=$(".ph-h",P);hh.insertBefore(bk,hh.firstChild)}
+    return}
+  var bk0=$(".f2bk",P);if(bk0)bk0.parentNode.removeChild(bk0);
+  var pp=d.createElement("div");pp.className="f2pp-l";
+  pp.innerHTML='<div class="f2sec"><b>Par pièce</b><span>'+I.length+' menuiseries</span></div><div class="f2pp-c">'+ordre.map(function(p){var g=G[p],r=g.filter(function(x){return !x.fini}).length;
+    return '<button type="button" class="f2pc" data-f2pc="'+escH(p)+'"><span class="f2pc-i">'+PICO(p)+'</span><span class="f2pc-t"><b>'+escH(p)+'</b><small>'+g.length+' menuiserie'+(g.length>1?'s':'')+'</small></span>'+
+      (r?'<em class="f2pc-a">'+r+' à mesurer</em>':'<em class="f2pc-ok">'+OK+(g.length>1?'toutes':'mesurée')+'</em>')+'<i class="f2pc-go">›</i></button>'}).join("")+'</div>';
+  if(sec)sec.classList.add("f2hors");L.parentNode.insertBefore(pp,L);
+  $$("[data-f2pc]",pp).forEach(function(x){x.addEventListener("click",function(){PIECE=x.getAttribute("data-f2pc");rafr(P);window.scrollTo(0,0)})})}
+function rafr(P){var C=window.PCCotes;if(C&&C.render)C.render()}
 function suit(){var P=$("#phone");if(!P)return;liste(P);new MutationObserver(function(){liste(P)}).observe(P,{childList:true})}
 if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",suit);else suit();
 })();
