@@ -102,6 +102,8 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   if(vco&&!vco.hidden){var sp=vco.querySelector("span");h+='<div class="demo-b"><span>'+(sp?sp.innerHTML:"<b>Mode démo.</b>")+'</span><button class="pill" type="button" data-f2="connexion" style="height:34px;padding:0 14px;font-size:12.5px">Se connecter</button></div>'}
   h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
+  /* Déposer un document (Cyril 22/11 : « bien trop compliqué à trouver ») : tout de suite, sans choisir le fournisseur d'abord, Cliky le lit */
+  h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+ic("photo")+'</span><span class="x"><b>Déposer un document</b><span>Facture, bon de livraison, devis fournisseur</span></span>'+ic("d")+"</button>";
 
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   if(B.jour){var L=J.L;
@@ -181,6 +183,7 @@ function agir(el){var v;
     if(v==="connexion"){var b=$("#vco button");if(b)b.click()}
     else if(v==="parler"){var s=$("#speak");if(s)s.click()}
     else if(v==="perso")perso();
+    else if(v==="doc"){if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");else X.toast("Pas encore disponible","Le dépôt de document arrive avec Cliky.")}
     return true}
   if((v=el.getAttribute("data-f2cree"))){cree(v);return true}
   if((v=el.getAttribute("data-chouv"))){nav("chantiers");apres(function(){if(window.PCCH)PCCH.ouvrir(v)});return true}
