@@ -77,6 +77,8 @@ function prenom(){var h=$("#hello"),t=h?h.textContent:"";return t.replace(/^Bon(
 function salut(){var h=$("#hello");return h?h.textContent.replace(/[.!]\s*$/,"").trim():"Bonjour"}
 function eur2(n){return Number(n).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function debut(t){t=String(t||"");var p=t.split(" → "),m=(t.match(/\/\d{1,2}\s*$/)||[""])[0];return p[0]+(p[1]&&!/\//.test(p[0])?m:"")}
+function clikyOn(){return !!(window.PCOPT&&PCOPT.cliky)}
+var CKI='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>';
 function pl(n,un,plus){return n>1?plus:un}
 function chDe(e){var C=X.CH||{},c=null;Object.keys(C).forEach(function(k){var y=C[k];if(!c&&y&&(y.id===(e.x&&e.x.ch)||y.n===e.t||(y.n&&String(e.t).indexOf(y.n)>=0)))c=y});return c}
 function manque(c){if(!c||!c.four)return null;var m=c.four.filter(function(x){return !/livr|pris/i.test(x[2])&&/manquant/i.test(String(x[1]))})[0];
@@ -102,8 +104,9 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   if(vco&&!vco.hidden){var sp=vco.querySelector("span");h+='<div class="demo-b"><span>'+(sp?sp.innerHTML:"<b>Mode démo.</b>")+'</span><button class="pill" type="button" data-f2="connexion" style="height:34px;padding:0 14px;font-size:12.5px">Se connecter</button></div>'}
   h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
-  /* Déposer un document (Cyril 22/11 : « bien trop compliqué à trouver ») : tout de suite, sans choisir le fournisseur d'abord, Cliky le lit */
-  h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+ic("photo")+'</span><span class="x"><b>Déposer un document</b><span>Facture, devis, bon de livraison, plan</span></span>'+ic("d")+"</button>";
+  /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
+     et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
+  if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+CKI+'</span><span class="x"><b>Cliky</b><span>Photo, image ou PDF : il crée pour vous</span></span>'+ic("d")+"</button>";
 
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   if(B.jour){var L=J.L;
@@ -184,10 +187,10 @@ function perso(){var B=blocs(),N=[["jour","Ma journée"],["afaire","À faire"],[
    Mur : la photo se rattache à un mur, donc on ouvre ses plans et on touche le mur. */
 var fiPlan=null;
 function deposer(){
-  X.xopen("Déposer un document","Photo ou PDF : Cliky le lit pour vous",
-    '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Une facture, un devis ou un bon</b><small>De votre fournisseur. Cliky reporte les prix et le range dans le chantier</small></span></button>'+
-    '<button type="button" data-f2dc="plan"><span class="f2dc-i">'+ic("plan")+'</span><span><b>Un plan</b><small>D\'architecte, de vente ou un croquis. Cliky le dessine dans un nouveau plan</small></span></button>'+
-    '<button type="button" data-f2dc="mur"><span class="f2dc-i">'+ic("photo")+'</span><span><b>La photo d\'un mur</b><small>Ouvrez le plan du client, touchez le mur, puis « Photo »</small></span></button></div>',
+  X.xopen("Cliky","Une photo, une image ou un PDF : choisissez ce qu'il crée",
+    '<div class="f2dc"><button type="button" data-f2dc="four"><span class="f2dc-i">'+ic("facture")+'</span><span><b>Les prix d\'un fournisseur</b><small>Facture, devis, bon de livraison ou tarif : Cliky met vos prix à jour et range l\'achat dans le chantier</small></span></button>'+
+    '<button type="button" data-f2dc="plan"><span class="f2dc-i">'+ic("plan")+'</span><span><b>Un plan</b><small>D\'architecte, de vente ou un croquis : Cliky le dessine, pièce par pièce</small></span></button>'+
+    '<button type="button" data-f2dc="mur"><span class="f2dc-i">'+ic("photo")+'</span><span><b>Un mur vu de face</b><small>Ouvrez le plan du client, touchez le mur, puis « Photo » : Cliky note ce qui est déjà en place</small></span></button></div>',
     '<button class="btn" data-xclose style="width:100%">Annuler</button>',function(){
       $$("[data-f2dc]").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.f2dc;
         if(k==="four"){X.xclose();if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");return}
@@ -360,6 +363,13 @@ function auDebut(){var t=new Date(),j=t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t
     var w=$("#welcome"),occupe=$("#pc-ouv")||$("#pc-ouk")||(w&&!w.hidden)||$(".x-scrim.on,#x.on,.sheet.on")||!visible();
     if(occupe)return setTimeout(guette,400);lsS("pc-f2-pj",j);pjOuvre(null)})()}
 
+/* l'entrée « Cliky » du menu (barre du bas, panneau du galet, menu de côté), seulement avec l'option */
+function entreeMenu(){var nav=$("nav.nav");if(!nav)return;var b=$("#nb-cliky"),ch=false;
+  if(!b){b=d.createElement("button");b.type="button";b.id="nb-cliky";b.setAttribute("data-pbx","");b.setAttribute("data-opt","cliky");
+    b.innerHTML='<span class="ico" aria-hidden="true">'+CKI.replace(' class="i"',"")+"</span>Cliky";b.addEventListener("click",function(e){e.preventDefault();e.stopImmediatePropagation();deposer()});nav.appendChild(b);ch=true}
+  var h=!clikyOn();if(b.hidden!==h){b.hidden=h;ch=true}
+  if(ch&&window.PCBarre&&PCBarre.applique)PCBarre.applique()}
+entreeMenu();setInterval(entreeMenu,3000);
 rendre();
 addEventListener("load",function(){CACHE.h=null;rendre()});
 /* l'ancien Accueil se redessine (badges, vraies demandes) : on suit */
