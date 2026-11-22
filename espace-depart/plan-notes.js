@@ -25,6 +25,52 @@ function hit(p){const P=K(),tol=P.pxM(26);let best=null;
 /* La note retrouve son élément par sa position (le plan peut avoir changé depuis) */
 function elOf(n){return hit([n.x,n.y])}
 
+/* ---------- Note pré-mâchée par Cliky (lot B12, option Cliky) ----------
+   Cliky lit la note (dictée ou écrite) et pose lui-même les éléments sur le mur ou dans la pièce : prises,
+   interrupteurs, spots, arrivées d'eau, caissons, verrières… L'artisan vérifie dans la vue de face et valide.
+   Lecture faite ici sur l'appareil (mots du métier + nombres en lettres) ; la lecture d'une PHOTO du mur par Cliky
+   viendra avec la clé Claude du service (comme la photo d'un plan). */
+const CK_NB={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,douze:12};
+/* ordre important : le plus précis d'abord */
+const CK=[[/prises?\s+(?:de\s+)?(?:tv|t[ée]l[ée])/,"tv"],[/(?:prises?\s+)?(?:rj\s?45|internet|r[ée]seau)/,"rj"],[/prises?\s+32\s?a|prises?\s+(?:de\s+la\s+)?plaque/,"p32"],
+ [/prises?\s+quadruples?/,"pc4"],[/prises?\s+triples?/,"pc3"],[/prises?\s+doubles?/,"pc2"],[/prises?/,"pc"],
+ [/va[\s-]et[\s-]vient/,"vv"],[/interrupteurs?|inters?\b/,"int"],[/appliques?/,"app"],[/spots?/,"spot"],[/plafonniers?|points?\s+lumineux|lumi[eè]res?\s+au\s+plafond/,"pl"],
+ [/d[ée]tecteurs?\s+de\s+fum[ée]e/,"df"],[/bouches?\s+vmc|vmc/,"vmc"],[/tableaux?\s+[ée]lectriques?/,"tab"],
+ [/s[eè]che[\s-]serviettes?/,"ss"],[/radiateurs?/,"rad"],[/arriv[ée]es?\s+(?:d.)?eau\s+chaude/,"ec"],[/arriv[ée]es?\s+(?:d.)?eau(?:\s+froide)?/,"ef"],[/[ée]vacuations?/,"ev"],[/mitigeurs?/,"mit"],[/chauffe[\s-]eau/,"cee"],
+ [/b[aâ]tis?[\s-]?(?:supports?)?\s*(?:wc|toilettes?)|b[aâ]tis?\s+wc/,"bwc"],[/caissons?\s+(?:au\s+)?plafond/,"cp"],[/caissons?/,"cv"],[/retomb[ée]es?/,"rt"],[/verri[eè]res?\s+avec\s+(?:une\s+)?porte/,"verp"],[/verri[eè]res?/,"verr"],
+ [/clims?\b|climatisations?|splits?/,"split"]];
+const CK_PLAF={spot:1,pl:1,df:1,vmc:1,cp:1};
+function ckParse(txt){let t=" "+String(txt||"").toLowerCase().replace(/[’']/g," ").replace(/\s+/g," ")+" ";const out=[];
+ for(const [re,k] of CK){const g=new RegExp("(?:(\\d+|"+Object.keys(CK_NB).join("|")+")\\s+(?:nouvel(?:le)?s?\\s+|autres?\\s+)?)?(?:"+re.source+")","g");
+  t=t.replace(g,(m,n)=>{const q=n?(+n||CK_NB[n]||1):1;if(q>0&&q<=20)out.push({t:k,q});return" · "})}
+ const m={};out.forEach(o=>m[o.t]=(m[o.t]||0)+o.q);return Object.keys(m).map(t=>({t,q:m[t]}))}
+function ckOn(){if(/[?&]demo/.test(location.search))return true;try{const a=JSON.parse(localStorage.getItem("pc-vrai-artisan")||"null");if(a&&a.options&&a.options.cliky!=null)return!!a.options.cliky;return!!JSON.parse(localStorage.getItem("pc-cliky")||"false")}catch(e){return false}}
+function ckName(o){const F=window.PKFACES,d=F&&F.T&&F.T[o.t];const n={spot:"spot",pl:"plafonnier",df:"détecteur de fumée",vmc:"bouche VMC",cp:"caisson au plafond"}[o.t]||(d?d.n.charAt(0).toLowerCase()+d.n.slice(1):o.t);return o.q+" "+(o.q>1?n.replace(/^(\S+?)(s|x)?(\b)/,(m,a,b)=>a+(b||"s")):n)}
+function ckTarget(el){if(!el)return null;const P=K(),S=P.segs();if(el.t==="seg"||el.t==="op"){const sg=S[el.x];return sg?{sg,ri:P.F().rooms.indexOf(sg.rm)}:null}if(el.t==="room"){const rm=P.F().rooms[el.ri];if(!rm)return null;
+ const ws=S.filter(s=>s.rm===rm&&s.kind==="mur");const sg=ws.sort((a,b)=>P.dist(b.a,b.b)-P.dist(a.a,a.b))[0]||S.find(s=>s.rm===rm);return sg?{sg,ri:el.ri,room:1}:null}return null}
+const CKI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="4"/><path d="M12 4.8V8"/><circle cx="12" cy="3.6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.4" r="1.25" fill="currentColor" stroke="none"/></svg>';
+function ckBtn(txt,el){const L=ckParse(txt),tg=ckTarget(el);if(!L.length||!tg)return"";const on=ckOn();
+ return`<button class="ck${on?"":" off"}" data-a="cliky" id="nt-ck"><span class="cki">${CKI}</span><span><b>${on?"Cliky prépare "+(tg.room?"la pièce":"ce mur"):"Cliky peut préparer "+(tg.room?"la pièce":"ce mur")}</b><small>${esc(L.map(ckName).join(", "))}${on?"":" · avec l'option Cliky"}</small></span></button>`}
+function ckUpd(){const c=N&&N.cur;if(!c)return;const w=$("nt-ckw");if(w)w.innerHTML=ckBtn(c.txt,c.el||hit([c.x,c.y]))}
+function ckApply(txt,el){const P=K(),F=window.PKFACES,L=ckParse(txt),tg=ckTarget(el);if(!F||!L.length||!tg)return null;const T=F.T||{},Hh=Math.round(((P.F().H)||2.5)*100);
+ try{P.hist()}catch(e){}
+ /* les familles des éléments posés deviennent visibles (métiers) */try{const M=F.metiers()||[],need=new Set(L.map(o=>(T[o.t]||{}).f||(CK_PLAF[o.t]?(o.t==="cp"?"placo":"el"):null)).filter(Boolean));const nm=[...new Set([...M,...need])];if(nm.length!==M.length)F.setMetiers(nm)}catch(e){}
+ const sg=tg.sg,Lw=Math.round(P.dist(sg.a,sg.b)*100);let E=P.EQ.get(sg.a);if(!E){E=[];P.EQ.set(sg.a,E)}const rm=sg.rm;let n=0;
+ const mur=[];L.forEach(o=>{for(let k=0;k<o.q;k++)if(!CK_PLAF[o.t])mur.push(o.t)});
+ mur.forEach((t,k)=>{const d=T[t]||{},x=Math.round(Lw*(k+1)/(mur.length+1)/5)*5;
+  if(d.o){const hh=Math.min(Hh,d.dh||Hh),w=Math.min(Lw,d.dw);E.push({t,n:d.n,x:Math.max(w/2,Math.min(Lw-w/2,x)),h:d.pos==="haut"?Hh-hh/2:d.pos==="al"?Math.min(Hh-hh/2,(d.al||0)+hh/2):hh/2,w,hh,p:d.dp||0,st:"faire",ck:1})}
+  else E.push({t,n:d.n||t,x:Math.max(20,Math.min(Lw-20,x)),h:Math.min(Hh-10,d.h||30),st:"faire",ck:1});n++});
+ /* plafond : répartis sur la pièce */
+ const pl=[];L.forEach(o=>{if(CK_PLAF[o.t])for(let k=0;k<o.q;k++)pl.push(o.t)});
+ if(pl.length&&rm){const xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=>p[1]),b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];rm.eqp=rm.eqp||[];
+  const byT={};pl.forEach(t=>byT[t]=(byT[t]||0)+1);Object.keys(byT).forEach(t=>{const q=byT[t],c=Math.ceil(Math.sqrt(q*(b[2]-b[0])/Math.max(.5,b[3]-b[1]))),r=Math.ceil(q/c);let i=0;
+   for(let j=0;j<r;j++)for(let k=0;k<c&&i<q;k++,i++){const x=b[0]+(b[2]-b[0])*(k+.5)/c,y=b[1]+(b[3]-b[1])*(j+.5)/r,e={t,n:(T[t]||{}).n||t,x:+x.toFixed(2),y:+y.toFixed(2),st:"faire",ck:1};if(t==="cp")Object.assign(e,{w:200,l:40,hh:30});rm.eqp.push(e);n++}})}
+ save();return{n,tg,plaf:pl.length&&!mur.length}}
+/* bouton Cliky touché : pose, puis ouvre la vue de face pour vérifier */
+function ckGo(txt,el){if(!ckOn()){toast("Avec l'option Cliky : il pose les éléments de la note pour vous (Réglages › Mes options)");return}
+ const r=ckApply(txt,el);if(!r||!r.n)return;const F=window.PKFACES;if(N&&N.cur&&String(N.cur.txt||"").trim())keep();stop(true);
+ try{F.open({ri:r.tg.ri,wa:r.tg.sg.a,tab:r.plaf?"plaf":"mur"})}catch(e){}setTimeout(()=>toast(`Cliky a posé ${r.n} élément${r.n>1?"s":""} : vérifiez les places, puis OK`),300)}
+
 /* ---------- Dessin : épingles numérotées + élément allumé ---------- */
 function pins(){const svg=$("svg"),P=K();if(!svg||!P||!P.F)return;let g=svg.querySelector("#nt-g");if(g)g.remove();
  const L=notes(),on=document.documentElement.classList.contains("nt-on");if(!L.length&&!(N&&N.cur))return;if(!on&&!L.some(n=>!n.fait))return;
@@ -55,6 +101,7 @@ html.nt-on #cltools,html.nt-on #legend,html.nt-on #sheet,html.nt-on #opp,html.nt
 @keyframes ntmic{50%{box-shadow:0 0 0 10px rgba(184,146,79,.35)}}
 #nt-card .ph{position:relative}#nt-card .ph em{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;border-radius:999px;background:#1B2440;color:#fff;font:800 11px var(--f);font-style:normal;display:grid;place-items:center}
 #nt-card .go{appearance:none;flex:1;min-height:52px;border:0;border-radius:999px;background:#1B2440;color:#fff;font:800 16px var(--f);cursor:pointer;padding:0 18px}
+#nt-card .ck{display:flex;align-items:center;gap:10px;width:100%;margin:8px 0 0;appearance:none;text-align:left;border:1.5px solid var(--fg);border-radius:16px;background:var(--surface);color:var(--fg);padding:10px 12px;font:inherit;cursor:pointer;min-height:52px}#nt-card .ck b{display:block;font-size:15px}#nt-card .ck small{display:block;font-size:13px;color:var(--muted);margin-top:1px}#nt-card .ck .cki{flex:none;width:34px;height:34px;border-radius:10px;background:var(--fg);color:var(--surface);display:grid;place-items:center}#nt-card .ck .cki svg{width:22px;height:22px}#nt-card .ck.off{border-style:dashed;border-color:var(--line)}#nt-card .ck.off .cki{background:var(--paper);color:var(--muted)}
 #nt-card .go2{appearance:none;flex:1;min-height:48px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:800 15px var(--f);cursor:pointer}
 :root[data-theme="dark"] #nt-card .go,:root[data-theme="dark"] #nt-card .mic{background:#F2EEE4;color:#1B2440}
 :root[data-theme="dark"] #nt-card .ph em{background:#F2EEE4;color:#1B2440}
@@ -83,7 +130,7 @@ html.nt-aide #nt-aide #legend{display:flex!important;flex-wrap:wrap;gap:6px 12px
 `;
 function ensure(){if($("nt-card"))return;const st=document.createElement("style");st.textContent=CSS;document.head.appendChild(st);
  const c=document.createElement("div");c.id="nt-card";c.hidden=true;c.setAttribute("role","dialog");c.setAttribute("aria-label","Notes de chantier");document.body.appendChild(c);
- c.addEventListener("click",onClick);c.addEventListener("input",e=>{if(e.target.id==="nt-tx"&&N&&N.cur)N.cur.txt=e.target.value});
+ c.addEventListener("click",onClick);c.addEventListener("input",e=>{if(e.target.id==="nt-tx"&&N&&N.cur){N.cur.txt=e.target.value;ckUpd()}});
  const fi=document.createElement("input");fi.type="file";fi.accept="image/*";fi.id="nt-file";fi.hidden=true;document.body.appendChild(fi);fi.addEventListener("change",()=>{const f=fi.files&&fi.files[0];fi.value="";photo(f)})}
 function overlay(on){let o=$("nt-ov");if(!on){if(o)o.remove();return}if(o)return;const b=$("board");if(!b)return;o=document.createElement("div");o.id="nt-ov";b.appendChild(o);
  let d=null;o.addEventListener("pointerdown",e=>{d={x:e.clientX,y:e.clientY,id:e.pointerId}});o.addEventListener("pointerup",e=>{if(!d||e.pointerId!==d.id)return;const m=Math.hypot(e.clientX-d.x,e.clientY-d.y);d=null;if(m>12)return;tap(e)})}
@@ -101,10 +148,10 @@ function badge(){const b=document.querySelector('.cltool[data-cl="notes"]');if(!
 function render(){ensure();const c=$("nt-card");if(!N){c.hidden=true;return}c.hidden=false;const L=notes();let h='<i class="gr"></i>';
  if(N.mode==="rep"){const R=N.rep,k=N.k,n=L[R[k]];if(!n){N.mode="pose";return render()}const e=elOf(n);
   h+=`<div class="hd"><span class="chip">Note ${k+1} sur ${R.length} · ${esc(n.w)}</span><span style="flex:1"></span><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div><div class="q">« ${esc(n.txt||"Voir la photo")} »</div>${n.ph&&n.ph.length?`<div class="phs">${n.ph.map(p=>`<img src="${p.u}" alt="">`).join("")}</div>`:""}
-  <div class="row">${e?`<button class="go2" data-a="ouvre">${e.t==="room"?"Ouvrir la pièce":e.t==="op"?"Ouvrir "+(/porte/i.test(e.w)?"la porte":"la fenêtre"):"Ouvrir le mur"}</button>`:""}<button class="go2" data-a="tard">Plus tard</button></div><div class="row"><button class="go" data-a="fait">${k<R.length-1?"C'est fait, note suivante":"C'est fait"}</button></div>`}
+  <div class="row">${e?`<button class="go2" data-a="ouvre">${e.t==="room"?"Ouvrir la pièce":e.t==="op"?"Ouvrir "+(/porte/i.test(e.w)?"la porte":"la fenêtre"):"Ouvrir le mur"}</button>`:""}<button class="go2" data-a="tard">Plus tard</button></div>${ckBtn(n.txt,e)}<div class="row"><button class="go" data-a="fait">${k<R.length-1?"C'est fait, note suivante":"C'est fait"}</button></div>`}
  else if(N.cur){const c2=N.cur,np=(c2.ph||[]).length;
   h+=`<div class="hd"><span class="chip">${esc(c2.w)}</span><span style="flex:1"></span><button class="rd" data-a="annule" aria-label="Fermer sans garder">${ico("x")}</button></div><textarea id="nt-tx" placeholder="Dites ou écrivez ce qu'il faut faire ici">${esc(c2.txt||"")}</textarea>
-  <div class="row"><button class="mic" data-a="mic" aria-label="Dicter la note">${ico("mic")}</button><button class="rd ph" data-a="photo" aria-label="Ajouter une photo">${ico("cam")}${np?`<em>${np}</em>`:""}</button><button class="go" data-a="range">Ranger la note</button></div>
+  <div class="row"><button class="mic" data-a="mic" aria-label="Dicter la note">${ico("mic")}</button><button class="rd ph" data-a="photo" aria-label="Ajouter une photo">${ico("cam")}${np?`<em>${np}</em>`:""}</button><button class="go" data-a="range">Ranger la note</button></div><div id="nt-ckw">${ckBtn(c2.txt,c2.el||hit([c2.x,c2.y]))}</div>
   ${c2.idx!=null?`<div class="row" style="justify-content:space-between"><button class="lnk" data-a="${c2.fait?"refaire":"faite"}">${c2.fait?"Remettre à reprendre":"Marquer comme faite"}</button><button class="lnk del" data-a="suppr">Supprimer la note</button></div>`:`<div class="cons"><i></i>Touchez un autre endroit pour une autre note.</div>`}`}
  else{const n=todo(),mine=L.map((x,i)=>({x,i}));
   h+=`<div class="hd"><b>Notes du chantier</b><button class="rd" data-a="x" aria-label="Fermer">${ico("x")}</button></div>`;
@@ -119,7 +166,7 @@ let REC=null;
 function mic(){const t=$("nt-tx"),b=document.querySelector("#nt-card .mic");const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(REC){try{REC.stop()}catch(e){}return}
  if(!SR){if(t){t.focus()}toast("Touchez la case, puis le micro du clavier pour dicter");return}
  try{const r=new SR();REC=r;r.lang="fr-FR";r.interimResults=false;r.continuous=false;b&&b.classList.add("on");
-  r.onresult=e=>{const s=[...e.results].map(x=>x[0].transcript).join(" ").trim();if(!s)return;const v=(N.cur.txt||"").trim();N.cur.txt=(v?v+" ":"")+s.charAt(0).toUpperCase()+s.slice(1);if(t)t.value=N.cur.txt};
+  r.onresult=e=>{const s=[...e.results].map(x=>x[0].transcript).join(" ").trim();if(!s)return;const v=(N.cur.txt||"").trim();N.cur.txt=(v?v+" ":"")+s.charAt(0).toUpperCase()+s.slice(1);if(t)t.value=N.cur.txt;ckUpd()};
   r.onerror=e=>{toast(e&&e.error==="not-allowed"?"Micro non autorisé : touchez la case puis le micro du clavier":"La dictée n'a pas marché");t&&t.focus()};
   r.onend=()=>{REC=null;b&&b.classList.remove("on")};r.start()}catch(e){REC=null;t&&t.focus()}}
 function photo(f){if(!f||!/^image\//.test(f.type)||!N||!N.cur)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{let u=r.result;try{const s=Math.min(1,1400/Math.max(im.width,im.height));if(s<1){const c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);u=c.toDataURL("image/jpeg",.82)}}catch(x){}if(!N||!N.cur)return;N.cur.ph=(N.cur.ph||[]).concat([{u}]);render()};im.src=r.result};r.readAsDataURL(f)}
@@ -129,6 +176,7 @@ function onClick(e){const b=e.target.closest("button");if(!b||!N)return;const a=
  if(a==="annule"){N.cur=null;render();pins();return}
  if(a==="range"){keep();render();pins();toast("Note rangée sur le plan");return}
  if(a==="mic")return mic();
+ if(a==="cliky"){if(N.mode==="rep"){const n=L[N.rep[N.k]];return ckGo(n.txt,elOf(n))}const c=N.cur;return ckGo(c.txt,c.el||hit([c.x,c.y]))}
  if(a==="photo"){const f=$("nt-file");f&&f.click();return}
  if(a==="suppr"){const i=N.cur.idx;try{K().hist()}catch(e){}L.splice(i,1);N.cur=null;save();render();pins();return}
  if(a==="faite"||a==="refaire"){N.cur.fait=a==="faite"?1:0;keep();render();pins();return}
