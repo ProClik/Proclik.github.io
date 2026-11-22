@@ -57,7 +57,12 @@ function ckApply(txt,el){const P=K(),F=window.PKFACES,L=ckParse(txt),tg=ckTarget
  /* les familles des éléments posés deviennent visibles (métiers) */try{const M=F.metiers()||[],need=new Set(L.map(o=>(T[o.t]||{}).f||(CK_PLAF[o.t]?(o.t==="cp"?"placo":"el"):null)).filter(Boolean));const nm=[...new Set([...M,...need])];if(nm.length!==M.length)F.setMetiers(nm)}catch(e){}
  const sg=tg.sg,Lw=Math.round(P.dist(sg.a,sg.b)*100);let E=P.EQ.get(sg.a);if(!E){E=[];P.EQ.set(sg.a,E)}const rm=sg.rm;let n=0;
  const mur=[];L.forEach(o=>{for(let k=0;k<o.q;k++)if(!CK_PLAF[o.t])mur.push(o.t)});
- mur.forEach((t,k)=>{const d=T[t]||{},x=Math.round(Lw*(k+1)/(mur.length+1)/5)*5;
+ /* places libres du mur (vu de la pièce, depuis l'angle gauche) : hors portes et fenêtres */
+ let la=true;if(sg.kind==="mur"){try{const m=P.inward(sg);la=(sg.b[0]-sg.a[0])*m[1]-(sg.b[1]-sg.a[1])*m[0]>0}catch(e){}}
+ const occ=(P.OP.get(sg.a)||[]).map(o=>{const a=(o.p||0)*100,b=a+(o.w||.8)*100;return la?[a-15,b+15]:[Lw-b-15,Lw-a+15]}).sort((u,v)=>u[0]-v[0]);
+ const fr=[];let c0=20;occ.forEach(([a,b])=>{if(a>c0)fr.push([c0,a]);c0=Math.max(c0,b)});if(Lw-20>c0)fr.push([c0,Lw-20]);if(!fr.length)fr.push([20,Lw-20]);
+ const tot=fr.reduce((u,[a,b])=>u+b-a,0),at=v=>{for(const [a,b] of fr){if(v<=b-a)return a+v;v-=b-a}return Lw/2};
+ mur.forEach((t,k)=>{const d=T[t]||{},x=Math.round(at(tot*(k+1)/(mur.length+1))/5)*5;
   if(d.o){const hh=Math.min(Hh,d.dh||Hh),w=Math.min(Lw,d.dw);E.push({t,n:d.n,x:Math.max(w/2,Math.min(Lw-w/2,x)),h:d.pos==="haut"?Hh-hh/2:d.pos==="al"?Math.min(Hh-hh/2,(d.al||0)+hh/2):hh/2,w,hh,p:d.dp||0,st:"faire",ck:1})}
   else E.push({t,n:d.n||t,x:Math.max(20,Math.min(Lw-20,x)),h:Math.min(Hh-10,d.h||30),st:"faire",ck:1});n++});
  /* plafond : répartis sur la pièce */
