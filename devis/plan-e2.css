@@ -1,0 +1,34 @@
+/* Plan au style du formulaire et du nouvel Espace (Cyril 22/11 : « même pratique, même style » client et artisan).
+   Chargé APRÈS plan-relief.css, dans devis/plan.html ET espace/plan.html. Ne change que l'apparence :
+   - plus de relief : tout ce qui se touche est à plat avec un liseré fin ;
+   - bleu nuit = action, laiton = seulement la sélection / l'étape en cours ;
+   - murs foncés et nets, fond clair comme le formulaire ;
+   - plus de bouton « Plein écran » (on tourne le téléphone). */
+html:root:root:root{
+  --bg:#F3F3F1;--surface:#F3F3F1;--fg:#17181D;--muted:#575A63;--line:rgba(23,24,29,.10);
+  --paper:#FAFAF8;--dot:#DCDDD8;--wall:#17181D;
+  --pe-tile:#FFFFFF;--pe-line:rgba(23,24,29,.10);--pe-nuit:#1B2440;--pe-onnuit:#FFFFFF;--laiton:#A8823F;
+  --up:0 0 0 1px var(--pe-line);--up-s:0 0 0 1px var(--pe-line);--up-xs:0 0 0 1px var(--pe-line);--shadow:0 0 0 1px var(--pe-line);
+  --in:inset 0 0 0 1px var(--pe-line);--in-s:inset 0 0 0 1px var(--pe-line);
+  --hi:transparent;--lo:transparent;--ihi:transparent;--ilo:transparent}
+@media (prefers-color-scheme:dark){html:root:root:root:not([data-theme="light"]){
+  --bg:#0F1117;--surface:#0F1117;--fg:#F0F1F4;--muted:#B9BDC8;--line:rgba(255,255,255,.10);
+  --paper:#14161D;--dot:#2A2D36;--wall:#E6E7EA;
+  --pe-tile:#191C24;--pe-line:rgba(255,255,255,.10);--pe-nuit:#EFEBE2;--pe-onnuit:#17181D;--laiton:#D4B483}}
+html:root:root:root[data-theme="dark"]{
+  --bg:#0F1117;--surface:#0F1117;--fg:#F0F1F4;--muted:#B9BDC8;--line:rgba(255,255,255,.10);
+  --paper:#14161D;--dot:#2A2D36;--wall:#E6E7EA;
+  --pe-tile:#191C24;--pe-line:rgba(255,255,255,.10);--pe-nuit:#EFEBE2;--pe-onnuit:#17181D;--laiton:#D4B483}
+html body{background:var(--bg)}
+/* Ce qui se touche : fond carte, liseré fin, pas d'ombre portée */
+html body button:not(.okgo):not(.go):not([class*="nuit"]),html body .qk button,html body .chip{text-shadow:none}
+html body #clbanner,html body #sheet,html body .wz-q,html body #intro>div,html body #repk>div{box-shadow:0 0 0 1px var(--pe-line)!important;border:0!important}
+/* Plein écran retiré (21/11) : on tourne le téléphone */
+html body #p-full{display:none!important}
+/* Gestes doux */
+html body button{transition:transform .12s ease,background .15s,box-shadow .15s}
+html body button:active{transform:scale(.97)}
+/* Choix fait (réponse, nom de pièce) : laiton, comme dans le formulaire */
+html body .qk button[aria-pressed="true"],html body .chip[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--laiton)!important;background:color-mix(in srgb,var(--laiton) 10%,var(--pe-tile))!important;color:var(--fg)!important}
+/* Niveau affiché : plein bleu nuit (maquette 21/11) */
+html body #floors .chip[aria-pressed="true"]{background:var(--pe-nuit)!important;color:var(--pe-onnuit)!important;box-shadow:none!important}

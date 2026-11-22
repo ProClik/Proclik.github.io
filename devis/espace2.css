@@ -219,3 +219,5 @@ html body .step-meta,html body .step-meta .cheer{font-size:13.5px!important}
 @media (min-width:700px){html body[data-cur="contact"] #app>section{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
  html body[data-cur="contact"] #app>section>*{grid-column:1/-1}
  html body[data-cur="contact"] #app>section>.q:has(input[type=text],input[type=tel],input[type=email]){grid-column:auto}}
+/* Plan : plus de bouton « Plein écran » (décision 21/11 : on tourne le téléphone) */
+html body #pf-fs{display:none!important}
