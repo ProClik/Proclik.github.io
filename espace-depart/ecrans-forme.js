@@ -12,7 +12,7 @@ suit();setInterval(suit,2000);
 
 /* Lot 3 : Réglages, Cadences, Véhicules, Équipe, Mes plans… s'ouvrent en VRAIE PAGE (maquettes du 21/11), plus en feuille du bas.
    La barre du bas reste visible ; « C'est bon / Fermer » du bas disparaît quand il ne fait que fermer (le × en haut reste). */
-var root=d.documentElement,PAGES={"Votre espace":"Réglages","Mes cadences":0,"Mes véhicules":0,"Mon équipe":0,"Mes plans":0,"Mes réglages":0};
+var root=d.documentElement,PAGES={"Votre espace":"Réglages","Mes cadences":0,"Mes véhicules":0,"Mon équipe":0,"Mes plans":0,"Mes réglages":0,"Votre couleur":0};
 function page(){var x=$("#xsheet"),t=$("#x-t");if(t&&t.dataset.f2t&&t.textContent!==PAGES[t.dataset.f2t])delete t.dataset.f2t;
   var on=!!(x&&t&&x.classList.contains("on")&&(PAGES.hasOwnProperty(t.textContent)||t.dataset.f2t));
   if(on){var n=PAGES[t.textContent];if(n){t.dataset.f2t=t.textContent;t.textContent=n}

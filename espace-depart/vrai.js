@@ -125,9 +125,9 @@ function connexion(msg){
   '<input id="vmail" type="email" inputmode="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Votre e-mail" aria-label="Votre e-mail" value="'+esc(lsG(KM)||'')+'">'+
   '<input id="vcode" type="password" inputmode="text" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Mot de passe (ou code provisoire)" aria-label="Mot de passe">'+
   '<label style="font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center"><input type="checkbox" id="vvoir" style="width:auto"> Afficher le mot de passe</label>'+
-  '<div class="verr" id="verr"></div><button class="vbtn go" id="vgo" type="button">Se connecter</button>'+
-  '<p style="margin:0;font-size:13px;color:var(--muted)">Mot de passe oublié ? Demandez à Cyril un nouveau lien : votre Espace et vos données ne bougent pas.</p></div>'+
-  '<p class="hint" style="margin:0;color:var(--muted);font-size:13px">Ancien code d\'accès ? Laissez l\'e-mail vide et tapez votre code. Sans connexion, l\'Espace reste en démonstration (exemples fictifs).</p>');
+  '<div class="verr" id="verr"></div><button class="vbtn go" id="vgo" type="button">Se connecter</button></div>'+
+  '<p class="hint vlog-h" style="margin:0;color:var(--muted);font-size:13px"><b>Mot de passe oublié ?</b> Demandez à Cyril un nouveau lien : votre Espace et vos données ne bougent pas.</p>'+
+  '<p class="hint vlog-h" style="margin:0;color:var(--muted);font-size:13px"><b>Ancien code d\'accès ?</b> Laissez l\'e-mail vide et tapez votre code. Sans connexion, l\'Espace reste en démonstration (exemples fictifs).</p>');
  var inp=$('#vcode'),mail=$('#vmail');setTimeout(function(){try{(mail.value?inp:mail).focus()}catch(e){}},200);
  oeil('#vvoir',inp);
  function go(){var c=inp.value.trim(),m=mail.value.trim().toLowerCase(),b=$('#vgo');if(!c){$('#verr').textContent='Le mot de passe est vide.';return}

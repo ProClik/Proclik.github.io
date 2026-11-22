@@ -55,7 +55,7 @@ var COUL={nuit:["#1B2440","#FFFFFF","#EFEBE2","#1B2440"],sapin:["#2F4A3E","#FFFF
   ardoise:["#3A5470","#FFFFFF","#B3C7DE","#141927"],noyer:["#4A3A2E","#FFFFFF","#D8C3B0","#141927"],encre:["#17181D","#FFFFFF","#FFFFFF","#141927"]};
 function couleur(){var c=COUL[lsG("pc-couleur-espace","nuit")]||COUL.nuit;
   root.style.setProperty("--f2-act-j",c[0]);root.style.setProperty("--f2-sur-j",c[1]);root.style.setProperty("--f2-act-n",c[2]);root.style.setProperty("--f2-sur-n",c[3])}
-couleur();addEventListener("storage",couleur);
+couleur();addEventListener("storage",couleur);window.PCF2Couleur=couleur;
 
 /* ---------- le cadre ---------- */
 root.classList.add("f2on");
