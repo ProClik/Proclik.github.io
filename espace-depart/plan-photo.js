@@ -42,6 +42,8 @@ const CSS=`
 #pf-card .wait{display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 4px 6px}#pf-card .wait .sp{width:46px;height:46px;border-radius:50%;border:4px solid rgba(184,146,79,.25);border-top-color:#B8924F;animation:pfsp 1s linear infinite;margin:0 0 12px}
 @keyframes pfsp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){#pf-card .wait .sp{animation-duration:3s}}
+#pf-card .big{display:grid;gap:10px;margin:4px 0 14px}#pf-card .bg{appearance:none;display:flex;align-items:center;gap:14px;text-align:left;width:100%;min-height:76px;border:0;border-radius:18px;background:#1B2440;color:#fff;padding:12px 18px;font:inherit;cursor:pointer}#pf-card .bg svg{flex:none;width:30px;height:30px}#pf-card .bg b{display:block;font:800 17px/1.25 var(--f)}#pf-card .bg small{display:block;font-size:13.5px;opacity:.8;margin-top:2px}#pf-card .bg.l{background:var(--surface);color:var(--fg);border:1.5px solid var(--line)}
+:root[data-theme="dark"] #pf-card .bg:not(.l){background:#F2EEE4;color:#1B2440}
 #pf-ph{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:14px;appearance:none;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;font:800 14.5px var(--f);padding:0 16px 0 8px;min-height:46px;cursor:pointer;box-shadow:0 2px 10px rgba(11,18,38,.10)}
 #pf-ph .cki{width:32px;height:32px;border-radius:50%;background:#1B2440;color:#fff;display:grid;place-items:center}#pf-ph .cki svg{width:20px;height:20px}
 :root[data-theme="dark"] #pf-ph .cki{background:#F2EEE4;color:#1B2440}
@@ -55,9 +57,15 @@ function lireFichier(f){return new Promise((ok,ko)=>{const r=new FileReader();r.
  if(!/^image\//.test(f.type))return ko(new Error("Choisissez une photo ou un PDF"));
  r.onload=()=>{const im=new Image();im.onload=()=>{try{const s=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);const u=c.toDataURL("image/jpeg",.86);ok(u.slice(u.indexOf(",")+1))}catch(e){ko(new Error("Photo illisible"))}};im.onerror=()=>ko(new Error("Photo illisible"));im.src=r.result};r.readAsDataURL(f)})}
 
-function choisir(){if(!ckOn()){toast("Avec l'option Cliky : il lit la photo d'un plan et le dessine pour vous (Réglages › Mes options)");return}
+/* Ouvert depuis « Photo d'un plan » (Mes plans, ?photo=1) : tout de suite les 2 gros boutons, sans chercher (Cyril 22/11) */
+function accueil(){if(!ckOn()){card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Photo d'un plan</h3><p class="sub" style="margin:0">Avec l'option Cliky : il lit la photo d'un plan et le dessine pour vous (Réglages › Mes options).</p></div></div><div class="row fin"><button class="go" data-pf="x">Dessiner moi-même</button></div>`);return}
+ card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Photo d'un plan</h3><p class="sub" style="margin:0">Plan d'architecte, de vente ou dessiné à la main : Cliky le dessine, vous vérifiez.</p></div></div>
+  <div class="big"><button class="bg" data-pf="cam">${PHI}<span><b>Prendre le plan en photo</b><small>Bien à plat, toute la feuille dans l'écran</small></span></button>
+  <button class="bg l" data-pf="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5z"/><path d="M14 3.5v5h5"/></svg><span><b>Choisir une photo ou un PDF</b><small>Déjà dans le téléphone, la tablette ou l'ordinateur</small></span></button></div>
+  <div class="row fin"><button class="go2" data-pf="x">Non, je le dessine moi-même</button></div>`)}
+function choisir(cam){if(!ckOn()){toast("Avec l'option Cliky : il lit la photo d'un plan et le dessine pour vous (Réglages › Mes options)");return}
  if(!api()){toast(/[?&]demo/.test(location.search)?"En démo, Cliky ne lit pas les photos de plan":"Ouvrez le plan depuis votre Espace pour que Cliky lise la photo");return}
- $("pf-file").click()}
+ const f=$("pf-file");if(cam)f.setAttribute("capture","environment");else f.removeAttribute("capture");f.click()}
 function envoyer(f){if(!f)return;card(`<div class="wait"><div class="sp" aria-hidden="true"></div><h3>Cliky lit votre plan…</h3><p class="sub">Ça prend souvent moins d'une minute. Gardez cet écran ouvert.</p></div>`);
  lireFichier(f).then(d=>api()("/espace/lire-photo",{method:"POST",body:{sorte:"plan",fichier:d}})).then(x=>{LU={...x,nv:0};resultat()},e=>{
   card(`<div class="hd"><span class="cki">${CKI}</span><div><h3>Cliky n'a pas pu lire ce plan</h3><p class="sub" style="margin:0">${esc(e&&e.message?e.message:"Erreur inconnue")}</p></div></div><div class="row"><button class="go2" data-pf="x">Fermer</button><button class="go" data-pf="re">Essayer une autre photo</button></div>`)})}
@@ -108,14 +116,14 @@ function close(){const c=$("pf-card");if(c){c.hidden=true;c.innerHTML=""}LU=null
 function vide(){try{const P=K(),R=[];P.ST.floors.forEach(f=>f.rooms.forEach(r=>R.push(r)));if(!R.length)return true;return R.length===1&&/^Pièce \d+$/.test(R[0].nom)&&!R[0].pts.some(q=>(P.OP.get(q)||[]).length)}catch(e){return false}}
 function ensure(){const st=document.createElement("style");st.textContent=CSS;document.head.appendChild(st);
  const c=document.createElement("div");c.id="pf-card";c.hidden=true;document.body.appendChild(c);
- c.addEventListener("click",e=>{if(e.target===c&&!c.querySelector(".wait"))return close();const b=e.target.closest("button");if(!b)return;if(b.dataset.nv!=null){LU.nv=+b.dataset.nv;return resultat()}const a=b.dataset.pf;if(a==="x")close();if(a==="re"){close();choisir()}if(a==="ok")poser()});
+ c.addEventListener("click",e=>{if(e.target===c&&!c.querySelector(".wait"))return close();const b=e.target.closest("button");if(!b)return;if(b.dataset.nv!=null){LU.nv=+b.dataset.nv;return resultat()}const a=b.dataset.pf;if(a==="x")close();if(a==="re"){close();choisir()}if(a==="cam"||a==="fic")choisir(a==="cam");if(a==="ok")poser()});
  const fi=document.createElement("input");fi.type="file";fi.accept="image/*,application/pdf";fi.id="pf-file";fi.hidden=true;document.body.appendChild(fi);fi.addEventListener("change",()=>{const f=fi.files&&fi.files[0];fi.value="";envoyer(f)});
  /* bouton sur le plan tant qu'il est vide */
  const bd=$("board");if(bd){const b=document.createElement("button");b.id="pf-ph";b.type="button";b.innerHTML=`<span class="cki">${CKI}</span>Partir d'une photo de plan`;b.hidden=true;bd.appendChild(b);b.addEventListener("click",e=>{e.stopPropagation();choisir()});
   const pos=()=>{const v=vide()&&ckOn();if(b.hidden===v)b.hidden=!v;if(!v)return;/* au-dessus de la barre d'outils */const t=$("cltools"),q=bd.getBoundingClientRect();let y=14;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).display!=="none"&&r.top<q.bottom&&r.bottom>q.top)y=Math.max(14,q.bottom-r.top+12)}b.style.bottom=y+"px"};pos();setInterval(pos,500)}}
 function addAide(){const a=$("nt-aide");if(!a)return false;if(a.querySelector(".pf-open"))return true;const b=document.createElement("button");b.className="pf-open";b.type="button";b.innerHTML=PHI+"Partir d'une photo de plan";
  b.addEventListener("click",e=>{e.stopPropagation();a.hidden=true;document.documentElement.classList.remove("nt-aide","pro-leg");choisir()});const pp=a.querySelector(".pp-open");if(pp)pp.after(b);else a.insertBefore(b,a.firstChild.nextSibling);return true}
-function boot(){const P=K();if(!P||P.CL)return;ensure();let n=0;const t=setInterval(()=>{if((addAide()&&$("nt-aide").querySelector(".pp-open"))||++n>100)clearInterval(t)},150);addEventListener("keydown",e=>{const c=$("pf-card");if(e.key==="Escape"&&c&&!c.hidden&&!c.querySelector(".wait"))close()})}
+function boot(){const P=K();if(!P||P.CL)return;ensure();if(/[?&]photo=1/.test(location.search))setTimeout(()=>{if(vide())accueil()},900);let n=0;const t=setInterval(()=>{if((addAide()&&$("nt-aide").querySelector(".pp-open"))||++n>100)clearInterval(t)},150);addEventListener("keydown",e=>{const c=$("pf-card");if(e.key==="Escape"&&c&&!c.hidden&&!c.querySelector(".wait"))close()})}
 function wait(n){if(K()&&$("svg"))return boot();if(n>80)return;setTimeout(()=>wait(n+1),100)}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>wait(0));else wait(0);
 window.PKPHOTO={choisir,_poser:x=>{LU={...x,nv:0};poser()},_montrer:x=>{LU={...x,nv:0};resultat()}};
