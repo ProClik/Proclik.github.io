@@ -142,9 +142,9 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   else if(B.afaire&&D.charge)h+='<div class="sec"><h2>À faire</h2></div><section class="hero"><div class="lab">Tout est à jour</div><div class="hero-t">Rien à valider ni à envoyer</div><div class="s mut">Le café peut rester chaud.</div></section>';
 
   /* 3. mes chiffres (exemple de l'Espace, comme avant) : un seul langage, des barres */
-  if(B.chiffres){var sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
-    h+='<div class="sec"><h2>Mes chiffres</h2><span class="lien">Octobre · HT</span></div>'+
-      '<section class="chif2 cv1"><div class="lab">Encaissé en octobre</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
+  if(B.chiffres){var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][(window.PCDEMO?PCDEMO.today():new Date()).getMonth()],sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
+    h+='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
+      '<section class="chif2 cv1"><div class="lab">Encaissé en '+MN+'</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
       '<div class="seg"><i style="flex:8640"></i><i class="r" style="flex:2760"></i><i class="v" style="flex:2810"></i></div>'+
       '<div class="leg"><span><i></i>Encaissé</span><span><i class="r"></i>À encaisser 2 760 €</span><span><i class="v"></i>Pas encore facturé</span></div>'+
       '<button class="act2" type="button" data-accv="factures"><span>2 760 € à encaisser</span><b>Relancer</b>'+ic("d")+"</button>"+

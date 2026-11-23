@@ -110,7 +110,7 @@ function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===
   '<div class="xsec"><h3>'+(on?'Ce qu\'elle fait pour vous':'Avec '+esc(o.n))+'</h3><div class="card"><ul class="mo-ul">'+t.avec.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>'+
   (on&&k==='cliky'&&window.PCJR?PCJR.reglagesHTML():'')+
   (on?'':'<div class="xsec"><h3>Sans cette option</h3><div class="card"><p class="mo-p">'+esc(t.sans)+'</p></div></div>'+
-   (k==='lien'?'<p class="mo-p mo-cy"><a class="btn" style="display:inline-flex;text-decoration:none" href="/demo-vx-9m2t/espace.html?r=relie" target="_blank" rel="noopener">Voir comment ça marche ›</a></p><p class="mo-p mo-cy">Exemple avec un négoce fictif. <b>Ça vous intéresse ? Dites-le à Cyril.</b></p>':'<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>'));
+   (k==='lien'?'<p class="mo-p mo-cy"><a class="btn" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;height:auto;padding-top:0;padding-bottom:0;text-decoration:none" href="/demo-vx-9m2t/espace.html?r=relie" target="_blank" rel="noopener">Voir comment ça marche ›</a></p><p class="mo-p mo-cy">Exemple avec un négoce fictif. <b>Ça vous intéresse ? Dites-le à Cyril.</b></p>':'<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>'));
  X.xopen(o.n,on?'Option branchée':'Option à découvrir',h,
   '<button class="btn" id="mo-ret">‹ Mes options</button>'+(on?'':'<button class="btn go" id="mo-dem">Demander à Cyril</button>'),function(){
    $('#mo-ret').addEventListener('click',function(){X.xclose();ouvrir()});

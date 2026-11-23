@@ -46,8 +46,9 @@ var CLIKY=!!(window.PCOPT&&PCOPT.cliky); /* Option Cliky prise (PCOPT) ; sans el
 function prep(){
  D.forEach(function(d){(d.L||[]).forEach(function(l){if(!l.pc)l.pc=d.id==='0043'?'Séjour':/salle de bain/i.test(d.titre)?'Salle de bain':/garage/i.test(d.titre)?'Garage':'Séjour'})});
  var a=X.find('0044');if(a&&!a.plan)a.plan=1;
- if(!DOS.roche)DOS.roche={n:'Mme Roche',v:'Saint-Égrève',adr:'[adresse], Saint-Égrève',tel:'06 •• •• •• 71',t:'Parquet du salon et de la chambre',k:'devis',src:'Formulaire du site',dv:'0046',chat:[],ph:[],docs:[],hist:[['lun. 26/10','Demande reçue sur votre site, plan dessiné'],['mar. 27/10','Demande de prix envoyée par vous à Négoce Isère Matériaux']]};
- if(!X.find('0046'))D.push({id:'0046',client:'Mme Roche',ville:'Saint-Égrève',titre:'Parquet du salon et de la chambre',recu:'lun. 26/10',tva:10,statut:'four',marge:'v',dos:'roche',
+ var shR=!DOS.roche;if(!DOS.roche)DOS.roche={n:'Mme Roche',v:'Saint-Égrève',adr:'[adresse], Saint-Égrève',tel:'06 •• •• •• 71',t:'Parquet du salon et de la chambre',k:'devis',src:'Formulaire du site',dv:'0046',chat:[],ph:[],docs:[],hist:[['lun. 26/10','Demande reçue sur votre site, plan dessiné'],['mar. 27/10','Demande de prix envoyée par vous à Négoce Isère Matériaux']]};
+ if(shR&&window.PCDEMO)PCDEMO.deep(DOS.roche);
+ if(!X.find('0046'))(window.PCDEMO?PCDEMO.push.bind(null,D):D.push.bind(D))({id:'0046',client:'Mme Roche',ville:'Saint-Égrève',titre:'Parquet du salon et de la chambre',recu:'lun. 26/10',tva:10,statut:'four',marge:'v',dos:'roche',
   four:{n:'Négoce Isère Matériaux',env:'mar. 27/10',att:'réponse attendue sous 48 h'},
   ask:[['Travaux','Parquet flottant'],['Pièces','salon et chambre'],['Surface','environ 34 m² (plan du client)']],fil:[['lun. 26/10','Demande reçue sur votre site'],['mar. 27/10','Demande de prix envoyée au fournisseur']],
   L:[{c:'SOL-FOUR',d:'Parquet chêne contrecollé (prix fournisseur attendu)',u:'m²',q:22,p:0,step:1,pc:'Salon',v:'prix du fournisseur pas encore reçu'},{c:'SOL-POSE',d:'Pose de parquet flottant (main-d\'œuvre)',u:'m²',q:22,p:18,step:1,pc:'Salon'},

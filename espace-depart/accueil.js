@@ -157,6 +157,9 @@
       (L.length>max?'<button class="af-plus" type="button" data-accv="devis">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":"")+"</div>"};
   /* Encaissé par mois (exemple) : de simples barres, faciles à lire d'un coup d'œil */
   var MOIS=[["Mai","mai",6100,9200],["Juin","juin",8400,12500],["Juil.","juillet",7200,7800],["Août","août",9600,13100],["Sept.","septembre",7900,11000],["Oct.","octobre",8640,14210]];
+  /* 23/11 : les 6 mois d exemple finissent au mois en cours (vraie date) */
+  (function(){var C=["Janv.","Févr.","Mars","Avril","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."],N=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],m=PCDEMO.today().getMonth();MOIS.forEach(function(x,k){var i=(m-5+k+12)%12;x[0]=C[i];x[1]=N[i]})})();
+  var MOISC=MOIS[5][0].replace(".","")+" · HT",MOISN=MOIS[5][1];
   R.argent=function(t){var sel=acc._mois==null?5:acc._mois,m=MOIS[sel],max=10000,moy=MOIS.reduce(function(s,x){return s+x[2]},0)/MOIS.length;
     var ev=sel>0?Math.round((m[2]-MOIS[sel-1][2])/MOIS[sel-1][2]*100):null;
     return tete("argent","Chiffre d'affaires")+
@@ -260,7 +263,7 @@
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   /* Devis signés et taux de réussite en tête (Cyril, 19/11 : « pour motiver »), puis trois montants avec leur icône */
   R.chiffres=function(){var ns=3,ne=5,pc=Math.round(ns/ne*100),C=[["argent","Encaissé","8 640 €","factures",0],["signe","Signé","14 210 €","devis",0],["facture","À encaisser","2 760 €","factures",1]];
-    return '<div class="pt">'+hd(IC.argent,"Mes chiffres",pil("","Octobre · HT",""))+
+    return '<div class="pt">'+hd(IC.argent,"Mes chiffres",pil("",MOISC.charAt(0).toUpperCase()+MOISC.slice(1),""))+
       '<button type="button" class="fo cm-fo" data-accv="devis"><small>Devis signés ce mois</small><div>'+anneau(pc,"cm-an")+'<span><b>'+ns+" signés sur "+ne+"</b><em>"+pc+" % de réussite · "+(pc>=50?"plus d'un sur deux, bravo":"chaque devis compte")+"</em></span></div></button>"+
       '<div class="bl">'+C.map(function(x){return rang(IC[x[0]],"",esc(x[1]),'data-accv="'+x[3]+'"','<b class="bl-v'+(x[4]?" cor":"")+'">'+x[2]+"</b>")}).join("")+"</div></div>"};
   /* L'anneau ProClik (comme le logo) : trait fin bleu nuit, et le point laiton qui avance sur le cercle */
@@ -285,7 +288,7 @@
     return '<span class="tu-sp" aria-hidden="true">'+MOIS.map(function(x,i){return '<i'+(i===5?' class="on"':"")+' style="height:'+Math.max(12,x[k]/max*100).toFixed(0)+'%"></i>'}).join("")+"</span>"}
   function part(p,txt){return '<span class="tu-pa" aria-hidden="true"><span><i style="width:'+p+'%"></i></span><small>'+txt+"</small></span>"}
   function tuile(ic,titre,val,sous,v,cor,bas){return function(){return '<button type="button" class="tu" data-accv="'+v+'"><span class="tu-h"><span class="w-ic">'+IC[ic]+"</span><small>"+titre+'</small></span><b'+(cor?' class="cor"':"")+">"+val+"</b><em>"+sous+"</em>"+bas()+"</button>"}}
-  R.encaisse=tuile("argent","Encaissé","8 640 €","HT · en octobre","factures",0,function(){return spark(2)});
+  R.encaisse=tuile("argent","Encaissé","8 640 €","HT · en "+MOISN,"factures",0,function(){return spark(2)});
   R.signes=tuile("signe","Devis signés","14 210 €","3 sur 5 · 60 %","devis",0,function(){return spark(3)});
   R.aencaisser=tuile("facture","À encaisser","2 760 €","1 facture","factures",1,function(){return part(24,"24 % du facturé")});
   R.envoyes=tuile("attente","Devis envoyés","9 850 €","2 sans réponse","devis",0,function(){return part(40,"2 sur 5 en attente")});

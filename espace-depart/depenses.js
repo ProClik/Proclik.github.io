@@ -49,7 +49,7 @@ var DEP0=[
  {id:'d4',d:'ven. 16/10',cat:'repas',ou:'Restaurant, Meylan',ttc:16.50,tva:10,ch:null,src:'voix'},
  {id:'d5',d:'mer. 14/10',cat:'carb',ou:'Station de Crolles',ttc:65.10,tva:20,ch:null,src:'photo',ph:1},
  {id:'d6',d:'jeu. 8/10',cat:'repas',ou:'Boulangerie, Crolles',ttc:11.20,tva:10,ch:null,src:'main'}];
-var DEP=X.lsGet('pc-dep1',null)||DEP0;
+var DEP=X.lsGet('pc-dep1',null)||(window.PCDEMO?PCDEMO.deep(DEP0):DEP0);
 /* Chaque dépense a sa vraie date (j, AAAA-MM-JJ) : les anciennes « jeu. 29/10 » sont relues une fois */
 DEP.forEach(function(x){if(x.j)return;var m=/(\d{1,2})\/(\d{1,2})/.exec(x.d||''),n=new Date(),y=n.getFullYear();if(!m){x.j=isoJ(n);return}if(+m[2]>n.getMonth()+1)y--;x.j=y+'-'+p2(+m[2])+'-'+p2(+m[1])});
 function save(){X.lsSet('pc-dep1',DEP)}

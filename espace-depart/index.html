@@ -692,11 +692,11 @@ button.pill{cursor:pointer}
 <div class="col">
 <div class="sec-h"><h2>Mises à jour proposées</h2><span id="upd-n">3 lignes</span></div>
 <div class="card" id="upd">
-<div class="upd"><div><b>Fenêtre PVC 2 vantaux 120 × 135</b><br><small>Menuiseries des Alpes · devis du 15/10</small></div><div class="ch"><s>412 €</s> → <b>428 €</b><br><span class="up">+3,9 %</span></div><div class="ac"><button class="btn sm go" data-ok="1">Accepter</button><button class="btn sm" data-no="1">Garder 412 €</button></div></div>
+<div class="upd"><div><b>Fenêtre PVC 2 vantaux 120 × 135</b><br><small>Menuiseries des Alpes · devis du <span class="pcd">15/10</span></small></div><div class="ch"><s>412 €</s> → <b>428 €</b><br><span class="up">+3,9 %</span></div><div class="ac"><button class="btn sm go" data-ok="1">Accepter</button><button class="btn sm" data-no="1">Garder 412 €</button></div></div>
 <div class="upd"><div><b>Plaque BA13 standard</b><br><small>Placo Dauphiné · nouveau tarif · <b style="color:var(--warn)">⚠ hausse de plus de 5 %</b></small></div><div class="ch"><s>2,62 €</s> → <b>2,79 €</b><br><span class="up">+6,5 %</span></div><div class="ac"><button class="btn sm go" data-ok="1">Accepter</button><button class="btn sm" data-no="1">Garder 2,62 €</button></div></div>
 <div class="upd"><div><b>Nouvel article : rail R48</b><br><small>Placo Dauphiné · référence absente de votre base</small></div><div class="ch"><b>3,10 €</b><br><small>le mètre</small></div><div class="ac"><button class="btn sm go" data-ok="1">Ajouter</button><button class="btn sm" data-no="1">Ignorer</button></div></div>
 </div>
-<button class="btn go" id="okall">Tout accepter</button>
+<button class="btn go" id="okall">Tout accepter</button><script>document.querySelectorAll(".pcd").forEach(function(e){var m=e.textContent.match(/^(\d+)\/(\d+)$/);if(m&&window.PCDEMO&&PCDEMO.w){var d=new Date(2026,+m[2]-1,+m[1],12);d.setDate(d.getDate()+7*PCDEMO.w);e.textContent=d.getDate()+"/"+("0"+(d.getMonth()+1)).slice(-2)}})</script>
 <p class="hint">Les devis déjà envoyés ne changent pas. Seuls les prochains pré-devis utilisent les nouveaux prix.</p><div class="card is-soon" style="display:flex;flex-direction:column;gap:8px"><div class="row"><b>Catalogue qui apprend</b><span class="soon">Bientôt</span></div><small style="color:var(--muted)">Une correction que vous faites souvent devient une proposition : « On l'ajoute à votre catalogue ? »</small></div><div class="card is-soon" style="display:flex;flex-direction:column;gap:8px"><div class="row"><b>Prix indicatif fenêtres</b><span class="soon">Bientôt</span></div><small style="color:var(--muted)">Une fourchette tirée de vos devis fournisseur, seulement si vous l'activez.</small></div>
 </div>
 </div></div>
@@ -1437,7 +1437,7 @@ var DPST={wait:['En attente','warn'],recu:['Réponse lue','todo'],done:['Command
 function renderFour(){
  $('#dplist').innerHTML=DP.map(function(x){var s=SUP[x.sup],o=DOS[x.dos],st=DPST[x.st];
   return '<button data-dp="'+x.id+'"><span class="av '+(x.st==='wait'?'w':x.st==='recu'?'c':'t')+'">'+(x.st==='done'?'✓':x.st==='recu'?'€':'⏱')+'</span><span class="tx"><b>'+s.n+'</b><small>'+x.id+' · '+o.n+' · '+o.t+'</small><small>'+(x.st==='wait'?'Envoyée '+x.sent+' · sans réponse depuis '+x.since:x.st==='recu'?'Réponse '+x.got+' · lue par l\'IA':x.st==='done'?'Commandé '+x.cmd+' · livré '+x.liv:'Envoyée '+x.sent)+'</small></span><span class="pill '+st[1]+'">'+st[0]+'</span></button>'}).join('');
- $('#suplist').innerHTML=Object.keys(SUP).map(function(k){var s=SUP[k];return '<div class="it"><span class="av">'+s.n.split(' ').map(function(w){return w[0]}).join('').slice(0,2)+'</span><span class="tx"><b>'+s.n+'</b><small>'+s.t+' · '+s.d+'</small><small class="mono" style="font-family:var(--mono);font-size:11px">'+s.m+'</small></span></div>'}).join('');
+ $('#suplist').innerHTML=Object.keys(SUP).map(function(k){var s=SUP[k];/* 23/11 : la ligne d un fournisseur se touche : elle ouvre un e-mail à son adresse */return '<a class="it" style="color:inherit;text-decoration:none" href="mailto:'+s.m+'" aria-label="Écrire à '+s.n+'"><span class="av">'+s.n.split(' ').map(function(w){return w[0]}).join('').slice(0,2)+'</span><span class="tx"><b>'+s.n+'</b><small>'+s.t+' · '+s.d+'</small><small class="mono" style="font-family:var(--mono);font-size:11px">'+s.m+'</small></span><span class="chev" aria-hidden="true" style="margin-left:auto;color:var(--muted);font-size:18px">›</span></a>'}).join('');
 }
 function openDP(id){var x=DP.filter(function(y){return y.id===id})[0];if(!x)return;var s=SUP[x.sup],o=DOS[x.dos];
  var mail='<div class="mail"><div class="mh"><span>À : <b>'+s.m+'</b></span><span>De : <b>julien@dupont-renovation.fr</b> (votre adresse)</span><span>Objet : <b>Demande de prix · '+o.t+' · réf. '+x.id+'</b></span></div>Bonjour,\n\nPourriez-vous me faire un prix pour :\n'+x.items.map(function(i){return '• '+i[0]+' · '+i[1]}).join('\n')+'\n\nLivraison : [dépôt ou chantier], '+o.v+'.\nMerci de m\'indiquer le délai.\n\nJulien · Dupont Rénovation</div><p class="hint" style="margin-top:6px">🔒 Vos prix de vente et votre marge ne figurent jamais dans la demande.</p>';
@@ -1708,19 +1708,19 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=14"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
-<script src="accueil.js?v=36"></script>
+<script src="accueil.js?v=37"></script>
 <link rel="stylesheet" href="clients.css?v=5">
 <script src="gps.js?v=1"></script>
-<script src="clients.js?v=12"></script>
+<script src="clients.js?v=13"></script>
 <link rel="stylesheet" href="devis.css?v=3">
-<script src="devis.js?v=7"></script>
-<script src="commandes.js?v=2"></script>
+<script src="devis.js?v=8"></script>
+<script src="commandes.js?v=3"></script>
 <link rel="stylesheet" href="chantiers.css?v=18">
 <script src="photos-demo.js?v=3"></script><script src="chantiers.js?v=29"></script><script src="journee.js?v=13"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=31"></script>
 <script src="planning-ajout.js?v=4"></script><script src="entretiens.js?v=2"></script>
 <script src="equipe.js?v=2"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
-<script src="depenses.js?v=3"></script>
+<script src="depenses.js?v=4"></script>
 <link rel="stylesheet" href="produits.css?v=6">
 <script src="produits.js?v=12"></script><script src="suivi-cliky.js?v=1"></script>
 <link rel="stylesheet" href="reseaux.css?v=1">
@@ -1735,7 +1735,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <link rel="stylesheet" href="reglages.css?v=4">
 <script src="reglages.js?v=7"></script>
 <script src="couleur-formulaire.js?v=3"></script>
-<script src="mes-options.js?v=7"></script>
+<script src="mes-options.js?v=8"></script>
 <script src="habitudes.js?v=9"></script>
 <script src="fige.js?v=3"></script>
 <link rel="stylesheet" href="poussoir.css?v=1">
@@ -1743,8 +1743,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="titres.js?v=3"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=8"></script>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="style-n1.css?v=47"><script src="couleurs.js?v=3"></script>
-<link rel="stylesheet" href="accueil-forme.css?v=6"><script src="accueil-forme.js?v=9"></script><script src="couleur-espace.js?v=2"></script>
-<link rel="stylesheet" href="barre-forme.css?v=4"><script src="barre-forme.js?v=2"></script>
+<link rel="stylesheet" href="accueil-forme.css?v=6"><script src="accueil-forme.js?v=10"></script><script src="couleur-espace.js?v=2"></script>
+<link rel="stylesheet" href="barre-forme.css?v=8"><script src="barre-forme.js?v=2"></script>
 <link rel="stylesheet" href="ecrans-forme.css?v=4"><script src="ecrans-forme.js?v=7"></script>
 <link rel="stylesheet" href="achats-forme.css?v=5"><script src="achats-forme.js?v=2"></script><link rel="stylesheet" href="produits-forme.css?v=2"><script src="produits-forme.js?v=2"></script><link rel="stylesheet" href="parler-forme.css?v=2"><script src="parler-forme.js?v=1"></script><script src="presentation-forme.js?v=2"></script>
 <link rel="stylesheet" href="pages-forme.css?v=12">

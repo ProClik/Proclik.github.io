@@ -12,14 +12,17 @@ var esc=X.esc,r2=X.r2,D=X.D,DOS=X.DOS,CH=X.CH;
 var eur=function(n){var s=Math.abs(n).toFixed(2).split('.');return (n<0?'− ':'')+s[0].replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0')+','+s[1]+'\u00a0€'};
 
 /* ---------- deux clients de plus pour la démo (fictifs, comme les autres) ---------- */
+var sh0=!DOS.fabre,sh1=!DOS.rey;/* 23/11 : démo à la vraie date */
 if(!DOS.fabre)DOS.fabre={n:'M. Fabre',v:'Seyssinet-Pariset',adr:'[adresse], Seyssinet-Pariset',tel:'06 •• •• •• 54',t:'Doublage des chambres',k:'fini',src:'Recommandation',chat:[],ph:[],docs:[],
  hist:[['lun. 21/09','Devis 0035 signé en ligne'],['mar. 22/09','Facture d\'acompte envoyée'],['jeu. 24/09','Acompte reçu'],['ven. 9/10','Fin du chantier validée par vous'],['lun. 12/10','Facture finale envoyée (avec le supplément du coffre de volet)']]};
 if(!DOS.rey)DOS.rey={n:'Boulangerie Rey',v:'Grenoble',adr:'[adresse], Grenoble',tel:'04 •• •• •• 19',t:'Faux plafond du fournil',k:'chantier',ch:'rey',src:'Téléphone',chat:[],ph:[],docs:[],
  hist:[['lun. 28/09','Devis 0034 signé'],['mar. 29/09','Acompte reçu'],['lun. 5 → mer. 7/10','Chantier'],['mer. 7/10','Facture finale envoyée'],['ven. 9/10','Tout est payé']]};
+if(window.PCDEMO){if(sh0)PCDEMO.deep(DOS.fabre);if(sh1)PCDEMO.deep(DOS.rey)}
 
 /* ---------- les devis (numéros de la démo) et les factures ---------- */
 var DVX=[{id:'0037',cli:'alpes',ht:CH.alpes?CH.alpes.fin.ht:0,tva:20,st:'signe',d:'ven. 2/10'},{id:'0036',cli:'perrin',ht:2180,tva:5.5,st:'signe',d:'mer. 7/10'},
  {id:'0035',cli:'fabre',ht:3600,tva:10,st:'signe',d:'lun. 21/09',L:[{d:'Doublage isolant des deux chambres, plaques et bandes, prêt à peindre',u:'forfait',q:1,p:3600}]},{id:'0034',cli:'rey',ht:2870,tva:20,st:'signe',d:'lun. 28/09'}];
+if(window.PCDEMO)PCDEMO.deep(DVX);
 var FA0=[
  {id:'f1',cli:'lopez',ty:'ac',dv:'0042',L:[['Acompte de 30 % sur le devis 0042',r2(504.28*.3)]],tva:10,st:'pret',cree:'hier soir, 20 h 41'},
  {id:'f2',cli:'fabre',ty:'fin',dv:'0035',L:[['Doublage des chambres, selon le devis 0035',3600],['Supplément : habillage du coffre de volet, demandé sur place',240]],ac:1080,tva:10,st:'attente',env:'lun. 12/10',rel:'lundi 19/10'},
@@ -29,7 +32,7 @@ var FA0=[
  {id:'f6',cli:'perrin',ty:'fin',dv:'0036',L:[['Isolation des combles, selon le devis 0036',2180]],ac:654.06,tva:5.5,st:'payee',env:'mar. 13/10',paye:'mar. 13/10'},
  {id:'f7',cli:'rey',ty:'ac',dv:'0034',L:[['Acompte de 30 % sur le devis 0034',861]],tva:20,st:'payee',env:'lun. 28/09',paye:'mar. 29/09'},
  {id:'f8',cli:'rey',ty:'fin',dv:'0034',L:[['Faux plafond du fournil, selon le devis 0034',2870]],ac:861,tva:20,st:'payee',env:'mer. 7/10',paye:'ven. 9/10'}];
-var FA=X.lsGet('pc-fa1',null)||FA0;
+var FA=X.lsGet('pc-fa1',null)||(window.PCDEMO?PCDEMO.deep(FA0):FA0);
 var NEW=X.lsGet('pc-cl1',{});Object.keys(NEW).forEach(function(k){if(!DOS[k])DOS[k]=NEW[k]});
 var DVN=X.lsGet('pc-dvn1',[]);
 X.cf={vrais:function(){return vraisClients().liste},chargerVrais:function(cb){chargerVC(cb)},ligneVdoc:function(d){return ligneVdoc(d)},FA:function(){return FA},RC:function(){return RC},ftot:function(f){return ftot(f)},nouveauClient:function(r){formClient(r)},ficheClient:function(k){fseg=null;if(DOS[k]&&!DOS[k].vrai)ficheClient(k);else ficheVraie(k)},DVX:DVX,DVN:DVN,ficheDv:function(id){ficheDv(id)},ajoutFacture:function(k,L,t){var f={id:'m'+Date.now().toString(36),cli:k,ty:'main',L:L,tva:t,st:'pret',cree:'à l\'instant'};FA.unshift(f);save();seg='fa';vueFactures();vueClients();}};
