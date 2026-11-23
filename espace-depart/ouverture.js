@@ -155,8 +155,9 @@ if(!site&&!vitrine){
   var gl=function(){d.querySelectorAll('.brand>svg,.logo .g>svg').forEach(function(v){goutte(v,0)})};
   var gc=function(){root.classList.add('pc-go');ptm=setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};
   if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){gl();pret(gc)});else{gl();pret(gc)}}
- if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court){window.PC_OUV_MS=1200;petite()}
- function retour(){if(parti){if(Date.now()-parti>PAUSE)couvre();else petite()}parti=0}
+ /* Cyril 23/11 : on garde la petite animation actuelle (couvre), simplement pas avant 15 min ; petite() reste disponible mais n'est pas utilisée */
+ if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court)window.PC_OUV_MS=0;
+ function retour(){if(parti&&Date.now()-parti>PAUSE)couvre();parti=0}
  d.addEventListener('visibilitychange',function(){if(d.hidden)note();else retour()});
  window.addEventListener('pagehide',note);
  window.addEventListener('pageshow',function(e){if(e.persisted)retour()});
