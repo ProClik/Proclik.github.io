@@ -248,7 +248,7 @@ function avisCard(c){var a=c.avis||(c.avis={on:true,quand:'lendemain'});
 var SITR=[['mois','Chaque fin de mois'],['quinz','Toutes les 2 semaines'],['palier','À chaque palier de 25 %'],['non','Jamais']];
 var SITS=[['15j','Chantiers de plus de 15 jours'],['5000','Chantiers de plus de 5 000 € HT'],['tous','Tous les chantiers']];
 function sitReg(){var r=X.lsGet('pc-sit-reg',null)||{};return {ry:r.ry||'mois',se:r.se||'15j'}}
-function sitDur(c){var a=c.d1||'',b=c.d2||'';if(c.id==='alpes'){a='2026-10-14';b='2026-10-19'}if(!a||!b)return 0;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5)+1}
+function sitDur(c){var a=c.d1||'',b=c.d2||'';if(c.id==='alpes'){a=PCDEMO.sh('2026-10-14');b=PCDEMO.sh('2026-10-19')}if(!a||!b)return 0;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5)+1}
 function sitPour(c){var R=sitReg();if(R.ry==='non'||c.sitOff||c.st==='done'||!c.fin||!c.fin.ht)return false;return R.se==='tous'||(R.se==='5000'&&c.fin.ht>=5000)||(R.se==='15j'&&sitDur(c)>=15)}
 function finMois(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
 function sitProchain(c){var R=sitReg(),t=X.TODAY||new Date(),a=avc(c);
@@ -538,7 +538,7 @@ function icEnt(e){return metSvg(e&&(e.ic||metDe(e.m)))}
 /* Accès des entreprises : un code par entreprise, valable jusqu'à la date choisie (fin du chantier par défaut) */
 function addJ(iso,n){var d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return X.iso(d)}
 function auj(){return X.iso(X.TODAY||new Date())}
-function finCh(c){return c.d2||(c.id==='alpes'?'2026-10-19':addJ(auj(),30))}
+function finCh(c){return c.d2||(c.id==='alpes'?PCDEMO.sh('2026-10-19'):addJ(auj(),30))}
 function accesFin(c){var P=part(c);if(!P.fin)P.fin=finCh(c);return P.fin}
 function codeNeuf(){var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];return r}
 function joursAvant(iso){return Math.round((new Date(iso+'T12:00:00')-new Date(auj()+'T12:00:00'))/864e5)}

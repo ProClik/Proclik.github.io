@@ -28,6 +28,7 @@ function stTous(){return STD.concat(STA)}
 function stDe(id){return stTous().filter(function(t){return t.id===id})[0]}
 DEMO.push({d:'2026-10-29',s:'08:00',e:'17:00',k:'st',t:'Élec Belledonne · M. Lopez',w:'Échirolles · électricité de la salle de bain · toute la journée',x:{ch:'lopez',st:'st-elec',jour:1}},
  {d:'2026-10-30',s:'08:00',e:'17:00',k:'st',t:'Plomberie du Vercors · M. Lopez',w:'Échirolles · raccords douche et lavabo · toute la journée',x:{ch:'lopez',st:'st-plomb',jour:1}});
+if(window.PCDEMO)PCDEMO.deep(DEMO);/* 23/11 : démo à la vraie date */
 /* Les jours d'un sous-traitant (sur un chantier, ou partout), à partir d'aujourd'hui */
 function stJours(id,ch){var T=iso(X.TODAY);return EV.filter(function(e){return e.k==='st'&&e.x&&e.x.st===id&&(!ch||e.x.ch===ch)&&e.d>=T}).sort(function(a,b){return a.d<b.d?-1:1})}
 function stTexte(id,ch){var t=stDe(id),L=stJours(id,ch),c=ch&&CH[ch];if(!t||!L.length)return '';

@@ -451,7 +451,7 @@ function typesDe(s){return TYPES.filter(function(t){return t[2].test(String(s||'
 /* une ligne de main-d'œuvre du pré-devis : son type, si on le reconnaît (le nettoyage, le déplacement… n'en ont pas) */
 function typeLigne(lib){if(/nettoyage|d[ée]placement|protection|d[ée]pose/i.test(lib||''))return null;var T=typesDe(lib);return T.length===1?T[0]:null}
 /* chantiers d'exemple : seulement en démo, marqués comme tels */
-var EXC=[{n:'M. Garnier',t:'Faux plafond de cuisine',d:'2026-09-18',prev:14,reel:16},{n:'Mme Roux',t:'Faux plafond du salon',d:'2026-09-30',prev:20,reel:22.5},{n:'SARL Vidal',t:'Faux plafond de bureau',d:'2026-10-02',prev:12,reel:13}];
+var EXC=[{n:'M. Garnier',t:'Faux plafond de cuisine',d:'2026-09-18',prev:14,reel:16},{n:'Mme Roux',t:'Faux plafond du salon',d:'2026-09-30',prev:20,reel:22.5},{n:'SARL Vidal',t:'Faux plafond de bureau',d:'2026-10-02',prev:12,reel:13}];if(window.PCDEMO)PCDEMO.deep(EXC);
 var demo=function(){return !document.documentElement.classList.contains('pcvrai')};
 function histo(type){var H=[];Object.keys(CH).forEach(function(k){var c=CH[k],m=c.mo||{};if(!(c.st==='done'||c.closed)||!(m.prev>0&&m.reel>0))return;var T=typesDe(c.t);if(T.length===1&&T[0]===type)H.push({n:c.n,t:c.t,prev:m.prev,reel:m.reel})});
  if(demo())EXC.forEach(function(e){if(typesDe(e.t)[0]===type)H.push(Object.assign({ex:true},e))});return H}

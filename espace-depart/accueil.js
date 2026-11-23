@@ -171,7 +171,7 @@
   var JS=["Lun","Mar","Mer","Jeu","Ven","Sam"],KN={ent:"Entretien",run:"Chantier",plan:"Chantier prévu",done:"Chantier",visit:"Visite",pc:"Point ProClik",free:"Libre"};
   function evs(iso){var E=(window.PCX&&PCX.EV)||[];return E.filter(function(e){return e.d===iso&&e.k!=="free"}).sort(function(a,b){return a.s<b.s?-1:1})}
   var iso=function(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)};
-  R.agenda=function(t){var auj=new Date(2026,9,16),lun=new Date(auj);lun.setDate(auj.getDate()-((auj.getDay()+6)%7));
+  R.agenda=function(t){var auj=PCDEMO.today(),lun=new Date(auj);lun.setDate(auj.getDate()-((auj.getDay()+6)%7));
     var sel=acc._jour||iso(auj),j=[],k;for(k=0;k<6;k++){var d=new Date(lun);d.setDate(lun.getDate()+k);j.push(d)}
     var ds=new Date(sel+"T12:00:00"),L=evs(sel),max=t==="m"?1:3;
     return tete("agenda",ds.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+
@@ -179,7 +179,7 @@
       '<div class="ag-l">'+(L.length?L.slice(0,max).map(function(e){return '<div class="ag-e k-'+e.k+'"><span class="ag-h">'+e.s.replace(":"," h ")+'</span><span class="ag-t"><b>'+esc(e.t)+"</b><small>"+esc(e.w)+"</small></span></div>"}).join("")+
         (L.length>max&&t!=="m"?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":""):'<p class="vide">Rien de prévu ce jour-là.</p>')+"</div>"};
   /* « Ma journée » : la journée en ligne de temps, un bouton « Y aller » par adresse ; le soir, la prochaine journée prévue */
-  var AUJ=function(){return new Date(2026,9,16)};
+  var AUJ=function(){return PCDEMO.today()};
   function hm(s){var p=String(s||"").split(":");return (+p[0]||0)*60+(+p[1]||0)}
   function hTxt(s){var p=String(s||"").split(":");return (+p[0])+"\u00a0h"+(p[1]&&p[1]!=="00"?"\u00a0"+p[1]:"")}
   function lieu(e){return String(e.w||"").split(" · ")[0].trim()}
