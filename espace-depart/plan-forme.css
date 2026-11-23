@@ -22,9 +22,11 @@ html.pro:not(.client) body .pro-menu>button[aria-selected="true"]{background:var
 html.pro:not(.client)[data-theme="dark"] body .pro-menu>button[aria-selected="true"]{background:#2A2E3A!important}
 html.pro:not(.client) body #z-help{display:none!important}
 @media (min-width:430px){html.pro:not(.client) body .ud{width:auto!important;padding:0 10px!important;gap:5px;display:inline-flex!important;align-items:center;font-size:13.5px;font-weight:600;color:var(--muted)}
-html.pro:not(.client) body #t-undo::after{content:"Annuler"}
-html.pro:not(.client) body #t-redo::after{content:"Rétablir"}
 html.pro:not(.client) body .ud svg{width:16px!important;height:16px!important}}
 html.pro:not(.client) body .pro-menu>button{flex:1 1 auto!important;padding:0 6px!important;gap:5px!important;font-size:13.5px!important;white-space:nowrap}
 html.pro:not(.client) body .pro-menu>button span{overflow:visible!important;text-overflow:clip!important}
 html.pro:not(.client) body .pro-menu>button svg{width:15px!important;height:15px!important;flex:none}
+
+/* « Annuler » / « Rétablir » : le mot est déjà dans le bouton, plus de doublon (23/11) */
+/* dictée en cours dans le pavé (23/11) */
+html body .opp.acts .pd-f button.listen:not(.rs-ok){box-shadow:inset 0 0 0 2px #A8823F!important;color:#A8823F!important}
