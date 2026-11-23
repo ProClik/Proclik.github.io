@@ -100,3 +100,7 @@
   html.f2bar body .app{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
 }
 html.f2on,html.f2on body{overscroll-behavior-y:none}
+
+/* 23/11 : le menu « Tout l Espace » fermé restait posé, invisible, en haut de l écran : il avalait les touchers (bouton + de Factures, Devis, Produits…) */
+.f2.f2m[hidden],.f2.f2ms[hidden]{display:none!important}
+.f2.f2m:not(.in),.f2.f2ms:not(.in){pointer-events:none}

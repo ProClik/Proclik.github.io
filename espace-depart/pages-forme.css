@@ -180,3 +180,7 @@ html.f2on body .sw.on::after,html.f2on body .sw.on>i{background:var(--z-sur)!imp
 /* la couleur choisie (« Votre couleur ») remplace le bleu nuit partout : tout ce qui utilisait encore --n1-nuit la suit */
 html.f2on:root,html.f2on:root[data-theme="dark"],html.f2on:root[data-theme="light"]{--n1-nuit:var(--z-nuit);--n1-nuit-fg:var(--z-sur)}
 html.f2on body .mo-nv{background:var(--z-nuit)!important}
+
+/* 23/11 : Véhicules, « Détour » : les 5 choix sur une ligne (10 km et 15 km passaient sur 2 lignes, 20 km tout seul dessous) */
+.jr-row:has(>[data-vhd]){display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.jr-row>[data-vhd]{min-width:0!important;padding:0 4px!important;white-space:nowrap;font-size:13.5px}
