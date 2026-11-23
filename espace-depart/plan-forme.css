@@ -64,3 +64,14 @@ html.pro:not(.client) body #board>#chk-btn{position:absolute!important;z-index:7
 html.pro:not(.client).clhide body #board>#chk-btn{transform:translateX(4px)!important;top:10px;height:34px}html.pro:not(.client).clhide body #board>#clb-open{height:34px;padding-top:0;padding-bottom:0}
 html.pro:not(.client).clhide body #board>#clb-open{top:10px}
 }
+/* Cyril 23/11 : téléphone couché, la consigne en bandeau sur la largeur, en haut du plan */
+@media (orientation:landscape) and (max-height:520px){
+html.pro:not(.client):not(.clhide) body #clbanner{position:fixed!important;z-index:30!important;top:6px!important;left:276px!important;right:96px!important;bottom:auto!important;width:auto!important;max-width:none!important;margin:0!important;display:grid!important;grid-template-columns:22px minmax(0,1fr) auto auto;grid-template-rows:auto auto;column-gap:8px!important;row-gap:4px!important;align-items:center;padding:6px 8px!important;transform:none!important}
+html.pro:not(.client) body #clbanner::before{grid-column:1;grid-row:1 / 3}
+html.pro:not(.client) body #clbanner #clb-t{grid-column:2;grid-row:1 / 3;align-self:center}
+html.pro:not(.client) body #clbanner>#clb-x{grid-column:3;grid-row:1;width:100%;justify-content:center}
+html.pro:not(.client) body #clbanner>#clb-nx{grid-column:3;grid-row:2;width:100%;justify-content:center}
+html.pro:not(.client) body #clbanner>#clb-v,html.pro:not(.client) body #clbanner>#clb-b{grid-column:4;grid-row:1 / 3}
+html.pro:not(.client):not(.clhide) body #board>#chk-btn{top:62px}
+}
+@media (orientation:landscape) and (max-height:520px){html.pro:not(.client):not(.clhide) body #board>#chk-btn{top:auto!important;bottom:10px}}
