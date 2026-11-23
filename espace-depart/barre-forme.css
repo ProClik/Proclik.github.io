@@ -104,3 +104,20 @@ html.f2on,html.f2on body{overscroll-behavior-y:none}
 /* 23/11 : le menu « Tout l Espace » fermé restait posé, invisible, en haut de l écran : il avalait les touchers (bouton + de Factures, Devis, Produits…) */
 .f2.f2m[hidden],.f2.f2ms[hidden]{display:none!important}
 .f2.f2m:not(.in),.f2.f2ms:not(.in){pointer-events:none}
+/* 23/11 : sur téléphone, les petites bulles (« Nouvelle demande de devis »…) arrivent en bas, au-dessus de la barre : elles ne cachent plus le titre ni le bouton + */
+@media (max-width:899px){
+ html.f2bar .toast{top:auto!important;bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;transform:translate(-50%,calc(100% + 140px))!important}
+ html.f2bar .toast.on{transform:translate(-50%,0)!important}
+}
+/* 23/11 (Cyril, choix D) : la barre du bas est collée au bord, sur toute la largeur ; le bas arrondi de l iPhone passe dans la barre */
+@media (max-width:899px){
+ .f2.f2b{bottom:0!important;width:100%!important;border-radius:26px 26px 0 0!important;border-bottom:0!important;padding:8px 6px calc(8px + max(10px,env(safe-area-inset-bottom,0px)))!important;box-shadow:0 -8px 24px -16px rgba(0,0,0,.28)!important}
+ .f2.f2mic{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+ html.f2bar body .app{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+ html.f2bar .toast{bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
+}
+/* 23/11 : sur iPad / ordinateur aussi, la bulle arrive en bas à gauche (à côté du menu) : elle ne cache plus le titre ni les boutons d une fenêtre ouverte à droite */
+@media (min-width:900px){
+ .toast{top:auto!important;left:124px!important;width:min(420px,calc(50vw - 150px))!important;bottom:calc(20px + env(safe-area-inset-bottom,0px))!important;transform:translateY(calc(100% + 60px))!important}
+ .toast.on{transform:none!important}
+}
