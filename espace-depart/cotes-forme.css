@@ -111,3 +111,7 @@ html.f2on .ch.pics.big button>svg.pic{max-height:170px}
 html.f2on .ch.pics:not(.one) button:has(>svg.pic){align-items:stretch;padding:10px 10px 12px;gap:6px}
 html.f2on .ch.pics button:has(>svg.pic) b,html.f2on .ch.pics button:has(>svg.pic) span{text-align:left}
 html.f2on .ill{height:min(36svh,250px);padding:2px}
+/* 23/11 : poubelle au bout de chaque ligne ; le trait de séparation passe sur la ligne entière */
+html.f2on .irow{border-bottom:1px solid var(--z-line)}html.f2on .irow:last-child{border-bottom:0}html.f2on .irow>.item{border-bottom:0!important}
+html.f2on .idel{color:var(--z-mut);width:38px;height:38px;margin-right:-6px}
+html.f2on .phone.f2l .toast{position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;max-width:520px;margin:0 auto}

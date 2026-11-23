@@ -158,7 +158,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--laiton);outline
 .rc button span{color:var(--muted);font-weight:600}
 .rc button b{font-weight:800;text-align:right}
 .rc button b.ask{color:var(--laiton)}
-.list{display:grid;gap:9px}
+.list{display:grid;gap:9px}.irow{display:flex;align-items:center;gap:6px}.irow>.item{flex:1;min-width:0}.idel{flex:none;width:40px;height:40px;border:0;border-radius:12px;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer}.idel svg{width:21px;height:21px}.idel:active{background:color-mix(in srgb,#C0392B 12%,transparent);color:#B23A2E}.toast{display:flex;align-items:center;gap:10px}.tundo{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;background:var(--bg);color:var(--nuit);font:800 14px var(--f);cursor:pointer}
 .item{display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:center;padding:7px 10px 7px 9px;border-radius:14px;border:0;background:var(--bg);box-shadow:var(--pk)!important;text-align:left;cursor:pointer;color:var(--fg)}
 .item .ico{position:relative;width:38px;height:38px;border-radius:11px;background:var(--calme);color:var(--nuit);display:grid;place-items:center;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--laiton) 35%,transparent)}
 .item .ico svg{width:23px;height:23px}
@@ -269,7 +269,7 @@ body{padding:0!important;overflow:hidden;background:var(--bg)}
   .phone{height:auto;overflow:visible;max-width:none}
   .ph-h,.foot,.toast,.heard,.ph-b>.go,.ph-b>.ghost,.ph-b>p{display:none!important}
 }
-</style><link rel="stylesheet" href="cotes-forme.css?v=4"><script src="cotes-forme.js?v=2"></script></head><body>
+</style><link rel="stylesheet" href="cotes-forme.css?v=6"><script src="cotes-forme.js?v=3"></script></head><body>
 <div class="phone" id="phone"></div>
 <script>
 (function(){
@@ -573,13 +573,14 @@ function fakePh(k){const c=document.createElement("canvas");c.width=160;c.height
 function savePh(k,url){const it=S.items[cur];if(!it)return;(it.ph=it.ph||{})[k]=url;if(k==="int"||k==="ext")it.photo=!!(it.ph.int||it.ph.ext);render()}
 CAM.addEventListener("change",()=>{const f=CAM.files&&CAM.files[0],k=camK;CAM.value="";if(!f||!k)return;const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const m=640,r=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=img.width*r;c.height=img.height*r;c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);savePh(k,c.toDataURL("image/jpeg",.72))};img.onerror=()=>RID?say("Photo illisible, réessayez."):savePh(k,fakePh(k));img.src=u});
 function head(t,s,back){return `<div class="ph-h">${back?`<button class="ib" data-a="${back}" aria-label="Retour">‹</button>`:EMB?`<button class="ib" data-a="close" aria-label="Fermer la prise de cotes">‹ Fermer</button>`:`<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="var(--nuit)" stroke-width="5"/><circle cx="32" cy="32" r="5" fill="var(--laiton)"/></svg>`}<div class="t"><b>${esc(t)}</b><small>${esc(s)}</small></div>${mode==="wz"?`<button class="ib" data-a="rcv">Récap</button>`:mode==="list"?(S.items.some(i=>i.fini)?`<button class="ib" data-a="end">Fiche</button>`:""):""}</div>${mode==="list"&&!RID?`<span class="exc">Démonstration ProClik · client et cotes d'exemple</span>`:""}`}
+const OKI=it=>!!it.fini&&minOf(it.L)>0&&minOf(it.H)>0;let UNDO=null;
 function render(){save();
  let h="";
  if(mode==="list"){
-  const ok=S.items.filter(i=>i.fini).length;
+  const ok=S.items.filter(OKI).length;
   h=head("Prise de cotes",S.chantier+(S.four?" · pour "+S.four:""))+`<div class="ph-b">
-   ${(()=>{const n=S.items.length,rest=S.items.filter(i=>!i.fini);return `<div class="card sum"><div class="sum-n"><b>${ok}</b><span>/ ${n}</span></div><div class="sum-t"><b>${!n?"Aucune menuiserie pour l'instant":ok===n?"Tout est mesuré":rest.length+" à mesurer : "+rest.map(r=>esc(r.piece||r.type||"")).join(", ")}</b><i class="bar"><i style="width:${n?ok/n*100:0}%"></i></i></div></div>`})()}
-   <div class="list">${S.items.map((it,i)=>[it,i]).sort((x,y)=>x[0].no-y[0].no).map(([it,i])=>`<button class="item ${it.fini?"":"todo"}" data-a="open" data-i="${i}"><span class="ico">${TIC(it)}<span class="no">${it.no}</span></span><span class="txt"><span class="l1"><b>${esc(it.type||"Menuiserie")}</b>${it.fini?`<span class="dim">${minOf(it.L)}<i>×</i>${minOf(it.H)}</span>`:""}</span><small>${esc([it.piece,...(it.fini?[it.mat]:[it.fromPlan?"venue du plan":"à finir"])].filter(Boolean).join(" · "))}</small></span>${it.fini?`<em class="ok" aria-label="Prête"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3L15 6.5"/></svg></em>`:`<em class="todo">À mesurer</em>`}</button>`).join("")}</div>
+   ${(()=>{const n=S.items.length,rest=S.items.filter(i=>!OKI(i));return `<div class="card sum"><div class="sum-n"><b>${ok}</b><span>/ ${n}</span></div><div class="sum-t"><b>${!n?"Aucune menuiserie pour l'instant":ok===n?"Tout est mesuré":rest.length+" à mesurer : "+rest.map(r=>esc(r.piece||r.type||"")).join(", ")}</b><i class="bar"><i style="width:${n?ok/n*100:0}%"></i></i></div></div>`})()}
+   <div class="list">${S.items.map((it,i)=>[it,i]).sort((x,y)=>x[0].no-y[0].no).map(([it,i])=>`<div class="irow"><button class="item ${OKI(it)?"":"todo"}" data-a="open" data-i="${i}"><span class="ico">${TIC(it)}<span class="no">${it.no}</span></span><span class="txt"><span class="l1"><b>${esc(it.type||"Menuiserie")}</b>${OKI(it)?`<span class="dim">${minOf(it.L)}<i>×</i>${minOf(it.H)}</span>`:""}</span><small>${esc([it.piece,...(it.fini?[it.mat]:[it.fromPlan?"venue du plan":"à finir"])].filter(Boolean).join(" · "))}</small></span>${OKI(it)?`<em class="ok" aria-label="Prête"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3.2 3L15 6.5"/></svg></em>`:`<em class="todo">${it.fini?"Cotes à prendre":"À mesurer"}</em>`}</button><button class="idel" data-a="del" data-i="${i}" aria-label="Supprimer la menuiserie n°${it.no}" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/></svg></button></div>`).join("")}</div>
    ${S.items.length?"":`<div class="empty"><b>Touchez + pour commencer</b><span>Une question à la fois, le mètre dans une main.</span></div>`}
    <button class="addr" data-a="add" aria-label="Ajouter une menuiserie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><div class="lfoot"><button class="lnk end" data-a="end" ${ok?"":"disabled"}>J'ai terminé, voir la fiche ›</button></div></div>`;
  }else if(mode==="new"){
@@ -619,7 +620,7 @@ function render(){save();
   <button class="ghost full" data-a="send">Envoyer à ${esc(S.four)}</button>
   <p style="margin:0;font-size:12.5px;color:var(--muted);text-align:center">${RID?"« Créer le PDF » ouvre l'impression : choisissez « Enregistrer en PDF », puis joignez-le à votre e-mail. L'envoi direct au fournisseur arrive bientôt.":"Dans la vraie version, le PDF s'enregistre dans le chantier et part par e-mail avec les photos, le plan et un tableau. Ici, rien n'est créé ni envoyé."}</p></div>`;
  }
- P.innerHTML=h+(toast?`<div class="toast" role="status">${esc(toast)}</div>`:"")+(DIC.on&&mode==="wz"?`<div class="heard" aria-live="polite">${DIC.txt?"« "+esc(DIC.txt)+" »":"Je vous écoute…"}<small>${DIC.hint||micHint()}</small></div>`:"");
+ P.innerHTML=h+(toast?`<div class="toast" role="status">${esc(toast)}${UNDO?`<button class="tundo" data-a="undo">Annuler</button>`:""}</div>`:"")+(DIC.on&&mode==="wz"?`<div class="heard" aria-live="polite">${DIC.txt?"« "+esc(DIC.txt)+" »":"Je vous écoute…"}<small>${DIC.hint||micHint()}</small></div>`:"");
  const f=P.querySelector(".mrow.cur input");if(f){f.focus({preventScroll:true});try{f.setSelectionRange(f.value.length,f.value.length)}catch(e){}}
 }
 
@@ -800,12 +801,16 @@ function simStart(){if(RID){DIC.on=false;DIC.kind="";say("Dictée indisponible s
 function micStop(){DIC.on=false;DIC.txt="";if(DIC.kind==="cld"&&CLD)CLD.stop().catch(()=>{});if(DIC.kind==="sr"&&DIC.eng)try{DIC.eng.stop()}catch(e){}render()}
 /* ---------- actions ---------- */
 let adv;
-let tt;function say(m){toast=m;render();clearTimeout(tt);tt=setTimeout(()=>{toast="";render()},2600)}
+let tt;function say(m,ms){toast=m;render();clearTimeout(tt);tt=setTimeout(()=>{toast="";UNDO=null;render()},ms||2600)}
+/* Cyril 23/11 : supprimer la menuiserie qu'on veut depuis la liste ; « Annuler » pendant 6 s ; les numéros se resserrent */
+function renum(){S.items.slice().sort((a,b)=>a.no-b.no).forEach((x,k)=>{x.no=k+1})}
 P.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;const a=b.dataset.a,it=cur!=null?S.items[cur]:null;
  if(a==="bpdimok"){const w=+(P.querySelector("#bw").value||"").replace(/\D/g,""),h=+(P.querySelector("#bh").value||"").replace(/\D/g,"");if(!w||!h||w<300||h<1500){say("Écrivez la largeur et la hauteur de la porte, en millimètres.");return}it.bpDim="Autre : "+w+" × "+h+" mm";it.L=[w];it.H=[h];
   if(S.fromRc&&steps(it).slice(step+1).every(x=>valTxt(x,it)!=="")){S.fromRc=false;mode="rc";render();return}step=nxt(it,step);dir=1;cur3=0;render();return}
  if(a==="mic"){DIC.on?micStop():micStart();return}
+ if(a==="del"){const k=+b.dataset.i,x=S.items[k];if(!x)return;UNDO=JSON.stringify(S.items);S.items.splice(k,1);renum();cur=null;say((x.type||"Menuiserie")+" n°"+x.no+" supprimée",6000);return}
+ if(a==="undo"){if(UNDO){S.items=JSON.parse(UNDO);UNDO=null}clearTimeout(tt);toast="";render();return}
  if(a==="list"){if(DIC.on)micStop();mode="list";cur=null;render();return}
  if(a==="end"){mode="end";render();return}
  if(a==="open"){cur=+b.dataset.i;const x=S.items[cur];if(!x.fab&&S.lastFab)x.fab=S.lastFab;if(x.fab)V=FABV(x.fab),vs();mode=x.fini?"rc":"wz";step=0;dir=1;cur3=0;if(!x.fini){const L=steps(x);step=Math.max(0,L.findIndex(q=>valTxt(q,x)===""));}render();return}
