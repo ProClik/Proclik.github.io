@@ -70,6 +70,7 @@ var DEMO=[
  {id:'e-rey',cle:'rey',nom:'Boulangerie Rey',ville:'Grenoble',tel:'04 •• •• •• 19',app:'clim',nb:2,fluide:'R410A',charge:6,freq:12,dernier:'2025-11-05',prix:260,msg:[{t:'rappel',d:'2026-10-06',auto:1}],hist:['2025-11-05']},
  {id:'e-fabre',cle:'fabre',nom:'M. Fabre',ville:'Seyssinet-Pariset',tel:'06 •• •• •• 54',app:'clim',nb:1,fluide:'R32',charge:.9,freq:12,dernier:'2025-11-20',prix:120,rdv:{d:'2026-10-22',s:'09:00',e:'10:00'},msg:[{t:'rappel',d:'2026-10-14',auto:1},{t:'rdv',d:'2026-10-15'}],hist:['2025-11-20']},
  {id:'e-martin',cle:'martin',nom:'M. Martin',ville:'Saint-Égrève',tel:'06 •• •• •• ••',app:'pac-ae',nb:1,freq:24,dernier:'2025-06-10',prix:190,msg:[],hist:['2025-06-10']}];
+if(window.PCDEMO)PCDEMO.deep(DEMO);/* 23/11 : démo à la vraie date */
 function cle(){return vrai()?CLE_V:CLE_D}
 function tous(){var L=lsG(cle(),null);if(!L){L=vrai()?[]:JSON.parse(JSON.stringify(DEMO));lsS(cle(),L)}return L}
 var C=null;function liste(){if(!C||C._v!==vrai()){C=tous();C._v=vrai()}return C}

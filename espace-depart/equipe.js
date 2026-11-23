@@ -11,7 +11,7 @@ var esc=X.esc||function(s){return String(s)};
 if(O&&O.actif('equipe')===false)return;
 
 /* ---------- données d'exemple ---------- */
-var JOURS=['Lun.','Mar.','Mer.','Jeu.','Ven.'],LUNDI=new Date(2026,9,12);
+var JOURS=['Lun.','Mar.','Mer.','Jeu.','Ven.'],LUNDI=PCDEMO.d(2026,9,12);
 var EQ=[{n:'Thomas',r:'Chef'},{n:'Kevin',r:'Plaquiste'},{n:'Mathieu',r:'Plaquiste'},{n:'Lucas',r:'Apprenti'}];
 var COUL=['var(--k-run)','var(--k-visit)','var(--k-liv)','var(--k-autre)','var(--k-devis)','var(--k-plan)'];
 function chantiers(){var C=X.CH||{};return Object.keys(C).map(function(k){return C[k]}).filter(function(c){return c&&c.st!=='done'})}
