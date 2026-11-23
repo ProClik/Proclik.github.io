@@ -75,7 +75,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--laiton);outline
 .cp{display:grid;gap:8px}
 .cp button{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;text-align:left;padding:12px;border-radius:16px;border:0;background:var(--bg);box-shadow:var(--pk);cursor:pointer;color:var(--fg)}
 .cp button .ico{width:44px;height:44px;border-radius:12px;background:var(--calme);display:grid;place-items:center;color:var(--nuit)}.cp button .ico svg{width:26px;height:26px}
-.cp button b{display:block;font-size:15px}.cp button small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
+.cp button b{display:block;font-size:15px}.cp button.cpz{grid-template-columns:44px 1fr auto}.cp .cpd{font-weight:800;font-size:16px;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;color:var(--nuit)}.cp .cpd i{font-style:normal;color:var(--laiton);margin:0 3px}.cp .cpd small{display:block;font-size:11px;color:var(--muted);font-weight:600}.cp button .ico svg{max-width:34px;max-height:40px}.cp button small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
 .cp button.main{box-shadow:var(--pk),0 0 0 1.5px var(--laiton)}
 /* récap compact : une ligne par partie */
 .rs{display:grid;gap:5px}
@@ -586,9 +586,9 @@ function render(){save();
    ${S.items.length?"":`<div class="empty"><b>Touchez + pour commencer</b><span>Une question à la fois, le mètre dans une main.</span></div>`}
    <button class="addr" data-a="add" aria-label="Ajouter une menuiserie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><div class="lfoot"><button class="lnk end" data-a="end" ${ok?"":"disabled"}>J'ai terminé, voir la fiche ›</button></div></div>`;
  }else if(mode==="new"){
-  const done=S.items.filter(i=>i.fini),seen=new Set(),models=[];const ld=done.find(i=>i.no===S.lastNo);for(const x of [...(ld?[ld]:[]),...done.filter(i=>i!==ld).reverse()]){const k=[x.type,x.pose,x.pos,x.mat,x.ouv,x.ci,x.ce].join("|");if(!seen.has(k)){seen.add(k);models.push(x)}if(models.length>=3)break}
+  const done=S.items.filter(i=>i.fini),seen=new Set(),models=[];const ld=done.find(i=>i.no===S.lastNo);/* Cyril 23/11 : on choisit à la taille et à la pièce, pas au numéro ; toutes les menuiseries faites, la dernière en premier */for(const x of [...(ld?[ld]:[]),...done.filter(i=>i!==ld).reverse()]){models.push(x);if(models.length>=10)break}
   h=head("Menuiserie n°"+(S.items.length+1),"Comment on commence ?","list")+`<div class="ph-b"><div class="q"><div><h3>Pareille qu'une autre ?</h3><p class="h">On reprend tout sauf la pièce, les cotes, le sens, le volet et les photos. Vous ne répondez qu'à ce qui change.</p></div>
-   <div class="cp">${models.map((x,j)=>`<button data-a="copy" data-i="${S.items.indexOf(x)}" class="${j?"":"main"}"><span class="ico">${TIC(x)}</span><span><b>Comme la n°${x.no} · ${esc(x.type)}</b><small>${esc(resume(x)||x.piece||"")}</small></span></button>`).join("")}
+   <div class="cp">${models.map((x,j)=>`<button data-a="copy" data-i="${S.items.indexOf(x)}" class="${j?"":"main"} cpz"><span class="ico">${thumb(x)}</span><span><b>${esc(x.type||"Menuiserie")}${x.piece&&x.piece!==DK?" · "+esc(x.piece):""}</b><small>${esc(["n°"+x.no,resume(x)].filter(Boolean).join(" · "))}</small></span><span class="cpd">${minOf(x.L)&&minOf(x.H)?`${minOf(x.L)}<i>×</i>${minOf(x.H)}<small>mm</small>`:`<small>cotes à prendre</small>`}</span></button>`).join("")}
    <button data-a="blank"><span class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8v16M8 16h16"/></svg></span><span><b>Une autre, je réponds à tout</b><small>Nouveau type ou autre modèle</small></span></button></div></div>
    <div class="foot"><button class="lnk" data-a="list">‹ Retour</button><span></span></div></div>`;
  }else if(mode==="wz"){
