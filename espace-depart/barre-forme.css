@@ -121,3 +121,5 @@ html.f2on,html.f2on body{overscroll-behavior-y:none}
  .toast{top:auto!important;left:124px!important;width:min(420px,calc(50vw - 150px))!important;bottom:calc(20px + env(safe-area-inset-bottom,0px))!important;transform:translateY(calc(100% + 60px))!important}
  .toast.on{transform:none!important}
 }
+/* 23/11 : la bulle passe SOUS les fenêtres ouvertes (choix du chantier, fiches…) : elle ne cache plus leurs cases ni leurs boutons */
+html.f2bar .toast,.toast{z-index:28!important}
