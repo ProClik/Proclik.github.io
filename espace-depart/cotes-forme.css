@@ -105,3 +105,9 @@ html.f2on .f2bk{border:0;background:none;font:600 16px "Manrope",system-ui,sans-
 html.f2on .phone.f2p1 .ph-h .f2brand,html.f2on .phone.f2p1 .ph-h svg.ring{display:none}
 html.f2on .phone.f2p1 .f2hd .exc{display:none}
 html.f2on .f2pp-l{padding-bottom:96px}
+/* 23/11 (Cyril) : les dessins des choix (pose, appui, sens…) étaient écrasés en icônes de 44 px par la règle du dessus → rendus à leur taille ; schéma de mesure plus grand */
+html.f2on .ch.pics button>svg.pic{width:100%!important;height:auto!important;max-height:118px;padding:2px!important;border-radius:12px!important;background:none!important}
+html.f2on .ch.pics.big button>svg.pic{max-height:170px}
+html.f2on .ch.pics:not(.one) button:has(>svg.pic){align-items:stretch;padding:10px 10px 12px;gap:6px}
+html.f2on .ch.pics button:has(>svg.pic) b,html.f2on .ch.pics button:has(>svg.pic) span{text-align:left}
+html.f2on .ill{height:min(36svh,250px);padding:2px}

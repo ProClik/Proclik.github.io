@@ -132,7 +132,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--laiton);outline
 .ch.pics button[aria-pressed="true"]::after{position:absolute;top:8px;right:8px}
 .ill{border-radius:16px;background:var(--calme);box-shadow:var(--calme-sh);padding:4px;display:grid;place-items:center;height:min(25svh,150px)}
 .ill svg{width:100%;height:100%;display:block}
-.ill .mk{opacity:.28;transition:opacity .25s}.ill .mk.on{opacity:1}
+.ill .mk{opacity:.45;transition:opacity .25s}.ill .mk:not(.on) line{stroke:var(--muted)}.ill .mk:not(.on) circle{fill:var(--muted)}.ill .mk.on{opacity:1}
 .meas{display:grid;gap:4px}
 .mrow{display:grid;grid-template-columns:30px 1fr minmax(0,1.3fr) auto;align-items:center;gap:8px;padding:3px 8px;border-radius:12px;transition:background .15s}
 .mrow.cur{background:var(--tint)}
@@ -269,7 +269,7 @@ body{padding:0!important;overflow:hidden;background:var(--bg)}
   .phone{height:auto;overflow:visible;max-width:none}
   .ph-h,.foot,.toast,.heard,.ph-b>.go,.ph-b>.ghost,.ph-b>p{display:none!important}
 }
-</style><link rel="stylesheet" href="cotes-forme.css?v=3"><script src="cotes-forme.js?v=2"></script></head><body>
+</style><link rel="stylesheet" href="cotes-forme.css?v=4"><script src="cotes-forme.js?v=2"></script></head><body>
 <div class="phone" id="phone"></div>
 <script>
 (function(){
@@ -437,29 +437,38 @@ const arrowV=(x,y1,y2,c=LA,w=2.4)=>`<line x1="${x}" y1="${y1+5}" x2="${x}" y2="$
 const pin=(x,y,n)=>`<circle cx="${x}" cy="${y}" r="9" fill="${LA}"/>${T(x,y+3.6,n,{c:"#fff",fs:10.5,fw:800})}`;
 /* Dessins au trait (style « coupe fabricant ») : traits bleu nuit, hachures fines, pas d'aplats de couleur. */
 let HID=0;
-const lis=(x,y,w,h,r=1)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${LA}" stroke-width=".6" opacity=".55"/>`;
+/* 23/11 (Cyril : « pas assez ProClik ») : plus de hachures techniques — murs en bleu nuit doux, isolant en laiton clair ondulé, menuiserie en laiton, angles arrondis */
+const lis=()=>"";
 const defs=u=>`<defs><pattern id="hm${u}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="${NU}" stroke-width=".7" opacity=".5"/></pattern><pattern id="hi${u}" width="8" height="6" patternUnits="userSpaceOnUse"><path d="M0 6 L4 0 L8 6" fill="none" stroke="${NU}" stroke-width=".7" opacity=".55"/></pattern></defs>`;
-const mur=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#hm${u})" stroke="${NU}" stroke-width="1"/>`+lis(x+1.6,y+1.6,w-3.2,h-3.2,0);
-const isol=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#hi${u})" stroke="${NU}" stroke-width="1"/>`;
+const mur=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${NU}" opacity=".16"/>`;
+const isol=(u,x,y,w,h)=>{let p=`M${x+3} ${y+h/2}`;for(let k=x+3;k<x+w-3;k+=6)p+=`q1.5 -${h*.28} 3 0t3 0`;return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${LA}" opacity=".2"/><path d="${p}" fill="none" stroke="${LA}" stroke-width=".9" opacity=".8"/>`};
 /* profil de menuiserie en coupe : dormant + ouvrant + double vitrage (traits) */
-function profil(x,y,w,h){const dw=w*.32,ow=w*.2;let s="";
- [[x,dw,0],[x+w-dw,dw,1]].forEach(([dx,ww,r])=>{s+=`<rect x="${dx}" y="${y}" width="${ww}" height="${h}" rx="1.2" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/>${lis(dx+1.4,y+1.4,ww-2.8,h-2.8,.6)}<line x1="${dx+ww/2}" y1="${y+2}" x2="${dx+ww/2}" y2="${y+h-2}" stroke="${NU}" stroke-width=".7"/>`;
+function profil(x,y,w,h){const dw=w*.3;let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" fill="${LA}" opacity=".18"/>`;
+ [[x,dw],[x+w-dw,dw]].forEach(([dx,ww])=>{s+=`<rect x="${dx}" y="${y}" width="${ww}" height="${h}" rx="2.5" fill="${LA}"/>`});
+ const c=y+h/2;s+=`<line x1="${x+dw}" y1="${c-1.8}" x2="${x+w-dw}" y2="${c-1.8}" stroke="${LA}" stroke-width="1.3"/><line x1="${x+dw}" y1="${c+1.8}" x2="${x+w-dw}" y2="${c+1.8}" stroke="${LA}" stroke-width="1.3"/>`;
+ return s}
+/* 23/11 (Cyril) : le type de pose garde ses coupes hachurées (version d'avant), un peu affinées : angles arrondis, traits plus nets, menuiserie soulignée de laiton, mots plus lisibles */
+const lisH=(x,y,w,h,r=1)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${LA}" stroke-width=".6" opacity=".55"/>`;
+const murH=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#hm${u})" stroke="${NU}" stroke-width="1.3"/>`+lisH(x+1.6,y+1.6,w-3.2,h-3.2,0);
+const isolH=(u,x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#hi${u})" stroke="${NU}" stroke-width="1.1"/>`;
+function profilH(x,y,w,h){const dw=w*.32,ow=w*.2;let s="";
+ [[x,dw,0],[x+w-dw,dw,1]].forEach(([dx,ww,r])=>{s+=`<rect x="${dx}" y="${y}" width="${ww}" height="${h}" rx="1.2" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/>${lisH(dx+1.4,y+1.4,ww-2.8,h-2.8,.6)}<line x1="${dx+ww/2}" y1="${y+2}" x2="${dx+ww/2}" y2="${y+h-2}" stroke="${NU}" stroke-width=".7"/>`;
   const ox=r?dx-ow+2:dx+ww-2;s+=`<rect x="${ox}" y="${y+2}" width="${ow}" height="${h-4}" rx="1" fill="var(--calme)" stroke="${NU}" stroke-width="1.1"/>`});
  const g0=x+dw+ow-1,g1=x+w-dw-ow+1,c=y+h/2;
  s+=`<line x1="${g0}" y1="${c-2.4}" x2="${g1}" y2="${c-2.4}" stroke="${NU}" stroke-width="1"/><line x1="${g0}" y1="${c+2.4}" x2="${g1}" y2="${c+2.4}" stroke="${NU}" stroke-width="1"/>`;
  return s}
 /* coupe vue de dessus : où se pose la menuiserie dans l'épaisseur du mur */
 function coupe(pos){const u=HID++;
- let s=`<svg class="pic" viewBox="0 0 140 112" aria-hidden="true">${defs(u)}${T(70,10,"DEHORS",{fs:8.5})}${T(70,109,"DEDANS",{fs:8.5})}`;
+ let s=`<svg class="pic" viewBox="0 0 140 112" aria-hidden="true">${defs(u)}${T(70,10,"DEHORS",{fs:9.5,fw:800})}${T(70,109,"DEDANS",{fs:9.5,fw:800})}`;
  const yM=pos==="ite"?36:24,mas=38,ins=13;
- if(pos==="ite")s+=isol(u,0,yM-ins,48,ins)+isol(u,92,yM-ins,48,ins);
- s+=mur(u,0,yM,48,mas)+mur(u,92,yM,48,mas);
- if(pos!=="ite")s+=isol(u,0,yM+mas,48,ins)+isol(u,92,yM+mas,48,ins)+`<rect x="0" y="${yM+mas+ins}" width="48" height="3" fill="none" stroke="${NU}" stroke-width="1"/><rect x="92" y="${yM+mas+ins}" width="48" height="3" fill="none" stroke="${NU}" stroke-width="1"/>`;
- if(pos==="feu")s+=mur(u,48,yM,7,12)+mur(u,85,yM,7,12);
+ if(pos==="ite")s+=isolH(u,0,yM-ins,48,ins)+isolH(u,92,yM-ins,48,ins);
+ s+=murH(u,0,yM,48,mas)+murH(u,92,yM,48,mas);
+ if(pos!=="ite")s+=isolH(u,0,yM+mas,48,ins)+isolH(u,92,yM+mas,48,ins)+`<rect x="0" y="${yM+mas+ins}" width="48" height="3" fill="none" stroke="${NU}" stroke-width="1"/><rect x="92" y="${yM+mas+ins}" width="48" height="3" fill="none" stroke="${NU}" stroke-width="1"/>`;
+ if(pos==="feu")s+=murH(u,48,yM,7,12)+murH(u,85,yM,7,12);
  const F={app:[40,yM+mas,60],tun:[48,yM+14,44],feu:[48,yM+12,44],ite:[40,yM-ins-10,60]}[pos];const[fx,fy,fw]=F;
- s+=profil(fx,fy,fw,10);
- if(pos==="app")s+=T(24,yM+mas+ins/2+3,"ISOLANT",{fs:6.5,c:NU});if(pos==="ite")s+=T(24,yM-ins/2+2.5,"ISOLANT",{fs:6.5,c:NU});
- s+=T(24,yM+mas/2+3,"MUR",{fs:7.5,c:NU});
+ s+=`<rect x="${fx-3}" y="${fy-3}" width="${fw+6}" height="16" rx="5" fill="${LA}" opacity=".22"/>`+profilH(fx,fy,fw,10);
+ if(pos==="app")s+=T(24,yM+mas+ins/2+3,"ISOLANT",{fs:7.5,c:NU,fw:800});if(pos==="ite")s+=T(24,yM-ins/2+2.5,"ISOLANT",{fs:7.5,c:NU,fw:800});
+ s+=T(24,yM+mas/2+3,"MUR",{fs:9,c:NU,fw:800});
  return s+"</svg>"}
 /* fenêtre vue de face, au trait, avec le symbole d'ouverture (la pointe du triangle = côté des charnières) */
 function face(o){const{w=64,h=78,hinge,ouv,nv=1,serv,porte}=o;const x=(100-w)/2,y=(96-h)/2,d=4;let s=`<svg class="pic" viewBox="0 0 100 100" aria-hidden="true"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" fill="none" stroke="${NU}" stroke-width="2.2"/>`+lis(x+2,y+2,w-4,h-4,1);
@@ -485,10 +494,10 @@ function vrCoupe(k){const u=HID++;let s=`<svg class="pic" viewBox="0 0 100 100" 
  return s+`<rect x="58" y="26" width="6" height="52" fill="none" stroke="${NU}" stroke-width="1.3"/><line x1="61" y1="28" x2="61" y2="76" stroke="${NU}" stroke-width=".6"/></svg>`}
 /* bas de la fenêtre vu de côté : appui avec ou sans rejingot */
 function appuiPic(k){const u=HID++;let s=`<svg class="pic" viewBox="0 0 100 70" aria-hidden="true">${defs(u)}${T(10,66,"DEHORS",{fs:8,a:"start"})}${T(92,66,"DEDANS",{fs:8,a:"end"})}`;
- const fen=y=>`<rect x="58" y="${y}" width="14" height="16" fill="none" stroke="${NU}" stroke-width="1.4"/>${lis(59.5,y+1.5,11,13,.5)}<line x1="65" y1="${y}" x2="65" y2="${y+16}" stroke="${NU}" stroke-width=".7"/>`;
- if(k==="rej")s+=`<path d="M6 40 H58 V30 H94 V54 H6 Z" fill="url(#hm${u})" stroke="${NU}" stroke-width="1"/>${fen(14)}${T(46,26,"rejingot",{fs:8.5,c:NU})}<path d="M52 28 l5 3" stroke="${NU}" stroke-width=".8"/>`;
- else if(k==="plat")s+=`<rect x="6" y="36" width="88" height="18" fill="url(#hm${u})" stroke="${NU}" stroke-width="1"/>${fen(20)}`;
- else s+=`<path d="M6 44 L20 38 L40 46 L60 36 L94 42 V54 H6 Z" fill="url(#hm${u})" stroke="${NU}" stroke-width="1" stroke-dasharray="3 2"/>`;
+ const fen=y=>`<rect x="58" y="${y}" width="14" height="16" rx="2" fill="${LA}" fill-opacity=".2" stroke="${LA}" stroke-width="1.6"/><line x1="65" y1="${y}" x2="65" y2="${y+16}" stroke="${LA}" stroke-width="1"/>`;
+ if(k==="rej")s+=`<path d="M6 40 H58 V30 H94 V54 H6 Z" fill="${NU}" fill-opacity=".16" stroke="${NU}" stroke-opacity=".5" stroke-width="1" stroke-linejoin="round"/>${fen(14)}${T(46,26,"rejingot",{fs:8.5,c:NU})}<path d="M52 28 l5 3" stroke="${NU}" stroke-width=".8"/>`;
+ else if(k==="plat")s+=`<rect x="6" y="36" width="88" height="18" fill="${NU}" fill-opacity=".16" stroke="${NU}" stroke-opacity=".5" stroke-width="1" stroke-linejoin="round"/>${fen(20)}`;
+ else s+=`<path d="M6 44 L20 38 L40 46 L60 36 L94 42 V54 H6 Z" fill="${NU}" fill-opacity=".16" stroke="${NU}" stroke-opacity=".5" stroke-width="1" stroke-linejoin="round" stroke-dasharray="3 2"/>`;
  return s+"</svg>"}
 /* sens d'enroulement vu de côté : le tablier descend côté dehors ou côté fenêtre */
 function vrEnrPic(k){const cx=46,cy=28,r=12,tx=k==="ext"?cx-r:cx+r;let s=`<svg class="pic" viewBox="0 0 100 100" aria-hidden="true">${T(14,97,"DEHORS",{fs:8,a:"start"})}${T(88,97,"DEDANS",{fs:8,a:"end"})}`;
@@ -520,25 +529,31 @@ const camBtn=(it,k)=>{const ph=(it.ph||{})[k];return `<button class="cam ${ph?"o
 const PICQ=["pos","sens","serv","ouv","ouvP","vrPose","vrEnr","appui","volc","vbSens"];
 /* grand dessin des mesures, vue de face au trait : le mètre ruban montre où mesurer ; mesure en cours pleine, les autres en pâle */
 function ill(kind,it){const inside=kind==="Li"||kind==="Hi";if(inside)kind=kind[0];
+ /* 23/11 (Cyril : « ce dessin fait pas pro ») : vue de face façon plan d'architecte — mur hachuré, tableau, lignes de cote à traits obliques,
+    la cote en cours en laiton, les autres en gris fin. Plus de mètre ruban dessiné. */
  const reno=it.pose==="reno",porte=isPorte(it)||isBP(it)||/Porte-fenêtre|Baie/.test(it.type||""),vol=isVol(it)&&!inside;
- const X=78,W=144,Y=porte?22:34,H=porte?160:114,base=porte?182:148,dp=12;
- let s=`<svg viewBox="0 0 300 215" aria-label="Où mesurer"><rect x="0" y="0" width="300" height="215" rx="12" fill="var(--calme)"/>`;
- /* ouverture avec la profondeur du tableau */
- s+=`<rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="none" stroke="${NU}" stroke-width="1.6"/><path d="M${X} ${Y} L${X+dp} ${Y+dp} M${X+W} ${Y} L${X+W-dp} ${Y+dp} M${X} ${Y+H} L${X+dp} ${Y+H-(porte?0:dp)} M${X+W} ${Y+H} L${X+W-dp} ${Y+H-(porte?0:dp)}" stroke="${NU}" stroke-width="1"/><rect x="${X+dp}" y="${Y+dp}" width="${W-2*dp}" height="${H-dp-(porte?0:dp)}" fill="none" stroke="${NU}" stroke-width="1"/>`+lis(X-3,Y-3,W+6,H+(porte?3:6),1.5);
- if(!porte)s+=`<path d="M${X-14} ${Y+H} h${W+28} v9 h-${W+28} Z" fill="none" stroke="${NU}" stroke-width="1.3"/>`+lis(X-12,Y+H+2,W+24,5,.5);
- if(porte||kind==="all")s+=`<line x1="10" y1="${base+(porte?0:46)}" x2="290" y2="${base+(porte?0:46)}" stroke="${NU}" stroke-width="1.6"/>${T(282,base+(porte?0:46)-5,"sol fini",{fs:8.5,a:"end"})}`;
- if(reno&&!vol){const fx=X+dp,fy=Y+dp,fw=W-2*dp,fh=H-dp-(porte?0:dp);s+=`<rect x="${fx+3}" y="${fy+3}" width="${fw-6}" height="${fh-6}" fill="none" stroke="${MU}" stroke-width="5" opacity=".55"/><line x1="${fx+fw/2}" y1="${fy+6}" x2="${fx+fw/2}" y2="${fy+fh-6}" stroke="${MU}" stroke-width="3" opacity=".55"/>${T(fx+fw/2,fy+fh-12,"ancien cadre",{fs:9})}`}
- const tag=vol?"VUE DE DEHORS":"VUE DE L'INTÉRIEUR";s+=`<rect x="8" y="8" width="${tag.length*6.2+14}" height="18" rx="9" fill="none" stroke="${NU}" stroke-width=".8" opacity=".5"/>${T(15,20.5,tag,{fs:9,a:"start",c:NU,fw:800})}`;
+ const X=86,W=128,Y=porte?30:40,H=porte?150:100,dp=9,sol=porte?Y+H:Y+H+52,u=HID++;
+ let s=`<svg viewBox="0 0 300 215" aria-label="Où mesurer">${defs(u)}<rect x="0" y="0" width="300" height="215" rx="12" fill="var(--calme)"/>`;
+ /* mur hachuré autour de l'ouverture */
+ const mx0=X-46,mx1=X+W+46,my0=Y-22,my1=porte?Y+H:sol;
+ s+=`<rect x="${mx0}" y="${my0}" width="${mx1-mx0}" height="${my1-my0}" rx="10" fill="${NU}" opacity=".1"/>`;
+ s+=`<rect x="${X}" y="${Y}" width="${W}" height="${H}" rx="3" fill="var(--calme)" stroke="${NU}" stroke-width="2"/>`;
+ /* profondeur du tableau (embrasure) */
+ s+=`<rect x="${X+dp}" y="${Y+dp}" width="${W-2*dp}" height="${H-dp-(porte?0:dp)}" fill="none" stroke="${NU}" stroke-width=".9" opacity=".7"/><path d="M${X} ${Y}l${dp} ${dp}M${X+W} ${Y}l-${dp} ${dp}${porte?"":`M${X} ${Y+H}l${dp} -${dp}M${X+W} ${Y+H}l-${dp} -${dp}`}" stroke="${NU}" stroke-width=".9" opacity=".7"/>`;
+ if(!porte)s+=`<rect x="${X-10}" y="${Y+H}" width="${W+20}" height="7" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/>`;
+ if(porte||kind==="all")s+=`<line x1="14" y1="${sol}" x2="286" y2="${sol}" stroke="${NU}" stroke-width="2"/>${T(284,sol+13,"SOL FINI",{fs:9,a:"end",c:NU,fw:800})}`;
+ if(reno&&!vol){const fx=X+dp,fy=Y+dp,fw=W-2*dp,fh=H-dp-(porte?0:dp);s+=`<rect x="${fx+3}" y="${fy+3}" width="${fw-6}" height="${fh-6}" fill="none" stroke="${MU}" stroke-width="5" opacity=".5"/><line x1="${fx+fw/2}" y1="${fy+6}" x2="${fx+fw/2}" y2="${fy+fh-6}" stroke="${MU}" stroke-width="3" opacity=".5"/>${T(fx+fw/2,fy+fh-12,"ancien cadre",{fs:10})}`}
+ s+=T(14,22,vol?"VUE DE DEHORS":"VUE DE L'INTÉRIEUR",{fs:10,a:"start",c:NU,fw:800});
  const g=(i,inner)=>`<g class="mk${i===cur3?" on":""}" data-k="${i}">${inner}</g>`;
- /* le mètre ruban : bande avec graduations + boîtier au départ */
- const ticks=(n,f)=>Array.from({length:n},(_,k)=>f(k)).join("");
- const tapeH=(x1,x2,y)=>`<rect x="${x1}" y="${y-4}" width="${x2-x1}" height="8" fill="var(--calme)" stroke="${LA}" stroke-width="1.4"/>${ticks(Math.floor((x2-x1)/6),k=>`<line x1="${x1+k*6}" y1="${y-4}" x2="${x1+k*6}" y2="${y-(k%5?1.5:-1)}" stroke="${LA}" stroke-width=".8"/>`)}<rect x="${x1-15}" y="${y-9}" width="16" height="18" rx="4" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/><circle cx="${x1-7}" cy="${y}" r="3.5" fill="none" stroke="${NU}" stroke-width="1"/>`;
- const tapeV=(x,y1,y2)=>`<rect x="${x-4}" y="${y1}" width="8" height="${y2-y1}" fill="var(--calme)" stroke="${LA}" stroke-width="1.4"/>${ticks(Math.floor((y2-y1)/6),k=>`<line x1="${x-4}" y1="${y2-k*6}" x2="${x-(k%5?1.5:-1)}" y2="${y2-k*6}" stroke="${LA}" stroke-width=".8"/>`)}<rect x="${x-9}" y="${y2-1}" width="18" height="16" rx="4" fill="var(--calme)" stroke="${NU}" stroke-width="1.4"/><circle cx="${x}" cy="${y2+7}" r="3.5" fill="none" stroke="${NU}" stroke-width="1"/>`;
+ /* ligne de cote d'architecte : trait fin, petits traits obliques aux deux bouts, numéro au milieu */
+ const tk=(x,y)=>`<line x1="${x-4.5}" y1="${y+4.5}" x2="${x+4.5}" y2="${y-4.5}" stroke="${LA}" stroke-width="2.2" stroke-linecap="round"/>`;
+ const cH=(x1,x2,y,n)=>`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${LA}" stroke-width="1.8"/>`+tk(x1,y)+tk(x2,y)+pin((x1+x2)/2,y,n);
+ const cV=(x,y1,y2,n,lab)=>`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${LA}" stroke-width="1.8"/>`+tk(x,y1)+tk(x,y2)+(n?pin(x,(y1+y2)/2,n):"")+(lab?T(x+9,(y1+y2)/2+4,lab,{a:"start",c:NU,fw:800,fs:11}):"");
  const xa=reno&&!vol?X+dp+3:X,xb=reno&&!vol?X+W-dp-3:X+W,ya=reno&&!vol?Y+dp+3:Y,yb=reno&&!vol?Y+H-(porte?0:dp)-3:Y+H;
- if(kind==="L")[.2,.5,.8].forEach((f,i)=>{const y=ya+(yb-ya)*f;s+=g(i,tapeH(xa,xb,y)+pin(X+W/2,y-14,i+1))});
- if(kind==="H")[.22,.5,.78].forEach((f,i)=>{const x=xa+(xb-xa)*f;s+=g(i,tapeV(x,ya,yb)+pin(x+15,(ya+yb)/2-14*(i-1),i+1))});
- if(kind==="D"){s+=g(0,`<line x1="${xa+3}" y1="${ya+3}" x2="${xb-3}" y2="${yb-3}" stroke="${LA}" stroke-width="2.2"/>`+pin(xa+(xb-xa)*.3,ya+(yb-ya)*.3-8,1))+g(1,`<line x1="${xb-3}" y1="${ya+3}" x2="${xa+3}" y2="${yb-3}" stroke="${LA}" stroke-width="2.2"/>`+pin(xa+(xb-xa)*.7,ya+(yb-ya)*.3-8,2))}
- if(kind==="all")s+=`<g class="mk on">${tapeV(X+W/2,Y+H+9,base+46)}${T(X+W/2+12,(Y+H+base+56)/2+4,"allège",{a:"start",c:NU,fw:800,fs:11})}</g>`;
+ if(kind==="L")[.2,.5,.8].forEach((f,i)=>{s+=g(i,cH(xa,xb,ya+(yb-ya)*f,i+1))});
+ if(kind==="H")[.2,.5,.8].forEach((f,i)=>{s+=g(i,cV(xa+(xb-xa)*f,ya,yb,i+1))});
+ if(kind==="D"){s+=g(0,`<line x1="${xa}" y1="${ya}" x2="${xb}" y2="${yb}" stroke="${LA}" stroke-width="1.8"/>`+pin(xa+(xb-xa)*.28,ya+(yb-ya)*.28,1))+g(1,`<line x1="${xb}" y1="${ya}" x2="${xa}" y2="${yb}" stroke="${LA}" stroke-width="1.8"/>`+pin(xa+(xb-xa)*.72,ya+(yb-ya)*.28,2))}
+ if(kind==="all")s+=`<g class="mk on">${cV(X+W/2,Y+H+7,sol,0,"allège")}</g>`;
  return s+"</svg>"}
 let cur3=0;
 
