@@ -1151,7 +1151,7 @@ function cotesApply(o,id,sgA){const c=cotesListe(o.k==="porte").find(x=>x.id===i
    (En face / À gauche / À droite / Côté porte, vu depuis la porte de la pièce), à sa distance de l'angle de gauche */
 function cotesAFaire(){if(CL)return[];const used=new Set();ST.floors.forEach(f=>segs(f).forEach(sg=>(OP.get(sg.a)||[]).forEach(o=>{if(o.cotes)used.add(o.cotes)})));
  return cotesListe(false).concat(cotesListe(true).filter(c=>!/Bloc-porte/.test(c.it.type||""))).filter(c=>!used.has(c.id))}
-function cotesPlace(){const A=cotesAFaire(),ok=[],ko=[],DKS="Je ne sais pas",nrm=x=>String(x||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+function cotesPlace(){const A=cotesAFaire(),ok=[],ko=[],np=[],DKS="Je ne sais pas",nrm=x=>String(x||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
  A.forEach(c=>{const it=c.it,nom=`n°${it.no} ${it.type||""}`;if(!it.piece||it.piece===DKS){ko.push(nom+" : pièce non notée");return}
   let fi=-1,rm=null;const P=nrm(it.piece);for(const pass of[0,1])ST.floors.forEach((f,i)=>f.rooms.forEach(r=>{if(rm)return;const n=nrm(r.nom);if(pass?n.startsWith(P):n===P){rm=r;fi=i}}));
   if(!rm){ko.push(nom+" : pas de pièce « "+it.piece+" » sur le plan");return}
@@ -1160,7 +1160,7 @@ function cotesPlace(){const A=cotesAFaire(),ok=[],ko=[],DKS="Je ne sais pas",nrm
   if(mur){const dp=[];S.forEach(sg=>(OP.get(sg.a)||[]).forEach(o=>{if(o.k!=="porte")return;const L=dist(sg.a,sg.b)||1,ux=(sg.b[0]-sg.a[0])/L,uy=(sg.b[1]-sg.a[1])/L,t=o.p+o.w/2,pt=[sg.a[0]+ux*t,sg.a[1]+uy*t];
     E.forEach(e=>{const l=dist(e.a,e.b)||1,vx=(e.b[0]-e.a[0])/l,vy=(e.b[1]-e.a[1])/l,tt=(pt[0]-e.a[0])*vx+(pt[1]-e.a[1])*vy,dd=Math.abs((pt[0]-e.a[0])*vy-(pt[1]-e.a[1])*vx);if(tt>-.05&&tt<l+.05&&dd<.35)dp.push({e,ext:opExt(sg)})})}));
    const dw=(dp.find(x=>!x.ext)||dp[0]||{}).e;
-   if(!dw){ko.push(nom+" : la pièce n'a pas de porte pour savoir où est « "+mur.toLowerCase()+" »");return}
+   if(!dw){if(!np.some(x=>x.rm===rm))np.push({rm,fi,ri:f.rooms.indexOf(rm)});return}
    const dv=mid(dw),fx=-dv[0],fy=-dv[1],lx=fy,ly=-fx,dot=(s,v)=>{const m=mid(s);return m[0]*v[0]+m[1]*v[1]},best=(sc)=>E.reduce((b,s)=>!b||sc(s)>sc(b)?s:b,null);
    tgt=mur==="Côté porte"?dw:mur==="En face"?best(s=>-dot(s,dv)):mur==="À gauche"?best(s=>dot(s,[lx,ly])):mur==="À droite"?best(s=>-dot(s,[lx,ly])):null}
   if(!tgt){ko.push(nom+" : mur non noté");return}
@@ -1169,10 +1169,14 @@ function cotesPlace(){const A=cotesAFaire(),ok=[],ko=[],DKS="Je ne sais pas",nrm
   const arr=OP.get(tgt.a)||[];let o=arr.find(x=>!x.cotes&&(porte?x.k==="porte":x.k!=="porte"));
   if(!o){o=newOp(porte?"porte":pf?"pf":"fenetre",tgt);const L=dist(tgt.a,tgt.b);o.p=Math.max(0,(L-o.w)/2);arr.push(o);OP.set(tgt.a,arr)}
   cotesApply(o,c.id,tgt);ok.push(nom+" · "+rm.nom)});
- return{ok,ko}}
+ return{ok,ko,np}}
 function cotBtn(){const b=$("cot-btn");if(!b)return;const T=cotBtn.vu||(cotBtn.vu=new Set()),n=CL?0:cotesAFaire().filter(c=>c.it.piece&&c.it.mur&&!T.has(c.id)).length;b.hidden=!n;b.innerHTML=`Placer les cotes <b>${n}</b>`}
-document.addEventListener("click",e=>{if(!(e.target.closest&&e.target.closest("#cot-btn")))return;hist();const T=cotBtn.vu||(cotBtn.vu=new Set());cotesAFaire().forEach(c=>T.add(c.id));const r=cotesPlace();draw();rows();
- say(null,(r.ok.length?r.ok.length+" menuiserie"+(r.ok.length>1?"s placées":" placée")+" ✓ ("+r.ok.join(", ")+")":"Aucune menuiserie placée")+(r.ko.length?". À placer à la main : "+r.ko.join(" ; ")+".":"."))});
+document.addEventListener("click",e=>{if(!(e.target.closest&&e.target.closest("#cot-btn")))return;hist();const T=cotBtn.vu||(cotBtn.vu=new Set());cotesAFaire().forEach(c=>T.add(c.id));cotesFin(cotesPlace())});
+/* une pièce sans porte (Cyril 23/11) : le plan propose d'abord de poser sa porte (outil Porte prêt), puis place sa fenêtre tout seul */
+function cotesFin(r){draw();rows();const m=(r.ok.length?r.ok.length+" menuiserie"+(r.ok.length>1?"s placées":" placée")+" ✓ ("+r.ok.join(", ")+"). ":"")+(r.ko.length?"À placer à la main : "+r.ko.join(" ; ")+". ":"");
+ if(r.np.length){const x=r.np[0];cotBtn.att=x;ST.fi=x.fi;ST.ri=x.ri;all();setMode("door");say(null,m+"La pièce « "+x.rm.nom+" » n'a pas encore de porte sur le plan : touchez le mur où se trouve sa porte, puis sa fenêtre se placera toute seule.");return}
+ cotBtn.att=null;say(null,m||"Aucune menuiserie à placer.")}
+function cotesApres(m){if(m!=="door"||!cotBtn.att)return;cotBtn.att=null;setTimeout(()=>{hist();cotesFin(cotesPlace())},400)}
 function opNums(){const M=new Map();let nf=0,np=0;ST.floors.forEach(f=>segs(f).forEach(sg=>(OP.get(sg.a)||[]).forEach(o=>M.set(o,o.k==="porte"?"P"+(++np):"F"+(++nf)))));return M}
 function opTxt(sg){const N=opNums(),ext=opExt(sg);return(OP.get(sg.a)||[]).map(o=>`${N.get(o)} ${opName(o,ext).toLowerCase()}${o.k==="porte"&&ext?" (menuiserie extérieure)":""} ${Math.round(o.w*100)}×${Math.round(o.h*100)}${o.ouv&&o.k!=="porte"?" "+ouvTxt(o).toLowerCase():""}${o.pose&&o.k!=="porte"?" pose "+o.pose.toLowerCase()+(o.posepos?" "+o.posepos.toLowerCase():""):""}${o.vol&&o.k!=="porte"?" + "+o.vol.toLowerCase()+(/Roulant|Je ne sais/.test(o.vol)?" "+(o.volcmd||"manuel").toLowerCase():"")+(/extérieur/.test(o.vol)?" pose "+(o.volpose||"sur façade").toLowerCase()+" enroulement "+(o.volenr||"extérieur").toLowerCase():"")+" "+(o.volcoul||"blanc").toLowerCase():""}${o.enc&&o.enc!=="Non"?` · encadrement placo ${o.enc==="Sur de l'ancien"?"sur de l'ancien":"neuf"} (${fr(2*o.h+o.w)} ml)`:""}`).join(" · ")}
 function newOp(kind,sg,t){const ext=opExt(sg);if(kind==="porte")return ext?{k:"porte",t:"Porte d'entrée",w:.9,h:2.15,al:0}:{k:"porte",t:"Bloc-porte",w:.83,h:2.04,al:0};if(kind==="pf")return{k:"pf",t:"Porte-fenêtre",ouv:"Battant",w:1.4,h:2.15,al:0};return{k:"fenetre",t:"Fenêtre",ouv:"Battant",w:1.2,h:1.35,al:.9}}
@@ -1737,7 +1741,7 @@ function addOpAt(x,p,m){const sg=segs()[x];if(!sg)return;if(sg.kind!=="mur"&&m!=
  hist();const arr=OP.get(sg.a)||[],cp=CLIP,o=cp?JSON.parse(JSON.stringify(cp)):newOp(m==="win"?"fenetre":"porte",sg);o.p=r2(cp?Math.max(0,Math.min(L-o.w,snap(t-o.w/2))):Math.max(0,(L-o.w)/2));
  // milieu déjà pris (2e porte sur la même cloison, par ex.) : elle se pose là où on a touché (Cyril 10/11)
  if(!cp&&arr.some(q=>q.p<o.p+o.w&&o.p<q.p+q.w))o.p=r2(Math.max(0,Math.min(L-o.w,snap(t-o.w/2))));arr.push(o);OP.set(sg.a,arr);if(cp){CLIP=null;setMode("plan");draw();rows();notify();selectOp(x,arr.length-1,1);return}if(CL){/* client : la fiche de la fenêtre ou de la porte s'ouvre tout de suite, avec seulement ses questions (Cyril 12/11) */setMode("plan");draw();rows();notify();openOp(x,arr.length-1);say(null,`${opNums().get(o)} posée au milieu de ${segName(sg)}. Répondez à ses questions puis « OK » ; ensuite, faites-la glisser à sa place sur le mur.`);return}if(!CL)setMode("plan");draw();rows();notify();selectOp(x,arr.length-1,0,CL?0:m);
- say(null,newOpMsg(o,sg))}
+ say(null,newOpMsg(o,sg));cotesApres(m)}
 function newOpMsg(o,sg){return`${opNums().get(o)} posée au milieu de ${segName(sg)} (${Math.round(o.w*100)} × ${Math.round(o.h*100)} cm)${o.k==="porte"&&opExt(sg)?", menuiserie extérieure":""}. Faites-la glisser à sa place : elle se cale au milieu et aux quarts du mur. « Options » pour son type et sa taille.`}
 function toggleTodo(x){const sg=segs()[x];if(!sg)return;hist();if(TD.get(sg.a))TD.delete(sg.a);else TD.set(sg.a,sg.kind==="clo"?"Créer":"À refaire");todoMsg();draw()}
 function todoMsg(){const S=segs(),n=S.filter(x=>TD.get(x.a)).length,all=S.length&&S.every(x=>TD.get(x.a));const b=$("t-all");if(b)b.textContent=all?"☑ Tout décocher":"☐ Tout cocher";
