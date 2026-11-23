@@ -33,6 +33,8 @@ function agit(v){
   if(v==="micro"){var m=$("#speak");if(m)m.click();return}
   if(v==="reglages"){var r=$("#menu");if(r)r.click();return}
   if(v==="options"){var o=$("#mo-bt");if(o)o.click();return}
+  /* 23/11 (Cyril) : une fenêtre restée ouverte (Mes plans…) se ferme avant d'aller ailleurs, sinon « Cotes » montrait encore « Mes plans » */
+  $$(".sheet.on").forEach(function(s){var sc=s.previousElementSibling;if(sc&&sc.classList.contains("scrim")&&sc.classList.contains("on"))sc.click();else s.classList.remove("on")});
   var b=$("#nb-"+v);if(b)b.click()}
 function courant(){return ($("nav.nav [aria-selected=true]")||{dataset:{}}).dataset.v}
 
