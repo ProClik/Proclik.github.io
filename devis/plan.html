@@ -443,6 +443,21 @@ html.client #sheet.wzon{transition:opacity .2s ease}
 html.leger body #clbanner:has(#cl-now:not(:empty):not([hidden])){padding:2px 0!important;min-height:0!important;justify-content:center;background:transparent!important;border:0!important;box-shadow:none!important}
 html.leger body #cl-now .cn-l{display:none}html.leger body #cl-now{justify-content:center;margin:0!important}
 html.leger body #cl-now .cn-i{padding:5px 14px 5px 5px}html.leger body #cl-now .cn-i small{white-space:normal}}
+/* Cyril 23/11 (idée 3) : l'action en cours ressort (bouton plein bleu nuit cerclé laiton), le reste à plat et discret */
+html.leger body #cl-now .cn-act{display:flex!important;align-items:center;gap:10px;flex:1 1 100%;padding:10px 16px 10px 10px!important;border-radius:18px;background:var(--mint,#1B2440);color:var(--paper,#fff);box-shadow:0 0 0 3px rgba(212,180,131,.7),0 12px 24px -12px rgba(27,36,64,.7);animation:cnAct 2.4s ease-in-out infinite}
+html.leger body #cl-now .cn-act>svg{flex:none;width:38px!important;height:38px!important;border-radius:12px;background:rgba(255,255,255,.14);padding:5px;color:inherit}
+html.leger body #cl-now .cn-act b{display:block;font:800 17px var(--f);white-space:normal}html.leger body #cl-now .cn-act small{display:block!important;font:600 13px var(--f);opacity:.88;white-space:normal}
+html.leger body #cl-now .cn-alt{display:flex;gap:6px;flex-wrap:wrap}
+html.leger body #cl-now .cn-alt button{appearance:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:4px 14px 4px 6px;border-radius:999px;border:0;background:transparent!important;box-shadow:inset 0 0 0 1.5px var(--line,#C5C9D3)!important;color:var(--fg,#1B2440);font:700 13.5px var(--f);cursor:pointer}
+html.leger body #cl-now .cn-alt button svg{width:22px;height:22px}
+html.client #svg .cl-glow{animation:clGlow 1.6s ease-in-out infinite}@keyframes clGlow{50%{stroke-opacity:.18}}
+html.leger body #clbanner:has(#cl-now .cn-act) #clb-t{display:none!important}
+@keyframes cnAct{50%{box-shadow:0 0 0 5px rgba(212,180,131,.35),0 12px 24px -12px rgba(27,36,64,.7)}}
+@media (prefers-reduced-motion:reduce){html.leger body #cl-now .cn-act{animation:none}}
+html.leger body #clb-b:not(.okgo){background:transparent!important;box-shadow:none!important;border:0!important;color:var(--muted,#5b6170)!important;text-decoration:underline;font-weight:600!important}
+html.leger body #cl-more,html.client.leger body .fl.tr .ud{background:rgba(255,255,255,.72)!important;box-shadow:none!important;border:0!important;color:var(--muted,#5b6170)!important;font-weight:600!important}
+html[data-theme="dark"].leger body #cl-more,html[data-theme="dark"].client.leger body .fl.tr .ud{background:rgba(255,255,255,.08)!important}
+@media (orientation:landscape) and (max-height:520px){html.leger body #cl-now .cn-act{padding:6px 10px 6px 6px!important;gap:8px}html.leger body #cl-now .cn-act>svg{width:30px!important;height:30px!important}html.leger body #cl-now .cn-act b{font-size:14.5px}html.leger body #cl-now .cn-act small{display:block!important;font-size:11.5px}html.leger body #cl-now .cn-alt button{min-height:32px;font-size:12px}}
 .hico{vertical-align:-.22em;margin-right:.25em}html.leger body #tut b{display:none!important}html.leger body #clbanner:has(#cl-now:not(:empty)) .pcl{display:none!important}
 
 #esck{position:fixed;inset:0;z-index:91;display:grid;place-items:center;background:rgba(15,20,36,.32);animation:lvF .25s ease both}#esck[hidden]{display:none}
@@ -727,6 +742,11 @@ function draw(){{const b=$("v-toit");if(b){const ok=!!roofGeo()&&ST.fi===ST.floo
    if(o.k==="fenetre"||o.k==="pf")s+=`<g pointer-events="none"><polygon points="${quad(P,Q,nx,ny,-sg.t/2,sg.t/2)}" fill="${k["--surface"]}" stroke="${k["--win"]}" stroke-width="${u*.06}"/><line x1="${P[0]}" y1="${P[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${k["--win"]}" stroke-width="${u*.05}"/></g>`;
    if(o.k==="porte"||o.k==="pf"){const E=[P[0]+nx*o.w,P[1]+ny*o.w];s+=`<g pointer-events="none"><line x1="${P[0]}" y1="${P[1]}" x2="${E[0]}" y2="${E[1]}" stroke="${k["--fg"]}" stroke-width="${u*.09}"/><path d="M${E[0]} ${E[1]} A${o.w} ${o.w} 0 0 ${ux*ny-uy*nx>0?0:1} ${Q[0]} ${Q[1]}" fill="none" stroke="${k["--muted"]}" stroke-width="${u*.05}" stroke-dasharray="${u*.2} ${u*.15}"/></g>`}})});
  S.forEach(sg=>{const t=TD.get(sg.a);if(!t)return;const L=dist(sg.a,sg.b);if(L<.05)return;s+=`<line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="${k["--hot"]}" stroke-width="${Math.max(u*.42,.1)}" stroke-opacity=".42" stroke-linecap="round" pointer-events="none"/>`});
+ /* Cyril 23/11 (idée 3) : fenêtre / porte, les murs à toucher brillent en laiton et une étiquette « Touchez un mur » montre où faire */
+ if(CL&&document.documentElement.classList.contains("leger")&&(ST.mode==="win"||ST.mode==="door")&&!SH&&!PD){const G2=ST.mode==="win"?EXT.map(e=>({a:e.a,b:e.b,sg:e.sg})):S.filter(x=>x.kind==="mur"||x.kind==="clo").map(x=>({a:x.a,b:x.b,sg:x}));let best=null;
+  G2.forEach(e=>{const L=dist(e.a,e.b);if(L<.3)return;s+=`<line x1="${e.a[0]}" y1="${e.a[1]}" x2="${e.b[0]}" y2="${e.b[1]}" stroke="#D4B483" stroke-width="${Math.max(u*.75,.14)}" stroke-opacity=".5" stroke-linecap="round" pointer-events="none" class="cl-glow"/>`;if(!best||L>best.L)best={...e,L}});
+  const any=[...OP.values()].some(a=>a.some(o=>ST.mode==="win"?o.k!=="porte":o.k==="porte"));
+  if(best&&!any){const m=[(best.a[0]+best.b[0])/2,(best.a[1]+best.b[1])/2];let n=[0,0];try{n=inward(best.sg)}catch(e){}s+=chip(m[0]+n[0]*u*2.2,m[1]+n[1]*u*2.2,"Touchez un mur","#D4B483",u,true)}}
  if(CL&&ST.mode==="todo")S.forEach(sg=>{if(TD.get(sg.a))return;s+=`<line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="${k["--hot"]}" stroke-width="${u*.18}" stroke-dasharray="${u*.5} ${u*.4}" stroke-opacity=".6" pointer-events="none"/>`});
  S.forEach((sg,x)=>{if(x===shSeg&&!(CL&&SH))s+=`<line x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="${k["--hot"]}" stroke-width="${u*.9}" stroke-opacity=".35" stroke-linecap="round" pointer-events="none"/>`;
   s+=`<line data-seg="${x}" x1="${sg.a[0]}" y1="${sg.a[1]}" x2="${sg.b[0]}" y2="${sg.b[1]}" stroke="transparent" stroke-width="${Math.max(u*1.4,.28)}" style="cursor:pointer"/>`});
@@ -1182,8 +1202,8 @@ function clNameNext(){if(SH)return;const f=F();for(let ri=0;ri<f.rooms.length;ri
 const CLNOW={2:["clo","Cloison","Touchez 2 points du plan"],3:["win","",""],4:["sol","Sol","Touchez une pièce"],5:["todo","Murs","Un mur à la fois"],6:["","Plafonds","Touchez une pièce"],7:["","Toit","Glissez vos fenêtres de toit"]};
 function clNowIco(k){const b=document.querySelector(`.cltool[data-cl="${k}"] svg`);return b?b.outerHTML:""}
 function clNowPaint(){const e=$("cl-now");if(!e)return;const g=document.documentElement.dataset.gs,c=CLNOW[g];if(!clStepOnly()||!c){e.innerHTML="";e.hidden=true;return}e.hidden=false;let h;
- if(g==="3"){const k=ST.mode==="door"?"door":ST.mode==="esc"?"esc":"win",multi=document.documentElement.classList.contains("multi");h=`<span class="cn-l">En ce moment</span><span class="cn-sw" role="group" aria-label="Ce que vous posez">${["win","door"].concat(multi?["esc"]:[]).map(x=>`<button type="button" data-cnk="${x}" aria-pressed="${k===x}">${clNowIco(x)}${x==="win"?"Fenêtre":x==="door"?"Porte":"Escalier"}</button>`).join("")}</span>`}
- else h=`<span class="cn-l">En ce moment</span><span class="cn-i">${clNowIco(c[0]||"plan")}<b>${c[1]}</b><small>${c[2]}</small></span>`;
+ if(g==="3"){/* Cyril 23/11 (idée 3) : l'outil en cours = gros bouton plein bleu nuit cerclé laiton qui dit quoi faire ; l'autre choix à côté, seulement entouré */const k=ST.mode==="door"?"door":ST.mode==="esc"?"esc":"win",multi=document.documentElement.classList.contains("multi"),N={win:"Fenêtre",door:"Porte",esc:"Escalier"},H={win:"Touchez le mur où se trouve la fenêtre",door:"Touchez le mur où se trouve la porte",esc:"Touchez la pièce de l'escalier"},A={win:"Une fenêtre",door:"Une porte",esc:"Un escalier"};h=`<span class="cn-l">En ce moment</span><span class="cn-act">${clNowIco(k)}<span><b>${N[k]}</b><small>${H[k]}</small></span></span><span class="cn-alt">${["win","door"].concat(multi?["esc"]:[]).filter(x=>x!==k).map(x=>`<button type="button" data-cnk="${x}">${clNowIco(x)}Plutôt ${A[x].toLowerCase()}</button>`).join("")}</span>`}
+ else h=`<span class="cn-l">En ce moment</span><span class="cn-i cn-act">${clNowIco(c[0]||"plan")}<b>${c[1]}</b><small>${c[2]}</small></span>`;
  if(e.dataset.h!==h){e.innerHTML=h;e.dataset.h=h}}
 function clAutoTool(){if(!clStepOnly())return clNowPaint();const r=document.documentElement,g=r.dataset.gs,sh=$("sheet"),it=$("intro");
  if(clAutoTool.g!==g){clAutoTool.g=g;clAutoTool.m5=0}

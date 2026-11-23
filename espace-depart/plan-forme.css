@@ -30,3 +30,26 @@ html.pro:not(.client) body .pro-menu>button svg{width:15px!important;height:15px
 /* « Annuler » / « Rétablir » : le mot est déjà dans le bouton, plus de doublon (23/11) */
 /* dictée en cours dans le pavé (23/11) */
 html body .opp.acts .pd-f button.listen:not(.rs-ok){box-shadow:inset 0 0 0 2px #A8823F!important;color:#A8823F!important}
+/* Consigne au style C « Guide » (Cyril 23/11) : carte bleu nuit en dégradé, rond laiton, texte blanc en entier ;
+   « Compris » (jusqu'à la prochaine consigne), « Ne plus afficher » (pour de bon), pastille « Consigne » pour la remettre. */
+html.pro:not(.client) body #clbanner{background:linear-gradient(135deg,#26335A,#1B2440)!important;color:#fff!important;border:0!important;border-radius:18px!important;box-shadow:0 12px 26px -12px rgba(27,36,64,.7)!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:8px 10px!important;padding:12px!important}
+html.pro:not(.client) body #clbanner::before{content:"";flex:none;order:0;width:36px;height:36px;border-radius:50%;background:#D4B483 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B2440' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'/%3E%3C/svg%3E") center/20px no-repeat}
+html.pro:not(.client) body #clbanner #clb-t{order:1!important;flex:1 1 calc(100% - 50px)!important;min-width:0;margin:0!important;color:#fff!important;font-size:15px!important;line-height:1.35!important;display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important}
+html.pro:not(.client) body #clbanner #clb-t::before{content:"Consigne";display:block;font:800 10.5px var(--f,Manrope),sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#E6D3B0;margin-bottom:2px}
+html.pro:not(.client) body #clbanner>:is(#clb-x,#clb-nx,#chk-btn,#clb-v,#clb-b){order:2!important;flex:none!important;height:34px!important;min-height:0!important;padding:0 12px!important;margin:0!important;border:0!important;border-radius:999px!important;font:700 12.5px var(--f,Manrope),sans-serif!important;white-space:nowrap;box-shadow:none!important;transform:none!important;position:static!important}
+html.pro:not(.client) body #clbanner>#clb-v{order:2!important}html.pro:not(.client) body #clbanner>#clb-nx{order:4!important}html.pro:not(.client) body #clbanner>#chk-btn{order:5!important}
+html.pro:not(.client) body #clbanner>#clb-x{order:3!important;margin-left:46px!important;background:#fff!important;color:#1B2440!important}
+html.pro:not(.client) body #clbanner>#clb-nx{background:rgba(255,255,255,.12)!important;color:#fff!important}
+html.pro:not(.client) body #clbanner>#chk-btn{background:#D4B483!important;color:#1B2440!important;margin-left:auto!important}
+html.pro:not(.client) body #clbanner>#clb-v{background:rgba(255,255,255,.12)!important;color:#fff!important;width:auto!important}
+html.pro:not(.client)[data-theme="dark"] body #clbanner{background:linear-gradient(135deg,#34426C,#26304F)!important;box-shadow:0 0 0 1px rgba(212,180,131,.35)!important}
+#clb-nx{display:none}html.pro:not(.client) body #clbanner>#clb-nx{display:inline-flex;align-items:center}
+html.pro:not(.client).clhide body #clb-open{display:inline-flex!important;align-items:center;gap:6px;align-self:flex-end;margin:0 0 6px auto;padding:7px 12px 7px 8px;border:0;border-radius:999px;background:#1B2440!important;color:#fff!important;font:700 13px var(--f,Manrope),sans-serif;box-shadow:0 6px 16px -8px rgba(0,0,0,.5)!important}
+html.pro:not(.client).clhide body #clb-open svg{width:20px;height:20px;padding:3px;border-radius:50%;background:#D4B483;color:#1B2440}
+html.pro.clhide:not(.client) body #clbanner{display:none!important}
+@media (max-width:420px){html.pro:not(.client) body #clbanner>#clb-x{margin-left:0!important}}
+@media (orientation:landscape) and (max-height:520px){html.pro:not(.client) body #clbanner #clb-t{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:4!important;overflow:hidden!important;cursor:pointer}html.pro:not(.client) body #clbanner.cl-ouvert #clb-t{display:block!important;-webkit-line-clamp:unset!important}html.pro:not(.client) body #clbanner{padding:8px!important;gap:6px!important}html.pro:not(.client) body #clbanner::before{width:26px;height:26px;background-size:15px}html.pro:not(.client) body #clbanner #clb-t{flex-basis:calc(100% - 34px)!important;font-size:12.5px!important}html.pro:not(.client) body #clbanner>#clb-x{margin-left:0!important}html.pro:not(.client) body #clbanner>:is(#clb-x,#clb-nx,#chk-btn,#clb-v,#clb-b){height:30px!important;padding:0 10px!important;font-size:11.5px!important}}
+/* consigne masquée : la pastille « Consigne » et « À vérifier » côte à côte en haut du plan */
+html.pro:not(.client).clhide body #board>#clb-open{position:absolute!important;z-index:7;top:12px;left:50%;transform:translateX(calc(-100% - 4px));margin:0!important}
+html.pro:not(.client).clhide body #board>#chk-btn{position:absolute!important;z-index:7;top:12px;left:50%;transform:translateX(4px)!important;margin:0!important;height:40px;min-height:0}
+@media (max-width:520px){html.pro:not(.client).clhide body #board>:is(#clb-open,#chk-btn){top:66px}}
