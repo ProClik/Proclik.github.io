@@ -10,7 +10,7 @@ var d=document,$=function(s,r){return (r||d).querySelector(s)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var lsG=function(k,v){try{var x=JSON.parse(localStorage.getItem(k));return x==null?v:x}catch(e){return v}};
 var lsS=function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-var KEY='pc-cotes',V='2';
+var KEY='pc-cotes',V='3';
 var v=$('#v-cotes');if(!v)return;
 
 var S=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'};

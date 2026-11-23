@@ -86,7 +86,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--laiton);outline
 .rs button em{font-style:normal;font-size:11px;font-weight:800;color:var(--laiton);white-space:nowrap}
 .rs button em.ok{color:var(--ok)}
 .rs .phs{display:inline-flex;gap:4px;vertical-align:middle;margin-left:6px}.rs .phs img{width:20px;height:20px;border-radius:5px;object-fit:cover}
-.rcf{display:grid;grid-template-columns:auto 1fr;gap:8px;margin-top:auto}
+.rcf{display:grid;grid-template-columns:auto 1fr;gap:8px;margin-top:auto}.rcf:empty{display:none}.rcq{display:grid;gap:10px;margin-top:auto;padding:14px;border-radius:18px;background:var(--calme);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--laiton) 45%,transparent)}.rcq>b{font-size:18px;font-weight:800;text-align:center}.rcq>small{text-align:center;color:var(--muted);font-weight:700;font-size:13px;margin-bottom:-6px}.rcq-b button{white-space:nowrap}.rcq-b{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rcq-b button{min-height:52px}
 /* ---------- maquette : téléphone ---------- */
 .demo{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:28px;align-items:start}
 @media (max-width:860px){.demo{grid-template-columns:minmax(0,1fr)}.side{order:2}}
@@ -604,7 +604,7 @@ function render(){save();
     const vals=qs.map(q=>{const t=valTxt(q,it);if(q.id==="D"&&t==="Non relevées")return"";if(q.id==="photo")return"";return !t||t===DK?`<i>${esc(shortT(q,it))} ?</i>`:esc(q.kind==="m3"?shortT(q,it)+" "+t:t)}).filter(Boolean).join(" · ");
     const phs=Object.entries(it.ph||{}).filter(([k])=>ids.includes(k)||(n==="Photos"&&(k==="int"||k==="ext")));
     return `<button data-a="goto" data-i="${L.indexOf(first)}"><span><h5>${n}</h5><p>${vals||(n==="Photos"?(phs.length?phs.length+" photo"+(phs.length>1?"s":""):"<i>Aucune photo</i>"):"")}${phs.length?`<span class="phs">${phs.map(([,u])=>`<img src="${u}" alt="">`).join("")}</span>`:""}</p></span><em class="${miss.length?"":"ok"}">${miss.length?miss.length+" à voir":"✓"}</em></button>`}).join("")}</div>
-   <div class="rcf">${S.back!=null&&!it.fini?`<button class="ghost" data-a="resume">‹ Reprendre</button>`:`<button class="ghost" data-a="done">C'est bon</button>`}<button class="go" data-a="${S.back!=null&&!it.fini?"done":"donext"}">${S.back!=null&&!it.fini?"C'est bon":"C'est bon, suivante ›"}</button></div></div>`;
+   <div class="rcf">${S.back!=null&&!it.fini?`<button class="ghost" data-a="resume">‹ Reprendre</button>`:""}${S.back!=null&&!it.fini?`<button class="go" data-a="done">C'est bon</button></div>`:`</div><div class="rcq"><small>${esc(it.type||"Menuiserie")} n°${it.no} prête ✓</small><b>Il y en a d'autres ?</b><div class="rcq-b"><button class="ghost" data-a="fin">Non, c'est tout</button><button class="go" data-a="donext">Oui, une autre</button></div></div>`}</div>`;
  }else if(mode==="end"){
   h=head("C'est terminé",S.chantier,"list")+`<div class="ph-b">
    <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" style="margin:4px auto 0"><circle cx="32" cy="32" r="28" fill="none" stroke="var(--nuit)" stroke-width="3"/><path d="M20 33l8 8 16-17" fill="none" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -825,6 +825,8 @@ P.addEventListener("click",e=>{
  if(a==="rcv"){clearTimeout(adv);S.back=step;mode="rc";render();return}
  if(a==="resume"){mode="wz";step=S.back||0;dir=0;render();return}
  if(a==="done"){it.fini=true;it.fromPlan=false;finTime(it);mode="list";cur=null;say("Menuiserie n°"+it.no+" prête"+dur(it)+" ✓");return}
+ /* Cyril 23/11 : à la fin d'une menuiserie, « Il y en a d'autres ? » ; « Non, c'est tout » mène à l'écran de fin */
+ if(a==="fin"){it.fini=true;it.fromPlan=false;finTime(it);cur=null;if(S.items.every(i=>i.fini)){mode="end";render()}else{mode="list";say("Menuiserie n°"+it.no+" prête ✓. Il reste "+S.items.filter(i=>!i.fini).length+" à finir.")}return}
  if(a==="bon"){mode="bon";render();return}
  if(a==="close"){if(DIC.on)micStop();save();try{parent.postMessage({type:"proclik-cotes-close",r:RID},"*")}catch(x){}return}
  if(a==="pdf"&&RID){setTimeout(()=>window.print(),50);return}
