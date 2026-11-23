@@ -121,3 +121,19 @@ html.f2on,html.f2on body{overscroll-behavior-y:none}
  .toast{top:auto!important;left:124px!important;width:min(420px,calc(50vw - 150px))!important;bottom:calc(20px + env(safe-area-inset-bottom,0px))!important;transform:translateY(calc(100% + 60px))!important}
  .toast.on{transform:none!important}
 }
+/* 23/11 : la bulle passe SOUS les fenêtres ouvertes (choix du chantier, fiches…) : elle ne cache plus leurs cases ni leurs boutons */
+html.f2bar .toast,.toast{z-index:28!important}
+/* 23/11 (Cyril) : bulle touchable (va au sujet) + sortie douce (elle s efface sur place au lieu de glisser à travers la barre) */
+.toast.va{pointer-events:auto!important;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.toast.va::after{content:"›";margin-left:auto;padding-left:8px;font-size:24px;line-height:1;font-weight:500;color:var(--mut,#6b7280)}
+.toast.va:active{filter:brightness(.97)}
+.toast{opacity:0;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s .3s!important}
+.toast.on{opacity:1;transition:opacity .2s ease,transform .35s cubic-bezier(.2,.8,.2,1)!important}
+@media (max-width:899px){
+ html.f2bar .toast{transform:translate(-50%,14px)!important}
+ html.f2bar .toast.on{transform:translate(-50%,0)!important}
+}
+@media (min-width:900px){
+ .toast{transform:translateY(14px)!important}
+ .toast.on{transform:none!important}
+}

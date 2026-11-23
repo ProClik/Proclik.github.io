@@ -144,11 +144,23 @@ if(!site&&!vitrine){
   var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},750)}
   o.addEventListener('click',fin);pret(function(){o.classList.add('go');try{if(o.getAnimations)o.getAnimations({subtree:true}).forEach(function(an){an.playbackRate=VITE})}catch(e){}setTimeout(fin,DUK)});
  }
- if(court){window.PC_OUV_MS=DUK;couvre()}
- /* retour dans l'appli après au moins 30 s ailleurs : on rejoue la courte ouverture */
- var cache=0;
- d.addEventListener('visibilitychange',function(){if(d.hidden){cache=Date.now()}else if(cache&&Date.now()-cache>30000){cache=0;couvre()}});
- window.addEventListener('pageshow',function(e){if(e.persisted)couvre()});
+ /* retour dans l'appli après au moins 15 min ailleurs : on rejoue la courte ouverture (30 s était bien trop court pour qui sort et revient souvent, Cyril 23/11).
+    L'heure de sortie est aussi gardée sur l'appareil : quand l'iPhone recharge l'appli au retour, le logo ne revient pas avant 15 min non plus. */
+ var PAUSE=15*60*1000,parti=0,QK='pc-ouv-quitte',recent=false;
+ try{var q=+localStorage.getItem(QK)||0;recent=q>0&&Date.now()-q<PAUSE}catch(e){}
+ function note(){parti=parti||Date.now();try{localStorage.setItem(QK,String(parti))}catch(e){}}
+ /* avant 15 min : pas de grand écran, mais la petite animation du logo en haut de l'Espace (Cyril 23/11) */
+ var stp=d.createElement('style');stp.textContent='html.pc-court:not(.pc-go) .brand>svg,html.pc-court:not(.pc-go) .brand>svg *,html.pc-court:not(.pc-go) .logo .g>svg,html.pc-court:not(.pc-go) .logo .g>svg *{animation-play-state:paused!important}';d.head.appendChild(stp);
+ var ptm=0;function petite(){if(reduit)return;clearTimeout(ptm);root.classList.remove('pc-court','pc-go');void root.offsetWidth;root.classList.add('pc-court');
+  var gl=function(){d.querySelectorAll('.brand>svg,.logo .g>svg').forEach(function(v){goutte(v,0)})};
+  var gc=function(){root.classList.add('pc-go');ptm=setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};
+  if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){gl();pret(gc)});else{gl();pret(gc)}}
+ /* Cyril 23/11 : on garde la petite animation actuelle (couvre), simplement pas avant 15 min ; petite() reste disponible mais n'est pas utilisée */
+ if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court)window.PC_OUV_MS=0;
+ function retour(){if(parti&&Date.now()-parti>PAUSE)couvre();parti=0}
+ d.addEventListener('visibilitychange',function(){if(d.hidden)note();else retour()});
+ window.addEventListener('pagehide',note);
+ window.addEventListener('pageshow',function(e){if(e.persisted)retour()});
  if(court)return}
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;var gl=function(){d.querySelectorAll('.brand>svg,.logo .g>svg').forEach(function(v){goutte(v,0)})};if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',gl);else gl();var stc=d.createElement('style');stc.textContent='html.pc-court:not(.pc-go) .brand>svg,html.pc-court:not(.pc-go) .brand>svg *,html.pc-court:not(.pc-go) .logo .g>svg,html.pc-court:not(.pc-go) .logo .g>svg *{animation-play-state:paused!important}';d.head.appendChild(stc);var gc=function(){root.classList.add('pc-go');setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};if(d.readyState==='complete')gc();else{var gd=false,g1=function(){if(gd)return;gd=true;requestAnimationFrame(function(){requestAnimationFrame(gc)})};window.addEventListener('load',g1);setTimeout(g1,1500)}return}
 

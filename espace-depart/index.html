@@ -580,7 +580,7 @@ button.pill{cursor:pointer}
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 
-<script>window.PC_PROFIL_DEMO="PRO";</script><script src="ouverture.js?v=30"></script>
+<script>window.PC_PROFIL_DEMO="PRO";</script><script src="ouverture.js?v=33"></script>
 
 <div class="app">
 <header class="head">
@@ -997,7 +997,9 @@ var P=["Votre agenda est plein, votre café est froid. On s'occupe du reste.","D
 $('#phrase').textContent=P[new Date().getDate()%P.length];
 var root=document.documentElement;
 $('#theme').addEventListener('click',function(){pcTheme()});
-var tmr;function toast(t,s){$('#tt').textContent=t;$('#ts').textContent=s||'';$('#toast').classList.add('on');clearTimeout(tmr);tmr=setTimeout(function(){$('#toast').classList.remove('on')},3400);}
+/* 23/11 (Cyril) : une bulle peut se toucher pour aller directement au sujet (3e argument = ce qu il faut ouvrir) */
+var tmr,tact=null;function toast(t,s,act){var e=$('#toast');$('#tt').textContent=t;$('#ts').textContent=s||'';tact=typeof act==='function'?act:null;e.classList.toggle('va',!!tact);if(tact){e.setAttribute('role','button');e.tabIndex=0}else{e.setAttribute('role','status');e.removeAttribute('tabindex')}e.classList.add('on');clearTimeout(tmr);tmr=setTimeout(function(){e.classList.remove('on')},tact?6000:3400);}
+(function(){var e=$('#toast');if(!e)return;function vas(ev){if(!tact||!e.classList.contains('on'))return;ev.preventDefault();var f=tact;tact=null;clearTimeout(tmr);e.classList.remove('on');try{f()}catch(x){}}e.addEventListener('click',vas);e.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' ')vas(ev)})})();
 /* ---------- données de démonstration (prix de la bibliothèque ProClik) ---------- */
 var D=[
  {id:'0044',client:'Mme Durand',ville:'Grenoble',titre:'Cloisons du séjour',recu:'ce matin, 7 h 58',tva:10,statut:'todo',marge:'v',
@@ -1085,7 +1087,7 @@ function go(v){$$('.view').forEach(function(s){s.hidden=s.id!=='v-'+v});$$('[rol
 $$('[role=tab][data-v]').forEach(function(b){b.addEventListener('click',function(){go(b.dataset.v)})});
 /* ---------- prix ---------- */
 function updCount(){var n=$$('#upd .upd:not(.done)').length;$('#upd-n').textContent=n?n+' ligne'+(n>1?'s':''):'à jour ✓';$('#okall').hidden=!n}
-$$('#upd [data-ok]').forEach(function(b){b.addEventListener('click',function(){var u=b.closest('.upd');u.classList.add('done');u.querySelector('.ch').insertAdjacentHTML('beforeend','<br><span class="pill ok">Accepté</span>');updCount();if(!online()){Q.push({t:'prix'});save();netUI()}toast('Catalogue mis à jour',online()?'Les prochains pré-devis utiliseront ce prix.':'Enregistré sur le téléphone, synchronisé au retour du réseau.')})});
+$$('#upd [data-ok]').forEach(function(b){b.addEventListener('click',function(){var u=b.closest('.upd');u.classList.add('done');u.querySelector('.ch').insertAdjacentHTML('beforeend','<br><span class="pill ok">Accepté</span>');updCount();if(!online()){Q.push({t:'prix'});save();netUI()}toast('Catalogue mis à jour',online()?'Les prochains pré-devis utiliseront ce prix.':'Enregistré sur le téléphone, synchronisé au retour du réseau.',function(){go('produits')})})});
 $$('#upd [data-no]').forEach(function(b){b.addEventListener('click',function(){var u=b.closest('.upd');u.classList.add('done');u.querySelector('.ch').insertAdjacentHTML('beforeend','<br><span class="pill grey">Gardé</span>');updCount()})});
 $('#okall').addEventListener('click',function(){$$('#upd .upd:not(.done) [data-ok]').forEach(function(b){b.click()})});
 $$('#a-prix [data-add]').forEach(function(b){b.addEventListener('click',function(){var m={photo:'Prenez en photo un devis, un ticket ou une étiquette.',mail:'Transférez le devis à tarifs.dupont@proclik.fr.',file:'Glissez un PDF ou un tableau Excel.'};toast('Démo · '+b.textContent.trim(),m[b.dataset.add])})});
@@ -1110,7 +1112,7 @@ function renderWeek(){$('#week').innerHTML=JOURS.map(function(j){return '<button
 function renderDay(){var j=JOURS.filter(function(x){return x[1]===curDay})[0];$('#day-t').textContent={Lun:'Lundi',Mar:'Mardi',Mer:'Mercredi',Jeu:'Jeudi',Ven:'Vendredi'}[j[0]]+' '+curDay;
  var L=AG[curDay]||[];$('#day-s').textContent=L.filter(function(a){return a[3]==='free'}).length+' créneau(x) libre(s)';
  $('#day').innerHTML=L.map(function(a,i){var cls=a[3]==='on'?' on':a[3]==='free'?' free tap':'';return '<div class="slot"><span class="h">'+a[0]+'</span><div class="b'+cls+'"'+(a[3]==='free'?' role="button" tabindex="0" data-free="'+i+'"':'')+'><b'+(a[3]==='free'?' style="color:var(--muted)"':'')+'>'+(a[3]==='free'?'Créneau libre':a[1])+'</b><small>'+(a[3]==='free'?(a[2]||'Touchez pour le proposer'):a[2])+'</small></div></div>'}).join('');
- $$('#day [data-free]').forEach(function(el){var f=function(){toast('Créneau proposé à Mme Durand',JOURS.filter(function(x){return x[1]===curDay})[0][0]+'. '+curDay+' · '+AG[curDay][+el.dataset.free][0]+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'));if(!online()){Q.push({t:'sms'});save();netUI()}};el.addEventListener('click',f);el.addEventListener('keydown',function(e){if(e.key==='Enter')f()})});}
+ $$('#day [data-free]').forEach(function(el){var f=function(){toast('Créneau proposé à Mme Durand',JOURS.filter(function(x){return x[1]===curDay})[0][0]+'. '+curDay+' · '+AG[curDay][+el.dataset.free][0]+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'),function(){go('devis');open('0044')});if(!online()){Q.push({t:'sms'});save();netUI()}};el.addEventListener('click',f);el.addEventListener('keydown',function(e){if(e.key==='Enter')f()})});}
 function renderAplan(){$('#aplan').innerHTML=
  '<button data-goto="devis"><span class="dot c">✓</span><span class="tx"><b>Mme Durand · cloisons</b><small>2 jours estimés · à planifier dès la signature</small></span><span class="go">›</span></button>'+
  '<button data-goto="devis"><span class="dot o">€</span><span class="tx"><b>M. Martin · 2 fenêtres</b><small>pose après livraison fournisseur (délai à confirmer)</small></span><span class="go">›</span></button>';
@@ -1201,7 +1203,7 @@ function evDetail(sel,e){if(!e){$(sel).innerHTML='';return;}var c=CK[e.k],d=new 
  var b=$(sel+' [data-goch]');if(b)b.addEventListener('click',function(){go('chantiers');showCh(e.x.ch===1?'alpes':e.x.ch)});
  b=$(sel+' [data-stsms]');if(b)b.addEventListener('click',function(){PCPLAN.st.sms(e.x.st,e.x.ch)});
  b=$(sel+' [data-godv]');if(b)b.addEventListener('click',function(){go('devis');open(this.dataset.godv)});
- b=$(sel+' [data-propose]');if(b)b.addEventListener('click',function(){toast('Créneau proposé à Mme Durand',e.d.slice(8)+'/'+e.d.slice(5,7)+' · '+e.s.replace(':','h')+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'));if(!online()){Q.push({t:'sms'});save();netUI()}});
+ b=$(sel+' [data-propose]');if(b)b.addEventListener('click',function(){toast('Créneau proposé à Mme Durand',e.d.slice(8)+'/'+e.d.slice(5,7)+' · '+e.s.replace(':','h')+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'),function(){go('devis');open('0044')});if(!online()){Q.push({t:'sms'});save();netUI()}});
 }
 function renderCalMonth(){
  $('#mo-t').innerHTML=cap(MOIS[calMo.getMonth()])+' <span>'+calMo.getFullYear()+'</span>';
@@ -1478,7 +1480,7 @@ $('#newdp').addEventListener('click',function(){
  '<button class="btn" data-xclose>Annuler</button><button class="btn go" id="nd-go">Envoyer depuis ma messagerie</button>',function(){
   $('#nd-go').addEventListener('click',function(){var it=$('#nd-it').value.split('\n').filter(Boolean).map(function(l){var p=l.split('·');return[p[0].trim(),(p[1]||'').trim()]});
    DP.unshift({id:'DP-0'+(14+DP.length-3),sup:$('#nd-sup').value,dos:$('#nd-dos').value,st:'wait',sent:'à l\'instant',since:'0 h',items:it});saveDP();renderFour();renderTodo();xclose();
-   toast('Demande de prix envoyée',online()?'Depuis votre adresse. ProClik surveille la réponse et relance au bout de 24 h.':'Elle partira au retour du réseau.');if(!online()){Q.push({t:'dp'});save();netUI();}});});});
+   toast('Demande de prix envoyée',online()?'Depuis votre adresse. ProClik surveille la réponse et relance au bout de 24 h.':'Elle partira au retour du réseau.',function(){go('prix')});if(!online()){Q.push({t:'dp'});save();netUI();}});});});
 
 /* ---------- chantiers ---------- */
 var curCh=null;
@@ -1643,7 +1645,7 @@ function showInstall(){
 
 /* ---------- démarrage ---------- */
 renderList();netUI();
-(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.')},(window.PC_OUV_MS||0)+2100)})();
+(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.',function(){go('devis');open('0044')})},(window.PC_OUV_MS||0)+2100)})();
 })();
 </script>
 
@@ -1743,8 +1745,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="titres.js?v=3"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=8"></script>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="style-n1.css?v=47"><script src="couleurs.js?v=3"></script>
-<link rel="stylesheet" href="accueil-forme.css?v=6"><script src="accueil-forme.js?v=10"></script><script src="couleur-espace.js?v=2"></script>
-<link rel="stylesheet" href="barre-forme.css?v=8"><script src="barre-forme.js?v=2"></script>
+<link rel="stylesheet" href="accueil-forme.css?v=7"><script src="accueil-forme.js?v=10"></script><script src="couleur-espace.js?v=2"></script>
+<link rel="stylesheet" href="barre-forme.css?v=10"><script src="barre-forme.js?v=3"></script>
 <link rel="stylesheet" href="ecrans-forme.css?v=4"><script src="ecrans-forme.js?v=7"></script>
 <link rel="stylesheet" href="achats-forme.css?v=5"><script src="achats-forme.js?v=2"></script><link rel="stylesheet" href="produits-forme.css?v=2"><script src="produits-forme.js?v=2"></script><link rel="stylesheet" href="parler-forme.css?v=2"><script src="parler-forme.js?v=1"></script><script src="presentation-forme.js?v=2"></script>
 <link rel="stylesheet" href="pages-forme.css?v=12">
