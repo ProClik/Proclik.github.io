@@ -45,7 +45,7 @@ function lesItems(){var C=window.PCCotes;return C&&C.S&&Array.isArray(C.S.items)
 function pieces(P,b,hd){var I=lesItems(),L=$(".list",b);if(!L)return;var on=I.length>=SEUIL;P.classList.toggle("f2pp",on);if(!on){PIECE=null;return}
   var G={},ordre=[];I.slice().sort(function(a,c){return a.no-c.no}).forEach(function(it){var p=it.piece||"Sans pièce";if(!G[p]){G[p]=[];ordre.push(p)}G[p].push(it)});
   if(PIECE&&!G[PIECE])PIECE=null;
-  $$(".item",L).forEach(function(it){var x=I[+it.getAttribute("data-i")];it.classList.toggle("f2hors",!!PIECE&&(!x||(x.piece||"Sans pièce")!==PIECE))});
+  $$(".item",L).forEach(function(it){var x=I[+it.getAttribute("data-i")];(it.closest(".irow")||it).classList.toggle("f2hors",!!PIECE&&(!x||(x.piece||"Sans pièce")!==PIECE))});
   P.classList.toggle("f2p1",!!PIECE);
   var sec=$(".f2sec",b);
   if(PIECE){var g=G[PIECE],r=g.filter(function(x){return !x.fini}).length;
