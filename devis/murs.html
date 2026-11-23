@@ -662,7 +662,7 @@ $("tech").onclick=()=>{tech=!tech;ui();draw()};
 $("ok").onclick=()=>{if(epAsk()){vib(8);toast("Une petite question d'abord, juste au-dessus",2200);return}if(PC.rv){toast("On termine la vérification, élément par élément",2200);return}const L=miss();if(L.length){const m=M.items.indexOf(L[0]);if(sel!=null&&sel!==m)deselect();askAll=false;M.items[m].lock=true;sel=m;toast(L.length>1?`Encore ${L.length} réponses : on les passe une par une`:"Dernière réponse pour ce mur",2200);draw();return}
  if(WALLS&&!(isClo()&&face===0)){saveSnap();WALLS[wi].done=true;
  if(PC.edit){showRecap("<b>C'est corrigé !</b> Seul ce mur a changé");return}
- if(wi<WALLS.length-1){party(`Mur ${wi+1} terminé !`,`On passe au mur ${wi+2}`);setTimeout(()=>{goWall(wi+1);toast(`<b>Mur ${wi+1}</b> : la flèche du petit plan montre où regarder`,3000)},1700)}
+ if(wi<WALLS.length-1){/* 23/11 : double toucher = un seul mur suivant (sinon on sortait de la liste des murs) */if(window.__mwGo)return;window.__mwGo=1;const nx=wi+1;party(`Mur ${wi+1} terminé !`,`On passe au mur ${wi+2}`);setTimeout(()=>{window.__mwGo=0;if(nx>=WALLS.length)return;goWall(nx);toast(`<b>Mur ${wi+1}</b> : la flèche du petit plan montre où regarder`,3000)},1700)}
  else roomEnd()
  return}if(isClo()&&face===0){face=1;sel=null;party("Première face terminée !","On passe à l'autre côté");ui();draw()}else{party("Mur terminé !","Votre devis vient de gagner en précision");$("ok").textContent="Mur suivant ›"}};
 $("room").addEventListener("input",e=>{M.named=true;if(face===1&&isClo())M.room2=e.target.value;else{M.room=e.target.value;if(WALLS)WALLS.forEach(w=>{w.room=M.room;w.named=true})}$("f1").textContent="Côté "+(M.room||"pièce 1");$("f2").textContent="Côté "+(M.room2||"pièce 2");draw()});

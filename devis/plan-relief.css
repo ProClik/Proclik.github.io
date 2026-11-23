@@ -296,3 +296,17 @@ html body #clbanner #clb-b.okgo:not([hidden]):active{box-shadow:inset 0 3px 8px 
 @media (orientation:landscape) and (max-height:560px){html.client body #clbanner #clb-b.okgo:not([hidden]){min-height:42px;font-size:14.5px;padding:8px 12px}}
 /* Un seul bouton qui pulse : quand « C'est bon » est là, l'outil de l'étape reste visible mais calme. */
 html body #clbanner:has(#clb-b.okgo:not([hidden])) #clb-go{animation:none}
+/* 23/11 (Cyril) : bulle de la cote (et de la dictée) propre : police normale, un seul contour, tout sur une ligne.
+   Seulement le plan du client (ce fichier sert aussi à l'Espace de BRS, qu'on ne touche pas). */
+html.client body .ed{box-shadow:var(--up),0 0 0 1.5px var(--line);flex-wrap:nowrap;gap:5px}
+html.client body .ed.listen{box-shadow:var(--up),0 0 0 2px var(--acc)}
+html.client body .ed input{font:700 17px var(--f)!important;width:118px;outline:none!important;-webkit-appearance:none}
+html.client body .ed input:focus{border-color:var(--acc,#1B2440)}
+html.client body .ed input::placeholder{font:500 15px var(--f);font-style:normal;color:var(--muted)}
+html.client body .ed button{width:36px;height:36px;flex:none}
+@media (max-width:420px){html.client body .ed input{width:100px}}
+/* plus de carré autour d'un bouton rond touché (contour de focus) */
+html.client body button:focus:not(:focus-visible){outline:none}
+/* plus de police « machine à écrire » dans le plan du client (cotes, hauteurs, totaux) : même police que le reste, chiffres alignés */
+html.client:root{--mono:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+html.client body input,html.client body .tot b,html.client body .cap{font-variant-numeric:tabular-nums}
