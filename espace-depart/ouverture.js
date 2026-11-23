@@ -112,6 +112,7 @@ if(!site&&!vitrine){
  ':root[data-theme="dark"] #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}'+
  '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}}'+
  '#pc-ouk.pcfin{opacity:0;pointer-events:none}'+
+ '#pc-ouk.pcv0{transition:opacity .35s ease-out}'+
  '#pc-ouk .lk{display:flex;align-items:center;gap:14px;color:var(--mt)}'+
  '#pc-ouk .gk{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--m);box-shadow:-6px -6px 14px var(--mh),7px 7px 16px var(--mo),inset 1px 1px 1px var(--mh),inset -1px -1px 2px var(--mo);opacity:0;transform:translateX(var(--dx,0px)) scale(.9);animation:pkLeve 1.05s cubic-bezier(.4,0,.2,1) .05s forwards,pkGlisse .55s cubic-bezier(.65,0,.35,1) 1.15s forwards}'+
  '#pc-ouk svg{width:40px;height:40px;overflow:visible}'+
@@ -160,7 +161,12 @@ if(!site&&!vitrine){
   var gc=function(){root.classList.add('pc-go');ptm=setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};
   if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){gl();pret(gc)});else{gl();pret(gc)}}
  /* Cyril 23/11 : on garde la petite animation actuelle (couvre), simplement pas avant 15 min ; petite() reste disponible mais n'est pas utilisée */
- if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court)window.PC_OUV_MS=0;
+ /* 23/11 (Cyril : petit blanc et saccade à l'ouverture quand le logo ne s'affiche pas) : avant 15 min, un simple voile de la couleur du fond
+    (sans logo) cache la page pendant qu'elle se construit, puis s'efface en douceur (~0,35 s) */
+ function voile(){var o=d.createElement('div');o.id='pc-ouk';o.className='pcv0';o.setAttribute('aria-hidden','true');(d.body||root).appendChild(o);root.classList.add('pc-ouk-on');
+  var fait=false;function fin(){if(fait)return;fait=true;requestAnimationFrame(function(){o.classList.add('pcfin');setTimeout(function(){o.remove();root.classList.remove('pc-ouk-on')},450)})}
+  o.addEventListener('click',fin);pret(fin)}
+ if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court){window.PC_OUV_MS=0;voile()}
  function retour(){if(parti&&Date.now()-parti>PAUSE)couvre();parti=0}
  d.addEventListener('visibilitychange',function(){if(d.hidden)note();else retour()});
  window.addEventListener('pagehide',note);
