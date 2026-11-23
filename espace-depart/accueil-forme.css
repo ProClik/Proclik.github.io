@@ -493,3 +493,6 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 .f2sc-t{margin-top:16px}
 .f2sc .sc-crayon{width:18px;height:18px;flex-shrink:0;color:var(--muted)}
 .f2sc .sc-crayon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+/* 23/11 : les petits liens écrits (« 7 en tout », « 2 en cours », « Personnaliser l accueil ») se touchent plus facilement au doigt : zone de toucher agrandie, sans rien changer à l œil */
+.f2 button.lien{position:relative}
+.f2 button.lien::after{content:"";position:absolute;left:-8px;right:-8px;top:-13px;bottom:-13px}
