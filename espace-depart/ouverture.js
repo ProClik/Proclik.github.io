@@ -149,8 +149,14 @@ if(!site&&!vitrine){
  var PAUSE=15*60*1000,parti=0,QK='pc-ouv-quitte',recent=false;
  try{var q=+localStorage.getItem(QK)||0;recent=q>0&&Date.now()-q<PAUSE}catch(e){}
  function note(){parti=parti||Date.now();try{localStorage.setItem(QK,String(parti))}catch(e){}}
- if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court)window.PC_OUV_MS=0;
- function retour(){if(parti&&Date.now()-parti>PAUSE)couvre();parti=0}
+ /* avant 15 min : pas de grand écran, mais la petite animation du logo en haut de l'Espace (Cyril 23/11) */
+ var stp=d.createElement('style');stp.textContent='html.pc-court:not(.pc-go) .brand>svg,html.pc-court:not(.pc-go) .brand>svg *,html.pc-court:not(.pc-go) .logo .g>svg,html.pc-court:not(.pc-go) .logo .g>svg *{animation-play-state:paused!important}';d.head.appendChild(stp);
+ var ptm=0;function petite(){if(reduit)return;clearTimeout(ptm);root.classList.remove('pc-court','pc-go');void root.offsetWidth;root.classList.add('pc-court');
+  var gl=function(){d.querySelectorAll('.brand>svg,.logo .g>svg').forEach(function(v){goutte(v,0)})};
+  var gc=function(){root.classList.add('pc-go');ptm=setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};
+  if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){gl();pret(gc)});else{gl();pret(gc)}}
+ if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court){window.PC_OUV_MS=1200;petite()}
+ function retour(){if(parti){if(Date.now()-parti>PAUSE)couvre();else petite()}parti=0}
  d.addEventListener('visibilitychange',function(){if(d.hidden)note();else retour()});
  window.addEventListener('pagehide',note);
  window.addEventListener('pageshow',function(e){if(e.persisted)retour()});
