@@ -53,3 +53,14 @@ html.pro.clhide:not(.client) body #clbanner{display:none!important}
 html.pro:not(.client).clhide body #board>#clb-open{position:absolute!important;z-index:7;top:12px;left:50%;transform:translateX(calc(-100% - 4px));margin:0!important}
 html.pro:not(.client).clhide body #board>#chk-btn{position:absolute!important;z-index:7;top:12px;left:50%;transform:translateX(4px)!important;margin:0!important;height:40px;min-height:0}
 @media (max-width:520px){html.pro:not(.client).clhide body #board>:is(#clb-open,#chk-btn){top:66px}}
+/* téléphone couché (Cyril 23/11 « prend trop de place sur le plan ») : consigne en 2 lignes, boutons sur une ligne, « À vérifier » en haut du plan */
+@media (orientation:landscape) and (max-height:520px){
+html.pro:not(.client) body #clbanner{padding:7px 8px!important;gap:5px!important;border-radius:14px!important}
+html.pro:not(.client) body #clbanner::before{width:22px!important;height:22px!important;background-size:13px!important;align-self:flex-start}
+html.pro:not(.client) body #clbanner #clb-t{-webkit-line-clamp:2!important;font-size:12px!important;line-height:1.3!important;flex-basis:calc(100% - 30px)!important}
+html.pro:not(.client) body #clbanner #clb-t::before{display:none!important}
+html.pro:not(.client) body #clbanner>:is(#clb-x,#clb-nx,#clb-v,#clb-b){height:26px!important;min-height:0!important;padding:0 9px!important;font-size:11px!important}
+html.pro:not(.client) body #board>#chk-btn{position:absolute!important;z-index:7;top:10px;left:50%;transform:translateX(-50%)!important;margin:0!important;height:34px;min-height:0;font-size:12.5px}
+html.pro:not(.client).clhide body #board>#chk-btn{transform:translateX(4px)!important;top:10px;height:34px}html.pro:not(.client).clhide body #board>#clb-open{height:34px;padding-top:0;padding-bottom:0}
+html.pro:not(.client).clhide body #board>#clb-open{top:10px}
+}
