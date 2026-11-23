@@ -376,7 +376,7 @@ const isFen=it=>/Fenêtre|Châssis fixe/.test(it.type||"");
 const Q=[
  {id:"fab",nodk:0,t:()=>"Quel fabricant ?",h:()=>"Les questions et la fiche prendront ses mots.",o:()=>FABS.map(f=>[f[0],f[1]])},
  {id:"piece",t:()=>"Dans quelle pièce ?",o:()=>["Séjour","Cuisine","Chambre","Salle de bain","WC","Entrée","Garage","Autre"].map(x=>[x])},
- /* 23/11 (Cyril, go) : place dans la pièce (pour le plan), épaisseur du mur, entrée d'air, ancienne menuiserie + année (amiante) */
+ /* 23/11 (Cyril, go) : place dans la pièce (pour le plan), épaisseur du mur, entrée d'air, ancienne menuiserie */
  {id:"mur",t:()=>"Sur quel mur ?",h:()=>"Placez-vous à l'entrée de la pièce, dos à la porte.",o:()=>[["En face","Le mur que l'on voit en entrant"],["À gauche"],["À droite"],["Côté porte","Le mur de la porte d'entrée"]]},
  {id:"dist",kind:"m1",ml:"Depuis l'angle",t:()=>"À combien de l'angle de gauche ?",h:()=>"Face au mur, de l'angle de gauche jusqu'au bord de l'ouverture. Elle se placera toute seule sur le plan."},
  {id:"type",t:()=>"Qu'est-ce qu'on mesure ?",o:()=>[["Fenêtre","",IC.fen],["Porte-fenêtre","",IC.pf],["Baie coulissante","",IC.baie],["Châssis fixe","",IC.fixe],["Porte d'entrée","",IC.pe],["Porte de service","",IC.ps],["Porte de garage","",IC.garage],["Bloc-porte intérieur","Porte + huisserie",IC.pi],["Volet roulant","Seul, sans fenêtre",IC.vr],["Volets battants","Seuls, sans fenêtre",IC.vb]]},
@@ -384,7 +384,6 @@ const Q=[
  {id:"pose",when:it=>it.bat==="Rénovation"&&it.type!=="Porte de garage",t:()=>"Et l'ancienne menuiserie ?",o:()=>[["reno",v("reno"),v("renoS")],["depose",v("depose"),v("deposeS")]],lab:x=>x==="reno"?v("reno"):x==="depose"?v("depose"):x,one:1},
  {id:"aile",when:it=>it.pose==="reno",t:()=>v("aile")+" ?",h:()=>"La largeur du rebord du nouveau cadre qui cache l'ancien. Si vous ne savez pas, le fournisseur choisira.",o:()=>["30 mm","40 mm","60 mm","75 mm"].map(x=>[x])},
  {id:"anc",when:it=>it.bat==="Rénovation"&&it.type!=="Porte de garage",t:()=>"L'ancienne menuiserie est en…",o:()=>[["Bois"],["PVC"],["Aluminium"],["Acier"]]},
- {id:"annee",when:it=>it.bat==="Rénovation",t:()=>"Le bâtiment date de…",h:()=>"Avant 1997, mastics et joints peuvent contenir de l'amiante : un repérage est obligatoire avant la dépose.",o:()=>[["Avant 1997","Repérage amiante avant la dépose"],["1997 ou après"]],one:1},
  {id:"pos",when:it=>it.pose!=="reno",t:()=>"Où se pose la nouvelle menuiserie dans le mur ?",o:()=>[["app","Isolation par l'intérieur"],["tun","Au milieu du mur"],["feu","Dans le creux prévu"],["ite","Isolation par dehors"]],lab:x=>v(x)||x},
  {id:"doub",when:it=>it.pose!=="reno"&&it.pos==="app",t:()=>v("doub")+" ?",h:()=>"De la maçonnerie jusqu'à la face du placo, au bord de l'ouverture. Le fournisseur choisit la tapée.",o:()=>["100 mm","120 mm","140 mm","160 mm","180 mm","200 mm"].map(x=>[x]),grid4:1},
  {id:"vrPose",vw:1,t:()=>"Où se pose le volet roulant ?",o:()=>[["Dans l'ouverture","Entre les murs (tunnel)"],["Sur la façade","Coffre devant le mur (applique)"],["Dans un caisson maçonné","Caché dans le mur, au-dessus"]]},
@@ -565,7 +564,7 @@ function ill(kind,it){const inside=kind==="Li"||kind==="Hi";if(inside)kind=kind[
 let cur3=0;
 
 /* parties du questionnaire : on peut revenir sur n'importe laquelle à tout moment */
-const SECT=[["Fabricant",["fab"]],["Pièce",["piece","mur","dist"]],["Menuiserie",["type"]],["Pose",["bat","bpPose","ep","bpDim","pose","aile","anc","annee","pos","doub","vrPose","vrExist","vbModele","vbPose"]],["Cotes",["L","H","Li","Hi","D","epm","all","appui","seuil"]],["Ouverture",["vant","ouv","ouvP","sens","serv","vbSens"]],["Volet",["vol","vrEnr","volm","volc"]],["Finitions",["bpMod","bpFin","bpSer","mat","ci","ce","vcoul","vitr","sb","air"]],["Photos",["photo"]]];
+const SECT=[["Fabricant",["fab"]],["Pièce",["piece","mur","dist"]],["Menuiserie",["type"]],["Pose",["bat","bpPose","ep","bpDim","pose","aile","anc","pos","doub","vrPose","vrExist","vbModele","vbPose"]],["Cotes",["L","H","Li","Hi","D","epm","all","appui","seuil"]],["Ouverture",["vant","ouv","ouvP","sens","serv","vbSens"]],["Volet",["vol","vrEnr","volm","volc"]],["Finitions",["bpMod","bpFin","bpSer","mat","ci","ce","vcoul","vitr","sb","air"]],["Photos",["photo"]]];
 function secs(it,L,curId){const out=[];SECT.forEach(([n,ids],si)=>{const qs=L.filter(q=>ids.includes(q.id));if(!qs.length)return;const done=qs.every(q=>valTxt(q,it)!==""),cur=qs.some(q=>q.id===curId);out.push(`<button data-a="sec" data-s="${L.indexOf(qs[0])}" class="${cur?"cur":done?"ok":""}">${n}</button>`)});return `<nav class="secs" aria-label="Parties">${out.join("")}<button data-a="rcv" class="rcb">Tout revoir</button></nav>`}
 /* ---------- rendu ---------- */
 const P=$("#phone");
@@ -683,7 +682,6 @@ function blocPD(it){const A='<b class="ask">à vérifier</b>',val=(k,f)=>{const 
  if(it.epm&&it.epm!==DK)add("Épaisseur du mur : "+esc(it.epm)+" mm");
  if(it.air)add("Entrée d'air : "+val("air"));
  if(it.anc)add("Ancienne menuiserie : "+val("anc"));
- if(it.annee)add(it.annee==="Avant 1997"?'<b class="ask">Bâtiment d\'avant 1997 : repérage amiante avant la dépose</b>':"Bâtiment de 1997 ou après");
  if(it.mur&&it.mur!==DK)add("Emplacement : mur "+esc(it.mur.toLowerCase())+(it.dist&&it.dist!==DK?", à "+esc(it.dist)+" mm de l'angle gauche":""));
  const mes=["L","H","Li","Hi","D"].map(k=>{const q=steps(it).find(x=>x.id===k);return q?`<tr><td>${esc(bonT(q,it))}</td><td>${bonV(q,it)}</td></tr>`:""}).join("");
  return `<section class="frep"><div class="fab">${esc((it.fab||"Fabricant à choisir").toUpperCase())}</div>
@@ -731,7 +729,7 @@ function body(q,it){
 
 
 /* ---------- aller vite ---------- */
-const COPYK=["epm","anc","annee","air","vrEnr","bpDim","bpPose","ep","bpMod","bpFin","fab","type","bat","pose","aile","pos","doub","appui","seuil","ouv","ouvP","vol","volm","mat","ci","ce","vcoul","vitr","sb","vrPose","vrExist","vbModele","vbPose"];
+const COPYK=["epm","anc","air","vrEnr","bpDim","bpPose","ep","bpMod","bpFin","fab","type","bat","pose","aile","pos","doub","appui","seuil","ouv","ouvP","vol","volm","mat","ci","ce","vcoul","vitr","sb","vrPose","vrExist","vbModele","vbPose"];
 function newItem(src){const it={no:S.items.length+1,fab:src?src.fab:S.lastFab,L:[],H:[],fini:false,t0:Date.now()};
  if(src){COPYK.forEach(k=>{if(src[k]!=null&&src[k]!==DK)it[k]=src[k]});it._copy=src.no}
  S.items.push(it);cur=S.items.length-1;mode="wz";S.back=null;S.fromRc=false;if(it.fab)V=FABV(it.fab);dir=1;cur3=0;
