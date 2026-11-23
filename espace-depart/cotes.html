@@ -376,10 +376,15 @@ const isFen=it=>/Fenêtre|Châssis fixe/.test(it.type||"");
 const Q=[
  {id:"fab",nodk:0,t:()=>"Quel fabricant ?",h:()=>"Les questions et la fiche prendront ses mots.",o:()=>FABS.map(f=>[f[0],f[1]])},
  {id:"piece",t:()=>"Dans quelle pièce ?",o:()=>["Séjour","Cuisine","Chambre","Salle de bain","WC","Entrée","Garage","Autre"].map(x=>[x])},
+ /* 23/11 (Cyril, go) : place dans la pièce (pour le plan), épaisseur du mur, entrée d'air, ancienne menuiserie + année (amiante) */
+ {id:"mur",t:()=>"Sur quel mur ?",h:()=>"Placez-vous à l'entrée de la pièce, dos à la porte.",o:()=>[["En face","Le mur que l'on voit en entrant"],["À gauche"],["À droite"],["Côté porte","Le mur de la porte d'entrée"]]},
+ {id:"dist",kind:"m1",ml:"Depuis l'angle",t:()=>"À combien de l'angle de gauche ?",h:()=>"Face au mur, de l'angle de gauche jusqu'au bord de l'ouverture. Elle se placera toute seule sur le plan."},
  {id:"type",t:()=>"Qu'est-ce qu'on mesure ?",o:()=>[["Fenêtre","",IC.fen],["Porte-fenêtre","",IC.pf],["Baie coulissante","",IC.baie],["Châssis fixe","",IC.fixe],["Porte d'entrée","",IC.pe],["Porte de service","",IC.ps],["Porte de garage","",IC.garage],["Bloc-porte intérieur","Porte + huisserie",IC.pi],["Volet roulant","Seul, sans fenêtre",IC.vr],["Volets battants","Seuls, sans fenêtre",IC.vb]]},
  {id:"bat",t:()=>"Le bâtiment est…",o:()=>[["Neuf","Construction en cours",IC.neuf],["Rénovation","Il y a déjà une menuiserie",IC.reno]],nodk:1},
  {id:"pose",when:it=>it.bat==="Rénovation"&&it.type!=="Porte de garage",t:()=>"Et l'ancienne menuiserie ?",o:()=>[["reno",v("reno"),v("renoS")],["depose",v("depose"),v("deposeS")]],lab:x=>x==="reno"?v("reno"):x==="depose"?v("depose"):x,one:1},
  {id:"aile",when:it=>it.pose==="reno",t:()=>v("aile")+" ?",h:()=>"La largeur du rebord du nouveau cadre qui cache l'ancien. Si vous ne savez pas, le fournisseur choisira.",o:()=>["30 mm","40 mm","60 mm","75 mm"].map(x=>[x])},
+ {id:"anc",when:it=>it.bat==="Rénovation"&&it.type!=="Porte de garage",t:()=>"L'ancienne menuiserie est en…",o:()=>[["Bois"],["PVC"],["Aluminium"],["Acier"]]},
+ {id:"annee",when:it=>it.bat==="Rénovation",t:()=>"Le bâtiment date de…",h:()=>"Avant 1997, mastics et joints peuvent contenir de l'amiante : un repérage est obligatoire avant la dépose.",o:()=>[["Avant 1997","Repérage amiante avant la dépose"],["1997 ou après"]],one:1},
  {id:"pos",when:it=>it.pose!=="reno",t:()=>"Où se pose la nouvelle menuiserie dans le mur ?",o:()=>[["app","Isolation par l'intérieur"],["tun","Au milieu du mur"],["feu","Dans le creux prévu"],["ite","Isolation par dehors"]],lab:x=>v(x)||x},
  {id:"doub",when:it=>it.pose!=="reno"&&it.pos==="app",t:()=>v("doub")+" ?",h:()=>"De la maçonnerie jusqu'à la face du placo, au bord de l'ouverture. Le fournisseur choisit la tapée.",o:()=>["100 mm","120 mm","140 mm","160 mm","180 mm","200 mm"].map(x=>[x]),grid4:1},
  {id:"vrPose",vw:1,t:()=>"Où se pose le volet roulant ?",o:()=>[["Dans l'ouverture","Entre les murs (tunnel)"],["Sur la façade","Coffre devant le mur (applique)"],["Dans un caisson maçonné","Caché dans le mur, au-dessus"]]},
@@ -391,7 +396,8 @@ const Q=[
  {id:"Li",kind:"m3",vw:1,t:()=>"Largeur du tableau, côté intérieur",h:it=>{const a=minOf(it.L),b=minOf(it.Li);return a&&b&&Math.abs(a-b)>10?"Le tableau "+(b>a?"s'ouvre vers l'intérieur":"se resserre vers l'intérieur")+" : "+Math.abs(a-b)+" mm d'écart avec le dehors.":"Recopié du dehors : changez ce qui diffère."},labs:["En haut","Au milieu","En bas"],ill:"Li"},
  {id:"Hi",kind:"m3",vw:1,t:()=>"Hauteur du tableau, côté intérieur",h:()=>"À gauche, au milieu et à droite, côté intérieur.",labs:["À gauche","Au milieu","À droite"],ill:"Hi"},
  {id:"D",kind:"m3",opt:1,t:()=>"Les 2 diagonales (pour vérifier l'équerre)",h:()=>"D'un coin à l'autre, en croix. Vous pouvez passer.",labs:["Diagonale 1","Diagonale 2"],ill:"D"},
- {id:"all",kind:"m1",when:it=>it.type==="Fenêtre"||it.type==="Châssis fixe",t:()=>"Hauteur entre le sol et le bas de la fenêtre (allège)",h:()=>"Du sol fini jusqu'à l'appui. Si le sol n'est pas encore fait, dites-le dans la remarque.",ill:"all"},
+ {id:"epm",kind:"m1",ml:"Épaisseur",when:it=>!isBP(it),t:()=>"Épaisseur totale du mur",h:()=>"Au bord de l'ouverture, du dehors au dedans, enduits et doublage compris. Elle sert pour la tapée et l'appui."},
+ {id:"all",kind:"m1",ml:"Allège",when:it=>it.type==="Fenêtre"||it.type==="Châssis fixe",t:()=>"Hauteur entre le sol et le bas de la fenêtre (allège)",h:()=>"Du sol fini jusqu'à l'appui. Si le sol n'est pas encore fait, dites-le dans la remarque.",ill:"all"},
  {id:"appui",when:it=>!isPorte(it)&&it.type!=="Porte-fenêtre"&&it.type!=="Baie coulissante",t:()=>"En bas, côté extérieur, il y a…",o:()=>[["Appui avec rejingot","Petite marche en béton"],["Appui sans rejingot","Plat"],["Rien","Brut, à faire"]]},
  {id:"seuil",when:it=>isPorte(it)||it.type==="Porte-fenêtre"||it.type==="Baie coulissante",t:()=>"Au sol, le passage doit être…",o:()=>[["Seuil normal"],["Seuil plat (accès fauteuil)"]],one:1},
  {id:"vant",when:it=>it.type!=="Châssis fixe"&&it.type!=="Porte de garage",t:it=>isVol(it)?"Combien de battants ?":"Combien de parties qui s'ouvrent ?",h:it=>{const l=minOf(it.L);return l?(l<=900?"Avec "+l+" mm de large, 1 partie suffit en général.":"Avec "+l+" mm de large, on met en général 2 parties."):""},o:it=>(it.type==="Volets battants"?["1","2","3 repliables","4 repliables"]:it.type==="Baie coulissante"?["2","3","4"]:isPorte(it)?["1","1 + 1 petite"]:["1","2","3"]).map(x=>[x,x==="1"?"vantail":""]),grid4:1,auto:it=>{const l=minOf(it.L);return l&&!isPorte(it)&&it.type!=="Baie coulissante"?(l<=900?"1":"2"):null}},
@@ -409,6 +415,7 @@ const Q=[
  {id:"ci",t:()=>"Couleur côté intérieur ?",o:()=>COUL,sw:1},
  {id:"ce",t:()=>"Couleur côté extérieur ?",o:it=>[["Comme l'intérieur","",""]].concat(COUL),sw:1},
  {id:"vitr",when:it=>it.type!=="Porte de garage",t:()=>"Quel vitrage ?",h:it=>/Salle de bain|WC/.test(it.piece||"")?"Pour une "+it.piece.toLowerCase()+", on met souvent du dépoli.":"",o:()=>[["Clair"],["Dépoli","On ne voit pas à travers"],["Sécurité","Retarde l'effraction"],["Phonique","Rue bruyante"]],auto:it=>/Salle de bain|WC/.test(it.piece||"")?"Dépoli":null},
+ {id:"air",when:it=>/Séjour|Chambre/.test(it.piece||"")&&!isPorte(it)&&!isVol(it)&&!isBP(it)&&it.type!=="Porte de garage",t:()=>"Une entrée d'air dans le cadre ?",h:()=>"Avec une VMC, le séjour et les chambres en ont une. Elle se commande avec la fenêtre.",o:()=>[["Oui","Grille en haut du cadre"],["Non","Pas de VMC, ou déjà ailleurs"]],one:1},
  {id:"sb",when:it=>it.type==="Porte-fenêtre",t:()=>"Un bas plein (soubassement) ?",o:()=>[["Oui"],["Non","Vitrée jusqu'en bas"]],one:1},
  {id:"bpPose",vw:1,t:()=>"Quand se pose la porte ?",o:()=>[["Au montage de la cloison","L'huisserie se pose avec les rails"],["En fin de chantier","Cloison finie, posée dans l'ouverture"],["En remplacement","On dépose l'ancien bloc-porte"]]},
  {id:"bpDim",vw:1,kind:"bpdim",t:()=>"Quelle dimension de porte ?",h:()=>"Les tailles standard (largeur × hauteur de la porte, en cm). Sinon, écrivez la vôtre en dessous."},
@@ -423,7 +430,7 @@ const FABV=f=>(FABS.find(x=>x[0]===f)||[,,"proclik"])[2];
 const COUL=[["Blanc","RAL 9016","#F1F0EA"],["Gris anthracite","RAL 7016","#383E42"],["Gris clair","RAL 7035","#CBD0CC"],["Noir","RAL 9005","#141414"],["Chêne doré","Plaxé","#B57E43"],["Autre","On l'écrit en remarque","conic-gradient(#F1F0EA 0 33%,#383E42 0 66%,#B8C4B0 0)"]];
 const minOf=a=>{const n=(a||[]).map(Number).filter(x=>x>0);return n.length?Math.min(...n):0};
 const ecart=a=>{const n=(a||[]).map(Number).filter(x=>x>0);return n.length>1?Math.max(...n)-Math.min(...n):0};
-const VOLQ={"Bloc-porte intérieur":["fab","piece","type","bat","bpPose","ep","bpDim","L","H","D","sens","bpMod","bpFin","bpSer","photo"],"Volet roulant":["fab","piece","type","vrPose","vrEnr","vrExist","L","H","Li","Hi","D","volm","volc","mat","vcoul","photo"],"Volets battants":["fab","piece","type","vbModele","vbPose","L","H","D","vant","vbSens","mat","vcoul","photo"]};
+const VOLQ={"Bloc-porte intérieur":["fab","piece","mur","dist","type","bat","bpPose","ep","bpDim","L","H","D","sens","bpMod","bpFin","bpSer","photo"],"Volet roulant":["fab","piece","mur","dist","type","vrPose","vrEnr","vrExist","L","H","Li","Hi","D","volm","volc","mat","vcoul","photo"],"Volets battants":["fab","piece","mur","dist","type","vbModele","vbPose","L","H","D","vant","vbSens","mat","vcoul","photo"]};
 const bpStd=it=>isBP(it)&&/montage|fin/i.test(it.bpPose||"");
 const steps=it=>VOLQ[it.type]?VOLQ[it.type].map(id=>Q.find(q=>q.id===id)).filter(q=>q&&(typeof q.vw!=="function"||q.vw(it))&&!(q.id==="bpDim"&&!bpStd(it))&&!(["L","H","D"].includes(q.id)&&bpStd(it))):Q.filter(q=>!q.vw&&(!q.when||q.when(it)));
 const valTxt=(q,it)=>{const x=it[q.id];if(x===DK)return DK;if(q.id==="D"){const n=(x||[]).filter(Number).length;return n===2?(ecart(x)?"écart "+ecart(x)+" mm":"d'équerre"):"Non relevées"}if(q.kind==="m3"){const m=minOf(x);return m?m+" mm":""}if(q.kind==="m1")return x?x+" mm":"";if(q.kind==="photo")return it.photo?"2 photos":"";if(x==null||x==="")return"";return oL(q,x)};
@@ -558,7 +565,7 @@ function ill(kind,it){const inside=kind==="Li"||kind==="Hi";if(inside)kind=kind[
 let cur3=0;
 
 /* parties du questionnaire : on peut revenir sur n'importe laquelle à tout moment */
-const SECT=[["Fabricant",["fab"]],["Pièce",["piece"]],["Menuiserie",["type"]],["Pose",["bat","bpPose","ep","bpDim","pose","aile","pos","doub","vrPose","vrExist","vbModele","vbPose"]],["Cotes",["L","H","Li","Hi","D","all","appui","seuil"]],["Ouverture",["vant","ouv","ouvP","sens","serv","vbSens"]],["Volet",["vol","vrEnr","volm","volc"]],["Finitions",["bpMod","bpFin","bpSer","mat","ci","ce","vcoul","vitr","sb"]],["Photos",["photo"]]];
+const SECT=[["Fabricant",["fab"]],["Pièce",["piece","mur","dist"]],["Menuiserie",["type"]],["Pose",["bat","bpPose","ep","bpDim","pose","aile","anc","annee","pos","doub","vrPose","vrExist","vbModele","vbPose"]],["Cotes",["L","H","Li","Hi","D","epm","all","appui","seuil"]],["Ouverture",["vant","ouv","ouvP","sens","serv","vbSens"]],["Volet",["vol","vrEnr","volm","volc"]],["Finitions",["bpMod","bpFin","bpSer","mat","ci","ce","vcoul","vitr","sb","air"]],["Photos",["photo"]]];
 function secs(it,L,curId){const out=[];SECT.forEach(([n,ids],si)=>{const qs=L.filter(q=>ids.includes(q.id));if(!qs.length)return;const done=qs.every(q=>valTxt(q,it)!==""),cur=qs.some(q=>q.id===curId);out.push(`<button data-a="sec" data-s="${L.indexOf(qs[0])}" class="${cur?"cur":done?"ok":""}">${n}</button>`)});return `<nav class="secs" aria-label="Parties">${out.join("")}<button data-a="rcv" class="rcb">Tout revoir</button></nav>`}
 /* ---------- rendu ---------- */
 const P=$("#phone");
@@ -673,6 +680,11 @@ function blocPD(it){const A='<b class="ask">à vérifier</b>',val=(k,f)=>{const 
  if(!vol&&it.vol)add("Volet : "+val("vol"));
  if(it.vrEnr)add("Enroulement "+val("vrEnr",x=>esc(x.toLowerCase())));if(it.volm)add("Manœuvre du volet : "+val("volm"));if(it.volc==="G"||it.volc==="D")add("Commande du volet à "+(it.volc==="D"?"droite":"gauche")+" (vue intérieure)");
  if(it.all&&it.all!==DK)add("Allège : "+esc(it.all)+" mm");
+ if(it.epm&&it.epm!==DK)add("Épaisseur du mur : "+esc(it.epm)+" mm");
+ if(it.air)add("Entrée d'air : "+val("air"));
+ if(it.anc)add("Ancienne menuiserie : "+val("anc"));
+ if(it.annee)add(it.annee==="Avant 1997"?'<b class="ask">Bâtiment d\'avant 1997 : repérage amiante avant la dépose</b>':"Bâtiment de 1997 ou après");
+ if(it.mur&&it.mur!==DK)add("Emplacement : mur "+esc(it.mur.toLowerCase())+(it.dist&&it.dist!==DK?", à "+esc(it.dist)+" mm de l'angle gauche":""));
  const mes=["L","H","Li","Hi","D"].map(k=>{const q=steps(it).find(x=>x.id===k);return q?`<tr><td>${esc(bonT(q,it))}</td><td>${bonV(q,it)}</td></tr>`:""}).join("");
  return `<section class="frep"><div class="fab">${esc((it.fab||"Fabricant à choisir").toUpperCase())}</div>
   <div class="pdt"><b>${esc(titre)}</b><b>Haut ${minOf(it.H)||"?"} mm x Larg ${minOf(it.L)||"?"} mm</b><small>Repère ${it.no} · ${esc(it.piece||"")} · quantité 1</small></div>
@@ -695,6 +707,10 @@ function fiche(its){const st=steps;
 const PROS={Li:"Largeur int.",Hi:"Hauteur int.",type:"Menuiserie",bat:"Chantier",pose:"Rénovation",pos:"Type de pose",doub:"Doublage",all:"Allège",appui:"Appui",seuil:"Seuil",vant:"Vantaux",ouv:"Ouverture",ouvP:"Sens d'ouverture",sens:"Ferrage (vue int.)",serv:"Vantail de service",vbSens:"Ferrage (vue ext.)",vol:"Volet",volm:"Manœuvre",volc:"Côté manœuvre",mat:"Matériau",vcoul:"Teinte",ci:"Teinte intérieure",ce:"Teinte extérieure",vitr:"Vitrage",sb:"Soubassement",vrPose:"Pose du coffre",vrExist:"Existant",vbModele:"Modèle",vbPose:"Fixation",ep:"Épaisseur de cloison",bpMod:"Porte",bpFin:"Finition",bpSer:"Serrure",bpPose:"Pose",bpDim:"Dimension de la porte",vrEnr:"Enroulement"};
 function shortT(q,it){if(metier()&&PROS[q.id])return PROS[q.id];return({Li:"Largeur intérieur",Hi:"Hauteur intérieur",vrEnr:"Sens d'enroulement",bpDim:"Dimension de la porte",bpPose:"Pose",ep:"Épaisseur de cloison",bpMod:"Porte",bpFin:"Finition",bpSer:"Serrure",fab:"Fabricant",piece:"Pièce",type:"Menuiserie",bat:"Bâtiment",pose:"Ancienne menuiserie",aile:v("aile"),pos:"Pose dans le mur",doub:"Doublage",L:"Largeur",H:"Hauteur",D:"Diagonales",all:"Allège",appui:"Bas extérieur",seuil:"Seuil",vant:"Parties qui s'ouvrent",ouv:"Ouverture",ouvP:"Ouverture de la porte",sens:"Charnières (vu de l'intérieur)",serv:"Partie avec poignée",vol:"Volet",volm:"Manœuvre du volet",vrPose:"Pose du volet",vrExist:"Volet existant",vbModele:"Modèle",vbPose:"Accroche",vbSens:"Gonds (vu de dehors)",vcoul:"Couleur",volc:"Commande du volet",mat:"Matière",ci:"Couleur intérieure",ce:"Couleur extérieure",vitr:"Vitrage",sb:"Soubassement",photo:"Photos"})[q.id]||q.id}
 function bonT(q,it){if(["L","H","Li","Hi"].includes(q.id))return q.t(it);if(q.id==="pos")return"Type de pose";if(q.id==="pose")return"Rénovation";if(q.id==="doub")return v("doub");if(q.id==="sens")return v("sens").replace("…","");if(q.id==="vant")return"Vantaux";return shortT(q,it)}
+/* garde-fou (Cyril 23/11) : une cote qui paraît impossible (un zéro oublié, un chiffre en trop) est signalée tout de suite */
+const LIM={L:[300,6000],H:[300,6000],Li:[300,6000],Hi:[300,6000],D:[300,8000],epm:[80,1200],all:[0,2500],dist:[0,15000]};
+const chk=(q,a)=>{const r=LIM[q.id];if(!r)return"";const n=(Array.isArray(a)?a:[]).map(Number).filter(x=>x>0);const lo=n.find(x=>x<r[0]),hi=n.find(x=>x>r[1]);
+ if(lo)return `${lo} mm, soit ${(lo/10).toLocaleString("fr-FR")} cm : ça paraît très petit. Un zéro oublié ?`;if(hi)return `${hi} mm, soit ${(hi/1000).toLocaleString("fr-FR")} m : ça paraît très grand. Un chiffre en trop ?`;return""};
 const alertTxt=(q,e)=>`Écart de ${e} mm entre vos mesures : l'ouverture n'est pas ${q.id==="D"?"d'équerre":"droite"}. On le signale au fournisseur.`;
 function body(q,it){
  if(q.kind==="bpdim"){const cur=it.bpDim||"",m=cur.match(/^Autre : (\d+) × (\d+)/);
@@ -704,9 +720,9 @@ function body(q,it){
  if(q.kind==="m3"){if((q.id==="Li"||q.id==="Hi")&&!(it[q.id]||[]).some(Number)){const src=minOf(it[q.id==="Li"?"L":"H"]);if(src){it[q.id]=[src,src,src].map(String);(it._auto=it._auto||{})[q.id]=[true,true,true]}}const a=it[q.id]=Array.isArray(it[q.id])?it[q.id]:[];const m=minOf(a),e=ecart(a);
   return `<div class="meas">${q.labs.map((l,i)=>`<div class="mrow ${i===cur3?"cur":""}"><i>${i+1}</i><label for="m${i}">${l}</label><input id="m${i}" inputmode="numeric" pattern="[0-9]*" data-m="${i}" enterkeyhint="next" class="${(it._auto&&it._auto[q.id]&&it._auto[q.id][i])?"auto":""}" value="${esc(a[i]||"")}" placeholder="mm"><span>mm</span></div>`).join("")}</div>
   <div class="keep" ${m&&q.id!=="D"?"":"hidden"}><span>On garde la plus petite</span><b>${m} mm</b></div>
-  <div class="alert" ${e>10?"":"hidden"}>${alertTxt(q,e)}</div>
+  <div class="alert" ${e>10||chk(q,a)?"":"hidden"}>${chk(q,a)||alertTxt(q,e)}</div>
   <button class="dkl" data-v="${DK}">${DK}, je mesurerai plus tard</button>`}
- if(q.kind==="m1")return `<div class="meas"><div class="mrow cur"><i>↕</i><label for="m0">Allège</label><input id="m0" inputmode="numeric" data-m1="1" value="${esc(it.all||"")}" placeholder="mm"><span>mm</span></div></div><div class="ch one"><button class="dk" data-v="${DK}">${DK}</button></div>`;
+ if(q.kind==="m1")return `<div class="meas"><div class="mrow cur"><i>↕</i><label for="m0">${esc(q.ml||"Mesure")}</label><input id="m0" inputmode="numeric" data-m1="${q.id}" value="${esc(it[q.id]&&it[q.id]!==DK?it[q.id]:"")}" placeholder="mm"><span>mm</span></div></div><div class="alert" ${chk(q,[it[q.id]])?"":"hidden"}>${chk(q,[it[q.id]])}</div><div class="ch one"><button class="dk" data-v="${DK}">${DK}</button></div>`;
  if(q.kind==="photo"){const ph=it.ph||{};return `<div class="phx">${(isBP(it)?[["int","Côté poussant"],["ext","Côté tirant"]]:[["int","Intérieur"],["ext","Extérieur"]]).map(([k,l])=>`<button data-cam="${k}" class="${ph[k]?"on":""}">${ph[k]?`<img src="${ph[k]}" alt="">`:CAMI}<b>${ph[k]?l+" ✓":l}</b></button>`).join("")}</div><p style="margin:0;font-size:12.5px;color:var(--muted)">Touchez pour ouvrir l'appareil photo.${RID?"":" Si l'appareil n'est pas disponible, la maquette met une photo d'exemple."}</p>`}
  const o=q.o(it),val=it[q.id];
  const pics=PICQ.includes(q.id);
@@ -715,7 +731,7 @@ function body(q,it){
 
 
 /* ---------- aller vite ---------- */
-const COPYK=["vrEnr","bpDim","bpPose","ep","bpMod","bpFin","fab","type","bat","pose","aile","pos","doub","appui","seuil","ouv","ouvP","vol","volm","mat","ci","ce","vcoul","vitr","sb","vrPose","vrExist","vbModele","vbPose"];
+const COPYK=["epm","anc","annee","air","vrEnr","bpDim","bpPose","ep","bpMod","bpFin","fab","type","bat","pose","aile","pos","doub","appui","seuil","ouv","ouvP","vol","volm","mat","ci","ce","vcoul","vitr","sb","vrPose","vrExist","vbModele","vbPose"];
 function newItem(src){const it={no:S.items.length+1,fab:src?src.fab:S.lastFab,L:[],H:[],fini:false,t0:Date.now()};
  if(src){COPYK.forEach(k=>{if(src[k]!=null&&src[k]!==DK)it[k]=src[k]});it._copy=src.no}
  S.items.push(it);cur=S.items.length-1;mode="wz";S.back=null;S.fromRc=false;if(it.fab)V=FABV(it.fab);dir=1;cur3=0;
@@ -741,7 +757,7 @@ function spoken2mm(t){const s=nrm(t);let m=s.match(/(\d+)[,.](\d{1,3})\s*(m|metr
  if(/metre/.test(s)){const[a,b]=s.split(/metres?/);const A=words2n(a),B=words2n(b||"");if(A!=null)return A*1000+(B!=null?(B<100?B*10:B):0)}
  const n=words2n(s);return n}
 function micHint(){const it=cur!=null?S.items[cur]:null;if(!it||mode!=="wz")return"";const q=steps(it)[step];if(!q)return"";
- if(q.kind==="m3")return"Dites la mesure : « mille deux cent deux ». Puis « suivant ».";if(q.kind==="m1")return"Dites l'allège : « neuf cent cinquante ».";if(q.kind==="photo")return"Dites « photo intérieur » ou « suivant ».";
+ if(q.kind==="m3")return"Dites la mesure : « mille deux cent deux ». Puis « suivant ».";if(q.kind==="m1")return"Dites la mesure : « neuf cent cinquante ».";if(q.kind==="photo")return"Dites « photo intérieur » ou « suivant ».";
  const o=q.o(it).slice(0,2).map(([x])=>"« "+oL(q,x)+" »").join(" ou ");return"Dites "+o+", ou « je ne sais pas ».";}
 function heard(t,final){DIC.txt=t;const el=P.querySelector(".heard");if(el)el.firstChild.textContent="« "+t+" »";if(final)applySpeech(t)}
 function applySpeech(t){const it=cur!=null?S.items[cur]:null;if(!it||mode!=="wz")return;const q=steps(it)[step];if(!q)return;const s=nrm(t);
@@ -829,13 +845,13 @@ P.addEventListener("click",e=>{
 });
 P.addEventListener("input",e=>{
  const t=e.target,it=S.items[cur];if(!it)return;
- if(t.dataset.m1){it.all=t.value.replace(/\D/g,"");return}
+ if(t.dataset.m1){const q=steps(it)[step];it[t.dataset.m1]=t.value.replace(/\D/g,"");const al=P.querySelector(".alert"),m=chk(q,[it[t.dataset.m1]]);if(al){al.hidden=!m;al.textContent=m}return}
  if(t.dataset.m!=null){const q=steps(it)[step];if(!Array.isArray(it[q.id]))it[q.id]=[];const val=t.value.replace(/\D/g,""),k=+t.dataset.m,au=(it._auto=it._auto||{})[q.id]=it._auto[q.id]||[];it[q.id][k]=val;au[k]=false;t.classList.remove("auto");
   /* 1re mesure tapée : les autres prennent la même valeur, on ne change que celles qui diffèrent */
   if(k===0)for(let j=1;j<q.labs.length;j++){if(!it[q.id][j]||au[j]){it[q.id][j]=val;au[j]=!!val;const f=P.querySelector("#m"+j);if(f){f.value=val;f.classList.toggle("auto",!!val)}}}
   const m=minOf(it[q.id]),e=ecart(it[q.id]),keep=P.querySelector(".keep"),al=P.querySelector(".alert"),go=P.querySelector('[data-a="next"]');
   if(keep){keep.hidden=!m||q.id==="D";keep.querySelector("b").textContent=m+" mm"}
-  if(al){al.hidden=!(e>10);al.textContent=alertTxt(q,e)}
+  if(al){const g=chk(q,it[q.id]);al.hidden=!(e>10||g);al.textContent=g||alertTxt(q,e)}
   if(go){go.disabled=!m&&!q.opt;go.textContent=q.opt&&!m?"Passer":"Continuer"}
 }
 });
