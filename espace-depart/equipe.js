@@ -85,57 +85,106 @@ ecoute.push(function(){if(!pv.hidden)rend()});
 /* 24/11 12h (Cyril : « pas assez clair, un peu brouillon, surtout pour les salariés ») : deux écrans, deux besoins.
    PATRON = le planning d'équipe classique : une ligne par salarié, une colonne par jour, le chantier écrit en couleur dans la case
    (+ ce qu'il fait), case rouge = rien de prévu, ligne « Il manque » en bas ; le Mois = le même tableau qui glisse.
-   SALARIÉ = « Ma semaine » : une carte par jour (où, adresse + Itinéraire, heures, ce que je fais, avec qui). */
-var SEL=null,VUE='sem',MO=0,QUI=EQ[0].n;
+   SALARIÉ = « Ma semaine » : une carte par jour (où, adresse + Itinéraire, heures, ce que je fais, avec qui).
+   24/11 14h (Cyril : « inspire-toi des grandes entreprises ») : comme Skello, Connecteam, When I Work, Obat :
+   1) bascule « Par personne / Par chantier » ; 2) BROUILLON : ce qui a changé depuis la dernière publication est hachuré,
+   le salarié ne voit que la version publiée, « Publier et prévenir » n'envoie que les changements ;
+   3) « Copier la semaine d'avant » ; 4) heures de chacun au bout de sa ligne (8 h par jour, contrat 39 h, courant dans le bâtiment : exemple à régler). */
+var SEL=null,VUE='sem',MO=0,QUI=EQ[0].n,BY='p',ANNUL=null,CONTRAT=39;
 function court(v){if(!v)return '';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';var c=(X.CH||{})[v];if(!c)return v;
   var w=(c.n||'').replace(/^(M\.|Mme|Cabinet|SCI|Maison)\s+/,'').split(/[\s·,]+/)[0];return w.length>8?w.slice(0,7)+'.':w}
-function heures(id,k){var c=(X.CH||{})[id],e=(X.EV||[]).filter(function(e){var x=e.x||{};return e.k==='run'&&e.d===k&&(x.ch===id||(id==='alpes'&&x.ch===1)||(c&&String(e.t||'').indexOf(c.n)>-1))})[0];
-  return e?e.s.replace(':','h')+' – '+e.e.replace(':','h'):'8h00 – 17h00'}
+function evDe(id,k){var c=(X.CH||{})[id];return (X.EV||[]).filter(function(e){var x=e.x||{};return e.k==='run'&&e.d===k&&(x.ch===id||(id==='alpes'&&x.ch===1)||(c&&String(e.t||'').indexOf(c.n)>-1))})[0]}
+function heures(id,k){var e=evDe(id,k);return e?e.s.replace(':','h')+' – '+e.e.replace(':','h'):'8h00 – 17h00'}
+/* heures travaillées d'un jour : horaires du chantier moins 1 h de pause, sinon 8 h ; bureau 8 h ; rien / repos 0 */
+function hJour(v,k){if(!v||v==='repos')return 0;var e=v==='bureau'?null:evDe(v,k);if(!e)return 8;
+  function m(s){var a=s.split(':');return +a[0]*60+(+a[1]||0)}var n=(m(e.e)-m(e.s))/60;return n>6?n-1:n}
+function hTxt(n){return (Math.round(n*2)/2).toString().replace('.',',')+' h'}
+
+/* ---------- brouillon / publié ---------- */
+function val(k,n){var v=get(k,n);return v?v+'|'+taches(k,n).join(','):''}
+if(!S.pub){S.pub={};Object.keys(S.jr).forEach(function(k){var o=S.pub[k]={};EQ.forEach(function(p){o[p.n]=val(k,p.n)})});ecrit()}
+function pubVal(k,n){var o=S.pub[k];return o&&o[n]!=null?o[n]:''}
+function brouillon(k,n){return val(k,n)!==pubVal(k,n)}
+/* ce que voit le salarié = la version publiée */
+function pGet(k,n){return pubVal(k,n).split('|')[0]}
+function pTaches(k,n){var t=pubVal(k,n).split('|')[1];return t?t.split(','):[]}
+function pQui(id,k){return EQ.filter(function(p){return pGet(k,p.n)===id})}
+function changes(K){var R=[];K.forEach(function(k){EQ.forEach(function(p){if(brouillon(k,p.n))R.push([k,p.n])})});return R}
+function publier(K){var C=changes(K),N={};C.forEach(function(x){(S.pub[x[0]]=S.pub[x[0]]||{})[x[1]]=val(x[0],x[1]);N[x[1]]=1});ecrit();return Object.keys(N)}
+
 function choix(){return '<div class="seg eqv" role="tablist" aria-label="Vue de l\'équipe">'+[['sem','Semaine'],['mois','Mois'],['sal','Ce que voit un salarié']].map(function(x){return '<button type="button" role="tab" data-vue="'+x[0]+'" aria-selected="'+(VUE===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
+function parQui(){return '<div class="eqby" role="group" aria-label="Lire le tableau"><span>Lire par</span>'+[['p','Personne'],['c','Chantier']].map(function(x){return '<button type="button" data-by="'+x[0]+'" aria-pressed="'+(BY===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
 function nav(titre,cle){return '<div class="cal-top"><h3>'+titre+'</h3><div class="cal-nav"><button class="nb" data-'+cle+'="-1" aria-label="Avant">‹</button><button data-'+cle+'="0">Aujourd\'hui</button><button class="nb" data-'+cle+'="1" aria-label="Après">›</button></div></div>'}
 function cap(t){return t.replace(/^./,function(x){return x.toUpperCase()})}
-/* le tableau : K = liste de dates ; large = case avec la tâche */
-function tableau(K,large){var CHs=chantiers(),T=iso(auj());
-  var h='<div class="eqt'+(large?' large':' serre')+'"><table><thead><tr><th class="eqt-n"></th>'+K.map(function(k){var x=dte(k),we=!(x.getDay()%6);
-    return '<th class="'+(k===T?'tdy':'')+(we?' we':'')+'"><small>'+JC[x.getDay()].replace('.','')+'</small><b>'+x.getDate()+'</b></th>'}).join('')+'</tr></thead><tbody>';
-  h+=EQ.map(function(p){return '<tr><th class="eqt-n"><b>'+p.n+'</b><small>'+p.r+'</small></th>'+K.map(function(k){var v=get(k,p.n),c=(X.CH||{})[v],we=!(dte(k).getDay()%6),t=c?taches(k,p.n):[];
-      if(we&&!v)return '<td class="we"></td>';
-      if(!v&&k<T)return '<td><span class="eqc passe"></span></td>';
-      return '<td><button type="button" class="eqc'+(c?' ch':v?' gris':' vide')+(k===T?' tdy':'')+'" data-eqp="'+p.n+'" data-k="'+k+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+p.n+', '+jourLong(k)+' : '+esc(nomCase(v))+'">'+
-        (v?'<b>'+esc(court(v))+'</b>'+(large&&t.length?'<small>'+esc(t[0].toLowerCase())+(t.length>1?' +'+(t.length-1):'')+'</small>':''):'<b>+</b>'+(large?'<small>à placer</small>':''))+'</button></td>'}).join('')+'</tr>'}).join('');
+function tete(K,T,fin){return '<thead><tr><th class="eqt-n"></th>'+K.map(function(k){var x=dte(k),we=!(x.getDay()%6);
+    return '<th class="'+(k===T?'tdy':'')+(we?' we':'')+'"><small>'+JC[x.getDay()].replace('.','')+'</small><b>'+x.getDate()+'</b></th>'}).join('')+(fin?'<th class="eqt-h"><small>Heures</small></th>':'')+'</tr></thead>'}
+function legende(CHs,br){return '<div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="vd"></i>Rien de prévu</span>'+(br?'<span><i class="hb"></i>Pas encore publié</span>':'')+'</div>'}
+/* le tableau par personne : K = liste de dates ; large = case avec la tâche + heures au bout */
+function tableau(K,large){var CHs=chantiers(),T=iso(auj()),br=0;
+  var h='<div class="eqt'+(large?' large':' serre')+'"><table>'+tete(K,T,large)+'<tbody>';
+  h+=EQ.map(function(p){var tot=0;return '<tr><th class="eqt-n"><b>'+p.n+'</b><small>'+p.r+'</small></th>'+K.map(function(k){var v=get(k,p.n),c=(X.CH||{})[v],we=!(dte(k).getDay()%6),t=c?taches(k,p.n):[],b=brouillon(k,p.n);
+      tot+=hJour(v,k);if(b)br++;
+      if(we&&!v&&!b)return '<td class="we"></td>';
+      return '<td><button type="button" class="eqc'+(c?' ch':v?' gris':' vide')+(k===T?' tdy':'')+(b?' br':'')+'" data-eqp="'+p.n+'" data-k="'+k+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+p.n+', '+jourLong(k)+' : '+esc(nomCase(v))+(b?' (pas encore publié)':'')+'">'+
+        (v?'<b>'+esc(court(v))+'</b>'+(large&&t.length?'<small>'+esc(t[0].toLowerCase())+(t.length>1?' +'+(t.length-1):'')+'</small>':''):'<b>+</b>'+(large?'<small>à placer</small>':''))+'</button></td>'}).join('')+
+      (large?'<td class="eqt-h'+(tot>CONTRAT?' sup':tot<CONTRAT?' moins':'')+'"><b>'+hTxt(tot)+'</b><small>'+(tot>CONTRAT?'+'+hTxt(tot-CONTRAT)+' sup.':'sur '+CONTRAT+' h')+'</small></td>':'')+'</tr>'}).join('');
   /* ligne « il manque » */
   var lm=K.map(function(k){var L=CHs.filter(function(c){return qui(c.id,k).length<besoin(c.id,k)});
     return '<td>'+L.map(function(c){var m=besoin(c.id,k)-qui(c.id,k).length;return '<button type="button" class="eqm" data-eqc="'+c.id+'" data-k="'+k+'" style="--cc:'+couleur(c.id)+'">'+esc(court(c.id))+' +'+m+'</button>'}).join('')+'</td>'});
-  if(lm.join('').indexOf('eqm')>-1)h+='<tr class="eqt-m"><th class="eqt-n"><b>Il manque</b></th>'+lm.join('')+'</tr>';
-  h+='</tbody></table></div>';
-  h+='<div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="vd"></i>Rien de prévu</span></div>';
+  if(lm.join('').indexOf('eqm')>-1)h+='<tr class="eqt-m"><th class="eqt-n"><b>Il manque</b></th>'+lm.join('')+(large?'<td></td>':'')+'</tr>';
+  h+='</tbody></table></div>'+legende(CHs,br);
   return h}
-function rendSem(){var K=[0,1,2,3,4].map(kj),M0=dte(K[0]),env=S.env[kj(0)],h='';
-  h+=nav(titreSem(),'wk');
-  h+='<p class="hint eqt-hint">Touchez une case pour changer où va la personne et ce qu\'elle fait.</p>'+tableau(K,true);
-  h+='<button type="button" class="btn go eq-env" id="eq-env"><span class="lab"><span>'+(env?'Renvoyer le planning à l\'équipe':'Envoyer le planning à l\'équipe')+'</span></span></button>';
-  h+='<p class="hint" style="text-align:center">'+(env?'Envoyé : chacun voit sa semaine sur son téléphone.':'Chacun reçoit sa semaine sur son téléphone (voir « Ce que voit un salarié »).')+'</p>';
+/* le même tableau par chantier : une ligne par chantier, les prénoms dans la case, rouge s'il manque du monde */
+function tableauCh(K,large){var CHs=chantiers(),T=iso(auj());
+  var h='<div class="eqt bych'+(large?' large':' serre')+'"><table>'+tete(K,T,false)+'<tbody>';
+  h+=CHs.map(function(c){return '<tr><th class="eqt-n"><b><i style="background:'+couleur(c.id)+'"></i>'+esc(court(c.id))+'</b><small>'+esc(c.v||'')+'</small></th>'+K.map(function(k){var Q=qui(c.id,k),B=besoin(c.id,k),m=B-Q.length,we=!(dte(k).getDay()%6),b=Q.some(function(p){return brouillon(k,p.n)});
+      if(!Q.length&&B<=0)return we?'<td class="we"></td>':'<td><button type="button" class="eqc rien" data-eqc="'+c.id+'" data-k="'+k+'" aria-label="'+esc(c.n)+', '+jourLong(k)+' : rien de prévu"></button></td>';
+      return '<td><button type="button" class="eqc ch'+(m>0?' man':'')+(k===T?' tdy':'')+(b?' br':'')+'" data-eqc="'+c.id+'" data-k="'+k+'" style="--cc:'+couleur(c.id)+'" aria-label="'+esc(c.n)+', '+jourLong(k)+' : '+(Q.map(function(p){return p.n}).join(', ')||'personne')+(m>0?', il manque '+m:'')+'">'+
+        (large?Q.map(function(p){return '<small class="nm">'+p.n+'</small>'}).join(''):'<b>'+Q.length+'</b>')+(m>0?'<em>+'+m+(large?'<span> à trouver</span>':'')+'</em>':'')+'</button></td>'}).join('')+'</tr>'}).join('');
+  /* personne de libre ce jour-là */
+  h+='<tr class="eqt-m"><th class="eqt-n"><b>Pas placé</b></th>'+K.map(function(k){var we=!(dte(k).getDay()%6),P=we?[]:EQ.filter(function(p){return !get(k,p.n)});
+    if(!large)return '<td>'+(P.length?'<button type="button" class="eqm" data-eqp="'+P[0].n+'" data-k="'+k+'" aria-label="'+P.length+' pas placé'+(P.length>1?'s':'')+'">'+P.length+'</button>':'')+'</td>';
+    return '<td>'+P.map(function(p){return '<button type="button" class="eqm" data-eqp="'+p.n+'" data-k="'+k+'">'+p.n+'</button>'}).join('')+'</td>'}).join('')+'</tr>';
+  h+='</tbody></table></div>'+legende(CHs,0).replace('Rien de prévu','Contour rouge : il manque du monde');
+  return h}
+function rendSem(){var K=[0,1,2,3,4].map(kj),C=changes(K),h='';
+  h+=nav(titreSem(),'wk')+parQui();
+  h+='<p class="hint eqt-hint">'+(BY==='c'?'Touchez une case pour choisir qui va sur ce chantier ce jour-là.':'Touchez une case pour changer où va la personne et ce qu\'elle fait.')+'</p>';
+  h+=BY==='c'?tableauCh(K,true):tableau(K,true);
+  h+='<div class="eq-act"><button type="button" class="btn" id="eq-copie"><span class="lab"><span>Copier la semaine d\'avant</span></span></button>'+(ANNUL&&ANNUL.wk===WK?'<button type="button" class="btn" id="eq-annul"><span class="lab"><span>Annuler la copie</span></span></button>':'')+'</div>';
+  if(C.length){var N={};C.forEach(function(x){N[x[1]]=1});N=Object.keys(N);
+    h+='<button type="button" class="btn go eq-env" id="eq-pub"><span class="lab"><span>Publier et prévenir ('+C.length+' changement'+(C.length>1?'s':'')+')</span></span></button>';
+    h+='<p class="hint" style="text-align:center">Les cases hachurées ne sont pas encore publiées : '+N.join(', ')+(N.length>1?' ne voient':' ne voit')+' pas encore ces changements. Seuls '+(N.length>1?'eux seront prévenus':'lui sera prévenu')+'.</p>'}
+  else h+='<p class="eq-ok">✓ Tout est publié : chacun voit sa semaine sur son téléphone.</p>';
   return h}
 function rendMois(){var b=new Date(auj());b.setDate(1);b.setMonth(b.getMonth()+MO);var mm=b.getMonth(),K=[],x=new Date(b);
   while(x.getMonth()===mm){K.push(iso(x));x=plus(x,1)}
-  return nav(cap(MOIS[mm])+' <span>'+b.getFullYear()+'</span>','mo')+'<p class="hint eqt-hint">Faites glisser le tableau pour voir tout le mois.</p>'+tableau(K,false)}
-/* ---------- ce que voit un salarié ---------- */
+  return nav(cap(MOIS[mm])+' <span>'+b.getFullYear()+'</span>','mo')+parQui()+'<p class="hint eqt-hint">Faites glisser le tableau pour voir tout le mois.</p>'+(BY==='c'?tableauCh(K,false):tableau(K,false))}
+/* ---------- ce que voit un salarié (version publiée seulement) ---------- */
 function rendSal(){var T=iso(auj()),J=[],x=auj(),h='';while(J.length<5){if(x.getDay()%6)J.push(iso(x));x=plus(x,1)}
   h+='<div class="eqs-qui"><span>Voir comme</span>'+EQ.map(function(p){return '<button type="button" data-qui="'+p.n+'" aria-pressed="'+(QUI===p.n)+'">'+p.n+'</button>'}).join('')+'</div>';
   h+='<div class="eqs-tel"><div class="eqs-top"><small>Espace de '+QUI+'</small><b>Ma semaine</b></div>';
-  h+=J.map(function(k){var v=get(k,QUI),c=(X.CH||{})[v],t=taches(k,QUI),avec=c?qui(v,k).filter(function(p){return p.n!==QUI}).map(function(p){return p.n}):[],jt=k===T?'Aujourd\'hui':k===iso(plus(auj(),1))?'Demain':cap(jourLong(k).split(' ')[0]);
+  h+=J.map(function(k){var v=pGet(k,QUI),c=(X.CH||{})[v],t=pTaches(k,QUI),avec=c?pQui(v,k).filter(function(p){return p.n!==QUI}).map(function(p){return p.n}):[],jt=k===T?'Aujourd\'hui':k===iso(plus(auj(),1))?'Demain':cap(jourLong(k).split(' ')[0]);
     var hd='<div class="eqs-j">'+(k===T||k===iso(plus(auj(),1))?'<b>'+jt+'</b> · '+jourLong(k):'<b>'+cap(jourLong(k))+'</b>')+'</div>';
     if(!c)return hd+'<div class="eqs-c gris"><b>'+(v==='bureau'?'Au bureau':v==='repos'?'Repos':'Rien de prévu pour l\'instant')+'</b>'+(v?'':'<small>Votre patron vous préviendra.</small>')+'</div>';
     return hd+'<div class="eqs-c" style="--cc:'+couleur(v)+'"><div class="eqs-h"><i></i><span><b>'+esc(c.n)+'</b><small>'+esc(c.v||'')+' · '+heures(v,k)+'</small></span></div>'+
       '<div class="eqs-l"><span>À faire</span><b>'+(t.length?esc(t.join(', ')):'Voir avec le chef')+'</b></div>'+
       '<div class="eqs-l"><span>Avec</span><b>'+(avec.length?avec.join(', '):'Seul')+'</b></div>'+
       '<div class="eqs-b"><button type="button" class="eqs-it" data-itin="'+esc(c.v||'')+'">Itinéraire</button>'+(k===T?'<button type="button" class="eqs-ok">J\'ai vu ✓</button>':'')+'</div></div>'}).join('');
-  h+='</div><p class="hint" style="text-align:center">C\'est l\'écran que reçoit '+QUI+' sur son téléphone : pas le planning de toute l\'équipe, seulement ses jours.</p>';
+  var br=changes(J).filter(function(x){return x[1]===QUI}).length;
+  h+='</div><p class="hint" style="text-align:center">C\'est l\'écran que reçoit '+QUI+' sur son téléphone : pas le planning de toute l\'équipe, seulement ses jours'+(br?', et seulement ce qui est publié ('+br+' changement'+(br>1?'s':'')+' en brouillon pour '+QUI+')':'')+'.</p>';
   return h}
 function rend(){var h=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
   h+=VUE==='mois'?rendMois():VUE==='sal'?rendSal():rendSem();
   pv.innerHTML=h;
   var td=pv.querySelector('.eqt.serre th.tdy');if(td){var sc=td.closest('.eqt');sc.scrollLeft=Math.max(0,td.offsetLeft-sc.clientWidth/2)}}
+/* copier la semaine d'avant (affectations + tâches), avec « Annuler la copie » */
+function copier(){var K=[0,1,2,3,4].map(kj),A=K.map(function(k){return iso(plus(dte(k),-7))});
+  if(!A.some(function(a){return EQ.some(function(p){return get(a,p.n)})}))return X.toast('Rien à copier','La semaine d\'avant est vide.');
+  ANNUL={wk:WK,jr:{},ta:{}};K.forEach(function(k,i){ANNUL.jr[k]=JSON.parse(JSON.stringify(S.jr[k]||{}));ANNUL.ta[k]=JSON.parse(JSON.stringify(S.ta[k]||{}));
+    var o=S.jr[k]={},t=S.ta[k]={};EQ.forEach(function(p){o[p.n]=get(A[i],p.n);var x=(S.ta[A[i]]||{})[p.n];if(x)t[p.n]=x.slice()})});
+  ecrit();bouge();rend();X.toast('Semaine d\'avant copiée','Rien n\'est envoyé tant que vous n\'avez pas publié.')}
+function annuler(){if(!ANNUL)return;Object.keys(ANNUL.jr).forEach(function(k){S.jr[k]=ANNUL.jr[k];S.ta[k]=ANNUL.ta[k]});ANNUL=null;ecrit();bouge();rend();X.toast('Copie annulée','')}
 
 /* ---------- toucher un jour d'un chantier : qui vient ---------- */
 function caseCh(id,k){var c=(X.CH||{})[id];
@@ -163,7 +212,10 @@ pv.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)r
   if(b.classList.contains('eqs-ok')){b.textContent='Vu ✓';b.disabled=true;X.toast('Le patron voit que c\'est lu','« ✓ vu » à côté du prénom (démo).');return}
   if(b.dataset.eqc)return caseCh(b.dataset.eqc,b.dataset.k);
   if(b.dataset.eqp)return caseP(b.dataset.eqp,b.dataset.k);
-  if(b.id==='eq-env'){S.env[kj(0)]=true;ecrit();rend();X.toast('Planning envoyé à l\'équipe','Chacun voit sa semaine sur son téléphone (exemple).')}});
+  if(b.dataset.by){BY=b.dataset.by;return rend()}
+  if(b.id==='eq-copie')return copier();
+  if(b.id==='eq-annul')return annuler();
+  if(b.id==='eq-pub'){var N=publier([0,1,2,3,4].map(kj));ANNUL=null;rend();X.toast('Planning publié','Prévenu'+(N.length>1?'s':'')+' : '+N.join(', ')+'. Seulement les changements, pas toute la semaine (exemple).')}});
 
 var st=d.createElement('style');
 st.textContent=
@@ -243,6 +295,20 @@ st.textContent=
  '#p-equipe .eqs-h{display:flex;align-items:flex-start;gap:10px}#p-equipe .eqs-h i{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--cc)}#p-equipe .eqs-h span{display:flex;flex-direction:column}#p-equipe .eqs-h b{font-size:18px}#p-equipe .eqs-h small{font-size:13.5px;color:var(--muted)}'+
  '#p-equipe .eqs-l{display:flex;gap:10px;padding:8px 0 0 22px;font-size:14.5px}#p-equipe .eqs-l span{flex:none;width:52px;color:var(--muted);font-size:13px;padding-top:1px}'+
  '#p-equipe .eqs-b{display:flex;gap:8px;margin:12px 0 0 22px}#p-equipe .eqs-b button{min-height:42px;padding:0 18px;border-radius:99px;font:700 14px var(--f,inherit)}#p-equipe .eqs-it{background:var(--n1-nuit,#1B2440);color:#fff;border:0}#p-equipe .eqs-ok{background:none;border:1.5px solid var(--line);color:var(--fg)}'+
+ '#p-equipe .eqby{display:flex;align-items:center;gap:6px;margin:0 0 10px}#p-equipe .eqby span{font-size:13px;color:var(--muted);margin-right:2px}'+
+ '#p-equipe .eqby button{min-height:36px;padding:0 14px;border-radius:99px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);font:700 13.5px var(--f,inherit)}#p-equipe .eqby button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440);color:#fff;box-shadow:none}'+
+ '#p-equipe .eqc.br{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.42) 0 4px,transparent 4px 9px)}#p-equipe .eqc.gris.br,#p-equipe .eqc.vide.br{background-image:repeating-linear-gradient(135deg,var(--line) 0 3px,transparent 3px 8px)}'+
+ '#p-equipe .eqc.br::after{content:"";position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--n1-laiton,#B8925A);box-shadow:0 0 0 1.5px #fff}#p-equipe .eqc{position:relative}'+
+ '#p-equipe .eqw-leg i.hb{width:12px;height:10px;border-radius:3px;background:var(--k-run,#888) repeating-linear-gradient(135deg,rgba(255,255,255,.5) 0 3px,transparent 3px 6px)}'+
+ '#p-equipe .eqt th.eqt-h{background:none;box-shadow:none;width:58px}#p-equipe .eqt td.eqt-h{text-align:center;width:58px}#p-equipe td.eqt-h b{display:block;font-size:15px}#p-equipe td.eqt-h small{display:block;font-size:10.5px;color:var(--muted);white-space:nowrap}'+
+ '#p-equipe td.eqt-h.sup b,#p-equipe td.eqt-h.sup small{color:var(--n1-laiton,#A8823F)}#p-equipe td.eqt-h.moins small{color:var(--muted)}@media (max-width:699px){#p-equipe .eqc em span{display:none}}'+
+ '#p-equipe .bych .eqt-n b{display:flex!important;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#p-equipe .bych .eqt-n b i{flex:none;width:9px;height:9px;border-radius:50%}#p-equipe .bych tbody .eqt-n small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+ '#p-equipe .eqc .nm{font-size:11.5px;font-weight:700;opacity:1}#p-equipe .eqc em{font-style:normal;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:99px;background:#fff;color:var(--cor,#B4472F);margin-top:2px;white-space:nowrap}'+
+ '#p-equipe .eqc.man{box-shadow:0 0 0 2px var(--cor,#B4472F)}#p-equipe .eqc.rien{background:none;border:1.5px dashed var(--line);min-height:40px}'+
+ '#p-equipe .eqt-m .eqm:not([style]){border-color:var(--line);color:var(--fg)}'+
+ '#p-equipe .eq-act{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}#p-equipe .eq-act .btn{flex:1 1 200px;justify-content:center}'+
+ '#p-equipe .eq-ok{text-align:center;font-weight:700;color:var(--ok,#2E7D4F);margin:8px 0 14px}'+
+ '@media (min-width:700px){#p-equipe .eqc .nm{font-size:13px}#p-equipe .eqc em{font-size:11.5px}}'+
  '#p-equipe .eq-jours{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 16px}'+
  '#p-equipe .eq-jours button{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px;border-radius:16px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);min-width:0}'+
  '#p-equipe .eq-jours small{font-size:11.5px;color:var(--muted);font-weight:600}#p-equipe .eq-jours b{font-size:19px;line-height:1.15}#p-equipe .eq-jours em{font-style:normal;font-size:10px;font-weight:700;color:var(--n1-laiton)}'+
