@@ -600,8 +600,11 @@ const TRAVAUX=[
  ["fenetres","Fenêtres","Changer ou ajouter une fenêtre"],
  ["portes","Portes intérieures","Les portes entre les pièces"],
  ["sol","Sol","Carrelage, parquet, stratifié…"],
- ["escalier","Escalier","Créer, changer ou rénover"],
+ ["escalier","Escalier, trémie ou trappe","Pour monter à l'étage ou aux combles"],
  ["autre","Autre projet","Racontez-le avec vos mots"]];
+// 24/11 (Cyril) : la partie escalier couvre aussi trémie et trappe ; leurs questions d'escalier (forme, matière, largeur) sont sautées.
+const ESCT=o=>/trémie|trappe/i.test((o&&o.travail)||"");
+const gNm=(sec,it)=>sec==="escalier"&&/trappe/i.test((it&&it.travail)||"")?"Trappe":sec==="escalier"&&/trémie/i.test((it&&it.travail)||"")?"Trémie":D[sec].g.n;
 // Fil de progression et icône de titre (Cyril 12/11, style N1) : une icône par étape, à plat.
 const SV=d=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const SIC={travaux:SV('<path d="M6 26 18 14"/><path d="M17 9.5 22.5 4l5.5 5.5-5.5 5.5z"/><path d="M5 22.5 9.5 27"/>'),logement:SV('<path d="M5 15 16 6l11 9"/><path d="M8 13v13h16V13"/><path d="M13.5 26v-7h5v7"/>'),
@@ -625,7 +628,7 @@ function filH(st,n){const P=PARTS(),q=partOf(st[n]),ok0='<svg viewBox="0 0 24 24
 function filH_old(st,n){const ok='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4L18 8"/></svg>';
  return`<div class="fil9" style="--av:${st.length>1?n/(st.length-1):0}" aria-hidden="true">${st.map((k,j)=>`<span><i class="${j<n?"ok":j===n?"on":""}">${j<n?ok:j===n?sic(k):""}</i><b>${esc(snm(k))}</b></span>`).join("")}</div>`}
 const PLAQUE=["cloison","doublage","plafond","rampants"];
-const PHTX={cloison:"L'endroit de la future cloison, sol et plafond compris.",doublage:"Chaque mur à isoler, en entier, avec ses fenêtres et ses prises.",plafond:"Le plafond de chaque pièce, et la trappe s'il y en a une.",combles:"Les combles, depuis la trappe ou l'escalier, avec l'isolant s'il y en a.",rampants:"Les pièces sous la toiture, la pente du toit et ses fenêtres de toit.",fenetres:"Chaque fenêtre de l'intérieur, en entier avec le mur autour, et le coffre du volet s'il y en a un.",portes:"Chaque porte à changer, ouverte, avec son encadrement.",sol:"Le sol de chaque pièce, et une plinthe de près.",escalier:"L'escalier en entier, ou l'endroit prévu, du bas et du haut.",autre:"Ce que vous voulez faire."};
+const PHTX={cloison:"L'endroit de la future cloison, sol et plafond compris.",doublage:"Chaque mur à isoler, en entier, avec ses fenêtres et ses prises.",plafond:"Le plafond de chaque pièce, et la trappe s'il y en a une.",combles:"Les combles, depuis la trappe ou l'escalier, avec l'isolant s'il y en a.",rampants:"Les pièces sous la toiture, la pente du toit et ses fenêtres de toit.",fenetres:"Chaque fenêtre de l'intérieur, en entier avec le mur autour, et le coffre du volet s'il y en a un.",portes:"Chaque porte à changer, ouverte, avec son encadrement.",sol:"Le sol de chaque pièce, et une plinthe de près.",escalier:"L'escalier en entier, ou l'endroit prévu pour l'escalier, la trémie ou la trappe, du bas et du haut.",autre:"Ce que vous voulez faire."};
 const PHT=()=>S.travaux.filter(k=>PHTX[k]).map(k=>`<li>${esc(PHTX[k])}</li>`).join("");
 // 18/11 (Cyril) : le client donne ses dimensions, la surface de pente est calculée pour lui (faîtage au milieu pour 2 pentes).
 const RPLAN=()=>S.mode==="plan"&&S.travaux.some(k=>PLANABLE.includes(k));
@@ -739,14 +742,15 @@ const D={
    {k:"depose",t:"chips",l:"Faut-il enlever l'ancien sol ?",o:["Oui","Non",DK],sh:i=>i.actuel!=="Béton brut"},
    {k:"neuf",t:"chips",l:"Sol souhaité",o:["Carrelage","Parquet","Stratifié","Vinyle (lames ou dalles)",DK]},
    {k:"plinthes",t:"chips",l:"Plinthes neuves ?",o:["Oui","Non",DK]}]}},
- escalier:{t:"Vos escaliers",s:"Une estimation suffit, tout sera vérifié sur place.",cheer:"Une marche après l'autre",
-  g:{n:"Escalier",cnt:"Combien d'escaliers ?",cmax:3,add:"+ Ajouter un autre escalier",f:[
-   {k:"travail",t:"chips",l:"Que faut-il faire ?",o:["Créer un escalier","Remplacer l'escalier","Rénover ou habiller l'existant",DK]},
-   {k:"forme",t:"chips",l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
-   {k:"mat",t:"chips",l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
-   {k:"largeur",t:"chips",ill:"escL",l:"Largeur",h:"Mesurez la largeur des marches.",o:["70 cm","80 cm","90 cm",DK]},
-   {k:"haut",t:"num",ill:"escH",l:"Hauteur à monter (d'un sol à l'autre)",u:"cm",st:1,dk:1,pre:[250,270,290]},
-   {k:"rampe",t:"chips",l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
+ escalier:{t:"Escalier, trémie ou trappe",s:"Une estimation suffit, tout sera vérifié sur place.",cheer:"Une marche après l'autre",
+  g:{n:"Escalier",cnt:"Combien d'escaliers, de trémies ou de trappes ?",cmax:3,add:"+ Ajouter un escalier, une trémie ou une trappe",f:[
+   {k:"travail",t:"chips",l:"Que faut-il faire ?",h:"Trémie : l'ouverture dans le plancher, pour un futur escalier. Trappe : un petit accès aux combles.",o:["Créer un escalier","Remplacer l'escalier","Rénover ou habiller l'existant","Créer une trémie","Créer une trappe",DK]},
+   {k:"vers",t:"chips",l:"Elle mène…",o:["À l'étage","Aux combles",DK],sh:o=>ESCT(o)},
+   {k:"forme",t:"chips",sh:o=>!ESCT(o),l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
+   {k:"mat",t:"chips",sh:o=>!ESCT(o),l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
+   {k:"largeur",t:"chips",sh:o=>!ESCT(o),ill:"escL",l:"Largeur",h:"Mesurez la largeur des marches.",o:["70 cm","80 cm","90 cm",DK]},
+   {k:"haut",t:"num",sh:o=>!/trappe/i.test(o.travail||""),ill:"escH",l:"Hauteur à monter (d'un sol à l'autre)",u:"cm",st:1,dk:1,pre:[250,270,290]},
+   {k:"rampe",t:"chips",sh:o=>!/trappe/i.test(o.travail||""),l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
  autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
    {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
  finition:{t:"Encore quelques petites choses",s:"Pour tous vos travaux à la fois.",cheer:"Une question rapide",f:[
@@ -1086,8 +1090,8 @@ function render(){
   if(d.g&&d.g.cnt&&S[cur].n>0&&!S[cur].cedit)h+=`<div class="q cnt cmini"><span><span class="lab">${esc(CNTL())}</span> <b>${S[cur].n_dk?DK:S[cur].n}</b></span><button type="button" class="del" data-cedit="1">Changer</button></div>`;
   else if(d.g&&d.g.cnt){const n=S[cur].n,M=d.g.cmax||8,z=CNT0();h+=`<div class="q cnt"><span class="lab" id="cnt-${cur}">${esc(CNTL())}</span>${z?`<p class="hint">${esc(z)}</p>`:""}<div class="chips" role="group" aria-labelledby="cnt-${cur}">${Array.from({length:M+1},(_,j)=>j).filter(j=>j>0||z).map(j=>`<button type="button" class="chip" data-cnt="${j}" aria-pressed="${n===j&&!S[cur].n_dk}">${j}</button>`).join("")}<button type="button" class="chip dk" data-cnt="dk" aria-pressed="${!!S[cur].n_dk}">${DK}</button></div>${S[cur].n_dk?`<p class="hint">Pas de souci : décrivez-en une, ${esc(CONFIG.artisan)} comptera le reste sur place.</p>`:""}${n===0?`<p class="hint">Rien à prévoir ici : touchez « Continuer ».</p>`:""}</div>`}
   if(d.g&&(!d.g.cnt||S[cur].n>0)){const op=iOpen(cur);S[cur].items.forEach((it,i)=>{const b=badge(cur,it);
-   if(d.g.cnt&&i!==op){const sm=iSum(cur,it);h+=`<button type="button" class="item mini${it._ok?" ok":""}" data-iopen="${i}"><span class="mi-t">${it._ok?"✓ ":""}${esc(d.g.n)} n°${i+1}${it.piece?" · "+esc(it.piece):""}</span><span class="mi-s">${it._ok?esc(sm||"Rempli"):"À remplir"}</span><span class="mi-m">${it._ok?"Modifier":"Remplir"}</span></button>`;return}
-   h+=`<div class="item" data-n="${esc(d.g.n)} n°${i+1}"><div class="item-h"><h3>${d.g.n} n°${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.cnt?(()=>{const V=iqVis(cur,i),q=iqPos(cur,i);return`<div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="iq${i}-${q}">${fieldH(V[q],cur,i)}${schTxt(cur,V[q])}</div>`})():d.g.f.map(f=>fieldH(f,cur,i)).join("")}${d.g.cnt&&iqPos(cur,i)===iqVis(cur,i).length-1?`<button type="button" class="btn go iok" data-iok="${i}">C'est bon pour ${/^(Pièce|Cloison|Fenêtre|Porte)$/.test(d.g.n)?"la":"le"} ${d.g.n.toLowerCase()} n°${i+1}</button>`:""}</div>`});
+   if(d.g.cnt&&i!==op){const sm=iSum(cur,it);h+=`<button type="button" class="item mini${it._ok?" ok":""}" data-iopen="${i}"><span class="mi-t">${it._ok?"✓ ":""}${esc(gNm(cur,it))} n°${i+1}${it.piece?" · "+esc(it.piece):""}</span><span class="mi-s">${it._ok?esc(sm||"Rempli"):"À remplir"}</span><span class="mi-m">${it._ok?"Modifier":"Remplir"}</span></button>`;return}
+   h+=`<div class="item" data-n="${esc(gNm(cur,it))} n°${i+1}"><div class="item-h"><h3>${esc(gNm(cur,it))} n°${i+1}${it.piece?" · "+esc(it.piece):""}</h3><div style="display:flex;gap:10px;align-items:center">${b?`<span class="badge">${b}</span>`:""}${S[cur].items.length>1?`<button type="button" class="del" data-del="${i}">Retirer</button>`:""}</div></div>${d.g.cnt?(()=>{const V=iqVis(cur,i),q=iqPos(cur,i);return`<div class="lq ${render.dir<0?"lq-back":"lq-in"}" data-key="iq${i}-${q}">${fieldH(V[q],cur,i)}${schTxt(cur,V[q])}</div>`})():d.g.f.map(f=>fieldH(f,cur,i)).join("")}${d.g.cnt&&iqPos(cur,i)===iqVis(cur,i).length-1?`<button type="button" class="btn go iok" data-iok="${i}">C'est bon pour ${(n=>(/^(Pièce|Cloison|Fenêtre|Porte|Trappe|Trémie)$/.test(n)?"la ":/^[AEÉIOU]/.test(n)?"l'":"le ")+n.toLowerCase())(gNm(cur,it))} n°${i+1}</button>`:""}</div>`});
    if(!(d.g.cnt&&iOpen(cur)>=0)){h+=`<button type="button" class="add" data-add="1">${d.g.add}</button>`;
    if(d.g.copy&&S[cur].items.length)h+=`<p class="hint" style="margin-top:8px">La nouvelle ${d.g.n.toLowerCase()} reprend les choix de la précédente, pour aller plus vite.</p>`}}
   if(cur==="photos")h+=`<div class="q phx"><span class="lab">Ce qui aide ${esc(CONFIG.artisan)}</span><ul class="tips">${PHT()}<li>Chaque pièce entière, depuis un coin.</li><li>Un mètre déplié sur la photo aide beaucoup.</li></ul></div>`;
@@ -1143,7 +1147,7 @@ function introH(){const has=S.travaux.length>0,ok='<svg viewBox="0 0 24 24" widt
 function list(sec){const d=D[sec],o=S[sec],out=[];
  const fmt=(f,x)=>{if(f.sh&&!f.sh(x))return null;if(f.t==="num"){if(x[f.k+"_dk"]??f.dkdef)return`${f.l} : ${DK.toLowerCase()}`;const v=pn(x[f.k]);return v==null?null:`${f.l} : ${fr(v)} ${f.u}`}
   if(f.t==="step")return`${f.l} : ${x[f.k]??f.min??0}`;if(f.t==="multi")return Array.isArray(x[f.k])&&x[f.k].length?`${f.l} : ${x[f.k].join(", ")}`:null;if(f.t==="check"||f.t==="note"||f.t==="file")return null;const v=x[f.k]??f.def;return v?`${f.l} : ${v}`:null};
- if(d.g)o.items.forEach((it,i)=>{const b=badge(sec,it),skip=b?({fenetres:["taille","Lc","Hc"],portes:["largeur"]}[sec]||[]):[];const parts=d.g.f.filter(f=>!skip.includes(f.k)).map(f=>fmt(f,it)).filter(Boolean);if(sec==="fenetres"&&b&&/^Porte-fenêtre/.test(it.taille||""))parts.unshift("Porte-fenêtre");const pc=(it.piece||"").trim();out.push({sec,t:`${d.g.n} n°${i+1}`,pc,b:b||(parts.find(p=>!/^Pièce :/.test(p))||"").replace(/^[^:]*: /,""),parts:parts.filter(p=>!(pc&&/^(Pièce|Quelle pièce \?) :/.test(p)))})});
+ if(d.g)o.items.forEach((it,i)=>{const b=badge(sec,it),skip=b?({fenetres:["taille","Lc","Hc"],portes:["largeur"]}[sec]||[]):[];const parts=d.g.f.filter(f=>!skip.includes(f.k)).map(f=>fmt(f,it)).filter(Boolean);if(sec==="fenetres"&&b&&/^Porte-fenêtre/.test(it.taille||""))parts.unshift("Porte-fenêtre");const pc=(it.piece||"").trim();out.push({sec,t:`${gNm(sec,it)} n°${i+1}`,pc,b:b||(parts.find(p=>!/^Pièce :/.test(p))||"").replace(/^[^:]*: /,""),parts:parts.filter(p=>!(pc&&/^(Pièce|Quelle pièce \?) :/.test(p)))})});
 if(d.f&&!(d.g&&d.g.cnt&&o.n===0))d.f.filter(f=>!f.v||f.v(o||{})).forEach(f=>{const v=fmt(f,o);if(v)out.push(v)});return out}
 // Ce que le plan décrit (quand le client est passé par le plan, il remplace les étapes cloisons, fenêtres, portes, doublage, plafond).
 function planStats(){const t=S.plan.trace||{floors:[]},o={clo:0,cloN:0,dbl:0,win:[],extD:[],intD:[],plaf:[]};(t.floors||[]).forEach(f=>{const H=f.hauteur_m||2.5;(f.pieces||[]).forEach(p=>{{const Z=(p.zones||[]).filter(z=>z.plafond&&z.plafond.a_refaire),pz=Z.length?Z.map(z=>[z.nom,z.plafond]):p.plafond&&p.plafond.a_refaire?[[p.nom,p.plafond]]:[];pz.forEach(([n,q])=>{const ex=[q.baisser&&/^oui/i.test(q.baisser)?"à baisser":null,q.support&&!/je ne sais/i.test(q.support)?"support "+q.support.toLowerCase():null].filter(Boolean);o.plaf.push({piece:n,simple:`Plafond · ${n} · ≈ ${fr(q.surface_m2||0)} m² · plaques standard${ex.length?" · "+ex.join(", "):""}`,txt:`plafond ${n} ${fr(q.surface_m2||0)} m²`})})}
