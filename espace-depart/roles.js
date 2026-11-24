@@ -60,7 +60,7 @@ function quiVoit(){
     $$('#x-in [data-dc]').forEach(function(b){b.onclick=function(){var c=b.dataset.dc,k=b.dataset.dk,v=!droitC(c,k);(DR[c]=DR[c]||{})[k]=v?1:0;lss('pc-droits',DR);applique();$('#x-in').innerHTML=corps();lie();
       X.toast(DROITS.filter(function(x){return x[0]===k})[0][1],(v?'Accès donné':'Accès retiré')+' : '+COLS.filter(function(x){return x[0]===c})[0][1])}});
     $$('#x-in [data-qacc]').forEach(function(b){b.onclick=function(){X.xclose();setTimeout(function(){accesPerso(b.dataset.qacc)},250)}});
-    if(SERVICE&&jeton())api('/espace/equipe-acces').then(function(x){var M={};(x.membres||[]).forEach(function(m){M[m.n]=m.etat});$$('#x-in [data-qet]').forEach(function(s){var e=M[s.dataset.qet]||'aucun';s.textContent=e==='aucun'?'pas encore envoyé':e==='actif'?'accès ouvert':e})},function(){});
+    if(SERVICE&&jeton())api('/espace/equipe-acces').then(function(x){var M={};(x.membres||[]).forEach(function(m){if(!m.kind)M[m.n]=m.etat});$$('#x-in [data-qet]').forEach(function(s){var e=M[s.dataset.qet]||'aucun';s.textContent=e==='aucun'?'pas encore envoyé':e==='actif'?'accès ouvert':e})},function(){});
     var r=$('#x-in [data-qvd]');if(r)r.onclick=function(){DR={};lss('pc-droits',DR);applique();$('#x-in').innerHTML=corps();lie();X.toast('Réglages de départ remis','')}})}
 
 /* ---------- choisir la personne (démo) ---------- */
@@ -112,27 +112,42 @@ function fiche(n){var p=pers(n),o=Q.ouSuis(n),T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(
 function ENT(){var a=lsg('pc-vrai-artisan',null)||{};return a.entreprise||''}
 function api(chemin,corps){return fetch(SERVICE+chemin,{method:corps?'POST':'GET',headers:corps?{'Content-Type':'application/json',Authorization:'Bearer '+jeton()}:{Authorization:'Bearer '+jeton()},body:corps?JSON.stringify(corps):undefined,cache:'no-store'})
   .then(function(r){return r.json().catch(function(){return {ok:false}}).then(function(x){x._s=r.status;return x})})}
-function accesPerso(n){var p=pers(n),c=p.g==='dir'?'dir':col(p),qui=esc(n);
-  var expl='<p class="hint" style="margin:0 0 10px">'+qui+' reçoit un lien sur son téléphone. À la première ouverture, un code à 6 chiffres lui arrive par SMS : c\'est la preuve que c\'est bien lui. Ensuite son Espace reste ouvert, sans mot de passe. Il ne voit que ce que vous lui permettez dans « Qui voit quoi ».</p>';
-  if(!SERVICE||!jeton()){X.xopen('Accès de '+n,'Démo',expl+'<div class="rl-lien"><span>Exemple de lien</span><b>proclik.github.io/espace-depart/?acces=…</b></div><p class="hint" style="margin:10px 2px 0">En démo, rien n\'est envoyé. Quand votre Espace est connecté, ce bouton crée le vrai lien.</p>','<button class="btn" data-xclose>Fermer</button>');return}
-  X.xopen('Accès de '+n,GN[p.g]+' · '+p.r,expl+'<form class="rl-tel" id="rl-tel"><label for="rl-teli">Son portable (pour le code par SMS)</label><input id="rl-teli" type="tel" inputmode="tel" autocomplete="off" placeholder="06 12 34 56 78"><button type="submit" class="btn go">Créer son lien</button></form><div class="rl-lien" id="rl-lien" hidden></div>','<button class="btn" data-xclose>Fermer</button>',function(){
-    var f=$('#rl-tel'),i=$('#rl-teli');
-    api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(function(m){return m.n===n})[0];if(m&&m.tel&&i&&!i.value)i.value=m.tel.replace(/^\+33/,'0').replace(/(\d{2})(?=\d)/g,'$1 ')},function(){});
+/* Envoyer un lien personnel (salarié, entreprise invitée, client du chantier) : numéro, lien, SMS/Copier, couper. */
+function envoyerLien(o){/* o = {titre, sous, qui, expl, corps, tel, couper} */
+  X.xopen(o.titre,o.sous,o.expl+'<form class="rl-tel" id="rl-tel"><label for="rl-teli">Son portable (pour le code par SMS)</label><input id="rl-teli" type="tel" inputmode="tel" autocomplete="off" placeholder="06 12 34 56 78"><button type="submit" class="btn go">Créer son lien</button></form><div class="rl-lien" id="rl-lien" hidden></div>','<button class="btn" data-xclose>Fermer</button>',function(){
+    var f=$('#rl-tel'),i=$('#rl-teli'),beau=function(t){return String(t||'').replace(/^\+33/,'0').replace(/\D/g,'').replace(/(\d{2})(?=\d)/g,'$1 ')};
+    if(o.tel)i.value=beau(o.tel);
+    api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(o.trouve)[0];if(m&&m.tel&&!i.value)i.value=beau(m.tel)},function(){});
     f.onsubmit=function(e){e.preventDefault();var t=i.value.trim();if(t.replace(/\D/g,'').length<10){X.toast('Le numéro de portable','Il faut 10 chiffres pour envoyer le code.');i.focus();return}
       var b=$('#rl-lien');b.hidden=false;b.innerHTML='<span>Préparation du lien…</span>';
-      api('/espace/equipe-acces',{op:'lien',n:n,col:c,tel:t}).then(function(x){
+      api('/espace/equipe-acces',Object.assign({op:'lien',tel:t},o.corps)).then(function(x){
       if(!x.ok){b.innerHTML='<span>'+esc(x.erreur||'Le service ne répond pas. Réessayez dans un instant.')+'</span>';return}
-      f.hidden=true;
-      var txt='Bonjour '+n+', voici votre accès à l\'Espace '+(ENT()||'de l\'entreprise')+' : '+x.lien+' (un code vous sera envoyé par SMS à l\'ouverture)';
+      f.hidden=true;var qui=esc(o.qui);
+      var txt='Bonjour, voici votre accès '+(o.corps.kind?'au chantier « '+(o.chn||'')+' » ':'à l\'Espace ')+'de '+(ENT()||'l\'entreprise')+' : '+x.lien+' (un code vous sera envoyé par SMS à l\'ouverture)';
       b.innerHTML='<span>Lien personnel de '+qui+' · valable 7 jours, une seule fois</span><b>'+esc(x.lien)+'</b>'+
-        '<small class="rl-sms">'+(x.sms?'Le code partira par SMS au '+esc(x.tel||'')+' quand '+qui+' ouvrira le lien.':'Le SMS du code n\'est pas encore branché : quand '+qui+' ouvrira le lien, son code s\'affichera dans sa fiche, ici. Donnez-le-lui de vive voix.')+'</small>'+
+        '<small class="rl-sms">'+(x.sms?'Le code partira par SMS au '+esc(x.tel||'')+' quand '+qui+' ouvrira le lien.':'Le SMS du code n\'est pas encore branché : quand '+qui+' ouvrira le lien, son code s\'affichera dans sa fiche, ici. Donnez-le de vive voix.')+'</small>'+
         '<div class="rl-fb"><a class="btn go" href="sms:'+encodeURIComponent(t.replace(/[^\d+]/g,''))+'?&body='+encodeURIComponent(txt)+'">Envoyer par SMS</a><button type="button" class="btn" data-lcp>Copier</button></div>'+
-        '<button type="button" class="btn" data-lcut style="width:100%;margin-top:8px">Couper son accès</button>';
+        (o.couper?'<button type="button" class="btn" data-lcut style="width:100%;margin-top:8px">Couper son accès</button>':'');
       $('[data-lcp]',b).onclick=function(){try{navigator.clipboard.writeText(txt).then(function(){X.toast('Lien copié','Collez-le dans un SMS ou un e-mail.')})}catch(e){X.toast('Copie impossible','Appuyez longuement sur le lien.')}};
-      $('[data-lcut]',b).onclick=function(){couper(n)}})}})}
+      var cu=$('[data-lcut]',b);if(cu)cu.onclick=o.couper})}})}
+function accesPerso(n){var p=pers(n),c=p.g==='dir'?'dir':col(p),qui=esc(n);
+  var expl='<p class="hint" style="margin:0 0 10px">'+qui+' reçoit un lien sur son téléphone. À la première ouverture, un code à 6 chiffres lui arrive par SMS : c\'est la preuve que c\'est bien lui. Ensuite son Espace reste ouvert, sans mot de passe. Il ne voit que ce que vous lui permettez dans « Qui voit quoi ».</p>';
+  if(!reel()){X.xopen('Accès de '+n,'Démo',expl+'<div class="rl-lien"><span>Exemple de lien</span><b>proclik.github.io/espace-depart/?acces=…</b></div><p class="hint" style="margin:10px 2px 0">En démo, rien n\'est envoyé. Quand votre Espace est connecté, ce bouton crée le vrai lien.</p>','<button class="btn" data-xclose>Fermer</button>');return}
+  envoyerLien({titre:'Accès de '+n,sous:GN[p.g]+' · '+p.r,qui:n,expl:expl,corps:{n:n,col:c},trouve:function(m){return !m.kind&&m.n===n},couper:function(){couper(n)}})}
+/* entreprise invitée ou client d'un chantier (chantiers.js) : o = {kind:'ent'|'cli', ch, chn, eid, n, tel} */
+function lienInvite(o){var cli=o.kind==='cli';
+  envoyerLien({titre:'Lien de '+o.n,sous:'Chantier '+(o.chn||''),qui:o.n,chn:o.chn,tel:o.tel,
+    expl:'<p class="hint" style="margin:0 0 10px">'+esc(o.n)+' reçoit un lien pour '+(cli?'suivre son chantier':'ce chantier seulement')+'. À la première ouverture, un code à 6 chiffres arrive par SMS. '+(cli?'Il voit l\'avancement, les réserves et parle avec vous.':'Il voit ses jours, le plan, la conversation et ses réserves, jamais vos prix.')+'</p>',
+    corps:{kind:o.kind,ch:o.ch,eid:o.eid||'',n:o.n},trouve:function(m){return m.kind===o.kind&&m.ch===o.ch&&(cli||m.eid===o.eid)},
+    couper:function(){couperInvite(o);X.xclose()}})}
+function couperInvite(o){if(!reel())return;api('/espace/equipe-acces',{op:'couper',kind:o.kind,ch:o.ch,eid:o.eid||''}).then(function(){},function(){})}
+/* code que le SMS n'a pas pu porter, dans la fiche d'un invité */
+function codeInvite(o,el){if(!reel()||!el)return;api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(function(m){return m.kind===o.kind&&m.ch===o.ch&&(o.kind==='cli'||m.eid===o.eid)})[0];
+  if(!m||!m.code||el.querySelector('.rl-cdv'))return;el.insertAdjacentHTML('afterbegin','<div class="rl-cdv"><span>Code à donner à '+esc(o.n)+'</span><b>'+m.code.slice(0,3)+' '+m.code.slice(3)+'</b><small>Valable 10 minutes. Donnez-le de vive voix, jamais par écrit.</small></div>')},function(){})}
+function reel(){return !!(SERVICE&&jeton()&&!MB)}
 function couper(n){api('/espace/equipe-acces',{op:'couper',n:n}).then(function(x){X.xclose();X.toast(x.ok?'Accès coupé':'Pas d\'accès à couper',x.ok?n+' est déconnecté de tous ses appareils.':esc(x.erreur||''))})}
 /* fiche (patron) : le code que le SMS n'a pas pu porter, à donner de vive voix */
-function codeDansFiche(n){if(MB||!SERVICE||!jeton())return;api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(function(m){return m.n===n})[0],f=$('#x-in .rl-fi');
+function codeDansFiche(n){if(MB||!SERVICE||!jeton())return;api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(function(m){return !m.kind&&m.n===n})[0],f=$('#x-in .rl-fi');
   if(!m||!m.code||!f||$('#x-in .rl-cdv'))return;f.insertAdjacentHTML('beforebegin','<div class="rl-cdv"><span>Code à donner à '+esc(n)+'</span><b>'+m.code.slice(0,3)+' '+m.code.slice(3)+'</b><small>Valable 10 minutes. Donnez-le de vive voix, jamais par écrit.</small></div>')},function(){})}
 
 /* ---------- écran « Tapez le code reçu par SMS » (salarié) ---------- */
@@ -170,7 +185,7 @@ if(MB&&SERVICE)api('/espace/moi').then(function(x){
     env1().then(function(y){ecranCode({n:MB.n,tel:y.tel||x.tel,envoye:!!y.envoye,confirmer:1,envoyer:env1,valider:function(v){return postJ('/espace/acces/confirmer',{otp:v},true).then(function(z){if(z&&z.ok)setTimeout(function(){location.reload()},300);return z})}})});return}
   if(x._s===401){['pc-membre','pc-vrai-jeton','pc-vrai-liste','pc-role'].forEach(function(k){lss(k,null)});lss('pc-membre-fin','Votre accès a été coupé ou n\'est plus valable.');location.reload();return}
   if(x.ok&&x.membre){MB.col=x.membre.col;MB.droits=x.membre.droits;lss('pc-membre',MB);applique()}},function(){});
-window.PCACCES={envoyer:accesPerso,couper:couper,ecranCode:ecranCode};
+window.PCACCES={envoyer:accesPerso,couper:couper,ecranCode:ecranCode,reel:reel,lienInvite:lienInvite,couperInvite:couperInvite,codeInvite:codeInvite};
 window.PCPERS={fiche:fiche,droit:droit,peut:peut,moi:function(){return moi()}};
 /* un prénom touché n'importe où (data-pers) ouvre sa fiche */
 d.addEventListener('click',function(e){var b=e.target.closest('[data-pers]');if(!b)return;e.preventDefault();e.stopPropagation();fiche(b.dataset.pers)},true);

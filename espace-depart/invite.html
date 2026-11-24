@@ -4,7 +4,7 @@
 <link rel="apple-touch-icon" href="icone-1024.png?v=4">
 <link rel="stylesheet" href="../fonts/fonts.css">
 <link rel="stylesheet" href="../n1.css">
-<script src="theme.js?v=1"></script><script src="photos-demo.js?v=2"></script>
+<script src="config.js?v=2"></script><script src="theme.js?v=1"></script><script src="photos-demo.js?v=2"></script>
 <style>
 /* Page de l'entreprise invitée sur un chantier (idée de Cyril du 18-19/11) : elle l'ouvre avec le lien reçu par SMS ou e-mail.
    Style définitif ProClik (/n1.css) : fond calme, bleu nuit pour les actions, laiton en simple touche, seul ce qui se touche ressort.
@@ -155,7 +155,8 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 <div id="app"></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
-(function(){
+/* La page tourne en DÉMO (données de l'appareil) ou en VRAI (REEL = chantier envoyé par le service, voir le chargeur en bas). */
+function lancerPage(REEL){
 'use strict';
 var $=function(s){return document.querySelector(s)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
@@ -191,10 +192,10 @@ var LOGO='<svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A
 var toast=function(t){var e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(function(){e.classList.remove('on')},2800)};
 
 /* ---------- qui ouvre la page : l'entreprise et le chantier du lien (?e=…&ch=…) ---------- */
-var Q=new URLSearchParams(location.search),EID=Q.get('e')||'st-elec',CID=Q.get('ch')||'alpes';
+var Q=new URLSearchParams(location.search),EID=REEL?REEL.moi.id:(Q.get('e')||'st-elec'),CID=REEL?REEL.ch.id:(Q.get('ch')||'alpes');
 var lit=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 var ecrit=function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-var CH=lit('pc-ch9'),ch=CH&&CH[CID];
+var CH=REEL?{}:lit('pc-ch9');if(REEL)CH[CID]=REEL.ch;var ch=CH&&CH[CID];
 var DEMO={n:'Cabinet Alpes Kiné',v:'Meylan',t:'Faux plafond 32 m² · local professionnel',part:{fin:'2026-10-19',ent:[{id:'st-elec',n:'Élec Belledonne',m:'Électricien',ic:'elec'},{id:'st-plomb',n:'Plomberie du Vercors',m:'Plombier',ic:'plomb'}],
  msgs:[{de:'moi',t:'Faux plafond : dalles 60 × 60 blanches, validé avec le client.',h:'lun. 12/10 · 9 h 05',epi:1},
   {de:'st-elec',t:'Je passe jeudi pour les spots. Le plafond doit être fermé côté accueil avant.',h:'mer. 14/10 · 18 h 20'},
@@ -208,17 +209,18 @@ if(!P.res)P.res=CID==='alpes'?[{id:'r1',t:'Un spot de l\'accueil clignote',ent:'
  {id:'r3',t:'Bande de plafond qui se décolle au-dessus de la porte',ent:'sal:Kevin',pc:'Couloir',st:'ouv',par:'moi',d:'jeu. 8/10',ph:1}]:[];
 if(P.cli===undefined)P.cli=CID==='alpes'?{n:'Mme Garnier',code:'H8R3',commun:0,nl:1,msgs:[{de:'cli',t:'Bonjour, les patients demandent si l\'accueil sera ouvert lundi ?',h:'jeu. 15/10 · 12 h 40'},
  {de:'moi',t:'Oui, tout sera fini lundi midi. On fait la réception ensemble à 15 h 30.',h:'jeu. 15/10 · 13 h 05'},{de:'cli',t:'Parfait, merci ! Un des spots de l\'accueil clignote, je l\'ai signalé.',h:'ven. 16/10 · 8 h 02'}]}:null;
-var ROLE=Q.get('c')?'cli':Q.get('s')?'sal':'ent',SAL=Q.get('s')||'';
+var ROLE=REEL?(REEL.kind==='cli'?'cli':'ent'):Q.get('c')?'cli':Q.get('s')?'sal':'ent',SAL=REEL?'':Q.get('s')||'';
 var moi=ROLE==='cli'?{id:'cli',n:(P.cli&&P.cli.n)||'Votre chantier',m:'Client',ic:'cli'}:ROLE==='sal'?{id:'sal:'+SAL,n:SAL,m:EQS[SAL]||'Équipe',ic:/pl[aâ]tr|plaqu/i.test(EQS[SAL]||'')?'placo':'autre'}:(P.ent.filter(function(e){return e.id===EID})[0]||P.ent[0]);
-function sauver(){if(CH&&CH[CID]){CH[CID].part=P;ecrit('pc-ch9',CH)}}
+function sauver(){if(REEL){REEL.envoyer(P);return}if(CH&&CH[CID]){CH[CID].part=P;ecrit('pc-ch9',CH)}}
 function resOuv(id){return P.res.filter(function(r){return r.st!=='val'&&(!id||r.ent===id)}).length}
-var ARTISAN=(document.querySelector('#pc-id [data-k="entreprise"]')||{}).textContent||(window.PC_ENT&&PC_ENT.sous_compte)||'ProClik Test';
+var ARTISAN=(REEL&&REEL.artisan&&REEL.artisan.entreprise)||(document.querySelector('#pc-id [data-k="entreprise"]')||{}).textContent||(window.PC_ENT&&PC_ENT.sous_compte)||'ProClik Test';
 var JOURS={'st-elec':[['2026-10-14','13 h – 17 h','Saignées et gaines'],['2026-10-15','8 h – 12 h','Boîtiers et câbles'],['2026-10-19','8 h – 12 h','Spots de l\'accueil']],'st-plomb':[['2026-10-14','13 h – 17 h','Évacuation lavabo'],['2026-10-19','13 h – 16 h','Pose du lavabo']]};
 var J=(JOURS[moi.id]||(ROLE==='sal'?[['2026-10-14','8 h – 16 h','Ossature'],['2026-10-15','8 h – 16 h','Plaques'],['2026-10-16','8 h – 13 h','Bandes et joints'],['2026-10-19','8 h – 15 h','Finitions']]:null)||[['2026-10-19','8 h – 17 h','Sur le chantier']]),AUJ='2026-10-16';
+if(REEL){AUJ=REEL.aujourdhui||new Date().toISOString().slice(0,10);J=REEL.jours||[]}
 var JC=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],MC=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 var dd=function(s){return new Date(s+'T12:00:00')};
 var dt=function(s){var d=dd(s);return JC[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)};
-var termine=ROLE!=='ent'?false:((P.termine&&!resOuv(moi.id))||(P.ent.filter(function(e){return e.id===moi.id})[0]||{}).coupe);
+var termine=REEL&&REEL.fini?true:ROLE!=='ent'?false:((P.termine&&!resOuv(moi.id))||(P.ent.filter(function(e){return e.id===moi.id})[0]||{}).coupe);
 var cle='pc-inv-ok-'+moi.id+'-'+CID;
 
 /* ---------- 1re ouverture sur cet appareil : code SMS ---------- */
@@ -263,7 +265,7 @@ function fini(){var note=lit('pc-inv-note-'+moi.id+'-'+CID)||0;
  [].forEach.call(document.querySelectorAll('#st [data-n]'),function(b){b.addEventListener('click',function(){var n=+b.dataset.n;ecrit('pc-inv-note-'+moi.id+'-'+CID,n);
   [].forEach.call(document.querySelectorAll('#st [data-n]'),function(x){x.setAttribute('aria-pressed',String(+x.dataset.n<=n))});suite(n)})});
  if(note)suite(note);
- $('#essai').addEventListener('click',function(){toast('Cyril vous rappelle pour ouvrir votre Espace (démo)')});
+ $('#essai').addEventListener('click',function(){if(REEL){location.href='https://proclik.github.io/';return}toast('Cyril vous rappelle pour ouvrir votre Espace (démo)')});
 }
 /* Pendant le chantier : une seule petite offre, jamais avant son 2e passage */
 /* Espace d'exemple réglé sur SON métier (Cyril 19/11) : « Voir mon Espace d'électricien » */
@@ -286,15 +288,15 @@ function offre(){if(J.filter(function(j){return j[0]<AUJ}).length<2)return '';
 
 /* ---------- la page du client (Cyril 19/11) : son chantier, ses réserves, sa conversation ---------- */
 var AVC={alpes:[75,'Bandes et joints','lun. 19/10','Réception avec vous lundi à 15 h 30']};
-function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparation','',''],R=P.res,o=R.filter(function(r){return r.st!=='val'}).length;
- var qv=[];P.ent.forEach(function(e){(JOURS[e.id]||[]).forEach(function(j){if(j[0]>=AUJ)qv.push([j[0],e,j[2],j[1]])})});qv.sort(function(x,y){return x[0]<y[0]?-1:1});
+function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=REEL?[REEL.avc||0,REEL.etape||(REEL.avc>=100?'Travaux terminés':'Préparation'),P.fin?dt(P.fin):'','']:AVC[CID]||[0,'Préparation','',''],R=P.res,o=R.filter(function(r){return r.st!=='val'}).length;
+ var qv=[];if(!REEL)P.ent.forEach(function(e){(JOURS[e.id]||[]).forEach(function(j){if(j[0]>=AUJ)qv.push([j[0],e,j[2],j[1]])})});qv.sort(function(x,y){return x[0]<y[0]?-1:1});
  var conv=k.commun?P.msgs:k.msgs;
  var h='<header class="top"><div class="topin"><span class="logo">'+LOGO+'</span><div class="marque"><b>'+esc(ch.n)+' · '+esc(ch.v)+'</b><small>Suivi par '+esc(ARTISAN)+'</small></div><button class="rb pk" id="theme" aria-label="Jour ou nuit"></button></div></header>'+
- '<main><div class="hi monte"><h1>Bonjour '+esc(k.n)+'</h1><p>Vos travaux · '+esc(ch.t)+' <span class="demo">Démonstration</span></p></div><div class="grille"><div class="col">'+
- '<section class="now monte"><span class="k">Votre chantier</span><div class="avc"><span class="ring" style="--p:'+a[0]+'"><b>'+a[0]+' %</b></span><div><b class="t">'+esc(a[1])+'</b><p>'+(a[2]?'Fin prévue '+esc(a[2])+'. ':'')+esc(a[3])+'</p></div></div></section>'+
+ '<main><div class="hi monte"><h1>Bonjour '+esc(k.n)+'</h1><p>Vos travaux · '+esc(ch.t)+' '+(REEL?'':'<span class="demo">Démonstration</span>')+'</p></div><div class="grille"><div class="col">'+
+ (REEL&&REEL.avc==null?'':'<section class="now monte"><span class="k">Votre chantier</span><div class="avc"><span class="ring" style="--p:'+a[0]+'"><b>'+a[0]+' %</b></span><div><b class="t">'+esc(a[1])+'</b><p>'+(a[2]?'Fin prévue '+esc(a[2])+'. ':'')+esc(a[3])+'</p></div></div></section>')+
  (qv.length?'<section class="card monte"><h2><span class="ic">'+IC.cal+'</span>Qui vient, et quand</h2>'+qv.slice(0,4).map(function(q){var d=dd(q[0]);return '<div class="ln"><span class="r">'+icM(q[1].ic)+'</span><span class="tx"><b>'+JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]+' · '+esc(q[1].n)+'</b><small>'+esc(q[2])+' · '+esc(q[3])+'</small></span></div>'}).join('')+'</section>':'')+
  '<section class="card monte res" id="cres"><h2><span class="ic">'+IC.flag+'</span>Un souci ? Les réserves<span class="sp"></span><small>'+(R.length?(o?o+' en cours':'toutes levées'):'aucune')+'</small></h2>'+
-  (PZ.length>1?'<svg class="plan" viewBox="0 0 160 100" aria-label="Plan avec les réserves"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
+  (!REEL&&PZ.length>1?'<svg class="plan" viewBox="0 0 160 100" aria-label="Plan avec les réserves"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
    PZ.map(function(p){return '<text x="'+(p[1]+p[3]/2)+'" y="'+(p[2]+p[4]-6)+'" text-anchor="middle" class="plt">'+esc(p[0])+'</text>'}).join('')+pins(R)+'</svg>':'')+
   R.map(function(r,i){var q=quiM(r.ent),nx=(r.phx||[]).length;return '<div class="rs">'+PCPH.vg(r,i,'rn '+RST[r.st][1])+'<div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · '+esc(r.ent?q.n:ARTISAN+' choisit qui corrige')+(nx?' · '+nx+' photo'+(nx>1?'s':'')+' ajoutée'+(nx>1?'s':''):'')+'</small><span class="pill '+RST[r.st][1]+'">'+RST[r.st][0]+'</span>'+
    (r.st!=='val'?'<button class="b2 pk fx" data-addph="'+i+'">'+IC.photo+'Ajouter une photo</button>':'')+'</div>'+PCPH.mini(r)+'</div>'}).join('')+
@@ -304,9 +306,9 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=AVC[CID]||[0,'Préparat
  '<section class="card monte"><h2><span class="ic">'+IC.fil+'</span>'+(k.commun?'La conversation du chantier':'Avec '+esc(ARTISAN))+'</h2>'+
   (k.commun?luC():'<p class="lu priv">'+IC.lock+'<span>Privé : vous et '+esc(ARTISAN)+' seulement. Les entreprises ne lisent pas ces messages.</span></p>')+'<div class="fil" id="fil">'+cmsgs(conv)+'</div>'+
   '<div class="w"><textarea id="t" rows="1" placeholder="'+(k.commun?'Écrire à tout le chantier…':'Écrire à '+esc(ARTISAN)+'…')+'"></textarea><button class="ro pk" id="mic" aria-label="Dicter">'+IC.mic+'</button><button class="ro go" id="env" aria-label="Envoyer">'+IC.send+'</button></div></section>'+
- '<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Plans et photos</h2>'+
+ (REEL?'':'<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Plans et photos</h2>'+
   '<button class="ln" data-doc="Plan"><span class="r">'+IC.plan+'</span><span class="tx"><b>Le plan</b><small>La dernière version</small></span>'+IC.chev+'</button>'+
-  '<button class="ln" data-doc="Photos du chantier"><span class="r">'+IC.photo+'</span><span class="tx"><b>Photos du chantier</b><small>Ajoutées au fil des jours</small></span>'+IC.chev+'</button></section>'+
+  '<button class="ln" data-doc="Photos du chantier"><span class="r">'+IC.photo+'</span><span class="tx"><b>Photos du chantier</b><small>Ajoutées au fil des jours</small></span>'+IC.chev+'</button></section>')+
  '<p class="acces">'+IC.lock+'<span>Cette page est à vous seul, pour ce chantier. Vous ne voyez ni les prix des entreprises, ni leurs échanges entre elles.</span></p>'+
  '</div></div></main>';
  $('#app').innerHTML=h;
@@ -350,9 +352,9 @@ function mesRes(){var L=P.res.filter(function(r){return r.ent===moi.id&&r.st!=='
  return '<section class="card monte res" id="mres"><h2><span class="ic al">'+IC.flag+'</span>Vos réserves à lever<span class="sp"></span><small>'+L.length+'</small></h2>'+
   (P.termine?'<p class="muted" style="font-size:13px;margin:0 0 10px">Le chantier est réceptionné. Votre accès reste ouvert jusqu\'à ce que vos réserves soient levées.</p>':'')+
   L.map(function(r){var i=P.res.indexOf(r);return '<div class="rs"><span class="rn '+RST[r.st][1]+'">'+(i+1)+'</span><div class="tx"><b>'+esc(r.t)+'</b><small>'+esc(r.pc)+' · signalée le '+esc(r.d)+'</small>'+
-   (r.st==='corr'?'<span class="pill wa">Envoyée, '+esc(ARTISAN)+' vérifie</span>':'<button class="b2 pk fx" data-fix="'+i+'">'+IC.photo+'C\'est corrigé</button>')+'</div></div>'}).join('')+'</section>'}
+   (r.st==='corr'?'<span class="pill wa">Envoyée, '+esc(ARTISAN)+' vérifie</span>':'<button class="b2 pk fx" data-fix="'+i+'">'+(REEL?IC.check:IC.photo)+'C\'est corrigé</button>')+'</div></div>'}).join('')+'</section>'}
 function lierRes(){[].forEach.call(document.querySelectorAll('[data-fix]'),function(b){b.addEventListener('click',function(){var r=P.res[+b.dataset.fix];
- if(!b.dataset.ph){b.dataset.ph=1;b.classList.remove('pk');b.classList.add('go');b.innerHTML=IC.check+'Photo prise · envoyer';toast('Photo « après » prise (démo)');return}
+ if(!REEL&&!b.dataset.ph){b.dataset.ph=1;b.classList.remove('pk');b.classList.add('go');b.innerHTML=IC.check+'Photo prise · envoyer';toast('Photo « après » prise (démo)');return}
  r.st='corr';var d=new Date();r.dc=JC[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1);sauver();toast(ARTISAN+' est prévenu et va vérifier');chantier()})})}
 function msgs(){var dj='',n=P.ent.length;
  return P.msgs.map(function(x){var j=String(x.h||'').split(' · ')[0],sep=j!==dj?'<div class="j"><span>'+esc(j)+'</span></div>':'';dj=j;
@@ -364,44 +366,89 @@ function chantier(){
  if(ROLE==='cli')return client();
  var nx=J.filter(function(j){return j[0]>=AUJ})[0],dec=P.msgs.filter(function(x){return x.epi});
  var h='<header class="top"><div class="topin"><span class="logo">'+LOGO+'</span><div class="marque"><b>'+esc(ch.n)+' · '+esc(ch.v)+'</b><small>'+(ROLE==='sal'?'Votre équipe · '+esc(ARTISAN):'Invité par '+esc(ARTISAN))+'</small></div><button class="rb pk" id="theme" aria-label="Jour ou nuit"></button></div></header>'+
- '<main><div class="hi monte"><h1>Bonjour '+esc(moi.n)+'</h1><p>'+esc(moi.m)+' · '+esc(ch.t)+' <span class="demo">Démonstration</span></p></div><div class="grille"><div class="col">'+mesRes()+
+ '<main><div class="hi monte"><h1>Bonjour '+esc(moi.n)+'</h1><p>'+esc(moi.m)+' · '+esc(ch.t)+' '+(REEL?'':'<span class="demo">Démonstration</span>')+'</p></div><div class="grille"><div class="col">'+mesRes()+
  (nx?'<section class="now monte"><span class="k">Votre prochain passage</span><b class="t">'+esc(dt(nx[0]))+' · '+esc(nx[1])+'</b><p>'+esc(nx[2])+'. '+esc(ARTISAN)+' compte sur vous ce jour-là.</p>'+
   '<div class="row"><button class="w" id="jy">'+IC.check+'J\'y serai</button><button class="h" id="iti">'+IC.route+'Itinéraire</button></div></section>':'')+
- '<section class="card monte"><h2><span class="ic">'+IC.cal+'</span>Vos jours sur ce chantier</h2><div class="jours">'+J.map(function(j){var d=dd(j[0]);return '<div class="jour'+(j===nx?' next':j[0]<AUJ?' passe':'')+'"><small>'+JC[d.getDay()]+'</small><b>'+d.getDate()+'</b><span>'+MC[d.getMonth()]+' · '+esc(j[1])+'</span></div>'}).join('')+'</div></section>'+
+ '<section class="card monte"><h2><span class="ic">'+IC.cal+'</span>Vos jours sur ce chantier</h2>'+(J.length?'':'<p class="muted" style="margin:0">Pas encore de jour prévu. '+esc(ARTISAN)+' vous prévient dès que c\'est calé.</p>')+'<div class="jours">'+J.map(function(j){var d=dd(j[0]);return '<div class="jour'+(j===nx?' next':j[0]<AUJ?' passe':'')+'"><small>'+JC[d.getDay()]+'</small><b>'+d.getDate()+'</b><span>'+MC[d.getMonth()]+' · '+esc(j[1])+'</span></div>'}).join('')+'</div></section>'+
  '<section class="card monte"><h2><span class="ic">'+IC.map+'</span>Le chantier</h2>'+
-  '<div class="ln"><span class="r">'+IC.map+'</span><span class="tx"><b>[adresse], Meylan</b><small>Rez-de-chaussée · se garer sur le parking du cabinet</small></span></div>'+
-  '<div class="ln"><span class="r">'+IC.key+'</span><span class="tx"><b>Clés à l\'accueil du cabinet</b><small>Demander Mme Garnier</small></span></div>'+
-  '<div class="ln"><span class="r">'+IC.clock+'</span><span class="tx"><b>8 h – 17 h</b><small>Pas de bruit pendant les consultations du matin</small></span></div>'+
+  '<div class="ln"><span class="r">'+IC.map+'</span><span class="tx">'+(REEL?'<b>'+esc(ch.adr||ch.v||'Adresse à demander')+'</b><small>'+(ch.adr?'Touchez « Itinéraire » pour y aller':'L\'adresse exacte : demandez-la à '+esc(ARTISAN))+'</small>':'<b>[adresse], Meylan</b><small>Rez-de-chaussée · se garer sur le parking du cabinet</small>')+'</span></div>'+
+  (REEL?'':'<div class="ln"><span class="r">'+IC.key+'</span><span class="tx"><b>Clés à l\'accueil du cabinet</b><small>Demander Mme Garnier</small></span></div>'+
+  '<div class="ln"><span class="r">'+IC.clock+'</span><span class="tx"><b>8 h – 17 h</b><small>Pas de bruit pendant les consultations du matin</small></span></div>')+
   '<button class="ln" id="appel"><span class="r">'+IC.tel+'</span><span class="tx"><b>Appeler '+esc(ARTISAN)+'</b><small>Pour toute question sur le chantier</small></span>'+IC.chev+'</button></section>'+
- '<section class="card monte"><h2><span class="ic">'+IC.plan+'</span>Le plan<span class="sp"></span><small>dernière version</small></h2>'+plan()+
+ (REEL?'':'<section class="card monte"><h2><span class="ic">'+IC.plan+'</span>Le plan<span class="sp"></span><small>dernière version</small></h2>'+plan()+
   '<p class="muted" style="font-size:12.5px;margin:8px 2px 0">En laiton : la zone du faux plafond.</p></section>'+
  '<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Documents et photos</h2>'+
   '<button class="ln" data-doc="Plan du local"><span class="r">'+IC.plan+'</span><span class="tx"><b>Plan du local</b><small>Mis à jour le 12/10</small></span>'+IC.chev+'</button>'+
-  '<button class="ln" data-doc="Photos du chantier"><span class="r">'+IC.photo+'</span><span class="tx"><b>Photos du chantier</b><small>6 photos · accueil et couloir</small></span>'+IC.chev+'</button></section>'+
+  '<button class="ln" data-doc="Photos du chantier"><span class="r">'+IC.photo+'</span><span class="tx"><b>Photos du chantier</b><small>6 photos · accueil et couloir</small></span>'+IC.chev+'</button></section>')+
  '</div><div class="col">'+
  '<section class="card monte"><h2><span class="ic">'+IC.fil+'</span>La conversation du chantier</h2>'+
   (dec.length?'<div class="dec"><span class="dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(ARTISAN)+' · '+esc(String(x.h).split(' · ')[0])+'</small></p>'}).join('')+'</div>':'')+
   '<div class="fil" id="fil">'+msgs()+'</div>'+
   luC()+'<div class="w"><textarea id="t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button class="ro pk" id="mic" aria-label="Dicter">'+IC.mic+'</button><button class="ro go" id="env" aria-label="Envoyer">'+IC.send+'</button></div></section>'+
- '<p class="acces">'+IC.lock+'<span>Votre accès est personnel et dure jusqu\'au '+esc(dt(P.fin||'2026-10-19'))+', fin du chantier. Vous ne voyez que ce chantier.</span></p>'+
- (ROLE==='ent'?offre():'')+
+ '<p class="acces">'+IC.lock+'<span>Votre accès est personnel et dure '+(REEL&&!P.fin?'jusqu\'à la fin du chantier':'jusqu\'au '+esc(dt(P.fin||'2026-10-19'))+', fin du chantier')+'. Vous ne voyez que ce chantier.</span></p>'+
+ (ROLE==='ent'&&!REEL?offre():'')+
  '</div></div></main>';
  $('#app').innerHTML=h;
  var th=$('#theme'),r=document.documentElement,icT=function(){th.innerHTML=r.getAttribute('data-theme')==='dark'?IC.soleil:IC.lune};icT();
  th.addEventListener('click',function(){var d=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',d);try{localStorage.setItem('pc-theme',d)}catch(e){}icT()});
  lierRes();
  var jy=$('#jy');if(jy)jy.addEventListener('click',function(){jy.classList.add('ok');jy.innerHTML=IC.check+'C\'est noté';toast(ARTISAN+' voit que vous serez là')});
- var it=$('#iti');if(it)it.addEventListener('click',function(){toast('Ouverture du GPS (démo)')});
- $('#appel').addEventListener('click',function(){toast('Appel de '+ARTISAN+' (démo)')});
+ var it=$('#iti');if(it)it.addEventListener('click',function(){if(REEL){var q=ch.adr||ch.v;if(q){location.href='https://maps.apple.com/?daddr='+encodeURIComponent(q);return}toast('Adresse à demander à '+ARTISAN);return}toast('Ouverture du GPS (démo)')});
+ $('#appel').addEventListener('click',function(){var t=REEL&&REEL.artisan&&REEL.artisan.tel;if(t){location.href='tel:'+String(t).replace(/[^\d+]/g,'');return}toast(REEL?'Le numéro de '+ARTISAN+' n\'est pas encore renseigné':'Appel de '+ARTISAN+' (démo)')});
  [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});
  var t=$('#t');t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
  $('#mic').addEventListener('click',function(){t.focus();toast('Touchez le micro du clavier pour dicter')});
  $('#env').addEventListener('click',function(){var v=t.value.trim();if(!v){t.focus();return}var d=new Date();
   P.msgs.push({de:moi.id,t:v,h:JC[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)+' · '+d.getHours()+' h '+('0'+d.getMinutes()).slice(-2),lu:0});P.nl=(P.nl||0)+1;
-  if(CH&&CH[CID]){CH[CID].part=P;ecrit('pc-ch9',CH)}
+  sauver();
   $('#fil').innerHTML=msgs();t.value='';t.style.height='auto';toast('Envoyé à tout le chantier')});
 }
-if(termine)fini();else if(lit(cle))chantier();else porte();
-})();
+if(REEL){if(termine)fini();else chantier()}else if(termine)fini();else if(lit(cle))chantier();else porte();
+}
+
+/* ---------- chargeur : lien personnel (?acces=…) → code SMS → chantier envoyé par le service ----------
+   Le téléphone garde un jeton par chantier (pc-inv-j). Sans lien ni jeton : la démo, comme avant. */
+(function(){
+var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,''),Q=new URLSearchParams(location.search);
+var lit=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},ecrit=function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var LOGO='<svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="var(--n1-nuit)"/><circle cx="56" cy="42.82" r="4.71" fill="var(--n1-laiton)"/></svg>';
+var app=document.getElementById('app');
+var ACC=/[?&]acces=([a-z0-9-]{1,30}\.[A-Za-z0-9_-]{10,})/.exec(location.search),JT=lit('pc-inv-j')||{},CH=Q.get('ch');
+function post(chemin,corps,jeton){var h={'Content-Type':'application/json'};if(jeton)h.Authorization='Bearer '+jeton;return fetch(SERVICE+chemin,{method:'POST',headers:h,body:JSON.stringify(corps||{})}).then(function(r){return r.json().catch(function(){return {ok:false}}).then(function(x){x._s=r.status;return x})})}
+function get(chemin,jeton){return fetch(SERVICE+chemin,{headers:{Authorization:'Bearer '+jeton},cache:'no-store'}).then(function(r){return r.json().catch(function(){return {ok:false}}).then(function(x){x._s=r.status;return x})})}
+function message(t,s){app.innerHTML='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>'+esc(t)+'</h1><p>'+esc(s)+'</p></div></div>'}
+/* écran du code : même porte que la démo, cette fois avec le vrai code reçu par SMS */
+function porte(o){/* o = {n, ent, tel, envoye, envoyer(), valider(code)} */
+  function txt(x){return x.envoye?'Pour vérifier que c\'est bien vous, nous venons d\'envoyer un code par SMS'+(x.tel?' au '+esc(x.tel):'')+'.':'Demandez le code à '+esc(o.ent||'l\'entreprise')+' : il s\'affiche sur son téléphone.'}
+  app.innerHTML='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Bonjour'+(o.n?' '+esc(o.n):'')+'</h1>'+
+   '<p>'+(o.ent?'<b>'+esc(o.ent)+'</b> vous ouvre ce chantier.<br>':'')+'<span id="ptx">'+txt(o)+'</span></p>'+
+   '<div class="cases">'+[0,1,2,3,4,5].map(function(i){return '<input inputmode="numeric" maxlength="1" autocomplete="'+(i?'off':'one-time-code')+'" aria-label="Chiffre '+(i+1)+'" data-c="'+i+'">'}).join('')+'</div>'+
+   '<p id="perr" role="alert" style="min-height:20px;margin:8px 0 0;color:#B3261E;font-weight:600"></p>'+
+   '<button class="go" id="entrer">Entrer sur le chantier</button><button class="lien" id="renv">Renvoyer un code</button>'+
+   '<p style="margin:16px 0 0;font-size:12.5px">'+(o.confirmer?'Le code est redemandé après 15 jours sans ouvrir la page.':'Une seule fois : ensuite, le lien ouvre directement votre chantier.')+'</p></div></div>';
+  var C=[].slice.call(document.querySelectorAll('[data-c]')),err=document.getElementById('perr'),en=0;
+  function val(){return C.map(function(x){return x.value}).join('')}
+  function go(){if(val().length<6){err.textContent='Tapez les 6 chiffres reçus par SMS';return}if(en)return;en=1;err.textContent='';
+    o.valider(val()).then(function(x){en=0;if(x&&x.ok)return;err.textContent=(x&&x.erreur)||'Ce code ne passe pas.';C.forEach(function(c){c.value=''});C[0].focus()},function(){en=0;err.textContent='Pas de réseau pour l\'instant.'})}
+  C.forEach(function(x,i){x.addEventListener('input',function(){var v=x.value.replace(/\D/g,'');if(v.length>1){v.split('').slice(0,6-i).forEach(function(d,j){C[i+j].value=d})}else x.value=v;var k=C.findIndex(function(c){return !c.value});if(k<0)go();else if(x.value&&C[i+1])C[i+1].focus()});
+   x.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!x.value&&C[i-1])C[i-1].focus()})});
+  C[0].addEventListener('paste',function(e){var t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);if(!t)return;e.preventDefault();t.split('').forEach(function(d,i){C[i].value=d});if(t.length===6)go()});
+  document.getElementById('entrer').addEventListener('click',go);
+  document.getElementById('renv').addEventListener('click',function(){err.textContent='';o.envoyer().then(function(x){document.getElementById('ptx').innerHTML=x&&x.attendre?'Un code vient de partir : attendez quelques secondes.':txt(x||{})})});
+  C[0].focus()}
+function ouvrir(ch){var j=JT[ch];get('/espace/invite',j).then(function(x){
+   if(x.ok){x.envoyer=function(P){post('/espace/invite',{part:P},j).then(function(y){if(y&&!y.ok&&y.erreur)console.warn(y.erreur)})};lancerPage(x);return}
+   if(x._s===401&&x.confirmer){var env=function(){return post('/espace/acces/renvoyer',{},j)};env().then(function(y){porte({tel:y.tel||x.tel,envoye:!!y.envoye,confirmer:1,envoyer:env,valider:function(v){return post('/espace/acces/confirmer',{otp:v},j).then(function(z){if(z.ok)ouvrir(ch);return z})}})});return}
+   if(x.coupe||x._s===401){delete JT[ch];ecrit('pc-inv-j',JT);message('Accès terminé',(x.erreur||'Votre accès à ce chantier est terminé.')+' Si besoin, demandez un nouveau lien à l\'entreprise.');return}
+   message('Chantier indisponible',x.erreur||'Réessayez dans un instant.')},
+  function(){message('Pas de réseau','Rouvrez la page quand vous aurez du réseau.')})}
+if(SERVICE&&ACC){var envL=function(){return post('/espace/acces',{code:ACC[1]})};
+  envL().then(function(x){if(!x.ok||x.etape!=='code'){message('Lien plus valable',(x.erreur||'Ce lien n\'est plus valable.'));return}
+    porte({n:x.n,ent:x.entreprise,tel:x.tel,envoye:x.envoye,envoyer:envL,valider:function(v){return post('/espace/acces',{code:ACC[1],otp:v}).then(function(y){
+      if(y.ok&&y.invite){JT[y.invite.ch]=y.jeton;ecrit('pc-inv-j',JT);try{history.replaceState(null,'','invite.html?ch='+encodeURIComponent(y.invite.ch))}catch(e){}ouvrir(y.invite.ch)}
+      else if(y.ok){location.href='./'}return y})}})},function(){message('Pas de réseau','Rouvrez le lien quand vous aurez du réseau.')});return}
+if(SERVICE&&CH&&JT[CH]){ouvrir(CH);return}
+lancerPage(null)})();
 </script>
 </body></html>
