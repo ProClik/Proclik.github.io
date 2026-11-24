@@ -111,6 +111,8 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
      et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
   if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+SCI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
 
+  /* Lien négoce (24/11) : « Valcroix · 1 pose à accepter », une ligne seulement quand une pose attend (negoce.js) */
+  if(window.PCNEG&&PCNEG.accueilHTML)h+=PCNEG.accueilHTML();
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   if(B.jour){var L=J.L;
     h+='<section class="jr2"><button class="jr2-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée</span><b>'+

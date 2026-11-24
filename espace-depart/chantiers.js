@@ -620,6 +620,10 @@ function equipe(c){var P=part(c),E=P.ent,M=P.msgs,nl0=nonLus(c),ncli=(cliDe(c)||
  h+=cliRow(c);
  if(P.termine)h+='<p class="hint" style="margin:10px 0 0">Chantier terminé : les accès sont coupés (sauf pour qui a encore une réserve à lever), et chaque entreprise a reçu le récapitulatif par e-mail (décisions, plans, conversation). Touchez une entreprise pour lui donner votre note, que vous seul verrez.</p>';
  
+ /* Ce que les invités voient en plus (Cyril 24/11) : le plan (dessin seul, sans prix) et les photos du chantier. */
+ if((E.length||P.cli)&&!P.termine){var pl=planDe(c.dos);if(pl){var sv=planSVG(pl.plan);if(sv&&sv!==P.planSvg){P.planSvg=sv;saveCH()}}
+  h+='<div class="cp-par" style="margin-top:12px;display:grid;gap:14px"><div class="ch-sw"><span>Partager le plan<small>'+(pl?'Le dessin seul, sans aucun prix. Lecture seule.':'Pas encore de plan pour ce chantier.')+'</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+(P.pPlan!==0)+'" id="cp-ppl" aria-label="Partager le plan avec les invités"></button></div>'+
+   '<div class="ch-sw"><span>Partager les photos<small>'+((c.ph||[]).length?(c.ph.length+' photo'+(c.ph.length>1?'s':'')+' du chantier'):'Les photos que vous ajouterez au chantier')+'</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+(P.pPh!==0)+'" id="cp-pph" aria-label="Partager les photos avec les invités"></button></div></div>'}
  if(E.length&&!P.termine)h+='<button type="button" class="cp-lien" id="cp-voir">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
  var finB=E.length&&!P.termine&&jf>3?'<div class="cp-finbas"><button type="button" class="cp-fin cp-lien" id="cp-fin2">Chantier terminé : couper les accès</button></div>':'';
  h+='</div>';var hEnt=h,hRes=resCard(c);h='';
@@ -662,7 +666,10 @@ function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(wi
    if(sel==='autre'){var n=($('#cp-n').value||'').trim();if(!n){X.toast('Le nom de l\'entreprise','Il manque pour envoyer l\'invitation.');return}e={id:'cp'+Date.now().toString(36),n:n,m:($('#cp-m').value||'').trim()||'Entreprise',ic:ic}}
    else{var t=PCPLAN.st.de(sel);e={id:t.id,n:t.n,m:t.m,ic:metDe(t.m)}}
    e.code=codeNeuf();e.par=par;if(!d.hidden&&d.value)P.fin=d.value;
+   var tel=sel==='autre'?($('#cp-tel').value||'').trim():((PCPLAN.st.de(sel)||{}).tel||'');if(tel)e.tel=tel;
    P.ent.push(e);saveCH();attente('sms');X.xclose();
+   /* Espace connecté : le vrai lien + code SMS (service) */
+   if(window.PCACCES&&PCACCES.reel()){recharger('equipe');setTimeout(function(){PCACCES.lienInvite({kind:'ent',ch:c.id,chn:c.n,eid:e.id,n:e.n,tel:e.tel})},300);return}
    recharger('equipe');X.toast('Invitation envoyée',e.n+' reçoit son lien par '+(par==='sms'?'SMS':'e-mail')+', valable jusqu\'au '+dt(accesFin(c))+' (démo).')})})}
 /* Note privée de l'architecte sur chaque entreprise, à la fin du chantier (Cyril 19/11) : visible par lui seul, jamais par l'entreprise */
 var CRIT=[['ponct','Ponctualité'],['propre','Propreté du chantier'],['trav','Qualité du travail']];
@@ -681,9 +688,10 @@ function ficheEnt(c,i){var P=part(c),e=P.ent[i];if(!e)return;var arm=0,off=offE(
   lierPicker(function(k){e.ic=k;saveCH();var t=$('.cp-tete .cp-mi');if(t)t.innerHTML=metSvg(k);recharger('equipe')});
   $$('[data-cpn]').forEach(function(b){b.addEventListener('click',function(){e.note=e.note||{};e.note[b.dataset.cpn]=+b.dataset.v;saveCH();
    $$('[data-cpn="'+b.dataset.cpn+'"]').forEach(function(x){x.setAttribute('aria-pressed',String(+x.dataset.v<=+b.dataset.v))});recharger('equipe')})});
-  var r=$('#cp-ren');if(r)r.addEventListener('click',function(){X.toast('Lien renvoyé',e.n+' le reçoit par '+(e.par==='mail'?'e-mail':'SMS')+' (démo).')});
+  var r=$('#cp-ren');if(r)r.addEventListener('click',function(){if(window.PCACCES&&PCACCES.reel()){X.xclose();setTimeout(function(){PCACCES.lienInvite({kind:'ent',ch:c.id,chn:c.n,eid:e.id,n:e.n,tel:e.tel})},250);return}X.toast('Lien renvoyé',e.n+' le reçoit par '+(e.par==='mail'?'e-mail':'SMS')+' (démo).')});
+  if(window.PCACCES)PCACCES.codeInvite({kind:'ent',ch:c.id,eid:e.id,n:e.n},$('#x-in'));
   var k=$('#cp-cut');if(k)k.addEventListener('click',function(){if(!arm){arm=1;k.textContent='Touchez encore pour couper';setTimeout(function(){if(k.isConnected){arm=0;k.textContent='Couper son accès'}},3500);return}
-   e.coupe=1;saveCH();X.xclose();recharger('equipe');X.toast('Accès coupé',e.n+' ne peut plus ouvrir ce chantier.')})})}
+   e.coupe=1;saveCH();if(window.PCACCES)PCACCES.couperInvite({kind:'ent',ch:c.id,eid:e.id});X.xclose();recharger('equipe');X.toast('Accès coupé',e.n+' ne peut plus ouvrir ce chantier.')})})}
 function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PCPLAN.st&&PCPLAN.st.jours?PCPLAN.st.jours(e.id,c.id):[];
  var j=J.length?J.map(function(x){var d=new Date(x.d+'T12:00:00');return JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]}).join(', '):'à caler avec vous';
  var der=P.msgs[P.msgs.length-1];
@@ -696,6 +704,7 @@ function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PC
 function lierEquipe(c){lierRes(c);
  var b=$('#cp-inv');if(b)b.addEventListener('click',function(){inviter(c)});
  var v=$('#cp-voir');if(v)v.addEventListener('click',function(){apercu(c)});
+ [['#cp-ppl','pPlan','Le plan'],['#cp-pph','pPh','Les photos']].forEach(function(x){var t=$(x[0]);if(t)t.addEventListener('click',function(){var P=part(c);P[x[1]]=P[x[1]]===0?1:0;saveCH();t.setAttribute('aria-checked',String(P[x[1]]!==0));X.toast(x[2]+(P[x[1]]?' : partagé':' : plus partagé'),P[x[1]]?'Vos invités le voient à leur prochaine ouverture.':'Vos invités ne le voient plus.')})});
  $$('#chx [data-cpe]').forEach(function(b){b.addEventListener('click',function(){ficheEnt(c,+b.dataset.cpe)})});
  var pr=$('#cp-pro');if(pr)pr.addEventListener('click',function(){var P=part(c);P.fin=addJ(accesFin(c)<auj()?auj():accesFin(c),7);saveCH();recharger('equipe');X.toast('Accès prolongé','Jusqu\'au '+dt(P.fin)+'. Les entreprises sont prévenues (démo).')});
  $$('#chx #cp-fin1,#chx #cp-fin2').forEach(function(f){var arm=0;f.addEventListener('click',function(){if(!arm){arm=1;f.textContent='Touchez encore : couper tous les accès';setTimeout(function(){if(f.isConnected){arm=0;f.textContent='Chantier terminé'}},3500);return}
@@ -897,7 +906,8 @@ function ficheCli(c){var k=cliDe(c);if(!k)return;
    if(b.dataset.cpcom==='1'&&!k.commun&&!arm){arm=1;b.innerHTML='Touchez encore pour confirmer<small>Les entreprises liront ses messages, et lui les leurs</small>';setTimeout(function(){if(b.isConnected&&!k.commun){arm=0;b.textContent='Avec tout le chantier'}},4000);return}
    k.commun=+b.dataset.cpcom;saveCH();$$('[data-cpcom]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});recharger('equipe');
    X.toast(k.commun?'Conversation commune ouverte':'Conversation avec vous seulement',k.commun?k.n+' lit et écrit dans la conversation du chantier.':'Les entreprises ne lisent plus ses messages.')})});
-  $('#cp-cren').addEventListener('click',function(){X.toast('Lien renvoyé',k.n+' le reçoit par SMS (démo).')})})}
+  $('#cp-cren').addEventListener('click',function(){if(window.PCACCES&&PCACCES.reel()){X.xclose();setTimeout(function(){PCACCES.lienInvite({kind:'cli',ch:c.id,chn:c.n,n:k.n,tel:k.tel})},250);return}X.toast('Lien renvoyé',k.n+' le reçoit par SMS (démo).')});
+  if(window.PCACCES)PCACCES.codeInvite({kind:'cli',ch:c.id,n:k.n},$('#x-in'))})}
 /* TRÈS PRIVÉ (Cyril 19/11) : chaque conversation dit clairement qui la lit, juste au-dessus de la case où l'on écrit.
    Données séparées : la conversation du client (part.cli.msgs) n'est jamais envoyée aux entreprises ; à brancher côté service
    avec un filtre par lien (chaque code ne reçoit que SES conversations). */
@@ -920,7 +930,8 @@ function lierResCard(c){
  var p=$('#cp-pv');if(p)p.addEventListener('click',function(){pv(c)})}
 function lierRes(c){lierResCard(c);
  var k=$('#cp-cli');if(k)k.addEventListener('click',function(){ficheCli(c)});
- var ki=$('#cp-clinv');if(ki)ki.addEventListener('click',function(){var o=dos({dos:c.dos});part(c).cli={n:(o&&o.n)||c.n,code:codeNeuf(),vu:'',commun:0,nl:0,msgs:[]};saveCH();recharger('equipe');X.toast('Invitation envoyée',part(c).cli.n+' reçoit son lien par SMS (démo).')});
+ var ki=$('#cp-clinv');if(ki)ki.addEventListener('click',function(){var o=dos({dos:c.dos});part(c).cli={n:(o&&o.n)||c.n,code:codeNeuf(),vu:'',commun:0,nl:0,msgs:[],tel:(o&&o.tel)||''};saveCH();recharger('equipe');
+  if(window.PCACCES&&PCACCES.reel()){var k=part(c).cli;setTimeout(function(){PCACCES.lienInvite({kind:'cli',ch:c.id,chn:c.n,n:k.n,tel:k.tel})},300);return}X.toast('Invitation envoyée',part(c).cli.n+' reçoit son lien par SMS (démo).')});
  var t=$('#cp-ct'),se=$('#cp-csend');if(t)t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
  if(se)se.addEventListener('click',function(){var v=(t.value||'').trim();if(!v){t.focus();return}cliDe(c).msgs.push({de:'moi',t:v,h:maint()});saveCH();recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','Aucune entreprise ne le voit.')})}
 
