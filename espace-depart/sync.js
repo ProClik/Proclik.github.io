@@ -33,12 +33,15 @@ function appel(chemin,o,garder){o=o||{};var h={Authorization:'Bearer '+jeton()};
   return r.json().catch(function(){return {}}).then(function(j){if(r.status===401||r.status===402||r.status===403)arret=1;if(!r.ok||j.ok===false)throw new Error(j.erreur||('Erreur '+r.status));return j})})}
 
 /* Envoi de ce qui a changé, un tiroir après l'autre. */
-function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale});if(!L.length)return;
+/* Tiroir que le service ne connaît pas encore (nouveau dans l'Espace, service pas encore à jour) : il reste sur l'appareil
+   et ne bloque JAMAIS l'envoi des autres. Il repart à la prochaine ouverture. */
+var refuse={};
+function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale&&!refuse[k]});if(!L.length)return;
  enCours=1;var k=L[0],v=ls.getItem(k),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
  if(garder&&corps.length>60000){enCours=0;return}/* trop gros pour partir pendant la fermeture : part à la prochaine ouverture */
  appel('/espace/donnees',{method:'POST',body:corps},garder).then(function(r){var m2=meta();m2.k[k]=m2.k[k]||{};m2.k[k].maj=r.maj;
    if(ls.getItem(k)===v)delete m2.k[k].sale;ecrisMeta(m2);enCours=0;etat('ok');envoyer()},
-  function(e){enCours=0;etat('attente',e.message);if(!arret){clearTimeout(minuteur);minuteur=setTimeout(envoyer,30000)}})}
+  function(e){enCours=0;if(/Tiroir inconnu/.test(e.message)){refuse[k]=1;envoyer();return}etat('attente',e.message);if(!arret){clearTimeout(minuteur);minuteur=setTimeout(envoyer,30000)}})}
 
 /* Sécurité n° 1 : avant de remplacer ce qui est sur l'appareil par la version du service, une copie est gardée ici
    (« pc-sync-sauve », la dernière par tiroir). Si l'appareil est plein, on garde au moins le service (historique). */
