@@ -954,39 +954,77 @@ const MESH=(()=>{let ID=0;const LA="#A8823F",W='fill="var(--n1-calme,#F6F7F9)" s
  M=(x,y,t,a)=>`<text x="${x}" y="${y}"${a?` text-anchor="${a}"`:""} font-family="Manrope,sans-serif" font-weight="600" font-size="9.5" fill="var(--muted)">${t}</text>`,
  P=(x,y)=>`<circle cx="${x}" cy="${y}" r="4" fill="${LA}"/>`,
  band=d=>`<path d="${d}" fill="none" stroke="${LA}" stroke-opacity=".28" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
- sv=(b,lab)=>`<svg class="mes" viewBox="0 0 320 170" role="img" aria-label="${lab}">${mk()}${b}</svg>`;
+ sv=(b,lab)=>`<svg class="mes" viewBox="0 0 320 170" role="img" aria-label="${lab}">${mk()}${b}</svg>`,
+ // valeur tapée par le client (null si vide ou « Je ne sais pas »)
+ V=(o,k)=>o&&!o[k+"_dk"]&&o[k]!==DK?pn(o[k]):null,
+ F=(v,u)=>fr(v)+" "+u,
+ // étiquette de cote : pastille laiton posée sur la flèche
+ Q=(x,y,t)=>{const w=Math.round(16+t.length*6.6);return`<g class="mes-v"><rect x="${x-w/2}" y="${y-10.5}" width="${w}" height="21" rx="10.5" fill="var(--bg,#fff)" stroke="${LA}" stroke-width="1.6"/><text x="${x}" y="${y+4.2}" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="12" fill="${LA}">${t}</text></g>`},
+ // cote déjà connue (autre mesure) : petit texte discret
+ K=(x,y,t,a)=>`<text x="${x}" y="${y}"${a?` text-anchor="${a}"`:""} font-family="Manrope,sans-serif" font-weight="700" font-size="9.5" fill="var(--fg)" fill-opacity=".55">${t}</text>`,
+ cl=(v,a,b)=>Math.max(a,Math.min(b,v)),r1=n=>Math.round(n*10)/10,
+ // polygone fermé aux angles arrondis, comme les dessins des toits
+ RP=(pts,r)=>{const n=pts.length,q=(a,b,d)=>{const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1,k=Math.min(d,L/2)/L;return[r1(a[0]+(b[0]-a[0])*k),r1(a[1]+(b[1]-a[1])*k)]};let d="";for(let i=0;i<n;i++){const p=pts[i],a=pts[(i-1+n)%n],b=pts[(i+1)%n],s0=q(p,a,r),s1=q(p,b,r);d+=(i?"L":"M")+s0[0]+" "+s0[1]+"Q"+p[0]+" "+p[1]+" "+s1[0]+" "+s1[1]}return d+"Z"};
  // coupe d'une pièce : du sol au plafond
- const hsp=()=>sv(`<path d="M46 34H274V140H46Z" ${W}/><path d="M36 34H284M36 140H284" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/><path d="M236 140v-50a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v50" fill="none" stroke="var(--fg)" stroke-width="2.2"/>${A(120,135,120,39)}${T(132,84,"du sol")}${T(132,98,"au plafond")}${M(160,160,"vue en coupe","middle")}`,"Mesurer du sol au plafond");
- // mur vu de face : longueur au sol
- const murL=()=>sv(`<path d="M34 30H286V138H34Z" ${W}/><path d="M24 138H296" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/>${A(40,124,280,124)}${T(160,112,"d'un bout à l'autre, au sol","middle")}${G(34,30,34,138)}${M(160,160,"le mur vu de face","middle")}`,"Mesurer la longueur du mur au sol");
- // pièce vue de dessus
- const room=(L,l,both)=>sv(`<rect x="56" y="22" width="208" height="116" rx="6" ${W} stroke-width="6"/>${L?A(68,40,252,40):G(68,40,252,40)}${l?A(78,52,78,126):G(78,52,78,126)}${L?T(160,62,"longueur","middle"):""}${l?T(90,both?84:94,"largeur"):""}${both?M(196,108,"longueur × largeur","middle")+M(196,122,"= la surface en m²","middle"):""}${M(160,160,"la pièce vue de dessus","middle")}`,both?"Mesurer la longueur et la largeur de la pièce":L?"Mesurer la longueur de la pièce":"Mesurer la largeur de la pièce");
- // fenêtre vue de l'intérieur : d'un bord du mur à l'autre
- const fen=(w,h)=>sv(`<rect x="22" y="2" width="276" height="154" rx="6" fill="var(--n1-calme,#F6F7F9)" stroke="var(--fg)" stroke-opacity=".25" stroke-width="1.6"/><rect x="104" y="34" width="112" height="100" rx="2" fill="var(--bg)" stroke="var(--fg)" stroke-width="3"/><rect x="112" y="42" width="96" height="84" rx="2" fill="#DCE6EE" stroke="var(--fg)" stroke-width="2.2"/><path d="M160 42v84" stroke="var(--fg)" stroke-width="2.2"/>${w?A(106,24,214,24):G(106,24,214,24)}${h?A(232,36,232,132):G(232,36,232,132)}${w?T(160,18,"largeur","middle",10.5):""}${h?T(240,88,"hauteur"):""}${M(160,148,"vue de l'intérieur, d'un bord du mur à l'autre","middle")}`,"Mesurer l'ouverture de la fenêtre, côté intérieur");
- // porte : la porte elle-même, sans le cadre
- const porte=()=>sv(`<rect x="104" y="14" width="112" height="142" rx="3" ${W} stroke-opacity=".45"/><rect x="116" y="24" width="88" height="132" rx="2" ${W}/><circle cx="194" cy="94" r="3" fill="var(--fg)"/>${A(119,50,201,50)}${T(160,42,"à mesurer","middle")}${M(236,128,"le cadre")}<path d="M234 124 218 118" stroke="var(--fg)" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>`,"Mesurer la largeur de la porte, sans le cadre");
+ const hsp=o=>{const h=V(o,"H");return sv(`<rect x="46" y="34" width="228" height="106" rx="5" ${W}/><path d="M236 140v-50a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v50" fill="none" stroke="var(--fg)" stroke-width="2.2"/>${A(120,135,120,39)}${h!=null?Q(120,87,F(h,"m"))+M(158,91,"du sol au plafond"):T(132,84,"du sol")+T(132,98,"au plafond")}${M(160,160,"vue en coupe","middle")}`,"Mesurer du sol au plafond")};
+ // mur vu de face : longueur au sol, proportions d'après longueur × hauteur
+ const murL=o=>{const L=V(o,"L"),H=V(o,"H"),Lx=L||4,Hx=H||2.5,s=Math.min(252/Lx,108/Hx),w=r1(cl(Lx*s,70,252)),h=r1(cl(Hx*s,46,108)),x0=r1(160-w/2),x1=r1(160+w/2),y0=r1(138-h);
+  return sv(`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="5" ${W}/>${A(x0+6,124,x1-6,124)}${L!=null?Q(160,124,F(L,"m")):T(160,112,"d'un bout à l'autre, au sol","middle")}${G(x0-8,y0,x0-8,138)}${H!=null?K(x0-12,r1(y0+h/2+3),F(H,"m"),"end"):""}${M(160,160,"le mur vu de face","middle")}`,"Mesurer la longueur du mur au sol")};
+ // pièce vue de dessus, proportions d'après longueur × largeur
+ const room=(o,L1,l1,both,sk)=>{const L=V(o,"L"),l=V(o,"l"),su=V(o,sk||"surface"),Lx=L||5,lx=l||3.5,s=Math.min(208/Lx,116/lx),w=r1(cl(Lx*s,90,208)),h=r1(cl(lx*s,60,116)),x0=r1(160-w/2),y0=r1(80-h/2),x1=r1(x0+w),y1=r1(y0+h),o2=[];
+  o2.push(`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="6" ${W}/>`);
+  o2.push(L1?A(x0+12,y0+18,x1-12,y0+18):G(x0+12,y0+18,x1-12,y0+18));
+  o2.push(l1?A(x0+22,y0+30,x0+22,y1-12):G(x0+22,y0+30,x0+22,y1-12));
+  if(L1)o2.push(L!=null?Q(160,y0+18,F(L,"m")):both&&su!=null?"":T(160,y0+40,"longueur","middle"));else if(L!=null)o2.push(K(160,y0+32,F(L,"m"),"middle"));
+  if(l1)o2.push(l!=null?Q(x0+22,r1((y0+30+y1-12)/2),F(l,"m")):both&&su!=null?"":T(x0+34,both?r1(y0+62):r1(y0+72),"largeur"));else if(l!=null)o2.push(K(x0+30,r1((y0+y1)/2+9),F(l,"m")));
+  if(both){if(su!=null)o2.push(Q(r1(x0+w/2+10),r1(y0+h/2+8),F(su,"m²")));else o2.push(M(196,108,"longueur × largeur","middle"),M(196,122,"= la surface en m²","middle"))}
+  o2.push(M(160,163,"la pièce vue de dessus","middle"));
+  return sv(o2.join(""),both?"Mesurer la longueur et la largeur de la pièce":L1?"Mesurer la longueur de la pièce":"Mesurer la largeur de la pièce")};
+ // fenêtre vue de l'intérieur : d'un bord du mur à l'autre, proportions d'après largeur × hauteur
+ const fen=(o,w1,h1)=>{const Lc=V(o,"Lc"),Hc=V(o,"Hc"),Lx=Lc||100,Hx=Hc||115,s=Math.min(150/Lx,100/Hx),w=r1(cl(Lx*s,50,150)),h=r1(cl(Hx*s,50,104)),x0=r1(160-w/2),x1=r1(x0+w),y0=r1(84-h/2),y1=r1(y0+h),mid=r1((y0+y1)/2);
+  const two=Lx>90,ins=`<rect x="${x0+8}" y="${y0+8}" width="${w-16}" height="${h-16}" rx="4" fill="#DCE6EE" stroke="var(--fg)" stroke-width="2.2"/>${two?`<path d="M160 ${y0+8}V${y1-8}" stroke="var(--fg)" stroke-width="2.2"/>`:""}`;
+  return sv(`<rect x="22" y="2" width="276" height="154" rx="6" fill="var(--n1-calme,#F6F7F9)" stroke="var(--fg)" stroke-opacity=".25" stroke-width="1.6"/><rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="5" fill="var(--bg)" stroke="var(--fg)" stroke-width="3"/>${ins}${w1?A(x0+2,y0-12,x1-2,y0-12):G(x0+2,y0-12,x1-2,y0-12)}${h1?A(x1+16,y0+2,x1+16,y1-2):G(x1+16,y0+2,x1+16,y1-2)}${w1?(Lc!=null?Q(160,y0-12,F(Lc,"cm")):T(160,y0-18,"largeur","middle",10.5)):Lc!=null?K(160,y0-17,F(Lc,"cm"),"middle"):""}${h1?(Hc!=null?Q(x1+16,mid,F(Hc,"cm")):T(x1+24,mid+4,"hauteur")):Hc!=null?K(x1+22,mid+4,F(Hc,"cm")):""}${M(160,148,"vue de l'intérieur, d'un bord du mur à l'autre","middle")}`,"Mesurer l'ouverture de la fenêtre, côté intérieur")};
+ // porte : la porte elle-même, sans le cadre, largeur d'après la taille choisie
+ const porte=o=>{const W0=V(o,"largeur"),w=r1(88*(W0||83)/83),x0=r1(160-w/2),x1=r1(160+w/2);
+  return sv(`<rect x="${x0-12}" y="14" width="${w+24}" height="142" rx="6" ${W} stroke-opacity=".45"/><rect x="${x0}" y="24" width="${w}" height="132" rx="5" ${W}/><circle cx="${x1-10}" cy="94" r="3" fill="var(--fg)"/>${A(x0+3,50,x1-3,50)}${W0!=null?Q(160,50,F(W0,"cm")):T(160,42,"à mesurer","middle")}${M(x1+32,128,"le cadre")}<path d="M${x1+30} 124 ${x1+14} 118" stroke="var(--fg)" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>`,"Mesurer la largeur de la porte, sans le cadre")};
  // escalier : d'un sol à l'autre / largeur
- const escH=()=>sv(`<path d="M24 146H296" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/><path d="M170 46H296V58H170Z" fill="var(--fg)" fill-opacity=".12" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M40 146V128H58V110H76V92H94V74H112V58H130" fill="none" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M130 58H170" stroke="var(--fg)" stroke-width="3"/>${A(246,141,246,51)}${T(232,92,"d'un sol","end")}${T(232,106,"à l'autre","end")}${M(220,34,"le sol du dessus","middle")}`,"Mesurer la hauteur d'un sol à l'autre");
- const escL=()=>sv(`<rect x="70" y="30" width="180" height="70" rx="4" ${W}/>${[0,1,2,3,4,5,6,7].map(i=>`<path d="M${92+i*20} 30v70" stroke="var(--fg)" stroke-opacity=".35" stroke-width="1.6"/>`).join("")}${A(262,34,262,96)}${T(272,70,"largeur")}${M(160,124,"l'escalier vu de dessus","middle")}${M(160,138,"(la largeur des marches)","middle")}`,"Mesurer la largeur de l'escalier");
- // toit : coupe selon la forme, la hauteur demandée en laiton
- const R={"2":{p:"M60 140V95L160 30L260 95V140Z",b:"M70 92 160 38 250 92",hf:[160,36],m1:[72,96,60,95],m2:[248,96,260,95]},
-  "1":{p:"M60 140V100L260 30V140Z",b:"M70 97 252 39",hf:[248,37],m1:[72,101,60,100]},
-  "p":{p:"M60 140V100L120 50H200L260 100V140Z",b:"M70 97 122 57H198L250 97",hf:[160,55],m1:[72,101,60,100],m2:[248,101,260,100],lp:1}};
- const toit=(fo,k)=>{const r=R[/^1/.test(fo||"")?"1":/plat/i.test(fo||"")?"p":"2"],o=[];
-  o.push(`<path d="${r.p}" ${W}/>`,band(r.b),`<path d="M50 140H270" stroke="var(--fg)" stroke-width="4" stroke-linecap="round"/>`);
-  const hf=r.hf,m1=r.m1,m2=r.m2;
-  o.push(k==="hfait"?A(hf[0],136,hf[0],hf[1]+4):G(hf[0],136,hf[0],hf[1]+6));
-  if(m1)o.push(k==="hmur1"?A(m1[0],136,m1[0],m1[1]+3)+P(m1[2],m1[3]):G(m1[0],136,m1[0],m1[1]+4));
-  if(m2)o.push(k==="hmur2"?A(m2[0],136,m2[0],m2[1]+3)+P(m2[2],m2[3]):G(m2[0],136,m2[0],m2[1]+4));
-  if(r.lp)o.push(k==="lp"?A(124,40,196,40):"");
-  if(k==="l")o.push(A(64,128,256,128));
-  const lab={hfait:[hf[0]-10,hf[0]>200?90:108,"end",[r.lp?"hauteur du plat":"au plus haut"]],hmur1:[84,112,"",["en bas :","du sol jusqu'au point"]],hmur2:[236,112,"end",["en bas,","de l'autre côté"]],lp:[160,30,"middle",["largeur du plafond plat"]],l:[160,120,"middle",["d'un côté bas à l'autre, au sol"]]}[k];
-  if(lab)lab[3].forEach((t,i)=>o.push(i?M(lab[0],lab[1]+i*13,t,lab[2]):T(lab[0],lab[1],t,lab[2])));
-  if(k==="hmur1"||k==="hmur2"){const m=k==="hmur1"?m1:m2,L=k==="hmur1",x=L?6:314,a=L?"":"end";o.push(`<path d="M${m[2]+(L?-3:3)} ${m[3]-5}L${L?26:294} ${m[3]-22}" fill="none" stroke="${LA}" stroke-width="1.4" stroke-dasharray="3 3"/>`,T(x,m[3]-56,"ici, le plafond",a,10),T(x,m[3]-44,"commence",a,10),T(x,m[3]-32,"à pencher",a,10))}
-  return sv(o.join(""),"Où mesurer sous le toit")};
- const toitL=()=>sv(`<rect x="40" y="34" width="240" height="88" rx="4" ${W}/><path d="M44 78H276" stroke="var(--fg)" stroke-width="2.2" stroke-dasharray="6 5"/>${M(160,72,"le haut du toit","middle")}${A(44,136,276,136)}${T(160,156,"dans le sens du haut du toit","middle")}${M(160,24,"l'étage vu de dessus","middle")}`,"Mesurer la longueur sous le toit");
- return k=>{if(!k)return"";ID++;const[a,b,c]=String(k).split(":");
-  return a==="hsp"?hsp():a==="murL"?murL():a==="pieceL"?room(1,0):a==="piecel"?room(0,1):a==="surf"?room(1,1,1):a==="fen"?fen(1,1):a==="fenL"?fen(1,0):a==="fenH"?fen(0,1):a==="porte"?porte():a==="escH"?escH():a==="escL"?escL():a==="toitL"?toitL():a==="toit"?toit(b,c):""}})();
+ const escH=o=>{const h=V(o,"haut");return sv(`<path d="${RP([[40,146],[40,128],[58,128],[58,110],[76,110],[76,92],[94,92],[94,74],[112,74],[112,58],[170,58],[170,146]],3.5)}" ${W}/><rect x="170" y="46" width="126" height="12" rx="4" fill="var(--fg)" fill-opacity=".12" stroke="var(--fg)" stroke-width="3"/><path d="M28 146H292" stroke="var(--fg)" stroke-width="3" stroke-linecap="round"/>${A(246,141,246,51)}${h!=null?Q(246,96,F(h,"cm")):T(232,92,"d'un sol","end")+T(232,106,"à l'autre","end")}${M(220,34,"le sol du dessus","middle")}`,"Mesurer la hauteur d'un sol à l'autre")};
+ const escL=o=>{const W0=V(o,"largeur"),h=r1(70*(W0||80)/80),y0=r1(65-h/2),y1=r1(y0+h);return sv(`<rect x="70" y="${y0}" width="180" height="${h}" rx="6" ${W}/>${[0,1,2,3,4,5,6,7].map(i=>`<path d="M${92+i*20} ${y0}V${y1}" stroke="var(--fg)" stroke-opacity=".35" stroke-width="1.6"/>`).join("")}${A(266,y0+4,266,y1-4)}${W0!=null?Q(266,65,F(W0,"cm")):T(276,70,"largeur")}${M(160,124,"l'escalier vu de dessus","middle")}${M(160,138,"(la largeur des marches)","middle")}`,"Mesurer la largeur de l'escalier")};
+ // toit : coupe à l'échelle des hauteurs tapées, la hauteur demandée en laiton
+ const toit=(fo,k,o)=>{const ty=/^1/.test(fo||"")?"1":/plat/i.test(fo||"")?"p":"2",oo=[];
+  const v1=V(o,"hmur1"),v2=V(o,"hmur2"),vf=V(o,"hfait"),vl=V(o,"l"),vp=V(o,"lp");
+  let h1=v1??80,h2=ty==="1"?null:(v2??(v1??80)),hf=vf??250,l=(vl??6)*100,lp=(vp??1.5)*100;
+  hf=Math.max(hf,h1+20,(h2??0)+20);l=cl(l,hf*1.2,hf*6);
+  const s=Math.min(220/l,108/hf),Wd=r1(l*s),x0=r1(160-Wd/2),x1=r1(160+Wd/2),Y=c=>r1(140-c*s);
+  const y1=Y(h1),yf=Y(hf),y2=ty==="1"?yf:Y(h2);
+  let p,b,hx;
+  if(ty==="2"){p=RP([[x0,140],[x0,y1],[160,yf],[x1,y2],[x1,140]],5);hx=160;
+   const bl=(xa,ya,xb,yb,d)=>[r1(xa+(xb-xa)*d),r1(ya+(yb-ya)*d+6)];const a=bl(x0,y1,160,yf,.1),c=bl(x1,y2,160,yf,.1);b=`M${a[0]} ${a[1]} 160 ${yf+8} ${c[0]} ${c[1]}`}
+  else if(ty==="1"){p=RP([[x0,140],[x0,y1],[x1,yf],[x1,140]],5);hx=r1(x1-12);b=`M${r1(x0+10)} ${r1(y1+6-(y1-yf)*10/Wd)} ${r1(x1-10)} ${r1(yf+6+(y1-yf)*10/Wd)}`}
+  else{const lw=r1(cl(lp*s,24,Wd-50)),xa=r1(160-lw/2),xb=r1(160+lw/2);p=RP([[x0,140],[x0,y1],[xa,yf],[xb,yf],[x1,y2],[x1,140]],5);hx=160;b=`M${r1(x0+10)} ${r1(y1+4)} ${r1(xa+2)} ${yf+7}H${r1(xb-2)}L${r1(x1-10)} ${r1(y2+4)}`;
+   oo.lp=[xa,xb]}
+  oo.push(`<path d="${p}" ${W}/>`,band(b));
+  const mid=(a,c)=>r1((a+c)/2),ax1=r1(x0+12),ax2=r1(x1-12);
+  // hauteur au plus haut
+  if(k==="hfait"){oo.push(A(hx,136,hx,yf+4));oo.push(vf!=null?Q(hx,mid(136,yf+4),F(vf,"cm")):T(hx-10,hx>200?90:108,ty==="p"?"hauteur du plat":"au plus haut","end"))}
+  else{oo.push(G(hx,136,hx,yf+6));if(vf!=null)oo.push(ty==="1"?K(hx-5,mid(136,yf),F(vf,"cm"),"end"):K(hx+5,mid(136,yf),F(vf,"cm")))}
+  // en bas, 1er côté
+  if(k==="hmur1"){oo.push(A(ax1,136,ax1,y1+3),P(x0,y1));if(v1!=null)oo.push(Q(ax1+(Wd>150?18:14),mid(136,y1+3),F(v1,"cm")));else oo.push(T(ax1+12,112,"en bas :"),M(ax1+12,125,"du sol jusqu'au point"))}
+  else{oo.push(G(ax1,136,ax1,y1+4));if(v1!=null)oo.push(K(ax1+5,r1(y1+13),F(v1,"cm")))}
+  // en bas, 2e côté
+  if(ty!=="1"){if(k==="hmur2"){oo.push(A(ax2,136,ax2,y2+3),P(x1,y2));if(v2!=null)oo.push(Q(ax2-(Wd>150?18:14),mid(136,y2+3),F(v2,"cm")));else oo.push(T(ax2-12,112,"en bas,","end"),M(ax2-12,125,"de l'autre côté","end"))}
+   else{oo.push(G(ax2,136,ax2,y2+4));if(v2!=null)oo.push(K(ax2-5,r1(y2+13),F(v2,"cm"),"end"))}}
+  // plafond plat
+  if(ty==="p"&&k==="lp"){const[xa,xb]=oo.lp;oo.push(A(xa+4,yf-10,xb-4,yf-10));oo.push(vp!=null?Q(160,yf-10,F(vp,"m")):T(160,yf-18,"largeur du plafond plat","middle"))}
+  // largeur au sol
+  if(k==="l"){oo.push(A(x0+4,128,x1-4,128));oo.push(vl!=null?Q(160,128,F(vl,"m")):T(160,120,"d'un côté bas à l'autre, au sol","middle"))}
+  else if(vl!=null)oo.push(K(160,156,F(vl,"m")+" au sol","middle"));
+  if(k==="hmur1"||k==="hmur2"){const L=k==="hmur1",px=L?x0:x1,py=L?y1:y2,x=L?6:314,a=L?"":"end",ty0=Math.max(14,py-56);oo.push(`<path d="M${px+(L?-3:3)} ${py-5}L${L?26:294} ${ty0+24}" fill="none" stroke="${LA}" stroke-width="1.4" stroke-dasharray="3 3"/>`,T(x,ty0,"ici, le plafond",a,10),T(x,ty0+12,"commence",a,10),T(x,ty0+24,"à pencher",a,10))}
+  return sv(oo.join(""),"Où mesurer sous le toit")};
+ const toitL=o=>{const L=V(o,"L");return sv(`<rect x="40" y="34" width="240" height="88" rx="6" ${W}/><path d="M44 78H276" stroke="var(--fg)" stroke-width="2.2" stroke-dasharray="6 5"/>${M(160,72,"le haut du toit","middle")}${A(44,136,276,136)}${L!=null?Q(160,136,F(L,"m")):T(160,156,"dans le sens du haut du toit","middle")}${M(160,24,"l'étage vu de dessus","middle")}`,"Mesurer la longueur sous le toit")};
+ return (k,o)=>{if(!k)return"";ID++;const[a,b,c]=String(k).split(":");
+  return a==="hsp"?hsp(o):a==="murL"?murL(o):a==="pieceL"?room(o,1,0):a==="piecel"?room(o,0,1):a==="surf"?room(o,1,1,1):a==="fen"?fen(o,1,1):a==="fenL"?fen(o,1,0):a==="fenH"?fen(o,0,1):a==="porte"?porte(o):a==="escH"?escH(o):a==="escL"?escL(o):a==="toitL"?toitL(o):a==="toit"?toit(b,c,o):""}})();
+function meshQ(f,o,sec,i){return f.ill?MESH(typeof f.ill==="function"?f.ill(o):f.ill,o).replace('<svg class="mes"',`<svg class="mes" data-ms="${sec}" data-mi="${i??""}" data-mk="${f.k}"`):""}
 const PLAT='<svg viewBox="0 0 160 170" role="img" aria-label="Toit à 2 pentes avec un plafond plat en haut"><defs><marker id="fl3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M1.5 1.8 8.5 5 1.5 8.2z" fill="#A8823F" stroke="#A8823F" stroke-width="1.6" stroke-linejoin="round"/></marker></defs><path d="M16 135V100.5Q16 98 18 96.3L54 60.3Q56 58 59 58H101Q104 58 106 60.3L142 96.3Q144 98 144 100.5V135Q144 140 139 140H21Q16 140 16 135Z" fill="var(--n1-calme,#F6F7F9)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M24 100.5 58 65.5H102L136 100.5" fill="none" stroke="#A8823F" stroke-opacity=".28" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><g stroke="#A8823F" stroke-width="2.2" stroke-linecap="round"><path d="M80 134V66" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M26 134V106" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M134 134V106" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M60 48H100" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M59 52V56M101 52V56" stroke-width="1.4" stroke-opacity=".7"/></g><g font-family="Manrope,sans-serif" font-weight="700" font-size="9.5" fill="#A8823F"><text x="80" y="40" text-anchor="middle">largeur du plat</text><text x="86" y="98">au plus</text><text x="86" y="109">haut</text><text x="31" y="131">en bas</text><text x="129" y="131" text-anchor="end">en bas</text></g><text x="80" y="161" font-family="Manrope,sans-serif" font-weight="800" font-size="12.5" fill="var(--fg)" text-anchor="middle">Plafond plat en haut</text></svg>';
 function picH(k,j){if(j===2)return PLAT;const v=["6 0 160 170","160 0 160 170"][j],src=ILL[k][0],inner=src.slice(src.indexOf(">")+1,src.lastIndexOf("</svg>"));return`<svg viewBox="0 0 160 170" role="img" aria-label="${j?"Toit à 1 pente":"Toit à 2 pentes"}"><svg x="0" y="0" width="160" height="170" viewBox="${v}" overflow="hidden">${inner}</svg></svg>`}
 function fieldH(f,sec,i){
@@ -995,7 +1033,7 @@ function fieldH(f,sec,i){
  if(MISS===id){const b=`<div class="bulle9" role="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.8-1.1 1.6v.4"/><circle cx="12" cy="17" r=".7" fill="currentColor"/></svg><span>${MISSMSG}</span></div>`;return fieldH0(f,sec,i,id).replace('<div class="q"','<div class="q miss"').replace(/<\/div>$/,b+'</div>')}return fieldH0(f,sec,i,id)}
 function fieldH0(f,sec,i,id){const o=obj(sec,i),da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
  const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
- const hint=(f.h?`<p class="hint">${esc(f.h)}</p>`:"")+(f.ill?MESH(typeof f.ill==="function"?f.ill(o):f.ill):"");
+ const hint=(f.h?`<p class="hint">${esc(f.h)}</p>`:"")+meshQ(f,o,sec,i);
  if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
  if(f.t==="chips")return`<div class="q${f.brk?" pgbrk":""}"><span class="lab" id="${id}">${f.ic?`<svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${f.ic}</svg>`:""}${esc(f.l)}</span>${hint}${f.svg||""}<div class="chips${f.pics?" pics":""}" role="group" aria-labelledby="${id}">${f.o.map((x,j)=>`<button type="button" class="chip${x===DK?" dk":f.pics?" pic":""}" aria-pressed="${(o[f.k]??f.def)===x}" ${da} data-v="${esc(x)}"${f.pics&&x!==DK?` data-noico="1" aria-label="${esc(x)}"`:""}>${f.pics&&x!==DK?picH(f.pics,j):esc(x)}</button>`).join("")}</div></div>`;
  if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
@@ -1428,7 +1466,7 @@ const CAPW=/^(de|du|des|la|le|les|sur|sous|en|et|lès|lez|aux|au|à)$/i;
 function cap(v){let w=0;return String(v||"").replace(/\s+/g," ").replace(/^ /,"").replace(/[^\s-]+/g,m=>{const i=w++;if(i&&CAPW.test(m))return m.toLowerCase();const a=m.match(/^([dl])['’](.+)$/i);if(a&&i)return a[1].toLowerCase()+"'"+a[2].charAt(0).toUpperCase()+a[2].slice(1);return m.charAt(0).toUpperCase()+m.slice(1)})}
 document.addEventListener("focusout",ev=>{const el=ev.target;if(!el||!el.dataset)return;if(el.id==="in-pre"){const v=cap(el.value).trim();if(v!==el.value){el.value=v;S.contact.prenom=v;save()}return}if(!el.dataset.cap||!el.dataset.s)return;const v=cap(el.value).trim();if(v===el.value)return;el.value=v;obj(el.dataset.s,el.dataset.i===""?null:+el.dataset.i)[el.dataset.k]=v;save()});
 document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pnum){planInput(el);return}if(!ds.s)return;const o=obj(ds.s,ds.i===""?null:+ds.i);
- if(ds.num){o[ds.k]=el.value.replace(",",".");o[ds.k+"_dk"]=false;save();const it=el.closest(".item");if(it){const b=badge(ds.s,o);let bd=it.querySelector(".badge");if(b&&!bd){bd=document.createElement("span");bd.className="badge";it.querySelector(".item-h div").prepend(bd)}if(bd)bd.textContent=b}return}
+ if(ds.num){o[ds.k]=el.value.replace(",",".");o[ds.k+"_dk"]=false;save();document.querySelectorAll(`.mes[data-ms="${ds.s}"][data-mi="${ds.i}"]`).forEach(m=>{const f=findF(ds.s,m.dataset.mk);if(f)m.outerHTML=meshQ(f,o,ds.s,ds.i===""?null:+ds.i)});const it=el.closest(".item");if(it){const b=badge(ds.s,o);let bd=it.querySelector(".badge");if(b&&!bd){bd=document.createElement("span");bd.className="badge";it.querySelector(".item-h div").prepend(bd)}if(bd)bd.textContent=b}return}
  if(ds.txt){o[ds.k]=el.value;save();if(ds.s==="logement"&&(ds.k==="cp"||ds.k==="commune"))geoAsk(ds.k);return}
  if(ds.chk){o[ds.k]=el.checked;save();return}});
 document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)return;const k=el.dataset.file;
