@@ -117,7 +117,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
    E-mail vide = ancien code d'accès (BRS, ProClik Test) tant que l'artisan n'a pas choisi de mot de passe.
    Code provisoire donné par Cyril (PC-XXXX-XXXX) ou lien d'invitation (#invit=…) → « Choisissez votre mot de passe ». */
 var apres=null,KM='pc-vrai-email';
-function connecte(x){lsS(KJ,x.jeton);lsS(KA,x.artisan);if(window.PCMenus)window.PCMenus.applique();fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
+/* 24/11 : un lien salarié/client ouvert sur cet appareil ne doit jamais empêcher le patron de se reconnecter */
+function connecte(x){var mb=lsG('pc-membre');lsS(KJ,x.jeton);lsS(KA,x.artisan);if(mb){['pc-membre','pc-role','pc-vrai-liste'].forEach(function(k){lsS(k,null)});setTimeout(function(){location.reload()},200);return}if(window.PCMenus)window.PCMenus.applique();fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
 function oeil(id,inp){$(id).addEventListener('change',function(){[].concat(inp).forEach(function(i){i.type=this.checked?'text':'password'},this)})}
 function connexion(msg){
  ouvrir('Votre Espace<small>Connexion à l\'Espace ProClik</small>',
@@ -182,7 +183,7 @@ function enPause(msg){if(enPause.vu)return;enPause.vu=1;
  ouvrir('Votre Espace est en pause<small>Rien n\'est effacé</small>','<div class="card vlog"><p style="margin:0">'+esc(msg||'Votre Espace est en pause.')+'</p><p style="margin:0;color:var(--muted);font-size:13.5px">Vos clients, vos devis et vos factures sont gardés tels quels. Dès que c\'est réglé, tout se rouvre tout seul.</p>'+
   (window.PCREG&&window.PCREG.ecrire?'<button class="vbtn go" type="button" id="vpause">Écrire à Cyril</button>':'')+'</div>');
  var b=document.getElementById('vpause');if(b)b.addEventListener('click',function(){fermer();window.PCREG.ecrire('Bonjour Cyril, mon Espace est en pause. ')})}
-function deconnecter(expire){lsS(KJ,null);lsS(KL,null);document.documentElement.classList.remove('pcvrai');location.hash='';if(expire){setTimeout(function(){connexion('Votre connexion a expiré ou le mot de passe a changé : reconnectez-vous.')},50)}else location.reload()}
+function deconnecter(expire){lsS(KJ,null);lsS(KL,null);lsS('pc-membre',null);lsS('pc-role',null);document.documentElement.classList.remove('pcvrai');location.hash='';if(expire){setTimeout(function(){connexion('Votre connexion a expiré ou le mot de passe a changé : reconnectez-vous.')},50)}else location.reload()}
 
 /* ---------- liste des demandes ---------- */
 var LISTE=null,ETAPES=[],charge=0;
