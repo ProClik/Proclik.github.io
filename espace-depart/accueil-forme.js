@@ -105,44 +105,23 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   if(vco&&!vco.hidden){var sp=vco.querySelector("span");h+='<div class="demo-b"><span>'+(sp?sp.innerHTML:"<b>Mode démo.</b>")+'</span><button class="pill" type="button" data-f2="connexion" style="height:34px;padding:0 14px;font-size:12.5px">Se connecter</button></div>'}
   h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
   /* 24/11 (Cyril : « ça fait vide sur iPad ou PC ») : deux colonnes sur grand écran. À gauche ce qu'on fait (demander, scanner, la journée, à faire), à droite ce qu'on regarde (chiffres, chantiers, créer). Sur téléphone : rien ne change, tout reste l'un sous l'autre. */
-  /* 24/11 : Le point de la journée doit RESSORTIR (Cyril). 3 façons, au choix (pc-f2-pj ou ?pj=) :
-     a = carte bleu nuit pleine ; b = bandeau sur toute la largeur, rendez-vous côte à côte ; c = le prochain rendez-vous en très grand. */
-  var PJ=(location.search.match(/[?&]pj=([abc])/)||[])[1]||lsG("pc-f2-pj","a"),hj="",hb="";
-  /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
-  if(B.jour){var L=J.L;
-    hj+='<section class="jr2"><button class="jr2-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée</span><b>'+
-      (L.length?L.length+" "+pl(L.length,"rendez-vous","rendez-vous")+" aujourd'hui":"Rien de prévu aujourd'hui")+"</b></span>"+ic("d")+"</button>";
-    L.slice(0,4).forEach(function(e,k){var l=A.lieu(e),go=l&&e.k!=="pc"&&!J.soir;
-      hj+='<div class="rv'+(k===J.on?" on":"")+'"><span class="hh">'+A.hTxt(e.s)+'</span><span class="x"><b>'+esc(titreEv(e))+"</b><span>"+esc(e.w||"")+"</span></span>"+
-        (go?'<button class="rb2" type="button" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'">'+ic("nav")+"</button>":"")+"</div>"});
-    if(L.length>4)hj+='<button class="dem" type="button" data-accv="planning"><span>Et</span><b>'+(L.length-4)+" autre"+(L.length-4>1?"s":"")+"</b>"+ic("d")+"</button>";
-    var dm=J.dem,nl=dm.filter(function(e){return e.k==="liv"}).length,nr=dm.length-nl;
-    if(dm.length)hj+='<button class="dem" type="button" data-accv="planning"><span>Demain</span><b>'+[nr?nr+" rendez-vous":"",nl?nl+" livraison"+(nl>1?"s":""):""].filter(Boolean).join(" · ")+"</b>"+ic("d")+"</button>";
-    hj+="</section>"}
-
-  if(B.jour&&PJ==="b"){var L2=J.L,n2=A.nowMin();
-    hb='<section class="pjb"><button class="pjb-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée · '+esc(jourTxt(J.j))+'</span><b>'+
-      (L2.length?L2.length+" "+pl(L2.length,"rendez-vous","rendez-vous")+" aujourd'hui":"Rien de prévu aujourd'hui")+"</b></span>"+ic("d")+'</button><div class="pjb-l">'+
-      L2.slice(0,4).map(function(e,k){var l=A.lieu(e),go=l&&e.k!=="pc"&&!J.soir,fait=!J.soir&&A.hm(e.e||e.s)<=n2;
-        return '<div class="pjb-t'+(k===J.on?" on":"")+(fait?" fait":"")+'"><span class="hh">'+A.hTxt(e.s)+(fait?'<small>passé</small>':k===J.on?'<small>à suivre</small>':"")+'</span><b>'+esc(titreEv(e))+"</b><span>"+esc(e.w||"")+"</span>"+
-          (go?'<button class="rb2" type="button" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'">'+ic("nav")+"Y aller</button>":"")+"</div>"}).join("")+
-      (J.dem.length?'<button class="pjb-t dm" type="button" data-accv="planning"><span class="hh">Demain</span><b>'+J.dem.length+" "+pl(J.dem.length,"rendez-vous","rendez-vous")+"</b><span>"+esc(titreEv(J.dem[0]))+"</span>"+ic("d")+"</button>":"")+
-      "</div></section>";hj=""}
-  if(B.jour&&PJ==="c"){var n3=A.nowMin(),pe=J.on>=0?J.L[J.on]:null,dem=!pe&&J.dem.length?J.dem[0]:null,ev=pe||dem;
-    function dans(m){var d=m-n3;if(d<=0)return "en ce moment";var h=Math.floor(d/60),mi=d%60;return "dans "+(h?h+" h"+(mi?" "+(mi<10?"0":"")+mi:""):mi+" min")}
-    var l3=ev?A.lieu(ev):"";
-    hj='<section class="pjc"><button class="pjc-h" type="button" id="f2-ouvre"><span class="lab">'+ic("cafe")+"Le point de la journée</span>"+ic("d")+"</button>"+
-      (ev?'<div class="pjc-q">'+(pe?(A.hm(pe.s)<=n3?"En ce moment":"Prochain rendez-vous · "+dans(A.hm(pe.s))):"Demain")+'</div><div class="pjc-hh">'+A.hTxt(ev.s)+'</div><div class="pjc-t">'+esc(titreEv(ev))+'</div><div class="pjc-w">'+esc(ev.w||"")+"</div>"+
-        (l3&&ev.k!=="pc"?'<button class="pjc-go" type="button" data-gps="'+esc(l3)+'">'+ic("nav")+"Y aller</button>":"")
-        :'<div class="pjc-t">Rien de prévu</div>')+
-      '<div class="pjc-pied"><span>Aujourd\'hui <b>'+J.L.length+" "+pl(J.L.length,"rendez-vous","rendez-vous")+"</b></span>"+(J.dem.length?"<span>Demain <b>"+J.dem.length+"</b></span>":"")+"</div></section>"}
-  h+=hb;
   h+='<div class="f2cols"><div class="f2c f2c1">';
-  h+=hj;
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
      et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
   if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+SCI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
+
+  /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
+  if(B.jour){var L=J.L;
+    h+='<section class="jr2"><button class="jr2-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée</span><b>'+
+      (L.length?L.length+" "+pl(L.length,"rendez-vous","rendez-vous")+" aujourd'hui":"Rien de prévu aujourd'hui")+"</b></span>"+ic("d")+"</button>";
+    L.slice(0,4).forEach(function(e,k){var l=A.lieu(e),go=l&&e.k!=="pc"&&!J.soir;
+      h+='<div class="rv'+(k===J.on?" on":"")+'"><span class="hh">'+A.hTxt(e.s)+'</span><span class="x"><b>'+esc(titreEv(e))+"</b><span>"+esc(e.w||"")+"</span></span>"+
+        (go?'<button class="rb2" type="button" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'">'+ic("nav")+"</button>":"")+"</div>"});
+    if(L.length>4)h+='<button class="dem" type="button" data-accv="planning"><span>Et</span><b>'+(L.length-4)+" autre"+(L.length-4>1?"s":"")+"</b>"+ic("d")+"</button>";
+    var dm=J.dem,nl=dm.filter(function(e){return e.k==="liv"}).length,nr=dm.length-nl;
+    if(dm.length)h+='<button class="dem" type="button" data-accv="planning"><span>Demain</span><b>'+[nr?nr+" rendez-vous":"",nl?nl+" livraison"+(nl>1?"s":""):""].filter(Boolean).join(" · ")+"</b>"+ic("d")+"</button>";
+    h+="</section>"}
 
   /* 2. à faire : LE plus urgent en vedette, le reste en liste légère */
   var AF=aFaire(D),u=D.urgent,tot=nbAFaire(D);
