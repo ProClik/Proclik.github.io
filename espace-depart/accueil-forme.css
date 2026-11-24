@@ -496,3 +496,11 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 /* 23/11 : les petits liens écrits (« 7 en tout », « 2 en cours », « Personnaliser l accueil ») se touchent plus facilement au doigt : zone de toucher agrandie, sans rien changer à l œil */
 .f2 button.lien{position:relative}
 .f2 button.lien::after{content:"";position:absolute;left:-8px;right:-8px;top:-13px;bottom:-13px}
+/* 24/11 : deux colonnes sur iPad couché et PC (Cyril : « ça fait vide »). Téléphone et iPad debout : une seule colonne, comme avant. */
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+ .f2 .f2a{max-width:1120px;padding-inline:8px}
+ .f2 .f2a .f2cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0 32px;align-items:start}
+ .f2 .f2a .f2c2>.sec:first-child{margin-top:0}
+ .f2 .f2a .f2c1>.ask2:first-child{margin-top:0}
+}
+@media (min-width:1400px){.f2 .f2a{max-width:1240px}.f2 .f2a .f2cols{gap:0 44px}}

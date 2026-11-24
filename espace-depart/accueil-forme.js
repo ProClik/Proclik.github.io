@@ -104,6 +104,8 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   var vco=$("#vco");
   if(vco&&!vco.hidden){var sp=vco.querySelector("span");h+='<div class="demo-b"><span>'+(sp?sp.innerHTML:"<b>Mode démo.</b>")+'</span><button class="pill" type="button" data-f2="connexion" style="height:34px;padding:0 14px;font-size:12.5px">Se connecter</button></div>'}
   h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
+  /* 24/11 (Cyril : « ça fait vide sur iPad ou PC ») : deux colonnes sur grand écran. À gauche ce qu'on fait (demander, scanner, la journée, à faire), à droite ce qu'on regarde (chiffres, chantiers, créer). Sur téléphone : rien ne change, tout reste l'un sous l'autre. */
+  h+='<div class="f2cols"><div class="f2c f2c1">';
   h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
      et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
@@ -141,6 +143,7 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
     if(rows.length)h+='<div class="liste">'+rows.join("")+"</div>"}
   else if(B.afaire&&D.charge)h+='<div class="sec"><h2>À faire</h2></div><section class="hero"><div class="lab">Tout est à jour</div><div class="hero-t">Rien à valider ni à envoyer</div><div class="s mut">Le café peut rester chaud.</div></section>';
 
+  h+='</div><div class="f2c f2c2">';
   /* 3. mes chiffres (exemple de l'Espace, comme avant) : un seul langage, des barres */
   if(B.chiffres){var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][(window.PCDEMO?PCDEMO.today():new Date()).getMonth()],sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
     h+='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
@@ -163,6 +166,7 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   if(B.creer)h+='<div class="sec"><h2>Créer</h2></div><div class="ronds r5">'+
     [["predevis","plan","Pré-devis"],["facture","facture","Facture"],["depense","photo","Dépense"],["client","user","Client"],["rdv","cal","RDV"]].map(function(x){
       return '<button type="button" data-f2cree="'+x[0]+'"><span>'+ic(x[1])+"</span>"+x[2]+"</button>"}).join("")+"</div>";
+  h+="</div></div>";
   h+='<div class="f2pied"><button class="lien" type="button" data-f2="perso">'+ic("grille")+"Personnaliser l'accueil</button></div>";
   if(CACHE.h===h)return;CACHE.h=h;app.innerHTML=h;
   CACHE.D=D;CACHE.J=J}
