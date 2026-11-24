@@ -110,7 +110,8 @@ function cadOuvert(ch){var o=CAD[ch];return o&&o.d===Q.iso(Q.auj())?o:null}
 function vehDe(n){var E=lsg('pc-eq',[]),e=E.filter(function(x){return x.p===n})[0],REG=lsg('pc-jr-reg',{}),V=REG.vehs||[];
   var id=pers(n).g==='dir'?'moi':e&&e.id;return V.filter(function(v){return (v.ass||[]).indexOf(id)>-1})[0]||null}
 function fiche(n){var p=pers(n),o=Q.ouSuis(n),T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(X.CH||{})[v],vh=vehDe(n);
-  X.xopen(n,GN[p.g]+' · '+p.r,'<div class="rl-fi"><div class="rl-l"><span>Où il est</span><b>'+(o?Q.OU[o.v]+' <small>depuis '+o.h+'</small>':'Pas encore dit aujourd\'hui')+'</b></div>'+
+  var phOk=Q.fenPhoto&&((!MB&&moi().g==='dir')||n===moi().n);
+  X.xopen(n,GN[p.g]+' · '+p.r,(Q.ini?'<div class="rl-ph"><span class="eqa xl" style="background:'+(Q.photo(n)?'none':'var(--n1-nuit,#1B2440)')+'">'+Q.ini(n)+'</span>'+(phOk?'<button type="button" class="btn sm" data-fph>'+(Q.photo(n)?'Changer la photo':'Ajouter une photo')+'</button>':'')+'</div>':'')+'<div class="rl-fi"><div class="rl-l"><span>Où il est</span><b>'+(o?Q.OU[o.v]+' <small>depuis '+o.h+'</small>':'Pas encore dit aujourd\'hui')+'</b></div>'+
     (p.g==='ter'?'<div class="rl-l"><span>Aujourd\'hui</span><b>'+esc(c?c.n+' · '+(c.v||''):Q.nomCase(v))+'</b></div>':'')+
     '<div class="rl-l"><span>Véhicule</span><b>'+(vh?esc(vh.nom||'Véhicule'):'Aucun attitré')+'</b></div></div>'+
     (!MB&&moi().g==='dir'&&p.g!=='dir'?'<div id="rl-chv">'+blocCh(n)+'</div>':'')+
@@ -119,6 +120,7 @@ function fiche(n){var p=pers(n),o=Q.ouSuis(n),T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(
     if(!MB&&moi().g==='dir'&&p.g!=='dir')codeDansFiche(n);
     var fa=$('#x-in [data-facc]');if(fa)fa.onclick=function(){X.xclose();setTimeout(function(){accesPerso(n)},250)};
     lierCh(n);
+    var fph=$('#x-in [data-fph]');if(fph)fph.onclick=function(){Q.fenPhoto(n,n===moi().n)};
     $$('#x-in [data-fa]').forEach(function(b){b.onclick=function(){X.toast(b.dataset.fa+' à '+n,'(démo : numéro d\'exemple)')}})})}
 /* ---------- chantiers qu'une personne voit (le patron décide, personne par personne) ---------- */
 function blocCh(n){var m=chDe(n),mode=m==null?(droitC(col(pers(n)),'tous_ch')?'tous':'siens'):Array.isArray(m)?'choix':m,L=voitCh(n),C=X.CH||{},ids=Object.keys(C).filter(function(i){return C[i]&&C[i].st!=='done'});
@@ -257,7 +259,7 @@ function nomT(n){return '<button type="button" class="rl-nm" data-pers="'+esc(n)
 function plusDroits(){return ['prix','fact','chiffres','achats','reglages'].filter(peut)}
 function rendTer(){var P=moi(),n=P.n,T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(X.CH||{})[v],h='';
   h+=MB?'<div class="tr-band"><span>Espace de <b>'+esc(n)+'</b>'+(ENT()?' · '+esc(ENT()):'')+'</span></div>':'<div class="tr-band"><span>Démo · Espace de <b>'+n+'</b> ('+P.r+')</span><button type="button" data-rlx>Changer</button></div>';
-  h+='<div class="tr-in"><div class="tr-top"><small>'+cap(Q.jourLong(T))+'</small><h1>Bonjour '+n+'</h1></div>';
+  h+='<div class="tr-in"><div class="tr-top rl-tph">'+(Q.ini?'<button type="button" class="rl-maph" data-maph aria-label="Ma photo"><span class="eqa" style="background:'+(Q.photo(n)?'none':'var(--n1-nuit,#1B2440)')+'">'+Q.ini(n)+'</span><em>'+(Q.photo(n)?'Changer':'Ma photo')+'</em></button>':'')+'<span><small>'+cap(Q.jourLong(T))+'</small><h1>Bonjour '+n+'</h1></span></div>';
   h+='<section class="tr-c">'+ouHTML(n)+'</section>';
   h+='<h3 class="tr-t">Aujourd\'hui</h3>';
   if(c){var t=Q.pTaches(T,n),avec=Q.pQui(v,T).filter(function(p){return p.n!==n}).map(function(p){return p.n}),I=infosCh(c),chef=n===Q.EQ[0].n?null:Q.EQ[0].n,notes=(c.notes||[]).slice(-2),ph=(c.ph||[]),cad=cadOuvert(v);
@@ -301,6 +303,7 @@ function demande(){var T=Q.iso(Q.auj()),ty='malade';
         Q.demanderAbs({qui:moi().n,ty:ty,du:du,au:au,mo:$('#tr-mo').value.trim()});X.xclose();X.toast('Demande envoyée','Votre patron la voit dans son planning. Réponse ici.')}})}
 tr.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||b.closest('#ch-liste'))return;
   if(b.dataset.rlx!=null)return choisir();
+  if(b.dataset.maph!=null&&Q.fenPhoto)return Q.fenPhoto(moi().n,true);
   if(b.dataset.ou){Q.setOu(moi().n,b.dataset.ou);return}
   if(b.dataset.tri!=null)return X.toast('Itinéraire','Ouvre Waze ou Plans vers '+(b.dataset.tri||'le chantier')+' (démo).');
   if(b.dataset.trp!=null)return X.xopen('Plan du chantier',cadOuvert(Q.pGet(Q.iso(Q.auj()),moi().n))?'Cadenas ouvert':'Lecture seule','<div class="tr-plan grand pcplan">'+(window.PC_PLAN_MINI||'')+'</div>','');
@@ -371,7 +374,8 @@ st.textContent=
  '.tr-chips{display:flex;flex-wrap:wrap;gap:8px}.tr-chips button{min-height:42px;padding:0 15px;border-radius:99px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);font:700 14px var(--f,inherit)}'+
  '.tr-chips button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440);color:#fff;box-shadow:none}'+
  '.tr-h{margin:10px 2px 0;font-size:13px;color:var(--muted)}'+
- 'html body .rl-ou .tr-chips button{background:var(--bg)!important;box-shadow:var(--n1-pk)!important;color:var(--fg)!important;border:0!important;border-radius:99px!important}html body .rl-ou .tr-chips button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440)!important;color:#fff!important;box-shadow:none!important}'+'.rl-ouc{margin:0 0 14px;padding:12px 14px}.rl-ou.court .rl-ot{font-size:14.5px;margin:0 0 8px}.rl-ou.court .tr-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none}.rl-ou.court .tr-chips button{flex:none;min-height:38px;padding:0 13px;font-size:13.5px}.rl-ou.court .tr-h{margin-top:6px}'+
+ '.rl-ph{display:flex;align-items:center;gap:14px;margin:0 0 14px}.rl-ph .eqa.xl{width:72px;height:72px;font-size:28px;color:#fff}.rl-tph{display:flex;align-items:center;gap:14px}.rl-maph{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;border:0;background:none;box-shadow:none;color:var(--muted);min-height:0}.rl-maph .eqa{width:54px;height:54px;font-size:21px;color:#fff;box-shadow:0 0 0 2px var(--z-tile,var(--card)),0 0 0 3.5px var(--n1-laiton,#A8823F)}.rl-maph em{font-style:normal;font-size:11.5px;font-weight:700}'+
+'html body .rl-ou .tr-chips button{background:var(--bg)!important;box-shadow:var(--n1-pk)!important;color:var(--fg)!important;border:0!important;border-radius:99px!important}html body .rl-ou .tr-chips button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440)!important;color:#fff!important;box-shadow:none!important}'+'.rl-ouc{margin:0 0 14px;padding:12px 14px}.rl-ou.court .rl-ot{font-size:14.5px;margin:0 0 8px}.rl-ou.court .tr-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none}.rl-ou.court .tr-chips button{flex:none;min-height:38px;padding:0 13px;font-size:13.5px}.rl-ou.court .tr-h{margin-top:6px}'+
  '#terrain .tr-auj{box-shadow:inset 5px 0 0 var(--cc),var(--z-ombre-s,0 1px 3px rgba(0,0,0,.08));padding-left:20px}'+
  '#terrain .tr-ch{display:flex;gap:10px;margin-bottom:6px}#terrain .tr-ch i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--cc);margin-top:8px}#terrain .tr-ch span{display:flex;flex-direction:column}#terrain .tr-ch b{font-size:21px}#terrain .tr-ch small{font-size:14px;color:var(--muted)}'+
  '#terrain .tr-l{display:flex;gap:10px;padding:8px 0 0 22px;font-size:15px}#terrain .tr-l>span{flex:none;width:72px;color:var(--muted);font-size:13.5px;padding-top:1px}#terrain .tr-l b small{display:block;font-weight:600;color:var(--muted);font-size:13px}'+
