@@ -21,7 +21,16 @@ var PATRON=(window.PCID&&PCID.prenom)||'Julien',BUREAU='Claire';/* Claire = pré
 var PERS=[{n:PATRON,g:'dir',r:'Patron'},{n:BUREAU,g:'bur',r:'Bureau (exemple)'}].concat(Q.EQ.map(function(p){return {n:p.n,g:'ter',r:p.r}}));
 var GN={dir:'Direction',bur:'Bureau',ter:'Terrain'};
 function pers(n){return PERS.filter(function(p){return p.n===n})[0]||PERS[0]}
+/* VRAI ACCÈS PERSONNEL (24/11) : le patron envoie un lien à chacun (fiche de la personne › « Envoyer son accès »).
+   Le lien ouvre l'Espace de la personne sur son téléphone, sans mot de passe ; le service ne lui donne que ce que
+   « Qui voit quoi » permet (proclik-cliky, calcul/membres.js). Plus de « Changer » ni de « Voir comme » pour elle. */
+var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');
+function jeton(){return lsg('pc-vrai-jeton',null)}
+var MB=lsg('pc-membre',null);if(MB&&!jeton()){MB=null;lss('pc-membre',null)}
+var RN={ref:'Chef',ouv:'Équipe',bur:'Bureau',dir:'Patron'};
+if(MB&&!PERS.some(function(p){return p.n===MB.n}))PERS.push({n:MB.n,g:MB.col==='dir'?'dir':MB.col==='bur'?'bur':'ter',r:RN[MB.col]||'Équipe'});
 var R=lsg('pc-role',null);if(!R||!R.qui||!PERS.some(function(p){return p.n===R.qui}))R={qui:PATRON};
+if(MB&&R.qui!==MB.n)R={qui:MB.n};
 function moi(){return pers(R.qui)}
 function garde(){lss('pc-role',R)}
 
@@ -35,7 +44,7 @@ var DROITS=[['plan_lire','Lire le plan et les cotes'],['plan','Modifier le plan 
 var DEF={ref:{plan_lire:1,plan:1,materiel:1,quiou:1,clients:1,equipe:1,hs:1},ouv:{plan_lire:1,materiel:1,quiou:1},
  bur:{plan_lire:1,materiel:1,prix:1,fact:1,quiou:1,clients:1,equipe:1,commande:1,achats:1}};
 var DR=lsg('pc-droits',{});
-function col(p){return p.g==='bur'?'bur':p.r==='Chef'?'ref':'ouv'}
+function col(p){if(MB&&p.n===MB.n&&MB.col!=='dir')return MB.col;return p.g==='bur'?'bur':p.r==='Chef'?'ref':'ouv'}
 function droitC(c,k){var o=DR[c];if(o&&o[k]!=null)return !!o[k];return !!DEF[c][k]}
 function droit(n,k){var p=pers(n);if(p.g==='dir')return true;return droitC(col(p),k)}
 function peut(k){return droit(R.qui,k)}
@@ -44,14 +53,18 @@ function quiVoit(){
     '<div class="rl-acc"><table><thead><tr><th></th><th class="dir">Direction</th>'+COLS.map(function(c){return '<th>'+c[1]+'<small>'+PERS.filter(function(p){return p.g!=='dir'&&col(p)===c[0]}).map(function(p){return p.n}).join(', ')+'</small></th>'}).join('')+'</tr></thead><tbody>'+
     DROITS.map(function(x){return '<tr><th>'+x[1]+'</th><td class="dir"><span>✓</span></td>'+COLS.map(function(c){var on=droitC(c[0],x[0]);return '<td><button type="button" data-dc="'+c[0]+'" data-dk="'+x[0]+'" aria-pressed="'+on+'" aria-label="'+x[1]+' pour '+c[1]+' : '+(on?'oui':'non')+'">'+(on?'✓':'—')+'</button></td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'+
     '<p class="hint" style="margin:10px 2px 0">Toujours pour chacun : sa semaine, son chantier du jour (adresse comprise), « Où je suis » et ses absences. Le client a son propre accès au chantier partagé.</p>'+
-    '<button type="button" class="btn" data-qvd style="width:100%;margin-top:10px">Remettre les réglages de départ</button>'}
+    '<button type="button" class="btn" data-qvd style="width:100%;margin-top:10px">Remettre les réglages de départ</button>'+
+    '<h4 class="rl-qa-t">Accès personnels</h4><p class="hint" style="margin:0 0 8px">Chacun reçoit un lien pour son téléphone. Touchez une personne pour l\'envoyer ou couper son accès.</p>'+
+    '<div class="rl-qa">'+PERS.filter(function(p){return p.g!=='dir'}).map(function(p){return '<button type="button" data-qacc="'+esc(p.n)+'"><b>'+esc(p.n)+'</b><small data-qet="'+esc(p.n)+'">'+(jeton()?'…':'pas encore envoyé')+'</small></button>'}).join('')+'</div>'}
   X.xopen('Qui voit quoi','Réservé à la Direction',corps(),'',function lie(){
     $$('#x-in [data-dc]').forEach(function(b){b.onclick=function(){var c=b.dataset.dc,k=b.dataset.dk,v=!droitC(c,k);(DR[c]=DR[c]||{})[k]=v?1:0;lss('pc-droits',DR);applique();$('#x-in').innerHTML=corps();lie();
       X.toast(DROITS.filter(function(x){return x[0]===k})[0][1],(v?'Accès donné':'Accès retiré')+' : '+COLS.filter(function(x){return x[0]===c})[0][1])}});
+    $$('#x-in [data-qacc]').forEach(function(b){b.onclick=function(){X.xclose();setTimeout(function(){accesPerso(b.dataset.qacc)},250)}});
+    if(SERVICE&&jeton())api('/espace/equipe-acces').then(function(x){var M={};(x.membres||[]).forEach(function(m){M[m.n]=m.etat});$$('#x-in [data-qet]').forEach(function(s){var e=M[s.dataset.qet]||'aucun';s.textContent=e==='aucun'?'pas encore envoyé':e==='actif'?'accès ouvert':e})},function(){});
     var r=$('#x-in [data-qvd]');if(r)r.onclick=function(){DR={};lss('pc-droits',DR);applique();$('#x-in').innerHTML=corps();lie();X.toast('Réglages de départ remis','')}})}
 
 /* ---------- choisir la personne (démo) ---------- */
-function choisir(){
+function choisir(){if(MB)return;
   var h='<p class="hint" style="margin:0 0 12px">Chaque personne de l\'entreprise a son Espace. En démo, touchez une personne pour voir ce qu\'elle voit.</p>';
   ['dir','bur','ter'].forEach(function(g){h+='<div class="rl-g"><h4>'+GN[g]+'</h4><div class="rl-p">'+PERS.filter(function(p){return p.g===g}).map(function(p){return '<button type="button" data-rq="'+p.n+'" aria-pressed="'+(R.qui===p.n)+'">'+p.n+'<small>'+p.r+'</small></button>'}).join('')+'</div></div>'});
   h+='<p class="hint" style="margin:12px 2px 0">Au vrai lancement, chacun reçoit son lien et son code sur son téléphone, comme les entreprises invitées.</p>';
@@ -90,8 +103,41 @@ function fiche(n){var p=pers(n),o=Q.ouSuis(n),T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(
   X.xopen(n,GN[p.g]+' · '+p.r,'<div class="rl-fi"><div class="rl-l"><span>Où il est</span><b>'+(o?Q.OU[o.v]+' <small>depuis '+o.h+'</small>':'Pas encore dit aujourd\'hui')+'</b></div>'+
     (p.g==='ter'?'<div class="rl-l"><span>Aujourd\'hui</span><b>'+esc(c?c.n+' · '+(c.v||''):Q.nomCase(v))+'</b></div>':'')+
     '<div class="rl-l"><span>Véhicule</span><b>'+(vh?esc(vh.nom||'Véhicule'):'Aucun attitré')+'</b></div></div>'+
-    '<div class="rl-fb"><button type="button" class="btn go" data-fa="Appel">Appeler</button><button type="button" class="btn" data-fa="SMS">SMS</button><button type="button" class="btn" data-fa="Message">Message</button></div>','',function(){
+    '<div class="rl-fb"><button type="button" class="btn go" data-fa="Appel">Appeler</button><button type="button" class="btn" data-fa="SMS">SMS</button><button type="button" class="btn" data-fa="Message">Message</button></div>'+
+    (!MB&&moi().g==='dir'&&p.g!=='dir'?'<button type="button" class="rl-acc-b" data-facc><span class="av">'+ic('cle')+'</span><span class="tx"><b>Envoyer son accès</b><small>Un lien pour son téléphone, sans mot de passe</small></span><span class="go">›</span></button>':''),'',function(){
+    var fa=$('#x-in [data-facc]');if(fa)fa.onclick=function(){X.xclose();setTimeout(function(){accesPerso(n)},250)};
     $$('#x-in [data-fa]').forEach(function(b){b.onclick=function(){X.toast(b.dataset.fa+' à '+n,'(démo : numéro d\'exemple)')}})})}
+/* ---------- accès personnel : créer / envoyer / couper (patron) ---------- */
+function ENT(){var a=lsg('pc-vrai-artisan',null)||{};return a.entreprise||''}
+function api(chemin,corps){return fetch(SERVICE+chemin,{method:corps?'POST':'GET',headers:corps?{'Content-Type':'application/json',Authorization:'Bearer '+jeton()}:{Authorization:'Bearer '+jeton()},body:corps?JSON.stringify(corps):undefined,cache:'no-store'})
+  .then(function(r){return r.json().catch(function(){return {ok:false}}).then(function(x){x._s=r.status;return x})})}
+function accesPerso(n){var p=pers(n),c=p.g==='dir'?'dir':col(p),qui=esc(n);
+  var expl='<p class="hint" style="margin:0 0 10px">'+qui+' reçoit un lien sur son téléphone. Il l\'ouvre une fois et son Espace reste ouvert : pas de mot de passe à retenir. Il ne voit que ce que vous lui permettez dans « Qui voit quoi ».</p>';
+  if(!SERVICE||!jeton()){X.xopen('Accès de '+n,'Démo',expl+'<div class="rl-lien"><span>Exemple de lien</span><b>proclik.github.io/espace-depart/?acces=…</b></div><p class="hint" style="margin:10px 2px 0">En démo, rien n\'est envoyé. Quand votre Espace est connecté, ce bouton crée le vrai lien.</p>','<button class="btn" data-xclose>Fermer</button>');return}
+  X.xopen('Accès de '+n,GN[p.g]+' · '+p.r,expl+'<div class="rl-lien" id="rl-lien"><span>Préparation du lien…</span></div>','<button class="btn" data-xclose>Fermer</button>',function(){
+    api('/espace/equipe-acces',{op:'lien',n:n,col:c}).then(function(x){var b=$('#rl-lien');if(!b)return;
+      if(!x.ok){b.innerHTML='<span>'+esc(x.erreur||'Le service ne répond pas. Réessayez dans un instant.')+'</span>';return}
+      var txt='Bonjour '+n+', voici votre accès à l\'Espace '+(ENT()||'de l\'entreprise')+' : '+x.lien;
+      b.innerHTML='<span>Lien personnel de '+qui+' · valable 7 jours, une seule fois</span><b>'+esc(x.lien)+'</b>'+
+        '<div class="rl-fb"><a class="btn go" href="sms:?&body='+encodeURIComponent(txt)+'">Envoyer par SMS</a><button type="button" class="btn" data-lcp>Copier</button></div>'+
+        '<button type="button" class="btn" data-lcut style="width:100%;margin-top:8px">Couper son accès</button>';
+      $('[data-lcp]',b).onclick=function(){try{navigator.clipboard.writeText(txt).then(function(){X.toast('Lien copié','Collez-le dans un SMS ou un e-mail.')})}catch(e){X.toast('Copie impossible','Appuyez longuement sur le lien.')}};
+      $('[data-lcut]',b).onclick=function(){couper(n)}})})}
+function couper(n){api('/espace/equipe-acces',{op:'couper',n:n}).then(function(x){X.xclose();X.toast(x.ok?'Accès coupé':'Pas d\'accès à couper',x.ok?n+' est déconnecté de tous ses appareils.':esc(x.erreur||''))})}
+/* le lien ouvert sur le téléphone du salarié */
+var ACC=/[?&]acces=([a-z0-9-]{1,30}\.[A-Za-z0-9_-]{10,})/.exec(location.search);
+function propre(){try{history.replaceState(null,'',location.pathname+location.hash)}catch(e){}}
+if(ACC&&SERVICE){fetch(SERVICE+'/espace/acces',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:ACC[1]})}).then(function(r){return r.json()}).then(function(x){
+    if(x&&x.ok){lss('pc-membre',x.membre);lss('pc-vrai-artisan',x.artisan);lss('pc-role',{qui:x.membre.n});lss('pc-vrai-jeton',x.jeton)}else lss('pc-membre-fin',(x&&x.erreur)||'Ce lien n\'est plus valable.');
+    propre();setTimeout(function(){location.reload()},400)},function(){lss('pc-membre-fin','Pas de réseau pour l\'instant : rouvrez le lien dans un moment.');propre();location.reload()})}
+/* lien refusé, accès coupé ou expiré : on le dit simplement */
+var FIN=lsg('pc-membre-fin',null);if(FIN){lss('pc-membre-fin',null);setTimeout(function(){X.xopen('Votre accès','',
+  '<p style="margin:0">'+esc(FIN)+'</p><p class="hint" style="margin:10px 0 0">Demandez un nouveau lien à votre patron : il l\'envoie en deux touchers.</p>','<button class="btn go" data-xclose>D\'accord</button>')},600)}
+/* au démarrage : droits à jour, ou accès coupé */
+if(MB&&SERVICE)api('/espace/moi').then(function(x){
+  if(x._s===401){['pc-membre','pc-vrai-jeton','pc-vrai-liste','pc-role'].forEach(function(k){lss(k,null)});lss('pc-membre-fin','Votre accès a été coupé ou n\'est plus valable.');location.reload();return}
+  if(x.ok&&x.membre){MB.col=x.membre.col;MB.droits=x.membre.droits;lss('pc-membre',MB);applique()}},function(){});
+window.PCACCES={envoyer:accesPerso,couper:couper};
 window.PCPERS={fiche:fiche,droit:droit,peut:peut,moi:function(){return moi()}};
 /* un prénom touché n'importe où (data-pers) ouvre sa fiche */
 d.addEventListener('click',function(e){var b=e.target.closest('[data-pers]');if(!b)return;e.preventDefault();e.stopPropagation();fiche(b.dataset.pers)},true);
@@ -140,7 +186,7 @@ function heures(id,k){var c=(X.CH||{})[id],e=(X.EV||[]).filter(function(e){var x
 function nomT(n){return '<button type="button" class="rl-nm" data-pers="'+esc(n)+'">'+esc(n)+'</button>'}
 function plusDroits(){return ['prix','fact','chiffres','achats','reglages'].filter(peut)}
 function rendTer(){var P=moi(),n=P.n,T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(X.CH||{})[v],h='';
-  h+='<div class="tr-band"><span>Démo · Espace de <b>'+n+'</b> ('+P.r+')</span><button type="button" data-rlx>Changer</button></div>';
+  h+=MB?'<div class="tr-band"><span>Espace de <b>'+esc(n)+'</b>'+(ENT()?' · '+esc(ENT()):'')+'</span></div>':'<div class="tr-band"><span>Démo · Espace de <b>'+n+'</b> ('+P.r+')</span><button type="button" data-rlx>Changer</button></div>';
   h+='<div class="tr-in"><div class="tr-top"><small>'+cap(Q.jourLong(T))+'</small><h1>Bonjour '+n+'</h1></div>';
   h+='<section class="tr-c">'+ouHTML(n)+'</section>';
   h+='<h3 class="tr-t">Aujourd\'hui</h3>';
@@ -203,7 +249,7 @@ function applique(){var p=moi(),ter=p.g==='ter'&&!R.full;
   DROITS.forEach(function(x){html.classList.toggle('no-'+x[0],!peut(x[0]))});
   tr.hidden=!ter;if(ter){rendTer();tr.scrollTop=0}
   band.hidden=p.g==='dir'||ter;
-  band.innerHTML=p.g==='dir'||ter?'':'<span>Démo · Espace de <b>'+p.n+'</b> ('+GN[p.g]+') : ce que la Direction lui permet</span>'+(p.g==='ter'?'<button type="button" data-rlback>Mon Espace</button>':'')+'<button type="button" data-rlx>Changer</button>';
+  band.innerHTML=p.g==='dir'||ter?'':MB?'<span>Espace de <b>'+esc(p.n)+'</b> ('+GN[p.g]+')'+(ENT()?' · '+esc(ENT()):'')+'</span>'+(p.g==='ter'?'<button type="button" data-rlback>Mon Espace</button>':''):'<span>Démo · Espace de <b>'+p.n+'</b> ('+GN[p.g]+') : ce que la Direction lui permet</span>'+(p.g==='ter'?'<button type="button" data-rlback>Mon Espace</button>':'')+'<button type="button" data-rlx>Changer</button>';
   rendOuA();
   /* écran interdit ouvert ? retour à l'Accueil */
   var vis=$$('.view').filter(function(s){return !s.hidden})[0];if(vis&&interdit(vis.id.slice(2))&&X.go)X.go('accueil')}
@@ -214,10 +260,10 @@ d.addEventListener('click',function(e){var b=e.target.closest('[data-v],[data-pb
 /* ---------- menu ☰ ---------- */
 var GARDER=['rl-m','rl-qv','m-simple','rg-aides','rg-barre','m-net','m-welcome','m-inst','rg-help','rg-pb'];
 function filtreMenu(){var c=$('#x-in .card.menu');if(!c)return;
-  if(!$('#rl-m')){var b=d.createElement('button');b.id='rl-m';b.type='button';b.innerHTML='<span class="av">'+ic('gens')+'</span><span class="tx"><b>Voir l\'Espace comme…</b><small>Démo : un patron, le bureau ou un salarié · maintenant : '+moi().n+'</small></span><span class="go">›</span>';
+  if(!MB&&!$('#rl-m')){var b=d.createElement('button');b.id='rl-m';b.type='button';b.innerHTML='<span class="av">'+ic('gens')+'</span><span class="tx"><b>Voir l\'Espace comme…</b><small>Démo : un patron, le bureau ou un salarié · maintenant : '+moi().n+'</small></span><span class="go">›</span>';
     c.insertBefore(b,c.firstChild);b.onclick=function(){X.xclose();setTimeout(choisir,250)}}
-  if(moi().g==='dir'&&!$('#rl-qv')){var q=d.createElement('button');q.id='rl-qv';q.type='button';q.innerHTML='<span class="av">'+ic('cle')+'</span><span class="tx"><b>Qui voit quoi</b><small>Vous décidez ce que voient le bureau et chaque salarié</small></span><span class="go">›</span>';
-    $('#rl-m').after(q);q.onclick=function(){X.xclose();setTimeout(quiVoit,250)}}
+  if(!MB&&moi().g==='dir'&&!$('#rl-qv')){var q=d.createElement('button');q.id='rl-qv';q.type='button';q.innerHTML='<span class="av">'+ic('cle')+'</span><span class="tx"><b>Qui voit quoi</b><small>Vous décidez ce que voient le bureau et chaque salarié</small></span><span class="go">›</span>';
+    c.insertBefore(q,($('#rl-m')||c.firstChild).nextSibling);q.onclick=function(){X.xclose();setTimeout(quiVoit,250)}}
   if(!peut('reglages')){$$('#x-in .card.menu > *').forEach(function(x){if(GARDER.indexOf(x.id)<0)x.hidden=true});$$('#x-in .xsec, #x-in .rg-beta ~ .card:not(.menu)').forEach(function(s){s.hidden=true});
     if(!$('#rl-note')){var n=d.createElement('p');n.id='rl-note';n.className='hint';n.style.margin='10px 2px 0';n.textContent='Les réglages et les options de l\'entreprise sont réservés à la Direction.';c.after(n)}}}
 var menu=$('#menu');
@@ -230,6 +276,9 @@ st.textContent=
  'html.no-achats [data-v="depenses"],html.no-achats [data-pb="depenses"],html.no-achats [data-v="prix"],html.no-achats [data-pb="prix"],html.no-clients [data-v="clients"],html.no-clients [data-pb="clients"],html.no-reglages [data-pb="reglages"],html.no-reglages [data-v="reseaux"]{display:none!important}'+
  '#terrain{position:fixed;inset:0;z-index:33;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);color:var(--fg)}'+
  'svg.tri{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}'+
+ '.rl-acc-b{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--bg);box-shadow:var(--n1-pk);text-align:left;color:var(--fg);min-height:56px}.rl-acc-b .tx{flex:1;min-width:0}.rl-acc-b b{display:block;font-size:15px}.rl-acc-b small{display:block;font-size:12.5px;color:var(--muted)}.rl-acc-b .av svg{width:20px;height:20px}'+
+ '.rl-lien{display:grid;gap:6px;padding:12px 14px;border-radius:14px;background:var(--teinte,rgba(0,0,0,.05))}.rl-lien span{font-size:12.5px;color:var(--muted);font-weight:600}.rl-lien b{font-size:13.5px;word-break:break-all}.rl-lien .rl-fb a{text-decoration:none;display:flex;align-items:center;justify-content:center}'+
+ '.rl-qa-t{margin:18px 2px 4px;font-size:15px}.rl-qa{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}.rl-qa button{display:grid;gap:2px;padding:10px 12px;border-radius:14px;background:var(--bg);box-shadow:var(--n1-pk);text-align:left;color:var(--fg);min-height:52px}.rl-qa small{font-size:12px;color:var(--muted)}'+
  '#rl-band,#terrain .tr-band{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--n1-nuit,#1B2440);color:#fff;font-size:13px}#rl-band span,#terrain .tr-band span{flex:1;min-width:0}'+
  '#rl-band{position:sticky;top:0;z-index:20;border-radius:0 0 14px 14px;margin:0 0 6px}#rl-band[hidden]{display:none}'+
  '#rl-band button,#terrain .tr-band button{flex:none;min-height:32px;padding:0 12px;border-radius:99px;border:1.5px solid rgba(255,255,255,.5);background:none;color:#fff;font:700 13px var(--f,inherit);box-shadow:none}'+
