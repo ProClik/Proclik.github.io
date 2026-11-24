@@ -682,7 +682,7 @@ function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
 function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
- rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null}})})).filter(f=>f.rooms.length)}
+ rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null,so:r.so||null,pfp:r.pfp||null}})})).filter(f=>f.rooms.length)}
 const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
 function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
 function cen(r){const p=r.pts;let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1]});return[x/p.length,y/p.length]}
@@ -767,7 +767,9 @@ function finish(){post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()}
 $("sr-go").onclick=()=>{vib([10,40,14]);finish()};$("sr-again").onclick=()=>location.reload();
 addEventListener("resize",()=>{if(PC.step==="p")planUI();if(PC.step==="r")recapUI()});
 M={type:"mur",rt:"cuisine",L:300,H:250,room:"",items:[]};
-function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);ALLR().forEach(({r})=>{r.works=want.length?want.includes(r.rt):true});startPick()}
+function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);ALLR().forEach(({r})=>{r.works=want.length?want.includes(r.rt):true});fromPlan();startPick()}
+/* Cyril 24/11 : le sol et le plafond répondus dans le plan ne sont pas redemandés ici (repris tels quels) */
+function fromPlan(){if(!PC.SO)return;const E={"Déjà en place":"On le garde","À changer":"On le change","À créer":"Il n'y a pas encore de sol"};ALLR().forEach(q=>{const r=q.r;if(r.so&&E[r.so.etat]){const a=soA(q.id,"sol");if(!a._done){a.etat=E[r.so.etat];if(r.so.depose&&r.so.depose!=="Aucune"&&r.so.depose!=="À préciser")a.depose=r.so.depose;const rv=r.so.revet;if(rv&&rv!=="Aucun"&&rv!=="À préciser")a.revet=/souple/i.test(rv)?"Sol souple (lino, vinyle)":rv;if(a.revet==="Carrelage"&&r.so.carFmt&&r.so.carFmt!=="À préciser")a.carFmt=r.so.carFmt;a._done=1;a._plan=1}}if(r.pfp&&r.pfp.pf){const a=soA(q.id,"pf");if(!a._done){Object.keys(r.pfp).forEach(k=>{if(r.pfp[k])a[k]=r.pfp[k]});a._done=1;a._plan=1}}})}
 addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-load"){PC.R={};boot(d.plan&&d.plan.geo,d.rep||{})}});
 if(EMB)post({type:"proclik-murs-ready"});
 else{// démo hors formulaire : un logement fictif
@@ -856,7 +858,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
 // ---------- Parcours ----------
-function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(needPart)).concat(["fin"]);
+function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(p=>needPart(p)&&!soA(q.id,p)._plan)).concat(["fin"]);
  PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="fai"?"Maintenant, la faïence":parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
 function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
  if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
