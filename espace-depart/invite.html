@@ -59,6 +59,12 @@ button.ln{background:var(--n1-bg);box-shadow:var(--n1-pk)}
 .jour.next{background:var(--n1-calme);box-shadow:inset 0 0 0 2px var(--n1-laiton)}
 .jour.passe{opacity:.45}
 /* plan miniature */
+.planr svg{width:100%;height:auto;max-height:60vh;display:block;border-radius:16px;background:var(--n1-bg);box-shadow:inset 0 0 0 1px var(--n1-line)}
+.phr{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.phb{position:relative;padding:0;border:0;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--n1-bg);cursor:pointer}
+.phb img{width:100%;height:100%;object-fit:cover;display:block}.phb span{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font-size:11.5px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.6));text-align:left}
+.phz{position:fixed;inset:0;z-index:50;background:rgba(10,14,26,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;color:#fff;text-align:center}
+.phz img{max-width:100%;max-height:70vh;border-radius:12px}.phz .go{max-width:240px}
 .plan{width:100%;height:auto;display:block;border-radius:16px;background:var(--n1-bg);box-shadow:inset 0 0 0 1px var(--n1-line)}
 /* conversation : même dessin que dans l'Espace */
 .dec{background:var(--n1-teinte);border-radius:16px;padding:11px 13px;margin-bottom:14px;box-shadow:inset 3px 0 0 var(--n1-laiton)}
@@ -306,7 +312,7 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=REEL?[REEL.avc||0,REEL.
  '<section class="card monte"><h2><span class="ic">'+IC.fil+'</span>'+(k.commun?'La conversation du chantier':'Avec '+esc(ARTISAN))+'</h2>'+
   (k.commun?luC():'<p class="lu priv">'+IC.lock+'<span>Privé : vous et '+esc(ARTISAN)+' seulement. Les entreprises ne lisent pas ces messages.</span></p>')+'<div class="fil" id="fil">'+cmsgs(conv)+'</div>'+
   '<div class="w"><textarea id="t" rows="1" placeholder="'+(k.commun?'Écrire à tout le chantier…':'Écrire à '+esc(ARTISAN)+'…')+'"></textarea><button class="ro pk" id="mic" aria-label="Dicter">'+IC.mic+'</button><button class="ro go" id="env" aria-label="Envoyer">'+IC.send+'</button></div></section>'+
- (REEL?'':'<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Plans et photos</h2>'+
+ (REEL?partageReel():'<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Plans et photos</h2>'+
   '<button class="ln" data-doc="Plan"><span class="r">'+IC.plan+'</span><span class="tx"><b>Le plan</b><small>La dernière version</small></span>'+IC.chev+'</button>'+
   '<button class="ln" data-doc="Photos du chantier"><span class="r">'+IC.photo+'</span><span class="tx"><b>Photos du chantier</b><small>Ajoutées au fil des jours</small></span>'+IC.chev+'</button></section>')+
  '<p class="acces">'+IC.lock+'<span>Cette page est à vous seul, pour ce chantier. Vous ne voyez ni les prix des entreprises, ni leurs échanges entre elles.</span></p>'+
@@ -314,7 +320,7 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=REEL?[REEL.avc||0,REEL.
  $('#app').innerHTML=h;
  var th=$('#theme'),rt=document.documentElement,icT=function(){th.innerHTML=rt.getAttribute('data-theme')==='dark'?IC.soleil:IC.lune};icT();
  th.addEventListener('click',function(){var d=rt.getAttribute('data-theme')==='dark'?'light':'dark';rt.setAttribute('data-theme',d);try{localStorage.setItem('pc-theme',d)}catch(e){}icT()});
- [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});
+ [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});lierPartage();
  [].forEach.call(document.querySelectorAll('[data-addph]'),function(b){b.addEventListener('click',function(){var r=P.res[+b.dataset.addph],d=new Date();r.phx=r.phx||[];r.phx.push([k.n,JC[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)]);sauver();toast('Photo ajoutée : '+ARTISAN+' la voit dans la réserve');client()})});
  var sg=$('#sg');if(sg)sg.addEventListener('click',function(){var F={pc:PZ.length===1?PZ[0][0]:'',ph:0};sg.hidden=true;
   $('#sig').innerHTML='<div class="sigf"><button class="phb" id="sph">'+IC.photo+'<span>Prendre une photo</span></button><textarea id="st" rows="2" placeholder="Ce qui ne va pas, en une phrase…"></textarea>'+
@@ -338,6 +344,15 @@ function cmsgs(L){var dj='';return L.map(function(x){var j=String(x.h||'').split
  return sep+'<div class="m'+(mien?' moi':'')+'">'+(mien?'':'<span class="av">'+icM(q.ic)+'</span>')+'<div class="c">'+(mien?'':'<span class="n">'+esc(q.n)+(q.m?' <small>'+esc(q.m)+'</small>':'')+'</span>')+
   '<p class="bu">'+esc(x.t)+'</p><span class="h">'+esc(String(x.h||'').split(' · ')[1]||'')+'</span></div></div>'}).join('')}
 /* ---------- son chantier ---------- */
+/* En vrai : le plan (dessin seul) et les photos que l'entreprise a choisi de partager. */
+function partageReel(){var h='';
+ if(REEL.plan)h+='<section class="card monte"><h2><span class="ic">'+IC.plan+'</span>Le plan<span class="sp"></span><small>lecture seule</small></h2><div class="planr">'+REEL.plan+'</div></section>';
+ var F=REEL.photos||[];if(F.length)h+='<section class="card monte"><h2><span class="ic">'+IC.photo+'</span>Photos du chantier<span class="sp"></span><small>'+F.length+'</small></h2><div class="phr">'+
+  F.map(function(f,i){return '<button type="button" class="phb" data-phr="'+i+'" aria-label="Agrandir la photo '+esc(f.pc)+'"><img alt="" loading="lazy" src="'+esc(f.im)+'"><span>'+esc(f.pc)+'</span></button>'}).join('')+'</div></section>';
+ return h}
+function lierPartage(){if(!REEL)return;[].forEach.call(document.querySelectorAll('[data-phr]'),function(b){b.addEventListener('click',function(){var f=REEL.photos[+b.dataset.phr],d=document.createElement('div');
+  d.className='phz';d.setAttribute('role','dialog');d.setAttribute('aria-label','Photo');d.innerHTML='<img alt="" src="'+esc(f.im)+'"><p><b>'+esc(f.pc)+'</b>'+(f.n?' · '+esc(f.n):'')+(f.d?'<br><small>'+esc(f.d)+'</small>':'')+'</p><button type="button" class="go">Fermer</button>';
+  d.addEventListener('click',function(){d.remove()});document.body.appendChild(d)})})}
 function plan(){return '<svg class="plan" viewBox="0 0 160 100" aria-label="Plan du local"><g fill="none" stroke="var(--n1-fg)" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="144" height="84" rx="4"/><path d="M76 8v46M8 54h44M76 54h76M112 54v38"/></g>'+
  '<g font-size="7" font-weight="700" fill="var(--n1-muted)" font-family="Manrope,sans-serif"><text x="20" y="32">Salle d\'attente</text><text x="98" y="32">Accueil</text><text x="20" y="76">Cabinet 1</text><text x="82" y="76">Couloir</text><text x="116" y="76">Cabinet 2</text></g>'+
  '<rect x="80" y="12" width="68" height="38" rx="3" fill="color-mix(in srgb,var(--n1-laiton) 16%,transparent)" stroke="var(--n1-laiton)" stroke-width="1.2" stroke-dasharray="3 2"/></svg>'}
@@ -375,7 +390,7 @@ function chantier(){
   (REEL?'':'<div class="ln"><span class="r">'+IC.key+'</span><span class="tx"><b>Clés à l\'accueil du cabinet</b><small>Demander Mme Garnier</small></span></div>'+
   '<div class="ln"><span class="r">'+IC.clock+'</span><span class="tx"><b>8 h – 17 h</b><small>Pas de bruit pendant les consultations du matin</small></span></div>')+
   '<button class="ln" id="appel"><span class="r">'+IC.tel+'</span><span class="tx"><b>Appeler '+esc(ARTISAN)+'</b><small>Pour toute question sur le chantier</small></span>'+IC.chev+'</button></section>'+
- (REEL?'':'<section class="card monte"><h2><span class="ic">'+IC.plan+'</span>Le plan<span class="sp"></span><small>dernière version</small></h2>'+plan()+
+ (REEL?partageReel():'<section class="card monte"><h2><span class="ic">'+IC.plan+'</span>Le plan<span class="sp"></span><small>dernière version</small></h2>'+plan()+
   '<p class="muted" style="font-size:12.5px;margin:8px 2px 0">En laiton : la zone du faux plafond.</p></section>'+
  '<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Documents et photos</h2>'+
   '<button class="ln" data-doc="Plan du local"><span class="r">'+IC.plan+'</span><span class="tx"><b>Plan du local</b><small>Mis à jour le 12/10</small></span>'+IC.chev+'</button>'+
@@ -395,7 +410,7 @@ function chantier(){
  var jy=$('#jy');if(jy)jy.addEventListener('click',function(){jy.classList.add('ok');jy.innerHTML=IC.check+'C\'est noté';toast(ARTISAN+' voit que vous serez là')});
  var it=$('#iti');if(it)it.addEventListener('click',function(){if(REEL){var q=ch.adr||ch.v;if(q){location.href='https://maps.apple.com/?daddr='+encodeURIComponent(q);return}toast('Adresse à demander à '+ARTISAN);return}toast('Ouverture du GPS (démo)')});
  $('#appel').addEventListener('click',function(){var t=REEL&&REEL.artisan&&REEL.artisan.tel;if(t){location.href='tel:'+String(t).replace(/[^\d+]/g,'');return}toast(REEL?'Le numéro de '+ARTISAN+' n\'est pas encore renseigné':'Appel de '+ARTISAN+' (démo)')});
- [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});
+ [].forEach.call(document.querySelectorAll('[data-doc]'),function(b){b.addEventListener('click',function(){toast(b.dataset.doc+' (démo)')})});lierPartage();
  var t=$('#t');t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
  $('#mic').addEventListener('click',function(){t.focus();toast('Touchez le micro du clavier pour dicter')});
  $('#env').addEventListener('click',function(){var v=t.value.trim();if(!v){t.focus();return}var d=new Date();

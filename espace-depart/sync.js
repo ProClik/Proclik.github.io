@@ -75,8 +75,21 @@ function tirer(){if(!actif())return;arret=0;
   envoyer()},function(e){etat('attente',e.message)})}
 
 var ETAT={t:'',msg:''};function etat(t,msg){ETAT={t:t,msg:msg||'',le:Date.now()};try{document.dispatchEvent(new CustomEvent('pc-sync',{detail:ETAT}))}catch(e){}}
-window.PCSYNC={tirer:tirer,envoyer:envoyer,etat:function(){return ETAT},cles:CLES.slice()};
+window.PCSYNC={tirer:tirer,envoyer:envoyer,guetter:function(){guetter()},etat:function(){return ETAT},cles:CLES.slice()};
 
+/* Pendant que l'Espace est ouvert (Cyril 24/11, « que tout fonctionne de partout ») : toutes les minutes, un coup d'œil
+   léger (les dates seulement). Si un invité a écrit, ou si un autre appareil a changé quelque chose, une pastille
+   « Du nouveau » apparaît : on ne recharge jamais la page sous les doigts de l'artisan. */
+var vuNeuf=0;
+function guetter(){if(!actif()||document.visibilityState!=='visible'||enCours||vuNeuf)return;
+ appel('/espace/donnees').then(function(r){var m=meta(),T=r.dates||{};if(m.a&&m.a!==r.compte)return;
+  var n=CLES.filter(function(k){var e=m.k[k]||{};return T[k]&&!e.sale&&T[k]>(e.maj||0)});if(!n.length)return;
+  vuNeuf=1;var b=document.createElement('button');b.type='button';b.id='pc-neuf';b.setAttribute('role','status');
+  b.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:var(--n1-laiton,#B08A3E);flex:none"></span>'+(n.indexOf('pc-ch9')>=0?'Du nouveau sur vos chantiers':'Du nouveau dans votre Espace')+'<b style="margin-left:6px">Afficher</b>';
+  b.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:9999;display:flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:999px;background:var(--n1-nuit,#1B2440);color:#fff;font-family:inherit;font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;width:max-content;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;max-width:calc(100% - 32px)';
+  b.addEventListener('click',function(){b.remove();vuNeuf=0;try{sessionStorage.removeItem('pc-sync-rl')}catch(e){}tirer()});
+  document.body.appendChild(b)},function(){})}
+setInterval(guetter,60000);
 window.addEventListener('online',function(){tirer()});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')envoyer(true);else tirer()});
 window.addEventListener('pagehide',function(){envoyer(true)});
