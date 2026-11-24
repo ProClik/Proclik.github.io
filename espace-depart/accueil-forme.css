@@ -496,3 +496,56 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 /* 23/11 : les petits liens écrits (« 7 en tout », « 2 en cours », « Personnaliser l accueil ») se touchent plus facilement au doigt : zone de toucher agrandie, sans rien changer à l œil */
 .f2 button.lien{position:relative}
 .f2 button.lien::after{content:"";position:absolute;left:-8px;right:-8px;top:-13px;bottom:-13px}
+/* 24/11 : deux colonnes sur iPad couché et PC (Cyril : « ça fait vide »). Téléphone et iPad debout : une seule colonne, comme avant. */
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+ .f2 .f2a{max-width:1120px;padding-inline:8px}
+ .f2 .f2a .f2cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0 32px;align-items:start}
+ .f2 .f2a .f2c2>.sec:first-child{margin-top:0}
+ .f2 .f2a .f2c1>.ask2:first-child{margin-top:0}
+}
+@media (min-width:1400px){.f2 .f2a{max-width:1240px}.f2 .f2a .f2cols{gap:0 44px}}
+/* 24/11 (Cyril : « celle d'avant, mais plus visible ») : même carte claire, qui ressort davantage :
+   rond du café plein en couleur d'action, titre plus grand, ombre plus marquée, fin liseré, rendez-vous à suivre surligné. */
+.f2 .f2a .jr2{padding:10px 20px 10px;border-radius:28px;border:1.5px solid color-mix(in srgb,var(--nuit) 16%,transparent);
+ box-shadow:0 2px 4px rgba(23,24,29,.05),0 24px 44px -22px rgba(27,36,64,.42)}
+.f2 .f2a .jr2 .jr2-h{padding:12px 0 16px}
+.f2 .f2a .jr2 .jr2-h .rond{width:48px;height:48px;background:var(--nuit);color:var(--sur-nuit);border:0}
+.f2 .f2a .jr2 .jr2-h .rond svg.i{width:21px;height:21px}
+.f2 .f2a .jr2 .jr2-h .lab{font-size:13.5px;font-weight:600;color:var(--mut)}
+.f2 .f2a .jr2 .jr2-h b{font-size:22px;letter-spacing:-.015em}
+.f2 .f2a .jr2 .rv .hh{font-size:18px;font-weight:700}
+.f2 .f2a .jr2 .rv .x b{font-size:16.5px}
+.f2 .f2a .jr2 .rv.on{margin:6px -12px;padding:12px;border-radius:18px;border-bottom:0;background:color-mix(in srgb,var(--nuit) 7%,transparent)}
+.f2 .f2a .jr2 .rv.on .rb2{width:44px;height:44px}
+:root[data-theme="dark"] .f2 .f2a .jr2{border-color:rgba(255,255,255,.12)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a .jr2{border-color:rgba(255,255,255,.12)}}
+/* 24/11 : d'un coup d'œil, ce qu'il faut faire : verbe en petit bouton au bout des lignes, phrase d'action en tête des chiffres,
+   prochaine étape sous chaque chantier (point orange = ça bloque), état à côté du titre (« À jour ✓ » / « 1 à régler ») */
+.f2 .f2a .vb{flex-shrink:0;display:inline-flex;align-items:center;height:34px;padding:0 15px;border-radius:99px;background:var(--nuit);color:var(--sur-nuit);font-size:13.5px;font-weight:700;white-space:nowrap}
+.f2 .f2a .liste button .vb{margin-left:4px}
+.f2 .f2a .chq{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:-4px -6px 18px;width:calc(100% + 12px);padding:12px 12px 12px 14px;border-radius:18px;background:color-mix(in srgb,var(--rose) 9%,transparent)}
+.f2 .f2a .chq .x{flex:1;min-width:0}
+.f2 .f2a .chq .x b{display:block;font-size:17px;font-weight:700}
+.f2 .f2a .chq .x span{display:block;font-size:13px;color:var(--mut)}
+.f2 .f2a .pt3{display:inline-block;width:9px;height:9px;border-radius:50%;background:#E08A3C;flex-shrink:0}
+.f2 .f2a .chq .pt3{background:var(--rose)}
+.f2 .f2a .liste .x .f2et{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:13px;font-weight:600;color:var(--fg);white-space:normal}
+.f2 .f2a .liste .x .f2et.f2pb{color:#B8621B}
+:root[data-theme="dark"] .f2 .f2a .liste .x .f2et.f2pb{color:#F0A868}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a .liste .x .f2et.f2pb{color:#F0A868}}
+.f2 .f2a .sec h2 .f2etat{display:inline-flex;align-items:center;margin-left:10px;vertical-align:3px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;letter-spacing:0}
+.f2 .f2a .f2etat.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.f2 .f2a .f2etat.f2pb{background:color-mix(in srgb,#E08A3C 15%,transparent);color:#B8621B}
+:root[data-theme="dark"] .f2 .f2a .f2etat.f2pb{color:#F0A868}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a .f2etat.f2pb{color:#F0A868}}
+/* 24/11 (retouche) : un seul gros bouton plein (Vérifier du plus urgent) ; les petits verbes en bouton clair entouré ;
+   bande des chiffres en teinte neutre, le rouge reste pour le plus urgent */
+.f2 .f2a .vb{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 22%,transparent)}
+.f2 .f2a .chq{background:var(--tile2)}
+.f2 .f2a .chq .pt3{display:none}
+.f2 .f2a .chq{padding-left:16px}
+/* 24/11 (retouche) : un seul gros bouton plein (Vérifier du plus urgent) ; les petits verbes en bouton clair entouré ;
+   bande des chiffres en teinte neutre, le rouge reste pour le plus urgent */
+.f2 .f2a .vb{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 22%,transparent)}
+.f2 .f2a .chq{background:var(--tile2);padding-left:16px}
+.f2 .f2a .chq .pt3{display:none}
