@@ -453,15 +453,18 @@ function draw(){
  const g=el("g",{},s);
  
  cote(g,0,L,-15*U,R(L)+" cm");
- el("rect",{x:0,y:0,width:L,height:H,fill:"var(--wall)",stroke:S,"stroke-width":2.5,rx:2},g);
+ if(M.prof)el("path",{d:"M0 "+H+M.prof.map(q=>"L"+q[0]+" "+(H-q[1])).join("")+"L"+L+" "+H+"Z",fill:"var(--wall)",stroke:S,"stroke-width":2.5,"stroke-linejoin":"round"},g);else el("rect",{x:0,y:0,width:L,height:H,fill:"var(--wall)",stroke:S,"stroke-width":2.5,rx:2},g);
  // carrelage mural discret derrière l'évier / la douche
  M.items.forEach(it=>{if(!visible(it))return;const c=CAT[it.k];if(it.k==="douche"){el("rect",{x:vx(it),y:0,width:it.w,height:H,fill:"var(--wall2)"},g)}});
  // crédence : une seule bande continue au-dessus du plan de travail (meubles bas, évier, plaque, lave-vaisselle qui se touchent)
  {const iv=M.items.filter(o=>visible(o)&&["mevier","mplaque","mbas","lv"].includes(o.k)).map(o=>[vx(o),vx(o)+o.w]).sort((a,b)=>a[0]-b[0]),run=[];iv.forEach(([a,b])=>{const l=run[run.length-1];if(l&&a<=l[1]+1)l[1]=Math.max(l[1],b);else run.push([a,b])});run.forEach(([a,b])=>el("rect",{x:a,y:H-145,width:b-a,height:55,fill:"var(--wall2)"},g))}
  el("path",{d:`M-10 ${H}H${L+10}`,stroke:S,"stroke-width":3},g);
  for(let i=-10;i<L+10;i+=14)el("path",{d:`M${i} ${H+2}l-8 8`,stroke:"var(--line)","stroke-width":1.2},g);
- el("path",{d:`M${-24*U} 0v${H}M${-24*U-5} 0h10M${-24*U-5} ${H}h10`,stroke:"var(--muted)","stroke-width":1.2,fill:"none"},g);
- const ht=txt(g,-24*U,H/2,R(H)+" cm",{fs:12.5});ht.setAttribute("transform",`rotate(-90 ${-24*U} ${H/2})`);
+ {/* sous le toit : cote du bord gauche + hauteur au point le plus haut (Cyril 25/11) */const hl=M.prof?M.prof[0][1]:H,y0=H-hl;
+ el("path",{d:`M${-24*U} ${y0}v${hl}M${-24*U-5} ${y0}h10M${-24*U-5} ${H}h10`,stroke:"var(--muted)","stroke-width":1.2,fill:"none"},g);
+ const ht=txt(g,-24*U,y0+hl/2,R(hl)+" cm",{fs:12.5});ht.setAttribute("transform",`rotate(-90 ${-24*U} ${y0+hl/2})`);
+ if(M.prof){const pk=M.prof.reduce((m,q)=>q[1]>m[1]?q:m,M.prof[0]);if(pk[1]-hl>5){const x=pk[0]>L-30?L+18*U:pk[0];el("path",{d:`M${x} ${H}V0`,stroke:"var(--muted)","stroke-width":1.2,"stroke-dasharray":"4 4",fill:"none"},g);txt(g,x+(x>L?6:8),Math.min(H-40,H*.35),R(pk[1])+" cm",{a:"start",fs:12.5})}
+  const hr=M.prof[M.prof.length-1][1];if(Math.abs(hr-hl)>5&&Math.abs(hr-pk[1])>5){const t2=txt(g,L+24*U,H-hr/2,R(hr)+" cm",{fs:12.5});t2.setAttribute("transform",`rotate(90 ${L+24*U} ${H-hr/2})`)}}}
  if(drag&&drag.snap!=null)el("path",{d:`M${drag.snap} 4V${H-4}`,stroke:"var(--laiton)","stroke-width":1.5,"stroke-dasharray":"5 5"},g);
  // ordre : grands éléments derrière, petits devant
  const order=M.items.map((it,i)=>i).filter(i=>visible(M.items[i])).sort((a,b)=>(CAT[M.items[a].k].petit?1:0)-(CAT[M.items[b].k].petit?1:0));
@@ -681,7 +684,7 @@ function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
 // ---------- Géométrie (cm) ----------
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
-function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),esc:(f.esc||[]).map(e=>({t:e.t,pts:e.pts.map(q=>[q[0]*100,q[1]*100])})),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
+function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),roof:f.roof||null,esc:(f.esc||[]).map(e=>({t:e.t,pts:e.pts.map(q=>[q[0]*100,q[1]*100])})),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
  rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null,so:r.so||null,pfp:r.pfp||null}})})).filter(f=>f.rooms.length)}
 const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
 function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
@@ -726,7 +729,10 @@ function putAt(w,k,x,ww,o={}){const c=CAT[k];M=w;face=0;const it={k,w:ww||c.w[0]
  if(o.faire)it.st="faire";else if(o.none){}else{it.st="exist";if(o.rep)it.rep=o.rep;else if(!c.petit)it.rep="non";if(!o.keep&&!o.rep)it.prop=1}w.items.push(it);return it}
 const putAny=(w,k,x,ww,o={})=>putAt(w,k,x,ww,Object.assign({exact:false},o));
 const stOf=v=>/refaire|créer/i.test(v||"")?{faire:1}:/n'y touche|garde/i.test(v||"")?{keep:1}:/change/i.test(v||"")&&!/Quelques/.test(v)?{rep:"oui"}:{};
-function buildRoom(r,lv){const H=GEO[lv].H,E=edges(r);const W=E.map((e,i)=>{const a=[e[0],e[1]],b=[e[2],e[3]],L=Math.round(len(sub(b,a)));return{type:"mur",rt:r.rt,L,H,room:r.nom,named:true,items:opsOn(lv,a,b).map(o=>({k:o.k,w:o.w,x:o.x,face:0,lock:true,st:"exist",rep:"non"})),side:i,rid:lv+"-"+GEO[lv].rooms.indexOf(r),lv}}).filter(w=>w.L>=40);
+/* Cyril 25/11 : sous le toit, la hauteur du mur suit les pentes (profil reçu du plan) */
+function roofH(rf,p){const P=rf.ax?p:[p[1],p[0]],v=P[1]/100,z=rf.one?(rf.hi?v-rf.v0:rf.v1-v)*rf.tn:(rf.hw-Math.abs(v-rf.vm))*rf.tn,hm=rf.one?(rf.hi?rf.hm1:rf.hm2):(v<rf.vm?rf.hm1:rf.hm2);return Math.max(5,Math.round(Math.max(z,hm||0)*100))}
+function wallProf(lv,a,b,L){const rf=GEO[lv].roof;if(!rf)return null;const va=(rf.ax?a[1]:a[0])/100,vb=(rf.ax?b[1]:b[0])/100,T=[0,1];if(Math.abs(vb-va)>1e-6){/* points où la pente change : faîtage et pied des pentes (haut des petits murs) */const tn=rf.tn||1,V=rf.one?[rf.hi?rf.v0+rf.hm1/tn:rf.v1-rf.hm2/tn]:[rf.vm,rf.v0+rf.hm1/tn,rf.v1-rf.hm2/tn];V.forEach(v=>{const t=(v-va)/(vb-va);if(t>0&&t<1)T.push(t)})}T.sort((x,y)=>x-y);const P=T.map(t=>[R(L*t),roofH(rf,[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t])]);if(P.every(q=>Math.abs(q[1]-P[0][1])<2))return{flat:P[0][1]};return{prof:P}}
+function buildRoom(r,lv){const H=GEO[lv].H,E=edges(r);const W=E.map((e,i)=>{const a=[e[0],e[1]],b=[e[2],e[3]],L=Math.round(len(sub(b,a))),pf=wallProf(lv,a,b,L),Hw=pf?(pf.flat||Math.max(...pf.prof.map(q=>q[1]))):H;return{type:"mur",rt:r.rt,L,H:Hw,prof:pf&&pf.prof||null,room:r.nom,named:true,items:opsOn(lv,a,b).map(o=>({k:o.k,w:o.w,x:o.x,face:0,lock:true,st:"exist",rep:"non"})),side:i,rid:lv+"-"+GEO[lv].rooms.indexOf(r),lv}}).filter(w=>w.L>=40);
  if(!W.length)return[];const sv=M,dw=W.findIndex(w=>w.items.some(i=>i.k==="porte")),free=W.filter(w=>!w.items.some(i=>i.k==="porte")).sort((a,b)=>b.L-a.L),nowin=free.filter(w=>!w.items.some(i=>i.k==="fenetre")),eSt=stOf(A.elec),pSt=stOf(A.plomb);
  if(r.rt==="cuisine"&&free[0]){const f=A.cuis?stOf(A.cuis):{none:1},w=free[0];let x=0;
   [["frigo",60],["mbas",80],["mevier",80],["lv",60],["mplaque",60]].forEach(([k,ww])=>{if(x+ww<=w.L){putAt(w,k,x,ww,f);x+=ww}});[80,60,40,30,20].forEach(ww=>{while(x+ww<=w.L){putAt(w,"mbas",x,ww,f);x+=ww}});
