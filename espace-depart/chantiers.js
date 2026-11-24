@@ -474,7 +474,7 @@ function agenda(c){var T=X.iso?X.iso(X.TODAY||new Date()):'',L=evsCh(c),av=L.fil
  function ligne(e){var d=new Date(e.d+'T12:00:00'),col=(window.PCCOUL&&PCCOUL.ev(e))||'var(--k-'+e.k+')',jour=e.x&&e.x.jour;
   return '<button type="button" class="cf-li ch-ag" data-agd="'+e.d+'" style="--c:'+col+'"><span class="ch-agd"><small>'+JC[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+MC[d.getMonth()]+'</small></span>'+
    '<span class="tx"><b>'+esc(e.t)+'</b><small>'+(jour?'Toute la journée':e.s.replace(':','h')+' – '+e.e.replace(':','h'))+(e.w?' · '+esc(e.w):'')+'</small></span><span class="pill">'+(TYC[e.k]||'')+'</span></button>'}
- var h=eqcCard(c)+'<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
+ var h=eqcCard(c)+(window.PCLISTE?PCLISTE.html(c.id):'')+'<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
   (av.length?'<div class="lst cf-l" style="padding:0!important">'+av.map(ligne).join('')+'</div>':'<p class="hint" style="margin:4px 0 0">Aucun jour ni rendez-vous prévu pour ce chantier.</p>')+
   (c.st!=='done'?'<button type="button" class="btn go cf-go" id="ch-agadd" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter au planning</span></span></button>':'')+
   '<button type="button" class="btn" id="ch-agvoir" style="width:100%;margin-top:10px">Voir dans le planning</button></div>';
@@ -497,6 +497,7 @@ function lier(c){var id=c.id;
  /* planning du chantier */
  $$('#chx [data-eqj]').forEach(function(b){b.addEventListener('click',function(){eqcJour(c,b.dataset.eqj)})});
  var eqp=$('#cheq-prev');if(eqp)eqp.addEventListener('click',function(){eqcPrev(c)});
+ if(window.PCLISTE)PCLISTE.lier($('#ch-liste'),c.id,function(){recharger('agenda','#ch-liste')});
  var aga=$('#ch-agadd');if(aga)aga.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'chantier',ch:id,d:X.iso(X.TODAY)})});
  var sta=$('#ch-stadd');if(sta)sta.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'st',ch:id,d:X.iso(X.TODAY)})});
  $$('#chx [data-stsms]').forEach(function(b){b.addEventListener('click',function(){PCPLAN.st.sms(b.dataset.stsms,id)})});

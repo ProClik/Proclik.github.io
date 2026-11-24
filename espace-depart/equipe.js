@@ -54,18 +54,49 @@ function setBesoin(id,k,n){(S.bes[id]=S.bes[id]||{})[k]=Math.max(0,n);ecrit();bo
 /* jours à venir d'un chantier (aujourd'hui compris) : ceux du planning, sinon les 5 prochains jours ouvrés */
 function jours(id){var T=iso(auj()),J=evJours(id).filter(function(k){return k>=T});if(J.length)return J;
   var c=(X.CH||{})[id];if(c&&c.st==='done')return [];var R=[],x=auj();while(R.length<5){if(x.getDay()%6)R.push(iso(x));x=plus(x,1)}return R}
-function nomCase(v){if(!v)return 'Rien de prévu';if(v==='bureau')return 'Au bureau';if(v==='repos')return 'Repos ou congé';var c=(X.CH||{})[v];return c?c.n:v}
+function nomCase(v){if(!v)return 'Rien de prévu';if(v==='bureau')return 'Au bureau';if(v==='repos')return 'Repos ou congé';if(ABS[v])return ABS[v];var c=(X.CH||{})[v];return c?c.n:v}
 /* ce qu'on a envoyé à l'équipe pour un chantier : signature des affectations, pour voir s'il y a eu des changements depuis */
 function sig(id){return jours(id).map(function(k){return k+':'+qui(id,k).map(function(p){return p.n+'='+taches(k,p.n).join(',')}).join('+')}).join('|')}
 function prevenir(id){var Q={};jours(id).forEach(function(k){qui(id,k).forEach(function(p){Q[p.n]=1})});var N=Object.keys(Q);
   S.prev[id]={d:iso(auj()),sig:sig(id),qui:N,vu:N.slice(0,Math.max(0,N.length-1))};ecrit();bouge();return N}
 function prevenu(id){var P=S.prev[id];if(!P)return null;return {d:P.d,qui:P.qui||[],vu:P.vu||[],change:P.sig!==sig(id)}}
+/* même équipe que la journée de chantier (pc-eq, heures en plus) : on y ajoute les personnes du planning */
+(function(){try{var E=JSON.parse(localStorage.getItem('pc-eq')||'null')||[],ch=false;EQ.forEach(function(p,i){if(!E.some(function(x){return x.p===p.n})){E.push({id:'e'+(i+1),p:p.n,h:35});ch=true}});
+  if(ch)localStorage.setItem('pc-eq',JSON.stringify(E))}catch(e){}})();
 var ecoute=[];function bouge(){ecoute.forEach(function(f){try{f()}catch(e){}})}
 function jourLong(k){var x=dte(k);return JL[x.getDay()]+' '+x.getDate()+' '+MOIS[x.getMonth()]}
 function jourCourt(k){var x=dte(k);return JC[x.getDay()]+' '+x.getDate()}
 function relatif(k){var T=iso(auj()),D=iso(plus(auj(),1));return k===T?'Aujourd\'hui':k===D?'Demain':jourCourt(k)}
+/* ---------- brouillon / publié ---------- */
+function val(k,n){var v=get(k,n);return v?v+'|'+taches(k,n).join(','):''}
+if(!S.pub){S.pub={};Object.keys(S.jr).forEach(function(k){var o=S.pub[k]={};EQ.forEach(function(p){o[p.n]=val(k,p.n)})});ecrit()}
+function pubVal(k,n){var o=S.pub[k];return o&&o[n]!=null?o[n]:''}
+function brouillon(k,n){return val(k,n)!==pubVal(k,n)}
+/* ce que voit le salarié = la version publiée */
+function pGet(k,n){return pubVal(k,n).split('|')[0]}
+function pTaches(k,n){var t=pubVal(k,n).split('|')[1];return t?t.split(','):[]}
+function pQui(id,k){return EQ.filter(function(p){return pGet(k,p.n)===id})}
+function changes(K){var R=[];K.forEach(function(k){EQ.forEach(function(p){if(brouillon(k,p.n))R.push([k,p.n])})});return R}
+function publier(K){var C=changes(K),N={};C.forEach(function(x){(S.pub[x[0]]=S.pub[x[0]]||{})[x[1]]=val(x[0],x[1]);N[x[1]]=1});ecrit();return Object.keys(N)}
+/* ---------- absences et congés (Cyril 24/11 : un Espace pour chaque personne) ----------
+   le salarié demande depuis son Espace (Terrain), la Direction accepte ou refuse dans Planning › Équipe ;
+   acceptée = ses jours deviennent « Congé » ou « Malade », publiés tout de suite, et les chantiers où il manquait du monde le montrent */
+if(!S.abs){S.abs=[{id:'a1',qui:'Mathieu',ty:'conge',du:iso(plus(LUN0,14)),au:iso(plus(LUN0,16)),mo:'Mariage de ma sœur',st:'att',le:iso(auj())}];ecrit()}
+if(!S.ou)S.ou={};
+var ABS={conge:'Congé',malade:'Malade',rdv:'Rendez-vous',autre:'Absent'};
+function absences(){return S.abs.slice()}
+function demanderAbs(o){o.id='a'+Date.now();o.st='att';o.le=iso(auj());S.abs.push(o);ecrit();bouge();return o}
+function joursAbs(o){var R=[],x=dte(o.du),f=dte(o.au);while(x<=f){if(x.getDay()%6)R.push(iso(x));x=plus(x,1)}return R}
+function repondreAbs(id,ok){var o=S.abs.filter(function(a){return a.id===id})[0];if(!o)return null;o.st=ok?'ok':'non';
+  if(ok)joursAbs(o).forEach(function(k){(S.jr[k]=S.jr[k]||{})[o.qui]=o.ty;if(S.ta[k])delete S.ta[k][o.qui];(S.pub[k]=S.pub[k]||{})[o.qui]=val(k,o.qui)});
+  ecrit();bouge();return o}
+/* « Où je suis » : présence seulement (pas de pointage, salariés payés au mois, règle de Cyril du 14/11) */
+var OU={chantier:'Sur le chantier',route:'En route',depot:'Au dépôt',client:'Chez un client (devis)',four:'Chez un fournisseur',bureau:'Au bureau'};
+function ouSuis(n){var o=S.ou[n];return o&&o.d===iso(auj())?o:null}
+function setOu(n,v){var x=new Date();S.ou[n]={v:v,d:iso(auj()),h:x.getHours()+'h'+p2(x.getMinutes())};ecrit();bouge()}
 window.PCEQ={EQ:EQ,iso:iso,get:get,set:set,taches:taches,togTache:togTache,qui:qui,besoin:besoin,setBesoin:setBesoin,jours:jours,nomCase:nomCase,prevenir:prevenir,prevenu:prevenu,
-  jourLong:jourLong,jourCourt:jourCourt,relatif:relatif,ecoute:function(f){ecoute.push(f)}};
+  jourLong:jourLong,jourCourt:jourCourt,relatif:relatif,ecoute:function(f){ecoute.push(f)},
+  pGet:pGet,pTaches:pTaches,pQui:pQui,brouillon:brouillon,ABS:ABS,absences:absences,demanderAbs:demanderAbs,repondreAbs:repondreAbs,joursAbs:joursAbs,OU:OU,ouSuis:ouSuis,setOu:setOu,dte:dte,plus:plus,auj:auj,couleur:couleur};
 
 if(!$('#v-planning'))return;
 if(O&&O.actif('equipe')===false)return;
@@ -90,49 +121,43 @@ ecoute.push(function(){if(!pv.hidden)rend()});
    1) bascule « Par personne / Par chantier » ; 2) BROUILLON : ce qui a changé depuis la dernière publication est hachuré,
    le salarié ne voit que la version publiée, « Publier et prévenir » n'envoie que les changements ;
    3) « Copier la semaine d'avant » ; 4) heures de chacun au bout de sa ligne (8 h par jour, contrat 39 h, courant dans le bâtiment : exemple à régler). */
-var SEL=null,VUE='sem',MO=0,QUI=EQ[0].n,BY='p',ANNUL=null,CONTRAT=39;
-function court(v){if(!v)return '';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';var c=(X.CH||{})[v];if(!c)return v;
+var SEL=null,VUE='sem',MO=0,QUI=EQ[0].n,BY='p',ANNUL=null;
+function court(v){if(!v)return '';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';if(ABS[v])return ABS[v];var c=(X.CH||{})[v];if(!c)return v;
   var w=(c.n||'').replace(/^(M\.|Mme|Cabinet|SCI|Maison)\s+/,'').split(/[\s·,]+/)[0];return w.length>8?w.slice(0,7)+'.':w}
 function evDe(id,k){var c=(X.CH||{})[id];return (X.EV||[]).filter(function(e){var x=e.x||{};return e.k==='run'&&e.d===k&&(x.ch===id||(id==='alpes'&&x.ch===1)||(c&&String(e.t||'').indexOf(c.n)>-1))})[0]}
 function heures(id,k){var e=evDe(id,k);return e?e.s.replace(':','h')+' – '+e.e.replace(':','h'):'8h00 – 17h00'}
 /* heures travaillées d'un jour : horaires du chantier moins 1 h de pause, sinon 8 h ; bureau 8 h ; rien / repos 0 */
-function hJour(v,k){if(!v||v==='repos')return 0;var e=v==='bureau'?null:evDe(v,k);if(!e)return 8;
+function hJour(v,k){if(!v||v==='repos'||ABS[v])return 0;var e=v==='bureau'?null:evDe(v,k);if(!e)return 8;
   function m(s){var a=s.split(':');return +a[0]*60+(+a[1]||0)}var n=(m(e.e)-m(e.s))/60;return n>6?n-1:n}
+/* heures EN PLUS (règle de Cyril, 17/11) : jamais calculées, c'est le patron qui les ajoute (Cliky lui pose la question le soir, journee.js, clé pc-hs) */
+function lsj(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function hsSem(n,K){var E=lsj('pc-eq')||[],s=E.filter(function(x){return x.p===n})[0];if(!s)return 0;
+  return (lsj('pc-hs')||[]).filter(function(x){return x.s===s.id&&K.indexOf(x.d)>-1}).reduce(function(a,x){return a+(+x.h||0)},0)}
 function hTxt(n){return (Math.round(n*2)/2).toString().replace('.',',')+' h'}
 
-/* ---------- brouillon / publié ---------- */
-function val(k,n){var v=get(k,n);return v?v+'|'+taches(k,n).join(','):''}
-if(!S.pub){S.pub={};Object.keys(S.jr).forEach(function(k){var o=S.pub[k]={};EQ.forEach(function(p){o[p.n]=val(k,p.n)})});ecrit()}
-function pubVal(k,n){var o=S.pub[k];return o&&o[n]!=null?o[n]:''}
-function brouillon(k,n){return val(k,n)!==pubVal(k,n)}
-/* ce que voit le salarié = la version publiée */
-function pGet(k,n){return pubVal(k,n).split('|')[0]}
-function pTaches(k,n){var t=pubVal(k,n).split('|')[1];return t?t.split(','):[]}
-function pQui(id,k){return EQ.filter(function(p){return pGet(k,p.n)===id})}
-function changes(K){var R=[];K.forEach(function(k){EQ.forEach(function(p){if(brouillon(k,p.n))R.push([k,p.n])})});return R}
-function publier(K){var C=changes(K),N={};C.forEach(function(x){(S.pub[x[0]]=S.pub[x[0]]||{})[x[1]]=val(x[0],x[1]);N[x[1]]=1});ecrit();return Object.keys(N)}
 
 function choix(){return '<div class="seg eqv" role="tablist" aria-label="Vue de l\'équipe">'+[['sem','Semaine'],['mois','Mois'],['sal','Ce que voit un salarié']].map(function(x){return '<button type="button" role="tab" data-vue="'+x[0]+'" aria-selected="'+(VUE===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
 function parQui(){return '<div class="eqby" role="group" aria-label="Lire le tableau"><span>Lire par</span>'+[['p','Personne'],['c','Chantier']].map(function(x){return '<button type="button" data-by="'+x[0]+'" aria-pressed="'+(BY===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
 function nav(titre,cle){return '<div class="cal-top"><h3>'+titre+'</h3><div class="cal-nav"><button class="nb" data-'+cle+'="-1" aria-label="Avant">‹</button><button data-'+cle+'="0">Aujourd\'hui</button><button class="nb" data-'+cle+'="1" aria-label="Après">›</button></div></div>'}
 function cap(t){return t.replace(/^./,function(x){return x.toUpperCase()})}
 function tete(K,T,fin){return '<thead><tr><th class="eqt-n"></th>'+K.map(function(k){var x=dte(k),we=!(x.getDay()%6);
-    return '<th class="'+(k===T?'tdy':'')+(we?' we':'')+'"><small>'+JC[x.getDay()].replace('.','')+'</small><b>'+x.getDate()+'</b></th>'}).join('')+(fin?'<th class="eqt-h"><small>Heures</small></th>':'')+'</tr></thead>'}
+    return '<th class="'+(k===T?'tdy':'')+(we?' we':'')+'"><small>'+JC[x.getDay()].replace('.','')+'</small><b>'+x.getDate()+'</b></th>'}).join('')+(fin?'<th class="eqt-h"><small>En plus</small></th>':'')+'</tr></thead>'}
 function legende(CHs,br){return '<div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="vd"></i>Rien de prévu</span>'+(br?'<span><i class="hb"></i>Pas encore publié</span>':'')+'</div>'}
 /* le tableau par personne : K = liste de dates ; large = case avec la tâche + heures au bout */
 function tableau(K,large){var CHs=chantiers(),T=iso(auj()),br=0;
   var h='<div class="eqt'+(large?' large':' serre')+'"><table>'+tete(K,T,large)+'<tbody>';
-  h+=EQ.map(function(p){var tot=0;return '<tr><th class="eqt-n"><b>'+p.n+'</b><small>'+p.r+'</small></th>'+K.map(function(k){var v=get(k,p.n),c=(X.CH||{})[v],we=!(dte(k).getDay()%6),t=c?taches(k,p.n):[],b=brouillon(k,p.n);
+  h+=EQ.map(function(p){var tot=0;return '<tr><th class="eqt-n"><button type="button" class="eq-nm" data-pers="'+p.n+'"><b>'+p.n+'</b>'+(function(){var o=K.indexOf(T)>-1?ouSuis(p.n):null;return o?'<small class="eq-ou1"><i></i>'+OU[o.v]+'</small>':'<small>'+p.r+'</small>'})()+'</button></th>'+K.map(function(k){var v=get(k,p.n),c=(X.CH||{})[v],we=!(dte(k).getDay()%6),t=c?taches(k,p.n):[],b=brouillon(k,p.n);
       tot+=hJour(v,k);if(b)br++;
       if(we&&!v&&!b)return '<td class="we"></td>';
       return '<td><button type="button" class="eqc'+(c?' ch':v?' gris':' vide')+(k===T?' tdy':'')+(b?' br':'')+'" data-eqp="'+p.n+'" data-k="'+k+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+p.n+', '+jourLong(k)+' : '+esc(nomCase(v))+(b?' (pas encore publié)':'')+'">'+
         (v?'<b>'+esc(court(v))+'</b>'+(large&&t.length?'<small>'+esc(t[0].toLowerCase())+(t.length>1?' +'+(t.length-1):'')+'</small>':''):'<b>+</b>'+(large?'<small>à placer</small>':''))+'</button></td>'}).join('')+
-      (large?'<td class="eqt-h'+(tot>CONTRAT?' sup':tot<CONTRAT?' moins':'')+'"><b>'+hTxt(tot)+'</b><small>'+(tot>CONTRAT?'+'+hTxt(tot-CONTRAT)+' sup.':'sur '+CONTRAT+' h')+'</small></td>':'')+'</tr>'}).join('');
+      (large?(function(){var hs=hsSem(p.n,K);return '<td class="eqt-h'+(hs?' sup':' moins')+'"><button type="button" data-hs="1" aria-label="Heures en plus de '+p.n+' : '+(hs?hTxt(hs):'aucune')+'"><b>'+(hs?'+'+hTxt(hs):'–')+'</b><small>'+(hs?'en plus':'ajouter')+'</small></button></td>'})():'')+'</tr>'}).join('');
   /* ligne « il manque » */
   var lm=K.map(function(k){var L=CHs.filter(function(c){return qui(c.id,k).length<besoin(c.id,k)});
     return '<td>'+L.map(function(c){var m=besoin(c.id,k)-qui(c.id,k).length;return '<button type="button" class="eqm" data-eqc="'+c.id+'" data-k="'+k+'" style="--cc:'+couleur(c.id)+'">'+esc(court(c.id))+' +'+m+'</button>'}).join('')+'</td>'});
   if(lm.join('').indexOf('eqm')>-1)h+='<tr class="eqt-m"><th class="eqt-n"><b>Il manque</b></th>'+lm.join('')+(large?'<td></td>':'')+'</tr>';
-  h+='</tbody></table></div>'+legende(CHs,br);
+  h+=stLignes(K,large);
+  h+='</tbody></table></div>'+legende(CHs,br)+bureauOu(K);
   return h}
 /* le même tableau par chantier : une ligne par chantier, les prénoms dans la case, rouge s'il manque du monde */
 function tableauCh(K,large){var CHs=chantiers(),T=iso(auj());
@@ -147,8 +172,26 @@ function tableauCh(K,large){var CHs=chantiers(),T=iso(auj());
     return '<td>'+P.map(function(p){return '<button type="button" class="eqm" data-eqp="'+p.n+'" data-k="'+k+'">'+p.n+'</button>'}).join('')+'</td>'}).join('')+'</tr>';
   h+='</tbody></table></div>'+legende(CHs,0).replace('Rien de prévu','Contour rouge : il manque du monde');
   return h}
+/* sous-traitants du planning (Planning › + › sous-traitant) : une ligne laiton par entreprise, ses jours sur nos chantiers */
+function stLignes(K,large){var P=window.PCPLAN&&PCPLAN.st,ids=[];(X.EV||[]).forEach(function(e){if(e.k==='st'&&e.x&&e.x.st&&K.indexOf(e.d)>-1&&ids.indexOf(e.x.st)<0)ids.push(e.x.st)});
+  return ids.map(function(id){var t=P&&P.de?P.de(id):null;if(!t)return '';
+    return '<tr class="eqt-st"><th class="eqt-n"><b>'+esc(t.n.split(' ')[0])+'</b><small>'+esc(t.m||'Sous-traitant')+'</small></th>'+K.map(function(k){var e=(X.EV||[]).filter(function(e){return e.k==='st'&&e.d===k&&e.x&&e.x.st===id})[0];
+      if(!e)return '<td></td>';var ch=e.x.ch;return '<td><span class="eqc st" title="'+esc(e.t)+'"><b>'+esc(court(ch))+'</b>'+(large?'<small>sous-traitant</small>':'')+'</span></td>'}).join('')+(large?'<td></td>':'')+'</tr>'}).join('')}
+/* patrons et bureau : où ils sont aujourd'hui (« Où je suis » est pour toute l'entreprise) */
+function bureauOu(K){var T=iso(auj());if(K.indexOf(T)<0||!window.PCPERS)return '';var L=[(window.PCID&&PCID.prenom)||'Julien','Claire'];
+  var h=L.map(function(n){var o=ouSuis(n);return '<button type="button" class="eq-bo" data-pers="'+n+'"><b>'+n+'</b> '+(o?OU[o.v]:'pas encore dit')+'</button>'}).join('');
+  return '<div class="eq-bou"><span>Patrons et bureau aujourd\'hui :</span>'+h+'</div>'}
+/* demandes d'absence en attente (envoyées depuis l'Espace Terrain du salarié) */
+function demandes(){var A=S.abs.filter(function(a){return a.st==='att'});if(!A.length)return '';
+  return '<div class="eq-dem"><h4>Demande'+(A.length>1?'s':'')+' d\'absence</h4>'+A.map(function(a){var J=joursAbs(a);
+    var autres=S.abs.filter(function(b){return b!==a&&b.st==='ok'&&joursAbs(b).some(function(k){return J.indexOf(k)>-1})}).map(function(b){return b.qui}),
+      ch=[];J.forEach(function(k){var v=get(k,a.qui);if((X.CH||{})[v]&&ch.indexOf(v)<0)ch.push(v)});
+    var verif='Cliky a vérifié : '+(autres.length?'<b>'+autres.join(', ')+' '+(autres.length>1?'sont':'est')+' déjà absent'+(autres.length>1?'s':'')+'</b> ces jours-là':'personne d\'autre n\'est absent')+
+      (ch.length?' ; '+a.qui+' était prévu sur '+ch.map(function(c){return esc(court(c))}).join(', ')+', il faudra le remplacer.':' ; le planning reste tenable.');
+    return '<div class="eq-dm"><div class="tx"><b>'+a.qui+' · '+ABS[a.ty]+'</b><small>'+(a.du===a.au?jourLong(a.du):'du '+jourLong(a.du)+' au '+jourLong(a.au))+' · '+J.length+' jour'+(J.length>1?'s':'')+'</small>'+(a.mo?'<small>« '+esc(a.mo)+' »</small>':'')+'<small class="eq-vf">'+verif+'</small></div>'+
+      '<div class="eq-db"><button type="button" class="btn sm" data-absn="'+a.id+'">Refuser</button><button type="button" class="btn sm go" data-abso="'+a.id+'">Accepter</button></div></div>'}).join('')+'</div>'}
 function rendSem(){var K=[0,1,2,3,4].map(kj),C=changes(K),h='';
-  h+=nav(titreSem(),'wk')+parQui();
+  h+=nav(titreSem(),'wk')+demandes()+parQui();
   h+='<p class="hint eqt-hint">'+(BY==='c'?'Touchez une case pour choisir qui va sur ce chantier ce jour-là.':'Touchez une case pour changer où va la personne et ce qu\'elle fait.')+'</p>';
   h+=BY==='c'?tableauCh(K,true):tableau(K,true);
   h+='<div class="eq-act"><button type="button" class="btn" id="eq-copie"><span class="lab"><span>Copier la semaine d\'avant</span></span></button>'+(ANNUL&&ANNUL.wk===WK?'<button type="button" class="btn" id="eq-annul"><span class="lab"><span>Annuler la copie</span></span></button>':'')+'</div>';
@@ -213,6 +256,8 @@ pv.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)r
   if(b.dataset.eqc)return caseCh(b.dataset.eqc,b.dataset.k);
   if(b.dataset.eqp)return caseP(b.dataset.eqp,b.dataset.k);
   if(b.dataset.by){BY=b.dataset.by;return rend()}
+  if(b.dataset.abso||b.dataset.absn){var ok=!!b.dataset.abso,a=repondreAbs(b.dataset.abso||b.dataset.absn,ok);rend();if(a)X.toast(ok?'Absence acceptée':'Absence refusée',ok?a.qui+' le voit sur son téléphone. Ses jours passent en « '+ABS[a.ty]+' ».':a.qui+' est prévenu.');return}
+  if(b.dataset.hs){if(window.PCJR&&PCJR.heuresSup){PCJR.heuresSup(iso(auj()))}else X.toast('Heures en plus','Cliky vous pose la question le soir.');return}
   if(b.id==='eq-copie')return copier();
   if(b.id==='eq-annul')return annuler();
   if(b.id==='eq-pub'){var N=publier([0,1,2,3,4].map(kj));ANNUL=null;rend();X.toast('Planning publié','Prévenu'+(N.length>1?'s':'')+' : '+N.join(', ')+'. Seulement les changements, pas toute la semaine (exemple).')}});
@@ -295,13 +340,20 @@ st.textContent=
  '#p-equipe .eqs-h{display:flex;align-items:flex-start;gap:10px}#p-equipe .eqs-h i{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--cc)}#p-equipe .eqs-h span{display:flex;flex-direction:column}#p-equipe .eqs-h b{font-size:18px}#p-equipe .eqs-h small{font-size:13.5px;color:var(--muted)}'+
  '#p-equipe .eqs-l{display:flex;gap:10px;padding:8px 0 0 22px;font-size:14.5px}#p-equipe .eqs-l span{flex:none;width:52px;color:var(--muted);font-size:13px;padding-top:1px}'+
  '#p-equipe .eqs-b{display:flex;gap:8px;margin:12px 0 0 22px}#p-equipe .eqs-b button{min-height:42px;padding:0 18px;border-radius:99px;font:700 14px var(--f,inherit)}#p-equipe .eqs-it{background:var(--n1-nuit,#1B2440);color:#fff;border:0}#p-equipe .eqs-ok{background:none;border:1.5px solid var(--line);color:var(--fg)}'+
+ '#p-equipe .eq-dem{margin:0 0 14px;padding:12px 14px;border-radius:18px;background:var(--z-tile,var(--card));box-shadow:inset 0 0 0 1.5px var(--n1-laiton,#A8823F),var(--z-ombre-s,none)}#p-equipe .eq-dem h4{margin:0 0 6px;font-size:15px}'+
+ '#p-equipe .eq-dm{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 0;border-top:1px solid var(--line)}#p-equipe .eq-dm:first-of-type{border-top:0}#p-equipe .eq-dm .tx{flex:1 1 200px;display:flex;flex-direction:column;gap:2px}#p-equipe .eq-dm small{color:var(--muted);font-size:13px}#p-equipe .eq-db{display:flex;gap:8px}'+
+ '#p-equipe .eq-ou1{display:flex!important;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#p-equipe .eq-ou1 i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--ok,#3E8E6A)}'+
+ '#p-equipe .eq-nm{display:block;width:100%;padding:0;border:0;background:none;box-shadow:none;text-align:left;color:inherit;min-height:0}#p-equipe .eq-nm b{display:block;font-size:14.5px;text-decoration:underline;text-decoration-color:var(--n1-laiton,#A8823F);text-decoration-thickness:2px;text-underline-offset:3px}#p-equipe .eq-nm small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}'+
+ '#p-equipe .eqc.st{background:color-mix(in srgb,var(--n1-laiton,#A8823F) 22%,var(--z-tile,var(--card)));color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--n1-laiton,#A8823F)}#p-equipe .eqt-st .eqt-n b{color:var(--n1-laiton,#A8823F)}'+
+ '#p-equipe .eq-bou{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 2px 14px;font-size:13px;color:var(--muted)}#p-equipe .eq-bo{min-height:34px;padding:0 12px;border-radius:99px;background:var(--z-tile,var(--card));box-shadow:var(--z-ombre-s,none);color:var(--muted);font:600 13px var(--f,inherit)}#p-equipe .eq-bo b{color:var(--fg)}'+
+ '#p-equipe .eq-vf{color:var(--fg)!important;font-size:12.5px!important;margin-top:4px;padding:6px 10px;border-radius:10px;background:var(--teinte,rgba(0,0,0,.05))}'+
  '#p-equipe .eqby{display:flex;align-items:center;gap:6px;margin:0 0 10px}#p-equipe .eqby span{font-size:13px;color:var(--muted);margin-right:2px}'+
  '#p-equipe .eqby button{min-height:36px;padding:0 14px;border-radius:99px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);font:700 13.5px var(--f,inherit)}#p-equipe .eqby button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440);color:#fff;box-shadow:none}'+
  '#p-equipe .eqc.br{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.42) 0 4px,transparent 4px 9px)}#p-equipe .eqc.gris.br,#p-equipe .eqc.vide.br{background-image:repeating-linear-gradient(135deg,var(--line) 0 3px,transparent 3px 8px)}'+
  '#p-equipe .eqc.br::after{content:"";position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--n1-laiton,#B8925A);box-shadow:0 0 0 1.5px #fff}#p-equipe .eqc{position:relative}'+
  '#p-equipe .eqw-leg i.hb{width:12px;height:10px;border-radius:3px;background:var(--k-run,#888) repeating-linear-gradient(135deg,rgba(255,255,255,.5) 0 3px,transparent 3px 6px)}'+
  '#p-equipe .eqt th.eqt-h{background:none;box-shadow:none;width:58px}#p-equipe .eqt td.eqt-h{text-align:center;width:58px}#p-equipe td.eqt-h b{display:block;font-size:15px}#p-equipe td.eqt-h small{display:block;font-size:10.5px;color:var(--muted);white-space:nowrap}'+
- '#p-equipe td.eqt-h.sup b,#p-equipe td.eqt-h.sup small{color:var(--n1-laiton,#A8823F)}#p-equipe td.eqt-h.moins small{color:var(--muted)}@media (max-width:699px){#p-equipe .eqc em span{display:none}}'+
+ '#p-equipe td.eqt-h button{width:100%;min-height:52px;border:0;background:none;box-shadow:none;color:var(--fg);padding:0}#p-equipe td.eqt-h.moins b{color:var(--muted)}#p-equipe td.eqt-h.sup b,#p-equipe td.eqt-h.sup small{color:var(--n1-laiton,#A8823F)}#p-equipe td.eqt-h.moins small{color:var(--muted)}@media (max-width:699px){#p-equipe .eqc em span{display:none}}'+
  '#p-equipe .bych .eqt-n b{display:flex!important;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#p-equipe .bych .eqt-n b i{flex:none;width:9px;height:9px;border-radius:50%}#p-equipe .bych tbody .eqt-n small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
  '#p-equipe .eqc .nm{font-size:11.5px;font-weight:700;opacity:1}#p-equipe .eqc em{font-style:normal;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:99px;background:#fff;color:var(--cor,#B4472F);margin-top:2px;white-space:nowrap}'+
  '#p-equipe .eqc.man{box-shadow:0 0 0 2px var(--cor,#B4472F)}#p-equipe .eqc.rien{background:none;border:1.5px dashed var(--line);min-height:40px}'+
