@@ -899,16 +899,16 @@ function ficheCli(c){var k=cliDe(c);if(!k)return;
  var h='<div class="cp-tete"><span class="cp-mi gros">'+IC_CLI+'</span><div><b>'+esc(k.n)+'</b><small>Client du chantier</small></div></div>'+
   '<div class="cp-l" style="margin-top:14px"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Code personnel '+esc(k.code)+'</b><small>Lien envoyé par SMS · code SMS à la 1re ouverture</small></span></div>'+
   /* LE CLIENT NE PARLE QU'À LA PERSONNE CONCERNÉE (Cyril 24/11, ex. RT2O) : une seule personne de l'entreprise, jamais au reste du chantier */
-  '<p class="hint" style="margin:16px 0 6px">'+esc(k.n)+' parle seulement avec :</p><div class="cp-avec" role="radiogroup">'+gensAvec().map(function(p){var on=avecDe(k)===p.n;return '<button type="button" class="btn" data-cpavec="'+esc(p.n)+'" aria-pressed="'+on+'">'+esc(p.n)+'<small>'+esc(p.r||'')+'</small></button>'}).join('')+'</div>'+
-  '<p class="hint" style="margin:8px 0 0">Lui seul (et la Direction) lit ses messages et lui répond. Les autres salariés et les entreprises ne les voient jamais.</p>'+
+  '<p class="hint" style="margin:16px 0 6px">Dans la conversation avec '+esc(k.n)+' :</p><div class="cp-avec">'+gensAvec().map(function(p){var d=p.g==='dir',on=d||avecL(k).indexOf(p.n)>=0;return '<button type="button" class="btn" data-cpavec="'+esc(p.n)+'" aria-pressed="'+on+'"'+(d?' disabled':'')+'>'+esc(p.n)+'<small>'+(d?'Direction · toujours':esc(p.r||''))+'</small></button>'}).join('')+'</div>'+
+  '<p class="hint" style="margin:8px 0 0">Les patrons y sont toujours. Touchez un prénom pour l\'ajouter ou le retirer : seules ces personnes lisent ses messages et lui répondent. Les autres salariés et les entreprises ne les voient jamais.</p>'+
   /* CE QUE LE CLIENT VOIT (Cyril 24/11 : « qu'il n'ait accès à rien à part sa conversation, ou ce qu'on lui autorise ») : tout fermé par défaut */
-  '<p class="hint" style="margin:18px 0 8px"><b>Ce que '+esc(k.n)+' voit</b></p><div class="cp-l"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Toujours</b><small>Sa conversation avec la personne choisie et les problèmes qu\'il signale. Rien d\'autre.</small></span></div>'+
+  '<p class="hint" style="margin:18px 0 8px"><b>Ce que '+esc(k.n)+' voit</b></p><div class="cp-l"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Toujours</b><small>Sa conversation (les patrons et les personnes ajoutées) et les problèmes qu\'il signale. Rien d\'autre.</small></span></div>'+
   '<div style="display:grid;gap:14px;margin-top:12px">'+[['vAvc','L\'avancement','Le pourcentage et l\'étape en cours, sans aucun montant'],['vPlan','Le plan','Le dessin seul, sans aucun prix, en lecture seule'],['vPh','Les photos','Les photos du chantier']].map(function(x){return '<div class="ch-sw"><span>'+x[1]+'<small>'+x[2]+'</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+(k[x[0]]===1)+'" data-cpv="'+x[0]+'" aria-label="'+esc(x[1])+' visible par le client"></button></div>'}).join('')+'</div>'+
   '<div class="cp-l" style="margin-top:12px"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Jamais</b><small>Prix, devis, factures, vos notes, le planning, les autres chantiers, les autres clients, les entreprises et leurs conversations.</small></span></div>'+
   '<button type="button" class="btn" id="cp-cren" style="width:100%;margin-top:14px">Renvoyer son lien</button>';
  X.xopen(k.n,'Sur le chantier '+c.n,h,'<button class="btn" data-xclose>Fermer</button><a class="btn go" style="text-decoration:none;display:flex;align-items:center;justify-content:center" href="invite.html?c=1&ch='+encodeURIComponent(c.id)+'" target="_blank" rel="noopener">Voir sa page</a>',function(){
-  $$('[data-cpavec]').forEach(function(b){b.addEventListener('click',function(){k.avec=b.dataset.cpavec;k.commun=0;saveCH();$$('[data-cpavec]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});recharger('equipe');
-   X.toast(k.n+' parle avec '+k.avec,'Lui seul (et la Direction) lit cette conversation.')})});
+  $$('[data-cpavec]').forEach(function(b){b.addEventListener('click',function(){var n=b.dataset.cpavec,L=avecL(k),i=L.indexOf(n);if(i>=0)L.splice(i,1);else L.push(n);k.avec=L;k.commun=0;saveCH();b.setAttribute('aria-pressed',String(i<0));recharger('equipe');
+   X.toast(i<0?n+' est ajouté à la conversation':n+' est retiré de la conversation',i<0?'Il lit les messages de '+k.n+' et peut lui répondre.':'Il ne voit plus ses messages.')})});
   $$('[data-cpv]').forEach(function(t){t.addEventListener('click',function(){var f=t.dataset.cpv;k[f]=k[f]===1?0:1;saveCH();t.setAttribute('aria-checked',String(k[f]===1));X.toast(t.getAttribute('aria-label').replace(' visible par le client','')+(k[f]?' : '+k.n+' le voit':' : '+k.n+' ne le voit plus'),k[f]?'À sa prochaine ouverture.':'')})});
   $('#cp-cren').addEventListener('click',function(){if(window.PCACCES&&PCACCES.reel()){X.xclose();setTimeout(function(){PCACCES.lienInvite({kind:'cli',ch:c.id,chn:c.n,n:k.n,tel:k.tel})},250);return}X.toast('Lien renvoyé',k.n+' le reçoit par SMS (démo).')});
   if(window.PCACCES)PCACCES.codeInvite({kind:'cli',ch:c.id,n:k.n},$('#x-in'))})}
@@ -920,16 +920,17 @@ function luPar(c){var P=part(c),L=P.ent.filter(function(e){return !offE(c,e)}).m
  return '<p class="cp-lu">'+IC_LOCK+'<span>Lu par : vous, '+esc(L.join(', '))+'</span></p>'}
 /* avec qui le client parle : la personne choisie, sinon le patron */
 function gensAvec(){var L=window.PCROLE&&PCROLE.pers?PCROLE.pers():[];return L.length?L:[{n:'Vous',r:'Patron'}]}
-function avecDe(k){return (k&&k.avec)||(window.PCROLE&&PCROLE.patron)||'vous'}
+function avecL(k){return Array.isArray(k&&k.avec)?k.avec:k&&k.avec?[k.avec]:[]}
+function avecDe(k){var P=(window.PCROLE&&PCROLE.patron)||'vous';return [P].concat(avecL(k).filter(function(n){return n!==P})).join(', ')}
 function moiMembre(){return window.PCROLE&&PCROLE.membre?PCROLE.membre():null}
-function voitCli(k){var m=moiMembre();if(m)return m.col==='dir'||k.avec===m.n;var r=window.PCROLE&&PCROLE.moi?PCROLE.moi():null;return !r||r.g==='dir'||r.n===avecDe(k)}
+function voitCli(k){var m=moiMembre();if(m)return m.col==='dir'||avecL(k).indexOf(m.n)>=0;var r=window.PCROLE&&PCROLE.moi?PCROLE.moi():null;return !r||r.g==='dir'||avecL(k).indexOf(r.n)>=0}
 function cliCard(c){var k=cliDe(c);if(!k)return '';
- if(!voitCli(k))return '<div class="card cp-priv" id="cp-cfil"><p class="cp-lu priv" style="margin:0">'+IC_LOCK+'<span>'+esc(k.n)+' parle seulement avec '+esc(avecDe(k))+'. Sa conversation est privée.</span></p></div>';
+ if(!voitCli(k))return '<div class="card cp-priv" id="cp-cfil"><p class="cp-lu priv" style="margin:0">'+IC_LOCK+'<span>La conversation de '+esc(k.n)+' est privée : '+esc(avecDe(k))+' seulement.</span></p></div>';
  k.nl=0;
  var dj='',fil=k.msgs.map(function(x){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j)+'</span></div>':'';dj=j;var moi=x.de==='moi',hh=String(x.h||'').split(' · ');
   return sep+'<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av">'+IC_CLI+'</span>')+'<div class="cp-c">'+(moi?(x.par?'<span class="cp-n">'+esc(x.par)+'</span>':''):'<span class="cp-n">'+esc(k.n)+' <small>Client</small></span>')+'<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p></div><span class="cp-h">'+esc(hh[1]||'')+'</span></div></div>'}).join('');
  return '<div class="card cp-priv" id="cp-cfil"><div class="row" style="margin-bottom:8px"><b>Avec '+esc(k.n)+'</b><span style="font-size:12px;color:var(--muted)">conversation privée</span></div>'+
-  '<p class="cp-lu priv">'+IC_LOCK+'<span>Privé : '+esc(k.n)+' et '+esc(avecDe(k))+' seulement (et la Direction). Ni l\'équipe ni les entreprises ne lisent ces messages.</span></p><div class="cp-fil">'+fil+'</div>'+
+  '<p class="cp-lu priv">'+IC_LOCK+'<span>Privé : '+esc(k.n)+' et '+esc(avecDe(k))+' seulement. Ni le reste de l\'équipe ni les entreprises ne lisent ces messages.</span></p><div class="cp-fil">'+fil+'</div>'+
   (part(c).termine?'':'<div class="cp-w"><textarea id="cp-ct" rows="1" placeholder="Écrire à '+esc(k.n)+' seulement…"></textarea><button type="button" class="cp-ro go" id="cp-csend" aria-label="Envoyer">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+'</div>'}
 function lierResCard(c){
  $$('#cp-res [data-cprs]').forEach(function(b){b.addEventListener('click',function(){ficheRes(c,+b.dataset.cprs)})});
@@ -946,7 +947,7 @@ function lierRes(c){lierResCard(c);
  var t=$('#cp-ct'),se=$('#cp-csend');if(t)t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
  if(se)se.addEventListener('click',function(){var v=(t.value||'').trim();if(!v){t.focus();return}var m=moiMembre(),h=maint();
   if(m){se.disabled=true;PCROLE.api('/espace/client-msg',{ch:c.id,t:v,h:h}).then(function(x){se.disabled=false;if(!x||!x.ok){X.toast('Pas envoyé',(x&&x.erreur)||'');return}cliDe(c).msgs.push({de:'moi',par:m.n,t:v,h:h});recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','')},function(){se.disabled=false;X.toast('Pas de réseau','')});return}
-  var r=window.PCROLE&&PCROLE.moi?PCROLE.moi():null;cliDe(c).msgs.push({de:'moi',par:r&&r.n!==avecDe(cliDe(c))?r.n:undefined,t:v,h:h});saveCH();recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','Aucune entreprise ne le voit.')})}
+  var r=window.PCROLE&&PCROLE.moi?PCROLE.moi():null;cliDe(c).msgs.push({de:'moi',par:r&&r.g!=='dir'?r.n:undefined,t:v,h:h});saveCH();recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','Aucune entreprise ne le voit.')})}
 
 /* ---------- créer un chantier ---------- */
 var NC=null;
