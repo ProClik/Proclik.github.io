@@ -14,7 +14,7 @@
 (function(){'use strict';
 if(/[?&]exemple=/.test(location.search))return;
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))return;
-var CLES=['pc-ch9','pc-ev1','pc-st1','pc-dep1','pc-compta1','pc-cmd1','pc-eq1','pc-cotes','pc-ent-v1','pc-ent-on','pc-plans','pc-cl1','pc-cl-sup','pc-fa1','pc-dvn1','pc-rc1','pc-sit-reg'];
+var CLES=['pc-ch9','pc-ev1','pc-st1','pc-dep1','pc-compta1','pc-cmd1','pc-eq1','pc-eq2','pc-cotes','pc-ent-v1','pc-ent-on','pc-plans','pc-cl1','pc-cl-sup','pc-fa1','pc-dvn1','pc-rc1','pc-sit-reg','pc-droits','pc-liste','pc-cad'];
 var META='pc-sync',ls=window.localStorage,S=Storage.prototype,set0=S.setItem,rem0=S.removeItem,calme=0,minuteur=null,enCours=0,arret=0;
 function lit(k){try{var v=ls.getItem(k);return v==null?null:JSON.parse(v)}catch(e){return null}}
 function meta(){var m=lit(META);return m&&typeof m==='object'&&m.k?m:{a:null,k:{}}}
@@ -33,12 +33,15 @@ function appel(chemin,o,garder){o=o||{};var h={Authorization:'Bearer '+jeton()};
   return r.json().catch(function(){return {}}).then(function(j){if(r.status===401||r.status===402||r.status===403)arret=1;if(!r.ok||j.ok===false)throw new Error(j.erreur||('Erreur '+r.status));return j})})}
 
 /* Envoi de ce qui a changé, un tiroir après l'autre. */
-function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale});if(!L.length)return;
+/* Tiroir que le service ne connaît pas encore (nouveau dans l'Espace, service pas encore à jour) : il reste sur l'appareil
+   et ne bloque JAMAIS l'envoi des autres. Il repart à la prochaine ouverture. */
+var refuse={};
+function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale&&!refuse[k]});if(!L.length)return;
  enCours=1;var k=L[0],v=ls.getItem(k),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
  if(garder&&corps.length>60000){enCours=0;return}/* trop gros pour partir pendant la fermeture : part à la prochaine ouverture */
  appel('/espace/donnees',{method:'POST',body:corps},garder).then(function(r){var m2=meta();m2.k[k]=m2.k[k]||{};m2.k[k].maj=r.maj;
    if(ls.getItem(k)===v)delete m2.k[k].sale;ecrisMeta(m2);enCours=0;etat('ok');envoyer()},
-  function(e){enCours=0;etat('attente',e.message);if(!arret){clearTimeout(minuteur);minuteur=setTimeout(envoyer,30000)}})}
+  function(e){enCours=0;if(/Tiroir inconnu/.test(e.message)){refuse[k]=1;envoyer();return}etat('attente',e.message);if(!arret){clearTimeout(minuteur);minuteur=setTimeout(envoyer,30000)}})}
 
 /* Sécurité n° 1 : avant de remplacer ce qui est sur l'appareil par la version du service, une copie est gardée ici
    (« pc-sync-sauve », la dernière par tiroir). Si l'appareil est plein, on garde au moins le service (historique). */

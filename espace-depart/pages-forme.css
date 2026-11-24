@@ -184,3 +184,11 @@ html.f2on body .mo-nv{background:var(--z-nuit)!important}
 /* 23/11 : Véhicules, « Détour » : les 5 choix sur une ligne (10 km et 15 km passaient sur 2 lignes, 20 km tout seul dessous) */
 .jr-row:has(>[data-vhd]){display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .jr-row>[data-vhd]{min-width:0!important;padding:0 4px!important;white-space:nowrap;font-size:13.5px}
+/* 24/11 : dans une partie du chantier, sur téléphone, les 10 icônes se replient en une ligne qui glisse */
+@media (max-width:899px){
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:2px!important;margin:0 -16px!important;padding:2px 16px 4px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini::-webkit-scrollbar{display:none}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button{flex:0 0 64px!important;gap:4px;font-size:10.5px!important;scroll-snap-align:start}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button svg{width:38px!important;height:38px!important;padding:10px}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button i{position:absolute!important;top:-2px;right:6px;margin:0}
+}
