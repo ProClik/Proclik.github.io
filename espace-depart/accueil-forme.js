@@ -137,8 +137,10 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
     if(!D.demo){var V=null;try{V=JSON.parse(localStorage.getItem("pc-vrai-liste")||"null")}catch(e){}
       ((V&&V.demandes)||[]).filter(function(x){return /valider/i.test(x.etape||"")}).slice(1,3).forEach(function(x){var n=String(x.client||"?"),ini=n.replace(/^(M\.|Mme|Mlle)\s*/,"").split(/\s+/).map(function(m){return m.charAt(0)}).join("").slice(0,2).toUpperCase();
         rows.push('<button type="button" data-vc="'+esc(x.contact||"")+'"><span class="ini">'+esc(ini)+'</span><span class="x"><b>'+esc(n)+"</b><span>"+esc(["Nouvelle demande",x.resume||x.titre||"",x.ville||""].filter(Boolean).join(" · "))+'</span></span><span class="tag">Pré-devis prêt</span></button>')})}
-    else if(pd&&pd[0]>1)rows.push('<button type="button" data-accv="devis"><span class="rond">'+ic("doc")+'</span><span class="x"><b>'+(pd[0]-1)+" autre"+(pd[0]>2?"s":"")+" pré-devis à valider</b></span>"+ic("d")+"</button>");
-    reste.forEach(function(x){rows.push('<button type="button" data-accv="'+x[5]+'"><span class="rond">'+ic(AIC[x[1]]||"doc")+'</span><span class="x"><b>'+esc(ligneAF(x))+"</b>"+(x[6]?"<span>"+esc(x[6])+"</span>":"")+"</span>"+ic("d")+"</button>")});
+    else if(pd&&pd[0]>1)rows.push('<button type="button" data-accv="devis"><span class="rond">'+ic("doc")+'</span><span class="x"><b>'+(pd[0]-1)+" autre"+(pd[0]>2?"s":"")+" pré-devis à valider</b></span><span class=\"vb\">Vérifier</span></button>");
+    /* 24/11 (Cyril : « qu'on sache d'un coup d'œil ce qu'on doit faire ») : chaque ligne finit par le VERBE de l'action, en petit bouton */
+    var VB={valider:"Vérifier",envoyer:"Envoyer",ranger:"Ranger",suivre:"Voir"};
+    reste.forEach(function(x){rows.push('<button type="button" data-accv="'+x[5]+'"><span class="rond">'+ic(AIC[x[1]]||"doc")+'</span><span class="x"><b>'+esc(ligneAF(x))+"</b>"+(x[6]?"<span>"+esc(x[6])+"</span>":"")+'</span><span class="vb">'+(VB[x[4]]||"Voir")+"</span></button>")});
     if(rows.length>4){var plus=rows.length-3;rows=rows.slice(0,3);rows.push('<button type="button" data-accv="devis"><span class="rond">'+ic("grille")+'</span><span class="x"><b>Et '+plus+" autre"+(plus>1?"s":"")+"</b></span>"+ic("d")+"</button>")}
     if(rows.length)h+='<div class="liste">'+rows.join("")+"</div>"}
   else if(B.afaire&&D.charge)h+='<div class="sec"><h2>À faire</h2></div><section class="hero"><div class="lab">Tout est à jour</div><div class="hero-t">Rien à valider ni à envoyer</div><div class="s mut">Le café peut rester chaud.</div></section>';
@@ -147,20 +149,26 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   /* 3. mes chiffres (exemple de l'Espace, comme avant) : un seul langage, des barres */
   if(B.chiffres){var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][(window.PCDEMO?PCDEMO.today():new Date()).getMonth()],sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
     h+='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
-      '<section class="chif2 cv1"><div class="lab">Encaissé en '+MN+'</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
+      '<section class="chif2 cv1"><button class="chq" type="button" data-accv="factures"><span class="pt3"></span><span class="x"><b>2 760 € à encaisser</b><span>'+(1+(nsr?1:0))+" relance"+(nsr?"s":"")+' à faire</span></span><span class="vb">Relancer</span></button><div class="lab">Encaissé en '+MN+'</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
       '<div class="seg"><i style="flex:8640"></i><i class="r" style="flex:2760"></i><i class="v" style="flex:2810"></i></div>'+
       '<div class="leg"><span><i></i>Encaissé</span><span><i class="r"></i>À encaisser 2 760 €</span><span><i class="v"></i>Pas encore facturé</span></div>'+
-      '<button class="act2" type="button" data-accv="factures"><span>2 760 € à encaisser</span><b>Relancer</b>'+ic("d")+"</button>"+
+      
       '<div class="dv"><span>Devis signés</span><span class="pts"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><b>3 sur 5</b></div>'+
       (nsr?'<button class="act2" type="button" data-accv="devis" style="border-top:0;padding-top:2px"><span>'+nsr+" devis sans réponse</span><b>Relancer</b>"+ic("d")+"</button>":"")+"</section>"}
 
   /* 4. chantiers : liste légère, sans répéter la journée */
   var C=X.CH||{},av=X.avc||function(){return 0},CL=Object.keys(C).map(function(k){return C[k]}).filter(function(c){return c.st==="run"||c.st==="start"});
+  /* 24/11 : sous chaque chantier, ce qu'il y a à faire ensuite ; point orange = ça bloque */
+  var et={},nPb=0;CL.forEach(function(c){var m=manque(c),ap=(c.four||[]).filter(function(x){return /prévoir|commander/i.test(x[2])})[0];
+    if(m){et[c.id]=[(m.n?m.n+" ":"")+m.art.toLowerCase()+" manquant"+(m.n>1?"es":"")+" · à relancer",1];nPb++}
+    else if(ap){et[c.id]=["Commande à passer : "+String(ap[0]).split(" · ")[0],1];nPb++}
+    else if(c.st==="start")et[c.id]=["Prêt à démarrer · rien à faire",0]});
   if(B.chantiers&&CL.length){
-    h+='<div class="sec"><h2>Chantiers en cours</h2><button class="lien" type="button" data-accv="chantiers">'+CL.length+" en cours"+ic("d")+"</button></div><div class=\"liste\">"+
+    h+='<div class="sec"><h2>Chantiers en cours'+(nPb?'<span class="f2etat f2pb">'+nPb+" à régler</span>":'<span class="f2etat ok">À jour ✓</span>')+'</h2><button class="lien" type="button" data-accv="chantiers">'+CL.length+" en cours"+ic("d")+"</button></div><div class=\"liste\">"+
       CL.slice(0,4).map(function(c){var p=c.st==="run"?Math.round(av(c)||0):0;
         return '<button type="button" data-chouv="'+esc(c.id)+'">'+(c.st==="run"?'<span class="ann2" style="--p:'+p+'">'+p+"</span>":'<span class="rond">'+ic("cal")+"</span>")+
-          '<span class="x"><b>'+esc(c.n)+"</b><span>"+esc([c.v||"",c.st==="run"?(c.dates||""):"à démarrer "+debut(c.dates)].filter(Boolean).join(" · "))+"</span></span>"+ic("d")+"</button>"}).join("")+"</div>"}
+          '<span class="x"><b>'+esc(c.n)+"</b><span>"+esc([c.v||"",c.st==="run"?(c.dates||""):"à démarrer "+debut(c.dates)].filter(Boolean).join(" · "))+"</span>"+
+          (et[c.id]?'<span class="f2et'+(et[c.id][1]?" f2pb":"")+'">'+(et[c.id][1]?'<i class="pt3"></i>':"")+esc(et[c.id][0])+"</span>":"")+"</span>"+ic("d")+"</button>"}).join("")+"</div>"}
 
   /* 5. créer : 5 ronds */
   if(B.creer)h+='<div class="sec"><h2>Créer</h2></div><div class="ronds r5">'+
