@@ -424,3 +424,19 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 #chx .cp-finbas .cp-lien{color:var(--muted);font-size:13.5px;text-decoration:underline;text-underline-offset:3px}
 html body #chx .cp-tabs button{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2px;white-space:nowrap;min-height:44px;padding:0 6px;font-size:14px}
 @media (max-width:420px){html body #chx .cp-tabs button{font-size:13px}#chx .cp-tabs button i{margin-left:2px;padding:1px 6px}}
+/* 24/11 : choix de conversation (Tout le chantier / client), relance, menu compact dans une partie (téléphone) */
+html body #chx .cp-sw{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:99px;margin:0 0 12px}
+html body #chx .cp-sw button{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 10px;border-radius:99px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#chx .cp-pt{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--n1-laiton,#B8925A);flex:none}
+#chx .cp-sws[data-s="ch"] .cp-sw-cli,#chx .cp-sws[data-s="cli"] .cp-sw-ch{display:none}
+#chx .cp-rel{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--tile2,rgba(0,0,0,.04))}
+#chx .cp-rel .tx{display:flex;flex-direction:column;gap:3px}#chx .cp-rel small{color:var(--muted);font-size:13px;line-height:1.35}
+#xsheet .cp-af-l{display:grid;gap:8px}#xsheet .cp-rel{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--tile2,rgba(0,0,0,.04))}
+#xsheet .cp-rel .tx{display:flex;flex-direction:column;gap:3px}#xsheet .cp-rel small{color:var(--muted);font-size:13px;line-height:1.35}
+@media (max-width:899px){
+ html body #chx .ch-menu.ch-mini{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:4px;border-radius:18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ html body #chx .ch-menu.ch-mini::-webkit-scrollbar{display:none}
+ html body #chx .ch-menu.ch-mini button,html body #chx .ch-menu.ch-mini button[data-ong="equipe"]{flex:none;flex-direction:row;gap:6px;padding:8px 12px;border-radius:14px;font-size:13px;grid-column:auto}
+ #chx .ch-menu.ch-mini svg{width:17px;height:17px}
+ #chx .ch-menu.ch-mini button i{position:static;margin-left:2px}
+}

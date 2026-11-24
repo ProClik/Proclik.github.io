@@ -163,7 +163,7 @@ function liste(){cur=null;ong=null;if(X.setCurCh)X.setCurCh(null);
 function ouvrir(id,o){var c=CH[id];if(!c)return;if(cur!==id){edit=null;prevenir=null;}cur=id;ong=o||null;if(X.setCurCh)X.setCurCh(id);
  var e=etat(c),bad={four:aPrevoir(c),trav:c.st==='run'&&!c.pointSent?1:0,equipe:ong==='equipe'?0:nonLus(c)};
  var h='<div class="cf"><button class="xback" id="ch-back">‹ Tous les chantiers</button><div class="sec-h"><h2 style="font-size:20px">'+esc(c.n)+' · '+esc(c.v)+'</h2><span class="pill '+e[1]+'">'+e[0]+'</span></div><p class="lead" style="font-size:13.5px;margin-bottom:12px">'+esc(c.t)+' · '+esc(c.dates||'dates à fixer')+'</p>'+
-  '<div class="seg ch-menu" role="tablist" aria-label="Parties du chantier">'+ONG.map(function(x){return '<button role="tab" data-ong="'+x[0]+'" aria-selected="'+(ong===x[0])+'">'+IC[x[0]]+'<span>'+x[1]+'</span>'+(bad[x[0]]?'<i>'+bad[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'+
+  '<div class="seg ch-menu'+(ong?' ch-mini':'')+'" role="tablist" aria-label="Parties du chantier">'+ONG.map(function(x){return '<button role="tab" data-ong="'+x[0]+'" aria-selected="'+(ong===x[0])+'">'+IC[x[0]]+'<span>'+x[1]+'</span>'+(bad[x[0]]?'<i>'+bad[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'+
   '<div class="ch-pane" id="ch-pane">'+(ong?'<button class="ch-back2" id="ch-res">‹ Résumé du chantier</button>'+partie(c,ong):resume(c))+'</div></div>';
  $('#chx').innerHTML=h;window.scrollTo(0,0);
  $('#ch-back').addEventListener('click',function(){liste()});
@@ -466,6 +466,9 @@ function lier(c){var id=c.id;
  $$('#chx [data-aller]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,b.dataset.aller)})});
  $$('#chx [data-eqt]').forEach(function(b){b.addEventListener('click',function(){EQT=b.dataset.eqt;var v=$('#chx .cp-vues');if(v)v.setAttribute('data-t',EQT);$$('#chx .cp-tabs [data-eqt]').forEach(function(x){x.setAttribute('aria-selected',String(x.dataset.eqt===EQT))});
    if(!b.closest('.cp-tabs')){var tg=$('#chx .cp-v-'+EQT);if(tg)tg.scrollIntoView({behavior:'smooth',block:'start'})}})});
+ var mm=$('#chx .ch-mini [aria-selected="true"]');if(mm){var pm=mm.parentNode;pm.scrollLeft=mm.offsetLeft-pm.offsetLeft-pm.clientWidth/2+mm.offsetWidth/2}
+ $$('#chx [data-eqa]').forEach(function(b){b.addEventListener('click',function(){var a=b.dataset.eqa;if(a==='rel')relancer(c);else ficheRes(c,+a.split(':')[1])})});
+ $$('#chx [data-eqs]').forEach(function(b){b.addEventListener('click',function(){EQSW=b.dataset.eqs;var v=$('#chx .cp-sws');if(v)v.setAttribute('data-s',EQSW);$$('#chx [data-eqs]').forEach(function(x){x.setAttribute('aria-selected',String(x===b))})})});
  $$('#chx [data-cact]').forEach(function(b){b.addEventListener('click',function(){action(c,b.dataset.cact)})});
  $$('#chx [data-chdos]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.chdos;if(X.cf&&X.cf.ficheClient)X.cf.ficheClient(k);else X.openDossier(k)})});
  /* travaux */
@@ -556,13 +559,19 @@ var EQT=null;
 /* 24/11 (Cyril : revoir le chantier partagé) : en tête ce qu'il faut faire ; puis 3 onglets (Conversation, Réserves, Entreprises) au lieu d'une longue page ;
    sur iPad couché / PC, conversation à gauche, réserves et entreprises à droite ; « Chantier terminé » tout en bas, discret. */
 function eqAFaire(c,nl){var R=resL(c),P=part(c),L=[],cv=R.filter(function(r){return r.st==='corr'}),ov=R.filter(function(r){return r.st==='ouv'}),vieux=ov.filter(function(r){return resJours(r)>=7});
- if(cv.length)L.push(['res',cv.length+(cv.length>1?' réserves corrigées à valider':' réserve corrigée à valider'),'Valider']);
- if(vieux.length){var mx=Math.max.apply(null,vieux.map(resJours));L.push(['res',vieux.length+(vieux.length>1?' réserves à corriger':' réserve à corriger')+' depuis '+mx+' jours','Relancer'])}
+ if(cv.length)L.push(['val:'+R.indexOf(cv[0]),cv.length+(cv.length>1?' réserves corrigées à valider':' réserve corrigée à valider'),'Valider']);
+ if(vieux.length){var mx=Math.max.apply(null,vieux.map(resJours));L.push(['rel',vieux.length+(vieux.length>1?' réserves à corriger':' réserve à corriger')+' depuis '+mx+' jours','Relancer'])}
  if(nl)L.push(['conv',nl>1?nl+' nouveaux messages':'1 nouveau message','Lire']);
  var fin=accesFin(c),jf=joursAvant(fin);if(P.ent.length&&!P.termine&&jf<=3)L.push(['ent',jf<0?'Accès des entreprises dépassé':'Accès des entreprises jusqu\'au '+dt(fin),'Prolonger']);
  return '<div class="card cp-af"><div class="cp-af-h"><b>À faire sur ce chantier partagé</b>'+(L.length?'<span class="ch-etat pb2">'+L.length+' à régler</span>':'<span class="ch-etat ok">À jour ✓</span>')+'</div>'+
-  (L.length?'<div class="cp-af-l">'+L.map(function(x){return '<button type="button" data-eqt="'+x[0]+'"><span class="tx">'+esc(x[1])+'</span><span class="ch-vb">'+x[2]+'</span></button>'}).join('')+'</div>':'<p class="hint" style="margin:6px 0 0">Rien à valider ni à relancer.</p>')+'</div>'}
-function equipe(c){var P=part(c),E=P.ent,M=P.msgs,nl0=nonLus(c);P.nl=0;saveCH();
+  (L.length?'<div class="cp-af-l">'+L.map(function(x){return '<button type="button" '+(/^(val|rel)/.test(x[0])?'data-eqa':'data-eqt')+'="'+x[0]+'"><span class="tx">'+esc(x[1])+'</span><span class="ch-vb">'+x[2]+'</span></button>'}).join('')+'</div>':'<p class="hint" style="margin:6px 0 0">Rien à valider ni à relancer.</p>')+'</div>'}
+function relancer(c){var R=resL(c).filter(function(r){return r.st==='ouv'&&resJours(r)>=7&&r.ent&&r.ent!=='moi'}),par={};
+ R.forEach(function(r){(par[r.ent]=par[r.ent]||[]).push(r)});
+ var h='<p class="hint" style="margin:0 0 10px">Un SMS part à chacun, avec la liste de ses réserves et le lien du chantier.</p><div class="cp-af-l">'+Object.keys(par).map(function(k){var e=entDe(c,k);
+   return '<div class="cp-rel"><span class="cp-mini">'+icQ(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+par[k].map(function(r){return esc(r.t||r.q||'Réserve')+' · '+resJours(r)+' j'}).join('<br>')+'</small></span></div>'}).join('')+'</div>';
+ X.xopen('Relancer pour les réserves',c.n,h,'<button class="btn" data-xclose>Annuler</button><button class="btn go" id="rel-ok">Envoyer les SMS</button>',function(){
+  var ok=$('#rel-ok');if(ok)ok.addEventListener('click',function(){var n=Object.keys(par).length;R.forEach(function(r){r.rel=dt(auj())});saveCH();X.xclose();X.toast('Relance envoyée',n+(n>1?' entreprises relancées':' entreprise relancée')+' par SMS (démo).')})})}
+function equipe(c){var P=part(c),E=P.ent,M=P.msgs,nl0=nonLus(c),ncli=(cliDe(c)||{}).nl||0;P.nl=0;saveCH();
  var h='<div class="card" id="cp-ent"><div class="row cp-ent-h" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b>'+(c.st!=='done'&&!P.termine?'<button type="button" class="cp-inv-p" id="cp-inv">'+IC.plus+'Inviter</button>':'<span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span>')+'</div>';
  if(!E.length)h+='<p class="hint" style="margin:4px 0 0">Invitez les entreprises qui travaillent ici. Elles reçoivent un lien par SMS, sans appli, et retrouvent tout au même endroit.</p>';
  var fin=accesFin(c),jf=joursAvant(fin);
@@ -578,14 +587,17 @@ function equipe(c){var P=part(c),E=P.ent,M=P.msgs,nl0=nonLus(c);P.nl=0;saveCH();
   var ord=M.map(function(x,i){return [x,i]}),epi=ord.filter(function(y){return y[0].epi}),aut=ord.filter(function(y){return !y[0].epi});
   var dj='',fil=M.map(function(x,i){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j==='À l\'instant'||/\d+ h/.test(j)?'Aujourd\'hui':j)+'</span></div>':'';dj=j;return sep+msgHTML(c,x,i)}).join('');
   var dec=M.filter(function(x){return x.epi});
-  if(window.PCOPT&&PCOPT.actif('conversation')===false)return eqVue(c,nl0,'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>'+cliCard(c),hRes,hEnt,finB);
+  if(window.PCOPT&&PCOPT.actif('conversation')===false)return eqVue(c,nl0,'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>',hRes,hEnt,finB,cliCard(c),ncli);
   h+='<div class="card" id="cp-fil">'+(window.PCTAG?PCTAG('conversation'):'')+''+
    (dec.length?'<div class="cp-dec"><span class="cp-dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(qui(c,x.de).n)+' · '+esc(jourDe(x.h))+'</small></p>'}).join('')+'</div>':'')+
    '<div class="cp-fil">'+fil+'</div>'+
    (P.termine?'<p class="hint" style="margin:0">Chantier terminé : la conversation est archivée, plus personne ne peut écrire.</p>':luPar(c)+'<div class="cp-w"><textarea id="cp-t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button type="button" class="cp-ro pk" id="cp-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro go" id="cp-send" aria-label="Envoyer à tous">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+
    (P.termine?'':'<p class="hint" style="margin:10px 2px 0">Touchez '+IC.epingle.replace('<svg','<svg class="cp-ih"')+' sur un message pour le garder dans « Ce qui est décidé ».</p>')+'</div>';}
- return eqVue(c,nl0,h+cliCard(c),hRes,hEnt,finB)}
-function eqVue(c,nl,hConv,hRes,hEnt,finB){var P=part(c),nr=resOuv(c),t=EQT||(P.ent.length?'conv':'ent');
+ return eqVue(c,nl0,h,hRes,hEnt,finB,cliCard(c),ncli)}
+var EQSW='ch';
+function eqVue(c,nl,hCh,hRes,hEnt,finB,hCli,ncli){var P=part(c),nr=resOuv(c),t=EQT||(P.ent.length?'conv':'ent'),k=cliDe(c);
+ var hConv=hCli&&k?'<div class="seg cp-sw" role="tablist" aria-label="Quelle conversation">'+[['ch','Tout le chantier',nl],['cli',k.n,ncli]].map(function(x){return '<button role="tab" data-eqs="'+x[0]+'" aria-selected="'+(EQSW===x[0])+'">'+esc(x[1])+(x[2]?'<i class="cp-pt" aria-label="nouveau"></i>':'')+'</button>'}).join('')+'</div>'+
+   '<div class="cp-sws" data-s="'+EQSW+'"><div class="cp-sw-ch">'+hCh+'</div><div class="cp-sw-cli">'+hCli+'</div></div>':hCh;
  var tabs=[['conv','Conversation',nl],['res','Réserves',nr],['ent','Entreprises',P.ent.length]];
  return eqAFaire(c,nl)+'<div class="seg cp-tabs" role="tablist" aria-label="Chantier partagé">'+tabs.map(function(x){return '<button role="tab" data-eqt="'+x[0]+'" aria-selected="'+(t===x[0])+'">'+x[1]+(x[2]?' <i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div>'+
   '<div class="cp-vues" data-t="'+t+'"><div class="cp-v cp-v-conv">'+hConv+'</div><div class="cp-v2"><div class="cp-v cp-v-res">'+hRes+'</div><div class="cp-v cp-v-ent">'+hEnt+'</div></div></div>'+finB}
