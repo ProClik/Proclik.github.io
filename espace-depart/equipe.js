@@ -43,7 +43,7 @@ if(!S||!S.jr){S={jr:{},bes:{},env:{},prev:{}};
 ['jr','bes','env','prev'].forEach(function(k){if(!S[k])S[k]={}});
 /* tâches par personne et par jour (Cyril 24/11) : lignes de travaux du chantier ; exemple : travaux pas finis répartis sur les jours */
 if(!S.ta){S.ta={};chantiers().forEach(function(c){var R=(c.ouv||[]).filter(function(o){return o[2]<100}).map(function(o){return o[0]}),i=0;if(!R.length)return;
-  evJours(c.id).forEach(function(k){EQ.forEach(function(p){if(get(k,p.n)===c.id){(S.ta[k]=S.ta[k]||{})[p.n]=[R[i%R.length]];i++}})})});ecrit()}
+  Object.keys(S.jr).sort().forEach(function(k){EQ.forEach(function(p){if(get(k,p.n)===c.id){(S.ta[k]=S.ta[k]||{})[p.n]=[R[i%R.length]];i++}})})});ecrit()}
 function taches(k,n){return ((S.ta[k]||{})[n]||[]).slice()}
 function togTache(k,n,t){var o=S.ta[k]=S.ta[k]||{},L=o[n]=o[n]||[],i=L.indexOf(t);if(i>-1)L.splice(i,1);else L.push(t);ecrit();bouge()}
 function get(k,n){return (S.jr[k]||{})[n]||''}
@@ -82,63 +82,60 @@ if(seg)seg.appendChild(bt);
 bt.addEventListener('click',function(){$$('button',seg).forEach(function(x){x.setAttribute('aria-selected',String(x===bt))});$$('#v-planning .pv').forEach(function(p){p.hidden=p!==pv});rend()});
 ecoute.push(function(){if(!pv.hidden)rend()});
 
-/* 24/11 (Cyril : « un planning équipe qui ressemblerait au planning de l'Espace ») : même dessin que Planning › Semaine
-   (jours en tuiles, aujourd'hui en bleu nuit, une colonne par jour, cartes à point de couleur, « Libre » en pointillés).
-   Dans chaque colonne : une carte par chantier avec les prénoms, puis Bureau, puis « Libre » = ceux qui n'ont rien de prévu. */
-var SEL=null;
-function court(v){if(!v)return '—';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';var c=(X.CH||{})[v];if(!c)return v;
+/* 24/11 12h (Cyril : « pas assez clair, un peu brouillon, surtout pour les salariés ») : deux écrans, deux besoins.
+   PATRON = le planning d'équipe classique : une ligne par salarié, une colonne par jour, le chantier écrit en couleur dans la case
+   (+ ce qu'il fait), case rouge = rien de prévu, ligne « Il manque » en bas ; le Mois = le même tableau qui glisse.
+   SALARIÉ = « Ma semaine » : une carte par jour (où, adresse + Itinéraire, heures, ce que je fais, avec qui). */
+var SEL=null,VUE='sem',MO=0,QUI=EQ[0].n;
+function court(v){if(!v)return '';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';var c=(X.CH||{})[v];if(!c)return v;
   var w=(c.n||'').replace(/^(M\.|Mme|Cabinet|SCI|Maison)\s+/,'').split(/[\s·,]+/)[0];return w.length>8?w.slice(0,7)+'.':w}
-function nomCh(c){return (c.n||'').replace(/^Cabinet\s+/,'')}
-function manques(){var A=[];for(var i=0;i<5;i++){var k=kj(i);
-  chantiers().forEach(function(c){var m=besoin(c.id,k)-qui(c.id,k).length;if(m>0)A.push([k,'c',c.id,jourCourt(k)+' · '+c.n+' : il manque '+m+' personne'+(m>1?'s':'')])});
-  EQ.forEach(function(p){if(!get(k,p.n))A.push([k,'p',p.n,jourCourt(k)+' · '+p.n+' n\'a rien de prévu'])})}return A}
-var VUE='sem',MO=0;
-function choix(){return '<div class="seg eqv" role="tablist" aria-label="Vue de l\'équipe">'+[['sem','Semaine'],['mois','Mois']].map(function(x){return '<button type="button" role="tab" data-vue="'+x[0]+'" aria-selected="'+(VUE===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
-function cartesJour(k,CHs){var h='';
-  CHs.filter(function(c){return besoin(c.id,k)>0||qui(c.id,k).length}).forEach(function(c){var Q=qui(c.id,k),m=besoin(c.id,k)-Q.length;
-    h+='<button type="button" class="eqm-l'+(m>0?' manque':'')+'" data-eqc="'+c.id+'" data-k="'+k+'" style="--c:'+couleur(c.id)+'"><i></i><span class="tx"><b>'+esc(c.n)+'</b><small>'+(Q.length?Q.map(function(p){var t=taches(k,p.n);return p.n+(t.length?' ('+esc(t.join(', ').toLowerCase())+')':'')}).join(', '):'Personne')+'</small>'+(m>0?'<em>Il manque '+m+' personne'+(m>1?'s':'')+'</em>':'')+'</span><span class="ch-vb">'+(m>0?'Ajouter':'Changer')+'</span></button>'});
-  [['bureau','Au bureau'],['repos','Repos ou congé'],['','Libre : rien de prévu']].forEach(function(x){var P=EQ.filter(function(p){return get(k,p.n)===x[0]});if(!P.length||(x[0]===''&&!(dte(k).getDay()%6)))return;
-    h+='<button type="button" class="eqm-l'+(x[0]===''?' libre':' gris')+'" data-eqp="'+P[0].n+'" data-k="'+k+'"><i></i><span class="tx"><b>'+x[1]+'</b><small>'+P.map(function(p){return p.n}).join(', ')+'</small></span><span class="ch-vb">'+(x[0]===''?'Placer':'Changer')+'</span></button>'});
-  return h||'<p class="hint" style="margin:6px 0">Rien de prévu ce jour-là.</p>'}
-function rendMois(){var CHs=chantiers(),T=iso(auj()),b=new Date(auj());b.setDate(1);b.setMonth(b.getMonth()+MO);var mm=b.getMonth(),y=b.getFullYear(),d0=lundiDe(b),h='';
-  if(!SEL||dte(SEL).getMonth()!==mm)SEL=MO===0?T:iso(b);
-  h+=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
-  h+='<div class="cal-top"><h3>'+MOIS[mm].replace(/^./,function(x){return x.toUpperCase()})+' <span>'+y+'</span></h3><div class="cal-nav"><button class="nb" data-mo="-1" aria-label="Mois précédent">‹</button><button data-mo="0">Aujourd\'hui</button><button class="nb" data-mo="1" aria-label="Mois suivant">›</button></div></div>';
-  h+='<div class="grid2 eqm"><div class="col"><div class="mo"><div class="mo-h">'+['L','M','M','J','V','S','D'].map(function(x){return '<div>'+x+'</div>'}).join('')+'</div><div class="mo-g">';
-  for(var i=0;i<42;i++){var x=plus(d0,i),k=iso(x),out=x.getMonth()!==mm;if(i>=35&&out&&plus(d0,35).getMonth()!==mm)break;
-    var C=CHs.filter(function(c){return qui(c.id,k).length||besoin(c.id,k)>0}),man=CHs.some(function(c){return qui(c.id,k).length<besoin(c.id,k)});
-    h+='<button type="button" class="'+(out?'out ':'')+(k===T?'tdy ':'')+(k===SEL?'sel ':'')+(man?'eqm-man':'')+'" data-day="'+k+'" aria-label="'+jourLong(k)+(man?', il manque du monde':'')+'"><span class="n">'+x.getDate()+'</span><span class="mo-d">'+C.slice(0,3).map(function(c){return '<i style="background:'+couleur(c.id)+'"></i>'}).join('')+'</span></button>'}
-  h+='</div></div><div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="rg"></i>Il manque du monde</span></div></div>';
-  h+='<div class="col"><h3 class="eqm-t">'+jourLong(SEL).replace(/^./,function(x){return x.toUpperCase()})+'</h3><div class="eqm-jl">'+cartesJour(SEL,CHs)+'</div></div></div>';
-  pv.innerHTML=h}
-function rend(){if(VUE==='mois')return rendMois();
-  var CHs=chantiers(),A=manques(),h='',env=S.env[kj(0)],T=iso(auj()),K5=[0,1,2,3,4].map(kj),M0=dte(K5[0]);
-  h+=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
-  h+='<div class="cal-top"><h3>'+MOIS[M0.getMonth()].replace(/^./,function(x){return x.toUpperCase()})+' <span>'+M0.getFullYear()+'</span></h3><div class="cal-nav"><button class="nb" data-wk="-1" aria-label="Semaine précédente">‹</button><button data-wk="0">Aujourd\'hui</button><button class="nb" data-wk="1" aria-label="Semaine suivante">›</button></div></div>';
-  var G='grid-template-columns:repeat(5,minmax(0,1fr))';
-  h+='<div class="wkc eqw"><div class="wkc-h" style="'+G+'"><div style="display:none"></div>'+K5.map(function(k,i){var n=EQ.filter(function(p){var v=get(k,p.n);return v&&v!=='repos'}).length,
-      m=CHs.reduce(function(s,c){return s+Math.max(0,besoin(c.id,k)-qui(c.id,k).length)},0);
-    return '<div class="'+(k===T?'tdy':'')+'">'+JOURS[i].replace('.','')+'<b>'+dte(k).getDate()+'</b><small class="f2n'+(m?' eqw-m':'')+'">'+(m?'il manque '+m:n+' pers.')+'</small></div>'}).join('')+'</div>';
-  h+='<div class="wkc-b" style="'+G+'">'+K5.map(function(k){
-    var cartes=CHs.filter(function(c){return besoin(c.id,k)>0||qui(c.id,k).length}).map(function(c){var Q=qui(c.id,k),m=besoin(c.id,k)-Q.length;
-      return '<button type="button" class="ev'+(m>0?' eqw-man':'')+'" data-eqc="'+c.id+'" data-k="'+k+'" style="--c:'+couleur(c.id)+'"><b>'+esc(nomCh(c))+'</b>'+
-        Q.map(function(p){return '<small>'+p.n+'</small>'}).join('')+(m>0?'<em>+'+m+' à trouver</em>':'')+'</button>'}).join('');
-    var bu=EQ.filter(function(p){return get(k,p.n)==='bureau'}),re=EQ.filter(function(p){return get(k,p.n)==='repos'}),li=EQ.filter(function(p){return !get(k,p.n)});
-    if(bu.length)cartes+='<button type="button" class="ev" data-eqp="'+bu[0].n+'" data-k="'+k+'" style="--c:var(--muted)"><b>Bureau</b>'+bu.map(function(p){return '<small>'+p.n+'</small>'}).join('')+'</button>';
-    if(re.length)cartes+='<button type="button" class="ev" data-eqp="'+re[0].n+'" data-k="'+k+'" style="--c:var(--line)"><b>Repos</b>'+re.map(function(p){return '<small>'+p.n+'</small>'}).join('')+'</button>';
-    if(li.length)cartes+='<button type="button" class="ev free" data-eqp="'+li[0].n+'" data-k="'+k+'" style="--c:var(--k-free)"><b>Libre</b>'+li.map(function(p){return '<small>'+p.n+'</small>'}).join('')+'</button>';
-    return '<div class="wkc-col'+(k===T?' tdy':'')+'">'+cartes+'</div>'}).join('')+'</div></div>';
-  h+='<div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="free"></i>Libre : rien de prévu</span></div>';
-  /* à régler dans la semaine */
-  if(A.length)h+='<div class="card eq-regl"><div class="sec-h" style="margin-bottom:4px"><h2>À régler cette semaine</h2><span>'+A.length+'</span></div>'+A.slice(0,5).map(function(a){
-    return '<button type="button" class="eq-rg" '+(a[1]==='c'?'data-eqc="'+a[2]+'"':'data-eqp="'+a[2]+'"')+' data-k="'+a[0]+'"><span>'+esc(a[3])+'</span><span class="ch-vb">Régler</span></button>'}).join('')+(A.length>5?'<p class="hint" style="margin:6px 0 0">… et '+(A.length-5)+' autre'+(A.length-5>1?'s':'')+'.</p>':'')+'</div>';
-  /* la semaine de chacun */
-  h+='<div class="sec-h eq-sh"><h2>La semaine de chacun</h2><span>touchez une case pour changer</span></div><div class="card eq-p"><div class="eq-pl eq-ph"><span class="eq-n"></span><span class="eq-sem">'+K5.map(function(x,i){return '<span class="'+(x===T?'on':'')+'">'+JOURS[i].replace('.','')+' '+dte(x).getDate()+'</span>'}).join('')+'</span></div>'+EQ.map(function(p){
-    return '<div class="eq-pl"><span class="eq-n"><b>'+p.n+'</b><small>'+p.r+'</small></span><span class="eq-sem">'+K5.map(function(x){var v=get(x,p.n),c=(X.CH||{})[v];
-      return '<button type="button" class="eq-k'+(v?'':' vide')+(c?' ch':'')+'" data-eqp="'+p.n+'" data-k="'+x+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+jourCourt(x)+' : '+esc(nomCase(v))+'">'+esc(court(v))+'</button>'}).join('')+'</span></div>'}).join('')+'</div>';
+function heures(id,k){var c=(X.CH||{})[id],e=(X.EV||[]).filter(function(e){var x=e.x||{};return e.k==='run'&&e.d===k&&(x.ch===id||(id==='alpes'&&x.ch===1)||(c&&String(e.t||'').indexOf(c.n)>-1))})[0];
+  return e?e.s.replace(':','h')+' – '+e.e.replace(':','h'):'8h00 – 17h00'}
+function choix(){return '<div class="seg eqv" role="tablist" aria-label="Vue de l\'équipe">'+[['sem','Semaine'],['mois','Mois'],['sal','Ce que voit un salarié']].map(function(x){return '<button type="button" role="tab" data-vue="'+x[0]+'" aria-selected="'+(VUE===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
+function nav(titre,cle){return '<div class="cal-top"><h3>'+titre+'</h3><div class="cal-nav"><button class="nb" data-'+cle+'="-1" aria-label="Avant">‹</button><button data-'+cle+'="0">Aujourd\'hui</button><button class="nb" data-'+cle+'="1" aria-label="Après">›</button></div></div>'}
+function cap(t){return t.replace(/^./,function(x){return x.toUpperCase()})}
+/* le tableau : K = liste de dates ; large = case avec la tâche */
+function tableau(K,large){var CHs=chantiers(),T=iso(auj());
+  var h='<div class="eqt'+(large?' large':' serre')+'"><table><thead><tr><th class="eqt-n"></th>'+K.map(function(k){var x=dte(k),we=!(x.getDay()%6);
+    return '<th class="'+(k===T?'tdy':'')+(we?' we':'')+'"><small>'+JC[x.getDay()].replace('.','')+'</small><b>'+x.getDate()+'</b></th>'}).join('')+'</tr></thead><tbody>';
+  h+=EQ.map(function(p){return '<tr><th class="eqt-n"><b>'+p.n+'</b><small>'+p.r+'</small></th>'+K.map(function(k){var v=get(k,p.n),c=(X.CH||{})[v],we=!(dte(k).getDay()%6),t=c?taches(k,p.n):[];
+      if(we&&!v)return '<td class="we"></td>';
+      if(!v&&k<T)return '<td><span class="eqc passe"></span></td>';
+      return '<td><button type="button" class="eqc'+(c?' ch':v?' gris':' vide')+(k===T?' tdy':'')+'" data-eqp="'+p.n+'" data-k="'+k+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+p.n+', '+jourLong(k)+' : '+esc(nomCase(v))+'">'+
+        (v?'<b>'+esc(court(v))+'</b>'+(large&&t.length?'<small>'+esc(t[0].toLowerCase())+(t.length>1?' +'+(t.length-1):'')+'</small>':''):'<b>+</b>'+(large?'<small>à placer</small>':''))+'</button></td>'}).join('')+'</tr>'}).join('');
+  /* ligne « il manque » */
+  var lm=K.map(function(k){var L=CHs.filter(function(c){return qui(c.id,k).length<besoin(c.id,k)});
+    return '<td>'+L.map(function(c){var m=besoin(c.id,k)-qui(c.id,k).length;return '<button type="button" class="eqm" data-eqc="'+c.id+'" data-k="'+k+'" style="--cc:'+couleur(c.id)+'">'+esc(court(c.id))+' +'+m+'</button>'}).join('')+'</td>'});
+  if(lm.join('').indexOf('eqm')>-1)h+='<tr class="eqt-m"><th class="eqt-n"><b>Il manque</b></th>'+lm.join('')+'</tr>';
+  h+='</tbody></table></div>';
+  h+='<div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="vd"></i>Rien de prévu</span></div>';
+  return h}
+function rendSem(){var K=[0,1,2,3,4].map(kj),M0=dte(K[0]),env=S.env[kj(0)],h='';
+  h+=nav(titreSem(),'wk');
+  h+='<p class="hint eqt-hint">Touchez une case pour changer où va la personne et ce qu\'elle fait.</p>'+tableau(K,true);
   h+='<button type="button" class="btn go eq-env" id="eq-env"><span class="lab"><span>'+(env?'Renvoyer le planning à l\'équipe':'Envoyer le planning à l\'équipe')+'</span></span></button>';
-  if(env)h+='<p class="hint" style="text-align:center">Envoyé : chacun voit sa semaine dans son Espace.</p>';
-  pv.innerHTML=h}
+  h+='<p class="hint" style="text-align:center">'+(env?'Envoyé : chacun voit sa semaine sur son téléphone.':'Chacun reçoit sa semaine sur son téléphone (voir « Ce que voit un salarié »).')+'</p>';
+  return h}
+function rendMois(){var b=new Date(auj());b.setDate(1);b.setMonth(b.getMonth()+MO);var mm=b.getMonth(),K=[],x=new Date(b);
+  while(x.getMonth()===mm){K.push(iso(x));x=plus(x,1)}
+  return nav(cap(MOIS[mm])+' <span>'+b.getFullYear()+'</span>','mo')+'<p class="hint eqt-hint">Faites glisser le tableau pour voir tout le mois.</p>'+tableau(K,false)}
+/* ---------- ce que voit un salarié ---------- */
+function rendSal(){var T=iso(auj()),J=[],x=auj(),h='';while(J.length<5){if(x.getDay()%6)J.push(iso(x));x=plus(x,1)}
+  h+='<div class="eqs-qui"><span>Voir comme</span>'+EQ.map(function(p){return '<button type="button" data-qui="'+p.n+'" aria-pressed="'+(QUI===p.n)+'">'+p.n+'</button>'}).join('')+'</div>';
+  h+='<div class="eqs-tel"><div class="eqs-top"><small>Espace de '+QUI+'</small><b>Ma semaine</b></div>';
+  h+=J.map(function(k){var v=get(k,QUI),c=(X.CH||{})[v],t=taches(k,QUI),avec=c?qui(v,k).filter(function(p){return p.n!==QUI}).map(function(p){return p.n}):[],jt=k===T?'Aujourd\'hui':k===iso(plus(auj(),1))?'Demain':cap(jourLong(k).split(' ')[0]);
+    var hd='<div class="eqs-j">'+(k===T||k===iso(plus(auj(),1))?'<b>'+jt+'</b> · '+jourLong(k):'<b>'+cap(jourLong(k))+'</b>')+'</div>';
+    if(!c)return hd+'<div class="eqs-c gris"><b>'+(v==='bureau'?'Au bureau':v==='repos'?'Repos':'Rien de prévu pour l\'instant')+'</b>'+(v?'':'<small>Votre patron vous préviendra.</small>')+'</div>';
+    return hd+'<div class="eqs-c" style="--cc:'+couleur(v)+'"><div class="eqs-h"><i></i><span><b>'+esc(c.n)+'</b><small>'+esc(c.v||'')+' · '+heures(v,k)+'</small></span></div>'+
+      '<div class="eqs-l"><span>À faire</span><b>'+(t.length?esc(t.join(', ')):'Voir avec le chef')+'</b></div>'+
+      '<div class="eqs-l"><span>Avec</span><b>'+(avec.length?avec.join(', '):'Seul')+'</b></div>'+
+      '<div class="eqs-b"><button type="button" class="eqs-it" data-itin="'+esc(c.v||'')+'">Itinéraire</button>'+(k===T?'<button type="button" class="eqs-ok">J\'ai vu ✓</button>':'')+'</div></div>'}).join('');
+  h+='</div><p class="hint" style="text-align:center">C\'est l\'écran que reçoit '+QUI+' sur son téléphone : pas le planning de toute l\'équipe, seulement ses jours.</p>';
+  return h}
+function rend(){var h=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
+  h+=VUE==='mois'?rendMois():VUE==='sal'?rendSal():rendSem();
+  pv.innerHTML=h;
+  var td=pv.querySelector('.eqt.serre th.tdy');if(td){var sc=td.closest('.eqt');sc.scrollLeft=Math.max(0,td.offsetLeft-sc.clientWidth/2)}}
 
 /* ---------- toucher un jour d'un chantier : qui vient ---------- */
 function caseCh(id,k){var c=(X.CH||{})[id];
@@ -161,7 +158,9 @@ pv.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)r
   if(b.dataset.sel){SEL=b.dataset.sel;return rend()}
   if(b.dataset.vue){VUE=b.dataset.vue;SEL=null;return rend()}
   if(b.dataset.mo!=null){MO=b.dataset.mo==='0'?0:MO+(+b.dataset.mo);SEL=null;return rend()}
-  if(b.dataset.day){SEL=b.dataset.day;return rend()}
+  if(b.dataset.qui){QUI=b.dataset.qui;return rend()}
+  if(b.dataset.itin!=null){X.toast('Itinéraire','Ouvre Waze ou Plans vers '+(b.dataset.itin||'le chantier')+' (démo).');return}
+  if(b.classList.contains('eqs-ok')){b.textContent='Vu ✓';b.disabled=true;X.toast('Le patron voit que c\'est lu','« ✓ vu » à côté du prénom (démo).');return}
   if(b.dataset.eqc)return caseCh(b.dataset.eqc,b.dataset.k);
   if(b.dataset.eqp)return caseP(b.dataset.eqp,b.dataset.k);
   if(b.id==='eq-env'){S.env[kj(0)]=true;ecrit();rend();X.toast('Planning envoyé à l\'équipe','Chacun voit sa semaine sur son téléphone (exemple).')}});
@@ -214,6 +213,36 @@ st.textContent=
  '#p-equipe .eqm-l>i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted))}#p-equipe .eqm-l.libre>i{background:none;border:1.5px dashed var(--muted)}'+
  '#p-equipe .eqm-l .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}#p-equipe .eqm-l b{font-size:15px}#p-equipe .eqm-l small{font-size:13px;color:var(--muted)}#p-equipe .eqm-l em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--cor,#B4472F)}'+
  '#p-equipe .eqm-l.manque{box-shadow:inset 0 0 0 1.5px var(--cor,#B4472F),var(--z-ombre-s,var(--n1-pk))}#p-equipe .eqm-l.libre{background:none;box-shadow:none;border:1.5px dashed var(--line)}#p-equipe .eqm-l.libre small{color:var(--cor,#B4472F)}'+
+ '#p-equipe .eqv{display:grid;grid-template-columns:1fr 1fr 1.6fr;margin:0 0 12px;max-width:560px}#p-equipe .eqv button{white-space:nowrap;font-size:13.5px}'+
+ '#p-equipe .eqt-hint{margin:-4px 2px 10px}'+
+ '#p-equipe .eqt{overflow-x:auto;margin:0 -16px;padding:0 16px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}'+
+ '#p-equipe .eqt table{border-collapse:separate;border-spacing:4px;width:100%;table-layout:fixed}#p-equipe .eqt.serre table{width:auto}'+
+ '#p-equipe .eqt th,#p-equipe .eqt td{padding:0;vertical-align:middle}'+
+ '#p-equipe .eqt thead th{font-weight:600;text-align:center;padding:6px 0;border-radius:14px;background:var(--z-tile,var(--card));box-shadow:var(--z-ombre-s,none)}'+
+ '#p-equipe .eqt thead th small{display:block;font-size:11px;color:var(--muted)}#p-equipe .eqt thead th b{display:block;font-size:17px;line-height:1.2}'+
+ '#p-equipe .eqt thead th.tdy{background:var(--n1-nuit,#1B2440);color:#fff}#p-equipe .eqt thead th.tdy small{color:rgba(255,255,255,.75)}'+
+ '#p-equipe .eqt thead th.eqt-n{background:none;box-shadow:none}#p-equipe .eqt th.we{opacity:.55}'+
+ '#p-equipe .eqt .eqt-n{width:84px;text-align:left;position:sticky;left:0;z-index:1;background:var(--bg);box-shadow:-20px 0 0 var(--bg)}#p-equipe .eqt.serre .eqt-m .eqt-n b{font-size:11px;white-space:nowrap}#p-equipe .eqt tbody .eqt-n b{display:block;font-size:14.5px}#p-equipe .eqt tbody .eqt-n small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}'+
+ '#p-equipe .eqc{width:100%;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 3px;border-radius:12px;border:0;box-shadow:none;background:var(--z-tile,var(--card));color:var(--fg);min-width:0;overflow:hidden}'+
+ '#p-equipe .eqc b{font-size:12px;font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#p-equipe .eqc small{font-size:10px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.9}'+
+ '#p-equipe .eqc.ch{background:var(--cc);color:#fff}#p-equipe .eqc.gris{background:var(--teinte,rgba(0,0,0,.06));color:var(--fg)}'+
+ '#p-equipe .eqc.vide{background:none;border:1.5px dashed var(--cor,#B4472F);color:var(--cor,#B4472F)}#p-equipe .eqc.vide b{font-size:16px}'+
+ '#p-equipe .eqc.passe{background:none;border:0;color:var(--muted)}'+
+ '#p-equipe .eqt td.we{background:repeating-linear-gradient(45deg,transparent 0 6px,var(--line) 6px 7px);border-radius:12px;opacity:.5}'+
+ '#p-equipe .eqt.serre .eqt-n{width:76px}#p-equipe .eqt.serre thead th:not(.eqt-n),#p-equipe .eqt.serre td{width:46px;min-width:46px}#p-equipe .eqt.serre .eqc{min-height:40px}#p-equipe .eqt.serre .eqc b{font-size:10px}'+
+ '#p-equipe .eqt-m td{vertical-align:top}#p-equipe .eqm{display:block;width:100%;margin:0 0 3px;padding:4px 2px;border-radius:10px;border:1.5px solid var(--cor,#B4472F);background:none;box-shadow:none;color:var(--cor,#B4472F);font:800 10.5px var(--f,inherit);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+ '#p-equipe .eqt-m .eqt-n b{font-size:12.5px;color:var(--cor,#B4472F)}'+
+ '#p-equipe .eqw-leg i.vd{width:10px;height:10px;border-radius:3px;border:1.5px dashed var(--cor,#B4472F);box-sizing:border-box}'+
+ '@media (min-width:700px){#p-equipe .eqt.large .eqt-n{width:130px}#p-equipe .eqt.large .eqc{min-height:62px}#p-equipe .eqt.large .eqc b{font-size:14px}#p-equipe .eqt.large .eqc small{font-size:12px}#p-equipe .eqm{font-size:12px}}'+
+ '#p-equipe .eqs-qui{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 14px}#p-equipe .eqs-qui span{font-size:13px;color:var(--muted);margin-right:4px}'+
+ '#p-equipe .eqs-qui button{min-height:38px;padding:0 14px;border-radius:99px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);font:700 14px var(--f,inherit)}#p-equipe .eqs-qui button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440);color:#fff;box-shadow:none}'+
+ '#p-equipe .eqs-tel{max-width:420px;margin:0 auto 10px;padding:18px 16px 20px;border-radius:32px;background:var(--bg);box-shadow:0 0 0 8px var(--z-tile,var(--card)),0 10px 30px rgba(0,0,0,.12)}'+
+ '#p-equipe .eqs-top small{display:block;font-size:12px;color:var(--muted)}#p-equipe .eqs-top b{display:block;font-size:24px;margin-bottom:6px}'+
+ '#p-equipe .eqs-j{margin:16px 2px 6px;font-size:14px;color:var(--muted)}#p-equipe .eqs-j b{color:var(--fg);font-size:15px}'+
+ '#p-equipe .eqs-c{padding:14px 16px;border-radius:20px;background:var(--z-tile,var(--card));box-shadow:inset 4px 0 0 var(--cc),var(--z-ombre-s,0 1px 3px rgba(0,0,0,.08))}#p-equipe .eqs-c.gris{box-shadow:var(--z-ombre-s,none)}#p-equipe .eqs-c.gris b{font-size:15px}#p-equipe .eqs-c.gris small{display:block;color:var(--muted);font-size:13px;margin-top:2px}'+
+ '#p-equipe .eqs-h{display:flex;align-items:flex-start;gap:10px}#p-equipe .eqs-h i{flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--cc)}#p-equipe .eqs-h span{display:flex;flex-direction:column}#p-equipe .eqs-h b{font-size:18px}#p-equipe .eqs-h small{font-size:13.5px;color:var(--muted)}'+
+ '#p-equipe .eqs-l{display:flex;gap:10px;padding:8px 0 0 22px;font-size:14.5px}#p-equipe .eqs-l span{flex:none;width:52px;color:var(--muted);font-size:13px;padding-top:1px}'+
+ '#p-equipe .eqs-b{display:flex;gap:8px;margin:12px 0 0 22px}#p-equipe .eqs-b button{min-height:42px;padding:0 18px;border-radius:99px;font:700 14px var(--f,inherit)}#p-equipe .eqs-it{background:var(--n1-nuit,#1B2440);color:#fff;border:0}#p-equipe .eqs-ok{background:none;border:1.5px solid var(--line);color:var(--fg)}'+
  '#p-equipe .eq-jours{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 16px}'+
  '#p-equipe .eq-jours button{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px;border-radius:16px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);min-width:0}'+
  '#p-equipe .eq-jours small{font-size:11.5px;color:var(--muted);font-weight:600}#p-equipe .eq-jours b{font-size:19px;line-height:1.15}#p-equipe .eq-jours em{font-style:normal;font-size:10px;font-weight:700;color:var(--n1-laiton)}'+
