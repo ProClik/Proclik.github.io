@@ -769,7 +769,7 @@ addEventListener("resize",()=>{if(PC.step==="p")planUI();if(PC.step==="r")recapU
 M={type:"mur",rt:"cuisine",L:300,H:250,room:"",items:[]};
 function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);ALLR().forEach(({r})=>{r.works=want.length?want.includes(r.rt):true});fromPlan();startPick()}
 /* Cyril 24/11 : le sol et le plafond répondus dans le plan ne sont pas redemandés ici (repris tels quels) */
-function fromPlan(){if(!PC.SO)return;const E={"Déjà en place":"On le garde","À changer":"On le change","À créer":"Il n'y a pas encore de sol"};ALLR().forEach(q=>{const r=q.r;if(r.so&&E[r.so.etat]){const a=soA(q.id,"sol");if(!a._done){a.etat=E[r.so.etat];if(r.so.depose&&r.so.depose!=="Aucune"&&r.so.depose!=="À préciser")a.depose=r.so.depose;const rv=r.so.revet;if(rv&&rv!=="Aucun"&&rv!=="À préciser")a.revet=/souple/i.test(rv)?"Sol souple (lino, vinyle)":rv;if(a.revet==="Carrelage"&&r.so.carFmt&&r.so.carFmt!=="À préciser")a.carFmt=r.so.carFmt;a._done=1;a._plan=1}}if(r.pfp&&r.pfp.pf){const a=soA(q.id,"pf");if(!a._done){Object.keys(r.pfp).forEach(k=>{if(r.pfp[k])a[k]=r.pfp[k]});a._done=1;a._plan=1}}})}
+function fromPlan(){if(!PC.SO)return;const E={"Déjà en place":"On le garde","À changer":"On le change","À créer":"Il n'y a pas encore de sol"};ALLR().forEach(q=>{const r=q.r;if(r.so&&E[r.so.etat]){const a=soA(q.id,"sol");if(!a._done){a.etat=E[r.so.etat];if(r.so.depose&&r.so.depose!=="Aucune"&&r.so.depose!=="À préciser")a.depose=r.so.depose;const rv=r.so.revet;if(rv&&rv!=="Aucun"&&rv!=="À préciser")a.revet=/souple/i.test(rv)?"Sol souple (lino, vinyle)":rv;if(a.revet==="Carrelage"&&r.so.carFmt&&r.so.carFmt!=="À préciser")a.carFmt=r.so.carFmt;if(r.so.plb)a.plb=r.so.plb;a._done=1;a._plan=1}}if(r.pfp&&r.pfp.pf){const a=soA(q.id,"pf");if(!a._done){Object.keys(r.pfp).forEach(k=>{if(r.pfp[k])a[k]=r.pfp[k]});a._done=1;a._plan=1}}})}
 addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-load"){PC.R={};boot(d.plan&&d.plan.geo,d.rep||{})}});
 if(EMB)post({type:"proclik-murs-ready"});
 else{// démo hors formulaire : un logement fictif
@@ -790,7 +790,8 @@ const SQ={sol:[
  {k:"etat",q:"Le sol de cette pièce…",o:["On le garde","On le change","Il n'y a pas encore de sol",DKs]},
  {k:"depose",q:"Quel sol y a-t-il aujourd'hui ?",s:"Il sera enlevé avant de poser le nouveau.",o:["Carrelage","Parquet","Moquette","Lino / PVC",DKs],if:a=>a.etat==="On le change"},
  {k:"revet",q:"Quel sol voulez-vous ?",o:["Carrelage","Parquet","Sol souple (lino, vinyle)",DKs],if:a=>/change|pas encore/.test(a.etat||"")},
- {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"}],
+ {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"},
+ {k:"plb",q:"Le plancher (ce qui est sous le sol) est à refaire ?",s:"Par exemple un plancher qui bouge, ou des combles sans plancher.",o:["Non","Oui",DKs],if:a=>/change|pas encore/.test(a.etat||"")}],
  fin:[],
  fai:[
  {k:"fai",q:"De la faïence aux murs ?",s:"Les carreaux collés au mur : autour de la douche, derrière l'évier…",o:["Oui, à poser","Non, pas de faïence",DKs]},
@@ -802,7 +803,7 @@ const SQ={sol:[
  {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfSup",q:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfIso",q:"Isolant au-dessus ?",o:["Oui","Non",DKs],if:a=>a.pf==="À refaire"}]};
-const SHORT={fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
+const SHORT={fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",plb:"Plancher",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
 PC.SO={};
 const needPart=p=>(A.trav||[]).includes(p==="sol"?"sol":"plafond");
 const soA=(id,p)=>{const o=PC.SO[id]||(PC.SO[id]={});return o[p]||(o[p]={})};
@@ -812,7 +813,7 @@ const m2=r=>fr1(Math.abs(area(r.pts))/1e4);
 function solConv(a){if(!a.etat)return null;const E={"On le garde":"Déjà en place","On le change":"À changer","Il n'y a pas encore de sol":"À créer"}[a.etat]||null,o={etat:E};
  if(!E){o.dk=1;return o}if(E==="Déjà en place"){o.depose="Aucune";o.revet="Aucun";return o}
  o.depose=E==="À créer"?"Aucune":a.depose&&a.depose!==DKs?a.depose:"À préciser";
- o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";return o}
+ o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";if(a.plb)o.plb=a.plb;return o}
 // Faïence (Cyril 18/11) : murs choisis × hauteur, moins les portes ; renvoyée au plan (pc.faience) pour le calcul.
 const WET=["sdb","wc","cuisine","buanderie"];
 const faiWalls=q=>PC.R[q.id]||[];
