@@ -183,6 +183,9 @@ function resume(c){var a=avc(c),f=cfin(c),o=dos(c),reel=(c.reel||[]).reduce(func
  var nl=nonLus(c);if(nl)T.push(['equipe',nl,nl>1?'Nouveaux messages des entreprises':'Nouveau message d\'une entreprise']);
  var sd=sitDu(c);if(sd)T.push(['fin','€','Facture de situation à préparer ('+sd+')']);
  var rc=resL(c).filter(function(r){return r.st==='corr'}).length;if(rc)T.push(['equipe',rc,rc>1?rc+' réserves corrigées à valider':'Une réserve corrigée à valider']);
+ if(eqcOn(c)){var EJ=PCEQ.jours(c.id);if(EJ.length){var k0=EJ[0],q0=PCEQ.qui(c.id,k0),man=EJ.filter(function(k){return PCEQ.qui(c.id,k).length<PCEQ.besoin(c.id,k)});
+  T.push(['agenda',q0.length||'!',PCEQ.relatif(k0)+' : '+(q0.length?q0.map(function(p){return p.n}).join(', '):'personne de l\'équipe')]);
+  if(man.length)T.push(['agenda','!','Il manque du monde '+man.slice(0,3).map(PCEQ.jourCourt).join(', ')+(man.length>3?'…':'')])}}
  var Lv=liv(c).filter(function(x){return !x.passe});if(Lv.length)T.push(['four',Lv.length,'Livraison'+(Lv.length>1?'s':'')+' prévue'+(Lv.length>1?'s':'')+' · '+Lv[0].quand]);
  var suite=c.st==='done'?'Chantier terminé.':a>=100?'Travaux finis : la facture de solde peut partir.':c.ouv.filter(function(x){return x[2]<100})[0];
  return '<div class="card ch-res"><span class="ring" style="--p:'+a+'"><span>'+a+'%</span></span><span class="tx"><b>Avancement</b><small>'+(typeof suite==='string'?suite:'En ce moment : '+esc(suite[0]).toLowerCase()+' ('+suite[2]+'\u00a0%)')+'</small></span></div>'+
@@ -433,11 +436,45 @@ var TYC={run:'Chantier',plan:'Chantier prévu',done:'Chantier fait',visit:'Visit
 function evsCh(c){var L=(X.EV||[]).filter(function(e){if(e.k==='free'||e.k==='pc')return false;var x=e.x||{};
   return x.ch===c.id||(c.id==='alpes'&&x.ch===1)||(c.n&&String(e.t||'').indexOf(c.n)>-1)});
  return L.sort(function(a,b){return (a.d+a.s)<(b.d+b.s)?-1:1})}
+/* 24/11 (Cyril : « la gestion des employés sur le chantier ») : qui de l'équipe vient, jour par jour ; toucher un jour = cocher qui vient ;
+   « Prévenir l'équipe » (SMS / Espace de chacun, « ✓ vu ») ; mêmes données que Planning › Équipe (window.PCEQ, equipe.js). */
+function eqcOn(c){return !!(window.PCEQ&&equipeOn()&&c.st!=='done')}
+function eqcCard(c){if(!eqcOn(c))return '';var Q=PCEQ,J=Q.jours(c.id);if(!J.length)return '';var nm=0;
+ var rows=J.map(function(k){var L=Q.qui(c.id,k),b=Q.besoin(c.id,k),m=Math.max(0,b-L.length),x=new Date(k+'T12:00:00');if(m)nm++;
+  return '<button type="button" class="cheq-j'+(m?' manque':'')+'" data-eqj="'+k+'"><span class="ch-agd"><small>'+JC[x.getDay()]+'</small><b>'+x.getDate()+'</b><small>'+MC[x.getMonth()]+'</small></span>'+
+   '<span class="tx"><b>'+(L.length?L.map(function(p){return esc(p.n)}).join(', '):'Personne de prévu')+'</b><small>'+(m?'Il manque '+m+' personne'+(m>1?'s':''):L.length+' sur '+b+' prévu'+(b>1?'s':''))+'</small>'+
+   L.map(function(p){var t=Q.taches(k,p.n);return '<span class="cheq-tt"><em>'+esc(p.n)+'</em> '+(t.length?esc(t.join(', ').toLowerCase()):'<i>tâche à donner</i>')+'</span>'}).join('')+'</span>'+
+   '<span class="cheq-av">'+L.map(function(p){return '<i>'+esc(p.n.charAt(0))+'</i>'}).join('')+'</span><span class="ch-vb">Changer</span></button>'}).join('');
+ var P=Q.prevenu(c.id),bas;
+ if(P&&!P.change)bas='<div class="cheq-vu">'+P.qui.map(function(n){var v=P.vu.indexOf(n)>-1;return '<span class="'+(v?'cheq-v':'')+'">'+esc(n)+(v?' · a vu':' · pas encore vu')+'</span>'}).join('')+'</div><button type="button" class="cp-lien" id="cheq-prev">Renvoyer à l\'équipe</button>';
+ else bas='<button type="button" class="btn go cf-go" id="cheq-prev" style="width:100%;margin-top:12px"><span class="lab"><span>'+(P?'Prévenir l\'équipe des changements':'Prévenir l\'équipe')+'</span></span></button>';
+ return '<div class="card cheq" id="ch-equipe"><div class="cp-af-h"><b>Votre équipe sur ce chantier</b>'+(nm?'<span class="ch-etat pb2">Il manque du monde</span>':'<span class="ch-etat ok">Complet ✓</span>')+'</div>'+
+  '<div class="cheq-l">'+rows+'</div>'+bas+'</div>'}
+function eqcJour(c,k){var Q=PCEQ;
+ function sous(){var n=Q.qui(c.id,k).length,b=Q.besoin(c.id,k);return n+' sur '+b+' prévu'+(b>1?'s':'')}
+ function corps(){var b=Q.besoin(c.id,k);
+  return '<div class="cheq-bes"><span>Il faut</span><button type="button" data-bes="-1" aria-label="Une personne de moins">−</button><b>'+b+'</b><button type="button" data-bes="1" aria-label="Une personne de plus">+</button><span>personne'+(b>1?'s':'')+'</span></div>'+
+   '<p class="hint" style="margin:0 0 10px">Touchez une personne pour la mettre sur ce chantier, ou l\'enlever. Puis touchez ce qu\'elle fait ce jour-là.</p><div class="eq-choix">'+Q.EQ.map(function(p){var v=Q.get(k,p.n),ici=v===c.id,ail=v&&!ici;
+   var T=Q.taches(k,p.n),O=(c.ouv||[]).map(function(o){return o[0]});T.forEach(function(t){if(O.indexOf(t)<0)O.push(t)});
+   var hT=ici&&O.length?'<div class="cheq-ta"><small>Ce qu\'il fait :</small>'+O.map(function(t){var on=T.indexOf(t)>-1;return '<button type="button" class="cheq-tc'+(on?' on':'')+'" data-ta="'+esc(t)+'" data-tp="'+esc(p.n)+'" aria-pressed="'+on+'">'+esc(t)+'</button>'}).join('')+'</div>':'';
+   return '<div class="cheq-pw'+(ici?' on':'')+'"><button type="button" class="eq-o'+(ici?' on':'')+'" data-pp="'+esc(p.n)+'"><span class="eq-av"><i>'+esc(p.n.charAt(0))+'</i></span><span class="tx"><b>'+esc(p.n)+'</b><small>'+(ici?'Sur ce chantier':ail?(v==='bureau'||v==='repos'?esc(Q.nomCase(v)):'Déjà prévu : '+esc(Q.nomCase(v)))+' · il viendra ici à la place':esc(p.r)+' · libre')+'</small></span><span class="eq-ck">'+(ici?'✓':'+')+'</span></button>'+hT+'</div>'}).join('')+'</div>'}
+ X.xopen(Q.jourLong(k).replace(/^./,function(x){return x.toUpperCase()}),c.n+' · '+sous(),corps(),'<button class="btn go" id="eq-ok" style="width:100%">C\'est bon</button>',lie);
+ function lie(){$$('#x-in [data-pp]').forEach(function(b){b.onclick=function(){var n=b.dataset.pp;Q.set(k,n,Q.get(k,n)===c.id?'':c.id);maj()}});
+  $$('#x-in [data-ta]').forEach(function(b){b.onclick=function(){Q.togTache(k,b.dataset.tp,b.dataset.ta);maj()}});
+  $$('#x-in [data-bes]').forEach(function(b){b.onclick=function(){Q.setBesoin(c.id,k,Q.besoin(c.id,k)+(+b.dataset.bes));maj()}});
+  var ok=$('#eq-ok');if(ok)ok.onclick=function(){X.xclose();recharger('agenda','#ch-equipe')}}
+ function maj(){$('#x-in').innerHTML=corps();$('#x-s').textContent=c.n+' · '+sous();lie()}}
+function eqcPrev(c){var Q=PCEQ,J=Q.jours(c.id),par={};J.forEach(function(k){Q.qui(c.id,k).forEach(function(p){var t=Q.taches(k,p.n);(par[p.n]=par[p.n]||[]).push(Q.jourCourt(k)+(t.length?' : '+esc(t.join(', ').toLowerCase()):''))})});
+ var N=Object.keys(par);if(!N.length){X.toast('Personne à prévenir','Mettez d\'abord quelqu\'un sur un jour du chantier.');return}
+ var h='<p class="hint" style="margin:0 0 10px">Chacun reçoit ses jours, ce qu\'il a à faire et l\'adresse du chantier'+(c.v?' ('+esc(c.v)+')':'')+', par SMS et dans son Espace.</p><div class="cp-af-l">'+N.map(function(n){
+  return '<div class="cp-rel"><span class="cheq-av"><i>'+esc(n.charAt(0))+'</i></span><span class="tx"><b>'+esc(n)+'</b><small>'+par[n].join('<br>')+'</small></span></div>'}).join('')+'</div>';
+ X.xopen('Prévenir l\'équipe',c.n,h,'<button class="btn" data-xclose>Annuler</button><button class="btn go" id="cheq-ok">Envoyer</button>',function(){
+  var ok=$('#cheq-ok');if(ok)ok.addEventListener('click',function(){Q.prevenir(c.id);X.xclose();X.toast('Équipe prévenue',N.length+(N.length>1?' personnes ont':' personne a')+' reçu ses jours (démo).');recharger('agenda','#ch-equipe')})})}
 function agenda(c){var T=X.iso?X.iso(X.TODAY||new Date()):'',L=evsCh(c),av=L.filter(function(e){return e.d>=T}),pa=L.filter(function(e){return e.d<T});
  function ligne(e){var d=new Date(e.d+'T12:00:00'),col=(window.PCCOUL&&PCCOUL.ev(e))||'var(--k-'+e.k+')',jour=e.x&&e.x.jour;
   return '<button type="button" class="cf-li ch-ag" data-agd="'+e.d+'" style="--c:'+col+'"><span class="ch-agd"><small>'+JC[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+MC[d.getMonth()]+'</small></span>'+
    '<span class="tx"><b>'+esc(e.t)+'</b><small>'+(jour?'Toute la journée':e.s.replace(':','h')+' – '+e.e.replace(':','h'))+(e.w?' · '+esc(e.w):'')+'</small></span><span class="pill">'+(TYC[e.k]||'')+'</span></button>'}
- var h='<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
+ var h=eqcCard(c)+'<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
   (av.length?'<div class="lst cf-l" style="padding:0!important">'+av.map(ligne).join('')+'</div>':'<p class="hint" style="margin:4px 0 0">Aucun jour ni rendez-vous prévu pour ce chantier.</p>')+
   (c.st!=='done'?'<button type="button" class="btn go cf-go" id="ch-agadd" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter au planning</span></span></button>':'')+
   '<button type="button" class="btn" id="ch-agvoir" style="width:100%;margin-top:10px">Voir dans le planning</button></div>';
@@ -458,6 +495,8 @@ function voirPlanning(d){X.go('planning');try{if(X.calWeek)X.calWeek(new Date((d
 
 function lier(c){var id=c.id;
  /* planning du chantier */
+ $$('#chx [data-eqj]').forEach(function(b){b.addEventListener('click',function(){eqcJour(c,b.dataset.eqj)})});
+ var eqp=$('#cheq-prev');if(eqp)eqp.addEventListener('click',function(){eqcPrev(c)});
  var aga=$('#ch-agadd');if(aga)aga.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'chantier',ch:id,d:X.iso(X.TODAY)})});
  var sta=$('#ch-stadd');if(sta)sta.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'st',ch:id,d:X.iso(X.TODAY)})});
  $$('#chx [data-stsms]').forEach(function(b){b.addEventListener('click',function(){PCPLAN.st.sms(b.dataset.stsms,id)})});
