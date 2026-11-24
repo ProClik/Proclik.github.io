@@ -327,7 +327,7 @@ html body #pf-form,html body #pf-later{display:none!important}
 @media (orientation:landscape) and (max-height:520px){#planfull .pf-bar:not(:has(#pf-done.fin)){display:none}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
-<link rel="stylesheet" href="espace2.css?v=13">
+<link rel="stylesheet" href="espace2.css?v=15">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -671,8 +671,8 @@ const D={
   {k:"acces",t:"chips",l:"L'accès au chantier est…",h:"Difficile : escalier étroit, rue piétonne, longue distance à pied, portail étroit…",o:["Facile","Difficile",DK]}]},
  cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
   g:{n:"Cloison",cnt:"Combien de cloisons à créer ?",add:"+ Ajouter une autre cloison",f:[
-   {k:"L",t:"num",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
-   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"L",t:"num",ill:"murL",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
+   {k:"H",t:"num",ill:"hsp",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre",DK]},
    {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
    {k:"largeur",t:"chips",l:"Largeur de la porte (hauteur standard 204 cm)",lf:i=>i.portes>1?"Largeur des portes (hauteur standard 204 cm)":"Largeur de la porte (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
@@ -682,8 +682,8 @@ const D={
   f:[{k:"phonique",t:"chips",l:"Isolation contre le bruit",o:["Standard","Renforcée",DK],h:"Renforcée = deux plaques par face, idéal pour une chambre ou une salle de bain."}]},
  doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
   g:{n:"Mur",cnt:"Combien de murs à isoler ?",add:"+ Ajouter un autre mur",f:[
-   {k:"L",t:"num",l:"Longueur du mur",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
-   {k:"H",t:"num",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"L",t:"num",ill:"murL",l:"Longueur du mur",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
+   {k:"H",t:"num",ill:"hsp",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"ext",t:"chips",l:"Ce mur donne-t-il sur l'extérieur ?",o:["Oui","Non",DK]},
    {k:"etat",t:"chips",l:"État du mur",o:["Bon, bien droit","Abîmé ou irrégulier","Humide",DK]},
    {k:"fen",t:"step",l:"Fenêtres ou portes dans ce mur",min:0,max:6}]},
@@ -691,33 +691,33 @@ const D={
  ]},
  plafond:{t:"Vos faux plafonds",s:"Pièce par pièce. Mesurez au sol, c'est plus simple.",cheer:"Pièce par pièce",sch:"piece",
   g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",f:[
-   {k:"L",t:"num",l:"Longueur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
-   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5]},
-   {k:"H",t:"num",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"L",t:"num",ill:"pieceL",l:"Longueur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
+   {k:"l",t:"num",ill:"piecel",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5]},
+   {k:"H",t:"num",ill:"hsp",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
    {k:"baisser",t:"chips",l:"Voulez-vous baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DK]},
    {k:"humide",t:"chips",l:"Pièce humide (salle de bain, buanderie) ?",o:["Oui","Non",DK]}]}},
- combles:{t:"Vos combles perdus",s:"Le grenier non habitable, au-dessus du dernier plafond.",cheer:"Le plus gros de la chaleur part par là",sch:"piece",f:[
-   {k:"surface",t:"num",l:"Surface au sol des combles",u:"m²",st:1,dk:1,h:"Souvent proche de la surface de l'étage en dessous.",v:o=>!/aménag/i.test(o.type||"")},
+ combles:{t:"Vos combles perdus",s:"Le grenier non habitable, au-dessus du dernier plafond.",cheer:"Le plus gros de la chaleur part par là",f:[
+   {k:"surface",t:"num",ill:"surf",l:"Surface au sol des combles",u:"m²",st:1,dk:1,h:"Souvent proche de la surface de l'étage en dessous.",v:o=>!/aménag/i.test(o.type||"")},
    {k:"acces",t:"chips",l:"Comment y accède-t-on ?",o:["Trappe","Escalier","Pas d'accès",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"existant",t:"chips",l:"Y a-t-il déjà de l'isolant ?",o:["Non","Oui, ancien ou tassé",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"spots",t:"chips",l:"Des spots encastrés dans le plafond en dessous ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")},
    {k:"conduit",t:"chips",l:"Un conduit de cheminée traverse les combles ?",o:["Oui","Non",DK],v:o=>!/aménag/i.test(o.type||"")}]},
  rampants:{t:"L'isolation sous la toiture",s:"Vos mesures suffisent : la surface est calculée pour vous.",cheer:"Le toit, c'est presque fait",f:[
    {k:"forme",t:"chips",pics:"rampants",l:"Votre toit ressemble plutôt à…",o:["2 pentes","1 pente","Pentes + plafond plat",DK],h:"Touchez le dessin qui ressemble à votre toit. Les flèches montrent les hauteurs à mesurer ensuite : au plus haut, et en bas où le plafond commence à pencher."},
-   {k:"hfait",t:"num",l:"Hauteur au plus haut",lf:i=>i.forme==="Pentes + plafond plat"?"Hauteur du plafond plat":"Hauteur au plus haut",u:"cm",st:1,dk:1,h:"Du sol de la pièce jusqu'au point le plus haut du plafond (la flèche sur le dessin)."},
-   {k:"hmur1",t:"num",l:"Hauteur en bas, 1er côté",lf:i=>i.forme==="1 pente"?"Hauteur en bas, côté le plus bas":"Hauteur en bas, 1er côté",u:"cm",st:1,dk:1,h:"Du sol jusqu'à l'endroit où le plafond commence à pencher (« en bas » sur le dessin). Souvent entre 40 et 120 cm."},
-   {k:"hmur2",t:"num",l:"Hauteur en bas, 2e côté",u:"cm",st:1,dk:1,h:"Pareil de l'autre côté. Souvent la même.",sh:i=>i.forme!=="1 pente"},
-   {k:"lp",t:"num",l:"Largeur du plafond plat",u:"m",st:.1,dk:1,pre:[1,1.5,2,2.5,3],h:"D'un bord à l'autre de la partie plate, en haut.",sh:i=>i.forme==="Pentes + plafond plat"},
-   {k:"L",t:"num",l:"Longueur de la pièce sous le toit",u:"m",st:.1,dk:1,pre:[3,4,5,6,8],h:"Mesurée au sol, dans le sens du haut du toit. Plusieurs pièces : mesurez tout l'étage.",sh:()=>!RPLAN()},
-   {k:"l",t:"num",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[3,4,5,6],hf:i=>{const r=RSURF(i);return r?`C'est tout : ≈ ${fr(r)} m² de pente à isoler, calculés pour vous.`:"Mesurée au sol, d'un côté bas à l'autre."},sh:()=>!RPLAN()},
+   {k:"hfait",t:"num",ill:i=>"toit:"+(i.forme||"")+":hfait",l:"Hauteur au plus haut",lf:i=>i.forme==="Pentes + plafond plat"?"Hauteur du plafond plat":"Hauteur au plus haut",u:"cm",st:1,dk:1,h:"Du sol de la pièce jusqu'au point le plus haut du plafond (la flèche sur le dessin)."},
+   {k:"hmur1",t:"num",ill:i=>"toit:"+(i.forme||"")+":hmur1",l:"Hauteur en bas, 1er côté",lf:i=>i.forme==="1 pente"?"Hauteur en bas, côté le plus bas":"Hauteur en bas, 1er côté",u:"cm",st:1,dk:1,h:"Du sol jusqu'à l'endroit où le plafond commence à pencher (« en bas » sur le dessin). Souvent entre 40 et 120 cm."},
+   {k:"hmur2",t:"num",ill:i=>"toit:"+(i.forme||"")+":hmur2",l:"Hauteur en bas, 2e côté",u:"cm",st:1,dk:1,h:"Pareil de l'autre côté. Souvent la même.",sh:i=>i.forme!=="1 pente"},
+   {k:"lp",t:"num",ill:i=>"toit:"+(i.forme||"")+":lp",l:"Largeur du plafond plat",u:"m",st:.1,dk:1,pre:[1,1.5,2,2.5,3],h:"D'un bord à l'autre de la partie plate, en haut.",sh:i=>i.forme==="Pentes + plafond plat"},
+   {k:"L",t:"num",ill:"toitL",l:"Longueur de la pièce sous le toit",u:"m",st:.1,dk:1,pre:[3,4,5,6,8],h:"Mesurée au sol, dans le sens du haut du toit. Plusieurs pièces : mesurez tout l'étage.",sh:()=>!RPLAN()},
+   {k:"l",t:"num",ill:i=>"toit:"+(i.forme||"")+":l",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[3,4,5,6],hf:i=>{const r=RSURF(i);return r?`C'est tout : ≈ ${fr(r)} m² de pente à isoler, calculés pour vous.`:"Mesurée au sol, d'un côté bas à l'autre."},sh:()=>!RPLAN()},
    {k:"ft",t:"chips",brk:1,ic:'<path d="M2.5 13.5 12 5l9.5 8.5"/><path d="M5 11.3v8.2h14v-8.2"/><path d="m13.6 7 3.4 3-1.5 1.8-3.4-3z" fill="currentColor" fill-opacity=".25"/><path d="M10 19.5v-4h4v4"/>',l:"Combien de fenêtres de toit en tout ?",lf:i=>i.forme==="1 pente"?"Combien de fenêtres dans la pente du toit ?":"Combien de fenêtres de toit en tout ?",h:"En comptant les 2 côtés du toit.",hf:i=>i.forme==="1 pente"?"Les fenêtres posées dans la pente, au-dessus de la pièce.":"En comptant les 2 côtés du toit.",o:["Aucune","1","2","3","4 ou plus",DK]},
    {k:"ftc",t:"chips",l:"Elles sont…",h:"Sur le même côté du toit, ou réparties des deux côtés ?",o:["Toutes du même côté","Des deux côtés",DK],sh:i=>i.forme!=="1 pente"&&/^(2|3|4 ou plus)$/.test(i.ft||"")}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
   g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
    {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
-   {k:"taille",t:"chips",l:"Taille en cm (largeur × hauteur)",o:["60 × 75","80 × 95","100 × 115","100 × 125","120 × 135","Porte-fenêtre 80 × 215","Porte-fenêtre 120 × 215","Autre taille",DK]},
-   {k:"Lc",t:"num",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
-   {k:"Hc",t:"num",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
+   {k:"taille",t:"chips",ill:"fen",l:"Taille en cm (largeur × hauteur)",o:["60 × 75","80 × 95","100 × 115","100 × 125","120 × 135","Porte-fenêtre 80 × 215","Porte-fenêtre 120 × 215","Autre taille",DK]},
+   {k:"Lc",t:"num",ill:"fenL",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
+   {k:"Hc",t:"num",ill:"fenH",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"ouv",t:"chips",l:"Ouverture",o:["Battant","Coulissante","Fixe",DK]},
    {k:"ob",t:"chips",l:"Oscillo-battant ?",o:["Oui","Non",DK],def:"Oui",h:"Elle s'ouvre aussi en haut, en soufflet, pour aérer.",sh:i=>i.ouv==="Battant"},
    {k:"mat",t:"chips",l:"Matériau",o:["PVC","Aluminium","Bois",DK]},
@@ -727,14 +727,14 @@ const D={
  portes:{t:"Vos portes intérieures",s:"Hauteur standard 2,04 m. Choisissez la largeur la plus proche.",cheer:"Porte par porte",
   g:{n:"Porte",cnt:"Combien de portes à changer ou à ajouter ?",add:"+ Ajouter une autre porte",copy:1,f:[
    // 22/11 (avis A à Z) : petit dessin « où mesurer » pour quelqu'un qui ne connaît pas les tailles de porte.
-   {k:"largeur",t:"chips",l:"Largeur (hauteur standard 204 cm)",h:"Mesurez la porte elle-même, sans le cadre, et touchez la taille la plus proche.",svg:`<svg class="porte-m" viewBox="0 0 160 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="6" width="80" height="112" rx="2" stroke-width="2.4" opacity=".45"/><rect x="48" y="12" width="64" height="106" rx="1.5" stroke-width="2"/><circle cx="102" cy="66" r="2.6" fill="currentColor" stroke="none"/><path d="M50 40h60M50 40l6-4M50 40l6 4M110 40l-6-4M110 40l-6 4" stroke-width="2"/><text x="80" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" stroke="none">à mesurer</text><text x="132" y="96" font-size="9" fill="currentColor" stroke="none" opacity=".6">cadre</text><path d="M130 92l-8-4" stroke-width="1.4" opacity=".6"/></svg>`,o:["63 cm","73 cm","83 cm","93 cm",DK]},
+   {k:"largeur",t:"chips",l:"Largeur (hauteur standard 204 cm)",h:"Mesurez la porte elle-même, sans le cadre, et touchez la taille la plus proche.",ill:"porte",o:["63 cm","73 cm","83 cm","93 cm",DK]},
    {k:"type",t:"chips",l:"Modèle",o:["Standard","Plus isolante contre le bruit",DK]},
    {k:"bati",t:"chips",l:"Cette porte…",o:["Dans une cloison neuve","Remplace une ancienne porte (à déposer)",DK]},
    {k:"fin",t:"chips",l:"Finition de la porte",h:"Fin de chantier : finition sur demande, plus chère.",o:["Prête à peindre","Fin de chantier (finition sur demande)",DK]}]}},
  sol:{t:"Vos sols",s:"Pièce par pièce. Une estimation suffit, tout sera vérifié sur place.",cheer:"Ça prend forme",
   g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",copy:1,f:[
    {k:"piece",t:"chips",l:"Quelle pièce ?",o:["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre",DK]},
-   {k:"surface",t:"num",l:"Surface au sol",u:"m²",st:1,dk:1,pre:[5,10,15,20,30]},
+   {k:"surface",t:"num",ill:"surf",l:"Surface au sol",h:"Longueur × largeur de la pièce, au sol. Une estimation suffit.",u:"m²",st:1,dk:1,pre:[5,10,15,20,30]},
    {k:"actuel",t:"chips",l:"Sol actuel",o:["Carrelage","Parquet","Stratifié","Lino / vinyle","Moquette","Béton brut",DK]},
    {k:"depose",t:"chips",l:"Faut-il enlever l'ancien sol ?",o:["Oui","Non",DK],sh:i=>i.actuel!=="Béton brut"},
    {k:"neuf",t:"chips",l:"Sol souhaité",o:["Carrelage","Parquet","Stratifié","Vinyle (lames ou dalles)",DK]},
@@ -744,8 +744,8 @@ const D={
    {k:"travail",t:"chips",l:"Que faut-il faire ?",o:["Créer un escalier","Remplacer l'escalier","Rénover ou habiller l'existant",DK]},
    {k:"forme",t:"chips",l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
    {k:"mat",t:"chips",l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
-   {k:"largeur",t:"chips",l:"Largeur",o:["70 cm","80 cm","90 cm",DK]},
-   {k:"haut",t:"num",l:"Hauteur à monter (d'un sol à l'autre)",u:"cm",st:1,dk:1,pre:[250,270,290]},
+   {k:"largeur",t:"chips",ill:"escL",l:"Largeur",h:"Mesurez la largeur des marches.",o:["70 cm","80 cm","90 cm",DK]},
+   {k:"haut",t:"num",ill:"escH",l:"Hauteur à monter (d'un sol à l'autre)",u:"cm",st:1,dk:1,pre:[250,270,290]},
    {k:"rampe",t:"chips",l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
  autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
    {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
@@ -944,6 +944,49 @@ const pn=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null
 function obj(sec,i){return i==null?S[sec]:S[sec].items[i]}
 
 // 18/11 (Cyril) : la forme du toit se choisit en touchant le dessin (moitié gauche = 2 pentes, droite = 1 pente).
+// Dessins « où mesurer » (Cyril 24/11 : même style que les dessins du toit) : un dessin par question de mesure,
+// la mesure demandée en laiton (flèche + mots), les autres en pointillés discrets. f.ill = clé, ou fonction (o)=>clé.
+const MESH=(()=>{let ID=0;const LA="#A8823F",W='fill="var(--n1-calme,#F6F7F9)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"',
+ mk=()=>'<defs><marker id="mf'+ID+'" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M1.5 1.8 8.5 5 1.5 8.2z" fill="'+LA+'" stroke="'+LA+'" stroke-width="1.6" stroke-linejoin="round"/></marker></defs>',
+ A=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${LA}" stroke-width="2.4" stroke-linecap="round" marker-start="url(#mf${ID})" marker-end="url(#mf${ID})"/>`,
+ G=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1}L${x2} ${y2}" stroke="var(--fg)" stroke-opacity=".22" stroke-width="1.6" stroke-dasharray="4 4" stroke-linecap="round"/>`,
+ T=(x,y,t,a,s)=>`<text x="${x}" y="${y}"${a?` text-anchor="${a}"`:""} font-family="Manrope,sans-serif" font-weight="800" font-size="${s||11}" fill="${LA}">${t}</text>`,
+ M=(x,y,t,a)=>`<text x="${x}" y="${y}"${a?` text-anchor="${a}"`:""} font-family="Manrope,sans-serif" font-weight="600" font-size="9.5" fill="var(--muted)">${t}</text>`,
+ P=(x,y)=>`<circle cx="${x}" cy="${y}" r="4" fill="${LA}"/>`,
+ band=d=>`<path d="${d}" fill="none" stroke="${LA}" stroke-opacity=".28" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
+ sv=(b,lab)=>`<svg class="mes" viewBox="0 0 320 170" role="img" aria-label="${lab}">${mk()}${b}</svg>`;
+ // coupe d'une pièce : du sol au plafond
+ const hsp=()=>sv(`<path d="M46 34H274V140H46Z" ${W}/><path d="M36 34H284M36 140H284" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/><path d="M236 140v-50a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v50" fill="none" stroke="var(--fg)" stroke-width="2.2"/>${A(120,135,120,39)}${T(132,84,"du sol")}${T(132,98,"au plafond")}${M(160,160,"vue en coupe","middle")}`,"Mesurer du sol au plafond");
+ // mur vu de face : longueur au sol
+ const murL=()=>sv(`<path d="M34 30H286V138H34Z" ${W}/><path d="M24 138H296" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/>${A(40,124,280,124)}${T(160,112,"d'un bout à l'autre, au sol","middle")}${G(34,30,34,138)}${M(160,160,"le mur vu de face","middle")}`,"Mesurer la longueur du mur au sol");
+ // pièce vue de dessus
+ const room=(L,l,both)=>sv(`<rect x="56" y="22" width="208" height="116" rx="6" ${W} stroke-width="6"/>${L?A(68,40,252,40):G(68,40,252,40)}${l?A(78,52,78,126):G(78,52,78,126)}${L?T(160,62,"longueur","middle"):""}${l?T(90,both?84:94,"largeur"):""}${both?M(196,108,"longueur × largeur","middle")+M(196,122,"= la surface en m²","middle"):""}${M(160,160,"la pièce vue de dessus","middle")}`,both?"Mesurer la longueur et la largeur de la pièce":L?"Mesurer la longueur de la pièce":"Mesurer la largeur de la pièce");
+ // fenêtre vue de l'intérieur : d'un bord du mur à l'autre
+ const fen=(w,h)=>sv(`<rect x="22" y="2" width="276" height="154" rx="6" fill="var(--n1-calme,#F6F7F9)" stroke="var(--fg)" stroke-opacity=".25" stroke-width="1.6"/><rect x="104" y="34" width="112" height="100" rx="2" fill="var(--bg)" stroke="var(--fg)" stroke-width="3"/><rect x="112" y="42" width="96" height="84" rx="2" fill="#DCE6EE" stroke="var(--fg)" stroke-width="2.2"/><path d="M160 42v84" stroke="var(--fg)" stroke-width="2.2"/>${w?A(106,24,214,24):G(106,24,214,24)}${h?A(232,36,232,132):G(232,36,232,132)}${w?T(160,18,"largeur","middle",10.5):""}${h?T(240,88,"hauteur"):""}${M(160,148,"vue de l'intérieur, d'un bord du mur à l'autre","middle")}`,"Mesurer l'ouverture de la fenêtre, côté intérieur");
+ // porte : la porte elle-même, sans le cadre
+ const porte=()=>sv(`<rect x="104" y="14" width="112" height="142" rx="3" ${W} stroke-opacity=".45"/><rect x="116" y="24" width="88" height="132" rx="2" ${W}/><circle cx="194" cy="94" r="3" fill="var(--fg)"/>${A(119,50,201,50)}${T(160,42,"à mesurer","middle")}${M(236,128,"le cadre")}<path d="M234 124 218 118" stroke="var(--fg)" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>`,"Mesurer la largeur de la porte, sans le cadre");
+ // escalier : d'un sol à l'autre / largeur
+ const escH=()=>sv(`<path d="M24 146H296" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/><path d="M170 46H296V58H170Z" fill="var(--fg)" fill-opacity=".12" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M40 146V128H58V110H76V92H94V74H112V58H130" fill="none" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M130 58H170" stroke="var(--fg)" stroke-width="3"/>${A(246,141,246,51)}${T(232,92,"d'un sol","end")}${T(232,106,"à l'autre","end")}${M(220,34,"le sol du dessus","middle")}`,"Mesurer la hauteur d'un sol à l'autre");
+ const escL=()=>sv(`<rect x="70" y="30" width="180" height="70" rx="4" ${W}/>${[0,1,2,3,4,5,6,7].map(i=>`<path d="M${92+i*20} 30v70" stroke="var(--fg)" stroke-opacity=".35" stroke-width="1.6"/>`).join("")}${A(262,34,262,96)}${T(272,70,"largeur")}${M(160,124,"l'escalier vu de dessus","middle")}${M(160,138,"(la largeur des marches)","middle")}`,"Mesurer la largeur de l'escalier");
+ // toit : coupe selon la forme, la hauteur demandée en laiton
+ const R={"2":{p:"M60 140V95L160 30L260 95V140Z",b:"M70 92 160 38 250 92",hf:[160,36],m1:[72,96,60,95],m2:[248,96,260,95]},
+  "1":{p:"M60 140V100L260 30V140Z",b:"M70 97 252 39",hf:[248,37],m1:[72,101,60,100]},
+  "p":{p:"M60 140V100L120 50H200L260 100V140Z",b:"M70 97 122 57H198L250 97",hf:[160,55],m1:[72,101,60,100],m2:[248,101,260,100],lp:1}};
+ const toit=(fo,k)=>{const r=R[/^1/.test(fo||"")?"1":/plat/i.test(fo||"")?"p":"2"],o=[];
+  o.push(`<path d="${r.p}" ${W}/>`,band(r.b),`<path d="M50 140H270" stroke="var(--fg)" stroke-width="4" stroke-linecap="round"/>`);
+  const hf=r.hf,m1=r.m1,m2=r.m2;
+  o.push(k==="hfait"?A(hf[0],136,hf[0],hf[1]+4):G(hf[0],136,hf[0],hf[1]+6));
+  if(m1)o.push(k==="hmur1"?A(m1[0],136,m1[0],m1[1]+3)+P(m1[2],m1[3]):G(m1[0],136,m1[0],m1[1]+4));
+  if(m2)o.push(k==="hmur2"?A(m2[0],136,m2[0],m2[1]+3)+P(m2[2],m2[3]):G(m2[0],136,m2[0],m2[1]+4));
+  if(r.lp)o.push(k==="lp"?A(124,40,196,40):"");
+  if(k==="l")o.push(A(64,128,256,128));
+  const lab={hfait:[hf[0]-10,hf[0]>200?90:108,"end",[r.lp?"hauteur du plat":"au plus haut"]],hmur1:[84,112,"",["en bas :","du sol jusqu'au point"]],hmur2:[236,112,"end",["en bas,","de l'autre côté"]],lp:[160,30,"middle",["largeur du plafond plat"]],l:[160,120,"middle",["d'un côté bas à l'autre, au sol"]]}[k];
+  if(lab)lab[3].forEach((t,i)=>o.push(i?M(lab[0],lab[1]+i*13,t,lab[2]):T(lab[0],lab[1],t,lab[2])));
+  if(k==="hmur1"||k==="hmur2"){const m=k==="hmur1"?m1:m2,L=k==="hmur1",x=L?6:314,a=L?"":"end";o.push(`<path d="M${m[2]+(L?-3:3)} ${m[3]-5}L${L?26:294} ${m[3]-22}" fill="none" stroke="${LA}" stroke-width="1.4" stroke-dasharray="3 3"/>`,T(x,m[3]-56,"ici, le plafond",a,10),T(x,m[3]-44,"commence",a,10),T(x,m[3]-32,"à pencher",a,10))}
+  return sv(o.join(""),"Où mesurer sous le toit")};
+ const toitL=()=>sv(`<rect x="40" y="34" width="240" height="88" rx="4" ${W}/><path d="M44 78H276" stroke="var(--fg)" stroke-width="2.2" stroke-dasharray="6 5"/>${M(160,72,"le haut du toit","middle")}${A(44,136,276,136)}${T(160,156,"dans le sens du haut du toit","middle")}${M(160,24,"l'étage vu de dessus","middle")}`,"Mesurer la longueur sous le toit");
+ return k=>{if(!k)return"";ID++;const[a,b,c]=String(k).split(":");
+  return a==="hsp"?hsp():a==="murL"?murL():a==="pieceL"?room(1,0):a==="piecel"?room(0,1):a==="surf"?room(1,1,1):a==="fen"?fen(1,1):a==="fenL"?fen(1,0):a==="fenH"?fen(0,1):a==="porte"?porte():a==="escH"?escH():a==="escL"?escL():a==="toitL"?toitL():a==="toit"?toit(b,c):""}})();
 const PLAT='<svg viewBox="0 0 160 170" role="img" aria-label="Toit à 2 pentes avec un plafond plat en haut"><defs><marker id="fl3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M1.5 1.8 8.5 5 1.5 8.2z" fill="#A8823F" stroke="#A8823F" stroke-width="1.6" stroke-linejoin="round"/></marker></defs><path d="M16 135V100.5Q16 98 18 96.3L54 60.3Q56 58 59 58H101Q104 58 106 60.3L142 96.3Q144 98 144 100.5V135Q144 140 139 140H21Q16 140 16 135Z" fill="var(--n1-calme,#F6F7F9)" stroke="var(--fg)" stroke-width="3" stroke-linejoin="round"/><path d="M24 100.5 58 65.5H102L136 100.5" fill="none" stroke="#A8823F" stroke-opacity=".28" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><g stroke="#A8823F" stroke-width="2.2" stroke-linecap="round"><path d="M80 134V66" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M26 134V106" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M134 134V106" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M60 48H100" marker-start="url(#fl3)" marker-end="url(#fl3)"/><path d="M59 52V56M101 52V56" stroke-width="1.4" stroke-opacity=".7"/></g><g font-family="Manrope,sans-serif" font-weight="700" font-size="9.5" fill="#A8823F"><text x="80" y="40" text-anchor="middle">largeur du plat</text><text x="86" y="98">au plus</text><text x="86" y="109">haut</text><text x="31" y="131">en bas</text><text x="129" y="131" text-anchor="end">en bas</text></g><text x="80" y="161" font-family="Manrope,sans-serif" font-weight="800" font-size="12.5" fill="var(--fg)" text-anchor="middle">Plafond plat en haut</text></svg>';
 function picH(k,j){if(j===2)return PLAT;const v=["6 0 160 170","160 0 160 170"][j],src=ILL[k][0],inner=src.slice(src.indexOf(">")+1,src.lastIndexOf("</svg>"));return`<svg viewBox="0 0 160 170" role="img" aria-label="${j?"Toit à 1 pente":"Toit à 2 pentes"}"><svg x="0" y="0" width="160" height="170" viewBox="${v}" overflow="hidden">${inner}</svg></svg>`}
 function fieldH(f,sec,i){
@@ -952,7 +995,7 @@ function fieldH(f,sec,i){
  if(MISS===id){const b=`<div class="bulle9" role="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.8-1.1 1.6v.4"/><circle cx="12" cy="17" r=".7" fill="currentColor"/></svg><span>${MISSMSG}</span></div>`;return fieldH0(f,sec,i,id).replace('<div class="q"','<div class="q miss"').replace(/<\/div>$/,b+'</div>')}return fieldH0(f,sec,i,id)}
 function fieldH0(f,sec,i,id){const o=obj(sec,i),da=`data-s="${sec}" data-i="${i??""}" data-k="${f.k}"`;
  const lab=f.l?`<label for="${id}" ${f.t==="chips"||f.t==="step"||f.t==="num"?'class="lab"':''}>${esc(f.l)}</label>`:"";
- const hint=f.h?`<p class="hint">${esc(f.h)}</p>`:"";
+ const hint=(f.h?`<p class="hint">${esc(f.h)}</p>`:"")+(f.ill?MESH(typeof f.ill==="function"?f.ill(o):f.ill):"");
  if(f.t==="multi"){const opts=typeof f.o==="function"?f.o(o):f.o,cur=Array.isArray(o[f.k])?o[f.k]:[];return`<div class="q"><span class="lab" id="${id}">${esc(f.l)}</span>${hint}<div class="chips" role="group" aria-labelledby="${id}">${opts.map(x=>`<button type="button" class="chip${x===DK?" dk":""}" aria-pressed="${cur.includes(x)}" ${da} data-v="${esc(x)}" data-multi="1">${esc(x)}</button>`).join("")}</div></div>`}
  if(f.t==="chips")return`<div class="q${f.brk?" pgbrk":""}"><span class="lab" id="${id}">${f.ic?`<svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${f.ic}</svg>`:""}${esc(f.l)}</span>${hint}${f.svg||""}<div class="chips${f.pics?" pics":""}" role="group" aria-labelledby="${id}">${f.o.map((x,j)=>`<button type="button" class="chip${x===DK?" dk":f.pics?" pic":""}" aria-pressed="${(o[f.k]??f.def)===x}" ${da} data-v="${esc(x)}"${f.pics&&x!==DK?` data-noico="1" aria-label="${esc(x)}"`:""}>${f.pics&&x!==DK?picH(f.pics,j):esc(x)}</button>`).join("")}</div></div>`;
  if(f.t==="num"){const dk=o[f.k+"_dk"]??(f.dkdef?true:false);let v=o[f.k];if(v==null&&f.def!=null&&!dk){v=f.def;o[f.k]=v}
@@ -1323,7 +1366,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
 });
 // Fiches en accordéon (Cyril 11/11) : une seule fiche ouverte ; « C'est bon » la replie en une ligne et ouvre la suivante.
 // 18/11 (Cyril) : parcours « décrire mes travaux » = une question à la fois dans chaque fiche (comme « Parlez-nous du logement »), qui avance seule après un choix.
-function schNow(){const d=D[cur];if(!d.g||!d.g.cnt)return true;if(!(S[cur].n>0))return false;const k=iOpen(cur);if(k<0)return false;const f=iqVis(cur,k)[iqPos(cur,k)];return innerWidth>=600&&!!f&&["L","H","l","Lc","Hc","taille"].includes(f.k)}
+function schNow(){const d=D[cur];if(!d.g||!d.g.cnt)return true;if(!(S[cur].n>0))return false;const k=iOpen(cur);if(k<0)return false;const f=iqVis(cur,k)[iqPos(cur,k)];return innerWidth>=600&&!!f&&!f.ill&&["L","H","l","Lc","Hc","taille"].includes(f.k)}
 function schTxt(sec,f){const d=D[sec];if(!d.sch||innerWidth>=600||!f||!["L","H","l","Lc","Hc","taille"].includes(f.k))return"";return`<p class="hint">${d.sch==="fenetre"?"Mesurez l'ouverture côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p>`}
 function iqVis(sec,i){const it=S[sec].items[i]||{};return D[sec].g.f.filter(f=>!f.sh||f.sh(it))}
 function iqPos(sec,i){const n=iqVis(sec,i).length,o=S[sec];let q=o.qi||0;if(o.qiI!==i){q=0;o.qi=0;o.qiI=i}return Math.max(0,Math.min(n-1,q))}
