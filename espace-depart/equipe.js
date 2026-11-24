@@ -81,45 +81,41 @@ if(seg)seg.appendChild(bt);
 bt.addEventListener('click',function(){$$('button',seg).forEach(function(x){x.setAttribute('aria-selected',String(x===bt))});$$('#v-planning .pv').forEach(function(p){p.hidden=p!==pv});rend()});
 ecoute.push(function(){if(!pv.hidden)rend()});
 
-/* 24/11 (Cyril : « le planning équipe n'est pas très clair ») : d'abord UN JOUR (qui est où, chantier par chantier, avec prénoms et tâches),
-   les jours de la semaine en pastilles (point rouge = il manque quelqu'un), puis la semaine de chacun écrite en noms de chantiers. */
+/* 24/11 (Cyril : « un planning équipe qui ressemblerait au planning de l'Espace ») : même dessin que Planning › Semaine
+   (jours en tuiles, aujourd'hui en bleu nuit, une colonne par jour, cartes à point de couleur, « Libre » en pointillés).
+   Dans chaque colonne : une carte par chantier avec les prénoms, puis Bureau, puis « Libre » = ceux qui n'ont rien de prévu. */
 var SEL=null;
 function court(v){if(!v)return '—';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';var c=(X.CH||{})[v];if(!c)return v;
   var w=(c.n||'').replace(/^(M\.|Mme|Cabinet|SCI|Maison)\s+/,'').split(/[\s·,]+/)[0];return w.length>8?w.slice(0,7)+'.':w}
-function soucis(k){var n=0;chantiers().forEach(function(c){if(qui(c.id,k).length<besoin(c.id,k))n++});EQ.forEach(function(p){if(!get(k,p.n))n++});return n}
+function nomCh(c){return (c.n||'').replace(/^Cabinet\s+/,'')}
 function manques(){var A=[];for(var i=0;i<5;i++){var k=kj(i);
   chantiers().forEach(function(c){var m=besoin(c.id,k)-qui(c.id,k).length;if(m>0)A.push([k,'c',c.id,jourCourt(k)+' · '+c.n+' : il manque '+m+' personne'+(m>1?'s':'')])});
   EQ.forEach(function(p){if(!get(k,p.n))A.push([k,'p',p.n,jourCourt(k)+' · '+p.n+' n\'a rien de prévu'])})}return A}
 function rend(){
-  var CHs=chantiers(),A=manques(),h='',env=S.env[kj(0)],T=iso(auj());
-  var K5=[0,1,2,3,4].map(kj);if(!SEL||K5.indexOf(SEL)<0)SEL=K5.indexOf(T)>-1?T:K5[0];var k=SEL;
+  var CHs=chantiers(),A=manques(),h='',env=S.env[kj(0)],T=iso(auj()),K5=[0,1,2,3,4].map(kj),M0=dte(K5[0]);
   h+=(window.PCTAG?window.PCTAG('equipe'):'');
-  h+='<div class="cal-top eq-top"><button type="button" class="eq-fl" data-wk="-1" aria-label="Semaine d\'avant">‹</button><h3>'+titreSem()+'</h3><button type="button" class="eq-fl" data-wk="1" aria-label="Semaine d\'après">›</button><span class="pill eq-ex">Exemple</span></div>';
-  /* les 5 jours */
-  h+='<div class="eq-jours" role="tablist" aria-label="Jour">'+K5.map(function(x,i){var s=soucis(x);
-    return '<button type="button" role="tab" data-sel="'+x+'" aria-selected="'+(x===k)+'"><small>'+JOURS[i].replace('.','')+'</small><b>'+dte(x).getDate()+'</b>'+(x===T?'<em>auj.</em>':'')+(s?'<i class="eq-pt" aria-label="à régler"></i>':'')+'</button>'}).join('')+'</div>';
-  /* qui est où ce jour-là */
-  var actifs=CHs.filter(function(c){return besoin(c.id,k)>0||qui(c.id,k).length});
-  h+='<div class="sec-h eq-sh"><h2>Qui est où · '+jourLong(k)+'</h2></div><div class="eq-ou">';
-  h+=actifs.map(function(c){var Q=qui(c.id,k),b=besoin(c.id,k),m=b-Q.length;
-    return '<div class="card eq-cc'+(m>0?' manque':'')+'" style="--cc:'+couleur(c.id)+'"><div class="eq-cch"><span class="tx"><b>'+esc(c.n)+'</b><small>'+esc(c.v||'')+'</small></span>'+
-      (m>0?'<span class="eq-nb manque"><b>'+Q.length+'</b> sur '+b+'</span>':'<span class="eq-nb"><b>'+Q.length+'</b> pers.</span>')+'</div>'+
-      (Q.length?'<div class="eq-gens">'+Q.map(function(p){var t=taches(k,p.n);return '<span class="eq-g"><i>'+p.n.charAt(0)+'</i><span><b>'+p.n+'</b>'+(t.length?'<small>'+esc(t.join(', ').toLowerCase())+'</small>':'')+'</span></span>'}).join('')+'</div>':'')+
-      (m>0?'<p class="eq-man">Il manque '+m+' personne'+(m>1?'s':'')+'</p>':'')+
-      '<button type="button" class="eq-ch2'+(m>0?' fort':'')+'" data-eqc="'+c.id+'" data-k="'+k+'">'+(m>0?'Ajouter quelqu\'un':'Changer')+'</button></div>'}).join('');
-  var hors={bureau:[],repos:[],'':[]};EQ.forEach(function(p){var v=get(k,p.n);if(v in hors)hors[v].push(p.n)});
-  var hh=[['bureau','Au bureau'],['repos','Repos ou congé'],['','Rien de prévu']].filter(function(x){return hors[x[0]].length}).map(function(x){
-    return '<div class="eq-hl'+(x[0]===''?' manque':'')+'"><span class="eq-ht">'+x[1]+'</span><span class="eq-hn">'+hors[x[0]].map(function(n){return '<button type="button" class="eq-hp" data-eqp="'+n+'" data-k="'+k+'">'+n+(x[0]===''?' · placer':'')+'</button>'}).join('')+'</span></div>'}).join('');
-  if(hh)h+='<div class="card eq-hors">'+hh+'</div>';
-  if(!actifs.length&&!hh)h+='<p class="hint">Rien de prévu ce jour-là.</p>';
-  h+='</div>';
+  h+='<div class="cal-top"><h3>'+MOIS[M0.getMonth()].replace(/^./,function(x){return x.toUpperCase()})+' <span>'+M0.getFullYear()+'</span></h3><div class="cal-nav"><button class="nb" data-wk="-1" aria-label="Semaine précédente">‹</button><button data-wk="0">Aujourd\'hui</button><button class="nb" data-wk="1" aria-label="Semaine suivante">›</button></div></div>';
+  var G='grid-template-columns:repeat(5,minmax(0,1fr))';
+  h+='<div class="wkc eqw"><div class="wkc-h" style="'+G+'"><div style="display:none"></div>'+K5.map(function(k,i){var n=EQ.filter(function(p){var v=get(k,p.n);return v&&v!=='repos'}).length,
+      m=CHs.reduce(function(s,c){return s+Math.max(0,besoin(c.id,k)-qui(c.id,k).length)},0);
+    return '<div class="'+(k===T?'tdy':'')+'">'+JOURS[i].replace('.','')+'<b>'+dte(k).getDate()+'</b><small class="f2n'+(m?' eqw-m':'')+'">'+(m?'il manque '+m:n+' pers.')+'</small></div>'}).join('')+'</div>';
+  h+='<div class="wkc-b" style="'+G+'">'+K5.map(function(k){
+    var cartes=CHs.filter(function(c){return besoin(c.id,k)>0||qui(c.id,k).length}).map(function(c){var Q=qui(c.id,k),m=besoin(c.id,k)-Q.length;
+      return '<button type="button" class="ev'+(m>0?' eqw-man':'')+'" data-eqc="'+c.id+'" data-k="'+k+'" style="--c:'+couleur(c.id)+'"><b>'+esc(nomCh(c))+'</b>'+
+        Q.map(function(p){return '<small>'+p.n+'</small>'}).join('')+(m>0?'<em>+'+m+' à trouver</em>':'')+'</button>'}).join('');
+    var bu=EQ.filter(function(p){return get(k,p.n)==='bureau'}),re=EQ.filter(function(p){return get(k,p.n)==='repos'}),li=EQ.filter(function(p){return !get(k,p.n)});
+    if(bu.length)cartes+='<button type="button" class="ev" data-eqp="'+bu[0].n+'" data-k="'+k+'" style="--c:var(--muted)"><b>Bureau</b>'+bu.map(function(p){return '<small>'+p.n+'</small>'}).join('')+'</button>';
+    if(re.length)cartes+='<button type="button" class="ev" data-eqp="'+re[0].n+'" data-k="'+k+'" style="--c:var(--line)"><b>Repos</b>'+re.map(function(p){return '<small>'+p.n+'</small>'}).join('')+'</button>';
+    if(li.length)cartes+='<button type="button" class="ev free" data-eqp="'+li[0].n+'" data-k="'+k+'" style="--c:var(--k-free)"><b>Libre</b>'+li.map(function(p){return '<small>'+p.n+'</small>'}).join('')+'</button>';
+    return '<div class="wkc-col'+(k===T?' tdy':'')+'">'+cartes+'</div>'}).join('')+'</div></div>';
+  h+='<div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="free"></i>Libre : rien de prévu</span></div>';
   /* à régler dans la semaine */
   if(A.length)h+='<div class="card eq-regl"><div class="sec-h" style="margin-bottom:4px"><h2>À régler cette semaine</h2><span>'+A.length+'</span></div>'+A.slice(0,5).map(function(a){
     return '<button type="button" class="eq-rg" '+(a[1]==='c'?'data-eqc="'+a[2]+'"':'data-eqp="'+a[2]+'"')+' data-k="'+a[0]+'"><span>'+esc(a[3])+'</span><span class="ch-vb">Régler</span></button>'}).join('')+(A.length>5?'<p class="hint" style="margin:6px 0 0">… et '+(A.length-5)+' autre'+(A.length-5>1?'s':'')+'.</p>':'')+'</div>';
   /* la semaine de chacun */
-  h+='<div class="sec-h eq-sh"><h2>La semaine de chacun</h2><span>touchez une case pour changer</span></div><div class="card eq-p"><div class="eq-pl eq-ph"><span class="eq-n"></span><span class="eq-sem">'+K5.map(function(x,i){return '<span class="'+(x===k?'on':'')+'">'+JOURS[i].replace('.','')+' '+dte(x).getDate()+'</span>'}).join('')+'</span></div>'+EQ.map(function(p){
+  h+='<div class="sec-h eq-sh"><h2>La semaine de chacun</h2><span>touchez une case pour changer</span></div><div class="card eq-p"><div class="eq-pl eq-ph"><span class="eq-n"></span><span class="eq-sem">'+K5.map(function(x,i){return '<span class="'+(x===T?'on':'')+'">'+JOURS[i].replace('.','')+' '+dte(x).getDate()+'</span>'}).join('')+'</span></div>'+EQ.map(function(p){
     return '<div class="eq-pl"><span class="eq-n"><b>'+p.n+'</b><small>'+p.r+'</small></span><span class="eq-sem">'+K5.map(function(x){var v=get(x,p.n),c=(X.CH||{})[v];
-      return '<button type="button" class="eq-k'+(v?'':' vide')+(c?' ch':'')+(x===k?' sel':'')+'" data-eqp="'+p.n+'" data-k="'+x+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+jourCourt(x)+' : '+esc(nomCase(v))+'">'+esc(court(v))+'</button>'}).join('')+'</span></div>'}).join('')+'</div>';
+      return '<button type="button" class="eq-k'+(v?'':' vide')+(c?' ch':'')+'" data-eqp="'+p.n+'" data-k="'+x+'" style="'+(c?'--cc:'+couleur(v):'')+'" aria-label="'+jourCourt(x)+' : '+esc(nomCase(v))+'">'+esc(court(v))+'</button>'}).join('')+'</span></div>'}).join('')+'</div>';
   h+='<button type="button" class="btn go eq-env" id="eq-env"><span class="lab"><span>'+(env?'Renvoyer le planning à l\'équipe':'Envoyer le planning à l\'équipe')+'</span></span></button>';
   if(env)h+='<p class="hint" style="text-align:center">Envoyé : chacun voit sa semaine dans son Espace.</p>';
   pv.innerHTML=h}
@@ -141,7 +137,7 @@ function caseP(p,k){var CHs=chantiers(),L=CHs.map(function(c){return [c.id,c.n]}
     $$('#x-in [data-v]').forEach(function(b){b.onclick=function(){set(k,p,b.dataset.v);X.xclose();X.toast(p+' : '+nomCase(b.dataset.v),jourLong(k))}})})}
 
 pv.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
-  if(b.dataset.wk){WK+=+b.dataset.wk;SEL=null;return rend()}
+  if(b.dataset.wk){WK=b.dataset.wk==='0'?0:WK+(+b.dataset.wk);return rend()}
   if(b.dataset.sel){SEL=b.dataset.sel;return rend()}
   if(b.dataset.eqc)return caseCh(b.dataset.eqc,b.dataset.k);
   if(b.dataset.eqp)return caseP(b.dataset.eqp,b.dataset.k);
@@ -172,6 +168,17 @@ st.textContent=
  '.eq-choix .eq-av i{width:30px;height:30px;font-size:13px}'+
  '#p-equipe .eq-top{justify-content:flex-start}#p-equipe .eq-top h3{flex:1;text-align:center;margin:0}#p-equipe .eq-fl{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:22px;line-height:1;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg)}'+
  '#p-equipe .eq-d.off{opacity:.45;box-shadow:none}'+
+ 'html body #v-planning #p-equipe .wkc-b{display:grid;gap:4px;height:auto!important}'+
+ 'html body #v-planning #p-equipe .wkc-col{position:relative;display:flex;flex-direction:column;gap:6px;padding:4px;min-height:220px}'+
+ 'html body #v-planning #p-equipe .wkc-col .ev{position:relative!important;left:auto!important;right:auto!important;top:auto!important;height:auto!important;display:flex!important;flex-direction:column;align-items:stretch;text-align:left;min-width:0;width:100%;cursor:pointer}'+
+ 'html body #v-planning #p-equipe .wkc-col .ev b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}'+
+ 'html body #v-planning #p-equipe .wkc-col .ev small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10.5px!important;line-height:1.35;color:var(--fg)!important;font-weight:600}'+
+ 'html body #v-planning #p-equipe .wkc-col .ev.free small{color:var(--cor,#B4472F)!important}'+
+ 'html body #v-planning #p-equipe .wkc-col .ev em{display:block;font-style:normal;font-size:10px;font-weight:800;color:var(--cor,#B4472F);margin-top:2px;line-height:1.2}'+
+ 'html body #v-planning #p-equipe .wkc-col .ev.eqw-man{box-shadow:inset 0 0 0 1.5px var(--cor,#B4472F),var(--z-ombre-s,0 1px 3px rgba(0,0,0,.1))!important}'+
+ 'html body #v-planning #p-equipe .wkc-h small.eqw-m{color:var(--cor,#B4472F)!important;font-weight:800}'+
+ '@media (min-width:700px){html body #v-planning #p-equipe .wkc-col .ev b{font-size:13px!important}html body #v-planning #p-equipe .wkc-col .ev small{font-size:12.5px!important}html body #v-planning #p-equipe .wkc-col .ev em{font-size:12px}html body #v-planning #p-equipe .wkc-col .ev{padding:8px 10px 8px!important}html body #v-planning #p-equipe .wkc-col .ev::before{left:10px!important;top:12px!important}html body #v-planning #p-equipe .wkc-col .ev b{padding-top:0!important;padding-left:14px}}'+
+ '#p-equipe .eqw-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 2px 16px;font-size:12.5px;color:var(--muted)}#p-equipe .eqw-leg span{display:flex;align-items:center;gap:6px}#p-equipe .eqw-leg i{width:8px;height:8px;border-radius:50%}#p-equipe .eqw-leg i.free{border:1.5px dashed var(--muted);width:10px;height:10px;box-sizing:border-box}'+
  '#p-equipe .eq-jours{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 16px}'+
  '#p-equipe .eq-jours button{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px;border-radius:16px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);min-width:0}'+
  '#p-equipe .eq-jours small{font-size:11.5px;color:var(--muted);font-weight:600}#p-equipe .eq-jours b{font-size:19px;line-height:1.15}#p-equipe .eq-jours em{font-style:normal;font-size:10px;font-weight:700;color:var(--n1-laiton)}'+
