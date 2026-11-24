@@ -681,7 +681,7 @@ function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
 // ---------- Géométrie (cm) ----------
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
-function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
+function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),esc:(f.esc||[]).map(e=>({t:e.t,pts:e.pts.map(q=>[q[0]*100,q[1]*100])})),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
  rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null,so:r.so||null,pfp:r.pfp||null}})})).filter(f=>f.rooms.length)}
 const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
 function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
@@ -700,6 +700,7 @@ function drawPlan(s,o={}){const box=s.getBoundingClientRect(),wide=box.width/Mat
   if(lvs.length>1){const t=el("text",{x:b.x,y:b.y-26,"font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":fs,fill:"var(--muted)"},g);t.textContent=GEO[lv].nom}
   GEO[lv].rooms.forEach((r,ri)=>{const st=o.room?o.room(r,lv):{};const rg=el("g",{"data-r":lv+"-"+ri,style:o.tap?"cursor:pointer":""},g);
    el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:st.fill||"var(--wall)"},rg)});
+  /* Cyril 25/11 : l'escalier, la trémie ou la trappe du plan se voit aussi ici */(GEO[lv].esc||[]).forEach(e=>{const d="M"+e.pts.map(p=>p.join(" ")).join("L")+"Z";el("path",{d,fill:"var(--laiton-soft)",stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"stroke-dasharray":`${6*sc/2} ${4*sc/2}`,"pointer-events":"none"},g);const c=e.pts.reduce((m,p)=>[m[0]+p[0]/e.pts.length,m[1]+p[1]/e.pts.length],[0,0]);const t=el("text",{x:c[0],y:c[1]+fs*.3,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":fs*.75,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=e.t});
   GEO[lv].segs.forEach(q=>{el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--fg)","stroke-width":Math.max(q.k==="clo"?8:12,(q.k==="clo"?2:3)*sc),"stroke-linecap":"square",fill:"none","pointer-events":"none"},g);
    const d=sub(q.b,q.a),L=len(d)||1,u=[d[0]/L,d[1]/L];q.ops.forEach(o=>{const P=[q.a[0]+u[0]*o.p,q.a[1]+u[1]*o.p],Q=[q.a[0]+u[0]*(o.p+o.w),q.a[1]+u[1]*(o.p+o.w)];
     el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:o.k==="fenetre"?"var(--glass)":"var(--wall)","stroke-width":Math.max(10,3*sc),"pointer-events":"none"},g);
