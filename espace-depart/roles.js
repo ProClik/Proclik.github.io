@@ -104,7 +104,8 @@ function fiche(n){var p=pers(n),o=Q.ouSuis(n),T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(
     (p.g==='ter'?'<div class="rl-l"><span>Aujourd\'hui</span><b>'+esc(c?c.n+' · '+(c.v||''):Q.nomCase(v))+'</b></div>':'')+
     '<div class="rl-l"><span>Véhicule</span><b>'+(vh?esc(vh.nom||'Véhicule'):'Aucun attitré')+'</b></div></div>'+
     '<div class="rl-fb"><button type="button" class="btn go" data-fa="Appel">Appeler</button><button type="button" class="btn" data-fa="SMS">SMS</button><button type="button" class="btn" data-fa="Message">Message</button></div>'+
-    (!MB&&moi().g==='dir'&&p.g!=='dir'?'<button type="button" class="rl-acc-b" data-facc><span class="av">'+ic('cle')+'</span><span class="tx"><b>Envoyer son accès</b><small>Un lien pour son téléphone, sans mot de passe</small></span><span class="go">›</span></button>':''),'',function(){
+    (!MB&&moi().g==='dir'&&p.g!=='dir'?'<button type="button" class="rl-acc-b" data-facc><span class="av">'+ic('cle')+'</span><span class="tx"><b>Envoyer son accès</b><small>Un lien pour son téléphone + un code par SMS</small></span><span class="go">›</span></button>':''),'',function(){
+    if(!MB&&moi().g==='dir'&&p.g!=='dir')codeDansFiche(n);
     var fa=$('#x-in [data-facc]');if(fa)fa.onclick=function(){X.xclose();setTimeout(function(){accesPerso(n)},250)};
     $$('#x-in [data-fa]').forEach(function(b){b.onclick=function(){X.toast(b.dataset.fa+' à '+n,'(démo : numéro d\'exemple)')}})})}
 /* ---------- accès personnel : créer / envoyer / couper (patron) ---------- */
@@ -112,32 +113,64 @@ function ENT(){var a=lsg('pc-vrai-artisan',null)||{};return a.entreprise||''}
 function api(chemin,corps){return fetch(SERVICE+chemin,{method:corps?'POST':'GET',headers:corps?{'Content-Type':'application/json',Authorization:'Bearer '+jeton()}:{Authorization:'Bearer '+jeton()},body:corps?JSON.stringify(corps):undefined,cache:'no-store'})
   .then(function(r){return r.json().catch(function(){return {ok:false}}).then(function(x){x._s=r.status;return x})})}
 function accesPerso(n){var p=pers(n),c=p.g==='dir'?'dir':col(p),qui=esc(n);
-  var expl='<p class="hint" style="margin:0 0 10px">'+qui+' reçoit un lien sur son téléphone. Il l\'ouvre une fois et son Espace reste ouvert : pas de mot de passe à retenir. Il ne voit que ce que vous lui permettez dans « Qui voit quoi ».</p>';
+  var expl='<p class="hint" style="margin:0 0 10px">'+qui+' reçoit un lien sur son téléphone. À la première ouverture, un code à 6 chiffres lui arrive par SMS : c\'est la preuve que c\'est bien lui. Ensuite son Espace reste ouvert, sans mot de passe. Il ne voit que ce que vous lui permettez dans « Qui voit quoi ».</p>';
   if(!SERVICE||!jeton()){X.xopen('Accès de '+n,'Démo',expl+'<div class="rl-lien"><span>Exemple de lien</span><b>proclik.github.io/espace-depart/?acces=…</b></div><p class="hint" style="margin:10px 2px 0">En démo, rien n\'est envoyé. Quand votre Espace est connecté, ce bouton crée le vrai lien.</p>','<button class="btn" data-xclose>Fermer</button>');return}
-  X.xopen('Accès de '+n,GN[p.g]+' · '+p.r,expl+'<div class="rl-lien" id="rl-lien"><span>Préparation du lien…</span></div>','<button class="btn" data-xclose>Fermer</button>',function(){
-    api('/espace/equipe-acces',{op:'lien',n:n,col:c}).then(function(x){var b=$('#rl-lien');if(!b)return;
+  X.xopen('Accès de '+n,GN[p.g]+' · '+p.r,expl+'<form class="rl-tel" id="rl-tel"><label for="rl-teli">Son portable (pour le code par SMS)</label><input id="rl-teli" type="tel" inputmode="tel" autocomplete="off" placeholder="06 12 34 56 78"><button type="submit" class="btn go">Créer son lien</button></form><div class="rl-lien" id="rl-lien" hidden></div>','<button class="btn" data-xclose>Fermer</button>',function(){
+    var f=$('#rl-tel'),i=$('#rl-teli');
+    api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(function(m){return m.n===n})[0];if(m&&m.tel&&i&&!i.value)i.value=m.tel.replace(/^\+33/,'0').replace(/(\d{2})(?=\d)/g,'$1 ')},function(){});
+    f.onsubmit=function(e){e.preventDefault();var t=i.value.trim();if(t.replace(/\D/g,'').length<10){X.toast('Le numéro de portable','Il faut 10 chiffres pour envoyer le code.');i.focus();return}
+      var b=$('#rl-lien');b.hidden=false;b.innerHTML='<span>Préparation du lien…</span>';
+      api('/espace/equipe-acces',{op:'lien',n:n,col:c,tel:t}).then(function(x){
       if(!x.ok){b.innerHTML='<span>'+esc(x.erreur||'Le service ne répond pas. Réessayez dans un instant.')+'</span>';return}
-      var txt='Bonjour '+n+', voici votre accès à l\'Espace '+(ENT()||'de l\'entreprise')+' : '+x.lien;
+      f.hidden=true;
+      var txt='Bonjour '+n+', voici votre accès à l\'Espace '+(ENT()||'de l\'entreprise')+' : '+x.lien+' (un code vous sera envoyé par SMS à l\'ouverture)';
       b.innerHTML='<span>Lien personnel de '+qui+' · valable 7 jours, une seule fois</span><b>'+esc(x.lien)+'</b>'+
-        '<div class="rl-fb"><a class="btn go" href="sms:?&body='+encodeURIComponent(txt)+'">Envoyer par SMS</a><button type="button" class="btn" data-lcp>Copier</button></div>'+
+        '<small class="rl-sms">'+(x.sms?'Le code partira par SMS au '+esc(x.tel||'')+' quand '+qui+' ouvrira le lien.':'Le SMS du code n\'est pas encore branché : quand '+qui+' ouvrira le lien, son code s\'affichera dans sa fiche, ici. Donnez-le-lui de vive voix.')+'</small>'+
+        '<div class="rl-fb"><a class="btn go" href="sms:'+encodeURIComponent(t.replace(/[^\d+]/g,''))+'?&body='+encodeURIComponent(txt)+'">Envoyer par SMS</a><button type="button" class="btn" data-lcp>Copier</button></div>'+
         '<button type="button" class="btn" data-lcut style="width:100%;margin-top:8px">Couper son accès</button>';
       $('[data-lcp]',b).onclick=function(){try{navigator.clipboard.writeText(txt).then(function(){X.toast('Lien copié','Collez-le dans un SMS ou un e-mail.')})}catch(e){X.toast('Copie impossible','Appuyez longuement sur le lien.')}};
-      $('[data-lcut]',b).onclick=function(){couper(n)}})})}
+      $('[data-lcut]',b).onclick=function(){couper(n)}})}})}
 function couper(n){api('/espace/equipe-acces',{op:'couper',n:n}).then(function(x){X.xclose();X.toast(x.ok?'Accès coupé':'Pas d\'accès à couper',x.ok?n+' est déconnecté de tous ses appareils.':esc(x.erreur||''))})}
-/* le lien ouvert sur le téléphone du salarié */
+/* fiche (patron) : le code que le SMS n'a pas pu porter, à donner de vive voix */
+function codeDansFiche(n){if(MB||!SERVICE||!jeton())return;api('/espace/equipe-acces').then(function(x){var m=(x.membres||[]).filter(function(m){return m.n===n})[0],f=$('#x-in .rl-fi');
+  if(!m||!m.code||!f||$('#x-in .rl-cdv'))return;f.insertAdjacentHTML('beforebegin','<div class="rl-cdv"><span>Code à donner à '+esc(n)+'</span><b>'+m.code.slice(0,3)+' '+m.code.slice(3)+'</b><small>Valable 10 minutes. Donnez-le de vive voix, jamais par écrit.</small></div>')},function(){})}
+
+/* ---------- écran « Tapez le code reçu par SMS » (salarié) ---------- */
+var cd=null;
+function ecranCode(o){/* o = {tel, envoye, n, envoyer(): Promise, valider(code): Promise} */
+  if(!cd){cd=d.createElement('div');cd.id='rl-code';cd.setAttribute('role','dialog');cd.setAttribute('aria-modal','true');d.body.appendChild(cd)}
+  function msg(x){return x.envoye?'Nous venons d\'envoyer un code à 6 chiffres par SMS'+(x.tel?' au <b>'+esc(x.tel)+'</b>':'')+'.':'Demandez le code à votre patron : il s\'affiche sur son téléphone, dans votre fiche.'}
+  cd.innerHTML='<div class="rl-cin"><span class="rl-clogo">'+ic('cle')+'</span><h1>'+(o.n?'Bonjour '+esc(o.n):'Votre code')+'</h1><p id="rl-cm">'+msg(o)+'</p>'+
+    '<form id="rl-cf"><label for="rl-ci">Code reçu</label><input id="rl-ci" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]*" maxlength="7" placeholder="••• •••"><p id="rl-ce" role="alert"></p>'+
+    '<button type="submit" class="btn go">Ouvrir mon Espace</button></form><button type="button" class="rl-cre" id="rl-cr">Renvoyer un code</button>'+
+    '<p class="hint">C\'est pour vérifier que c\'est bien vous. Ensuite votre Espace reste ouvert'+(o.confirmer?' ; le code est redemandé seulement après 15 jours sans l\'ouvrir.':'.')+'</p></div>';
+  html.classList.add('rl-codeon');var i=$('#rl-ci',cd),e=$('#rl-ce',cd),en=0;setTimeout(function(){i.focus()},300);
+  function go(){var v=i.value.replace(/\D/g,'');if(v.length!==6){e.textContent='Le code a 6 chiffres.';return}if(en)return;en=1;e.textContent='';
+    o.valider(v).then(function(x){en=0;if(x&&x.ok)return;e.textContent=(x&&x.erreur)||'Ce code ne passe pas.';i.select()},function(){en=0;e.textContent='Pas de réseau pour l\'instant : réessayez dans un moment.'})}
+  i.oninput=function(){var v=i.value.replace(/\D/g,'').slice(0,6);i.value=v.length>3?v.slice(0,3)+' '+v.slice(3):v;if(v.length===6)go()};
+  $('#rl-cf',cd).onsubmit=function(ev){ev.preventDefault();go()};
+  $('#rl-cr',cd).onclick=function(){e.textContent='';o.envoyer().then(function(x){if(!x)return;$('#rl-cm',cd).innerHTML=x.attendre?'Un code vient de partir : attendez quelques secondes avant d\'en demander un autre.':msg(x)},function(){e.textContent='Pas de réseau pour l\'instant.'})}}
+function postJ(chemin,corps,bearer){return fetch(SERVICE+chemin,{method:'POST',headers:bearer?{'Content-Type':'application/json',Authorization:'Bearer '+jeton()}:{'Content-Type':'application/json'},body:JSON.stringify(corps||{})}).then(function(r){return r.json().catch(function(){return {ok:false}})})}
+/* le lien ouvert sur le téléphone du salarié : 1) un code part par SMS ; 2) le code tapé ouvre son Espace */
 var ACC=/[?&]acces=([a-z0-9-]{1,30}\.[A-Za-z0-9_-]{10,})/.exec(location.search);
 function propre(){try{history.replaceState(null,'',location.pathname+location.hash)}catch(e){}}
-if(ACC&&SERVICE){fetch(SERVICE+'/espace/acces',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:ACC[1]})}).then(function(r){return r.json()}).then(function(x){
-    if(x&&x.ok){lss('pc-membre',x.membre);lss('pc-vrai-artisan',x.artisan);lss('pc-role',{qui:x.membre.n});lss('pc-vrai-jeton',x.jeton)}else lss('pc-membre-fin',(x&&x.erreur)||'Ce lien n\'est plus valable.');
-    propre();setTimeout(function(){location.reload()},400)},function(){lss('pc-membre-fin','Pas de réseau pour l\'instant : rouvrez le lien dans un moment.');propre();location.reload()})}
+function finLien(m){lss('pc-membre-fin',m);propre();location.reload()}
+if(ACC&&SERVICE){var envoyerL=function(){return postJ('/espace/acces',{code:ACC[1]})};
+  envoyerL().then(function(x){if(!x||!x.ok||x.etape!=='code')return finLien((x&&x.erreur)||'Ce lien n\'est plus valable.');
+    ecranCode({n:x.n,tel:x.tel,envoye:x.envoye,envoyer:envoyerL,valider:function(v){return postJ('/espace/acces',{code:ACC[1],otp:v}).then(function(y){
+      if(y&&y.ok){lss('pc-membre',y.membre);lss('pc-vrai-artisan',y.artisan);lss('pc-role',{qui:y.membre.n});lss('pc-vrai-jeton',y.jeton);propre();setTimeout(function(){location.reload()},300)}
+      else if(y&&!y.code)finLien(y.erreur||'Ce lien n\'est plus valable.');return y})}})},
+  function(){finLien('Pas de réseau pour l\'instant : rouvrez le lien dans un moment.')})}
 /* lien refusé, accès coupé ou expiré : on le dit simplement */
 var FIN=lsg('pc-membre-fin',null);if(FIN){lss('pc-membre-fin',null);setTimeout(function(){X.xopen('Votre accès','',
   '<p style="margin:0">'+esc(FIN)+'</p><p class="hint" style="margin:10px 0 0">Demandez un nouveau lien à votre patron : il l\'envoie en deux touchers.</p>','<button class="btn go" data-xclose>D\'accord</button>')},600)}
-/* au démarrage : droits à jour, ou accès coupé */
+/* au démarrage : droits à jour ; code redemandé après 15 jours sans usage ; ou accès coupé */
 if(MB&&SERVICE)api('/espace/moi').then(function(x){
+  if(x._s===401&&x.confirmer){var env1=function(){return postJ('/espace/acces/renvoyer',{},true)};
+    env1().then(function(y){ecranCode({n:MB.n,tel:y.tel||x.tel,envoye:!!y.envoye,confirmer:1,envoyer:env1,valider:function(v){return postJ('/espace/acces/confirmer',{otp:v},true).then(function(z){if(z&&z.ok)setTimeout(function(){location.reload()},300);return z})}})});return}
   if(x._s===401){['pc-membre','pc-vrai-jeton','pc-vrai-liste','pc-role'].forEach(function(k){lss(k,null)});lss('pc-membre-fin','Votre accès a été coupé ou n\'est plus valable.');location.reload();return}
   if(x.ok&&x.membre){MB.col=x.membre.col;MB.droits=x.membre.droits;lss('pc-membre',MB);applique()}},function(){});
-window.PCACCES={envoyer:accesPerso,couper:couper};
+window.PCACCES={envoyer:accesPerso,couper:couper,ecranCode:ecranCode};
 window.PCPERS={fiche:fiche,droit:droit,peut:peut,moi:function(){return moi()}};
 /* un prénom touché n'importe où (data-pers) ouvre sa fiche */
 d.addEventListener('click',function(e){var b=e.target.closest('[data-pers]');if(!b)return;e.preventDefault();e.stopPropagation();fiche(b.dataset.pers)},true);
@@ -271,13 +304,21 @@ if(menu)menu.addEventListener('click',function(){[0,120,400].forEach(function(t)
 
 var st=d.createElement('style');
 st.textContent=
- 'html.role-ter{overflow:hidden}html.role-ter body>*:not(#terrain):not(#xscrim):not(#xsheet):not(#toast):not(#vscrim):not(#vsheet):not(script):not(style):not(link):not(svg){display:none!important}'+
+ 'html.role-ter{overflow:hidden}html.role-ter body>*:not(#terrain):not(#rl-code):not(#xscrim):not(#xsheet):not(#toast):not(#vscrim):not(#vsheet):not(script):not(style):not(link):not(svg){display:none!important}'+
  'html.no-prix [data-v="devis"],html.no-prix [data-pb="devis"],html.no-prix [data-v="produits"],html.no-prix [data-pb="produits"],html.no-fact [data-v="factures"],html.no-fact [data-pb="factures"],'+
  'html.no-achats [data-v="depenses"],html.no-achats [data-pb="depenses"],html.no-achats [data-v="prix"],html.no-achats [data-pb="prix"],html.no-clients [data-v="clients"],html.no-clients [data-pb="clients"],html.no-reglages [data-pb="reglages"],html.no-reglages [data-v="reseaux"]{display:none!important}'+
  '#terrain{position:fixed;inset:0;z-index:33;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);color:var(--fg)}'+
  'svg.tri{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}'+
  '.rl-acc-b{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--bg);box-shadow:var(--n1-pk);text-align:left;color:var(--fg);min-height:56px}.rl-acc-b .tx{flex:1;min-width:0}.rl-acc-b b{display:block;font-size:15px}.rl-acc-b small{display:block;font-size:12.5px;color:var(--muted)}.rl-acc-b .av svg{width:20px;height:20px}'+
  '.rl-lien{display:grid;gap:6px;padding:12px 14px;border-radius:14px;background:var(--teinte,rgba(0,0,0,.05))}.rl-lien span{font-size:12.5px;color:var(--muted);font-weight:600}.rl-lien b{font-size:13.5px;word-break:break-all}.rl-lien .rl-fb a{text-decoration:none;display:flex;align-items:center;justify-content:center}'+
+ '.rl-tel{display:grid;gap:8px;margin:0 0 4px}.rl-tel label{font-size:13px;font-weight:700;color:var(--muted)}.rl-tel input{min-height:50px;border-radius:14px;padding:0 14px;font:600 18px var(--f,inherit);letter-spacing:.04em}.rl-tel[hidden]{display:none}'+
+ '.rl-sms{display:block;font-size:12.5px;color:var(--fg);line-height:1.4}'+
+ '.rl-cdv{display:grid;gap:2px;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:var(--n1-nuit,#1B2440);color:#fff}.rl-cdv span,.rl-cdv small{font-size:12.5px;opacity:.85}.rl-cdv b{font-size:30px;letter-spacing:.12em}'+
+ 'html.rl-codeon{overflow:hidden}#rl-code{position:fixed;inset:0;z-index:2147483100;background:var(--bg,#ECEEF2);color:var(--fg);overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:max(48px,env(safe-area-inset-top)) 20px 40px}'+
+ '#rl-code *{box-sizing:border-box}#rl-code .rl-cin{width:100%;max-width:420px;min-width:0;display:grid;gap:12px;text-align:center}#rl-code h1{margin:6px 0 0;font-size:30px;letter-spacing:-.02em}#rl-code p{margin:0;font-size:16px;line-height:1.45}'+
+ '#rl-code .rl-clogo{justify-self:center;display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--n1-nuit,#1B2440);color:#fff}#rl-code .rl-clogo svg{width:28px;height:28px}'+
+ '#rl-code form{display:grid;gap:10px;margin-top:8px}#rl-code label{font-size:13px;font-weight:700;color:var(--muted)}#rl-code input{width:100%;max-width:100%;min-height:64px;border-radius:18px;text-align:center;font:800 32px var(--f,inherit);letter-spacing:.2em;padding:0 10px}'+
+ '#rl-code #rl-ce{min-height:20px;color:#B3261E;font-size:14.5px;font-weight:600}#rl-code .btn{min-height:56px;font-size:17px}#rl-code .rl-cre{justify-self:center;min-height:44px;padding:0 16px;background:none;border:0;box-shadow:none;color:var(--fg);font:700 15px var(--f,inherit);text-decoration:underline;text-underline-offset:3px}#rl-code .hint{font-size:13.5px;color:var(--muted)}'+
  '.rl-qa-t{margin:18px 2px 4px;font-size:15px}.rl-qa{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}.rl-qa button{display:grid;gap:2px;padding:10px 12px;border-radius:14px;background:var(--bg);box-shadow:var(--n1-pk);text-align:left;color:var(--fg);min-height:52px}.rl-qa small{font-size:12px;color:var(--muted)}'+
  '#rl-band,#terrain .tr-band{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--n1-nuit,#1B2440);color:#fff;font-size:13px}#rl-band span,#terrain .tr-band span{flex:1;min-width:0}'+
  '#rl-band{position:sticky;top:0;z-index:20;border-radius:0 0 14px 14px;margin:0 0 6px}#rl-band[hidden]{display:none}'+
