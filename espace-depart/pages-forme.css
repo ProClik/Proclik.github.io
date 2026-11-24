@@ -192,3 +192,10 @@ html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button{flex:0 
 html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button svg{width:38px!important;height:38px!important;padding:10px}
 html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button i{position:absolute!important;top:-2px;right:6px;margin:0}
 }
+
+/* 24/11 21h (Cyril : « la barre du bas descend et remonte avec le défilement ») : sur iPhone/iPad, toucher une case
+   écrite en moins de 16 px fait ZOOMER Safari, qui ne dézoome pas ; l'écran zoomé déborde et la barre du bas suit le
+   défilement. Toutes les cases à 16 px au moins sur écran tactile = plus de zoom automatique. */
+@media (hover:none) and (pointer:coarse){
+html:not(#a):not(#b):not(#c):not(#d) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select){font-size:16px!important}
+}
