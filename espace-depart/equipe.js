@@ -37,7 +37,8 @@ if(!S||!S.jr){S={jr:{},bes:{},env:{},prev:{}};
   var L=chantiers().map(function(c){return c.id}),a=L[0],b=L[1]||L[0],Ja=evJours(a);
   var M={Thomas:[a,a,b,b,'bureau'],Kevin:[a,a,a,b,b],Mathieu:[b,b,a,a,a],Lucas:[a,a,'',b,b]};
   [0,7].forEach(function(w){for(var i=0;i<5;i++){var k=iso(plus(LUN0,w+i)),o=S.jr[k]={};
-    EQ.forEach(function(p,j){var v=M[p.n][i];if(v===a&&Ja.length&&Ja.indexOf(k)<0)v=(j%2&&L[2])?L[2]:b;o[p.n]=v})}});
+    EQ.forEach(function(p,j){var v=M[p.n][i];if(v===a&&Ja.length&&Ja.indexOf(k)<0)v=(j%2&&L[2])?L[2]:b;o[p.n]=v});
+    L.forEach(function(id){if(!evJours(id).length)(S.bes[id]=S.bes[id]||{})[k]=2})}});
   ecrit()}
 ['jr','bes','env','prev'].forEach(function(k){if(!S[k])S[k]={}});
 /* tâches par personne et par jour (Cyril 24/11) : lignes de travaux du chantier ; exemple : travaux pas finis répartis sur les jours */
@@ -48,7 +49,7 @@ function togTache(k,n,t){var o=S.ta[k]=S.ta[k]||{},L=o[n]=o[n]||[],i=L.indexOf(t
 function get(k,n){return (S.jr[k]||{})[n]||''}
 function set(k,n,v){(S.jr[k]=S.jr[k]||{})[n]=v;ecrit();bouge()}
 function qui(id,k){return EQ.filter(function(p){return get(k,p.n)===id})}
-function besoin(id,k){var B=S.bes[id];if(B&&B[k]!=null)return B[k];var J=evJours(id);return J.length?(J.indexOf(k)>-1?2:0):(dte(k).getDay()%6?2:0)}
+function besoin(id,k){var B=S.bes[id];if(B&&B[k]!=null)return B[k];var J=evJours(id);return J.indexOf(k)>-1?2:0}
 function setBesoin(id,k,n){(S.bes[id]=S.bes[id]||{})[k]=Math.max(0,n);ecrit();bouge()}
 /* jours à venir d'un chantier (aujourd'hui compris) : ceux du planning, sinon les 5 prochains jours ouvrés */
 function jours(id){var T=iso(auj()),J=evJours(id).filter(function(k){return k>=T});if(J.length)return J;
@@ -91,9 +92,28 @@ function nomCh(c){return (c.n||'').replace(/^Cabinet\s+/,'')}
 function manques(){var A=[];for(var i=0;i<5;i++){var k=kj(i);
   chantiers().forEach(function(c){var m=besoin(c.id,k)-qui(c.id,k).length;if(m>0)A.push([k,'c',c.id,jourCourt(k)+' · '+c.n+' : il manque '+m+' personne'+(m>1?'s':'')])});
   EQ.forEach(function(p){if(!get(k,p.n))A.push([k,'p',p.n,jourCourt(k)+' · '+p.n+' n\'a rien de prévu'])})}return A}
-function rend(){
+var VUE='sem',MO=0;
+function choix(){return '<div class="seg eqv" role="tablist" aria-label="Vue de l\'équipe">'+[['sem','Semaine'],['mois','Mois']].map(function(x){return '<button type="button" role="tab" data-vue="'+x[0]+'" aria-selected="'+(VUE===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'}
+function cartesJour(k,CHs){var h='';
+  CHs.filter(function(c){return besoin(c.id,k)>0||qui(c.id,k).length}).forEach(function(c){var Q=qui(c.id,k),m=besoin(c.id,k)-Q.length;
+    h+='<button type="button" class="eqm-l'+(m>0?' manque':'')+'" data-eqc="'+c.id+'" data-k="'+k+'" style="--c:'+couleur(c.id)+'"><i></i><span class="tx"><b>'+esc(c.n)+'</b><small>'+(Q.length?Q.map(function(p){var t=taches(k,p.n);return p.n+(t.length?' ('+esc(t.join(', ').toLowerCase())+')':'')}).join(', '):'Personne')+'</small>'+(m>0?'<em>Il manque '+m+' personne'+(m>1?'s':'')+'</em>':'')+'</span><span class="ch-vb">'+(m>0?'Ajouter':'Changer')+'</span></button>'});
+  [['bureau','Au bureau'],['repos','Repos ou congé'],['','Libre : rien de prévu']].forEach(function(x){var P=EQ.filter(function(p){return get(k,p.n)===x[0]});if(!P.length||(x[0]===''&&!(dte(k).getDay()%6)))return;
+    h+='<button type="button" class="eqm-l'+(x[0]===''?' libre':' gris')+'" data-eqp="'+P[0].n+'" data-k="'+k+'"><i></i><span class="tx"><b>'+x[1]+'</b><small>'+P.map(function(p){return p.n}).join(', ')+'</small></span><span class="ch-vb">'+(x[0]===''?'Placer':'Changer')+'</span></button>'});
+  return h||'<p class="hint" style="margin:6px 0">Rien de prévu ce jour-là.</p>'}
+function rendMois(){var CHs=chantiers(),T=iso(auj()),b=new Date(auj());b.setDate(1);b.setMonth(b.getMonth()+MO);var mm=b.getMonth(),y=b.getFullYear(),d0=lundiDe(b),h='';
+  if(!SEL||dte(SEL).getMonth()!==mm)SEL=MO===0?T:iso(b);
+  h+=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
+  h+='<div class="cal-top"><h3>'+MOIS[mm].replace(/^./,function(x){return x.toUpperCase()})+' <span>'+y+'</span></h3><div class="cal-nav"><button class="nb" data-mo="-1" aria-label="Mois précédent">‹</button><button data-mo="0">Aujourd\'hui</button><button class="nb" data-mo="1" aria-label="Mois suivant">›</button></div></div>';
+  h+='<div class="grid2 eqm"><div class="col"><div class="mo"><div class="mo-h">'+['L','M','M','J','V','S','D'].map(function(x){return '<div>'+x+'</div>'}).join('')+'</div><div class="mo-g">';
+  for(var i=0;i<42;i++){var x=plus(d0,i),k=iso(x),out=x.getMonth()!==mm;if(i>=35&&out&&plus(d0,35).getMonth()!==mm)break;
+    var C=CHs.filter(function(c){return qui(c.id,k).length||besoin(c.id,k)>0}),man=CHs.some(function(c){return qui(c.id,k).length<besoin(c.id,k)});
+    h+='<button type="button" class="'+(out?'out ':'')+(k===T?'tdy ':'')+(k===SEL?'sel ':'')+(man?'eqm-man':'')+'" data-day="'+k+'" aria-label="'+jourLong(k)+(man?', il manque du monde':'')+'"><span class="n">'+x.getDate()+'</span><span class="mo-d">'+C.slice(0,3).map(function(c){return '<i style="background:'+couleur(c.id)+'"></i>'}).join('')+'</span></button>'}
+  h+='</div></div><div class="eqw-leg">'+CHs.map(function(c){return '<span><i style="background:'+couleur(c.id)+'"></i>'+esc(c.n)+'</span>'}).join('')+'<span><i class="rg"></i>Il manque du monde</span></div></div>';
+  h+='<div class="col"><h3 class="eqm-t">'+jourLong(SEL).replace(/^./,function(x){return x.toUpperCase()})+'</h3><div class="eqm-jl">'+cartesJour(SEL,CHs)+'</div></div></div>';
+  pv.innerHTML=h}
+function rend(){if(VUE==='mois')return rendMois();
   var CHs=chantiers(),A=manques(),h='',env=S.env[kj(0)],T=iso(auj()),K5=[0,1,2,3,4].map(kj),M0=dte(K5[0]);
-  h+=(window.PCTAG?window.PCTAG('equipe'):'');
+  h+=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
   h+='<div class="cal-top"><h3>'+MOIS[M0.getMonth()].replace(/^./,function(x){return x.toUpperCase()})+' <span>'+M0.getFullYear()+'</span></h3><div class="cal-nav"><button class="nb" data-wk="-1" aria-label="Semaine précédente">‹</button><button data-wk="0">Aujourd\'hui</button><button class="nb" data-wk="1" aria-label="Semaine suivante">›</button></div></div>';
   var G='grid-template-columns:repeat(5,minmax(0,1fr))';
   h+='<div class="wkc eqw"><div class="wkc-h" style="'+G+'"><div style="display:none"></div>'+K5.map(function(k,i){var n=EQ.filter(function(p){var v=get(k,p.n);return v&&v!=='repos'}).length,
@@ -139,6 +159,9 @@ function caseP(p,k){var CHs=chantiers(),L=CHs.map(function(c){return [c.id,c.n]}
 pv.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
   if(b.dataset.wk){WK=b.dataset.wk==='0'?0:WK+(+b.dataset.wk);return rend()}
   if(b.dataset.sel){SEL=b.dataset.sel;return rend()}
+  if(b.dataset.vue){VUE=b.dataset.vue;SEL=null;return rend()}
+  if(b.dataset.mo!=null){MO=b.dataset.mo==='0'?0:MO+(+b.dataset.mo);SEL=null;return rend()}
+  if(b.dataset.day){SEL=b.dataset.day;return rend()}
   if(b.dataset.eqc)return caseCh(b.dataset.eqc,b.dataset.k);
   if(b.dataset.eqp)return caseP(b.dataset.eqp,b.dataset.k);
   if(b.id==='eq-env'){S.env[kj(0)]=true;ecrit();rend();X.toast('Planning envoyé à l\'équipe','Chacun voit sa semaine sur son téléphone (exemple).')}});
@@ -179,6 +202,18 @@ st.textContent=
  'html body #v-planning #p-equipe .wkc-h small.eqw-m{color:var(--cor,#B4472F)!important;font-weight:800}'+
  '@media (min-width:700px){html body #v-planning #p-equipe .wkc-col .ev b{font-size:13px!important}html body #v-planning #p-equipe .wkc-col .ev small{font-size:12.5px!important}html body #v-planning #p-equipe .wkc-col .ev em{font-size:12px}html body #v-planning #p-equipe .wkc-col .ev{padding:8px 10px 8px!important}html body #v-planning #p-equipe .wkc-col .ev::before{left:10px!important;top:12px!important}html body #v-planning #p-equipe .wkc-col .ev b{padding-top:0!important;padding-left:14px}}'+
  '#p-equipe .eqw-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 2px 16px;font-size:12.5px;color:var(--muted)}#p-equipe .eqw-leg span{display:flex;align-items:center;gap:6px}#p-equipe .eqw-leg i{width:8px;height:8px;border-radius:50%}#p-equipe .eqw-leg i.free{border:1.5px dashed var(--muted);width:10px;height:10px;box-sizing:border-box}'+
+ '#p-equipe .eqv{display:inline-grid;grid-template-columns:1fr 1fr;margin:0 0 12px}'+
+ 'html body #v-planning #p-equipe .mo{background:transparent!important;box-shadow:none!important;border:0!important}'+
+ '#p-equipe .mo-d{display:flex;justify-content:center;gap:3px;min-height:6px}#p-equipe .mo-d i{width:6px;height:6px;border-radius:50%}'+
+ '#p-equipe .mo-g button.eqm-man .n{box-shadow:inset 0 0 0 2px var(--cor,#B4472F)!important}'+
+ '#p-equipe .mo-g button.sel:not(.tdy) .n{outline:2px solid var(--n1-laiton,#B8925A);outline-offset:2px}'+
+ '#p-equipe .eqw-leg i.rg{width:10px;height:10px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--cor,#B4472F)}'+
+ '#p-equipe .eqm-t{margin:14px 2px 8px;font-size:17px}@media (min-width:900px){#p-equipe .eqm-t{margin-top:0}}'+
+ '#p-equipe .eqm-jl{display:grid;gap:8px}'+
+ '#p-equipe .eqm-l{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:16px;background:var(--z-tile,var(--card));box-shadow:var(--z-ombre-s,var(--n1-pk));text-align:left;color:var(--fg)}'+
+ '#p-equipe .eqm-l>i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c,var(--muted))}#p-equipe .eqm-l.libre>i{background:none;border:1.5px dashed var(--muted)}'+
+ '#p-equipe .eqm-l .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}#p-equipe .eqm-l b{font-size:15px}#p-equipe .eqm-l small{font-size:13px;color:var(--muted)}#p-equipe .eqm-l em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--cor,#B4472F)}'+
+ '#p-equipe .eqm-l.manque{box-shadow:inset 0 0 0 1.5px var(--cor,#B4472F),var(--z-ombre-s,var(--n1-pk))}#p-equipe .eqm-l.libre{background:none;box-shadow:none;border:1.5px dashed var(--line)}#p-equipe .eqm-l.libre small{color:var(--cor,#B4472F)}'+
  '#p-equipe .eq-jours{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 16px}'+
  '#p-equipe .eq-jours button{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px;border-radius:16px;background:var(--bg);box-shadow:var(--n1-pk);color:var(--fg);min-width:0}'+
  '#p-equipe .eq-jours small{font-size:11.5px;color:var(--muted);font-weight:600}#p-equipe .eq-jours b{font-size:19px;line-height:1.15}#p-equipe .eq-jours em{font-style:normal;font-size:10px;font-weight:700;color:var(--n1-laiton)}'+
