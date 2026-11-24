@@ -149,12 +149,12 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
   /* 3. mes chiffres (exemple de l'Espace, comme avant) : un seul langage, des barres */
   if(B.chiffres){var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][(window.PCDEMO?PCDEMO.today():new Date()).getMonth()],sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
     h+='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
-      '<section class="chif2 cv1"><button class="chq" type="button" data-accv="factures"><span class="pt3"></span><span class="x"><b>2 760 € à encaisser</b><span>'+(1+(nsr?1:0))+" relance"+(nsr?"s":"")+' à faire</span></span><span class="vb">Relancer</span></button><div class="lab">Encaissé en '+MN+'</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
+      '<section class="chif2 cv1"><button class="chq" type="button" data-accv="factures"><span class="pt3"></span><span class="x"><b>2 760 € à encaisser</b><span>'+(nsr?"1 facture et "+nsr+" devis sans réponse":"1 facture en attente")+'</span></span><span class="vb">Relancer</span></button><div class="lab">Encaissé en '+MN+'</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
       '<div class="seg"><i style="flex:8640"></i><i class="r" style="flex:2760"></i><i class="v" style="flex:2810"></i></div>'+
       '<div class="leg"><span><i></i>Encaissé</span><span><i class="r"></i>À encaisser 2 760 €</span><span><i class="v"></i>Pas encore facturé</span></div>'+
       
       '<div class="dv"><span>Devis signés</span><span class="pts"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><b>3 sur 5</b></div>'+
-      (nsr?'<button class="act2" type="button" data-accv="devis" style="border-top:0;padding-top:2px"><span>'+nsr+" devis sans réponse</span><b>Relancer</b>"+ic("d")+"</button>":"")+"</section>"}
+      "</section>"}
 
   /* 4. chantiers : liste légère, sans répéter la journée */
   var C=X.CH||{},av=X.avc||function(){return 0},CL=Object.keys(C).map(function(k){return C[k]}).filter(function(c){return c.st==="run"||c.st==="start"});
