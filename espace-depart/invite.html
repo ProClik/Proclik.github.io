@@ -437,11 +437,11 @@ function message(t,s){app.innerHTML='<div class="porte"><div class="card monte">
 function porte(o){/* o = {n, ent, tel, envoye, envoyer(), valider(code)} */
   function txt(x){return x.envoye?'Pour vérifier que c\'est bien vous, nous venons d\'envoyer un code par SMS'+(x.tel?' au '+esc(x.tel):'')+'.':'Demandez le code à '+esc(o.ent||'l\'entreprise')+' : il s\'affiche sur son téléphone.'}
   app.innerHTML='<div class="porte"><div class="card monte"><div class="logo">'+LOGO+'</div><h1>Bonjour'+(o.n?' '+esc(o.n):'')+'</h1>'+
-   '<p>'+(o.ent?'<b>'+esc(o.ent)+'</b> vous ouvre ce chantier.<br>':'')+'<span id="ptx">'+txt(o)+'</span></p>'+
+   '<p>'+(o.ent?'<b>'+esc(o.ent)+'</b> '+(o.pose?'vous donne accès à vos poses.':'vous ouvre ce chantier.')+'<br>':'')+'<span id="ptx">'+txt(o)+'</span></p>'+
    '<div class="cases">'+[0,1,2,3,4,5].map(function(i){return '<input inputmode="numeric" maxlength="1" autocomplete="'+(i?'off':'one-time-code')+'" aria-label="Chiffre '+(i+1)+'" data-c="'+i+'">'}).join('')+'</div>'+
    '<p id="perr" role="alert" style="min-height:20px;margin:8px 0 0;color:#B3261E;font-weight:600"></p>'+
-   '<button class="go" id="entrer">Entrer sur le chantier</button><button class="lien" id="renv">Renvoyer un code</button>'+
-   '<p style="margin:16px 0 0;font-size:12.5px">'+(o.confirmer?'Le code est redemandé après 15 jours sans ouvrir la page.':'Une seule fois : ensuite, le lien ouvre directement votre chantier.')+'</p></div></div>';
+   '<button class="go" id="entrer">'+(o.pose?'Voir mes poses':'Entrer sur le chantier')+'</button><button class="lien" id="renv">Renvoyer un code</button>'+
+   '<p style="margin:16px 0 0;font-size:12.5px">'+(o.confirmer?'Le code est redemandé après 15 jours sans ouvrir la page.':'Une seule fois : ensuite, le lien ouvre directement '+(o.pose?'vos poses':'votre chantier')+'.')+'</p></div></div>';
   var C=[].slice.call(document.querySelectorAll('[data-c]')),err=document.getElementById('perr'),en=0;
   function val(){return C.map(function(x){return x.value}).join('')}
   function go(){if(val().length<6){err.textContent='Tapez les 6 chiffres reçus par SMS';return}if(en)return;en=1;err.textContent='';
@@ -452,7 +452,50 @@ function porte(o){/* o = {n, ent, tel, envoye, envoyer(), valider(code)} */
   document.getElementById('entrer').addEventListener('click',go);
   document.getElementById('renv').addEventListener('click',function(){err.textContent='';o.envoyer().then(function(x){document.getElementById('ptx').innerHTML=x&&x.attendre?'Un code vient de partir : attendez quelques secondes.':txt(x||{})})});
   C[0].focus()}
-function ouvrir(ch){var j=JT[ch];get('/espace/invite',j).then(function(x){
+/* ---------- accès Poseur gratuit (poseur SANS Espace d'un négoce, Cyril 24/11) : ses poses seulement ---------- */
+var JC=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'];
+function jr(iso){if(!iso)return 'date à caler';var t=new Date(iso+'T12:00:00');return JC[t.getDay()]+' '+t.getDate()+'/'+(t.getMonth()+1)}
+function hh(h){return h?h.replace(':',' h ').replace(' h 00',' h'):''}
+var STP={proposee:'À répondre',autre:'Autre date proposée',acceptee:'Calée',refusee:'Refusée',faite:'Faite'};
+function reduire(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=1000,s=Math.min(1,m/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);cb(cv.toDataURL('image/jpeg',.72))};im.src=r.result};r.readAsDataURL(f)}
+function ouvrirPose(){var j=JT.pose;
+ get('/espace/negoce',j).then(function(x){
+  if(x._s===401&&x.confirmer){var env=function(){return post('/espace/acces/renvoyer',{},j)};env().then(function(y){porte({tel:y.tel||x.tel,envoye:!!y.envoye,confirmer:1,envoyer:env,valider:function(v){return post('/espace/acces/confirmer',{otp:v},j).then(function(z){if(z.ok)ouvrirPose();return z})}})});return}
+  if(!x.ok||!x.negoces||!x.negoces.length||x.negoces[0].etat!=='actif'){if(x._s===401||(x.negoces&&x.negoces[0]&&x.negoces[0].etat!=='actif')){delete JT.pose;ecrit('pc-inv-j',JT)}message('Accès terminé',(x.erreur&&x._s!==403?x.erreur:'Votre accès Poseur est terminé.')+' Si besoin, demandez un nouveau lien à votre négoce.');return}
+  listePoses(x,j)},function(){message('Pas de réseau','Rouvrez la page quand vous aurez du réseau.')})}
+function listePoses(x,j){var N=x.negoces[0],L=x.poses||[],G=[['À répondre',L.filter(function(p){return p.st==='proposee'||p.st==='autre'})],['Calées',L.filter(function(p){return p.st==='acceptee'})],['Faites',L.filter(function(p){return p.st==='faite'||p.st==='refusee'})]];
+ app.innerHTML='<header class="top"><div class="topin"><span class="logo">'+LOGO+'</span><div class="marque"><b>Poses de '+esc(N.n)+'</b><small>Votre accès Poseur</small></div></div></header><main><div class="hi monte"><h1>Vos poses</h1><p>Les poses que '+esc(N.n)+' vous confie. Touchez-en une pour répondre.</p></div><div class="grille"><div class="col">'+
+  G.map(function(g){return '<section class="card monte"><h2>'+esc(g[0])+'<span class="sp"></span><small>'+g[1].length+'</small></h2>'+(g[1].length?g[1].map(function(p){var c=p.client||{};return '<button class="ln" data-pz="'+esc(p.id)+'"><span class="r" style="font-weight:800">'+esc(jr(p.date).split(' ')[1]||'—')+'</span><span class="tx"><b>'+esc(c.n)+(p.nouveau?' ●':'')+'</b><small>'+esc(p.quoi)+' · '+esc(STP[p.st]||'')+(p.facture?' · facture '+(p.facture.st==='payee'?'payée':'envoyée'):'')+'</small></span></button>'}).join(''):'<p class="muted" style="margin:0">Rien pour l\'instant.</p>')+'</section>'}).join('')+
+  '</div><div class="col"><section class="card monte"><h2>Votre propre Espace</h2><p style="margin:0 0 12px">Vos clients, vos devis, vos factures et votre planning, au même endroit : votre Espace ProClik, 49 € HT par mois. Les poses de '+esc(N.n)+' y arrivent aussi, dans un bouton à son nom.</p><a class="go" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="https://proclik.github.io/">Avoir mon propre Espace</a></section>'+
+  '<p class="acces">Cet accès est à vous seul. Vous ne voyez que les poses que '+esc(N.n)+' vous envoie.</p></div></div></main>';
+ [].forEach.call(document.querySelectorAll('[data-pz]'),function(b){b.addEventListener('click',function(){unePose(N,b.dataset.pz,j)})});scrollTo(0,0)}
+function unePose(N,id,j){get('/espace/negoce/pose?avec='+encodeURIComponent(N.id)+'&id='+encodeURIComponent(id),j).then(function(x){if(!x.ok){ouvrirPose();return}
+ var p=x.pose,c=p.client||{},act=function(o,fin){o.neg=N.id;o.id=id;return post('/espace/negoce',o,j).then(function(y){if(!y.ok){alerte(y.erreur||'Pas envoyé.');return}unePose(N,id,j)},function(){alerte('Pas de réseau pour l\'instant.')})};
+ var h='<header class="top"><div class="topin"><button class="rb pk" id="pz-ret" aria-label="Retour">‹</button><div class="marque"><b>'+esc(c.n)+'</b><small>'+esc(STP[p.st]||'')+' · '+esc(N.n)+'</small></div></div></header><main><div class="grille"><div class="col">'+
+  '<section class="card monte"><h2>'+esc(p.quoi)+'</h2><div class="ln"><span class="tx"><b>'+esc(jr(p.date))+(p.h?' · '+esc(hh(p.h)):'')+(p.duree?' · '+esc(p.duree):'')+'</b><small>'+esc(c.adr||'Adresse à demander')+'</small></span></div>'+
+   (c.adr?'<a class="ln" style="text-decoration:none;color:inherit" href="https://maps.apple.com/?daddr='+encodeURIComponent(c.adr)+'"><span class="tx"><b>Itinéraire</b></span></a>':'')+(c.tel?'<a class="ln" style="text-decoration:none;color:inherit" href="tel:'+esc(c.tel.replace(/[^\d+]/g,''))+'"><span class="tx"><b>Appeler '+esc(c.n)+'</b></span></a>':'')+'</section>'+
+  (p.cotes?'<section class="card monte"><h2>Cotes</h2><p style="white-space:pre-wrap;margin:0">'+esc(p.cotes)+'</p></section>':'')+(p.notes?'<section class="card monte"><h2>À savoir</h2><p style="white-space:pre-wrap;margin:0">'+esc(p.notes)+'</p></section>':'')+
+  (p.plan?'<section class="card monte"><h2>Le plan</h2><div class="planr">'+p.plan+'</div></section>':'')+
+  '<section class="card monte" id="pz-act">'+
+   (p.st==='proposee'?'<h2>Votre réponse</h2><button class="go" id="pz-ok">J\'accepte cette pose</button><div id="pz-autre" style="margin-top:12px"><p class="muted" style="margin:0 0 6px">Ou proposez une autre date :</p><input type="date" id="pz-d" style="width:100%;min-height:46px;border-radius:12px;padding:0 12px;box-sizing:border-box"><button class="b2 pk" id="pz-prop" style="margin-top:8px">Proposer cette date</button><button class="b2 pk" id="pz-ref" style="margin-top:8px">Je ne peux pas</button></div>':
+    p.st==='autre'?'<h2>Date proposée</h2><p style="margin:0">Vous avez proposé le '+esc(jr(p.prop&&p.prop.date))+'. '+esc(N.n)+' va vous répondre.</p>':
+    p.st==='acceptee'?'<h2>Après la pose</h2><label class="b2 pk" style="display:flex;justify-content:center;cursor:pointer">Ajouter des photos<input type="file" accept="image/*" multiple id="pz-f" hidden></label><div id="pz-ph" class="phr" style="margin:8px 0"></div><textarea id="pz-r" rows="2" placeholder="Des réserves ? (facultatif)" style="width:100%;box-sizing:border-box;border-radius:12px;padding:10px"></textarea><button class="go" id="pz-fait" style="margin-top:10px">La pose est faite</button>':
+    p.st==='faite'&&!p.facture?'<h2>Votre facture de pose</h2><input id="pz-ht" inputmode="decimal" placeholder="Montant HT, ex. : 320" style="width:100%;min-height:46px;border-radius:12px;padding:0 12px;box-sizing:border-box"><input id="pz-num" placeholder="N° de facture (facultatif)" style="width:100%;min-height:46px;border-radius:12px;padding:0 12px;box-sizing:border-box;margin-top:8px"><button class="go" id="pz-fac" style="margin-top:10px">Envoyer ma facture de pose</button>':
+    p.facture?'<h2>Facture de pose</h2><p style="margin:0">'+esc(String(p.facture.ht).replace('.',','))+' € HT · '+(p.facture.st==='payee'?'payée le '+esc(jr(p.facture.payee)):'envoyée, en attente du paiement')+'</p>':
+    '<h2>'+esc(STP[p.st]||'')+'</h2>')+'<p id="pz-err" role="alert" style="color:#B3261E;font-weight:600;margin:8px 0 0"></p></section>'+
+  '</div><div class="col"><section class="card monte"><h2>Messages avec '+esc(N.n)+'</h2><div>'+((p.msgs||[]).map(function(m){return '<p style="margin:0 0 8px"><b>'+(m.de==='pos'?'Vous':esc(N.n))+'</b> · <small class="muted">'+esc(jr(m.h.slice(0,10)))+'</small><br>'+esc(m.t)+'</p>'}).join('')||'<p class="muted" style="margin:0">Pas encore de message.</p>')+'</div>'+
+  '<textarea id="pz-m" rows="2" placeholder="Écrire à '+esc(N.n)+'…" style="width:100%;box-sizing:border-box;border-radius:12px;padding:10px;margin-top:8px"></textarea><button class="b2 pk" id="pz-env" style="margin-top:8px">Envoyer</button></section></div></div></main>';
+ app.innerHTML=h;scrollTo(0,0);var $=function(s){return document.getElementById(s)},F=[];
+ function alerte(t){var e=$('pz-err');if(e)e.textContent=t}
+ $('pz-ret').addEventListener('click',ouvrirPose);
+ $('pz-env').addEventListener('click',function(){var t=$('pz-m').value.trim();if(t)act({op:'msg',t:t})});
+ if($('pz-ok'))$('pz-ok').addEventListener('click',function(){act({op:'repondre',rep:'accepter'})});
+ if($('pz-prop'))$('pz-prop').addEventListener('click',function(){var d=$('pz-d').value;if(!d){alerte('Choisissez la date que vous proposez.');return}act({op:'repondre',rep:'autre',date:d})});
+ if($('pz-ref'))$('pz-ref').addEventListener('click',function(){act({op:'repondre',rep:'refuser'})});
+ if($('pz-f'))$('pz-f').addEventListener('change',function(){[].slice.call(this.files||[]).slice(0,6-F.length).forEach(function(f){reduire(f,function(u){F.push(u);$('pz-ph').innerHTML=F.map(function(x){return '<img alt="" src="'+x+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px">'}).join('')})})});
+ if($('pz-fait'))$('pz-fait').addEventListener('click',function(){this.disabled=true;act({op:'faite',photos:F,reserves:$('pz-r').value})});
+ if($('pz-fac'))$('pz-fac').addEventListener('click',function(){var v=$('pz-ht').value;if(!(parseFloat(String(v).replace(',','.'))>0)){alerte('Le montant HT de la pose ?');return}act({op:'facture',ht:v,num:$('pz-num').value})})},function(){message('Pas de réseau','Rouvrez la page quand vous aurez du réseau.')})}
+function ouvrir(ch){if(ch==='pose'){ouvrirPose();return}var j=JT[ch];get('/espace/invite',j).then(function(x){
    if(x.ok){x.envoyer=function(P){post('/espace/invite',{part:P},j).then(function(y){if(y&&!y.ok&&y.erreur)console.warn(y.erreur)})};lancerPage(x);return}
    if(x._s===401&&x.confirmer){var env=function(){return post('/espace/acces/renvoyer',{},j)};env().then(function(y){porte({tel:y.tel||x.tel,envoye:!!y.envoye,confirmer:1,envoyer:env,valider:function(v){return post('/espace/acces/confirmer',{otp:v},j).then(function(z){if(z.ok)ouvrir(ch);return z})}})});return}
    if(x.coupe||x._s===401){delete JT[ch];ecrit('pc-inv-j',JT);message('Accès terminé',(x.erreur||'Votre accès à ce chantier est terminé.')+' Si besoin, demandez un nouveau lien à l\'entreprise.');return}
@@ -460,7 +503,7 @@ function ouvrir(ch){var j=JT[ch];get('/espace/invite',j).then(function(x){
   function(){message('Pas de réseau','Rouvrez la page quand vous aurez du réseau.')})}
 if(SERVICE&&ACC){var envL=function(){return post('/espace/acces',{code:ACC[1]})};
   envL().then(function(x){if(!x.ok||x.etape!=='code'){message('Lien plus valable',(x.erreur||'Ce lien n\'est plus valable.'));return}
-    porte({n:x.n,ent:x.entreprise,tel:x.tel,envoye:x.envoye,envoyer:envL,valider:function(v){return post('/espace/acces',{code:ACC[1],otp:v}).then(function(y){
+    porte({n:x.n,ent:x.entreprise,pose:x.kind==='pose',tel:x.tel,envoye:x.envoye,envoyer:envL,valider:function(v){return post('/espace/acces',{code:ACC[1],otp:v}).then(function(y){
       if(y.ok&&y.invite){JT[y.invite.ch]=y.jeton;ecrit('pc-inv-j',JT);try{history.replaceState(null,'','invite.html?ch='+encodeURIComponent(y.invite.ch))}catch(e){}ouvrir(y.invite.ch)}
       else if(y.ok){location.href='./'}return y})}})},function(){message('Pas de réseau','Rouvrez le lien quand vous aurez du réseau.')});return}
 if(SERVICE&&CH&&JT[CH]){ouvrir(CH);return}

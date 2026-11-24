@@ -116,7 +116,7 @@ var S=String(window.PC_SERVICE||'').replace(/\/+$/,''),KJ='pc-admin-jeton';
 var $=function(s){return document.querySelector(s)},esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 function lj(){try{return sessionStorage.getItem(KJ)||''}catch(e){return ''}}
 function sj(v){try{v?sessionStorage.setItem(KJ,v):sessionStorage.removeItem(KJ)}catch(e){}}
-var NOMS={cliky:'Cliky',reservation:'Réservation',sms:'SMS',assistant:'Assistant du site',avis:'Avis Google',reseaux:'Réseaux sociaux',image:'Votre image',equipe:'Équipe'};
+var NOMS={cliky:'Cliky',reservation:'Réservation',sms:'SMS',assistant:'Assistant du site',avis:'Avis Google',reseaux:'Réseaux sociaux',image:'Votre image',equipe:'Équipe',negoce:'Réseau négoce'};
 var MENUS={clients:'Clients',devis:'Devis',factures:'Factures',depenses:'Dépenses',planning:'Planning',chantiers:'Chantiers',prix:'Achats',produits:'Produits',cotes:'Cotes',reseaux:'Réseaux'};
 var DATA={clients:[],options:Object.keys(NOMS),menus:Object.keys(MENUS)},COUR=null;
 function toast(t){var e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2400)}

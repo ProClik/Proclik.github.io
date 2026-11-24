@@ -87,21 +87,40 @@ function ecranNegoce(){var P=D.poseurs,L=D.poses.filter(function(p){return p.rol
  var G={rep:L.filter(function(p){return p.st==='proposee'||p.st==='autre'||p.st==='refusee'}),cal:L.filter(function(p){return p.st==='acceptee'}),fac:L.filter(function(p){return p.st==='faite'})};
  var h='<button type="button" class="btn go ng-big" id="ng-env"'+(P.some(function(x){return x.etat==='actif'})?'':' disabled')+'>'+IC.plus+'Envoyer une pose</button>'+
   sec('Réponses des poseurs',G.rep,'Aucune pose en attente de réponse.')+sec('Calées',G.cal,'Aucune pose calée.')+sec('Faites · factures de pose',G.fac,'Pas encore de pose faite.')+
-  '<div class="xsec"><h3>Vos poseurs</h3><div class="card">'+(P.length?P.map(function(x){return '<div class="ng-r"><span class="ng-ic">'+IC.maison+'</span><span class="tx"><b>'+esc(x.n)+'</b><small>'+(x.etat==='actif'?'Relié depuis le '+esc(jour(x.depuis)):'Lien coupé')+'</small></span>'+(x.etat==='actif'?'<button type="button" class="btn" data-ngcut="'+esc(x.id)+'">Couper</button>':'')+'</div>'}).join(''):'<p class="hint" style="margin:0">Aucun poseur relié pour l\'instant.</p>')+
+  '<div class="xsec"><h3>Vos poseurs</h3><div class="card">'+(P.length?P.map(function(x){return '<div class="ng-r"><span class="ng-ic">'+IC.maison+'</span><span class="tx"><b>'+esc(x.n)+'</b><small>'+(x.etat!=='actif'?'Lien coupé':x.sans?'Accès Poseur (sans Espace) · depuis le '+esc(jour(x.depuis)):'Son Espace · relié depuis le '+esc(jour(x.depuis)))+'</small>'+(x.sans&&x.etat==='actif'?'<span class="ng-cdv" data-ngcd="'+esc(x.id)+'"></span>':'')+'</span>'+
+  (x.etat==='actif'?(x.sans?'<button type="button" class="btn" data-ngren="'+esc(x.id)+'">Lien</button>':'')+'<button type="button" class="btn" data-ngcut="'+esc(x.id)+'"'+(x.sans?' data-sans="1"':'')+'>Couper</button>':'')+'</div>'}).join(''):'<p class="hint" style="margin:0">Aucun poseur relié pour l\'instant.</p>')+
   '<button type="button" class="btn" id="ng-code" style="width:100%;margin-top:10px">'+IC.lien+' Relier un poseur</button></div>'+
-  '<p class="hint" style="margin:8px 2px 0">Le poseur garde son propre Espace (gratuit pour lui). Il ne voit que les poses que vous lui envoyez.</p></div>'+
+  '<p class="hint" style="margin:8px 2px 0">Gratuit pour le poseur. Avec son Espace ProClik, vos poses arrivent dans un bouton à votre nom ; sans Espace, il reçoit un accès Poseur par SMS. Dans les deux cas, il ne voit que les poses que vous lui envoyez.</p></div>'+
   (actifsN().length?'<button type="button" class="btn" id="ng-moi" style="width:100%;margin-top:12px">Les poses que mes négoces me confient</button>':'');
  X.xopen('Mes poseurs',P.length+' poseur'+(P.length>1?'s':'')+' relié'+(P.length>1?'s':''),h,'<button class="btn" data-xclose>Fermer</button>',function(){
   var e=$('#ng-env');if(e)e.addEventListener('click',function(){formulaire(null)});
-  $('#ng-code').addEventListener('click',nouveauCode);
+  $('#ng-code').addEventListener('click',relier);
+  $$('#x-in [data-ngren]').forEach(function(b){b.addEventListener('click',function(){var x=D.poseurs.filter(function(p){return p.id===b.dataset.ngren})[0];if(x)accesPoseur(x)})});
+  /* code à donner de vive voix quand le SMS ne part pas */
+  if($('#x-in [data-ngcd]'))api('/espace/equipe-acces').then(function(r){(r.membres||[]).forEach(function(m){if(m.kind!=='pose'||!m.code)return;var el=$('#x-in [data-ngcd="'+m.eid+'"]');if(el)el.innerHTML='<b class="ng-cd">Code à lui donner : '+m.code.slice(0,3)+' '+m.code.slice(3)+'</b>'})},function(){});
   var m=$('#ng-moi');if(m)m.addEventListener('click',function(){ecranPoseur(actifsN()[0].id)});
   $$('#x-in [data-ngcut]').forEach(function(b){var arm=0;b.addEventListener('click',function(){if(!arm){arm=1;b.textContent='Sûr ? Touchez encore';setTimeout(function(){arm=0;b.textContent='Couper'},3500);return}
+   if(b.dataset.sans)api('/espace/equipe-acces',{op:'couper',kind:'pose',eid:b.dataset.ngcut}).then(function(){},function(){});
    api('/espace/negoce',{op:'couper',avec:b.dataset.ngcut}).then(function(){charger().then(ecranNegoce);toast('Lien coupé','Ce poseur ne reçoit plus vos poses.')})})});
   lierCartes(ecranNegoce)})}
 function sec(t,L,vide){return '<div class="xsec"><h3>'+esc(t)+(L.length?' · '+L.length:'')+'</h3>'+(L.length?'<div class="ng-l">'+L.map(carte).join('')+'</div>':'<p class="hint" style="margin:0 2px">'+esc(vide)+'</p>')+'</div>'}
 function lierCartes(retour){$$('#x-in [data-ngp]').forEach(function(b){b.addEventListener('click',function(){fiche(b.dataset.av,b.dataset.ngp,retour)})})}
 
 /* ---------- relier : le négoce crée un code, le poseur le tape ---------- */
+/* relier un poseur : il a son Espace ProClik (code) ou pas (accès Poseur gratuit par SMS) */
+function relier(){X.xopen('Relier un poseur','Gratuit pour lui','<button type="button" class="ng-p" id="ng-r1"><span class="ng-ic">'+IC.maison+'</span><span class="tx"><b>Il a son Espace ProClik</b><small>Vous lui donnez un code : vos poses arrivent dans son Espace, à votre nom.</small></span><span class="ng-go">›</span></button>'+
+ '<button type="button" class="ng-p" id="ng-r2" style="margin-top:8px"><span class="ng-ic">'+IC.tel+'</span><span class="tx"><b>Il n\'a pas d\'Espace</b><small>Il reçoit un lien par SMS : ses poses, sans appli à installer, sans mot de passe.</small></span><span class="ng-go">›</span></button>',
+ '<button class="btn" id="ng-ret">‹ Mes poseurs</button>',function(){$('#ng-r1').addEventListener('click',nouveauCode);$('#ng-r2').addEventListener('click',sansEspace);$('#ng-ret').addEventListener('click',ecranNegoce)})}
+function sansEspace(){X.xopen('Poseur sans Espace','Son accès Poseur, gratuit','<label class="ng-lab">Son nom<input id="ng-sn" autocapitalize="words" placeholder="Ex. : Karim Benali"></label><label class="ng-lab">Son portable (pour le code par SMS)<input id="ng-st" type="tel" inputmode="tel" placeholder="06 12 34 56 78"></label>'+
+ '<p class="hint" style="margin:0">Il reçoit un lien. À la première ouverture, un code à 6 chiffres lui arrive par SMS. Il voit seulement les poses que vous lui envoyez : il répond, envoie ses photos et sa facture de pose.</p>',
+ '<button class="btn" id="ng-ret">‹</button><button class="btn go" id="ng-sok">Créer son accès</button>',function(){$('#ng-ret').addEventListener('click',relier);
+  $('#ng-sok').addEventListener('click',function(){var b=this,n=$('#ng-sn').value.trim(),t=$('#ng-st').value.trim();if(!n){toast('Son nom ?','');return}if(t.replace(/\D/g,'').length<10){toast('Son portable','Il faut 10 chiffres pour le code par SMS.');return}
+   b.disabled=true;api('/espace/negoce',{op:'ajouter',n:n,tel:t}).then(function(x){b.disabled=false;if(!x.ok){toast('Pas créé',x.erreur);return}charger().then(function(){accesPoseur(x.poseur)})},function(){b.disabled=false;toast('Pas de réseau','')})})})}
+function accesPoseur(x){api('/espace/equipe-acces',{op:'lien',kind:'pose',eid:x.id,n:x.n,tel:x.tel||''}).then(function(r){if(!r.ok){toast('Lien impossible',r.erreur);return}
+ var ent=(lsg('pc-vrai-artisan',{})||{}).entreprise||'votre négoce',txt='Bonjour, voici votre accès Poseur pour les poses de '+ent+' : '+r.lien+' (un code vous sera envoyé par SMS à l\'ouverture)';
+ X.xopen('Accès de '+x.n,'Lien personnel · 7 jours, une seule fois','<div class="card ng-code"><span>Son lien</span><b style="font-size:14px;letter-spacing:0;word-break:break-all">'+esc(r.lien)+'</b><small>'+(r.sms?'Le code partira par SMS au '+esc(r.tel||'')+' quand il ouvrira le lien.':'Le SMS du code n\'est pas encore branché : quand il ouvrira le lien, son code s\'affichera ici, dans Mes poseurs. Donnez-le de vive voix.')+'</small></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px"><a class="btn go" href="sms:'+encodeURIComponent(String(x.tel||'').replace(/[^\d+]/g,''))+'?&body='+encodeURIComponent(txt)+'">Envoyer par SMS</a><button type="button" class="btn" id="ng-cp">Copier</button></div>',
+  '<button class="btn" id="ng-ret">‹ Mes poseurs</button>',function(){$('#ng-cp').addEventListener('click',function(){try{navigator.clipboard.writeText(txt).then(function(){toast('Copié','')})}catch(e){toast('Copie impossible','')}});$('#ng-ret').addEventListener('click',function(){charger().then(ecranNegoce)})})})}
 function nouveauCode(){api('/espace/negoce',{op:'code'}).then(function(x){if(!x.ok){toast('Code impossible',x.erreur);return}
  var txt='Bonjour, pour recevoir nos poses directement dans votre Espace ProClik : ouvrez votre Espace, Mes options › Lien négoce, et tapez le code '+x.code+' (valable 7 jours). Ou touchez ce lien : '+x.lien;
  X.xopen('Relier un poseur','Code valable 7 jours, une seule fois','<div class="card ng-code"><span>Code à donner au poseur</span><b>'+x.code.slice(0,4)+' '+x.code.slice(4)+'</b><small>Il le tape dans son Espace : Mes options › Lien négoce. Il n\'a pas d\'Espace ? Il en ouvre un gratuitement avec vous.</small></div>'+
@@ -218,7 +237,7 @@ var css=d.createElement('style');css.textContent=
  '.ng-code{display:grid;gap:6px;text-align:center}.ng-code b{font-size:34px;letter-spacing:.12em;font-variant-numeric:tabular-nums}.ng-code small,.ng-code span{color:var(--muted)}'+
  '.ng-ci{box-sizing:border-box;width:100%;min-height:54px;font-size:24px;letter-spacing:.14em;text-align:center;text-transform:uppercase;border-radius:14px;border:1px solid var(--line,rgba(0,0,0,.15));background:var(--bg);color:var(--fg)}'+
  '.ng-err{min-height:18px;margin:6px 0;color:#B3261E;font-weight:600;font-size:13.5px}.ng-phb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0 0 6px;cursor:pointer}'+
- '.ng-lien{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;padding:8px 0;cursor:pointer}';
+ '.ng-cd{display:block;margin-top:4px;color:var(--n1-nuit,#1B2440);font-size:14px}.ng-r .btn+.btn{margin-left:6px}'+'.ng-lien{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;padding:8px 0;cursor:pointer}';
 d.head.appendChild(css);
 
 if(reel()){setTimeout(function(){charger().then(lienRecu)},1200);
