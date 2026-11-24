@@ -456,3 +456,19 @@ html body .hero8 .carte7 .btn.go{border-radius:99px!important}
 @media (max-height:760px){html body .logo8 svg{width:36px;height:42px}html body .p8{width:48px;height:48px}html body .p8 svg{width:26px;height:26px}html body ol.fil8::before{top:24px}html body ol.fil8{margin:0}}
 @media (max-height:620px){html body .logo8 svg{width:30px;height:34px}html body ol.fil8 small{display:none}html body ol.fil8 b{font-size:13px;margin-top:2px}html body .p8{width:40px;height:40px}html body .p8 svg{width:22px;height:22px}html body ol.fil8::before{top:20px}}
 @media (prefers-reduced-motion:no-preference){html body ol.fil8 li{animation:fil7m .6s cubic-bezier(.2,.8,.2,1) both}html body ol.fil8 li:nth-child(2){animation-delay:.15s}html body ol.fil8 li:nth-child(3){animation-delay:.3s}}
+
+/* Dessins « où mesurer » (Cyril 24/11, même style que les dessins du toit) : sous l'aide de chaque question de mesure. */
+html body .mes{display:block;width:100%;max-width:380px;height:auto;max-height:min(28vh,210px);margin:2px auto 10px;overflow:visible}
+@media (max-width:600px){html body .mes{max-height:min(23vh,170px);margin:0 auto 8px}}
+@media (max-height:620px){html body .mes{max-height:19vh}}
+/* iPad et ordinateur : le dessin à droite de la question, pour que l'écran tienne sans défiler */
+@media (min-width:700px){
+ html body .q:has(>.mes):not(.pg-off):not([hidden]){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(220px,40%);column-gap:22px;align-items:start;grid-column:1/-1}
+ html body .q:has(>.mes)>*{grid-column:1}
+ html body .q:has(>.mes)>.mes{grid-column:2;grid-row:1/span 8;align-self:center;margin:0;max-height:min(36vh,240px)}
+}
+/* téléphone : dessin assez grand pour lire les mots, mais compact */
+@media (max-width:699px){html body .q>.mes{max-height:min(19vh,140px)}}
+/* fiches en 2 colonnes (iPad couché) : la question avec dessin prend toute la largeur, dessin à droite et lisible */
+html body .item:not(.mini)>*:has(.q>.mes){grid-column:1/-1}
+@media (min-width:700px){html body .item .q:has(>.mes)>.mes{max-height:min(40vh,250px)}}
