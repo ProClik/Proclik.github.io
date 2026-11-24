@@ -331,9 +331,11 @@ function pfValider(){var b=$('#pf-ok'),c=CH[PF.c],t=pfTot();
  X.toast(ty==='pre'?'Brouillon enregistré':TYD[ty]+' créé'+(ty==='devis'?'':'e')+' : '+eur(t.ttc)+' TTC',ty==='pre'?'Retrouvez-le dans Documents.':en()?'Démo : dans votre Espace, VosFactures renvoie le PDF, rangé ici et dans Factures.':'Elle partira au retour du réseau.');}
 
 /* ---------- Notes : un bouton, on écrit ou on dicte, rangées par pièce ---------- */
+/* notes : un salarié écrit des notes signées de son prénom si la Direction le permet (Cyril 24/11, « Écrire des notes ») */
+function peutNoter(){var m=window.PCROLE&&PCROLE.membre?PCROLE.membre():null;return !m||m.col==='dir'||!window.PCROLE.peut||PCROLE.peut('notes_ecr')}
 function notes(c){var P={},ord=[];(c.notes||[]).forEach(function(n){var p=n[2]||'Tout le chantier';if(!P[p]){P[p]=[];ord.push(p)}P[p].push(n)});
- return '<button type="button" class="btn go cf-go" id="ch-nadd"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter une note</span></span></button>'+
-  '<div class="card ch-nt" id="ch-notes">'+(ord.length?ord.map(function(p){return '<h3>'+esc(p)+'</h3>'+P[p].slice().reverse().map(function(n){return '<div class="n">'+esc(n[1])+'<small>'+esc(n[0])+'</small></div>'}).join('')}).join(''):'<p class="hint">Aucune note pour l\'instant.</p>')+'</div>';}
+ return (peutNoter()?'<button type="button" class="btn go cf-go" id="ch-nadd"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter une note</span></span></button>':'')+
+  '<div class="card ch-nt" id="ch-notes">'+(ord.length?ord.map(function(p){return '<h3>'+esc(p)+'</h3>'+P[p].slice().reverse().map(function(n){return '<div class="n">'+esc(n[1])+'<small>'+esc(n[0])+(n[3]?' · '+esc(n[3]):'')+'</small></div>'}).join('')}).join(''):'<p class="hint">Aucune note pour l\'instant.</p>')+'</div>';}
 var NP=null;
 function choixPieces(c,sel,id){var P=pieces(c);return '<div class="ch-pcs" id="'+id+'">'+['Tout le chantier'].concat(P).map(function(p){return '<button type="button" class="btn" data-pc="'+esc(p)+'" aria-pressed="'+(sel===p)+'">'+esc(p)+'</button>'}).join('')+'<button type="button" class="btn" data-pcnew>+ Autre pièce</button></div>'}
 function lierPieces(c,id,cb){$$('#'+id+' [data-pc]').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' [data-pc]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});cb(b.dataset.pc)})});
@@ -346,7 +348,10 @@ function noteSheet(c){NP=pieces(c)[0]||'Tout le chantier';
   '<button class="btn" data-xclose>Annuler</button><button class="btn go" id="nt-ok">Ajouter la note</button>',function(){
   lierPieces(c,'np',function(p){NP=p});
   dictee($('#nt-d'),$('#nt-t'));
-  $('#nt-ok').addEventListener('click',function(){var v=$('#nt-t').value.trim();if(!v){$('#nt-t').focus();return}c.notes=c.notes||[];c.notes.push([maint(),v,NP]);saveCH();attente('note');X.xclose();recharger('notes');X.toast('Note ajoutée',NP+(en()?'':' · gardée sur le téléphone'));});});}
+  $('#nt-ok').addEventListener('click',function(){var v=$('#nt-t').value.trim();if(!v){$('#nt-t').focus();return}
+   var m=window.PCROLE&&PCROLE.membre?PCROLE.membre():null,b=this;
+   if(m){b.disabled=true;PCROLE.api('/espace/note',{ch:c.id,t:v,pc:NP,d:maint()}).then(function(x){b.disabled=false;if(!x||!x.ok){X.toast('Note pas ajoutée',(x&&x.erreur)||'');return}c.notes=c.notes||[];c.notes.push(x.note);X.xclose();recharger('notes');X.toast('Note ajoutée',NP+' · signée '+m.n)},function(){b.disabled=false;X.toast('Pas de réseau','Réessayez quand vous aurez du réseau.')});return}
+   c.notes=c.notes||[];c.notes.push([maint(),v,NP]);saveCH();attente('note');X.xclose();recharger('notes');X.toast('Note ajoutée',NP+(en()?'':' · gardée sur le téléphone'));});});}
 var REC=null;
 function dictee(btn,ta){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  btn.addEventListener('click',function(){
