@@ -1000,6 +1000,6 @@ function clientSecours(cb){var ty='part';
 /* « Ouvrir le plan » / « Créer le plan » : la carte se redessine quand le plan arrive, d'où l'écoute sur la page */
 document.addEventListener('click',function(e){var r=e.target.closest&&e.target.closest('[data-chrel]');if(r){e.preventDefault();var c=CH[r.getAttribute('data-chrel')],s=document.getElementById('ch-rel');if(c&&s&&s.value){c.dos=s.value;var o=dos(c);if(o){c.n=o.n;if(!c.v&&o.v)c.v=o.v}saveCH();X.toast('Chantier relié',(o?o.n:'')+' · son dossier s\'affiche.');ouvrir(c.id,ong)}return}
  var b=e.target.closest&&e.target.closest('[data-chplan]');if(!b)return;e.preventDefault();var k=b.getAttribute('data-chplan'),p=planDe(k);if(window.PCPLANS&&PCPLANS.ouvrirPour)PCPLANS.ouvrirPour(k,p&&p.plan)});
-window.PCCH={dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
+window.PCCH={metPath:function(e){var k=e&&(e.ic||metDe(e.m)),x=MET.filter(function(y){return y[0]===k})[0]||MET[MET.length-1];return {p:x[3],t:x[1]}},dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
 if(X.setCurCh)liste();
 })();

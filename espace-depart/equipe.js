@@ -101,7 +101,11 @@ if(!S.ph||typeof S.ph!=='object')S.ph={};
 function photo(n){var u=S.ph&&S.ph[n];return typeof u==='string'&&/^(data:image\/|https:\/\/)/.test(u)?u:''}
 function setPhoto(n,u){S.ph[n]=u||'';ecrit();bouge()}
 function ini(n){var u=photo(n);return u?'<img src="'+esc(u)+'" alt="" loading="lazy">':esc(String(n||'?').charAt(0))}
-/* sous-traitant : une icône (entreprise + clé) à la place d'une photo (Cyril 24/11 21h49) */
+/* sous-traitant : l'icône de SON MÉTIER (électricien, plombier, carreleur…) à la place d'une photo (Cyril 24/11 21h53) ;
+   même jeu d'icônes que le chantier partagé (chantiers.js MET), sinon un petit immeuble */
+function stIc(t){var m=window.PCCH&&PCCH.metPath?PCCH.metPath(t):null;if(!m)return STI;
+  return '<svg viewBox="0 0 24 24" width="60%" height="60%" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+m.p+'</svg>'}
+function stTit(t){var m=window.PCCH&&PCCH.metPath?PCCH.metPath(t):null;return esc((t&&t.m)||(m&&m.t)||'Sous-traitant')}
 var STI='<svg viewBox="0 0 24 24" width="60%" height="60%" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l6-4v17M11 9h8v12M14 12.5h2M14 16h2M7.5 10.5h1M7.5 14h1M7.5 17.5h1"/></svg>';
 function couleurP(n){var A=['#56607A','#8A6D4B','#4E7C86','#7A6491','#5E7A5A','#8A5A64'],i=EQ.map(function(p){return p.n}).indexOf(n);return A[(i<0?0:i)%A.length]}
 function lirePhoto(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=d.createElement('canvas'),z=256,w=im.naturalWidth,h=im.naturalHeight,m=Math.min(w,h);
@@ -114,7 +118,7 @@ function fenPhoto(n,moiMeme){function corps(){var u=photo(n);return '<div class=
   X.xopen(moiMeme?'Ma photo':'Photo de '+n,'',corps(),'',lie);
   function lie(){$$('#x-in [data-phc]').forEach(function(b){b.onclick=function(){prendrePhoto(n,b.dataset.phc==='1',function(){$('#x-in').innerHTML=corps();lie()})}});
     var x=$('#x-in [data-phx]');if(x)x.onclick=function(){setPhoto(n,'');$('#x-in').innerHTML=corps();lie();X.toast('Photo retirée','Les initiales reviennent.')}}}
-window.PCEQ={EQ:EQ,STI:STI,photo:photo,setPhoto:setPhoto,ini:ini,fenPhoto:fenPhoto,iso:iso,get:get,set:set,taches:taches,togTache:togTache,qui:qui,besoin:besoin,setBesoin:setBesoin,jours:jours,nomCase:nomCase,prevenir:prevenir,prevenu:prevenu,
+window.PCEQ={EQ:EQ,STI:STI,stIc:stIc,photo:photo,setPhoto:setPhoto,ini:ini,fenPhoto:fenPhoto,iso:iso,get:get,set:set,taches:taches,togTache:togTache,qui:qui,besoin:besoin,setBesoin:setBesoin,jours:jours,nomCase:nomCase,prevenir:prevenir,prevenu:prevenu,
   jourLong:jourLong,jourCourt:jourCourt,relatif:relatif,ecoute:function(f){ecoute.push(f)},
   pGet:pGet,pTaches:pTaches,pQui:pQui,brouillon:brouillon,ABS:ABS,absences:absences,demanderAbs:demanderAbs,repondreAbs:repondreAbs,joursAbs:joursAbs,OU:OU,ouSuis:ouSuis,setOu:setOu,dte:dte,plus:plus,auj:auj,couleur:couleur};
 
@@ -323,7 +327,7 @@ function ligneP(p,K,T,row){var tot=0;K.forEach(function(k){tot+=hJour(get(k,p.n)
     '<button type="button" class="eqw-h" data-hs="1" style="grid-row:'+row+';grid-column:7" aria-label="Heures prévues de '+esc(p.n)+' : '+hTxt(tot)+'"><b>'+hTxt(tot)+'</b><small'+(hs?' class="sup"':'')+'>'+(hs?'+'+hTxt(hs)+' en plus':'sur 39 h')+'</small><span class="hb"><i style="width:'+Math.min(100,Math.round(tot/39*100))+'%"></i></span></button>'}
 function stRangs(K,row){var ids=[];(X.EV||[]).forEach(function(e){if(e.k==='st'&&e.x&&e.x.st&&K.indexOf(e.d)>-1&&ids.indexOf(e.x.st)<0)ids.push(e.x.st)});
   var P=window.PCPLAN&&PCPLAN.st,h='';ids.forEach(function(id){var t=P&&P.de?P.de(id):null;if(!t)return;row++;
-    h+='<div class="eqw-who st" style="grid-row:'+row+';grid-column:1"><span class="eqa st" title="Sous-traitant">'+STI+'</span><span><b>'+esc(t.n.split(' ').slice(0,2).join(' '))+'</b><small>'+esc(t.m||'Sous-traitant')+'</small></span></div>';
+    h+='<div class="eqw-who st" style="grid-row:'+row+';grid-column:1"><span class="eqa st" title="'+stTit(t)+'">'+stIc(t)+'</span><span><b>'+esc(t.n.split(' ').slice(0,2).join(' '))+'</b><small>'+esc(t.m||'Sous-traitant')+'</small></span></div>';
     var R=[],cur=null;K.forEach(function(k,i){var e=(X.EV||[]).filter(function(e){return e.k==='st'&&e.d===k&&e.x&&e.x.st===id})[0],ch=e?e.x.ch:'';
       if(ch&&cur&&cur.ch===ch)cur.n++;else if(ch){cur={ch:ch,i:i,n:1};R.push(cur)}else cur=null});
     h+=R.map(function(r){return '<div class="eqb st" style="grid-row:'+row+';grid-column:'+(r.i+2)+' / span '+r.n+'"><b>'+esc(r.n>1?((X.CH||{})[r.ch]||{}).n||court(r.ch):court(r.ch))+'</b><small>'+esc(t.m||'sous-traitant')+'</small></div>'}).join('')});
@@ -380,7 +384,7 @@ function quiVa(id,k){var c=(X.CH||{})[id];if(!c)return;var O=options(id,k),best=
     T=(c.ouv||[]).map(function(o){return o[0]}),m=besoin(id,k)-qui(id,k).length;
   function corps(){return '<div class="eq-choix">'+O.map(function(o){var off=o.st==='ici'||o.st==='abs';
       return '<button type="button" class="eq-o eqq'+(sel===o.n?' on':'')+(off?' off':'')+'" data-qq="'+esc(o.n)+'"'+(off?' disabled':'')+'>'+av(o.n)+'<span class="tx"><b>'+esc(o.n)+'</b><small>'+esc(o.t)+'</small></span>'+(best&&best.n===o.n?'<span class="eqt2 nv">Conseillé</span>':'')+'</button>'}).join('')+
-    stListe().slice(0,2).map(function(s){return '<button type="button" class="eq-o eqq" data-qs="'+esc(s.n)+'"><span class="eqa st" title="Sous-traitant">'+STI+'</span><span class="tx"><b>'+esc(s.n)+'</b><small>Sous-traitant · lui envoyer une demande</small></span></button>'}).join('')+'</div>'+
+    stListe().slice(0,2).map(function(s){return '<button type="button" class="eq-o eqq" data-qs="'+esc(s.n)+'"><span class="eqa st" title="'+stTit(s)+'">'+stIc(s)+'</span><span class="tx"><b>'+esc(s.n)+'</b><small>'+esc(s.m||'Sous-traitant')+' · lui envoyer une demande</small></span></button>'}).join('')+'</div>'+
     (T.length?'<p class="eqq-t">Ce qu\'il fera</p><div class="eqq-tk">'+T.map(function(t){return '<button type="button" class="'+(ta===t?'on':'')+'" data-qt="'+esc(t)+'">'+esc(t)+'</button>'}).join('')+'</div>':'')}
   function pied(){return '<button type="button" class="btn go" id="eqq-ok" style="width:100%"'+(sel?'':' disabled')+'>'+(sel?'Placer '+esc(sel):'Choisissez une personne')+'</button>'}
   X.xopen('Qui va chez '+c.n+' ?',jourLong(k)+(m>0?' · il manque '+m+' personne'+(m>1?'s':''):''),corps(),pied(),lie);
