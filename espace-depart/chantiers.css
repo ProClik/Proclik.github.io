@@ -473,3 +473,6 @@ html body #chx .cp-sw button{position:relative;display:flex;align-items:center;j
 :root[data-theme="dark"] .cheq-tc.on{background:#EFEBE2;border-color:#EFEBE2;color:#1B2440}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cheq-tc.on{background:#EFEBE2;border-color:#EFEBE2;color:#1B2440}}
 #chx .cheq-l{grid-template-columns:minmax(0,1fr)}#chx .cheq-j{box-sizing:border-box;max-width:100%}#chx .cheq-j .tx{overflow:hidden}#chx .cheq-j .ch-vb{flex:none}
+
+/* le client parle seulement avec : une personne (24/11) */
+.cp-avec{display:flex;flex-wrap:wrap;gap:8px}.cp-avec .btn{display:flex;flex-direction:column;align-items:flex-start;min-height:46px;padding:6px 14px}.cp-avec .btn small{font-size:11px;opacity:.7;font-weight:500}.cp-avec .btn[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit)}

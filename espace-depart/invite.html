@@ -309,8 +309,8 @@ function client(){var k=P.cli||{n:'',msgs:[],commun:0},a=REEL?[REEL.avc||0,REEL.
   '<div id="sig"></div>'+(P.recep?'':'<button class="go" id="sg" style="margin-top:12px">'+IC.flag+'Signaler un problème</button>')+
   (P.recep?'<button class="ln" data-doc="Procès-verbal de réception" style="margin-top:12px"><span class="r">'+IC.docs+'</span><span class="tx"><b>Réception signée le '+esc(dt(P.recep.d))+'</b><small>Le procès-verbal, avec '+(P.recep.n||'aucune')+' réserve'+(P.recep.n>1?'s':'')+'</small></span>'+IC.chev+'</button>':'')+'</section>'+
  '</div><div class="col">'+
- '<section class="card monte"><h2><span class="ic">'+IC.fil+'</span>'+(k.commun?'La conversation du chantier':'Avec '+esc(ARTISAN))+'</h2>'+
-  (k.commun?luC():'<p class="lu priv">'+IC.lock+'<span>Privé : vous et '+esc(ARTISAN)+' seulement. Les entreprises ne lisent pas ces messages.</span></p>')+'<div class="fil" id="fil">'+cmsgs(conv)+'</div>'+
+ '<section class="card monte"><h2><span class="ic">'+IC.fil+'</span>'+(k.commun?'La conversation du chantier':'Avec '+esc(k.avec?k.avec+' · '+ARTISAN:ARTISAN))+'</h2>'+
+  (k.commun?luC():'<p class="lu priv">'+IC.lock+'<span>Privé : vous et '+esc(k.avec||ARTISAN)+' seulement. Personne d\'autre ne lit ces messages.</span></p>')+'<div class="fil" id="fil">'+cmsgs(conv)+'</div>'+
   '<div class="w"><textarea id="t" rows="1" placeholder="'+(k.commun?'Écrire à tout le chantier…':'Écrire à '+esc(ARTISAN)+'…')+'"></textarea><button class="ro pk" id="mic" aria-label="Dicter">'+IC.mic+'</button><button class="ro go" id="env" aria-label="Envoyer">'+IC.send+'</button></div></section>'+
  (REEL?partageReel():'<section class="card monte"><h2><span class="ic">'+IC.docs+'</span>Plans et photos</h2>'+
   '<button class="ln" data-doc="Plan"><span class="r">'+IC.plan+'</span><span class="tx"><b>Le plan</b><small>La dernière version</small></span>'+IC.chev+'</button>'+

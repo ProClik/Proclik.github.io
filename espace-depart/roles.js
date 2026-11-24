@@ -381,5 +381,5 @@ st.textContent=
  '#rl-m .av svg,#rl-qv .av svg{width:20px;height:20px}';
 d.head.appendChild(st);
 applique();
-window.PCROLE={moi:moi,choisir:choisir,quiVoit:quiVoit,peut:peut};
+window.PCROLE={moi:moi,choisir:choisir,quiVoit:quiVoit,peut:peut,pers:function(){return PERS},patron:PATRON,membre:function(){return MB},api:api};
 })();
