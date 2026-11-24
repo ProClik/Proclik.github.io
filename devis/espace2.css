@@ -472,3 +472,17 @@ html body .mes{display:block;width:100%;max-width:380px;height:auto;max-height:m
 /* fiches en 2 colonnes (iPad couché) : la question avec dessin prend toute la largeur, dessin à droite et lisible */
 html body .item:not(.mini)>*:has(.q>.mes){grid-column:1/-1}
 @media (min-width:700px){html body .item .q:has(>.mes)>.mes{max-height:min(40vh,250px)}}
+
+/* Écran final au style « Signature » de l'accueil (Cyril 25/11 : « cette page ne suit pas le style du formulaire ») */
+html body .done9 ol.fil8{max-width:600px;margin:6px auto 10px}
+html body ol.fil8 li.fait .p8{background:var(--e2-laiton);color:var(--e2-sur);border-color:transparent}
+html body ol.fil8 li.fait small{color:var(--e2-laiton)}
+html body ol.fil8.fin8::before{background:linear-gradient(90deg,var(--e2-laiton) 0 50%,var(--e2-line) 50%)}
+/* Récap (Cyril 25/11 : « on ne sait pas qu'il faut cliquer sur la question pour voir les réponses ») : bouton « Voir ⌄ » visible sur chaque ligne */
+html body .rblock.rfold h3 .rf-v{display:inline-flex;align-items:center;gap:4px;flex:none;padding:6px 12px!important;border-radius:99px;background:var(--e2-tile)!important;border:1px solid var(--e2-line)!important;color:var(--e2-nuit)!important;font:700 13px var(--f-body)!important;box-shadow:var(--e2-sh)}
+html body .rblock.rfold h3 .rf-v svg{width:15px;height:15px;transition:transform .2s}
+html body .rblock.rfold .rf-v .rv-c,html body .rblock.rfold.rf-on .rf-v .rv-o{display:none}
+html body .rblock.rfold.rf-on .rf-v .rv-c{display:inline}
+html body .rblock.rfold.rf-on .rf-v svg{transform:rotate(180deg)}
+html body .rblock.rfold .rsum{display:block!important}
+html body .rblock.rfold.rf-on .rsum{display:none!important}
