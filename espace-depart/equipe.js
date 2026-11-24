@@ -94,7 +94,25 @@ function repondreAbs(id,ok){var o=S.abs.filter(function(a){return a.id===id})[0]
 var OU={chantier:'Sur le chantier',route:'En route',depot:'Au dépôt',client:'Chez un client (devis)',four:'Chez un fournisseur',bureau:'Au bureau'};
 function ouSuis(n){var o=S.ou[n];return o&&o.d===iso(auj())?o:null}
 function setOu(n,v){var x=new Date();S.ou[n]={v:v,d:iso(auj()),h:x.getHours()+'h'+p2(x.getMinutes())};ecrit();bouge()}
-window.PCEQ={EQ:EQ,iso:iso,get:get,set:set,taches:taches,togTache:togTache,qui:qui,besoin:besoin,setBesoin:setBesoin,jours:jours,nomCase:nomCase,prevenir:prevenir,prevenu:prevenu,
+/* ---------- photo de chaque personne (Cyril 24/11 21h42) : à la place des initiales, partout ----------
+   Mise par la personne elle-même (son Espace) ou par le patron (sa fiche). Recadrée en carré, 256 px, JPEG léger.
+   Rangée dans pc-eq2 (ph[prénom]) : le service la sort vers le coffre photos et la remplace par un lien. */
+if(!S.ph||typeof S.ph!=='object')S.ph={};
+function photo(n){var u=S.ph&&S.ph[n];return typeof u==='string'&&/^(data:image\/|https:\/\/)/.test(u)?u:''}
+function setPhoto(n,u){S.ph[n]=u||'';ecrit();bouge()}
+function ini(n){var u=photo(n);return u?'<img src="'+esc(u)+'" alt="" loading="lazy">':esc(String(n||'?').charAt(0))}
+function couleurP(n){var A=['#56607A','#8A6D4B','#4E7C86','#7A6491','#5E7A5A','#8A5A64'],i=EQ.map(function(p){return p.n}).indexOf(n);return A[(i<0?0:i)%A.length]}
+function lirePhoto(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=d.createElement('canvas'),z=256,w=im.naturalWidth,h=im.naturalHeight,m=Math.min(w,h);
+    c.width=c.height=z;var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,z,z);g.drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,z,z);cb(c.toDataURL('image/jpeg',.85))};
+  im.onerror=function(){X.toast('Image illisible','Essayez une autre photo.')};im.src=r.result};r.readAsDataURL(f)}
+function prendrePhoto(n,cam,fin){var i=d.createElement('input');i.type='file';i.accept='image/*';if(cam)i.setAttribute('capture','user');i.style.display='none';d.body.appendChild(i);
+  i.onchange=function(){var f=i.files&&i.files[0];if(i.parentNode)i.parentNode.removeChild(i);if(!f)return;lirePhoto(f,function(u){setPhoto(n,u);X.toast('Photo enregistrée','Elle remplace les initiales de '+n+' partout.');if(fin)fin()})};i.click()}
+function fenPhoto(n,moiMeme){function corps(){var u=photo(n);return '<div class="eqph"><span class="eqa xl" style="background:'+couleurP(n)+'">'+ini(n)+'</span><p class="hint">'+(moiMeme?'Votre photo s\'affiche à la place de vos initiales, partout dans l\'Espace de l\'équipe.':'Elle s\'affiche à la place des initiales de '+esc(n)+', partout dans l\'Espace.')+'</p></div>'+
+    '<div class="eqph-b"><button type="button" class="btn go" data-phc="1">Prendre une photo</button><button type="button" class="btn" data-phc="0">Choisir une image</button>'+(u?'<button type="button" class="btn" data-phx>Retirer la photo</button>':'')+'</div>'}
+  X.xopen(moiMeme?'Ma photo':'Photo de '+n,'',corps(),'',lie);
+  function lie(){$$('#x-in [data-phc]').forEach(function(b){b.onclick=function(){prendrePhoto(n,b.dataset.phc==='1',function(){$('#x-in').innerHTML=corps();lie()})}});
+    var x=$('#x-in [data-phx]');if(x)x.onclick=function(){setPhoto(n,'');$('#x-in').innerHTML=corps();lie();X.toast('Photo retirée','Les initiales reviennent.')}}}
+window.PCEQ={EQ:EQ,photo:photo,setPhoto:setPhoto,ini:ini,fenPhoto:fenPhoto,iso:iso,get:get,set:set,taches:taches,togTache:togTache,qui:qui,besoin:besoin,setBesoin:setBesoin,jours:jours,nomCase:nomCase,prevenir:prevenir,prevenu:prevenu,
   jourLong:jourLong,jourCourt:jourCourt,relatif:relatif,ecoute:function(f){ecoute.push(f)},
   pGet:pGet,pTaches:pTaches,pQui:pQui,brouillon:brouillon,ABS:ABS,absences:absences,demanderAbs:demanderAbs,repondreAbs:repondreAbs,joursAbs:joursAbs,OU:OU,ouSuis:ouSuis,setOu:setOu,dte:dte,plus:plus,auj:auj,couleur:couleur};
 
@@ -238,7 +256,7 @@ function caseCh(id,k){var c=(X.CH||{})[id];
   function corps(){return '<p class="hint" style="margin:0 0 10px">Touchez une personne pour la mettre sur ce chantier, ou l\'enlever. Puis touchez ce qu\'elle fait.</p><div class="eq-choix">'+EQ.map(function(p){var v=get(k,p.n),ici=v===id;
     var T=taches(k,p.n),O=(c.ouv||[]).map(function(o){return o[0]});T.forEach(function(t){if(O.indexOf(t)<0)O.push(t)});
     var hT=ici&&O.length?'<div class="cheq-ta"><small>Ce qu\'il fait :</small>'+O.map(function(t){var on=T.indexOf(t)>-1;return '<button type="button" class="cheq-tc'+(on?' on':'')+'" data-ta="'+esc(t)+'" data-tp="'+p.n+'" aria-pressed="'+on+'">'+esc(t)+'</button>'}).join('')+'</div>':'';
-    return '<div class="cheq-pw'+(ici?' on':'')+'"><button type="button" class="eq-o'+(ici?' on':'')+'" data-pp="'+p.n+'"><span class="eq-av"><i>'+p.n.charAt(0)+'</i></span><span class="tx"><b>'+p.n+'</b><small>'+(ici?'Sur ce chantier':esc(nomCase(v)))+'</small></span><span class="eq-ck">'+(ici?'✓':'+')+'</span></button>'+hT+'</div>'}).join('')+'</div>'}
+    return '<div class="cheq-pw'+(ici?' on':'')+'"><button type="button" class="eq-o'+(ici?' on':'')+'" data-pp="'+p.n+'"><span class="eq-av"><i>'+ini(p.n)+'</i></span><span class="tx"><b>'+p.n+'</b><small>'+(ici?'Sur ce chantier':esc(nomCase(v)))+'</small></span><span class="eq-ck">'+(ici?'✓':'+')+'</span></button>'+hT+'</div>'}).join('')+'</div>'}
   X.xopen(c.n,sous(),corps(),'<button class="btn go" id="eq-ok" style="width:100%">C\'est bon</button>',lie);
   function lie(){$$('#x-in [data-pp]').forEach(function(b){b.onclick=function(){var p=b.dataset.pp;set(k,p,get(k,p)===id?'':id);$('#x-in').innerHTML=corps();$('#x-s').textContent=sous();lie()}});
     $$('#x-in [data-ta]').forEach(function(b){b.onclick=function(){togTache(k,b.dataset.tp,b.dataset.ta);$('#x-in').innerHTML=corps();lie()}});
@@ -261,7 +279,7 @@ function caseP(p,k){var CHs=chantiers(),L=CHs.map(function(c){return [c.id,c.n]}
 var PINC=null,JSEL=null,UNDO=null,UNDOT=null,DRG=0,DR=null;
 var AVC=['#56607A','#8A6D4B','#4E7C86','#7A6491','#5E7A5A','#8A5A64'];
 function avC(n){var i=EQ.map(function(p){return p.n}).indexOf(n);return AVC[(i<0?0:i)%AVC.length]}
-function av(n,sm){return '<span class="eqa'+(sm?' sm':'')+'" style="background:'+avC(n)+'" aria-hidden="true">'+esc(String(n).charAt(0))+'</span>'}
+function av(n,sm){return '<span class="eqa'+(sm?' sm':'')+'" style="background:'+avC(n)+'" aria-hidden="true">'+ini(n)+'</span>'}
 function estAbs(v){return !!ABS[v]||v==='repos'}
 function largeEcran(){return window.innerWidth>=700}
 function semK(){return [0,1,2,3,4].map(kj)}
@@ -327,7 +345,7 @@ function aRegler(K){var R=trous(K),s0=stListe()[0];
 function ouChacun(K){var T=iso(auj());if(K.indexOf(T)<0)return '';
   var L=EQ.map(function(p){var o=ouSuis(p.n),v=get(T,p.n);return [p.n,o?OU[o.v]:v?'Prévu : '+court(v):'Rien de prévu',avC(p.n)]});
   [(window.PCID&&PCID.prenom)||'Julien','Claire'].forEach(function(n){var o=ouSuis(n);L.push([n,o?OU[o.v]:'Pas encore dit','var(--n1-nuit)'])});
-  return '<div class="eqk eqr"><h4>Où est chacun maintenant</h4>'+L.map(function(x){return '<button type="button" class="eqo-l" data-pers="'+esc(x[0])+'"><span class="eqa sm" style="background:'+x[2]+'">'+esc(x[0].charAt(0))+'</span><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></button>'}).join('')+'</div>'}
+  return '<div class="eqk eqr"><h4>Où est chacun maintenant</h4>'+L.map(function(x){return '<button type="button" class="eqo-l" data-pers="'+esc(x[0])+'"><span class="eqa sm" style="background:'+x[2]+'">'+ini(x[0])+'</span><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></button>'}).join('')+'</div>'}
 function puce(v,t,cc){return '<button type="button" class="eqd-c'+(PINC===v?' on':'')+'" data-pinc="'+v+'" data-drag="'+v+'">'+(cc?'<i style="background:'+cc+'"></i>':'')+esc(t)+'</button>'}
 function dock(C,pal){var h='<div class="eqd">';
   if(pal)h+='<div class="eqd-p" role="toolbar" aria-label="Placer vite"><span class="lb">'+(PINC!=null?'Touchez les cases à remplir':'Placer vite : choisissez, puis touchez les cases')+'</span>'+
@@ -444,6 +462,8 @@ st2.textContent=[
 '#p-equipe .eqw-who>span:last-child{min-width:0;display:flex;flex-direction:column}#p-equipe .eqw-who b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#p-equipe .eqw-who small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}',
 '#p-equipe .eq-okp{flex:none;width:7px;height:7px;border-radius:50%;background:var(--ok,#3E8E6A)}',
 '.eqa{flex:none;width:32px;height:32px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;font:800 13px/1 Manrope,system-ui,sans-serif}.eqa.sm{width:28px;height:28px;font-size:12px}',
+'.eqa{overflow:hidden}.eqa img,.eq-av i img,.cheq-av i img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}.eq-av i,.cheq-av i{overflow:hidden}',
+'.eqa.xl{width:96px;height:96px;font-size:36px}.eqph{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:6px 0 4px}.eqph-b{display:grid;gap:8px;margin-top:12px}.eqph-b .btn{width:100%;justify-content:center}',
 '.eqa.st{background:none!important;color:var(--muted);box-shadow:inset 0 0 0 1.5px var(--muted)}',
 '#p-equipe .eqb{position:relative;min-height:60px;border-radius:14px;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;min-width:0;text-align:left;color:var(--fg);cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;border:0;background:var(--teinte);box-shadow:none;font:inherit;transition:transform .12s,opacity .12s}',
 '#p-equipe .eqb b{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#p-equipe .eqb small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
