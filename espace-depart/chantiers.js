@@ -464,6 +464,8 @@ function lier(c){var id=c.id;
  var agv=$('#ch-agvoir');if(agv)agv.addEventListener('click',function(){var L=evsCh(c),T=X.iso(X.TODAY),n=L.filter(function(e){return e.d>=T})[0];voirPlanning(n?n.d:null)});
  $$('#chx [data-agd]').forEach(function(b){b.addEventListener('click',function(){voirPlanning(b.dataset.agd)})});
  $$('#chx [data-aller]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,b.dataset.aller)})});
+ $$('#chx [data-eqt]').forEach(function(b){b.addEventListener('click',function(){EQT=b.dataset.eqt;var v=$('#chx .cp-vues');if(v)v.setAttribute('data-t',EQT);$$('#chx .cp-tabs [data-eqt]').forEach(function(x){x.setAttribute('aria-selected',String(x.dataset.eqt===EQT))});
+   if(!b.closest('.cp-tabs')){var tg=$('#chx .cp-v-'+EQT);if(tg)tg.scrollIntoView({behavior:'smooth',block:'start'})}})});
  $$('#chx [data-cact]').forEach(function(b){b.addEventListener('click',function(){action(c,b.dataset.cact)})});
  $$('#chx [data-chdos]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.chdos;if(X.cf&&X.cf.ficheClient)X.cf.ficheClient(k);else X.openDossier(k)})});
  /* travaux */
@@ -550,29 +552,43 @@ function msgHTML(c,x,i){var q=qui(c,x.de),moi=x.de==='moi',hh=String(x.h||'').sp
   '<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p>'+(x.epi||part(c).termine?'':'<button type="button" class="cp-pin" data-cpepi="'+i+'" aria-label="Épingler comme décision" title="Épingler comme décision">'+IC.epingle+'</button>')+'</div>'+
   '<span class="cp-h">'+esc(hh[1]||hh[0]||'')+' · <span class="'+(tous?'ok':'')+'">'+(tous?'✓✓ lu par tous':x.lu?'✓ lu par '+x.lu+' sur '+n:'✓ envoyé')+'</span>'+(x.epi?' · <span class="la">épinglé</span>':'')+'</span></div></div>'}
 function jourDe(h){return String(h||'').split(' · ')[0]}
-function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
- var h='<div class="card" id="cp-ent"><div class="row" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b><span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span></div>';
+var EQT=null;
+/* 24/11 (Cyril : revoir le chantier partagé) : en tête ce qu'il faut faire ; puis 3 onglets (Conversation, Réserves, Entreprises) au lieu d'une longue page ;
+   sur iPad couché / PC, conversation à gauche, réserves et entreprises à droite ; « Chantier terminé » tout en bas, discret. */
+function eqAFaire(c,nl){var R=resL(c),P=part(c),L=[],cv=R.filter(function(r){return r.st==='corr'}),ov=R.filter(function(r){return r.st==='ouv'}),vieux=ov.filter(function(r){return resJours(r)>=7});
+ if(cv.length)L.push(['res',cv.length+(cv.length>1?' réserves corrigées à valider':' réserve corrigée à valider'),'Valider']);
+ if(vieux.length){var mx=Math.max.apply(null,vieux.map(resJours));L.push(['res',vieux.length+(vieux.length>1?' réserves à corriger':' réserve à corriger')+' depuis '+mx+' jours','Relancer'])}
+ if(nl)L.push(['conv',nl>1?nl+' nouveaux messages':'1 nouveau message','Lire']);
+ var fin=accesFin(c),jf=joursAvant(fin);if(P.ent.length&&!P.termine&&jf<=3)L.push(['ent',jf<0?'Accès des entreprises dépassé':'Accès des entreprises jusqu\'au '+dt(fin),'Prolonger']);
+ return '<div class="card cp-af"><div class="cp-af-h"><b>À faire sur ce chantier partagé</b>'+(L.length?'<span class="ch-etat pb2">'+L.length+' à régler</span>':'<span class="ch-etat ok">À jour ✓</span>')+'</div>'+
+  (L.length?'<div class="cp-af-l">'+L.map(function(x){return '<button type="button" data-eqt="'+x[0]+'"><span class="tx">'+esc(x[1])+'</span><span class="ch-vb">'+x[2]+'</span></button>'}).join('')+'</div>':'<p class="hint" style="margin:6px 0 0">Rien à valider ni à relancer.</p>')+'</div>'}
+function equipe(c){var P=part(c),E=P.ent,M=P.msgs,nl0=nonLus(c);P.nl=0;saveCH();
+ var h='<div class="card" id="cp-ent"><div class="row cp-ent-h" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b>'+(c.st!=='done'&&!P.termine?'<button type="button" class="cp-inv-p" id="cp-inv">'+IC.plus+'Inviter</button>':'<span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span>')+'</div>';
  if(!E.length)h+='<p class="hint" style="margin:4px 0 0">Invitez les entreprises qui travaillent ici. Elles reçoivent un lien par SMS, sans appli, et retrouvent tout au même endroit.</p>';
  var fin=accesFin(c),jf=joursAvant(fin);
  if(E.length&&!P.termine&&jf<=3)h+='<div class="cp-rap"><b>'+(jf<0?'L\'accès des entreprises est dépassé':'Le chantier se termine '+(jf===0?'aujourd\'hui':jf===1?'demain':dt(fin)))+'</b><small>Les entreprises gardent l\'accès jusqu\'au '+dt(fin)+'.</small><div class="cp-rb"><button type="button" class="btn" id="cp-pro">Prolonger d\'une semaine</button><button type="button" class="btn" id="cp-fin1">Chantier terminé</button></div></div>';
  E.forEach(function(e,i){var off=offE(c,e),garde=P.termine&&!e.coupe&&!off;h+='<button type="button" class="cp-e'+(off?' off':'')+'" data-cpe="'+i+'"><span class="cp-mi">'+icEnt(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+esc(e.m)+' · '+(garde?'accès gardé : '+resOuv(c,e.id)+' réserve à lever':off?'accès terminé'+(moyNote(e)?' · <span class="cp-moy">★ '+String(moyNote(e)).replace('.',',')+'</span>':P.termine?' · <span class="cp-moy">à noter</span>':''):esc(e.vu||'invitation envoyée')+' · jusqu\'au '+dt(fin))+'</small></span><span class="cp-go">›</span></button>'});
  h+=cliRow(c);
  if(P.termine)h+='<p class="hint" style="margin:10px 0 0">Chantier terminé : les accès sont coupés (sauf pour qui a encore une réserve à lever), et chaque entreprise a reçu le récapitulatif par e-mail (décisions, plans, conversation). Touchez une entreprise pour lui donner votre note, que vous seul verrez.</p>';
- if(c.st!=='done'&&!P.termine)h+='<button type="button" class="btn go cf-go" id="cp-inv" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Inviter une entreprise</span></span></button>';
- if(E.length&&!P.termine)h+='<button type="button" class="btn" id="cp-voir" style="width:100%;margin-top:10px">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
- if(E.length&&!P.termine&&jf>3)h+='<button type="button" class="btn cp-fin" id="cp-fin2" style="width:100%;margin-top:10px">Chantier terminé</button>';
- h+='</div>'+resCard(c);
+ 
+ if(E.length&&!P.termine)h+='<button type="button" class="cp-lien" id="cp-voir">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
+ var finB=E.length&&!P.termine&&jf>3?'<div class="cp-finbas"><button type="button" class="cp-fin cp-lien" id="cp-fin2">Chantier terminé : couper les accès</button></div>':'';
+ h+='</div>';var hEnt=h,hRes=resCard(c);h='';
  if(E.length){
   var ord=M.map(function(x,i){return [x,i]}),epi=ord.filter(function(y){return y[0].epi}),aut=ord.filter(function(y){return !y[0].epi});
   var dj='',fil=M.map(function(x,i){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j==='À l\'instant'||/\d+ h/.test(j)?'Aujourd\'hui':j)+'</span></div>':'';dj=j;return sep+msgHTML(c,x,i)}).join('');
   var dec=M.filter(function(x){return x.epi});
-  if(window.PCOPT&&PCOPT.actif('conversation')===false)return h+'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>'+cliCard(c);
+  if(window.PCOPT&&PCOPT.actif('conversation')===false)return eqVue(c,nl0,'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>'+cliCard(c),hRes,hEnt,finB);
   h+='<div class="card" id="cp-fil">'+(window.PCTAG?PCTAG('conversation'):'')+''+
    (dec.length?'<div class="cp-dec"><span class="cp-dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(qui(c,x.de).n)+' · '+esc(jourDe(x.h))+'</small></p>'}).join('')+'</div>':'')+
    '<div class="cp-fil">'+fil+'</div>'+
    (P.termine?'<p class="hint" style="margin:0">Chantier terminé : la conversation est archivée, plus personne ne peut écrire.</p>':luPar(c)+'<div class="cp-w"><textarea id="cp-t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button type="button" class="cp-ro pk" id="cp-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro go" id="cp-send" aria-label="Envoyer à tous">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+
    (P.termine?'':'<p class="hint" style="margin:10px 2px 0">Touchez '+IC.epingle.replace('<svg','<svg class="cp-ih"')+' sur un message pour le garder dans « Ce qui est décidé ».</p>')+'</div>';}
- return h+cliCard(c)}
+ return eqVue(c,nl0,h+cliCard(c),hRes,hEnt,finB)}
+function eqVue(c,nl,hConv,hRes,hEnt,finB){var P=part(c),nr=resOuv(c),t=EQT||(P.ent.length?'conv':'ent');
+ var tabs=[['conv','Conversation',nl],['res','Réserves',nr],['ent','Entreprises',P.ent.length]];
+ return eqAFaire(c,nl)+'<div class="seg cp-tabs" role="tablist" aria-label="Chantier partagé">'+tabs.map(function(x){return '<button role="tab" data-eqt="'+x[0]+'" aria-selected="'+(t===x[0])+'">'+x[1]+(x[2]?' <i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div>'+
+  '<div class="cp-vues" data-t="'+t+'"><div class="cp-v cp-v-conv">'+hConv+'</div><div class="cp-v2"><div class="cp-v cp-v-res">'+hRes+'</div><div class="cp-v cp-v-ent">'+hEnt+'</div></div></div>'+finB}
 function icPicker(sel){return '<div class="cp-ics" role="radiogroup" aria-label="Icône du métier">'+MET.map(function(x){return '<button type="button" class="cp-ic" data-cpic="'+x[0]+'" aria-pressed="'+(x[0]===sel)+'" title="'+esc(x[1])+'">'+I(x[3])+'<small>'+esc(x[1].split(',')[0])+'</small></button>'}).join('')+'</div>'}
 function lierPicker(cb){$$('[data-cpic]').forEach(function(b){b.addEventListener('click',function(){$$('[data-cpic]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});cb(b.dataset.cpic)})})}
 function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(window.PCPLAN&&PCPLAN.st?PCPLAN.st.tous():[]).filter(function(t){return deja.indexOf(t.id)<0}),sel=S[0]?S[0].id:'autre',ic='autre',par='sms',ic0=0,fin=accesFin(c);

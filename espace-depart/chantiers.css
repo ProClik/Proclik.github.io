@@ -390,3 +390,37 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-pll{display:flex;justify-content:center;gap:14px;margin:6px 0 2px;font-size:11.5px;font-weight:700;color:var(--n1-muted)}
 .cp-pll span{display:inline-flex;align-items:center;gap:5px}.cp-pll span::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--n1-alert)}
 .cp-pll .wa::before{background:var(--n1-warn)}.cp-pll .ok::before{background:var(--n1-ok)}
+/* 24/11 : chantier partagé = À faire en tête, 3 onglets, deux colonnes sur grand écran */
+#chx .ch-etat{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;letter-spacing:0;white-space:nowrap}
+#chx .ch-etat.ok{background:color-mix(in srgb,#3E8E6A 14%,transparent);color:#3E8E6A}
+#chx .ch-etat.pb2{background:color-mix(in srgb,#E08A3C 15%,transparent);color:#B8621B}
+#chx .ch-vb{flex-shrink:0;display:inline-flex;align-items:center;height:34px;padding:0 15px;border-radius:99px;font-size:13.5px;font-weight:700;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 22%,transparent)}
+#chx .cp-af{padding:18px 20px;border:1.5px solid color-mix(in srgb,var(--n1-nuit,#1B2440) 16%,transparent);box-shadow:0 2px 4px rgba(23,24,29,.05),0 24px 44px -22px rgba(27,36,64,.42)}
+#chx .cp-af-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#chx .cp-af-h b{font-size:18px}
+#chx .cp-af-l{display:grid;margin-top:8px}
+#chx .cp-af-l button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 2px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:600 15px var(--f,inherit);cursor:pointer}
+#chx .cp-af-l button:last-child{border-bottom:0}
+#chx .cp-af-l .tx{flex:1;min-width:0}
+#chx .cp-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:16px 0 12px}
+#chx .cp-tabs button i{font-style:normal;font-size:11.5px;font-weight:800;margin-left:4px;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--fg) 10%,transparent)}
+#chx .cp-vues .cp-v{display:none}
+#chx .cp-vues[data-t="conv"] .cp-v-conv,#chx .cp-vues[data-t="res"] .cp-v-res,#chx .cp-vues[data-t="ent"] .cp-v-ent{display:block}
+#chx .cp-v>.card:first-child{margin-top:0}
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+ #chx .cp-tabs{display:none}
+ #chx .cp-vues{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0 24px;align-items:start;margin-top:16px}
+ #chx .cp-vues .cp-v{display:block}
+ #chx .cp-v2 .cp-v+.cp-v{margin-top:16px}
+}
+#chx .cp-ent-h{align-items:center}
+#chx .cp-inv-p{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:99px;border:0;background:var(--n1-nuit,#1B2440);color:#fff;font:700 13.5px var(--f,inherit);cursor:pointer}
+#chx .cp-inv-p svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+:root[data-theme="dark"] #chx .cp-inv-p{background:#EFEBE2;color:#1B2440}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #chx .cp-inv-p{background:#EFEBE2;color:#1B2440}}
+#chx .cp-lien{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 2px;border:0;background:none;color:var(--fg);font:600 14.5px var(--f,inherit);cursor:pointer;box-shadow:none}
+#chx .cp-lien svg{width:18px;height:18px}
+#chx .cp-finbas{margin:26px 0 6px;text-align:center}
+#chx .cp-finbas .cp-lien{color:var(--muted);font-size:13.5px;text-decoration:underline;text-underline-offset:3px}
+html body #chx .cp-tabs button{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2px;white-space:nowrap;min-height:44px;padding:0 6px;font-size:14px}
+@media (max-width:420px){html body #chx .cp-tabs button{font-size:13px}#chx .cp-tabs button i{margin-left:2px;padding:1px 6px}}
