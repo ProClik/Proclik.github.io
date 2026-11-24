@@ -37,12 +37,12 @@ function garde(){lss('pc-role',R)}
 /* ---------- qui voit quoi (le patron décide) : même tableau que la démo RT2O du 14/11 (Réglages › Qui voit quoi),
    cette fois chaque case se touche. Colonnes : Référent (chef d'équipe), Ouvrier, Bureau. Les patrons voient tout. ---------- */
 var COLS=[['ref','Référent'],['ouv','Ouvrier'],['bur','Bureau']];
-var DROITS=[['plan_lire','Lire le plan et les cotes'],['plan','Modifier le plan (ouvrir le cadenas)'],['materiel','Demander du matériel'],
+var DROITS=[['tous_ch','Voir tous les chantiers (sinon : les siens)'],['notes','Lire les notes des chantiers'],['plan_lire','Lire le plan et les cotes'],['plan','Modifier le plan (ouvrir le cadenas)'],['materiel','Demander du matériel'],
  ['prix','Prix de vente et devis'],['marges','Prix d\'achat et marges'],['fact','Factures et paiements'],['quiou','Qui est où'],
  ['clients','Coordonnées des clients'],['equipe','Planning de toute l\'équipe'],['commande','Passer le matériel « Commandé »'],
  ['hs','Ajouter les heures en plus'],['achats','Achats, fournisseurs, dépenses'],['chiffres','Chiffre d\'affaires et graphiques'],['reglages','Réglages et options de l\'entreprise']];
-var DEF={ref:{plan_lire:1,plan:1,materiel:1,quiou:1,clients:1,equipe:1,hs:1},ouv:{plan_lire:1,materiel:1,quiou:1},
- bur:{plan_lire:1,materiel:1,prix:1,fact:1,quiou:1,clients:1,equipe:1,commande:1,achats:1}};
+var DEF={ref:{tous_ch:1,notes:1,plan_lire:1,plan:1,materiel:1,quiou:1,clients:1,equipe:1,hs:1},ouv:{plan_lire:1,materiel:1,quiou:1},
+ bur:{tous_ch:1,notes:1,plan_lire:1,materiel:1,prix:1,fact:1,quiou:1,clients:1,equipe:1,commande:1,achats:1}};
 var DR=lsg('pc-droits',{});
 function col(p){if(MB&&p.n===MB.n&&MB.col!=='dir')return MB.col;return p.g==='bur'?'bur':p.r==='Chef'?'ref':'ouv'}
 function droitC(c,k){var o=DR[c];if(o&&o[k]!=null)return !!o[k];return !!DEF[c][k]}
