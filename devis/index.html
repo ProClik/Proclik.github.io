@@ -327,7 +327,7 @@ html body #pf-form,html body #pf-later{display:none!important}
 @media (orientation:landscape) and (max-height:520px){#planfull .pf-bar:not(:has(#pf-done.fin)){display:none}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
-<link rel="stylesheet" href="espace2.css?v=12">
+<link rel="stylesheet" href="espace2.css?v=13">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -1050,10 +1050,12 @@ const IC7={
  devis:'<path d="M8 3.5h11l5 5v15"/><path d="M19 3.5v5h5"/><path d="M8 3.5v25h9"/><path d="M11.5 12h7M11.5 15.5h9M11.5 19h5"/><circle cx="22.5" cy="24.5" r="5"/><path d="m20.4 24.6 1.5 1.5 2.8-3"/>'};
 const ic7=k=>`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC7[k]}</svg>`;
 function introH(){const has=S.travaux.length>0,ok='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
- return`<section class="hero7"><h1>Votre projet, prêt avant la visite.</h1><p class="sub">Trois étapes simples. « Je ne sais pas » est toujours une bonne réponse, et vous pouvez finir plus tard.</p>
- <ol class="fil7"><li class="on"><div class="g7">${ic7("tel")}</div><span class="n7">Étape 1 · vous êtes ici</span><b>Vous décrivez<br> vos travaux</b><span class="pt7">10 à 15 min</span></li>
- <li><div class="g7">${ic7("artisan")}</div><span class="n7">Étape 2</span><b>${esc(CONFIG.artisan)} lit tout<br> et vous appelle</b><span class="pt7">Pour fixer une visite</span></li>
- <li><div class="g7">${ic7("devis")}</div><span class="n7">Étape 3</span><b>Votre devis se finit<br> chez vous</b><span class="pt7">Sans tout redire</span></li></ol>
+ const LG8='<svg viewBox="16 -1.5 80 92" aria-hidden="true"><path d="M30.50 44.50A25.50 25.50 0 1 1 81.50 44.50A25.50 25.50 0 1 1 30.50 44.50ZM63.73 62.22A19.34 19.34 0 1 0 48.27 62.22A3.92 3.92 0 0 0 53.76 58.63L53.76 55.71A2.24 2.24 0 0 1 58.24 55.71L58.24 58.63A3.92 3.92 0 0 0 63.73 62.22Z" fill="currentColor"/><circle cx="56" cy="42.82" r="4.71" class="pt8"/></svg>';
+ // Accueil « Signature ProClik » (choix A de Cyril 24/11) : logo en tête, 3 étapes en frise reliées par un fil laiton, carte prénom dessous.
+ return`<section class="hero7 hero8"><div class="logo8">${LG8}</div><h1>Votre projet, prêt avant la visite.</h1><p class="sub">« Je ne sais pas » est toujours une bonne réponse.</p>
+ <ol class="fil8"><li class="on"><span class="p8">${ic7("tel")}</span><b>Vous décrivez<br> vos travaux</b><small>Vous êtes ici · 10 min</small></li>
+ <li><span class="p8">${ic7("artisan")}</span><b>${esc(CONFIG.artisan)}<br> vous appelle</b><small>Pour fixer une visite</small></li>
+ <li><span class="p8">${ic7("devis")}</span><b>Votre devis<br> chez vous</b><small>Sans tout redire</small></li></ol>
  <div class="carte7"><div class="q" style="margin:0"><label class="lab" for="in-pre">${has?"Votre prénom":"Pour commencer, votre prénom"}</label><input id="in-pre" type="text" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="Ex. Marie" value="${esc(S.contact.prenom||"")}"><p class="err" id="in-err" role="alert" style="min-height:0"></p></div>
  <button class="btn go" type="button" data-start="1">${has?"Reprendre ma demande":"C'est parti"}</button>${has?`<p class="e2-rep">Vos réponses sont gardées sur cet appareil : vous reprenez là où vous en étiez.</p>`:""}
  <div class="mini7"><span>${ok}Gratuit</span><span>${ok}Sans engagement</span><button class="lien7" type="button" data-example="1">Voir un exemple</button>${has?`<button class="lien7" type="button" data-reset="1">Recommencer</button>`:""}</div></div><p class="e2-conf">Vos réponses servent uniquement à préparer votre devis avec ${esc(CONFIG.nomComplet||CONFIG.entreprise)}.</p></section>`}

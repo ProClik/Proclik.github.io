@@ -432,3 +432,27 @@ html body .recap{grid-template-columns:minmax(0,1fr)}html body .recap>*{min-widt
  html body .done9 .sub{font-size:13.5px!important;margin-bottom:4px!important}
  html body .done9 ol.fil7 li{min-height:28px!important}
 }
+
+/* ===== Accueil « Signature ProClik » (choix A de Cyril 24/11) : logo en tête, titre centré, frise des 3 étapes
+   (fil laiton jusqu'à l'étape en cours), carte prénom dessous. Remplace la carte sombre « 3 étapes simples ». ===== */
+html body .hero8{text-align:center!important;align-items:center!important}
+html body .hero8 h1,html body .hero8 .sub,html body #app .hero8 h1{text-align:center!important;margin-inline:auto!important}
+html body .hero8 h1{letter-spacing:-.02em;line-height:1.08}
+html body .hero8 .sub{margin-top:-4px!important}
+html body .logo8{line-height:0;color:var(--e2-nuit)}html body .logo8 svg{width:50px;height:58px}html body .logo8 .pt8{fill:var(--e2-laiton)}
+html body ol.fil8{list-style:none;margin:4px 0 6px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);width:100%;position:relative}
+html body ol.fil8::before{content:"";position:absolute;top:30px;left:16.6%;right:16.6%;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--e2-laiton) 0 50%,var(--e2-line) 50%)}
+html body ol.fil8 li{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;padding:0 4px}
+html body .p8{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:var(--e2-tile);color:var(--e2-mut);box-shadow:var(--e2-sh);border:1px solid var(--e2-line)}
+html body .p8 svg{width:30px;height:30px}
+html body ol.fil8 li.on .p8{background:var(--e2-nuit);color:var(--e2-sur);border-color:transparent;box-shadow:0 0 0 3px var(--e2-bg),0 0 0 5px var(--e2-laiton)}
+html body ol.fil8 b{font-size:15px;line-height:1.25;margin-top:5px;color:var(--e2-fg)}
+html body ol.fil8 small{font-size:12.5px;font-weight:600;color:var(--e2-mut);white-space:nowrap}
+html body ol.fil8 li.on small{color:var(--e2-laiton)}
+html body .hero8 .carte7{width:100%!important;box-sizing:border-box;text-align:left;border-radius:30px!important}
+html body .hero8 .carte7 .btn.go{border-radius:99px!important}
+@media (min-width:700px){html body .hero8{max-width:600px!important}}
+@media (max-width:600px){html body ol.fil8 b{font-size:14px}html body ol.fil8 small{font-size:11.5px}html body .p8{width:54px;height:54px}html body ol.fil8::before{top:27px}html body .logo8 svg{width:42px;height:48px}}
+@media (max-height:760px){html body .logo8 svg{width:36px;height:42px}html body .p8{width:48px;height:48px}html body .p8 svg{width:26px;height:26px}html body ol.fil8::before{top:24px}html body ol.fil8{margin:0}}
+@media (max-height:620px){html body .logo8 svg{width:30px;height:34px}html body ol.fil8 small{display:none}html body ol.fil8 b{font-size:13px;margin-top:2px}html body .p8{width:40px;height:40px}html body .p8 svg{width:22px;height:22px}html body ol.fil8::before{top:20px}}
+@media (prefers-reduced-motion:no-preference){html body ol.fil8 li{animation:fil7m .6s cubic-bezier(.2,.8,.2,1) both}html body ol.fil8 li:nth-child(2){animation-delay:.15s}html body ol.fil8 li:nth-child(3){animation-delay:.3s}}
