@@ -697,6 +697,8 @@ function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),r
 const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
 function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
 function cen(r){const p=r.pts;let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1]});return[x/p.length,y/p.length]}
+/* Cyril 25/11 : l'œil se place au vrai milieu de la pièce (centre de la surface, pas la moyenne des coins, faussée par les coins ajoutés) */
+function cenA(r){const p=r.pts;let A=0,x=0,y=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length],c=a[0]*b[1]-b[0]*a[1];A+=c;x+=(a[0]+b[0])*c;y+=(a[1]+b[1])*c}if(Math.abs(A)<1e-9)return cen(r);const g=[x/(3*A),y/(3*A)];let ins=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const[xi,yi]=p[i],[xj,yj]=p[j];if((yi>g[1])!==(yj>g[1])&&g[0]<(xj-xi)*(g[1]-yi)/(yj-yi)+xi)ins=!ins}if(ins)return g;const X=p.map(q=>q[0]),Y=p.map(q=>q[1]);return[(Math.min(...X)+Math.max(...X))/2,(Math.min(...Y)+Math.max(...Y))/2]}
 // ouvertures du plan posées sur ce mur (segments du plan alignés avec le mur)
 function opsOn(lv,a,b){const d=sub(b,a),L=len(d),u=[d[0]/L,d[1]/L],out=[];
  GEO[lv].segs.forEach(s=>{const da=Math.abs((s.a[0]-a[0])*u[1]-(s.a[1]-a[1])*u[0]),db=Math.abs((s.b[0]-a[0])*u[1]-(s.b[1]-a[1])*u[0]);if(da>8||db>8)return;const sd=sub(s.b,s.a),sl=len(sd)||1,su=[sd[0]/sl,sd[1]/sl];
@@ -948,7 +950,7 @@ function wplan(){const W=$("where"),sd=W.parentNode,on=!!(WALLS&&WALLS[0]&&WALLS
  drawPlan(s,{lvs:[lv],room:q=>q===r?{fill:"var(--laiton-soft)"}:{}});const vb=s.viewBox.baseVal,bb=s.getBoundingClientRect(),sc=Math.max(vb.width/Math.max(1,bb.width),vb.height/Math.max(1,bb.height));
  const E=edges(r),g=el("g",{},s);
  /* Cyril 25/11 : garder la cible (l'œil au milieu de la pièce et son cône vers le mur regardé) */
- {const q=E[WALLS[wi].side],[c0x,c0y]=cen(r),m0x=(q[0]+q[2])/2,m0y=(q[1]+q[3])/2,cx=c0x-(m0x-c0x)*.45,cy=c0y-(m0y-c0y)*.45,a=[q[0]-cx,q[1]-cy],b=[q[2]-cx,q[3]-cy],k=.97,tg=el("g",{"pointer-events":"none"},g);
+ {const q=E[WALLS[wi].side],[c0x,c0y]=cenA(r),m0x=(q[0]+q[2])/2,m0y=(q[1]+q[3])/2,cx=c0x,cy=c0y,a=[q[0]-cx,q[1]-cy],b=[q[2]-cx,q[3]-cy],k=.97,tg=el("g",{"pointer-events":"none"},g);
   el("path",{d:`M${cx} ${cy}L${cx+a[0]*k} ${cy+a[1]*k}L${cx+b[0]*k} ${cy+b[1]*k}Z`,fill:"var(--laiton)",opacity:".28"},tg);
   const d=Math.hypot(m0x-cx,m0y-cy)||1,ux=(m0x-cx)/d,uy=(m0y-cy)/d;
   el("circle",{cx,cy,r:9*sc,fill:"var(--act)",stroke:"var(--surface)","stroke-width":2*sc},tg);el("circle",{cx:cx+ux*3.5*sc,cy:cy+uy*3.5*sc,r:3*sc,fill:"var(--on-act)"},tg)}
