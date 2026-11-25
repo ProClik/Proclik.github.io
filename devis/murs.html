@@ -305,10 +305,12 @@ const CAT={
  // chauffage et clim
  radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
  seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
- clim:{n:"Clim murale",libre:1,c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
+ clim:{n:"Clim murale",libre:1,c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[90],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
 };
 /* Cyril 25/11 : une prise peut se mettre à la hauteur des interrupteurs (axe 110 cm). Variante interne « …H » : même nom pour le devis, autre hauteur. */
 const PHI=["prise","prise2","prise3","prise4","tv","rj"];PHI.forEach(k=>{CAT[k+"H"]={...CAT[k],bas:CAT.inter.bas,info:"Axe à 110 cm, à la hauteur des interrupteurs",hautV:k}});
+/* hauteur du mur sous le toit entre x et x+w (Cyril 25/11 : la clim ne doit pas rentrer dans la pente) */function wallHAt(a,b){if(!M.prof)return M.H;const P=M.prof,f=x=>{for(let i=1;i<P.length;i++){const p=P[i-1],q=P[i];if(x<=q[0]){const t=q[0]>p[0]?(x-p[0])/(q[0]-p[0]):0;return p[1]+(q[1]-p[1])*t}}return P[P.length-1][1]};let m=Math.min(f(a),f(b));P.forEach(q=>{if(q[0]>a&&q[0]<b)m=Math.min(m,q[1])});return m}
+function underRoof(it){const c=CAT[it.k];if(!M.prof||c.top==null)return;const x=vx(it),lim=wallHAt(x,x+it.w)-c.top-c.h,cur=bas(cI(it));if(cur>lim)it.yb=Math.max(0,Math.floor(lim/5)*5)}
 const hyRow=it=>CAT[it.k].libre?`<div class="row hy"><span class="k">Hauteur</span><button class="chip" data-hy="-10" aria-label="Descendre de 10 cm">▼</button><b>${R(bas(cI(it)))} cm du sol</b><button class="chip" data-hy="10" aria-label="Monter de 10 cm">▲</button></div>`:"";
 const hBase=k=>CAT[k].hautV||k,hHaut=k=>PHI.includes(hBase(k));
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
@@ -484,7 +486,7 @@ function pfIc(x){const c=CAT[x];if(c&&!c.pfk)try{const NS="http://www.w3.org/200
 function pf(g,t,cx,cy,k,n){const s=el("g",{class:"pf",transform:`translate(${cx} ${cy}) scale(${k})`},g);s.innerHTML=PFs(t,n);return s}
 const dotC={ef:"var(--ef)",ec:"var(--ec)",ev:"var(--ev)",el:"var(--el)"};
 function overlaps(a,b){const ca=cI(a),cb=cI(b);const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
-function draw(){
+function draw(){if(M&&M.prof)M.items.forEach(o=>{if(visible(o))underRoof(o)});
  const s=$("wall");s.innerHTML="";const L=M.L,H=M.H,pr=14;let pl,pt,pb;
  for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
  const g=el("g",{},s);
@@ -572,7 +574,7 @@ function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
 function qzAdd(k){const c=CAT[k],q=Q(),n=M.items.filter(o=>visible(o)&&o.k===k).length;const w=c.w.includes(83)?83:c.w.includes(60)?60:c.w[Math.min(1,c.w.length-1)];const it={k,w,x:0,face:isClo()?face:0,lock:true};
  const want=M.L*[.5,.25,.75,.12,.88,.38,.62][n%7];let px=null;for(const ww of [w,...c.w.slice().sort((a,b)=>a-b)]){it.w=ww;px=place(it,want-ww/2);if(px!=null)break}
  if(px==null){toast("Plus de place à cette hauteur sur ce mur. <b>Touchez un élément</b> pour le retirer",3200);return}
- snap();it.x=R(px);if(face===1&&c.deux)it.x=M.L-it.x-it.w;it.pulse=Date.now();it.settle=performance.now();M.items.push(it);announce(it);vib(10);
+ snap();it.x=R(px);if(face===1&&c.deux)it.x=M.L-it.x-it.w;underRoof(it);it.pulse=Date.now();it.settle=performance.now();M.items.push(it);announce(it);vib(10);
  if(qzAuto(c.c)){it.st="faire";toast(`<b>${c.s||c.n}</b> : à créer, c'est noté`,1800)}else{q.it=M.items.length-1;sel=q.it}draw();anim()}
 function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=null));if(PC.step==="f"&&PC.rv&&sel==null){const j=M.items.indexOf(PC.rv.list[PC.rv.i]);if(j>=0)sel=j}const ep=epAsk(),grp=!ep&&sel==null&&askAll&&G().length>=2,qz=!ep&&!grp&&qzOn();const open=sel!=null||grp||ep||qz;document.querySelector(".app").classList.toggle("sel",open);$("pal").hidden=open;$("addbtn").style.visibility=open?"hidden":"";if(!open){k.hidden=true;return}if(ep){k.hidden=false;const L=EPL(),n=L.length,yes=F.trav.some(t=>["elec","plomb","chauf"].includes(t));const B1=`<button class="${yes?"go all":"chip"}" data-ep="oui">Oui, certaines choses changent</button>`,B2=`<button class="${yes?"chip":"go all"}" data-ep="non">Non, tout reste comme ça</button>`;
  k.innerHTML=`<div class="t"><span>${M.epAdd?"Et le reste, on y touche ?":"L'électricité et la plomberie de ce mur, on y touche ?"} <small>${n} élément${n>1?"s":""} posé${n>1?"s":""} pour vous</small></span></div>${yes?B1:B2}<div class="row">${yes?B2:B1}<button class="chip" data-ep="add">Il en manque</button><button class="chip" data-ep="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Placés là où on les met d'habitude. Pas au bon endroit ? Maintenez et glissez.</div>`;return}
@@ -703,7 +705,7 @@ const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);con
 $("card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
  if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
  if(b.dataset.w){const ow=it.w,ox=it.x,nw=+b.dataset.w;it.w=nw;const cx=vx({...it,w:ow,x:ox});const px=place(it,cx);if(px==null){it.w=ow;$("hint").textContent="Pas assez de place pour cette largeur";return}it.x=face===1&&CAT[it.k].deux?M.L-px-nw:px;it.x=R(it.x)}
- if(b.dataset.hy!=null){const c0=CAT[it.k],ob=it.yb,cur=bas(cI(it)),nb=Math.max(0,Math.min(M.H-c0.h,cur+(+b.dataset.hy)));if(nb===cur)return;snap();it.yb=nb;if(place(it,vx(it))==null||Math.abs(place(it,vx(it))-vx(it))>.5){if(ob==null)delete it.yb;else it.yb=ob;HIST.pop();toast("Un autre élément gêne à cette hauteur",2000);return}draw();return}
+ if(b.dataset.hy!=null){const c0=CAT[it.k],ob=it.yb,cur=bas(cI(it)),nb=Math.max(0,Math.min(Math.floor((wallHAt(vx(it),vx(it)+it.w)-c0.h)/5)*5,cur+(+b.dataset.hy)));if(nb===cur)return;snap();it.yb=nb;if(place(it,vx(it))==null||Math.abs(place(it,vx(it))-vx(it))>.5){if(ob==null)delete it.yb;else it.yb=ob;HIST.pop();toast("Un autre élément gêne à cette hauteur",2000);return}draw();return}
  if(b.dataset.hh!=null){const nk=b.dataset.hh==="1"?hBase(it.k)+"H":hBase(it.k);if(nk!==it.k){snap();const ok=it.k,ox=it.x;it.k=nk;const px=place(it,vx(it)+it.w/2-it.w/2);if(px==null){it.k=ok;it.x=ox;toast("Plus de place à cette hauteur sur ce mur",2400);return}it.x=R(face===1&&CAT[it.k].deux?M.L-px-it.w:px);draw()}return}
  if(b.dataset.trash){confirmDel=true;card();gauge();return}if(b.dataset.nodel){confirmDel=false;card();return}
  if(b.dataset.unlock){it.lock=false;if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}}
