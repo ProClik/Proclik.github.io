@@ -185,7 +185,7 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
    '<div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-act="apercu">Voir son Espace comme lui</button></div>'+
    '<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-act="deconnecter">Déconnecter tous ses appareils</button><button class="btn sm al" type="button" data-act="actif">'+(c.actif?'Couper l\'accès':'Rendre l\'accès')+'</button></div></div>';
   h+=sante(c)+abonnement(c)+cles(c);
-  h+=miseEnService(c)+surMesure(c)+'<div class="card"><h2>Notes</h2>'+champ('ftel','Téléphone du contact',c.telephone,'tel')+'<label class="f" for="fnote">Notes pour vous (jamais visibles par le client)</label><textarea class="t" id="fnote" rows="4" style="resize:vertical">'+esc(c.notes||'')+'</textarea><button class="btn sm" type="button" id="fnsave" style="margin-top:10px">Enregistrer les notes</button></div>';
+  h+=miseEnService(c)+'<div class="card" id="fdem"><h2>Demandes du formulaire</h2><p class="mu" style="margin:0">Chargement…</p></div>'+surMesure(c)+'<div class="card"><h2>Notes</h2>'+champ('ftel','Téléphone du contact',c.telephone,'tel')+'<label class="f" for="fnote">Notes pour vous (jamais visibles par le client)</label><textarea class="t" id="fnote" rows="4" style="resize:vertical">'+esc(c.notes||'')+'</textarea><button class="btn sm" type="button" id="fnsave" style="margin-top:10px">Enregistrer les notes</button></div>';
   h+=identite(c);
   h+='<div class="card" id="fcliky" data-client="'+esc(c.id)+'"><h2>Cliky</h2><p class="mu" style="margin:0">Chargement…</p></div>';
   h+='<div class="card" id="fsauv"><h2>Sauvegardes</h2><p class="mu" style="margin:0">Chargement…</p></div>';
@@ -193,7 +193,7 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
   h+='<div class="card"><h2>Archiver</h2><p class="mu" style="margin:0 0 10px">'+(c.archive?'Ce client est archivé : accès coupé, rien n\'est effacé.':'Le client part (ou fin de contrat) : accès coupé, fiche gardée. Rien n\'est effacé, vous pouvez le ressortir.')+'</p><button class="btn sm al" type="button" data-act="archiver">'+(c.archive?'Sortir des archives':'Archiver ce client')+'</button></div>';
  }
  $('#fiche').innerHTML=h;
- if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);if(window.PCDonnees)PCDonnees.fiche(c.id);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
+ if(!n){brancheMes(c);demandesForm(c.id);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);if(window.PCDonnees)PCDonnees.fiche(c.id);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
  $('#fsave').addEventListener('click',function(){var b=this,o={};[].forEach.call(document.querySelectorAll('[data-opt]'),function(x){o[x.dataset.opt]=x.checked});
   var body={entreprise:$('#fe').value,prenom:$('#fp').value,activite:$('#fact').value,email:$('#fm').value,locationId:$('#fl').value,vfCompte:$('#fv').value,tva:Number(String($('#ft').value).replace(',','.')),acomptePourcent:Number(String($('#fa').value).replace(',','.')),options:o};
   var mn={};[].forEach.call(document.querySelectorAll('[data-menu]'),function(x){mn[x.dataset.menu]=x.checked});body.menus=mn;body.effectif=Number($('#fn').value)||null;body.profil=$('#fpr').value;
@@ -303,15 +303,14 @@ function messages(){var M=$('#messages');M.innerHTML='<div class="card mu">Charg
 /* ---------- mise en service : toutes les étapes, dans l'ordre ---------- */
 var BLOC_STYLE='<style>\nhtml,body{margin:0!important;padding:0!important;overflow:hidden!important;height:100%!important;overscroll-behavior:none}\n#ID{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;border:0;display:block;z-index:2147483647;background:#ECEEF2}\n</style>\n';
 function blocEspace(){return BLOC_STYLE.replace('#ID','#pcespace')+'<iframe id="pcespace" title="Espace ProClik" allow="microphone; geolocation; camera; web-share; clipboard-write" src="https://proclik.github.io/espace-depart/?v=2"></iframe>'}
-function blocDevis(c){return BLOC_STYLE.replace('#ID','#clikdevis')+'<iframe id="clikdevis" title="Demande de devis" allow="web-share; clipboard-write; microphone; fullscreen" allowfullscreen src="https://proclik.github.io/devis/?v=31#w=COLLEZ_ICI&a='+encodeURIComponent(c.id)+'&n='+encodeURIComponent(c.entreprise||'')+'&pr='+encodeURIComponent(c.prenom||'')+'"></iframe>\n'+
+function blocDevis(c){return BLOC_STYLE.replace('#ID','#clikdevis')+'<iframe id="clikdevis" title="Demande de devis" allow="web-share; clipboard-write; microphone; fullscreen" allowfullscreen src="https://proclik.github.io/devis/?v=31#s=1&a='+encodeURIComponent(c.id)+'&n='+encodeURIComponent(c.entreprise||'')+'&pr='+encodeURIComponent(c.prenom||'')+'"></iframe>\n'+
  '<script>\n(function () {\n  var f = document.getElementById("clikdevis"), page = location.href.split("#")[0];\n  if (!f || !/^https?:/.test(page)) return;\n  var s = f.getAttribute("src"), i = s.indexOf("#");\n  var m = location.hash.match(/[#&]reprise=([A-Za-z0-9_-]+)/);\n  f.src = s.slice(0, i) + "&p=" + encodeURIComponent(page) + s.slice(i) + (m ? "&reprise=" + m[1] : "");\n  if (m && history.replaceState) history.replaceState(null, "", page);\n})();\n<\/script>'}
 function etapes(c){var m=c.mes||{};return [
  {k:'fiche',t:'Fiche remplie',d:'Nom, prénom, e-mail et sous-compte GHL.',auto:!!(c.entreprise&&c.email&&c.locationId)},
  {k:'ghl',t:'Clé GHL posée dans Cloudflare',d:'Clé privée du sous-compte (Paramètres › Clés privées), nommée '+c.secrets.ghl.nom+'.',auto:c.secrets.ghl.pose},
  {k:'vf',t:'VosFactures branché',d:'Nom du compte rempli + clé posée, nommée '+c.secrets.vf.nom+'.',auto:!!(c.vfCompte&&c.secrets.vf.pose)},
  {k:'snapshot',t:'Snapshot GHL poussé',d:'Pipelines « Devis & Chantiers », tags et workflows ProClik dans son sous-compte.'},
- {k:'make',t:'Scénario Make branché',d:'Copie de « Clik\'Devis formulaire » avec sa clé GHL et son locationId.'},
- {k:'pagedevis',t:'Page Devis dans son GHL',d:'Bouton ci-dessous : copiez le bloc et collez-le dans la page, avec l\'adresse Make (webhook) à la place de COLLEZ_ICI.',bloc:'devis'},
+ {k:'pagedevis',t:'Page Devis dans son GHL',d:'Bouton ci-dessous : copiez le bloc et collez-le dans la page. Les demandes arrivent directement chez ProClik (plus de Make).',bloc:'devis'},
  {k:'pageespace',t:'Page Espace dans son GHL',d:'Bouton ci-dessous : bloc à coller dans la page (le même pour tous).',bloc:'espace'},
  {k:'acces',t:'Accès donné au client',d:'Lien d\'invitation ou code provisoire (carte « Accès » plus haut).',auto:c.acces!=='pas encore d\'accès'},
  {k:'test',t:'Test de bout en bout',d:'Une demande d\'essai : alerte reçue, pré-devis visible dans son Espace.'}
@@ -325,6 +324,15 @@ function brancheMes(c){
   api('/admin/client',{method:'POST',body:{id:c.id,mes:m}}).then(function(){toast(x.checked?'Étape cochée':'Étape décochée');return charger()},function(e){x.checked=!x.checked;toast(e.message)})})});
  [].forEach.call(document.querySelectorAll('[data-bloc]'),function(b){b.addEventListener('click',function(){copier(b.dataset.bloc==='devis'?blocDevis(c):blocEspace())})});
 }
+/* ---------- demandes du formulaire reçues sans Make (25/11) ---------- */
+var ETQ={recue:['Reçue','w'],en_cours:['En cours','w'],a_reessayer:['Nouvel essai bientôt','w'],fini:['Pré-devis fait','ok'],limite:['Limite de 3 demandes','w'],erreur:['En échec','al']};
+function demandesForm(id){var D=$('#fdem');if(!D)return;
+ api('/admin/demandes?id='+encodeURIComponent(id)).then(function(j){var L=j.demandes||[];
+  var h='<h2>Demandes du formulaire</h2><p class="mu" style="margin:0 0 8px">'+(j.branche?'<span class="pill ok">Reçues par ProClik</span> Chaque demande est gardée dès son arrivée, puis traitée ; en cas de panne, nouvel essai toutes les 5 minutes (6 fois). Effacées de cette liste 30 jours après.':'<span class="pill w">Pas encore branché</span> '+esc(j.raison||'')+' : en attendant, ses demandes passent par Make.')+'</p>';
+  h+=L.length?L.map(function(q){var e=ETQ[q.etat]||[q.etat,'w'],d=new Date(q.recue);return '<div class="jl"><time>'+d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</time><span><b>'+esc(q.nom||'Client')+'</b>'+(q.commune?' · '+esc(q.commune):'')+(q.total!=null?' · '+String(q.total.toFixed(2)).replace('.',',')+' € HT':'')+' <span class="pill '+e[1]+'">'+esc(e[0])+'</span>'+(q.erreur&&q.etat!=='fini'?'<br><span class="mu">'+esc(q.erreur)+'</span>':'')+(q.etat==='erreur'||q.etat==='a_reessayer'?' <button class="btn sm" type="button" data-dq="'+esc(q.id)+'">Réessayer</button>':'')+'</span></div>'}).join(''):'<span class="mu">Aucune demande pour l\'instant.</span>';
+  D.innerHTML=h;
+  [].forEach.call(D.querySelectorAll('[data-dq]'),function(b){b.onclick=function(){b.disabled=true;b.textContent='Essai…';api('/admin/demandes',{method:'POST',body:{id:id,demande:b.dataset.dq}}).then(function(x){toast(x.demande&&x.demande.etat==='fini'?'Pré-devis fait':'Pas encore : nouvel essai bientôt');demandesForm(id)},function(e){toast(e.message);demandesForm(id)})}})
+ },function(e){D.innerHTML='<h2>Demandes du formulaire</h2><div class="err">'+esc(e.message)+'</div>'})}
 /* ---------- sur mesure : ce qui n'existe pas encore, pour ce client seulement ---------- */
 var ETATS={demande:'Demandé',"en cours":'En cours',pret:'Prêt'};
 function surMesure(c){var L=c.surmesure||[];
