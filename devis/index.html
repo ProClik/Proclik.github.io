@@ -299,7 +299,7 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 .psum b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
 .psum span{font-size:12.5px;color:var(--muted)}
 .fade{animation:fade .3s ease}
-.lq{will-change:transform,opacity}.lq-in{animation:lqIn .32s cubic-bezier(.22,1,.36,1)}.lq-back{animation:lqBack .32s cubic-bezier(.22,1,.36,1)}
+.lq{will-change:transform,opacity}.lq-in{animation:lqIn .32s cubic-bezier(.22,1,.36,1)}.lq.lqk{animation:none!important}.lq-back{animation:lqBack .32s cubic-bezier(.22,1,.36,1)}
 .lq-out{animation:lqOut .17s ease-in forwards}.lq-outb{animation:lqOutB .17s ease-in forwards}
 @keyframes lqIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}@keyframes lqBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
 @keyframes lqOut{to{opacity:0;transform:translateX(-22px)}}@keyframes lqOutB{to{opacity:0;transform:translateX(22px)}}
@@ -335,7 +335,7 @@ html body #pf-form,html body #pf-later{display:none!important}
 @media (orientation:landscape) and (max-height:520px){#planfull .pf-bar:not(:has(#pf-done.fin)){display:none}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
-<link rel="stylesheet" href="espace2.css?v=18">
+<link rel="stylesheet" href="espace2.css?v=20">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -1313,7 +1313,7 @@ function fitItem(){const b=document.body;/* Cyril 25/11 : saccades au toucher d'
  /* bas de la dernière réponse de la fiche, page en haut, comparé au haut de la barre Retour/Continuer */
  low=()=>{const E=[...document.querySelectorAll("#app .item:not(.mini) .chip,#app .item:not(.mini) input,#app .item:not(.mini) .iok,#app .item:not(.mini) .step")].filter(e=>e.offsetParent);return E.length?Math.max(...E.map(e=>e.getBoundingClientRect().bottom))+scrollY:0},
  lim=()=>(nav&&getComputedStyle(nav).position==="fixed"?nav.getBoundingClientRect().top:innerHeight)-6;
- for(const c of["iq1","iq2","iq3"].concat(innerWidth<600?["iq4","iq5"]:[])){if(low()<=lim())break;b.classList.add(c)}}
+ /* même fiche = même mise en page d'une question à l'autre (le dessin ne saute pas) : on garde le niveau le plus serré déjà atteint */const C=["iq1","iq2","iq3"].concat(innerWidth<600?["iq4","iq5"]:[]),ik=cur+"|"+iqKey().split("-")[0]+"|"+innerWidth+"x"+innerHeight;fitItem.lv=fitItem.lv||{};const m0=fitItem.lv[ik]||0;let n=0;for(;n<C.length;n++){if(n>=m0&&low()<=lim())break;b.classList.add(C[n])}fitItem.lv[ik]=Math.max(m0,n)}
 function fitPage(){fitItem();const b=document.body,over=()=>{if(["intro","done","plan","recap"].includes(cur)||iqKey())return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
  cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{fitItem();if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
 // 17/11 (Cyril, lot A) : la partie affichée suit son CONTENU, pas son numéro. Quand une réponse raccourcit l'écran,
@@ -1350,14 +1350,18 @@ function fitRoom(){const b=document.body,sec=document.querySelector("#app>sectio
  if(cur==="travaux"||cur==="mode"||cur==="intro"){const used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0),mh=sec.offsetHeight+(H-used)-2;if(mh>0){sec.classList.add("fill");sec.style.minHeight=mh+"px";if(!fits()){sec.classList.remove("fill");sec.style.minHeight=""}}}
  else{const ch=[...sec.querySelectorAll(".q:not(.cnt) .chips .chip:not(.dk)")].filter(e=>e.offsetParent&&!e.closest(".pg-off"));if(ch.length){/* Cyril 19/11 : même question réaffichée (après un choix) = mêmes tailles, rien ne bouge */const fk=cur+"|"+((sec.querySelector(".lab")||{}).textContent||"");if(fitRoom.k===fk&&fitRoom.v){b.style.setProperty("--ch",fitRoom.v);b.classList.add("grow");if(fits())return;b.classList.remove("grow")}fitRoom.k=fk;fitRoom.v=null;const rows=new Set(ch.map(e=>Math.round(e.getBoundingClientRect().top))).size,h0=Math.max(...ch.map(e=>e.offsetHeight)),used=b.getBoundingClientRect().bottom+scrollY+parseFloat(getComputedStyle(b).marginBottom||0);let add=Math.min(Math.floor((H-used-6)/rows),78-h0);if(add>3){const set=()=>b.style.setProperty("--ch",(h0+add)+"px");set();b.classList.add("grow");while(!fits()&&add>0){add-=3;set()}if(add<=0)b.classList.remove("grow");else fitRoom.v=(h0+add)+"px"}}}}finally{sec.style.animation=an}}
 const pfAsk={last:0};document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-ask-ok")){const a=document.getElementById("pf-ask");if(a)a.hidden=true}});
+function lqKids(e,c){if(!e.querySelector(".mes")){e.classList.add(c);return}[...e.children].forEach(k=>{if(k.classList.contains("mes"))return;lqKids(k,c)})}
 function fitGo(dir){const P=fitPage.pages||[];if(P.length<2)return false;const i=fitPage.p[cur]||0,j=i+dir;if(j<0||j>=P.length)return false;
- const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;fitPage.ak=fitPage.ak||{};fitPage.ak[cur]=fitAnc(P[j]);render();fitPage.pages[j]?.forEach(e=>{e.classList.remove("lq-out","lq-outb");e.classList.add(dir>0?"lq-in":"lq-back");setTimeout(()=>e.classList.remove("lq-in","lq-back"),400)});scrollTo(0,0)};
- if(RM){fin();return true}P[i].forEach(e=>e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
+ const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{fitPage.p[cur]=j;fitPage.ak=fitPage.ak||{};fitPage.ak[cur]=fitAnc(P[j]);render();const ci=dir>0?"lq-in":"lq-back";(fitPage.pages[j]||[]).forEach(e=>{e.classList.remove("lq-out","lq-outb");KM?lqKids(e,ci):e.classList.add(ci);setTimeout(()=>{e.classList.remove("lq-in","lq-back");e.querySelectorAll(".lq-in,.lq-back").forEach(x=>x.classList.remove("lq-in","lq-back"))},400)});scrollTo(0,0)};
+ /* Cyril 25/11 : questions à plusieurs mesures, le dessin reste en place, seules les questions glissent */const hasM=p=>(p||[]).some(e=>e.querySelector(".mes")),KM=hasM(P[i])&&hasM(P[j]);
+ if(RM){fin();return true}P[i].forEach(e=>KM?lqKids(e,dir>0?"lq-out":"lq-outb"):e.classList.add(dir>0?"lq-out":"lq-outb"));clearTimeout(fitGo.t);fitGo.t=setTimeout(fin,170);return true}
 function fitJump(k){const P=fitPage.pages||[];if(P.length<2||!k)return;const j=P.findIndex(p=>p.some(e=>e.querySelector(`[data-k="${k}"]`)));if(j>=0&&j!==fitPage.p[cur]){fitPage.p[cur]=j;fitPage.ak=fitPage.ak||{};fitPage.ak[cur]=fitAnc(P[j]);const m=document.getElementById("err").textContent;render();document.getElementById("err").textContent=m;scrollTo(0,0)}}
 const fitRz=()=>{clearTimeout(fitPage.rt);fitPage.rt=setTimeout(()=>{const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName))return;if(cur!=="intro"&&cur!=="done"&&cur!=="plan")render()},250)};addEventListener("resize",fitRz);if(window.visualViewport)visualViewport.addEventListener("resize",fitRz);addEventListener("focusout",()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)))fitRz()},350));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(SM())fitRoom()});
 function lqMove(q,dir){const el=document.querySelector(".lq"),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;S.lq=q;save();
- const fin=()=>{render.dir=dir;render();render.dir=0;if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
- if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
+ const km=!!(el&&el.querySelector(".mes")),fin=()=>{render.dir=dir;render();render.dir=0;lqKeep(".lq",km,dir);if(scrollY>0)scrollTo({top:0,behavior:RM?"auto":"smooth"})};
+ if(!el||RM){fin();return}clearTimeout(lqMove.t);el.classList.remove("lq-in","lq-back");km?lqKids(el,dir>0?"lq-out":"lq-outb"):el.classList.add(dir>0?"lq-out":"lq-outb");lqMove.t=setTimeout(fin,170)}
+/* Cyril 25/11 : d'une question à l'autre, le dessin des mesures ne bouge pas, seules les questions glissent */
+function lqKeep(sel,km,dir){if(!km)return;const n=document.querySelector("#app "+sel);if(!n||!n.querySelector(".mes"))return;n.classList.add("lqk");lqKids(n,dir<0?"lq-back":"lq-in")}
 let NAV9=0;
 function go(dir){if(go.busy)return;const st=steps();let n=st.indexOf(cur);if(iqGo(dir))return;
  let iLeft=false;if(dir>0&&D[cur]&&D[cur].g&&D[cur].g.cnt&&S[cur].n>0){const k=iOpen(cur),ok=document.querySelector("#app .iok");if(k>=0&&ok&&!ok.classList.contains("pg-off")){if(iDone(cur,k,true))return;iLeft=true}}
@@ -1469,7 +1473,7 @@ function schTxt(sec,f){const d=D[sec];if(!d.sch||innerWidth>=600||!f||!["L","H",
 function iqVis(sec,i){const it=S[sec].items[i]||{},P=PARS.includes(sec)&&i>0&&(S[sec].items[i-1]||{})._ok,F=D[sec].g.f.filter(f=>(!f.sh||f.sh(it))&&!(P&&it.pareil==="Oui"&&!PARK.includes(f.k)));return P?[PARF(sec,i)].concat(F):F}
 function iqPos(sec,i){const n=iqVis(sec,i).length,o=S[sec];let q=o.qi||0;if(o.qiI!==i){q=0;o.qi=0;o.qiI=i}return Math.max(0,Math.min(n-1,q))}
 function iqKey(){const d=D[cur];if(!d||!d.g||!d.g.cnt||!(S[cur].n>0))return"";const k=iOpen(cur);return k<0?"":k+"-"+iqPos(cur,k)}
-function iqMove(sec,i,q,dir){const o=S[sec];o.qi=q;o.qiI=i;MISS=null;save();const el=document.querySelector('#app .item .lq'),RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{render.dir=dir;render();render.dir=0};if(!el||RM){fin();return}clearTimeout(iqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");iqMove.t=setTimeout(fin,170)}
+function iqMove(sec,i,q,dir){const o=S[sec];o.qi=q;o.qiI=i;MISS=null;save();const el=document.querySelector('#app .item .lq'),RM=matchMedia("(prefers-reduced-motion:reduce)").matches,km=!!(el&&el.querySelector(".mes")),fin=()=>{render.dir=dir;render();render.dir=0;lqKeep(".item .lq",km,dir)};if(!el||RM){fin();return}clearTimeout(iqMove.t);el.classList.remove("lq-in","lq-back");km?lqKids(el,dir>0?"lq-out":"lq-outb"):el.classList.add(dir>0?"lq-out":"lq-outb");iqMove.t=setTimeout(fin,170)}
 function iqGo(dir){const d=D[cur];if(!d||!d.g||!d.g.cnt||!(S[cur].n>0))return false;const k=iOpen(cur);if(k<0)return false;const V=iqVis(cur,k),q=iqPos(cur,k);
  if(dir>0&&q<V.length-1){const f=missF(cur,k,[V[q]]);if(f){missShow(cur,k,f);render();return true}iqMove(cur,k,q+1,1);return true}
  if(dir<0&&q>0){iqMove(cur,k,q-1,-1);return true}
