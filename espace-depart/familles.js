@@ -32,7 +32,6 @@
       var bd=$(".badge",b),n=nb(v);bd.textContent=n;bd.hidden=!n;
     });
     $$("#pb-menu [data-pb]").forEach(function(x){if(bas.indexOf(x.dataset.pb)<0)tot+=nb(x.dataset.pb)});
-    if(window.PCNotif)tot+=PCNotif.nb(); /* nouveaux pré-devis (notifs.js, 25/11) */
     var c=$("#fam-c"),bc=c&&$(".badge",c);
     if(c){c.classList.toggle("on",!!cur&&bas.indexOf(cur)<0);bc.textContent=tot;bc.hidden=!tot}
   }
@@ -84,7 +83,6 @@
     "}";
   d.head.appendChild(st);
   construit();
-  document.addEventListener("pc-notifs",suit); /* nouveaux pré-devis (notifs.js) */
   new MutationObserver(suit).observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-selected","hidden","style"],childList:true,characterData:true});
   addEventListener("resize",function(){requestAnimationFrame(place)});
   if(large.addEventListener)large.addEventListener("change",function(){B.ferme();place()});

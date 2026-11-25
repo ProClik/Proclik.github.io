@@ -63,9 +63,7 @@ function groupes(){var ok=horsBarre(),vus={};
   /* une entrée nouvelle (option, menu ajouté plus tard) va dans « Et aussi » ; Scanner a sa propre carte */
   $$("nav.nav [data-pbx]").forEach(function(b){var v=(b.id||"").replace(/^nb-/,"");if(v&&v!=="cliky"&&!vus[v]&&ok(v))G[1].v.push(v)});
   return G}
-function totalMenu(){var ok=horsBarre(),t=0;FAM.forEach(function(f){f.v.forEach(function(v){if(ok(v))t+=badge(v)})});
-  /* 25/11 (Cyril) : les nouveaux pré-devis comptent dans le rond du menu (notifs.js) */
-  if(window.PCNotif)t+=PCNotif.nb();return t}
+function totalMenu(){var ok=horsBarre(),t=0;FAM.forEach(function(f){f.v.forEach(function(v){if(ok(v))t+=badge(v)})});return t}
 function bouton(v){var i=info(v);if(!i)return "";var n=badge(v);
   return '<button type="button" data-f2m="'+v+'" data-nom="'+esc(sa(i.nom))+'"><span class="r">'+i.ico+optm(v)+"</span>"+esc(i.nom)+(n?"<em>"+n+"</em>":"")+"</button>"}
 function bloc(g,cls){if(!g.v.length)return "";return '<div class="f2m-g"><h3>'+esc(g.t)+'</h3><div class="gr4'+(cls||"")+'">'+g.v.map(bouton).join("")+"</div></div>"}
@@ -74,7 +72,7 @@ function scanner(){var b=$("#nb-cliky");if(!b||b.hidden)return "";var ic=$(".ico
 function contenu(){var G=groupes(),h="";
   h+='<div class="tete"><b>Tout l\'Espace</b><button type="button" class="xr" data-f2m="x" aria-label="Fermer">'+I.x+"</button></div>";
   h+='<label class="cherche">'+I.loupe+'<input type="search" id="f2m-q" autocomplete="off" enterkeyhint="go" placeholder="Chercher ou dire un écran…"><button type="button" class="mic2" id="f2m-mic" aria-label="Dire le nom d\'un écran">'+I.mic+"</button></label>";
-  h+='<div class="defile">'+(window.PCNotif?PCNotif.html():"")+scanner();
+  h+='<div class="defile">'+scanner();
   var a=G[0],b=G[1];
   if(a.v.length&&b.v.length&&a.v.length<=2&&b.v.length<=3)h+='<div class="duo2">'+bloc(a," g2")+bloc(b," g3")+"</div>";
   else h+=bloc(a)+bloc(b);
@@ -88,7 +86,6 @@ function filtre(t){q=sa(t).trim();var vide=true;
   $$(".gr4 button",pan).forEach(function(b){var on=!q||b.dataset.nom.indexOf(q)>=0;b.hidden=!on;if(on)vide=false});
   $$(".f2m-g",pan).forEach(function(g){g.hidden=!$$("button:not([hidden])",g).length});
   var sc=$(".f2m-sc",pan);if(sc){var on=!q||/^(scan|cliky|photo)/.test(q)||"scanner cliky photo".indexOf(q)>=0;sc.hidden=!on;if(on)vide=false}
-  var nt=$(".f2nt",pan);if(nt)nt.hidden=!!q;
   $(".f2m-vide",pan).hidden=!vide}
 function dictee(mic,inp){var SR=window.SpeechRecognition||window.webkitSpeechRecognition,ec=null;
   mic.addEventListener("click",function(e){e.preventDefault();
@@ -98,8 +95,7 @@ function dictee(mic,inp){var SR=window.SpeechRecognition||window.webkitSpeechRec
     ec.onresult=function(ev){var t="";for(var i=0;i<ev.results.length;i++)t+=ev.results[i][0].transcript;inp.value=t.replace(/[.?!]$/,"");filtre(inp.value);
       if(ev.results[ev.results.length-1].isFinal){var v=$$(".defile [data-f2m]:not([hidden])",pan);if(v.length===1){setTimeout(function(){ferme();agit(v[0].dataset.f2m)},350)}}};
     ec.onend=ec.onerror=function(){mic.classList.remove("on");ec=null};try{ec.start()}catch(_){ec=null;mic.classList.remove("on")}})}
-pan.addEventListener("click",function(e){if(e.target.closest("[data-vc]")){ferme();return} /* une notification : vrai.js ouvre la demande */
-  var b=e.target.closest("[data-f2m]");if(!b)return;var v=b.dataset.f2m;ferme();if(v!=="x")setTimeout(function(){agit(v)},120)});
+pan.addEventListener("click",function(e){var b=e.target.closest("[data-f2m]");if(!b)return;var v=b.dataset.f2m;ferme();if(v!=="x")setTimeout(function(){agit(v)},120)});
 scrim.addEventListener("click",ferme);
 d.addEventListener("keydown",function(e){if(e.key==="Escape"&&ouvert)ferme()});
 
@@ -117,5 +113,4 @@ d.body.appendChild(scrim);d.body.appendChild(pan);d.body.appendChild(mic);d.body
 barre();
 var nav=$("nav.nav");new MutationObserver(function(){barre()}).observe(nav,{subtree:true,attributes:true,attributeFilter:["aria-selected","hidden"],childList:true,characterData:true});
 setInterval(barre,3000);
-d.addEventListener("pc-notifs",function(){barre();if(ouvert&&!q)contenu()});
 })();
