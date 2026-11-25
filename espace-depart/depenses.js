@@ -91,6 +91,8 @@ function vue(){var vrai=document.documentElement.classList.contains('pcvrai'),T=
  h+='<div class="cf-main dp-bas"><button type="button" class="btn sm" data-deptout>'+IC.liste+'Tout voir</button><button type="button" class="btn sm" data-depcompta>'+IC.compta+'Comptable</button></div>'+
   '<span class="exemple">Exemples de démonstration · montants fictifs</span></div></div>';
  var v=$('#v-depenses');if(!v)return;var c2=v.querySelector(':scope>.cf');if(!c2){c2=document.createElement('div');c2.className='cf';v.appendChild(c2)}c2.innerHTML=h;
+ /* 25/11 (Cyril : « plus de fausses notifications ») : connecté, les tickets d'exemple (d1…d6) ne font plus de pastille */
+ if(vrai)R=R.filter(function(x){return !/^d[1-6]$/.test(x.id)});
  var b=$('#badge-d');if(b){b.textContent=R.length;b.hidden=!R.length}}
 
 /* ---------- le dossier du comptable (option) ---------- */

@@ -188,7 +188,7 @@ function deconnecter(expire){lsS(KJ,null);lsS(KL,null);lsS('pc-membre',null);lsS
 /* ---------- liste des demandes ---------- */
 var LISTE=null,ETAPES=[],charge=0;
 function carte(d){var av=valider(d.etape);
- return '<button class="vcard'+(av?' vav':'')+'" type="button" data-vc="'+esc(d.contact||'')+'"><div class="r"><span><b>'+esc(d.client)+'</b><small>'+esc(d.resume||d.titre||'')+'</small></span><span class="vp '+(av?'t':'')+'">'+esc(d.etape||'—')+'</span></div>'+
+ return '<button class="vcard'+(av?' vav':'')+'" type="button" data-vc="'+esc(d.contact||'')+'"><div class="r"><span><b>'+esc(d.client)+'</b>'+(av&&window.PCNotif&&PCNotif.estNouveau(d.contact)?PCNotif.pastille():'')+'<small>'+esc(d.resume||d.titre||'')+'</small></span><span class="vp '+(av?'t':'')+'">'+esc(d.etape||'—')+'</span></div>'+
   '<div class="r"><span class="vamt">'+(d.total_ht!=null?eur(d.total_ht)+'<small>HT</small>':'<small style="margin:0">pré-devis pas encore prêt</small>')+'</span><small style="text-align:right">'+esc(quand(d.pre_devis_le||d.cree_le))+(d.a_verifier?'<br><span class="vp w">'+d.a_verifier+' à vérifier</span>':'')+'</small></div></button>'}
 /* Onglet Devis : le même petit menu à icônes que la démo (Pré-devis · Fournisseur · Validés) */
 var VSEG=null,FOURN=function(e){return /fournisseur/i.test(e||'')};
@@ -706,6 +706,9 @@ window.addEventListener('hashchange',function(){var c=lienDirect();if(c)ouvrirDe
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="devis"]');if(t&&lsG(KJ)&&Date.now()-charge>30000)charger()});
 document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('vcomm'))lsS('pc-calc-ferme',d.open?null:1)},true);
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&lsG(KJ)&&Date.now()-charge>60000)charger()});
+/* 25/11 (Cyril) : un nouveau pré-devis arrive aussi pendant que l'Espace reste ouvert (toutes les 5 min, écran allumé) */
+setInterval(function(){if(!document.hidden&&lsG(KJ)&&!lsG('pc-membre')&&Date.now()-charge>300000)charger()},60000);
+document.addEventListener('pc-notifs',function(){if(LISTE)rendre()});
 /* « Vérifier un par un » (Cyril 12/11) : les points à vérifier du pré-devis en un seul parcours, une question à la fois,
    dans la même petite fenêtre que le plan ; à la fin, on rappelle les points du plan (bouton « À vérifier » du plan). */
 var PLANCHK=0,VWZ=null;window.addEventListener('message',function(e){var d=e.data;if(d&&d.type==='proclik-plan-chk')PLANCHK=+d.n||0});

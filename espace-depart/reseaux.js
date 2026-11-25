@@ -166,7 +166,7 @@ function demander(){var txt='Bonjour Cyril, je voudrais ajouter l\'option Résea
  if(window.PCREG&&typeof PCREG.ecrire==='function'){PCREG.ecrire(txt);return}
  X.toast('C\'est noté','Écrivez « Réseaux sociaux » à Cyril depuis Réglages ☰ › Écrire à Cyril : il vous rappelle.')}
 
-function majBadge(){var n=prise()?messages().filter(function(m){return m.neuf}).length:0;
+function majBadge(){var n=prise()?messages().filter(function(m){return m.neuf&&!(m.ex&&vrai())}).length:0; /* 25/11 : connecté, les messages d'exemple ne font plus de pastille */
  ['#nb-reseaux','#tt-reseaux'].forEach(function(s){var b=$(s);if(!b)return;var i=b.querySelector('.rs-nb');if(!n){if(i)i.remove();return}
   if(!i){i=document.createElement('span');i.className='badge rs-nb';b.appendChild(i)}i.textContent=n})}
 
