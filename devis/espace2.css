@@ -11,7 +11,7 @@ html body header.top .logo{display:none}
 html body header.top .brand{gap:10px;font-size:15.5px;font-weight:700}
 html body .e2-av{width:40px;height:40px;border-radius:50%;background:var(--e2-nuit);color:var(--e2-sur);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;letter-spacing:.02em}
 html body header.top .brand small{font-size:13px;color:var(--e2-mut);font-weight:500}
-html body .e2-tb{height:36px;min-width:36px;padding:0 11px;border-radius:99px;border:0;background:var(--e2-tile);color:var(--e2-fg);font:700 13.5px Manrope,sans-serif;box-shadow:var(--e2-sh);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+html body .e2-tb{height:36px;min-width:36px;padding:0 11px;border-radius:28px;border:0;background:var(--e2-tile);color:var(--e2-fg);font:700 13.5px Manrope,sans-serif;box-shadow:var(--e2-sh);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 html body .e2-tb[aria-pressed="true"]{background:var(--e2-nuit);color:var(--e2-sur)}
 html body .theme-b{background:var(--e2-tile)!important;box-shadow:var(--e2-sh)!important}
 
@@ -58,12 +58,12 @@ html body .err:not(:empty)::before{content:"!";flex:none;width:20px;height:20px;
 
 /* Bas de l'écran : Retour près du pouce + gros Continuer */
 html body .nav{background:linear-gradient(to top,var(--e2-bg) 72%,transparent)!important;border-top:0!important;box-shadow:none!important}
-html body .nav .btn{min-height:60px;font-size:17.5px!important;border-radius:99px!important}
+html body .nav .btn{min-height:60px;font-size:17.5px!important;border-radius:28px!important}
 html body .nav .btn.back{background:var(--e2-tile)!important;color:var(--e2-fg)!important;box-shadow:var(--e2-sh)!important;border:0!important}
-html body .btn.go{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;min-height:60px;font-size:17.5px!important;border-radius:99px!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
+html body .btn.go{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;min-height:60px;font-size:17.5px!important;border-radius:28px!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
 
 /* Dicter (champs où l'on écrit beaucoup) */
-html body .e2-dic{width:auto!important;justify-content:flex-start!important;margin-top:8px;height:44px;padding:0 16px 0 12px;border-radius:99px;border:0;background:var(--e2-tile);color:var(--e2-fg);box-shadow:var(--e2-sh);font:700 15px Manrope,sans-serif;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+html body .e2-dic{width:auto!important;justify-content:flex-start!important;margin-top:8px;height:44px;padding:0 16px 0 12px;border-radius:28px;border:0;background:var(--e2-tile);color:var(--e2-fg);box-shadow:var(--e2-sh);font:700 15px Manrope,sans-serif;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
 html body .e2-dic svg{width:20px;height:20px;color:var(--e2-nuit)}
 html body .e2-dic.on{background:var(--e2-nuit);color:var(--e2-sur)}html body .e2-dic.on svg{color:var(--e2-sur)}
 html body .e2-dic-h{font-size:14px;color:var(--e2-mut);margin:6px 0 0}
@@ -78,7 +78,7 @@ html body #e2-aide[hidden]{display:none}
 html body #e2-aide>div{width:min(460px,100%);background:var(--e2-tile);color:var(--e2-fg);border-radius:26px;padding:22px 20px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
 html body #e2-aide h2{margin:0 0 6px;font-size:22px}html body #e2-aide p{margin:0 0 14px;color:var(--e2-mut);font-size:16px;line-height:1.45}
 html body #e2-aide .num{font-size:24px;font-weight:800;letter-spacing:.02em;margin:0 0 14px;color:var(--e2-fg);user-select:all}
-html body #e2-aide a.btn,html body #e2-aide button{display:grid;place-items:center;width:100%;min-height:58px;border-radius:99px;font:700 17px Manrope,sans-serif;text-decoration:none;border:0;margin-top:8px;cursor:pointer}
+html body #e2-aide a.btn,html body #e2-aide button{display:grid;place-items:center;width:100%;min-height:58px;border-radius:28px;font:700 17px Manrope,sans-serif;text-decoration:none;border:0;margin-top:8px;cursor:pointer}
 html body #e2-aide a.btn{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
 html body #e2-aide button{background:var(--e2-tile2);color:var(--e2-fg)}
 
@@ -164,11 +164,11 @@ html body #e2-aff[hidden]{display:none}
 html body #e2-aff>div{width:min(460px,100%);background:var(--e2-tile);color:var(--e2-fg);border-radius:26px;padding:22px 20px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
 html body #e2-aff h2{margin:0 0 12px;font-size:22px}
 html body #e2-aff .e2-opt{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:58px;padding:0 16px;margin-top:8px;border-radius:18px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-fg);font:700 16.5px Manrope,sans-serif;cursor:pointer}
-html body #e2-aff .e2-opt i{width:46px;height:28px;border-radius:99px;background:var(--e2-tile2);position:relative;flex:none;transition:background .2s}
+html body #e2-aff .e2-opt i{width:46px;height:28px;border-radius:28px;background:var(--e2-tile2);position:relative;flex:none;transition:background .2s}
 html body #e2-aff .e2-opt i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
 html body #e2-aff .e2-opt[aria-pressed="true"] i{background:var(--e2-nuit)}
 html body #e2-aff .e2-opt[aria-pressed="true"] i::after{transform:translateX(18px);background:var(--e2-sur)}
-html body #e2-aff [data-e2x]{display:grid;place-items:center;width:100%;min-height:58px;margin-top:14px;border-radius:99px;border:0;background:var(--e2-nuit);color:var(--e2-sur);font:700 17px Manrope,sans-serif;cursor:pointer}
+html body #e2-aff [data-e2x]{display:grid;place-items:center;width:100%;min-height:58px;margin-top:14px;border-radius:28px;border:0;background:var(--e2-nuit);color:var(--e2-sur);font:700 17px Manrope,sans-serif;cursor:pointer}
 /* À plat : plus d'ombres, un liseré très fin */
 html body .card,html body .lq,html body .chip,html body .carte7,html body .carte9,html body .item,html body .note,html body .drop,html body .recap>div,html body .rblock,html body .nav .btn.back,html body .e2-dic{box-shadow:none!important}
 html body .card,html body .lq,html body .carte7,html body .carte9,html body .drop,html body .recap>div,html body .rblock,html body .nav .btn.back,html body .e2-dic{border:1px solid var(--e2-line)!important}
@@ -194,7 +194,7 @@ html body .lq .chip.dk, html body[data-cur="finition"] #app .q .chip.dk{justify-
 /* Continuer : pilule pleine, juste le mot */
 html body .btn.go::before,html body .btn.go::after{display:none!important;content:none!important}
 /* Récapitulatif : « Voir tout » */
-html body .e2-voir{margin:8px 0 0;height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-nuit);font:700 14.5px Manrope,sans-serif;cursor:pointer}
+html body .e2-voir{margin:8px 0 0;height:40px;padding:0 14px;border-radius:28px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-nuit);font:700 14.5px Manrope,sans-serif;cursor:pointer}
 /* Toucher doux */
 html body .card,html body .chip,html body .btn{transition:transform .12s ease,background .15s,border-color .15s!important}
 html body .card:active,html body .chip:active,html body .btn:active{transform:scale(.975)}
@@ -450,7 +450,7 @@ html body ol.fil8 b{font-size:15px;line-height:1.25;margin-top:5px;color:var(--e
 html body ol.fil8 small{font-size:12.5px;font-weight:600;color:var(--e2-mut);white-space:nowrap}
 html body ol.fil8 li.on small{color:var(--e2-laiton)}
 html body .hero8 .carte7{width:100%!important;box-sizing:border-box;text-align:left;border-radius:30px!important}
-html body .hero8 .carte7 .btn.go{border-radius:99px!important}
+html body .hero8 .carte7 .btn.go{border-radius:28px!important}
 @media (min-width:700px){html body .hero8{max-width:600px!important}}
 @media (max-width:600px){html body ol.fil8 b{font-size:14px}html body ol.fil8 small{font-size:11.5px}html body .p8{width:54px;height:54px}html body ol.fil8::before{top:27px}html body .logo8 svg{width:42px;height:48px}}
 @media (max-height:760px){html body .logo8 svg{width:36px;height:42px}html body .p8{width:48px;height:48px}html body .p8 svg{width:26px;height:26px}html body ol.fil8::before{top:24px}html body ol.fil8{margin:0}}
@@ -479,7 +479,7 @@ html body ol.fil8 li.fait .p8{background:var(--e2-laiton);color:var(--e2-sur);bo
 html body ol.fil8 li.fait small{color:var(--e2-laiton)}
 html body ol.fil8.fin8::before{background:linear-gradient(90deg,var(--e2-laiton) 0 50%,var(--e2-line) 50%)}
 /* Récap (Cyril 25/11 : « on ne sait pas qu'il faut cliquer sur la question pour voir les réponses ») : bouton « Voir ⌄ » visible sur chaque ligne */
-html body .rblock.rfold h3 .rf-v{display:inline-flex;align-items:center;gap:4px;flex:none;padding:6px 12px!important;border-radius:99px;background:var(--e2-tile)!important;border:1px solid var(--e2-line)!important;color:var(--e2-nuit)!important;font:700 13px var(--f-body)!important;box-shadow:var(--e2-sh)}
+html body .rblock.rfold h3 .rf-v{display:inline-flex;align-items:center;gap:4px;flex:none;padding:6px 12px!important;border-radius:28px;background:var(--e2-tile)!important;border:1px solid var(--e2-line)!important;color:var(--e2-nuit)!important;font:700 13px var(--f-body)!important;box-shadow:var(--e2-sh)}
 html body .rblock.rfold h3 .rf-v svg{width:15px;height:15px;transition:transform .2s}
 html body .rblock.rfold .rf-v .rv-c,html body .rblock.rfold.rf-on .rf-v .rv-o{display:none}
 html body .rblock.rfold.rf-on .rf-v .rv-c{display:inline}
