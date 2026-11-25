@@ -131,14 +131,16 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
     h+='<div class="sec"><h2>À faire</h2>'+(tot?'<button class="lien" type="button" data-accv="devis">'+tot+" en tout"+ic("d")+"</button>":"")+"</div>";
     var pd=AF.filter(function(x){return x[1]==="predevis"})[0],reste=AF.filter(function(x){return x[1]!=="predevis"}),rows=[];
     if(u){var qui=String(u.qui||"").split(" · ")[0];
-      h+='<section class="hero"><div class="lab"><span class="pt2"></span>'+(J.soir?"À valider ce soir":"Le plus urgent · à valider")+"</div>"+
+      /* 25/11 (Cyril) : pastille « Nouveau » tant que la demande n'a pas été ouverte (notifs.js) */
+      var uc=(String(u.attr||"").match(/data-vc="([^"]*)"/)||[])[1],nv=!!(uc&&window.PCNotif&&PCNotif.estNouveau(uc.replace(/&amp;/g,"&")));
+      h+='<section class="hero'+(nv?" nv":"")+'"><div class="lab"><span class="pt2"></span>'+(J.soir?"À valider ce soir":"Le plus urgent · à valider")+(nv?PCNotif.pastille():"")+"</div>"+
         (u.prix!=null?'<div class="hero-n">'+eur2(u.prix)+"<small>€ HT</small></div>":"")+'<div class="hero-t">'+esc(qui)+"</div>"+
         '<div class="s mut">'+esc(["Pré-devis",u.quoi,pd&&pd[0]>1?pd[0]+" à valider":""].filter(Boolean).join(" · "))+"</div>"+
         '<button class="pill l" type="button" '+u.attr+' style="margin-top:18px">Vérifier</button></section>'}
     /* connecté : les autres demandes prêtes, avec leurs initiales */
     if(!D.demo){var V=null;try{V=JSON.parse(localStorage.getItem("pc-vrai-liste")||"null")}catch(e){}
       ((V&&V.demandes)||[]).filter(function(x){return /valider/i.test(x.etape||"")}).slice(1,3).forEach(function(x){var n=String(x.client||"?"),ini=n.replace(/^(M\.|Mme|Mlle)\s*/,"").split(/\s+/).map(function(m){return m.charAt(0)}).join("").slice(0,2).toUpperCase();
-        rows.push('<button type="button" data-vc="'+esc(x.contact||"")+'"><span class="ini">'+esc(ini)+'</span><span class="x"><b>'+esc(n)+"</b><span>"+esc(["Nouvelle demande",x.resume||x.titre||"",x.ville||""].filter(Boolean).join(" · "))+'</span></span><span class="tag">Pré-devis prêt</span></button>')})}
+        rows.push('<button type="button" data-vc="'+esc(x.contact||"")+'"><span class="ini">'+esc(ini)+'</span><span class="x"><b>'+esc(n)+"</b><span>"+esc(["Nouvelle demande",x.resume||x.titre||"",x.ville||""].filter(Boolean).join(" · "))+'</span></span><span class="tag">'+(window.PCNotif&&PCNotif.estNouveau(x.contact)?"Nouveau":"Pré-devis prêt")+'</span></button>')})}
     else if(pd&&pd[0]>1)rows.push('<button type="button" data-accv="devis"><span class="rond">'+ic("doc")+'</span><span class="x"><b>'+(pd[0]-1)+" autre"+(pd[0]>2?"s":"")+" pré-devis à valider</b></span><span class=\"vb\">Vérifier</span></button>");
     /* 24/11 (Cyril : « qu'on sache d'un coup d'œil ce qu'on doit faire ») : chaque ligne finit par le VERBE de l'action, en petit bouton */
     var VB={valider:"Vérifier",envoyer:"Envoyer",ranger:"Ranger",suivre:"Voir"};
@@ -411,6 +413,7 @@ rendre();
 addEventListener("load",function(){CACHE.h=null;rendre()});
 /* l'ancien Accueil se redessine (badges, vraies demandes) : on suit */
 ["#badge","#badge-f","#badge-d"].forEach(function(id){var b=$(id);if(b)new MutationObserver(function(){CACHE.h=null;rendre()}).observe(b,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:["hidden"]})});
+d.addEventListener("pc-notifs",function(){CACHE.h=null;rendre()}); /* un pré-devis ouvert ou arrivé (notifs.js) */
 var hl=$("#hello");if(hl)new MutationObserver(function(){CACHE.h=null;rendre()}).observe(hl,{childList:true,characterData:true,subtree:true});
 setTimeout(auDebut,600);
 })();
