@@ -10,14 +10,14 @@
 /* Un seul écran : le mur prend toute la place libre ; en largeur (tablette, PC, téléphone couché) le mur à gauche, les commandes à droite. Style N1 ProClik : bleu nuit pour agir, laiton en touche. */
 :root{
  --bg:#EEF0F4;--surface:#F8F9FB;--soft:#E4E7EE;--fg:#1B2440;--muted:#5D6478;--line:#C9CEDA;
- --act:#1B2440;--on-act:#FFFFFF;--laiton:#A8823F;--laiton-soft:#E9DFC9;--wall:#FFFFFF;--wall2:#EEF0F5;
+ --act:#1B2440;--on-act:#FFFFFF;--laiton:#A8823F;--laiton-soft:#E9DFC9;--wall:#FFFFFF;--pwall:#3D4355;--pfloor:#E8E8E7;--wall2:#EEF0F5;
  --wood:#E6EAF0;--wood2:#D9DEE7;--top:#9AA1B2;--glass:#CFE4F2;--inox:#D9DDE4;--ceram:#FFFFFF;
  --ef:#2F7DE1;--ec:#E8590C;--ev:#6B7280;--el:#A8823F;
  --hi:#FFFFFF;--lo:#C7CCD8;--bad:#C8553D;
  --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--pwall:#C9CBD3;--pfloor:#2A3350;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--pwall:#C9CBD3;--pfloor:#2A3350;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}
 [hidden]{display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
@@ -741,16 +741,19 @@ function drawPlan(s,o={}){const box=s.getBoundingClientRect(),wide=box.width/Mat
  const sc=Math.max((W+2*pad)/Math.max(1,box.width),(H+top+pad)/Math.max(1,box.height)),fs=15*sc;s.innerHTML="";
  lvs.forEach((lv,li)=>{const [ox,oy]=off[li],g=el("g",{transform:`translate(${ox} ${oy})`},s),b=bx[li];
   if(lvs.length>1){const t=el("text",{x:b.x,y:b.y-26,"font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":fs,fill:"var(--muted)"},g);t.textContent=GEO[lv].nom}
-  GEO[lv].rooms.forEach((r,ri)=>{const st=o.room?o.room(r,lv):{};const rg=el("g",{"data-r":lv+"-"+ri,style:o.tap?"cursor:pointer":""},g);
-   el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:st.fill||"var(--wall)"},rg)});
-  /* Cyril 25/11 : l'escalier, la trémie ou la trappe du plan se voit aussi ici */(GEO[lv].esc||[]).forEach(e=>{const d="M"+e.pts.map(p=>p.join(" ")).join("L")+"Z";el("path",{d,fill:"var(--laiton-soft)",stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"stroke-dasharray":`${6*sc/2} ${4*sc/2}`,"pointer-events":"none"},g);const c=e.pts.reduce((m,p)=>[m[0]+p[0]/e.pts.length,m[1]+p[1]/e.pts.length],[0,0]);const t=el("text",{x:c[0],y:c[1]+fs*.3,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":fs*.75,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=e.t});
-  GEO[lv].segs.forEach(q=>{el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--fg)","stroke-width":Math.max(q.k==="clo"?8:12,(q.k==="clo"?2:3)*sc),"stroke-linecap":"square",fill:"none","pointer-events":"none"},g);
+  /* Cyril 25/11 : « le plan n'a rien à voir avec le vrai plan » : même dessin que le plan (murs épais bleu nuit à coins arrondis, sol gris clair, cloisons fines, fenêtres dans l'épaisseur) */
+  const WE=14,WC=7;GEO[lv].segs.forEach(q=>{if(q.k==="clo")return;el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--pwall)","stroke-width":WE*2,"stroke-linecap":"round",fill:"none","pointer-events":"none"},g)});
+  const ops=(ext,arc)=>GEO[lv].segs.forEach(q=>{if((q.k!=="clo")!==ext)return;const T=(q.k==="clo"?WC:WE)*2;
    const d=sub(q.b,q.a),L=len(d)||1,u=[d[0]/L,d[1]/L];q.ops.forEach(o=>{const P=[q.a[0]+u[0]*o.p,q.a[1]+u[1]*o.p],Q=[q.a[0]+u[0]*(o.p+o.w),q.a[1]+u[1]*(o.p+o.w)];
-    el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:o.k==="fenetre"?"var(--glass)":"var(--wall)","stroke-width":Math.max(10,3*sc),"pointer-events":"none"},g);
-    if(o.k==="fenetre")el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"pointer-events":"none"},g);
-    else{const n=[-u[1],u[0]],r=o.w*.9;el("path",{d:`M${P[0]} ${P[1]}L${P[0]+n[0]*r} ${P[1]+n[1]*r}A${r} ${r} 0 0 ${1} ${Q[0]} ${Q[1]}`,fill:"none",stroke:"var(--muted)","stroke-width":Math.max(1.5,.7*sc),"stroke-dasharray":`${5*sc/2} ${4*sc/2}`,"pointer-events":"none"},g)}})});
+    if(arc&&o.k==="fenetre")return;if(o.k==="fenetre"){el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--glass)","stroke-width":T,"pointer-events":"none"},g);el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--pwall)","stroke-width":Math.max(2,.7*sc),"pointer-events":"none"},g);[P,Q].forEach(R=>el("path",{d:`M${R[0]-u[1]*T/2} ${R[1]+u[0]*T/2}L${R[0]+u[1]*T/2} ${R[1]-u[0]*T/2}`,stroke:"var(--pwall)","stroke-width":Math.max(2,.7*sc),"pointer-events":"none"},g))}
+    else{if(!arc){el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--pfloor)","stroke-width":T+1,"pointer-events":"none"},g);return}const n=[-u[1],u[0]],r=o.w*.9;el("path",{d:`M${P[0]} ${P[1]}L${P[0]+n[0]*r} ${P[1]+n[1]*r}A${r} ${r} 0 0 ${1} ${Q[0]} ${Q[1]}`,fill:"none",stroke:"var(--muted)","stroke-width":Math.max(1.5,.7*sc),"stroke-dasharray":`${5*sc/2} ${4*sc/2}`,"pointer-events":"none"},g)}})});ops(true,0);
+  GEO[lv].rooms.forEach((r,ri)=>{const st=o.room?o.room(r,lv):{};const rg=el("g",{"data-r":lv+"-"+ri,style:o.tap?"cursor:pointer":""},g);
+   el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:st.fill&&st.fill!=="var(--wall)"?st.fill:"var(--pfloor)",stroke:"var(--pfloor)","stroke-width":.5},rg)});
+  GEO[lv].segs.forEach(q=>{if(q.k!=="clo")return;el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--pwall)","stroke-width":WC*2,"stroke-linecap":"round",fill:"none","pointer-events":"none"},g)});
+  /* Cyril 25/11 : l'escalier, la trémie ou la trappe du plan se voit aussi ici */(GEO[lv].esc||[]).forEach(e=>{const d="M"+e.pts.map(p=>p.join(" ")).join("L")+"Z";el("path",{d,fill:"var(--laiton-soft)",stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"stroke-dasharray":`${6*sc/2} ${4*sc/2}`,"pointer-events":"none"},g);const c=e.pts.reduce((m,p)=>[m[0]+p[0]/e.pts.length,m[1]+p[1]/e.pts.length],[0,0]);const t=el("text",{x:c[0],y:c[1]+fs*.3,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":fs*.75,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=e.t});
+ops(true,1);ops(false,0);ops(false,1);
   GEO[lv].rooms.forEach(r=>{const st=o.room?o.room(r,lv):{};if(st.ring)el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:"none",stroke:"var(--laiton)","stroke-width":4*sc,"stroke-linejoin":"round","stroke-opacity":.9,transform:"",class:st.ringc||"","pointer-events":"none"},g);
-   const lab=r.nom||"",[cx,cy]=cen(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
+   const lab=r.nom||"",[cx,cy]=cenA(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
    const t=el("text",{x:cx,y:cy+f1*.35,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":f1,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=lab;
    if(st.sub){const u2=el("text",{x:cx,y:cy+f1*.35+fs*1.1,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":Math.min(fs*.8,(rw-20)/(st.sub.length*.6)),fill:"var(--muted)","pointer-events":"none"},g);u2.textContent=st.sub}})});return sc}
 function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`,cur={p:0,f:1,s:1,r:2}[PC.step];
@@ -760,7 +763,7 @@ function startPick(){PC.step="p";showScr("sp");planUI()}
 function planUI(){const n=ALLR().filter(q=>q.r.works).length;$("sp-tip").textContent="Touchez les pièces où il y a des travaux";
  $("sp-sub").innerHTML=n?(boot.hit===false?`Retirez les pièces sans travaux : on ne passera que dans celles qui restent.`:`${n} pièce${n>1?"s":""} choisie${n>1?"s":""} d'après vos réponses. On ne passera que dans celles-là.`):"Touchez au moins une pièce.";$("sp-cards").innerHTML=`<button class="back" id="sp-skip" type="button">Passer cette étape</button>`;
  $("sp-go").hidden=false;$("sp-go").disabled=!n;$("sp-go").textContent=n?`C'est parti : ${n} pièce${n>1?"s":""} ›`:"Choisissez une pièce";
- requestAnimationFrame(()=>drawPlan($("sp-svg"),{tap:1,room:r=>({fill:r.works?"var(--laiton-soft)":"var(--wall)",ring:r.works,sub:r.works?"✓ Travaux":""})}))}
+ requestAnimationFrame(()=>drawPlan($("sp-svg"),{tap:1,room:r=>({fill:r.works?"var(--laiton-soft)":"var(--wall)",ring:false,sub:r.works?"✓ Travaux":""})}))}
 $("sp-go").onclick=()=>{vib(8);PC.queue=ALLR().filter(q=>q.r.works);PC.qn=0;startRoom()};
 $("sp-cards").addEventListener("click",e=>{if(e.target.closest("#sp-skip"))finish()});
 $("sp-svg").addEventListener("click",e=>{const g=e.target.closest("[data-r]");if(!g)return;const q=ALLR().find(x=>x.id===g.dataset.r);q.r.works=!q.r.works;vib(6);planUI()});
