@@ -215,6 +215,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
  #sp .qo.sm{min-height:36px;font-size:12px;padding:4px 8px}#sp .qo.sm svg{width:18px;height:18px}
  .go{padding:10px 14px;font-size:14.5px}
 }
+/* Cyril 25/11 : Oui et Non sur la même ligne, même taille */.qyn{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qyn .go.all{margin-top:2px}.go.qno{background:var(--surface);color:var(--fg);box-shadow:inset 0 0 0 2px var(--fg)}
 </style>
 </head>
 <body>
@@ -540,7 +541,7 @@ function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
  const c=L[q.i],has=qzHas(c),bar=`<div class="qp" aria-label="Question ${q.i+1} sur ${L.length}">${L.map((x,j)=>`<i class="${j<q.i?"ok":j===q.i?"cur":""}"></i>`).join("")}</div>`;
  if(q.mode==="pick"){const a=avail(),all=availAll().filter(x=>CAT[x].c===c),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
   k.innerHTML=`${bar}<div class="t"><span>${CATS[c]} <small>Touchez ce qu'il y a ou ce que vous voulez${qzAuto(c)?" · tout sera à créer":""}</small></span></div><div class="qg">${mine.map(x=>`<button class="btn" data-qk="${x}">${qIc(CAT[x].ic)}${CAT[x].s||CAT[x].n}</button>`).join("")}${more?`<button class="btn oth" data-qmore="1"><b style="font-size:18px">…</b>Autre chose</button>`:""}</div>${has?`<div class="row inf2">Sur ce mur : <b>${has}</b></div>`:""}<button class="go all" data-qdone="1">C'est tout pour ${QF[c]} ›</button>`;return}
- k.innerHTML=`${bar}<div class="t"><span>${has?`Déjà sur ce mur : ${has}. Y en a-t-il d'autres, en place ou à mettre ?`:`Y a-t-il ${QN[c]} sur ce mur, en place ou à mettre ?`}</span></div><button class="go all" data-qa="oui">Oui</button><div class="row"><button class="chip" data-qa="non">Non</button><button class="chip" data-qa="dk">Je ne sais pas</button>${q.i>0?`<button class="chip" data-qb="1">‹ Question d'avant</button>`:""}</div>`}
+ k.innerHTML=`${bar}<div class="t"><span>${has?`Déjà sur ce mur : ${has}. Y en a-t-il d'autres, en place ou à mettre ?`:`Y a-t-il ${QN[c]} sur ce mur, en place ou à mettre ?`}</span></div><div class="qyn"><button class="go all" data-qa="oui">Oui</button><button class="go all qno" data-qa="non">Non</button></div><div class="row"><button class="chip" data-qa="dk">Je ne sais pas</button>${q.i>0?`<button class="chip" data-qb="1">‹ Question d'avant</button>`:""}</div>`}
 function qzAdd(k){const c=CAT[k],q=Q(),n=M.items.filter(o=>visible(o)&&o.k===k).length;const w=c.w.includes(83)?83:c.w.includes(60)?60:c.w[Math.min(1,c.w.length-1)];const it={k,w,x:0,face:isClo()?face:0,lock:true};
  const want=M.L*[.5,.25,.75,.12,.88,.38,.62][n%7];let px=null;for(const ww of [w,...c.w.slice().sort((a,b)=>a-b)]){it.w=ww;px=place(it,want-ww/2);if(px!=null)break}
  if(px==null){toast("Plus de place à cette hauteur sur ce mur. <b>Touchez un élément</b> pour le retirer",3200);return}
