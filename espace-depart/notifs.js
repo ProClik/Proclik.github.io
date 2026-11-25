@@ -4,8 +4,9 @@
    - Un pré-devis est NOUVEAU tant que l'artisan n'a pas ouvert sa demande (sur cet appareil ou un autre :
      tiroir pc-pd-vus, gardé dans le service par sync.js). Un pré-devis refait plus tard redevient nouveau.
    - Seulement avec un vrai compte connecté (html.pcvrai) : en démo, rien n'est inventé ici.
-   - Un bandeau en haut, cliquable, qui part seul après 7 s : à chaque ouverture tant qu'un pré-devis n'est pas
-     ouvert, et dès qu'un nouveau arrive pendant que l'Espace est ouvert (Cyril : pas dans le menu).
+   - Un bandeau en haut, cliquable, qui part seul après 7 s, pour TOUTE nouvelle (pré-devis, demandes, devis signés,
+     messages, réserves, notes… fil /espace/nouvelles du service). Pas dans le menu (Cyril).
+   - Les vraies notifications du téléphone / de l'iPad (sw.js + push.js du service), même Espace fermé.
    - L'Accueil (accueil-forme.js) et l'écran Devis (vrai.js) posent la pastille « Nouveau ».
    Données : la liste des demandes gardée par vrai.js (pc-vrai-liste). Événement « pc-notifs » à chaque changement.
    ================================================================================================ */
@@ -46,40 +47,125 @@ var sig='';
 function signale(){sig=signature();try{d.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}}
 function signature(){return vrai()?nouveaux().map(cle).join(','):''}
 
-/* ---------- le bandeau en haut (Cyril 25/11 : « à l'ouverture, en haut de l'Espace, qui disparaît après
-   quelques secondes et qui est cliquable ») : à chaque ouverture tant qu'un pré-devis n'est pas ouvert,
-   et dès qu'un nouveau arrive pendant que l'Espace est ouvert ---------- */
-var montres={},ban=null,tmB=null;
+/* ---------- LE BANDEAU EN HAUT (Cyril 25/11 : « à l'ouverture, en haut de l'Espace, qui disparaît après quelques
+   secondes et qui est cliquable » ; « il faut que ça marche pour n'importe quelle nouvelle ») ----------
+   Une file : chaque nouvelle passe à son tour (7 s, ou fermée d'un geste). Sources :
+   - les pré-devis pas encore ouverts (liste de vrai.js), à chaque ouverture tant qu'ils ne sont pas ouverts ;
+   - le fil des nouvelles du service (/espace/nouvelles : demandes, devis signés, messages, réserves, notes…),
+     chacune une fois par appareil. */
+var I=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'};
+var ICT={predevis:IC,demande:I('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'),signe:I('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  message:I('<path d="M4 5h16v11H9l-5 4z"/>'),reserve:I('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.5M12 16.3v.2"/>'),note:I('<path d="M5 19l1-4 10-10 3 3-10 10z"/><path d="M14 7l3 3"/>'),
+  cloche:I('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>')};
+var SUR={demande:'Nouvelle demande',signe:'Devis signé',message:'Nouveau message',reserve:'Réserve',note:'Note de chantier',chantier:'Chantier'};
+var Q=[],ban=null,tmB=null,enCours=null,montres={};
 function occupe(){var w=d.getElementById('welcome');return !!(d.getElementById('pc-ouv')||d.getElementById('pc-ouk')||(w&&!w.hidden)||d.getElementById('pc-ini'))}
-function bandeau(L){if(!L.length)return;
-  if(occupe()||d.hidden){setTimeout(function(){bandeau(L.filter(function(x){return estNouveau(x.contact)}))},500);return}
-  var x=L[0],plus=L.length>1;
+function pousse(it){if(Q.some(function(y){return y.k===it.k})||(enCours&&enCours.k===it.k))return;Q.push(it);suivant()}
+function suivant(){if(enCours||!Q.length)return;
+  if(occupe()||d.hidden){setTimeout(suivant,500);return}
+  var it=Q.shift();if(it.encore&&!it.encore())return suivant();
+  enCours=it;
   if(!ban){ban=d.createElement('div');ban.className='pc-ban';ban.setAttribute('role','status');ban.setAttribute('aria-live','polite');d.body.appendChild(ban);
-    ban.addEventListener('click',function(e){if(e.target.closest('.pc-ban-x')){cache();return}
-      var c=ban.dataset.c;cache();
-      if(!c){var t=d.getElementById('nb-devis');if(t)t.click();return}
-      marquerVu(c);if(window.PCV&&PCV.ouvrirDemande)PCV.ouvrirDemande(c)});
+    ban.addEventListener('click',function(e){var x=enCours;if(e.target.closest('.pc-ban-x')){if(x&&x.non)x.non();cache();return}cache();if(x&&x.act)x.act()});
     /* glisser vers le haut = fermer */
     var y0=null;ban.addEventListener('touchstart',function(e){y0=e.touches[0].clientY},{passive:true});
     ban.addEventListener('touchmove',function(e){if(y0!=null&&e.touches[0].clientY-y0<-25){y0=null;cache()}},{passive:true})}
-  ban.dataset.c=plus?'':x.contact;
-  ban.innerHTML='<button type="button" class="pc-ban-b"><span class="rond">'+IC+'</span><span class="x"><small>'+(plus?L.length+' nouveaux pré-devis':'Nouveau pré-devis')+'</small>'+
-    '<b>'+esc(plus?L.map(function(y){return y.client||'Client'}).slice(0,3).join(', ')+(L.length>3?'…':''):(x.client||'Client'))+'</b>'+
-    '<span>'+esc(plus?'Touchez pour les voir':[x.total_ht!=null?eur(x.total_ht):'',quand(x.pre_devis_le||x.cree_le)].filter(Boolean).join(' · '))+'</span></span>'+
-    '<span class="go">'+(plus?'Voir':'Vérifier')+'</span></button><button type="button" class="pc-ban-x" aria-label="Fermer">'+ICX+'</button>';
+  ban.innerHTML='<button type="button" class="pc-ban-b"><span class="rond">'+(it.ic||ICT.cloche)+'</span><span class="x"><small>'+esc(it.sur)+'</small>'+
+    '<b>'+esc(it.titre)+'</b>'+(it.sous?'<span>'+esc(it.sous)+'</span>':'')+'</span>'+
+    '<span class="go">'+esc(it.go||'Voir')+'</span></button><button type="button" class="pc-ban-x" aria-label="Fermer">'+ICX+'</button>';
   ban.hidden=false;requestAnimationFrame(function(){requestAnimationFrame(function(){ban.classList.add('on')})});
   try{if(navigator.vibrate)navigator.vibrate(12)}catch(e){}
-  clearTimeout(tmB);tmB=setTimeout(cache,7000)}
-function cache(){clearTimeout(tmB);if(!ban)return;ban.classList.remove('on');setTimeout(function(){if(ban&&!ban.classList.contains('on'))ban.hidden=true},400)}
+  clearTimeout(tmB);tmB=setTimeout(cache,it.ms||7000)}
+function cache(){clearTimeout(tmB);if(!ban)return;ban.classList.remove('on');
+  setTimeout(function(){if(ban&&!ban.classList.contains('on'))ban.hidden=true;enCours=null;setTimeout(suivant,350)},400)}
+
+/* les pré-devis pas encore ouverts */
 function annonce(){if(!vrai())return;var L=nouveaux().filter(function(x){return !montres[cle(x)]});if(!L.length)return;
-  L.forEach(function(x){montres[cle(x)]=1});bandeau(L)}
+  L.forEach(function(x){montres[cle(x)]=1});var x=L[0],plus=L.length>1;
+  pousse({k:'pd:'+L.map(cle).join(','),ic:IC,sur:plus?L.length+' nouveaux pré-devis':'Nouveau pré-devis',
+    titre:plus?L.map(function(y){return y.client||'Client'}).slice(0,3).join(', ')+(L.length>3?'…':''):(x.client||'Client'),
+    sous:plus?'Touchez pour les voir':[x.total_ht!=null?eur(x.total_ht):'',quand(x.pre_devis_le||x.cree_le)].filter(Boolean).join(' · '),
+    go:plus?'Voir':'Vérifier',encore:function(){return L.some(function(y){return estNouveau(y.contact)})},
+    act:function(){if(plus){var t=d.getElementById('nb-devis');if(t)t.click();return}marquerVu(x.contact);if(window.PCV&&PCV.ouvrirDemande)PCV.ouvrirDemande(x.contact)}})}
 function suit(){var s=signature();if(s!==sig){sig=s;annonce();try{d.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}}}
 
-/* ouvrir une demande (Accueil, Devis, panneau, message) = elle n'est plus nouvelle */
+/* aller là où la nouvelle le dit : une demande (c), un écran (vue) et un chantier (ch) */
+function va(n){if(!n)return;
+  if(n.c){marquerVu(n.c);if(window.PCV&&PCV.ouvrirDemande)PCV.ouvrirDemande(n.c);return}
+  if(n.vue){var t=d.getElementById('nb-'+n.vue);if(t)t.click();if(n.ch)setTimeout(function(){if(window.PCCH&&PCCH.ouvrir)try{PCCH.ouvrir(n.ch)}catch(e){}},350)}}
+/* lien d'une notification du téléphone : espace-depart/#vue=chantiers&ch=… (les #c= sont ouverts par vrai.js) */
+function lienHash(){var h=location.hash||'',m=/[#&]vue=([a-z0-9-]{2,30})/.exec(h);if(!m)return;var c=/[#&]ch=([^&]{1,60})/.exec(h);
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  var go=function(){if(occupe()||!vrai())return setTimeout(go,400);va({vue:m[1],ch:c?decodeURIComponent(c[1]):''})};setTimeout(go,300)}
+addEventListener('hashchange',lienHash);
+
+/* le fil des nouvelles du service : chacune une fois par appareil */
+var KD='pc-nf-depuis',chargeF=0;
+function api(c,o){return window.PCV&&PCV.api?PCV.api(c,o):Promise.reject(new Error('hors ligne'))}
+function fil(){if(!vrai()||!lit('pc-vrai-jeton'))return;chargeF=Date.now();
+  var dep=+lit(KD)||0;if(!dep){dep=Date.now()-864e5;ecrit(KD,dep)} /* 1re fois : seulement les dernières 24 h */
+  api('/espace/nouvelles?depuis='+dep).then(function(x){var L=(x&&x.nouvelles)||[];if(!L.length)return;
+    ecrit(KD,Math.max.apply(null,L.map(function(n){return n.t}).concat([dep])));
+    L.slice().reverse().filter(function(n){return n.type!=='predevis'}).slice(-5).forEach(function(n){
+      pousse({k:'nf:'+n.id,ic:ICT[n.type]||ICT.cloche,sur:SUR[n.type]||'Nouveau',titre:/^(demande|signe)$/.test(n.type)?String(n.titre||'').split(' · ').slice(1).join(' · ')||n.titre:String(n.titre||''),
+        sous:n.texte||'',go:n.c?'Ouvrir':'Voir',act:function(){va(n)}})})},function(){})}
+function auRetour(){if(!d.hidden){suit();if(Date.now()-chargeF>120000)fil()}}
+
+/* ouvrir une demande (Accueil, Devis, bandeau…) = elle n'est plus nouvelle */
 d.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc]');if(b)marquerVu(b.getAttribute('data-vc'))},true);
 /* la liste change (vrai.js la recharge, un autre appareil a marqué « vu ») */
 setInterval(suit,2000);addEventListener('storage',suit);
-d.addEventListener('visibilitychange',function(){if(!d.hidden)suit()});
+d.addEventListener('visibilitychange',auRetour);
+setInterval(function(){if(!d.hidden&&Date.now()-chargeF>180000)fil()},60000);
+
+/* ---------- VRAIES NOTIFICATIONS DU TÉLÉPHONE / DE L'IPAD (même Espace fermé) ----------
+   iPhone/iPad : iOS 16.4 ou plus, et l'Espace ajouté à l'écran d'accueil (règle d'Apple). Android, ordinateur : direct.
+   Le service envoie (proclik-cliky, push.js) ; ici : l'autorisation, l'abonnement de l'appareil, et sw.js qui affiche. */
+var KN='pc-push-non';
+function ios(){return /iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+function standalone(){return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true}
+function pushOk(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window}
+function etatPush(){if(pushOk())return Notification.permission==='granted'?(lit('pc-push-on')?'on':'a-finir'):Notification.permission==='denied'?'bloque':'off';
+  return ios()&&!standalone()?'installer':'impossible'}
+function deb64u(s){var t=String(s).replace(/-/g,'+').replace(/_/g,'/');t+='==='.slice((t.length+3)%4);var b=atob(t),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function appareil(){var u=navigator.userAgent;return /iPad/.test(u)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)?'iPad':/iPhone/.test(u)?'iPhone':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'PC':'Appareil'}
+function enregistrer(){return navigator.serviceWorker.register('sw.js').then(function(){return navigator.serviceWorker.ready})}
+function abonner(reg,silence){return api('/espace/push/cle').then(function(k){
+    return reg.pushManager.getSubscription().then(function(s){return s||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:deb64u(k.cle)})})})
+  .then(function(s){return api('/espace/push/abonner',{method:'POST',body:{abonnement:s.toJSON(),appareil:appareil()}})})
+  .then(function(){ecrit('pc-push-on',Date.now());if(!silence)return api('/espace/push/essai',{method:'POST',body:{}})})}
+function toast(a,b){if(window.PCX&&PCX.toast)PCX.toast(a,b||'')}
+function activer(){var e=etatPush();
+  if(e==='installer'){var ic=d.getElementById('inst-card');if(typeof window.showInstall==='function')window.showInstall();else if(ic)ic.click();
+    else toast('D\'abord l\'écran d\'accueil','Sur iPhone et iPad, ajoutez l\'Espace à l\'écran d\'accueil (Partager › Sur l\'écran d\'accueil), puis rouvrez-le depuis son icône.');return}
+  if(e==='impossible'){toast('Pas possible sur cet appareil','Essayez depuis Safari (iPhone/iPad, appli ajoutée à l\'écran d\'accueil) ou Chrome.');return}
+  if(e==='bloque'){toast('Notifications refusées',ios()?'Réglages de l\'iPhone › Notifications › ProClik › Autoriser.':'Autorisez-les dans les réglages du navigateur pour ce site.');return}
+  /* la question du téléphone doit partir tout de suite après le toucher */
+  var p;try{p=Notification.requestPermission()}catch(x){p=null}
+  Promise.resolve(p).then(function(r){if((r||Notification.permission)!=='granted'){toast('Pas de notifications','Vous pourrez les activer plus tard dans les Réglages ☰.');return}
+    return enregistrer().then(function(reg){return abonner(reg,false)}).then(function(){toast('Notifications activées','Un essai vient d\'arriver sur cet appareil.');majReglage()})})
+  .catch(function(x){toast('Pas pu activer',String(x&&x.message||x))})}
+/* déjà autorisé : on garde l'abonnement à jour une fois par jour (il change parfois tout seul) */
+function garder(){if(!vrai()||!pushOk()||Notification.permission!=='granted')return;var j=new Date().toDateString();if(lit('pc-push-jour')===j)return;
+  enregistrer().then(function(reg){return abonner(reg,true)}).then(function(){ecrit('pc-push-jour',j)},function(){})}
+/* l'invitation, une fois l'ouverture passée (et pas plus d'une fois tous les 14 jours si on dit non) */
+function invite(){var e=etatPush();if(!vrai()||(e!=='off'&&e!=='installer'))return;if(Date.now()-(+lit(KN)||0)<14*864e5)return;
+  pousse({k:'push-invite',ic:ICT.cloche,sur:'Notifications',titre:'Être prévenu sur ce '+(appareil()==='iPad'?'iPad':'téléphone')+' ?',
+    sous:e==='installer'?'Ajoutez d\'abord l\'Espace à l\'écran d\'accueil : nouvelles demandes, pré-devis, messages arrivent même Espace fermé.':'Nouvelles demandes, pré-devis, messages… même Espace fermé.',
+    go:e==='installer'?'Comment ?':'Activer',ms:12000,act:activer,non:function(){ecrit(KN,Date.now())}})}
+/* les clics sur une notification du téléphone quand l'Espace est déjà ouvert (sw.js) */
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){var u=e.data&&e.data.pcUrl;if(!u)return;
+  var h=String(u).split('#')[1];if(h){location.hash=h;lienHash()}});
+
+/* dans les Réglages ☰ : une ligne « Notifications » */
+var MOT={on:['Activées sur cet appareil','sw on'],'a-finir':['Touchez pour finir','sw'],off:['Touchez pour les activer','sw'],bloque:['Refusées : à autoriser dans les réglages','sw'],
+  installer:['Ajoutez d\'abord l\'Espace à l\'écran d\'accueil','sw'],impossible:['Pas possible sur ce navigateur','sw']};
+function majReglage(){var b=d.getElementById('pcn-reg');if(!b)return;var m=MOT[etatPush()];b.querySelector('small').textContent=m[0];b.querySelector('.sw').className=m[1]}
+var menu=d.getElementById('menu');
+if(menu)menu.addEventListener('click',function(){setTimeout(function(){if(!vrai())return;var c=d.querySelector('#x-in .card.menu');if(!c||d.getElementById('pcn-reg'))return;
+  var b=d.createElement('button');b.id='pcn-reg';b.innerHTML='<span class="av">'+ICT.cloche+'</span><span class="tx"><b>Notifications</b><small></small></span><span class="sw" role="switch" aria-hidden="true"><i></i></span>';
+  var a=d.getElementById('rg-aides');c.insertBefore(b,a||c.firstChild);majReglage();
+  b.addEventListener('click',function(){var e=etatPush();if(e==='on'){api('/espace/push/essai',{method:'POST',body:{}}).then(function(){toast('Essai envoyé','Il arrive sur vos appareils dans un instant.')},function(x){toast('Pas pu envoyer',x.message)});return}activer()})},60)});
 
 /* ---------- styles (pastille Nouveau + bandeau du haut) ---------- */
 var st=d.createElement('style');st.textContent=
@@ -97,7 +183,7 @@ var st=d.createElement('style');st.textContent=
  '.pc-ban .rond svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}'+
  '.pc-ban .x{flex:1;min-width:0;display:grid;gap:1px}'+
  '.pc-ban .x small{font-size:12px;font-weight:700;color:var(--pcn-l);letter-spacing:.01em}'+
- '.pc-ban .x b{font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'+
+ '.pc-ban .x b{font-size:16px;font-weight:700;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}'+
  '.pc-ban .x span{font-size:13px;opacity:.7}'+
  '.pc-ban .go{flex:none;font-size:13.5px;font-weight:700;padding:8px 14px;border-radius:20px;background:var(--pcn-a);color:var(--pcn-s)}'+
  '.pc-ban .pc-ban-x{flex:none;width:40px;display:grid;place-items:center;opacity:.55}'+
@@ -106,7 +192,7 @@ var st=d.createElement('style');st.textContent=
  '.vcard .pc-nv{margin-left:8px;vertical-align:1px}';
 d.head.appendChild(st);
 
-window.PCNotif={nouveaux:nouveaux,estNouveau:estNouveau,vu:marquerVu,nb:function(){return nouveaux().length},
+window.PCNotif={nouveaux:nouveaux,estNouveau:estNouveau,vu:marquerVu,activer:activer,etat:etatPush,montre:pousse,nb:function(){return nouveaux().length},
   pastille:function(){return '<span class="pc-nv">Nouveau</span>'}};
-sig=signature();setTimeout(function(){annonce();sig=signature()},1200);
+sig=signature();setTimeout(function(){annonce();sig=signature();fil();lienHash();garder();setTimeout(invite,2500)},1200);
 })();
