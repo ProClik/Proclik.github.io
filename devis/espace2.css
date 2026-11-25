@@ -465,10 +465,12 @@ html body .mes{display:block;width:100%;max-width:380px;height:auto;max-height:m
 @media (min-width:700px){
  html body .q:has(>.mes):not(.pg-off):not([hidden]){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(220px,40%);column-gap:22px;align-items:start;grid-column:1/-1}
  html body .q:has(>.mes)>*{grid-column:1}
- html body .q:has(>.mes)>.mes{grid-column:2;grid-row:1/span 8;align-self:center;margin:0;max-height:min(36vh,240px)}
+ html body .q:has(>.mes)>.mes{grid-column:2;grid-row:1/span 8;align-self:start;margin:0;max-height:min(36vh,240px)}
 }
 /* téléphone : dessin assez grand pour lire les mots, mais compact */
-@media (max-width:699px){html body .q>.mes{max-height:min(19vh,140px)}}
+@media (max-width:699px){html body .q>.mes{max-height:min(19vh,140px)}
+ /* Cyril 25/11 : le dessin en haut de la question, toujours à la même place d'un écran à l'autre */
+ html body .q:has(>.mes):not(.pg-off):not([hidden]){display:flex!important;flex-direction:column}html body .q:has(>.mes)>*{width:100%}html body .q:has(>.mes)>.mes{order:-1;margin:0 auto 10px;width:100%}}
 /* fiches en 2 colonnes (iPad couché) : la question avec dessin prend toute la largeur, dessin à droite et lisible */
 html body .item:not(.mini)>*:has(.q>.mes){grid-column:1/-1}
 @media (min-width:700px){html body .item .q:has(>.mes)>.mes{max-height:min(40vh,250px)}}
