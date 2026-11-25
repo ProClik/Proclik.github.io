@@ -177,7 +177,7 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 .mcard.reco{border:2px solid var(--mint);box-shadow:0 0 0 4px rgba(46,230,200,.18)}
 .mcard[aria-pressed="true"]{background:var(--soft);border-color:var(--mint-ink)}
 .mcard b{font-size:17px;line-height:1.25}
-.mcard>span{font-size:14px;color:var(--muted)}
+.mcard>span{font-size:14px;color:var(--muted)}.mcard>span.mwarn{color:var(--ink,#1B2440);font-weight:600;font-size:13.5px;border-top:1px solid rgba(27,36,64,.12);padding-top:8px;margin-top:2px}
 .mcard ul{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:2px}
 .mcard .rb{position:absolute;top:-12px;left:14px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px}
 .mcard svg.mini{width:100%;height:auto;max-height:130px}
@@ -574,6 +574,30 @@ addEventListener("DOMContentLoaded",function(){
 });
 })();
 </script>
+<style>/* Cyril 25/11 : une question de fiche (escalier, fenêtre…) doit montrer toutes ses réponses sans faire défiler. fitItem() pose iq1 → iq3. */
+html body.iq1 #app .cnt.cmini,html body.iq1 #app section>p.sub{display:none}
+html body.iq1 #app section h1{margin-bottom:6px}
+html body.iq1 #app .item{padding:10px 12px;margin-block:6px}
+html body.iq1 #app .item-h h3{margin:0 0 4px}
+html body.iq1 #app .item .q .hint{margin:2px 0 6px;font-size:13px}
+@media (min-width:600px){html body.iq2 #app .item>.lq{grid-column:1/-1}
+html body.iq2 #app .item .lq .q .chips{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html body.iq2 #app .item .lq .q .chips .chip.dk{grid-column:1/-1}
+html body.iq3 #app .item .lq .q .chips .chip{min-height:0!important;padding-top:8px;padding-bottom:8px}}
+@media (min-width:700px){html body.iq3 #app .item .lq .q .chips{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* téléphone : d'abord des réponses plus serrées et un dessin plus petit, puis 2 colonnes sans icône ni rond */
+@media (max-width:599px){html body.iq2 #app .item .lq .q .chips .chip{min-height:0!important;padding-top:7px!important;padding-bottom:7px!important;font-size:15px}
+html body.iq2 #app .item .lq .q svg.mes{max-height:96px}
+html body.iq2 #app .item .lq .q .chips{gap:6px!important}
+html body.iq3 #app .item .lq .q .chips{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+html body.iq3 #app .item .lq .q .chips .chip.dk{grid-column:1/-1}
+html body.iq3 #app .item .lq .q .chips .chip svg.ci{display:none}
+html body.iq3 #app .item .lq .q .chips .chip{justify-content:center!important;text-align:center;padding-left:8px!important;padding-right:8px!important}
+html body.iq3 #app .item .lq .q .chips .chip::after,html body.iq3 #app .item .lq .q .chips .chip::before{display:none!important}
+html body.iq3 #app .item .lq .q svg.mes{max-height:72px}}
+@media (max-width:599px){html body.iq4 #app section h1{display:none!important}html body.iq4 #app .item .lq .q .lab{font-size:16px!important}html body.iq4 #app .item .lq .q svg.mes{max-height:54px}html body.iq4 #app .item .lq .q .hint{display:none}html body.iq4 #app .item{padding:8px 10px}html body.iq4 #app .item .lq .q{padding:10px!important}}
+@media (max-width:599px){html body.iq5 #app .item .lq .q svg.mes{display:none}}
+</style>
 <script src="config.js"></script>
 <script>
 (function(){
@@ -611,6 +635,7 @@ const TRAVAUX=[
  ["escalier","Escalier, trémie ou trappe","Pour monter à l'étage ou aux combles"],
  ["autre","Autre projet","Racontez-le avec vos mots"]];
 // 24/11 (Cyril) : la partie escalier couvre aussi trémie et trappe ; leurs questions d'escalier (forme, matière, largeur) sont sautées.
+const ESCTR=o=>{const k=o.sorte,e=o.etat;if(!k||k===DK)return k===DK?DK:"";if(e==="Déjà en place")return"Déjà en place";if(k==="Escalier")return e==="À changer"?"Remplacer l'escalier":e===DK?DK:"Créer un escalier";if(k==="Trémie")return e==="À changer"?"Modifier la trémie":"Créer une trémie";return e==="À changer"?"Remplacer la trappe":"Créer une trappe"};
 const ESCT=o=>/trémie|trappe/i.test((o&&o.travail)||"");
 const gNm=(sec,it)=>sec==="escalier"&&/trappe/i.test((it&&it.travail)||"")?"Trappe":sec==="escalier"&&/trémie/i.test((it&&it.travail)||"")?"Trémie":D[sec].g.n;
 // Fil de progression et icône de titre (Cyril 12/11, style N1) : une icône par étape, à plat.
@@ -648,6 +673,17 @@ const FPLUS=()=>S.travaux.some(k=>PLAQUE.includes(k));
 // 22/11 (Cyril, avis A à Z) : une question du logement n'est posée que si elle sert aux travaux choisis.
 // « Autre projet » (ou rien de coché) : on pose tout, par sécurité.
 const TPCS=["cloison","doublage","plafond","sol","rampants"];
+/* Cyril 25/11 : formulaire par questions plus court.
+   HSPV : hauteur donnée une seule fois (« Du sol au plafond… ») ; PCL/PCO : pièces déjà choisies (« Dans quelles pièces… ») en boutons ;
+   PARF : « Même chose que … n°1 ? », Oui = on ne redemande que la pièce et la taille. */
+function HSPV(){const v=((typeof S!=="undefined"&&S.logement)||{}).hsp;const m=/^(\d+),(\d+) m$/.exec(v||"");return m?+(m[1]+"."+m[2]):null}
+function PCL(){const v=((typeof S!=="undefined"&&S.logement)||{}).pcs;return Array.isArray(v)?v.filter(x=>x!==DK):[]}
+function PCO(def){const L=PCL();if(!L.length)return def;const M={"Chambre(s)":"Chambre","Salle de bain":"Salle de bain / WC","WC":"Salle de bain / WC"},o=[];L.forEach(x=>{const y=M[x]||x;if(!o.includes(y))o.push(y)});return o.concat(["Autre",DK])}
+const PARS=["cloison","doublage","plafond","fenetres","portes","sol"],PARK=["pareil","piece","L","l","H","surface","taille","Lc","Hc","largeur","fen"];
+function PARF(sec,i){const n=D[sec].g.n,art=/^(Pièce|Cloison|Fenêtre|Porte)$/.test(n)?"la ":"le ";return{k:"pareil",t:"chips",l:`Même chose que ${art}${n.toLowerCase()} n°${i} ?`,h:"Oui : il ne reste que la pièce et la taille à donner.",o:["Oui","Non"],ol:{"Oui":"Oui, même chose","Non":"Non, c'est différent"}}}
+function PARC(sec,i){const it=S[sec].items,p=it[i-1]||{},o=it[i];Object.keys(p).forEach(k=>{if(k==="_ok"||PARK.includes(k.replace(/_dk$/,"")))return;o[k]=JSON.parse(JSON.stringify(p[k]))});Object.keys(o).forEach(k=>{if(!(k in p)&&!PARK.includes(k.replace(/_dk$/,""))&&k!=="_ok")delete o[k]})}
+/* Cyril 25/11 : escalier, trémie ou trappe déjà en place = plus aucune question */
+function ESC0(o){return /déjà en place/i.test((o||{}).travail||"")}
 function TRV(...k){const t=(typeof S!=="undefined"&&S.travaux)||[];return !t.length||t.includes("autre")||k.some(x=>t.includes(x))}
 // Réponses devenues inutiles (travaux changés) : retirées avant l'envoi pour ne pas fausser le chiffrage.
 function lqClean(){const o=S.logement;if(!o)return;D.logement.f.forEach(f=>{if(f.sh&&!f.sh(o)&&o[f.k]!==undefined)delete o[f.k]})}
@@ -683,8 +719,8 @@ const D={
  cloison:{t:"Vos cloisons",s:"Une cloison, c'est un mur à créer. Une estimation suffit, nous vérifierons sur place.",cheer:"On avance bien",sch:"mur",
   g:{n:"Cloison",cnt:"Combien de cloisons à créer ?",add:"+ Ajouter une autre cloison",f:[
    {k:"L",t:"num",ill:"murL",l:"Longueur",u:"m",st:.1,dk:1,pre:[1,2,3,4,5]},
-   {k:"H",t:"num",ill:"hsp",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
-   {k:"piece",t:"chips",l:"Dans quelle pièce ?",o:["Chambre","Salle de bain / WC","Séjour","Bureau","Autre",DK]},
+   {k:"H",t:"num",ill:"hsp",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7],sh:()=>HSPV()==null},
+   {k:"piece",t:"chips",l:"Dans quelle pièce ?",get o(){return PCO(["Chambre","Salle de bain / WC","Séjour","Bureau","Autre",DK])}},
    {k:"portes",t:"step",l:"Portes dans cette cloison",min:0,max:4},
    {k:"largeur",t:"chips",l:"Largeur de la porte (hauteur standard 204 cm)",lf:i=>i.portes>1?"Largeur des portes (hauteur standard 204 cm)":"Largeur de la porte (hauteur standard 204 cm)",o:["63 cm","73 cm","83 cm","93 cm",DK],sh:i=>i.portes>0},
    {k:"galandage",t:"chips",l:"Une porte coulissante qui rentre dans le mur ?",o:["Oui","Non",DK],sh:i=>i.portes>0},
@@ -694,17 +730,17 @@ const D={
  doublage:{t:"L'isolation de vos murs",s:"Indiquez chaque mur à isoler. Une estimation suffit.",cheer:"Votre maison va avoir chaud",sch:"mur",
   g:{n:"Mur",cnt:"Combien de murs à isoler ?",add:"+ Ajouter un autre mur",f:[
    {k:"L",t:"num",ill:"murL",l:"Longueur du mur",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
-   {k:"H",t:"num",ill:"hsp",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"H",t:"num",ill:"hsp",l:"Hauteur sous plafond",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7],sh:()=>HSPV()==null},
    {k:"ext",t:"chips",l:"Ce mur donne-t-il sur l'extérieur ?",o:["Oui","Non",DK]},
    {k:"etat",t:"chips",l:"État du mur",o:["Bon, bien droit","Abîmé ou irrégulier","Humide",DK]},
    {k:"fen",t:"step",l:"Fenêtres ou portes dans ce mur",min:0,max:6}]},
-  f:[{k:"objectif",t:"chips",l:"Votre objectif",o:["Isolation standard","Isolation renforcée",DK]},
- ]},
+  /* Cyril 25/11 : plus de question « Votre objectif » : le pré-devis suit les habitudes de l'artisan (épaisseur dans son Espace) */
+ },
  plafond:{t:"Vos faux plafonds",s:"Pièce par pièce. Mesurez au sol, c'est plus simple.",cheer:"Pièce par pièce",sch:"piece",
   g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",f:[
    {k:"L",t:"num",ill:"pieceL",l:"Longueur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5,6]},
    {k:"l",t:"num",ill:"piecel",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[2,3,4,5]},
-   {k:"H",t:"num",ill:"hsp",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7]},
+   {k:"H",t:"num",ill:"hsp",l:"Hauteur actuelle",u:"m",st:.05,def:2.5,dk:1,pre:[2.4,2.5,2.7],sh:()=>HSPV()==null},
    {k:"baisser",t:"chips",l:"Voulez-vous baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DK]},
    {k:"humide",t:"chips",l:"Pièce humide (salle de bain, buanderie) ?",o:["Oui","Non",DK]}]}},
  combles:{t:"Vos combles perdus",s:"Le grenier non habitable, au-dessus du dernier plafond.",cheer:"Le plus gros de la chaleur part par là",f:[
@@ -727,7 +763,8 @@ const D={
    {k:"ftetat",t:"chips",l:"Faut-il changer ces fenêtres de toit ?",lf:i=>/^1$/.test(i.ft||"")?"Faut-il changer cette fenêtre de toit ?":"Faut-il changer ces fenêtres de toit ?",o:["À changer","Déjà en place",DK],ol:{"À changer":"Oui, à changer","Déjà en place":"Non, on garde"},sh:i=>/^(1|2|3|4 ou plus)$/.test(i.ft||"")}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
   g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
-   {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
+   {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine",sh:()=>!PCL().length},
+   {k:"piece",t:"chips",l:"Dans quelle pièce ?",get o(){return PCO([])},sh:()=>PCL().length>0},
    {k:"taille",t:"chips",ill:"fen",l:"Taille en cm (largeur × hauteur)",o:["60 × 75","80 × 95","100 × 115","100 × 125","120 × 135","Porte-fenêtre 80 × 215","Porte-fenêtre 120 × 215","Autre taille",DK]},
    {k:"Lc",t:"num",ill:"fenL",l:"Largeur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
    {k:"Hc",t:"num",ill:"fenH",l:"Hauteur",u:"cm",st:1,dk:1,sh:i=>i.taille==="Autre taille"||(!i.taille&&(pn(i.Lc)||pn(i.Hc)))},
@@ -746,7 +783,7 @@ const D={
    {k:"fin",t:"chips",l:"Finition de la porte",h:"Fin de chantier : finition sur demande, plus chère.",o:["Prête à peindre","Fin de chantier (finition sur demande)",DK]}]}},
  sol:{t:"Vos sols",s:"Pièce par pièce. Une estimation suffit, tout sera vérifié sur place.",cheer:"Ça prend forme",
   g:{n:"Pièce",cnt:"Dans combien de pièces ?",add:"+ Ajouter une autre pièce",copy:1,f:[
-   {k:"piece",t:"chips",l:"Quelle pièce ?",o:["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre",DK]},
+   {k:"piece",t:"chips",l:"Quelle pièce ?",get o(){return PCO(["Séjour","Cuisine","Chambre","Salle de bain / WC","Entrée / couloir","Autre",DK])}},
    {k:"surface",t:"num",ill:"surf",l:"Surface au sol",h:"Longueur × largeur de la pièce, au sol. Une estimation suffit.",u:"m²",st:1,dk:1,pre:[5,10,15,20,30]},
    {k:"actuel",t:"chips",l:"Sol actuel",o:["Carrelage","Parquet","Stratifié","Lino / vinyle","Moquette","Béton brut",DK]},
    {k:"depose",t:"chips",l:"Faut-il enlever l'ancien sol ?",o:["Oui","Non",DK],sh:i=>i.actuel!=="Béton brut"},
@@ -754,18 +791,19 @@ const D={
    {k:"plinthes",t:"chips",l:"Plinthes neuves ?",o:["Oui","Non",DK]}]}},
  escalier:{t:"Escalier, trémie ou trappe",s:"Une estimation suffit, tout sera vérifié sur place.",cheer:"Une marche après l'autre",
   g:{n:"Escalier",cnt:"Combien d'escaliers, de trémies ou de trappes ?",cmax:3,add:"+ Ajouter un escalier, une trémie ou une trappe",f:[
-   {k:"travail",t:"chips",l:"Que faut-il faire ?",h:"Trémie : l'ouverture dans le plancher, pour un futur escalier. Trappe : un petit accès aux combles.",o:["Créer un escalier","Remplacer l'escalier","Rénover ou habiller l'existant","Créer une trémie","Créer une trappe",DK]},
-   {k:"vers",t:"chips",l:"Elle permet de monter…",o:["À l'étage","Aux combles",DK],ol:{"À l'étage":"À un étage (des pièces où l'on vit)","Aux combles":"Aux combles (sous le toit)"},dfn:()=>S.travaux.some(k=>k==="combles"||k==="rampants")?"Aux combles":null,sh:o=>ESCT(o)},
-   {k:"forme",t:"chips",sh:o=>!ESCT(o),l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
-   {k:"mat",t:"chips",sh:o=>!ESCT(o),l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
-   {k:"largeur",t:"chips",sh:o=>!ESCT(o),ill:"escL",l:"Largeur",h:"Mesurez la largeur des marches.",o:["70 cm","80 cm","90 cm",DK]},
-   {k:"haut",t:"num",sh:o=>!/trappe/i.test(o.travail||""),ill:"escH",l:"Hauteur à monter (d'un sol à l'autre)",h:"Du sol en bas jusqu'au sol de l'étage, l'épaisseur du plancher comprise (la flèche sur le dessin).",u:"cm",st:1,dk:1,pre:[250,270,290]},
-   {k:"rampe",t:"chips",sh:o=>!/trappe/i.test(o.travail||""),l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
+   /* Cyril 25/11 : deux questions courtes au lieu d'une longue liste ; « travail » est déduit (ESCTR) pour le plan et le chiffrage */
+   {k:"sorte",t:"chips",l:"C'est un escalier, une trémie ou une trappe ?",h:"Trémie : l'ouverture dans le plancher pour un escalier. Trappe : un petit accès aux combles.",o:["Escalier","Trémie","Trappe",DK],ol:{"Escalier":"Un escalier","Trémie":"Une trémie","Trappe":"Une trappe"}},
+   {k:"etat",t:"chips",l:"Il est…",lf:o=>o.sorte==="Trémie"?"Cette trémie est…":o.sorte==="Trappe"?"Cette trappe est…":"Cet escalier est…",o:["Déjà en place","À créer","À changer",DK],ol:{"Déjà en place":"Déjà en place, rien à faire"},sh:o=>!!o.sorte&&o.sorte!==DK},
+   {k:"vers",t:"chips",l:"Elle permet de monter…",o:["À l'étage","Aux combles",DK],ol:{"À l'étage":"À un étage (des pièces où l'on vit)","Aux combles":"Aux combles (sous le toit)"},dfn:()=>S.travaux.some(k=>k==="combles"||k==="rampants")?"Aux combles":null,sh:o=>ESCT(o)&&!ESC0(o)},
+   {k:"forme",t:"chips",sh:o=>!ESCT(o)&&!ESC0(o),l:"Forme",o:["Droit","Quart tournant","Deux quarts tournants","Colimaçon",DK]},
+   {k:"mat",t:"chips",sh:o=>!ESCT(o)&&!ESC0(o),l:"Matière souhaitée",o:["Bois","Métal","Béton",DK]},
+   {k:"largeur",t:"chips",sh:o=>!ESCT(o)&&!ESC0(o),ill:"escL",l:"Largeur",h:"Mesurez la largeur des marches.",o:["70 cm","80 cm","90 cm",DK]},
+   {k:"haut",t:"num",sh:o=>!/trappe/i.test(o.travail||"")&&!ESC0(o),ill:"escH",l:"Hauteur à monter (d'un sol à l'autre)",h:"Du sol en bas jusqu'au sol de l'étage, l'épaisseur du plancher comprise (la flèche sur le dessin).",u:"cm",st:1,dk:1,pre:[250,270,290]},
+   {k:"rampe",t:"chips",sh:o=>!/trappe/i.test(o.travail||"")&&!ESC0(o),l:"Rampe ou garde-corps ?",o:["Oui","Non",DK]}]}},
  autre:{t:"Décrivez votre projet",s:"Avec vos mots, comme si vous l'expliquiez à l'artisan.",cheer:"Merci pour les détails",f:[
    {k:"desc",t:"area",l:"Votre projet",ph:"Ex. reprendre un mur fissuré dans l'entrée…"}]},
  finition:{t:"Encore quelques petites choses",s:"Pour tous vos travaux à la fois.",cheer:"Une question rapide",f:[
-   {k:"fin",t:"chips",l:"Finition des plaques de plâtre",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris.",sh:()=>S.travaux.some(k=>PLAQUE.includes(k))},
-   {k:"obj",t:"chips",l:"Votre objectif d'isolation",o:["Isolation standard","Isolation renforcée",DK],sh:()=>S.mode==="plan"&&S.travaux.includes("doublage")&&S.travaux.some(k=>PLANABLE.includes(k))}]},
+   {k:"fin",t:"chips",l:"Finition des plaques de plâtre",o:["Prêt à peindre","Bandes seules (je finis moi-même)",DK],h:"Prêt à peindre : bandes, enduit et ponçage compris.",sh:()=>S.travaux.some(k=>PLAQUE.includes(k))}]},
  photos:{t:"Quelques photos",s:"Toutes vos photos ici, en une fois. Ce sont elles qui rendent le pré-devis vraiment juste.",cheer:"Les photos, ça change tout",f:[
    {k:"photos",t:"file",l:"Photos du chantier",acc:"image/*",multi:1,big:"Prendre ou ajouter des photos",small:"De jour si possible : la pièce en entier, puis les détails"},
    {k:"plan",t:"file",l:"Plan (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan",small:"Photo ou PDF, avec les cotes si possible"}]},
@@ -781,7 +819,7 @@ const D={
    {k:"plan",t:"file",l:"Plan ou document (facultatif)",acc:"image/*,application/pdf",multi:1,big:"Ajouter un plan ou un document",small:"Plan, ancien devis, diagnostic… en photo ou en PDF"}]},
  projet:{t:"Votre calendrier",s:"Pour organiser le planning.",cheer:"Pour le planning",f:[
    {k:"delai",t:"chips",l:"Quand souhaitez-vous les travaux ?",o:["Dès que possible","Dans le mois","Dans les 3 mois","Pas pressé",DK]},
-   {k:"budget",t:"chips",l:"Budget envisagé (facultatif)",o:["Moins de 2 000 €","2 000 à 5 000 €","5 000 à 10 000 €","Plus de 10 000 €","Je préfère ne pas dire"]},
+   /* Cyril 25/11 : plus de question « Budget envisagé » */
    {k:"msg",t:"area",v:()=>!SIMPLE()&&S.mode==="plan",l:"Un détail à ajouter ?",ph:"Meubles à déplacer, code du portail, contraintes de dates…"}]},
  note:{t:"Un mot pour "+CONFIG.artisan+" ?",s:"Facultatif. Tout ce qui n'a pas trouvé sa place : vos envies, vos questions, ce qui vous inquiète.",cheer:"Presque fini",f:[
    {k:"msg",t:"area",l:"Votre note",ph:"Ex. j'aimerais une porte coulissante dans la chambre, le chantier doit être fini avant Noël, code du portail…"}]},
@@ -817,7 +855,7 @@ const ICP='<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor
 const ICF='<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.2"/><path d="M9 4V3h6v1"/><path d="M8.5 10h1M12 10h3.5M8.5 14h1M12 14h3.5M8.5 18h1M12 18h2"/></svg>';
 function modeH(){return`<div class="modes">
  <button type="button" class="mcard reco" data-mode="plan" aria-pressed="${S.mode==="plan"}"><span class="rb">Recommandé · guidé pas à pas</span>${MINI}<b>${ICP}Je dessine mon plan</b><span>Le contour est déjà prêt : vous mettez ses mesures, séparez les pièces et posez fenêtres et portes.</span><ul><li>Le pré-devis le plus juste</li><li>Une étape à la fois, en haut de l'écran</li><li>Une estimation suffit, tout est vérifié sur place</li></ul></button>
- <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>${ICF}Je préfère décrire mes travaux</b><span>Quelques cases à cocher, quelques mots et vos photos. Sans dessin.</span></button></div>`}
+ <button type="button" class="mcard" data-mode="texte" aria-pressed="${S.mode==="texte"}"><b>${ICF}Je préfère décrire mes travaux</b><span>Quelques cases à cocher, quelques mots et vos photos. Sans dessin.</span>${(()=>{const n=(S.travaux||[]).filter(k=>k!=="autre").length;return n>3?`<span class="mwarn">Avec vos ${n} travaux, il faudra décrire chaque élément un par un : le plan ira plus vite.</span>`:""})()}</button></div>`}
 function rectSVG(r){const W=320,Hh=190,[L,l]=dimsOf(r),ok=L>0&&l>0;
  if(!ok)return`<svg viewBox="0 0 ${W} ${Hh}"><rect x="70" y="35" width="180" height="110" rx="6" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-dasharray="8 6"/><text x="160" y="96" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="14" fill="currentColor" opacity=".6">Entrez les 2 mesures ↓</text></svg>`;
  const sc=Math.min(34,250/L,125/l),w=L*sc,h=l*sc,x=(W-w)/2,y=(Hh-h)/2-6;
@@ -870,7 +908,6 @@ function planH(){const P=S.plan,sub=P.sub,tr=trsOk();
   <div class="psum"><div><b>${P.rooms.length}</b><span>pièce${P.rooms.length>1?"s":""}</span></div><div><b>${fr1(surf)}</b><span>m² au sol</span></div><div><b>≈ ${Math.round(ext*H)}</b><span>m² de murs extérieurs</span></div></div>
   ${est?`<p class="note">${est} pièce${est>1?"s":""} en taille estimée : ${CONFIG.artisan} vérifiera sur place. Aucun souci.</p>`:""}
   <button type="button" class="add" data-pback="1" style="margin-top:12px">+ Ajouter ou retirer une pièce</button>
-  ${S.travaux.includes("doublage")?`<div class="q"><span class="lab">Votre objectif d'isolation</span><div class="chips">${["Isolation standard","Isolation renforcée",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="obj|${esc(v)}" aria-pressed="${P.obj===v}">${esc(v)}</button>`).join("")}</div></div>`:""}
   ${S.travaux.includes("plafond")?`<div class="q"><span class="lab">Le plafond actuel est en…</span><div class="chips">${["Béton","Bois (poutres)","Ancien plâtre",DK].map(v=>`<button type="button" class="chip${v===DK?" dk":""}" data-pq="support|${esc(v)}" aria-pressed="${P.support===v}">${esc(v)}</button>`).join("")}</div></div>`:""}`}
  const i=sub,r=P.rooms[i];if(!r){P.sub="pieces";return planH()}const off=r.dk,[eL,el]=dimsOf(r);
  return`<div class="rhead"><span class="pic" style="background:${PCOL[r.type]}"></span><div><small>Pièce ${i+1} sur ${P.rooms.length}</small><h1 style="margin:0">${esc(r.nom)}</h1></div></div>
@@ -895,7 +932,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn${n?" fait":""}" data-openplan="1">${n?"Modifier mon plan":"Dessiner mon plan"}</button>
  ${n?"":`<ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul>`}</div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(fsOk()&&!fsOn())fsGo();if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=92");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;setTimeout(fsUpd,500);if(pfSc()){document.documentElement.classList.add("pfsc");if(window.top===window)document.documentElement.classList.add("pfsc-top");else document.body.style.overflow="hidden";pfScUpd.h0=innerHeight;pfScUpd.y=0;pfScUpd()}else document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");if(fsOk()&&!fsOn())fsGo();if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=93");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;setTimeout(fsUpd,500);if(pfSc()){document.documentElement.classList.add("pfsc");if(window.top===window)document.documentElement.classList.add("pfsc-top");else document.body.style.overflow="hidden";pfScUpd.h0=innerHeight;pfScUpd.y=0;pfScUpd()}else document.body.style.overflow="hidden";updSub()}
 /* Cyril 19/11 : sur iPhone (Safari, page ouverte directement), les barres de Safari se rétrécissent quand on fait glisser la page.
    Le plan garde ses gestes ; une petite poignée en bas sert à faire glisser la page. Dans un cadre (site de l'artisan) Safari ne le permet pas. */
 /* Dans le cadre de la page GHL : le glisser sur la poignée passe à la page GHL (qui doit être un peu plus haute que l'écran, voir le bloc GHL v2) ;
@@ -1113,7 +1150,7 @@ function render(){
    // 22/11 (avis A à Z) : la question devient le grand titre, pour voir qu'on avance (le titre change à chaque écran).
    const GT={parking:"Pour venir chez vous"};let ff=S.lq!==0&&d.f.find(f=>g.includes(f.k)&&(!f.sh||f.sh(S.logement)));if(ff&&GT[g[0]]){h=h.replace(`<h1>${esc(d.t)}</h1>`,`<h1>${GT[g[0]]}</h1>`);ff=null}if(ff&&ff.l)h=h.replace(`<h1>${esc(d.t)}</h1>`,`<h1>${esc(ff.l).replace(/(\S*-\S*)/g,'<span style="white-space:nowrap">$1</span>')}</h1>`);
    h+=`<div class="lq${ff&&ff.l?" qt":""} ${render.dir<0?"lq-back":"lq-in"}" data-key="lq${S.lq}">`+d.f.filter(f=>g.includes(f.k)).map(f=>fieldH(f,cur,null)).join("")+`</div>`}
-  else if(d.f&&!(d.g&&d.g.cnt&&!(S[cur].n>0)))h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
+  else if(d.f&&!(d.g&&d.g.cnt&&!(S[cur].n>0))&&!(d.g&&d.g.cnt&&iOpen(cur)>=0))h+=d.f.filter(f=>!f.v||f.v(S[cur]||{})).map(f=>fieldH(f,cur,null)).join("");
   // Lot B (Cyril 17/11) : plus de « Ajouter une photo » sous chaque travail, tout est réuni dans l'étape Photos.
   if(cur==="contact")h+=`<div class="hp" aria-hidden="true"><label for="site-web">Ne pas remplir</label><input id="site-web" type="text" tabindex="-1" autocomplete="off" data-hp="1"></div>`;
  }
@@ -1196,7 +1233,7 @@ function recapH(){const st=steps().filter(s=>s!=="recap");const tot=totals();
   /* 23/11 : récap replié, une ligne par partie (titre + résumé) ; toucher la ligne = le détail. La page tient sans défiler. */const sum=String(txt[0]!=null?txt[0]:its[0]?its[0].t+(its.length>1?` + ${its.length-1}`:""):"").replace(/<[^>]*>/g,"");
   h+=`<div class="rblock rfold${RF.has(s)?" rf-on":""}" data-rf="${s}"><h3><span class="rf-t" role="button" tabindex="0" aria-expanded="${RF.has(s)}">${esc(D[s].t)}<small class="rsum">${esc(sum)}</small></span><button type="button" class="rf-v" aria-expanded="${RF.has(s)}"><span class="rv-o">Voir</span><span class="rv-c">Masquer</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><button type="button" data-goto="${s}">Modifier</button></h3>${its.map(x=>`<div class="ritem${ROPEN.has(x.sec+x.t)?" open":""}"><button type="button" class="ri-s" data-rtog="${esc(x.sec+x.t)}" aria-expanded="${ROPEN.has(x.sec+x.t)}"><span class="ri-ic">${IC[x.sec]||""}</span><span class="ri-t"><b>${esc(x.t)}${x.pc?" · "+esc(x.pc):""}</b>${x.b?`<span class="ri-b">${esc(x.b)}</span>`:""}</span><span class="ri-m">Voir plus<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button><ul>${x.parts.map(p=>{const k=p.indexOf(" : ");return`<li>${k>0?`<span>${esc(p.slice(0,k))}</span><b>${esc(p.slice(k+3))}</b>`:esc(p)}</li>`}).join("")}</ul></div>`).join("")}${txt.length?`<ul>${txt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`});
  return h+`<button type="button" class="add" data-goto="travaux" style="margin-top:4px">+ Ajouter des travaux</button></div>`}
-function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="open"||k==="qi"||k==="qiI"?undefined:v))}if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(det.rampants){const rs=RPLAN()?null:RSURF();if(rs){det.rampants.surface=rs;det.rampants.surface_calculee="Calculée depuis les mesures du client";delete det.rampants.surface_dk}else if(!RPLAN()){delete det.rampants.surface;det.rampants.surface_dk=true}}(det.fenetres?.items||[]).forEach(it=>{if(it.pose==null)it.pose=DK});(det.portes?.items||[]).forEach(it=>{if(it.sens==null)it.sens=DK});(det.plafond?.items||[]).forEach(it=>{if(it.support==null)it.support=DK});if(det.doublage&&det.doublage.epaisseur==null)det.doublage.epaisseur_dk=true;if(det.plan&&det.plan.plafond_actuel==null&&S.travaux.includes("plafond"))det.plan.plafond_actuel=DK;{const F=S.finition||{},ai=F.aides;if(ai){["combles","rampants"].forEach(k=>{if(det[k])det[k].aides=ai});if(/^oui/i.test(ai)){if(det.doublage&&det.doublage.objectif!=="Isolation renforcée")det.doublage.objectif="Avoir droit aux aides";if(det.plan&&S.travaux.includes("doublage")&&(det.plan.objectif_isolation||"")!=="Isolation renforcée")det.plan.objectif_isolation="Avoir droit aux aides"}}}if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
+function payload(){const st=steps();const det={};st.forEach(s=>{if(TRAVAUX.some(t=>t[0]===s)||s==="finition"){if(D[s].g&&D[s].g.cnt&&S[s].n===0)return;det[s]=JSON.parse(JSON.stringify(S[s],(k,v)=>k==="_ok"||k==="pareil"||k==="open"||k==="qi"||k==="qiI"?undefined:v))}if(HSPV()!=null&&["cloison","doublage","plafond"].includes(s)&&det[s]&&det[s].items)det[s].items.forEach(it=>{it.H=HSPV();delete it.H_dk});if(s==="fenetres"&&det[s]&&det[s].items)det[s].items.forEach(it=>{if(it.ouv==="Battant"&&!it.ob)it.ob="Oui";if(it.ouv==="Battant")it.ouverture=it.ob==="Non"?"Battant":"Oscillo-battant";const n=vtxN_F(it);if(n)it.vantaux=n})});if(st.includes("plan"))det.plan=planPayload();if(det.rampants){const rs=RPLAN()?null:RSURF();if(rs){det.rampants.surface=rs;det.rampants.surface_calculee="Calculée depuis les mesures du client";delete det.rampants.surface_dk}else if(!RPLAN()){delete det.rampants.surface;det.rampants.surface_dk=true}}(det.fenetres?.items||[]).forEach(it=>{if(it.pose==null)it.pose=DK});(det.portes?.items||[]).forEach(it=>{if(it.sens==null)it.sens=DK});(det.plafond?.items||[]).forEach(it=>{if(it.support==null)it.support=DK});if(det.doublage&&det.doublage.epaisseur==null)det.doublage.epaisseur_dk=true;if(det.plan&&det.plan.plafond_actuel==null&&S.travaux.includes("plafond"))det.plan.plafond_actuel=DK;{const F=S.finition||{},ai=F.aides;if(ai){["combles","rampants"].forEach(k=>{if(det[k])det[k].aides=ai});if(/^oui/i.test(ai)){if(det.doublage&&det.doublage.objectif!=="Isolation renforcée")det.doublage.objectif="Avoir droit aux aides";if(det.plan&&S.travaux.includes("doublage")&&(det.plan.objectif_isolation||"")!=="Isolation renforcée")det.plan.objectif_isolation="Avoir droit aux aides"}}}if(st.includes("simple"))det.simple=JSON.parse(JSON.stringify(S.simple));
  return {source:"clikdevis",version:1,artisan:CONFIG.entreprise,envoye_le:new Date().toISOString(),duree_remplissage_s:Math.round((Date.now()-t0)/1000),
   contact:{prenom:cap(S.contact.prenom).trim(),nom:cap(S.contact.nom).trim(),telephone:S.contact.tel,email:S.contact.email,consentement:!!S.contact.rgpd},
   logement:{...S.logement,commune:cap(S.logement.commune).trim()},mode:S.mode||"texte",murs:S.murs||null,travaux:S.travaux,details:det,projet:SIMPLE()?{...S.projet,msg:S.simple.desc||""}:S.mode==="plan"?S.projet:{...S.projet,msg:(S.note||{}).msg||S.projet.msg||""},
@@ -1271,8 +1308,13 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.tete9,.sub,.err,.hp,.qph,.iok"))}
 // Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
 const SM=()=>innerWidth<=600||(innerHeight<=520&&innerWidth>innerHeight);
-function fitPage(){const b=document.body,over=()=>{if(["intro","done","plan","recap"].includes(cur)||iqKey())return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
- cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
+function fitItem(){const b=document.body;b.classList.remove("iq1","iq2","iq3","iq4","iq5");if(!iqKey())return;const nav=document.querySelector(".nav"),
+ /* bas de la dernière réponse de la fiche, page en haut, comparé au haut de la barre Retour/Continuer */
+ low=()=>{const E=[...document.querySelectorAll("#app .item:not(.mini) .chip,#app .item:not(.mini) input,#app .item:not(.mini) .iok,#app .item:not(.mini) .step")].filter(e=>e.offsetParent);return E.length?Math.max(...E.map(e=>e.getBoundingClientRect().bottom))+scrollY:0},
+ lim=()=>(nav&&getComputedStyle(nav).position==="fixed"?nav.getBoundingClientRect().top:innerHeight)-6;
+ for(const c of["iq1","iq2","iq3"].concat(innerWidth<600?["iq4","iq5"]:[])){if(low()<=lim())break;b.classList.add(c)}}
+function fitPage(){fitItem();const b=document.body,over=()=>{if(["intro","done","plan","recap"].includes(cur)||iqKey())return false;const sec=document.querySelector("#app>section"),an=sec?sec.style.animation:"",L=[...document.querySelectorAll("#app .lq-in,#app .lq-back")];if(sec)sec.style.animation="none";L.forEach(e=>e.style.animation="none");const r=document.documentElement.scrollHeight>innerHeight+2;if(sec)sec.style.animation=an;L.forEach(e=>e.style.animation="");return r};b.classList.remove("tight");fitPage0();if(over()){b.classList.add("tight");fitPage0()}
+ cancelAnimationFrame(fitPage.af);fitPage.af=requestAnimationFrame(()=>{fitItem();if(!b.classList.contains("tight")&&over()){b.classList.add("tight");fitPage0()}})}
 // 17/11 (Cyril, lot A) : la partie affichée suit son CONTENU, pas son numéro. Quand une réponse raccourcit l'écran,
 // les parties sont recalculées : on retrouve la partie qui contient la question où l'on était (avant : on gardait le
 // numéro, et la question suivante, par exemple « Finition de la porte », pouvait sauter sans retour possible).
@@ -1412,7 +1454,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
  if(ds.del!=null&&ds.del!==""){S[cur].items.splice(+ds.del,1);if(D[cur].g&&D[cur].g.cnt){S[cur].n=S[cur].items.length;S[cur].open=undefined}save();render();return}
  const sec=ds.s;if(!sec)return;const o=obj(sec,ds.i===""?null:+ds.i),k=ds.k;
  if(ds.multi){const a=(Array.isArray(o[k])?o[k]:[]).filter(x=>ds.v===DK?x===DK:x!==DK);o[k]=a.includes(ds.v)?a.filter(x=>x!==ds.v):a.concat(ds.v);save();render();return}
- if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();if(o[k]!=null&&!(sec==="fenetres"&&k==="taille"&&o[k]==="Autre taille"))iqAuto(sec,ds.i===""?null:+ds.i);return}
+ if(ds.v!=null){const was=o[k];o[k]=o[k]===ds.v?undefined:ds.v;if(k==="pareil"&&o[k]==="Oui"&&ds.i!=="")PARC(sec,+ds.i);if(sec==="escalier"&&(k==="sorte"||k==="etat")){if(k==="sorte"&&(!o.sorte||o.sorte===DK))delete o.etat;o.travail=ESCTR(o);if(!o.travail)delete o.travail}if(sec==="logement"&&k==="type"&&was!==o[k])o.ou=[];if(sec==="fenetres"&&k==="taille"){const m=/(\d+) × (\d+)/.exec(o.taille||"");if(m){o.Lc=+m[1];o.Hc=+m[2];o.Lc_dk=o.Hc_dk=false}else if(o.taille===DK){o.Lc_dk=o.Hc_dk=true}else if(o.taille==="Autre taille"){o.Lc_dk=o.Hc_dk=false;if(was&&was!==DK){delete o.Lc;delete o.Hc}}}if(sec==="fenetres"&&k==="mat"&&was!==o[k]&&((was==="Bois")!==(o[k]==="Bois")))delete o.coul;save();render();if(o[k]!=null&&!(sec==="fenetres"&&k==="taille"&&o[k]==="Autre taille"))iqAuto(sec,ds.i===""?null:+ds.i);return}
  if(ds.pre!=null){o[k]=+ds.pre;o[k+"_dk"]=false;o[k+"_o"]=false;save();render();iqAuto(sec,ds.i===""?null:+ds.i);return}
  if(ds.preo){o[k+"_o"]=true;o[k+"_dk"]=false;save();render();setTimeout(()=>document.getElementById(`${sec}-${ds.i||"x"}-${k}`)?.focus(),30);return}
  if(ds.dk){const f=findF(sec,k);const was=o[k+"_dk"]??(f&&f.dkdef?true:false);o[k+"_dk"]=!was;save();render();if(!was)iqAuto(sec,ds.i===""?null:+ds.i);return}
@@ -1423,7 +1465,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
 // 18/11 (Cyril) : parcours « décrire mes travaux » = une question à la fois dans chaque fiche (comme « Parlez-nous du logement »), qui avance seule après un choix.
 function schNow(){const d=D[cur];if(!d.g||!d.g.cnt)return true;if(!(S[cur].n>0))return false;const k=iOpen(cur);if(k<0)return false;const f=iqVis(cur,k)[iqPos(cur,k)];return innerWidth>=600&&!!f&&!f.ill&&["L","H","l","Lc","Hc","taille"].includes(f.k)}
 function schTxt(sec,f){const d=D[sec];if(!d.sch||innerWidth>=600||!f||!["L","H","l","Lc","Hc","taille"].includes(f.k))return"";return`<p class="hint">${d.sch==="fenetre"?"Mesurez l'ouverture côté intérieur.":d.sch==="piece"?"Mesurez la pièce au sol.":"Mesurez le mur au sol, puis du sol au plafond."} Une estimation suffit.</p>`}
-function iqVis(sec,i){const it=S[sec].items[i]||{};return D[sec].g.f.filter(f=>!f.sh||f.sh(it))}
+function iqVis(sec,i){const it=S[sec].items[i]||{},P=PARS.includes(sec)&&i>0&&(S[sec].items[i-1]||{})._ok,F=D[sec].g.f.filter(f=>(!f.sh||f.sh(it))&&!(P&&it.pareil==="Oui"&&!PARK.includes(f.k)));return P?[PARF(sec,i)].concat(F):F}
 function iqPos(sec,i){const n=iqVis(sec,i).length,o=S[sec];let q=o.qi||0;if(o.qiI!==i){q=0;o.qi=0;o.qiI=i}return Math.max(0,Math.min(n-1,q))}
 function iqKey(){const d=D[cur];if(!d||!d.g||!d.g.cnt||!(S[cur].n>0))return"";const k=iOpen(cur);return k<0?"":k+"-"+iqPos(cur,k)}
 function iqMove(sec,i,q,dir){const o=S[sec];o.qi=q;o.qiI=i;MISS=null;save();const el=document.querySelector('#app .item .lq'),RM=matchMedia("(prefers-reduced-motion:reduce)").matches,fin=()=>{render.dir=dir;render();render.dir=0};if(!el||RM){fin();return}clearTimeout(iqMove.t);el.classList.remove("lq-in","lq-back");el.classList.add(dir>0?"lq-out":"lq-outb");iqMove.t=setTimeout(fin,170)}
@@ -1436,7 +1478,7 @@ function iqGo(dir){const d=D[cur];if(!d||!d.g||!d.g.cnt||!(S[cur].n>0))return fa
 function iOpen(sec){const o=S[sec],it=o.items||[];if(o.open===-1)return -1;if(o.open!=null&&o.open<it.length)return o.open;const k=it.findIndex(x=>!x._ok);return k}
 function iSum(sec,it){const b=badge(sec,it),v=D[sec].g.f.filter(f=>(!f.sh||f.sh(it))&&f.t==="chips"&&f.k!=="piece").map(f=>it[f.k]??f.def).filter(x=>x&&x!==DK&&!/^\d+ cm$/.test(x)&&!/ × /.test(x));return[b,...v].filter(Boolean).slice(0,4).join(" · ")}
 function iDone(sec,i,leave){const o=S[sec],it=o.items;{const f=missF(sec,i,D[sec].g.f);if(f){missShow(sec,i,f);return true}}MISS=null;it[i]._ok=true;let k=it.findIndex((x,j)=>j>i&&!x._ok);if(k<0)k=it.findIndex(x=>!x._ok);o.open=k<0?-1:k;o.qi=0;o.qiI=o.open;fitPage.p=fitPage.p||{};fitPage.p[sec]=0;fitAk0(sec);fitPage.toItem=true;save();if(k<0&&leave&&!(D[sec].f||[]).some(f=>!f.v||f.v(o))){fitPage.toItem=false;return false}render();const el=document.querySelector("#app .item:not(.mini)")||document.querySelector("#app .cnt");if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return true}
-function newItem(sec){const it=S[sec].items,last=it[it.length-1]||{},d=D[sec];if(d.g.copy&&it.length)return Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k)));if(sec==="doublage"||sec==="cloison")return{H:last.H??2.5,portes:0,fen:0};if(sec==="plafond")return{H:last.H??2.5};return{}}
+function newItem(sec){const it=S[sec].items,last=it[it.length-1]||{},d=D[sec];if(d.g.copy&&it.length)return Object.fromEntries(Object.entries(last).filter(([k])=>!["piece"].includes(k)));if(sec==="doublage"||sec==="cloison")return{H:HSPV()??last.H??2.5,portes:0,fen:0};if(sec==="plafond")return{H:HSPV()??last.H??2.5};return{}}
 function findF(sec,k){const d=D[sec];return (d.f||[]).concat(d.g?d.g.f:[]).find(f=>f.k===k)}
 // Code postal <-> commune : propositions de la base officielle des communes (geo.api.gouv.fr, gratuite, sans clé).
 // Sans réseau, rien ne s'affiche et le client tape comme avant.
