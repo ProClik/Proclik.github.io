@@ -307,6 +307,9 @@ const CAT={
  seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
  clim:{n:"Clim murale",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
 };
+/* Cyril 25/11 : une prise peut se mettre à la hauteur des interrupteurs (axe 110 cm). Variante interne « …H » : même nom pour le devis, autre hauteur. */
+const PHI=["prise","prise2","prise3","prise4","tv","rj"];PHI.forEach(k=>{CAT[k+"H"]={...CAT[k],bas:CAT.inter.bas,info:"Axe à 110 cm, à la hauteur des interrupteurs",hautV:k}});
+const hBase=k=>CAT[k].hautV||k,hHaut=k=>PHI.includes(hBase(k));
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
 const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
 const bas=(c)=>c.top!=null?M.H-c.top-c.h:c.bas;
@@ -364,9 +367,9 @@ const visible=it=>CAT[it.k].deux||(it.face||0)===face;
 const R=v=>Math.round(v);
 function load(k){exk=k;M=JSON.parse(JSON.stringify(EX[k]));M.items.forEach(it=>{if(it.face==null)it.face=0;it.lock=true;const c=CAT[it.k];it.st=it.k==="fenetre"&&k==="mur"?"exist":(k==="cuis"||k==="sdb")&&!c.petit&&c.c!=="ouv"?undefined:"faire"});face=0;sel=null;askAll=true;
  document.querySelectorAll("[data-ex]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ex===k));cat=firstCat();lvl0=-1;HIST.length=0;$("undo").disabled=true;$("party").hidden=true;WALLS=null;wi=0;if(k!=="clo"){WALLS=[M];[300,M.L,300].forEach((L,j)=>WALLS.push({type:"mur",rt:M.rt,L,H:M.H,room:M.room,items:[]}))}ui();draw();if(!askAll||G().length<2)setTimeout(coach,4300);setTimeout(()=>toast("Placez tout, <b>même ce que vous gardez</b> : votre devis sera plus juste",3800),400)}
-function avail(){const rt=RT();return Object.keys(CAT).filter(k=>{const c=CAT[k];return c.r.includes(rt)&&!(c.murSeul&&isClo())})}
+function avail(){const rt=RT();return Object.keys(CAT).filter(k=>{const c=CAT[k];return !c.hautV&&c.r.includes(rt)&&!(c.murSeul&&isClo())})}
 /* Cyril 25/11 : « on ne peut pas rajouter ce qu'on veut » : tout est proposé, ce qui va avec la pièce d'abord */
-function availAll(){return Object.keys(CAT).filter(k=>!(CAT[k].murSeul&&isClo()))}
+function availAll(){return Object.keys(CAT).filter(k=>!CAT[k].hautV&&!(CAT[k].murSeul&&isClo()))}
 function firstCat(){const a=avail();return Object.keys(CATS).find(c=>a.some(k=>CAT[k].c===c))}
 function ui(){
  $("ttl").textContent=isClo()?"Votre cloison, vue de face":"Votre mur, vu de face";
@@ -495,8 +498,8 @@ function draw(){
  {/* sous le toit : cote du bord gauche + hauteur au point le plus haut (Cyril 25/11) */const hl=M.prof?M.prof[0][1]:H,y0=H-hl;
  el("path",{d:`M${-24*U} ${y0}v${hl}M${-24*U-5} ${y0}h10M${-24*U-5} ${H}h10`,stroke:"var(--muted)","stroke-width":1.2,fill:"none"},g);
  const hdl=M.prof?!!M.prof[0][2]:!!M.hdk,ht=txt(g,-24*U,y0+hl/2,hdl?"à vérifier":R(hl)+" cm",{fs:12.5});ht.setAttribute("transform",`rotate(-90 ${-24*U} ${y0+hl/2})`);
- if(M.prof){const pk=M.prof.reduce((m,q)=>q[1]>m[1]?q:m,M.prof[0]);if(pk[1]-hl>5){const x=pk[0]>L-30?L+18*U:pk[0];el("path",{d:`M${x} ${H}V0`,stroke:"var(--muted)","stroke-width":1.2,"stroke-dasharray":"4 4",fill:"none"},g);txt(g,x+(x>L?6:8),Math.min(H-40,H*.35),R(pk[1])+" cm",{a:"start",fs:12.5})}
-  const qr=M.prof[M.prof.length-1],hr=qr[1];if((Math.abs(hr-hl)>5||qr[2]!==M.prof[0][2])&&Math.abs(hr-pk[1])>5){const t2=txt(g,L+24*U,H-hr/2,qr[2]?"à vérifier":R(hr)+" cm",{fs:12.5});t2.setAttribute("transform",`rotate(90 ${L+24*U} ${H-hr/2})`)}}}
+ if(M.prof){const pk=M.prof.reduce((m,q)=>q[1]>m[1]?q:m,M.prof[0]);if(pk[1]-hl>5){/* point le plus haut au bord droit : cote écrite à l'intérieur du mur, sinon elle sort du dessin */const edge=pk[0]>L-30,x=edge?L:pk[0];if(!edge)el("path",{d:`M${x} ${H}V${H-pk[1]}`,stroke:"var(--muted)","stroke-width":1.2,"stroke-dasharray":"4 4",fill:"none"},g);const y=Math.min(H-40,H-pk[1]*.65);txt(g,edge?L-10*U:x+8,y,R(pk[1])+" cm",{a:edge?"end":"start",fs:12.5})}
+  const qr=M.prof[M.prof.length-1],hr=qr[1];if((Math.abs(hr-hl)>5||qr[2]!==M.prof[0][2])&&Math.abs(hr-pk[1])>5){const t2=txt(g,L-14*U,H-hr/2,qr[2]?"à vérifier":R(hr)+" cm",{fs:12.5});t2.setAttribute("transform",`rotate(-90 ${L-14*U} ${H-hr/2})`)}}}
  if(drag&&drag.snap!=null)el("path",{d:`M${drag.snap} 4V${H-4}`,stroke:"var(--laiton)","stroke-width":1.5,"stroke-dasharray":"5 5"},g);
  // ordre : grands éléments derrière, petits devant
  const order=M.items.map((it,i)=>i).filter(i=>visible(M.items[i])).sort((a,b)=>(CAT[M.items[a].k].petit?1:0)-(CAT[M.items[b].k].petit?1:0));
@@ -558,7 +561,7 @@ const qIc=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
  if(qzSt()){const it=M.items[q.it],c=CAT[it.k],ce=FEM.test(c.n)?"Cette":"Ce",nm=(c.s||c.n).toLowerCase();
   const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
-  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
+  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
  if(q.i>=L.length){k.innerHTML=`<div class="t"><span>Tout est noté pour ce mur <small>Un oubli ? Touchez ce qu'il faut ajouter</small></span></div><div class="qg">${L.map(c=>`<button class="btn" data-qplus="${c}">${qIc(I[QI[c]]?QI[c]:"prise")}+ ${CATS[c]}</button>`).join("")}</div>`;return}
  const c=L[q.i],has=qzHas(c),bar=`<div class="qp" aria-label="Question ${q.i+1} sur ${L.length}">${L.map((x,j)=>`<i class="${j<q.i?"ok":j===q.i?"cur":""}"></i>`).join("")}</div>`;
  if(q.mode==="pick"){const a=avail(),all=availAll().filter(x=>CAT[x].c===c),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
@@ -581,13 +584,13 @@ function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=
  if(!it.lock){
   k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+
   (c.w.length>1?`<div class="row"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"")+
-  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+auto+
+  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+auto+
   `<button class="go" data-place="1" style="padding:11px 16px;font-size:15px">C'est bien placé</button>`;return}
  if(it.askN){k.innerHTML=`<div class="t"><span>Combien de ${it.k==="mhaut"?"meubles hauts":"meubles bas"} de ${it.w} cm, côte à côte ?</span><span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button></span></div><button class="go all" data-n="full">Sur toute la longueur possible</button><div class="row">${[1,2,3,4,5].map(n=>`<button class="chip" data-n="${n}">${n}</button>`).join("")}</div>`;return}
  const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
  k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+wrow+
  (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st="faire">Non, c'est ${FEM.test(c.n)?"une nouvelle":"un nouveau"} ${c.n.toLowerCase()}</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
- `<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
+ (hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
 // ---------- Placement : jamais l'un sur l'autre, au plus collés ----------
 function band(a,b){const ca=CAT[a.k],cb=CAT[b.k],ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
 // ---------- Électricité près de l'eau (NF C 15-100) ----------
@@ -698,6 +701,7 @@ const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);con
 $("card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
  if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
  if(b.dataset.w){const ow=it.w,ox=it.x,nw=+b.dataset.w;it.w=nw;const cx=vx({...it,w:ow,x:ox});const px=place(it,cx);if(px==null){it.w=ow;$("hint").textContent="Pas assez de place pour cette largeur";return}it.x=face===1&&CAT[it.k].deux?M.L-px-nw:px;it.x=R(it.x)}
+ if(b.dataset.hh!=null){const nk=b.dataset.hh==="1"?hBase(it.k)+"H":hBase(it.k);if(nk!==it.k){snap();const ok=it.k,ox=it.x;it.k=nk;const px=place(it,vx(it)+it.w/2-it.w/2);if(px==null){it.k=ok;it.x=ox;toast("Plus de place à cette hauteur sur ce mur",2400);return}it.x=R(face===1&&CAT[it.k].deux?M.L-px-it.w:px);draw()}return}
  if(b.dataset.trash){confirmDel=true;card();gauge();return}if(b.dataset.nodel){confirmDel=false;card();return}
  if(b.dataset.unlock){it.lock=false;if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}}
  if(b.dataset.del){M.items.splice(sel,1);sel=null;confirmDel=false}if(b.dataset.fin)sel=null;
@@ -798,8 +802,12 @@ const stOf=v=>/refaire|créer/i.test(v||"")?{faire:1}:/n'y touche|garde/i.test(v
 /* Cyril 25/11 : sous le toit, la hauteur du mur suit les pentes (profil reçu du plan) */
 /* petit mur sous la pente pas mesuré (0) : on dessine 1 m et on écrit « à vérifier » (pas un vrai chiffre) */
 const HMDK=1;function hmE(h){return h>0?h:HMDK}
-function roofH(rf,p){const P=rf.ax?p:[p[1],p[0]],v=P[1]/100,z=rf.one?(rf.hi?v-rf.v0:rf.v1-v)*rf.tn:(rf.hw-Math.abs(v-rf.vm))*rf.tn,hm=rf.one?(rf.hi?rf.hm1:rf.hm2):(v<rf.vm?rf.hm1:rf.hm2),dk=!(hm>0)&&z<HMDK-.005;return[Math.max(5,Math.round(Math.max(z,hmE(hm))*100)),dk]}
-function wallProf(lv,a,b,L){const rf=GEO[lv].roof;if(!rf)return null;const va=(rf.ax?a[1]:a[0])/100,vb=(rf.ax?b[1]:b[0])/100,T=[0,1];if(Math.abs(vb-va)>1e-6){/* points où la pente change : faîtage et pied des pentes (haut des petits murs) */const tn=rf.tn||1,V=rf.one?[rf.hi?rf.v0+hmE(rf.hm1)/tn:rf.v1-hmE(rf.hm2)/tn]:[rf.vm,rf.v0+hmE(rf.hm1)/tn,rf.v1-hmE(rf.hm2)/tn];V.forEach(v=>{const t=(v-va)/(vb-va);if(t>0&&t<1)T.push(t)})}T.sort((x,y)=>x-y);const P=T.map(t=>{const[h,dk]=roofH(rf,[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);return dk?[R(L*t),h,1]:[R(L*t),h]});if(P.every(q=>Math.abs(q[1]-P[0][1])<2))return{flat:P[0][1],dk:!!P[0][2]};return{prof:P}}
+/* Cyril 25/11 « ça ne ressemble pas à un toit 2 pentes » : la pente part du haut du petit mur (bord de la pièce) et monte droit jusqu'au faîtage */
+function roofH(rf,p){const P=rf.ax?p:[p[1],p[0]],v=P[1]/100,e0=rf.v0+.2,e1=rf.v1-.2;let h,dk;
+ if(!rf.one){const side=v<rf.vm?rf.hm1:rf.hm2,hs=hmE(side),top=Math.max(rf.hw*rf.tn,hs),t=Math.min(1,Math.abs(v-rf.vm)/Math.max(.01,rf.vm-e0));h=hs+(top-hs)*(1-t);dk=!(side>0)&&t>.98}
+ else{const lo=rf.hi?e0:e1,hl=rf.hi?rf.hm1:rf.hm2,hs=hmE(hl),top=Math.max(2*rf.hw*rf.tn,hs),t=Math.min(1,Math.abs(v-lo)/Math.max(.01,e1-e0));h=hs+(top-hs)*t;dk=!(hl>0)&&t<.02}
+ return[Math.max(5,Math.round(h*100)),dk]}
+function wallProf(lv,a,b,L){const rf=GEO[lv].roof;if(!rf)return null;const va=(rf.ax?a[1]:a[0])/100,vb=(rf.ax?b[1]:b[0])/100,T=[0,1];if(Math.abs(vb-va)>1e-6){/* points où la pente change : faîtage et pied des pentes (haut des petits murs) */const tn=rf.tn||1,V=rf.one?[]:[rf.vm];V.forEach(v=>{const t=(v-va)/(vb-va);if(t>0&&t<1)T.push(t)})}T.sort((x,y)=>x-y);const P=T.map(t=>{const[h,dk]=roofH(rf,[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);return dk?[R(L*t),h,1]:[R(L*t),h]});if(P.every(q=>Math.abs(q[1]-P[0][1])<2))return{flat:P[0][1],dk:!!P[0][2]};return{prof:P}}
 function buildRoom(r,lv){const H=GEO[lv].H,E=edges(r);const W=E.map((e,i)=>{const a=[e[0],e[1]],b=[e[2],e[3]],L=Math.round(len(sub(b,a))),pf=wallProf(lv,a,b,L),Hw=pf?(pf.flat||Math.max(...pf.prof.map(q=>q[1]))):H;return{type:"mur",rt:r.rt,L,H:Hw,prof:pf&&pf.prof||null,hdk:!!(pf&&pf.dk),room:r.nom,named:true,items:opsOn(lv,a,b).map(o=>({k:o.k,w:o.w,x:o.x,face:0,lock:true,st:"exist",rep:"non"})),side:i,rid:lv+"-"+GEO[lv].rooms.indexOf(r),lv}}).filter(w=>w.L>=40);
  if(!W.length)return[];const sv=M,dw=W.findIndex(w=>w.items.some(i=>i.k==="porte")),free=W.filter(w=>!w.items.some(i=>i.k==="porte")).sort((a,b)=>b.L-a.L),nowin=free.filter(w=>!w.items.some(i=>i.k==="fenetre")),eSt=stOf(A.elec),pSt=stOf(A.plomb);
  if(r.rt==="cuisine"&&free[0]){const f=A.cuis?stOf(A.cuis):{none:1},w=free[0];let x=0;
