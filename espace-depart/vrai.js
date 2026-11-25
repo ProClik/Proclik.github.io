@@ -82,9 +82,10 @@ css.textContent=[
 'details.vcomm>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}details.vcomm>summary::-webkit-details-marker{display:none}.vred{flex:none;font:800 12px var(--f,inherit);padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--fg)}.vred::after{content:"Afficher"}details.vcomm[open] .vred::after{content:"Réduire"}',
 '.vtotc details.vd{margin-top:8px}.vtotc details.vd>summary{font-size:13px;color:var(--muted)}',
 '.vpart-h{display:grid;gap:2px;margin:0 0 6px}.vpart-h h3{margin:0}.vpart-h small{font-size:12.5px;color:var(--muted)}',
-'.vtrv-g{border-bottom:1px solid var(--line)}.vtrv-g>summary{list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 0;cursor:pointer}.vtrv-g>summary::-webkit-details-marker{display:none}.vtrv-g>summary b{font-size:15.5px}.vtrv-g>summary span{font-weight:800;font-size:15.5px;white-space:nowrap}.vtrv-g>summary i{font-style:normal;font-size:12.5px;color:var(--muted);grid-column:1/-1}.vtrv-g>summary b::before{content:"›";display:inline-block;width:14px;transition:transform .2s;opacity:.6}.vtrv-g[open]>summary b::before{transform:rotate(90deg)}',
-'.vtrv-k{margin:2px 0 2px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}.vtrv-l{display:flex;width:100%;gap:10px;align-items:baseline;text-align:left;padding:8px 0;border:0;border-top:1px dashed var(--line);background:none;color:var(--fg);font:inherit;font-size:14px;cursor:pointer}.vtrv-l>span{flex:1;min-width:0}.vtrv-l small{display:block;font-size:12px;color:var(--muted)}.vtrv-l>b{white-space:nowrap;font-size:13.5px}.vtrv-g[open]{padding-bottom:10px}.vtrv-d{display:flex;justify-content:space-between;padding:12px 0 0;font-size:14px}.vtrv-d b{font-weight:800}',
-'.vgt{margin:16px 0 4px}.vgt:first-of-type{margin-top:8px}.vgt-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 0 6px;margin:0 0 2px;border-bottom:2px solid currentColor}.vgt-h b{font-size:15.5px}.vgt-h span{font-size:13.5px;font-weight:700;opacity:.7;white-space:nowrap}',
+'.vtrv-g{border-bottom:1px solid var(--line)}.vtrv-g>summary{list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 0;cursor:pointer}.vtrv-g>summary::-webkit-details-marker{display:none}.vtrv-g>summary b{font-size:15.5px}.vtrv-g>summary span{font-weight:800;font-size:16px;white-space:nowrap;align-self:center;grid-row:1/span 2;grid-column:2;padding:7px 12px;border-radius:999px;background:#1B2440;color:#fff}html[data-theme="dark"] .vtrv-g>summary span{background:#F2EEE4;color:#1B2440}.vtrv-g>summary i{grid-column:1!important}.vtrv-g>summary i{font-style:normal;font-size:12.5px;color:var(--muted);grid-column:1/-1}.vtrv-g>summary b::before{content:"›";display:inline-block;width:14px;transition:transform .2s;opacity:.6}.vtrv-g[open]>summary b::before{transform:rotate(90deg)}',
+'.vtrv-k{margin:2px 0 2px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}.vtrv-l{display:flex;width:100%;gap:10px;align-items:baseline;text-align:left;padding:8px 0;border:0;border-top:1px dashed var(--line);background:none;color:var(--fg);font:inherit;font-size:14px;cursor:pointer}.vtrv-l>span{flex:1;min-width:0}.vtrv-l small{display:block;font-size:12px;color:var(--muted)}.vtrv-l>b{white-space:nowrap;font-size:13.5px}.vtrv-g[open]{padding-bottom:10px}.vtrv-d{display:flex;justify-content:space-between;padding:12px 0 0;font-size:14px}.vtrv-d b{font-weight:800}.vtrv-t{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;padding-top:12px;border-top:2px solid currentColor;font-size:17px;font-weight:800}.vtrv-t b{font-size:22px}',
+'.vm2{font-weight:800;color:var(--fg)}',
+'.vgt{margin:16px 0 4px}.vgt:first-of-type{margin-top:8px}.vgt-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 0 6px;margin:0 0 2px;border-bottom:2px solid currentColor}.vgt-h b{font-size:15.5px}.vgt-h span{font-size:15.5px;font-weight:800;white-space:nowrap}',
 '.vedit{position:relative;padding-right:96px!important}.vedit .vmod{position:absolute;right:0;top:50%;transform:translateY(-50%);appearance:none;cursor:pointer;min-height:38px;font:800 12.5px var(--f,inherit);padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--accx,var(--fg))}.vedit.fige{padding-right:0!important}',
 '.vedit .x{margin-right:0}.vli.vv.vedit{padding-right:92px!important}',
 '.vadd{width:100%;margin-top:8px;border:1.5px dashed var(--line);background:transparent}',
@@ -227,14 +228,14 @@ function lignes(L,vide){return L&&L.length?L.map(function(l){return '<div class=
 /* ---------- liste du matériel du chantier (promesse du site, 17/11) : tirée du pré-devis, à cocher, à envoyer au fournisseur ---------- */
 function cleListe(){return 'pc-liste-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
 function lignesListe(p){var M={},O=[];(ED&&ED.materiaux||p.materiaux||[]).forEach(function(l){if(!(+l.quantite>0))return;var k=(l.libelle+'|'+(l.unite||'')).toLowerCase();
-  if(!M[k]){M[k]={d:l.libelle,q:0,u:l.unite||''};O.push(M[k])}M[k].q+=+l.quantite});
+  if(!M[k]){M[k]={d:l.libelle,q:0,u:l.unite||'',m2:0};O.push(M[k])}M[k].q+=+l.quantite;M[k].m2+=+l.m2||0});
  var A=(p.attente||[]).map(function(a){return {d:a.libelle,q:+a.quantite||0,u:a.unite||'',att:1}});return O.map(function(x){x.q=Math.round(x.q*100)/100;return x}).concat(A)}
 function uL(x){return x.q>1&&/^(barre|boîte|plaque|rouleau|sac|pièce|paquet|lot|seau|sachet|carton|botte|cartouche|tube|unité)$/.test(x.u)?x.u.replace(/^(.*)$/,'$1s'):x.u}
 function texteListe(p){var k=COUR&&COUR.contact||{},L=lignesListe(p);
- return 'Liste du matériel · chantier '+(k.nom||'')+(k.ville?' ('+k.ville+')':'')+'\n\n'+L.filter(function(x){return !x.att}).map(function(x){return '- '+qte(x.q)+' '+uL(x)+' · '+x.d}).join('\n')+
+ return 'Liste du matériel · chantier '+(k.nom||'')+(k.ville?' ('+k.ville+')':'')+'\n\n'+L.filter(function(x){return !x.att}).map(function(x){return '- '+qte(x.q)+' '+uL(x)+(x.m2>0?' ('+qte(Math.round(x.m2*100)/100)+' m²)':'')+' · '+x.d}).join('\n')+
   (L.some(function(x){return x.att})?'\n\nÀ chiffrer à part :\n'+L.filter(function(x){return x.att}).map(function(x){return '- '+(x.q?qte(x.q)+' '+uL(x)+' · ':'')+x.d}).join('\n'):'')}
 function listeMatHTML(p){var L=lignesListe(p);if(!L.length)return '';var C=lsG(cleListe())||{},n=L.filter(function(x){return C[x.d]}).length;
- var li=function(x){return '<label class="vlm-i'+(C[x.d]?' ok':'')+'"><input type="checkbox" data-vlm="'+esc(x.d)+'"'+(C[x.d]?' checked':'')+'><b>'+(x.q?esc(qte(x.q)+' '+uL(x)):'')+'</b><span>'+esc(x.d)+'</span></label>'};
+ var li=function(x){return '<label class="vlm-i'+(C[x.d]?' ok':'')+'"><input type="checkbox" data-vlm="'+esc(x.d)+'"'+(C[x.d]?' checked':'')+'><b>'+(x.q?esc(qte(x.q)+' '+uL(x)):'')+(x.m2>0?'<small style="display:block;font-weight:600">'+qte(Math.round(x.m2*100)/100)+' m²</small>':'')+'</b><span>'+esc(x.d)+'</span></label>'};
  return '<details class="card vsec vlm"><summary><span>📋 Liste du matériel</span><small>'+L.length+' article'+(L.length>1?'s':'')+(n?' · '+n+' coché'+(n>1?'s':''):'')+'</small></summary>'+
   '<p class="vst" style="padding:6px 0 4px">Tout ce qu\'il faut acheter pour ce chantier, en boîtes et rouleaux entiers. Cochez au fur et à mesure.</p>'+
   L.filter(function(x){return !x.att}).map(li).join('')+
@@ -298,7 +299,7 @@ var ED=null,VTAB='devis',MODE='pre',ND=null;
 function T(){return MODE==='nd'?ND:ED}
 function retour(){return MODE==='nd'?rendreND():afficher(COUR)}
 function cleLg(){return 'pc-lg-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
-function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;return o})};
+function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;if(l.m2)o.m2=l.m2;return o})};
  var e={le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0,four:{}},R=lsG(cleRt());
  /* Après un recalcul : les retouches de l'artisan sont remises par-dessus le nouveau calcul */
  if(R&&R.avant!==p.le){e.materiaux=appliquerRt(e.materiaux,R.materiaux);e.main_oeuvre=appliquerRt(e.main_oeuvre,R.main_oeuvre);e.touche=1;if(R.att===JSON.stringify((p.attente||[]).map(function(a){return a.libelle})))e.four=R.four||{};lsS(cleRt(),null);lsS(cleLg(),e)}
@@ -372,19 +373,21 @@ function travauxHTML(p){if(!ED)return '';var L=[];['materiaux','main_oeuvre'].fo
  var dep=(t.deplacement||0)*(1+tf),r=function(n){return Math.round(n*100)/100};
  return '<div class="card vsec vtrv"><div class="vpart-h"><h3>Par travaux</h3><small>fourniture et pose ensemble · prix HT pour le client, marge et frais généraux compris · touchez une ligne pour la changer</small></div>'+
   G.map(function(g){var f=g.L.filter(function(x){return x.c==='materiaux'}),po=g.L.filter(function(x){return x.c!=='materiaux'});
-   var li=function(x){return '<button type="button" class="vtrv-l" data-vlg="'+x.c+'|'+x.i+'"><span>'+esc(x.l.libelle)+'<small>'+qte(x.l.quantite)+' '+esc(x.l.unite||'')+(x.l.a_verifier?' · ⚠ à vérifier':'')+'</small></span><b>'+eur(r(vente(x)))+'</b></button>'};
+   var li=function(x){return '<button type="button" class="vtrv-l" data-vlg="'+x.c+'|'+x.i+'"><span>'+esc(x.l.libelle)+'<small>'+qte(x.l.quantite)+' '+esc(x.l.unite||'')+m2t(x.l)+(x.l.a_verifier?' · ⚠ à vérifier':'')+'</small></span><b>'+eur(r(vente(x)))+'</b></button>'};
    return '<details class="vtrv-g"><summary><b>'+esc(g.t)+'</b><span>'+eur(r(g.v))+'</span><i>'+(f.length?f.length+' produit'+(f.length>1?'s':''):'')+(f.length&&po.length?' · ':'')+(po.length?'pose':'')+'</i></summary>'+
     (f.length?'<p class="vtrv-k">Fourniture</p>'+f.map(li).join(''):'')+(po.length?'<p class="vtrv-k">Pose</p>'+po.map(li).join(''):'')+'</details>'}).join('')+
-  (dep>0?'<div class="vtrv-d"><span>Déplacement</span><b>'+eur(r(dep))+'</b></div>':'')+'</div>'}
+  (dep>0?'<div class="vtrv-d"><span>Déplacement</span><b>'+eur(r(dep))+'</b></div>':'')+'<div class="vtrv-t"><span>Total HT</span><b>'+eur(r(G.reduce(function(a,g){return a+g.v},0)+dep))+'</b></div></div>'}
 /* Rangé par travaux (Cyril 25/11) : un titre par travail (Isolation des rampants, Doublage, Fenêtres…) avec son sous-total.
    Le titre vient du calcul (note « — Travail — ») ; une ligne ajoutée à la main va dans le travail choisi. */
 var AUTRE_G='Autres travaux';
+/* m² achetés (Cyril 25/11) : sous les rouleaux, plaques, paquets de laine ou de parquet */
+function m2t(l){return l&&+l.m2>0?' · soit <b class="vm2">'+qte(l.m2)+' m²</b>':''}
 /* même ordre que le calcul (proclik-cliky calcul/groupes.js) */
 var ORDRE_G=['Isolation des rampants','Isolation des combles',"Trappe d'accès",'Doublage et isolation des murs','Cloisons','Plafonds','Caissons, retombées et habillages','Fenêtres','Fenêtres de toit','Portes','Verrières','Escaliers et trémies','Sols','Plinthes','Électricité, plomberie et équipements','Bandes, enduit et vis (toutes les plaques)','Protection, nettoyage et évacuation'];
 function groupes(L){var G=[],M={};L.forEach(function(l,i){var g=l.groupe||AUTRE_G;if(!M[g]){M[g]={t:g,L:[],s:0};G.push(M[g])}M[g].L.push([l,i]);M[g].s+=+l.total||0});
  var a=G.filter(function(g){return g.t===AUTRE_G});return G.filter(function(g){return g.t!==AUTRE_G}).concat(a)}
 function titresGroupes(){if(!ED)return [];var v={},o=[];['materiaux','main_oeuvre'].forEach(function(c){(ED[c]||[]).forEach(function(l){if(l.groupe&&!v[l.groupe]){v[l.groupe]=1;o.push(l.groupe)}})});return o}
-function lignesEd(cle,titre,aide,ajout){var L=ED[cle],li=function(x){var l=x[0],i=x[1];return '<div class="vli vedit'+(l.a_verifier?' vv':'')+'"><span>'+esc(l.libelle)+(l.four!=null?' <span class="vp t">prix fournisseur</span>':'')+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small><button type="button" class="vmod" data-vlg="'+cle+'|'+i+'">Modifier</button></div>'},
+function lignesEd(cle,titre,aide,ajout){var L=ED[cle],li=function(x){var l=x[0],i=x[1];return '<div class="vli vedit'+(l.a_verifier?' vv':'')+'"><span>'+esc(l.libelle)+(l.four!=null?' <span class="vp t">prix fournisseur</span>':'')+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+m2t(l)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small><button type="button" class="vmod" data-vlg="'+cle+'|'+i+'">Modifier</button></div>'},
   G=groupes(L),par=L.some(function(l){return l.groupe});
  return '<div class="card vsec vpart"><div class="vpart-h"><h3>'+titre+'</h3><small>'+aide+'</small></div>'+(L.length?(par?G.map(function(g){return '<section class="vgt"><div class="vgt-h"><b>'+esc(g.t)+'</b><span>'+eur(Math.round(g.s*100)/100)+'</span></div>'+g.L.map(li).join('')+'</section>'}).join(''):L.map(function(l,i){return li([l,i])}).join('')):'<p class="vst">Aucune ligne pour l\'instant.</p>')+
   '<button class="vbtn vadd" type="button" data-vlg="+'+cle+'">＋ '+ajout+'</button></div>'}
@@ -507,7 +510,7 @@ var SUG=[],NOUVP=false;
 var SUGEX='',SUGC='materiaux';function majSug(cle){var z=$('#vl-sug');if(!z)return;SUGC=cle;SUG=suggestions(($('#vl-s')||{}).value,cle,SUGEX);z.innerHTML=sugHTML(cle)}
 function ligneV(ref){var p=MODE==='nd'?{attente:[]}:COUR&&COUR.pre_devis[0];if(MODE!=='nd'&&(!p||!ED))return;
  if(ref==='raz'){lsS(cleLg(),null);toastV('Calcul de Cliky remis','Vos retouches sont effacées.');return retour()}
- var fo=/^f\|/.test(ref)?+ref.slice(2):null,nv=ref.charAt(0)==='+'||fo!=null,c,i,l;NOUVP=false;
+ var fo=/^f\|/.test(ref)?+ref.slice(2):null,nv=ref.charAt(0)==='+'||fo!=null,c,i,l;NOUVP=false;SUGM2=null;
  if(fo!=null){var a=p.attente[fo];if(!a)return;c='materiaux';i=-1;l={libelle:a.libelle,quantite:a.quantite!=null?a.quantite:1,unite:a.unite||'u',pu:0}}
  else if(nv){c=ref.slice(1)==='materiaux'?'materiaux':'main_oeuvre';i=-1;l={libelle:'',quantite:1,unite:'u',pu:0}}
  else{c=ref.split('|')[0];i=+ref.split('|')[1];l=T()[c][i]}
@@ -527,14 +530,17 @@ function ligneV(ref){var p=MODE==='nd'?{attente:[]}:COUR&&COUR.pre_devis[0];if(M
   /* la base Cliky arrive du service la 1re fois : on remet la liste à jour quand elle est là */
   if(window.PCPROD&&PCPROD.cliky&&!(PCPROD.cliky()||[]).length)[900,2500].forEach(function(t){setTimeout(function(){if($('#vl-s')&&SUGC===c)majSug(c)},t)})}
  if(fo!=null)setTimeout(function(){try{$('#vl-p').focus()}catch(e){}},200);}
-function choisirSug(i){var b=SUG[i];if(!b)return;$('#vl-l').value=b.d;$('#vl-u').value=b.u||'u';if(b.p)$('#vl-p').value=String(b.p).replace('.',',');$('#vl-t').textContent=eur(nb($('#vl-q').value)*nb($('#vl-p').value));var z=$('#vl-sug');if(z)z.innerHTML='<small class="vsug-t vsug-ok">✓ « '+esc(b.d)+' » '+(b.src==='cliky'?'repris de la base Cliky':b.src==='ici'?'repris de ce pré-devis':'repris de vos produits')+'. Vérifiez la quantité'+(b.u?' (en '+esc(b.u)+')':'')+' et le prix.</small><button type="button" class="vbtn sm vsug-new" data-vsugre>Choisir un autre produit</button>'}
+var SUGM2=null;function choisirSug(i){var b=SUG[i];if(!b)return;var mm=/([\d]+(?:[.,]\d+)?)\s*m²/.exec(b.t||'');SUGM2=mm?parseFloat(mm[1].replace(',','.')):0;$('#vl-l').value=b.d;$('#vl-u').value=b.u||'u';if(b.p)$('#vl-p').value=String(b.p).replace('.',',');$('#vl-t').textContent=eur(nb($('#vl-q').value)*nb($('#vl-p').value));var z=$('#vl-sug');if(z)z.innerHTML='<small class="vsug-t vsug-ok">✓ « '+esc(b.d)+' » '+(b.src==='cliky'?'repris de la base Cliky':b.src==='ici'?'repris de ce pré-devis':'repris de vos produits')+'. Vérifiez la quantité'+(b.u?' (en '+esc(b.u)+')':'')+' et le prix.</small><button type="button" class="vbtn sm vsug-new" data-vsugre>Choisir un autre produit</button>'}
 function k0(){return COUR&&COUR.contact?COUR.contact.nom:''}
 function nb(s){var n=parseFloat(String(s||'').replace(/\s/g,'').replace(',','.'));return isFinite(n)?n:0}
 function ligneVok(ref){var lib=$('#vl-l').value.trim(),q=nb($('#vl-q').value),pu=nb($('#vl-p').value);
  if(!lib){toastV('Il manque la description','Une ligne suffit.');return $('#vl-l').focus()}
  if(!(q>0)||!(pu>0)){toastV('Il manque la quantité ou le prix','Hors taxes, en euros.');return}
  var l={libelle:lib,quantite:q,unite:$('#vl-u').value.trim(),pu:pu,total:Math.round(q*pu*100)/100},vg=$('#vl-g');
- if(vg&&vg.value)l.groupe=vg.value;else if(!/^[f+]/.test(ref)){var av0=T()[ref.split('|')[0]][+ref.split('|')[1]];if(av0&&av0.groupe)l.groupe=av0.groupe}
+ var av0=/^[f+]/.test(ref)?null:T()[ref.split('|')[0]][+ref.split('|')[1]];
+ if(vg&&vg.value)l.groupe=vg.value;else if(av0&&av0.groupe)l.groupe=av0.groupe;
+ /* m² : produit choisi dans la base Cliky (rouleau de x m²), sinon même produit qu'avant à la même surface par unité */
+ var pm=SUGM2!=null?SUGM2:(av0&&av0.m2&&av0.quantite&&av0.libelle===lib&&av0.unite===l.unite?av0.m2/av0.quantite:0);if(pm>0)l.m2=Math.round(q*pm*100)/100;
  if(/^f\|/.test(ref)){var fo=+ref.slice(2);l.four=fo;ED.four[fo]=1;ED.materiaux.push(l)}
  else if(ref.charAt(0)==='+')T()[ref.slice(1)==='materiaux'?'materiaux':'main_oeuvre'].push(l);
  else{var c=ref.split('|')[0],i=+ref.split('|')[1],av=T()[c][i];if(av&&av.four!=null)l.four=av.four;T()[c][i]=l}
@@ -733,7 +739,7 @@ if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore bra
 window.PCV={nouveauDevis:function(k,t){nouveauDevis(k,t)},api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc,
  demandes:function(){return (LISTE&&LISTE.demandes)||[]},cour:function(){return COUR},recalc:function(){recalc()},toast:function(a,b){toastV(a,b)},
  questionsClient:function(p){var ok=lsG(vokCle(p))||[];return (p.a_verifier||[]).map(vcourt).map(function(x,i){return [x,i]}).filter(function(z){return z[0].g==='cli'&&ok.indexOf(z[1])<0}).map(function(z){return z[0].q})},artisan:function(){return lsG(KA)||{}},
- prendre:function(np){if(!ED||!COUR||!np)return;var c=function(L){return (L||[]).map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;return o})};ED.materiaux=c(np.materiaux);ED.main_oeuvre=c(np.main_oeuvre);garderEd();afficher(COUR)}};
+ prendre:function(np){if(!ED||!COUR||!np)return;var c=function(L){return (L||[]).map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;if(l.m2)o.m2=l.m2;return o})};ED.materiaux=c(np.materiaux);ED.main_oeuvre=c(np.main_oeuvre);garderEd();afficher(COUR)}};
 if(AP){var bd=document.createElement('div');bd.id='vapercu';bd.setAttribute('role','status');bd.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);padding:8px 8px 8px 14px;border-radius:14px;font:600 13px var(--f);display:flex;gap:10px;align-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);max-width:calc(100% - 24px)';
  bd.innerHTML='<span id="vapn" style="overflow:hidden;text-overflow:ellipsis">Aperçu (lecture seule)</span><button type="button" style="flex:none;border:0;border-radius:10px;padding:6px 10px;font:700 13px var(--f);background:rgba(255,255,255,.18);color:inherit;cursor:pointer">Quitter</button>';
  document.body.appendChild(bd);bd.querySelector('button').addEventListener('click',quitterApercu);
