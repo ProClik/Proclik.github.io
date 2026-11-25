@@ -486,3 +486,7 @@ html body .rblock.rfold.rf-on .rf-v .rv-c{display:inline}
 html body .rblock.rfold.rf-on .rf-v svg{transform:rotate(180deg)}
 html body .rblock.rfold .rsum{display:block!important}
 html body .rblock.rfold.rf-on .rsum{display:none!important}
+/* téléphone (Cyril 25/11, tour complet) : le titre de la question passe à la ligne au lieu d'être coupé (« Quels travaux souhai… ») */
+html body .rblock.rfold .rf-t{white-space:normal!important;line-height:1.25}
+html body .rblock.rfold h3{gap:8px}
+@media (max-width:600px){html body .rblock.rfold h3 .rf-v{padding:6px 10px!important}html body .rblock.rfold h3 button[data-goto]{font-size:12.5px!important}}
