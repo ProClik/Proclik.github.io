@@ -286,12 +286,6 @@ const CAT={
  baignoire:{n:"Baignoire",c:"eau",r:["sdb"],h:55,bas:0,w:[150,160,170,180],d:70,ic:"baignoire",need:[["ef",.12,70],["ec",.22,70],["ev",.1,5]]},
  ll:{n:"Lave-linge",c:"eau",r:["sdb","buanderie","cuisine"],h:85,bas:0,w:[60],d:60,ic:"ll",need:[["ef",.25,95],["ev",.75,80],["el",.5,30,"16 A"]]},
  ce:{n:"Chauffe-eau",c:"eau",r:["sdb","buanderie","cuisine","wc"],h:120,bas:70,w:[55],d:55,ic:"ce",need:[["ef",.35,60],["ec",.65,60],["ev",.5,40],["el",.5,200,"20 A"]],info:"Fixé au mur, 150 à 200 L"},
- /* Cyril 25/11 : même liste qu'à l'Espace (plomberie) */
- ef:{n:"Arrivée d'eau froide",c:"eau",r:["sdb","wc","cuisine","buanderie"],h:10,bas:50,w:[10],petit:1,ic:"lavemains",pfk:"ef"},
- ec:{n:"Arrivée d'eau chaude",c:"eau",r:["sdb","wc","cuisine","buanderie"],h:10,bas:50,w:[10],petit:1,ic:"lavemains",pfk:"ec"},
- ev:{n:"Évacuation",c:"eau",r:["sdb","wc","cuisine","buanderie"],h:12,bas:34,w:[12],petit:1,ic:"lavemains",pfk:"ev"},
- mit:{n:"Mitigeur de douche",c:"eau",r:["sdb"],h:12,bas:104,w:[18],petit:1,ic:"douche",pfk:"mit",info:"À 110 cm du sol"},
- nour:{n:"Nourrice (départ de l'eau)",s:"Nourrice",c:"eau",r:["sdb","wc","cuisine","buanderie"],h:14,bas:33,w:[22],petit:1,ic:"lavemains",pfk:"nour"},
  pteau:{n:"Arrivée d'eau et évacuation",s:"Point d'eau",c:"eau",r:[],h:20,bas:40,w:[30],ic:"lavemains",need:[["ef",.3,50],["ec",.5,50],["ev",.7,40]],info:"Eau froide, eau chaude et évacuation, pour un appareil à brancher"},
  // électricité
  prise:{n:"Prise",c:"elec",r:ALL,h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"pc",np:1,info:"Axe à 30 cm du sol"},
@@ -299,7 +293,6 @@ const CAT={
  /* Cyril 25/11 : même liste et mêmes symboles qu'à l'Espace */
  prise3:{n:"Prise triple",c:"elec",r:ALL,h:8,bas:26,w:[22],petit:1,ic:"prise",pfk:"pc",np:3,info:"Axe à 30 cm du sol"},
  prise4:{n:"Prise quadruple",c:"elec",r:ALL,h:8,bas:26,w:[29],petit:1,ic:"prise",pfk:"pc",np:4,info:"Axe à 30 cm du sol"},
- p32:{n:"Prise 32 A (plaque de cuisson)",s:"Prise 32 A",c:"elec",r:["cuisine"],h:10,bas:10,w:[10],petit:1,ic:"prise",pfk:"p32",info:"Pour la plaque de cuisson, axe à 15 cm du sol"},
  prisept:{n:"Prise plan de travail",c:"elec",r:["cuisine"],h:8,bas:106,w:[15],petit:1,ic:"prise",pfk:"pc",np:2,info:"Axe à 110 cm, au-dessus du plan"},
  vv:{n:"Va-et-vient",c:"elec",r:ALL,h:8,bas:106,w:[8],petit:1,ic:"inter",pfk:"vv",info:"Interrupteur qui allume depuis 2 endroits, axe à 110 cm"},
  inter:{n:"Interrupteur",c:"elec",r:ALL,h:8,bas:106,w:[8],petit:1,ic:"inter",pfk:"int",info:"Axe à 110 cm du sol"},
@@ -308,19 +301,11 @@ const CAT={
  applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",pfk:"app",info:"À 180 cm du sol"},
  iph:{n:"Interphone",c:"elec",r:ALL,h:20,bas:140,w:[12],petit:1,ic:"inter",pfk:"iph",info:"À 150 cm du sol"},
  tab:{n:"Tableau électrique",c:"elec",r:ALL,h:80,bas:120,w:[60],ic:"inter",pfk:"tab",info:"Le tableau avec les disjoncteurs"},
- vmc:{n:"Bouche VMC",c:"elec",r:["sdb","wc","cuisine","buanderie"],h:12,bas:214,w:[12],petit:1,ic:"inter",pfk:"vmcm",info:"En haut du mur"},
  sortie:{n:"Sortie de câble",c:"elec",r:[],h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"sortie",info:"Pour un appareil branché en direct (volet, chauffe-eau, hotte…)"},
  // chauffage et clim
  radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
  seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
  clim:{n:"Clim murale",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
- /* Cyril 25/11 : même liste qu'à l'Espace (climatisation) */
- ge:{n:"Groupe extérieur (côté dehors)",s:"Groupe extérieur",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:60,bas:20,w:[80],ic:"clim",pfk:"ge"},
- gs:{n:"Grille de soufflage (gainable)",s:"Grille de soufflage",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:14,bas:216,w:[40],ic:"clim",pfk:"gs"},
- grp:{n:"Grille de reprise (gainable)",s:"Grille de reprise",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:24,bas:210,w:[50],ic:"clim",pfk:"grp"},
- liai:{n:"Passage des liaisons",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:10,bas:220,w:[10],petit:1,ic:"clim",pfk:"liai"},
- cond:{n:"Évacuation des condensats",s:"Condensats",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:10,bas:190,w:[10],petit:1,ic:"clim",pfk:"cond"},
- cmd:{n:"Commande murale clim",s:"Commande clim",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:12,bas:140,w:[12],petit:1,ic:"clim",pfk:"cmd"},
 };
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
 const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
