@@ -300,20 +300,24 @@ const CAT={
  rj:{n:"Prise internet (RJ45)",s:"Prise internet",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",pfk:"rj",info:"Axe à 30 cm du sol"},
  applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",pfk:"app",info:"À 180 cm du sol"},
  iph:{n:"Interphone",c:"elec",r:ALL,h:20,bas:140,w:[12],petit:1,ic:"inter",pfk:"iph",info:"À 150 cm du sol"},
- tab:{n:"Tableau électrique",c:"elec",r:ALL,h:80,bas:120,w:[60],ic:"inter",pfk:"tab",info:"Le tableau avec les disjoncteurs"},
+ tab:{n:"Tableau électrique",c:"elec",r:ALL,h:50,bas:120,w:[35],ic:"inter",pfk:"tab",libre:1,info:"Le tableau avec les disjoncteurs"},
  sortie:{n:"Sortie de câble",c:"elec",r:[],h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"sortie",info:"Pour un appareil branché en direct (volet, chauffe-eau, hotte…)"},
  // chauffage et clim
  radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
  seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
- clim:{n:"Clim murale",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
+ clim:{n:"Clim murale",libre:1,c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[90],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
 };
 /* Cyril 25/11 : une prise peut se mettre à la hauteur des interrupteurs (axe 110 cm). Variante interne « …H » : même nom pour le devis, autre hauteur. */
 const PHI=["prise","prise2","prise3","prise4","tv","rj"];PHI.forEach(k=>{CAT[k+"H"]={...CAT[k],bas:CAT.inter.bas,info:"Axe à 110 cm, à la hauteur des interrupteurs",hautV:k}});
+/* hauteur du mur sous le toit entre x et x+w (Cyril 25/11 : la clim ne doit pas rentrer dans la pente) */function wallHAt(a,b){if(!M.prof)return M.H;const P=M.prof,f=x=>{for(let i=1;i<P.length;i++){const p=P[i-1],q=P[i];if(x<=q[0]){const t=q[0]>p[0]?(x-p[0])/(q[0]-p[0]):0;return p[1]+(q[1]-p[1])*t}}return P[P.length-1][1]};let m=Math.min(f(a),f(b));P.forEach(q=>{if(q[0]>a&&q[0]<b)m=Math.min(m,q[1])});return m}
+function underRoof(it){const c=CAT[it.k];if(!M.prof||c.top==null)return;const x=vx(it),lim=wallHAt(x,x+it.w)-c.top-c.h,cur=bas(cI(it));if(cur>lim)it.yb=Math.max(0,Math.floor(lim/5)*5)}
+const hyRow=it=>CAT[it.k].libre?`<div class="row hy"><span class="k">Hauteur</span><button class="chip" data-hy="-10" aria-label="Descendre de 10 cm">▼</button><b>${R(bas(cI(it)))} cm du sol</b><button class="chip" data-hy="10" aria-label="Monter de 10 cm">▲</button></div>`:"";
 const hBase=k=>CAT[k].hautV||k,hHaut=k=>PHI.includes(hBase(k));
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
 const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
 const bas=(c)=>c.top!=null?M.H-c.top-c.h:c.bas;
-const needH=(c,n)=>c.top!=null?bas(c)+c.h/2:n[2];
+/* hauteur propre à un élément (tableau électrique placé où on veut, Cyril 25/11) */const cI=it=>it&&it.yb!=null?{...CAT[it.k],bas:it.yb,top:null,own:CAT[it.k].top!=null}:CAT[it.k];
+const needH=(c,n)=>c.top!=null||c.own?bas(c)+c.h/2:n[2];
 // ---------- Icônes du menu ----------
 const I={
  porte:'<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1" fill="currentColor"/>',
@@ -481,8 +485,8 @@ function PFs(t,n){n=n||1;
 function pfIc(x){const c=CAT[x];if(c&&!c.pfk)try{const NS="http://www.w3.org/2000/svg",sv=document.createElementNS(NS,"svg"),g=document.createElementNS(NS,"g");sv.appendChild(g);const w=c.w[Math.min(1,c.w.length-1)];drawItem(g,{k:x,w},0,0,c);const top=Math.min(0,-(c.top||0))-24,m=Math.max(w,c.h-top)+10;return`<svg class="pfi" viewBox="${w/2-m/2} ${(c.h+top)/2-m/2} ${m} ${m}" aria-hidden="true">${g.innerHTML}</svg>`}catch(e){}if(!c||!c.pfk)return qIc(c&&c.ic);if(c.pfk==="tab")return'<svg class="pfi" viewBox="-13 -13 26 26" aria-hidden="true"><g class="pf"><rect class="bx" x="-10" y="-11" width="20" height="22" rx="3"/><path class="gl" d="M-6 -5h12M-6 0h12M-6 5h12"/></g></svg>';const n=c.np||1,Z={ge:[86,66],gs:[44,18],grp:[54,28],nour:[32,22],mit:[28,20],iph:[22,28]}[c.pfk],W=Z?Z[0]/2:Math.max(13,9*n+4),Hh=Z?Z[1]/2:13;return`<svg class="pfi" viewBox="${-W} ${-Hh} ${2*W} ${2*Hh}" aria-hidden="true"><g class="pf">${PFs(c.pfk,n)}</g></svg>`}
 function pf(g,t,cx,cy,k,n){const s=el("g",{class:"pf",transform:`translate(${cx} ${cy}) scale(${k})`},g);s.innerHTML=PFs(t,n);return s}
 const dotC={ef:"var(--ef)",ec:"var(--ec)",ev:"var(--ev)",el:"var(--el)"};
-function overlaps(a,b){const ca=CAT[a.k],cb=CAT[b.k];const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
-function draw(){
+function overlaps(a,b){const ca=cI(a),cb=cI(b);const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function draw(){if(M&&M.prof)M.items.forEach(o=>{if(visible(o))underRoof(o)});
  const s=$("wall");s.innerHTML="";const L=M.L,H=M.H,pr=14;let pl,pt,pb;
  for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
  const g=el("g",{},s);
@@ -505,10 +509,10 @@ function draw(){
  const order=M.items.map((it,i)=>i).filter(i=>visible(M.items[i])).sort((a,b)=>(CAT[M.items[a].k].petit?1:0)-(CAT[M.items[b].k].petit?1:0));
  if(drag){const k=order.indexOf(sel);if(k>=0){order.splice(k,1);order.push(sel)}}
  const now0=performance.now();
- if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
+ if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=cI(it),gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
  if(drag&&sel!=null&&M.items[sel]){const zz=wetZones(M.items[sel]);zz.forEach(z=>{const a=Math.max(0,z.a),b=Math.min(L,z.b);if(b<=a)return;el("rect",{x:a,y:H-z.y1,width:b-a,height:z.y1-z.y0,rx:6,fill:"var(--bad)","fill-opacity":.07,stroke:"var(--bad)","stroke-opacity":.35,"stroke-width":1,"stroke-dasharray":"4 4","pointer-events":"none"},g)});
   if(zz.length){const z=zz[0],a=Math.max(0,z.a),b=Math.min(L,z.b);txt(g,(a+b)/2,H-z.y1+16*U,"Interdit près de l'eau",{fs:10.5,c:"var(--bad)",w:700})}}
- order.forEach(i=>{const it=M.items[i],c=CAT[it.k],x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
+ order.forEach(i=>{const it=M.items[i],c=cI(it),x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
   const e=el("g",{"data-i":i,style:"cursor:grab"},g);
   if(drag&&on){e.setAttribute("class","lift");e.style.animationDelay=-(now0-drag.t0)+"ms"}
   else if(hold&&hold.i===i){e.setAttribute("class","press");e.style.animationDelay=-(now0-hold.t0)+"ms"}
@@ -526,14 +530,14 @@ function draw(){
  });
  // ce que chaque meuble ou appareil apporte avec lui (prises, arrivées et évacuations d'eau) : toujours visible, très discret
  const now=Date.now();
- M.items.forEach((it,ii)=>{if(!visible(it))return;const c=CAT[it.k],fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
+ M.items.forEach((it,ii)=>{if(!visible(it))return;const c=cI(it),fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
   const m=el("g",{"pointer-events":"none",opacity:sel===ii||fresh||tech?1:.75},g);
   if(fresh){const r=el("circle",{cx:x,cy:y,r:5*U,fill:"none",stroke:col,"stroke-width":1.5},m);el("animate",{attributeName:"r",values:`${4*U};${13*U}`,dur:"1.1s",repeatCount:"2"},r);el("animate",{attributeName:"opacity",values:"0.9;0",dur:"1.1s",repeatCount:"2"},r)}
   const lab=n[3]||"",pt=n[0]==="el"?(lab==="32 A"?"p32":/sortie/.test(lab)?"sortie":lab==="liaison"?"liai":"pc"):lab==="condensats"?"cond":n[0];
   pf(m,pt,x,y,8.5*U/18);
   if(tech&&n[3])txt(m,x,y-7*U,n[3],{fs:9,c:col})})});
  // cotes de l'élément touché
- if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],x=vx(it),y=H-bas(c)-c.h;
+ if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=cI(it),x=vx(it),y=H-bas(c)-c.h;
   cote(g,0,x,H+26*U,R(x),"var(--laiton)");if(it.w>=30)cote(g,x,x+it.w,H+26*U,R(it.w),"var(--laiton)");cote(g,x+it.w,L,H+26*U,R(L-x-it.w),"var(--laiton)");
   const b=bas(c);if(b>0){const ax=x+it.w+12>L-20?x-10:x+it.w+10,axe=c.petit?R(b+c.h/2):R(b);el("path",{d:`M${ax} ${H}V${c.petit?y+c.h/2:y+c.h}`,stroke:"var(--laiton)","stroke-width":1.2,"stroke-dasharray":"3 3"},g);txt(g,ax+(ax>x?4:-4),H-8,axe+" cm",{a:ax>x?"start":"end",c:"var(--laiton)",fs:12})}
  }
@@ -561,7 +565,7 @@ const qIc=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
  if(qzSt()){const it=M.items[q.it],c=CAT[it.k],ce=FEM.test(c.n)?"Cette":"Ce",nm=(c.s||c.n).toLowerCase();
   const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
-  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
+  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hyRow(it)}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
  if(q.i>=L.length){k.innerHTML=`<div class="t"><span>Tout est noté pour ce mur <small>Un oubli ? Touchez ce qu'il faut ajouter</small></span></div><div class="qg">${L.map(c=>`<button class="btn" data-qplus="${c}">${qIc(I[QI[c]]?QI[c]:"prise")}+ ${CATS[c]}</button>`).join("")}</div>`;return}
  const c=L[q.i],has=qzHas(c),bar=`<div class="qp" aria-label="Question ${q.i+1} sur ${L.length}">${L.map((x,j)=>`<i class="${j<q.i?"ok":j===q.i?"cur":""}"></i>`).join("")}</div>`;
  if(q.mode==="pick"){const a=avail(),all=availAll().filter(x=>CAT[x].c===c),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
@@ -570,7 +574,7 @@ function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
 function qzAdd(k){const c=CAT[k],q=Q(),n=M.items.filter(o=>visible(o)&&o.k===k).length;const w=c.w.includes(83)?83:c.w.includes(60)?60:c.w[Math.min(1,c.w.length-1)];const it={k,w,x:0,face:isClo()?face:0,lock:true};
  const want=M.L*[.5,.25,.75,.12,.88,.38,.62][n%7];let px=null;for(const ww of [w,...c.w.slice().sort((a,b)=>a-b)]){it.w=ww;px=place(it,want-ww/2);if(px!=null)break}
  if(px==null){toast("Plus de place à cette hauteur sur ce mur. <b>Touchez un élément</b> pour le retirer",3200);return}
- snap();it.x=R(px);if(face===1&&c.deux)it.x=M.L-it.x-it.w;it.pulse=Date.now();it.settle=performance.now();M.items.push(it);announce(it);vib(10);
+ snap();it.x=R(px);if(face===1&&c.deux)it.x=M.L-it.x-it.w;underRoof(it);it.pulse=Date.now();it.settle=performance.now();M.items.push(it);announce(it);vib(10);
  if(qzAuto(c.c)){it.st="faire";toast(`<b>${c.s||c.n}</b> : à créer, c'est noté`,1800)}else{q.it=M.items.length-1;sel=q.it}draw();anim()}
 function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=null));if(PC.step==="f"&&PC.rv&&sel==null){const j=M.items.indexOf(PC.rv.list[PC.rv.i]);if(j>=0)sel=j}const ep=epAsk(),grp=!ep&&sel==null&&askAll&&G().length>=2,qz=!ep&&!grp&&qzOn();const open=sel!=null||grp||ep||qz;document.querySelector(".app").classList.toggle("sel",open);$("pal").hidden=open;$("addbtn").style.visibility=open?"hidden":"";if(!open){k.hidden=true;return}if(ep){k.hidden=false;const L=EPL(),n=L.length,yes=F.trav.some(t=>["elec","plomb","chauf"].includes(t));const B1=`<button class="${yes?"go all":"chip"}" data-ep="oui">Oui, certaines choses changent</button>`,B2=`<button class="${yes?"chip":"go all"}" data-ep="non">Non, tout reste comme ça</button>`;
  k.innerHTML=`<div class="t"><span>${M.epAdd?"Et le reste, on y touche ?":"L'électricité et la plomberie de ce mur, on y touche ?"} <small>${n} élément${n>1?"s":""} posé${n>1?"s":""} pour vous</small></span></div>${yes?B1:B2}<div class="row">${yes?B2:B1}<button class="chip" data-ep="add">Il en manque</button><button class="chip" data-ep="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Placés là où on les met d'habitude. Pas au bon endroit ? Maintenez et glissez.</div>`;return}
@@ -584,35 +588,35 @@ function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=
  if(!it.lock){
   k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+
   (c.w.length>1?`<div class="row"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"")+
-  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+auto+
+  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+hyRow(it)+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+auto+
   `<button class="go" data-place="1" style="padding:11px 16px;font-size:15px">C'est bien placé</button>`;return}
  if(it.askN){k.innerHTML=`<div class="t"><span>Combien de ${it.k==="mhaut"?"meubles hauts":"meubles bas"} de ${it.w} cm, côte à côte ?</span><span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button></span></div><button class="go all" data-n="full">Sur toute la longueur possible</button><div class="row">${[1,2,3,4,5].map(n=>`<button class="chip" data-n="${n}">${n}</button>`).join("")}</div>`;return}
  const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
  k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+wrow+
  (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st="faire">Non, c'est ${FEM.test(c.n)?"une nouvelle":"un nouveau"} ${c.n.toLowerCase()}</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
- (hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
+ hyRow(it)+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
 // ---------- Placement : jamais l'un sur l'autre, au plus collés ----------
-function band(a,b){const ca=CAT[a.k],cb=CAT[b.k],ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function band(a,b){const ca=cI(a),cb=cI(b),ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
 // ---------- Électricité près de l'eau (NF C 15-100) ----------
 // salle d'eau : rien sur la douche ou la baignoire (volumes 0 et 1), et prises/interrupteurs interdits à moins de 60 cm (volume 2) ;
 // cuisine : pas de prise ni d'appareil branché au-dessus de l'évier ou de la plaque.
 const CL2=["Miroir lumineux","Sèche-serviettes","Radiateur","Applique","Clim murale","Chauffe-eau","Hotte cheminée","Hotte intégrée au meuble"];// appareils fixes autorisés en volume 2 (classe II) : l'artisan vérifie
 const FEM=/^(Prise|Plaque|Colonne|Hotte|Fenêtre|Porte|Douche|Baignoire|Applique|Clim)/,ilElle=c=>FEM.test(c.n)?"Elle":"Il",leLa=c=>FEM.test(c.n)?"la":"le";
 const plugEl=c=>!CL2.includes(c.n)&&(c.need||[]).some(n=>n[0]==="el"&&!/sortie|liaison/.test(n[3]||""));
-function wetZones(it){const c=CAT[it.k],z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
+function wetZones(it){const c=cI(it),z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
  M.items.forEach(o=>{if(o===it||!visible(o))return;const x=vx(o);
   if(o.k==="douche"||o.k==="baignoire"){const m=sm||(plugEl(c)&&c.c!=="elec")?60:0;z.push({a:x-m,b:x+o.w+m,y0:0,y1:Math.min(M.H,225),t:"eau",o})}
   if((o.k==="mevier"||o.k==="mplaque")&&(c.c==="elec"||it.k==="mo")&&bas(c)>=88)z.push({a:x,b:x+o.w,y0:90,y1:M.H,t:o.k==="mevier"?"evier":"plaque",o})});return z}
 function wetBad(it){const x=vx(it);return wetZones(it).find(z=>x<z.b-.5&&x+it.w>z.a+.5)}
-function place(it,want){const c=CAT[it.k],m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
+function place(it,want){const c=cI(it),m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
  const bl=M.items.filter(o=>o!==it&&visible(o)&&band(it,o)).map(o=>[vx(o),vx(o)+o.w]).concat(wetZones(it).map(z=>[z.a,z.b])).sort((a,b)=>a[0]-b[0]);
  const gaps=[];let cur=lo;bl.forEach(([a,b])=>{if(a-it.w>=cur-1e-6)gaps.push([cur,a-it.w]);cur=Math.max(cur,b)});if(hi>=cur-1e-6)gaps.push([cur,hi]);
  let best=null;gaps.forEach(([a,b])=>{if(b<a)return;const x=Math.min(b,Math.max(a,want)),d=Math.abs(x-want);if(!best||d<best[0])best=[d,x]});return best?best[1]:null}
 // ---------- Glisser ----------
 function svgX(ev){const s=$("wall"),p=s.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(s.getScreenCTM().inverse()).x}
 function clamp(it,x){return Math.max(0,Math.min(M.L-it.w,x))}
-function snapX(it,x){const c=CAT[it.k],L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
- M.items.forEach(o=>{if(o===it||!visible(o))return;const co=CAT[o.k],ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
+function snapX(it,x){const c=cI(it),L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
+ M.items.forEach(o=>{if(o===it||!visible(o))return;const co=cI(o),ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
   if(sameBand||(!c.petit&&!co.petit)){cand.push([ox+o.w,ox+o.w],[ox-it.w,ox])}
   if(!c.petit&&!co.petit&&!sameBand)cand.push([ox,ox],[ox+o.w-it.w,ox+o.w]);
   if(c.petit&&!co.petit)cand.push([ox+o.w/2-it.w/2,ox+o.w/2])});
@@ -651,12 +655,12 @@ let looping=false;
 function anim(){setTimeout(draw,420);if(looping)return;looping=true;const step=()=>{draw();if(M.items.some(o=>o._a||(o.settle&&performance.now()-o.settle<320))||hold)requestAnimationFrame(step);else looping=false};requestAnimationFrame(step)}
 function nom(it){return CAT[it.k].n}
 function lift(ev){const i=hold.i,it=M.items[i];snap();liftSnap=HIST[HIST.length-1];clearTimeout(hold.tm);hold=null;sel=i;confirmDel=false;it.relock=it.lock;it.lock=false;
- drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
+ drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
 $("wall").addEventListener("pointerdown",ev=>{$("dock").classList.remove("open");const g=ev.target.closest("[data-i]");if(!g){deselect();draw();return}
  const i=+g.dataset.i,it=M.items[i];if(sel!==i)confirmDel=false;
  if(sel!=null&&sel!==i)deselect();
  $("wall").setPointerCapture(ev.pointerId);
- if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
+ if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
  hold={id:ev.pointerId,i,x0:ev.clientX,y0:ev.clientY,t0:performance.now(),mouse:ev.pointerType==="mouse",last:ev};
  hold.tm=setTimeout(()=>{if(hold&&hold.i===i)lift(hold.last)},HOLD);anim()});
 $("wall").addEventListener("pointermove",ev=>{
@@ -701,6 +705,7 @@ const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);con
 $("card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
  if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
  if(b.dataset.w){const ow=it.w,ox=it.x,nw=+b.dataset.w;it.w=nw;const cx=vx({...it,w:ow,x:ox});const px=place(it,cx);if(px==null){it.w=ow;$("hint").textContent="Pas assez de place pour cette largeur";return}it.x=face===1&&CAT[it.k].deux?M.L-px-nw:px;it.x=R(it.x)}
+ if(b.dataset.hy!=null){const c0=CAT[it.k],ob=it.yb,cur=bas(cI(it)),nb=Math.max(0,Math.min(Math.floor((wallHAt(vx(it),vx(it)+it.w)-c0.h)/5)*5,cur+(+b.dataset.hy)));if(nb===cur)return;snap();it.yb=nb;if(place(it,vx(it))==null||Math.abs(place(it,vx(it))-vx(it))>.5){if(ob==null)delete it.yb;else it.yb=ob;HIST.pop();toast("Un autre élément gêne à cette hauteur",2000);return}draw();return}
  if(b.dataset.hh!=null){const nk=b.dataset.hh==="1"?hBase(it.k)+"H":hBase(it.k);if(nk!==it.k){snap();const ok=it.k,ox=it.x;it.k=nk;const px=place(it,vx(it)+it.w/2-it.w/2);if(px==null){it.k=ok;it.x=ox;toast("Plus de place à cette hauteur sur ce mur",2400);return}it.x=R(face===1&&CAT[it.k].deux?M.L-px-it.w:px);draw()}return}
  if(b.dataset.trash){confirmDel=true;card();gauge();return}if(b.dataset.nodel){confirmDel=false;card();return}
  if(b.dataset.unlock){it.lock=false;if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}}
@@ -830,7 +835,7 @@ function startRoom(){const q=PC.queue[PC.qn];if(!q){showRecap();return}if(!PC.R[
 function goWall(i){wi=i;M=WALLS[wi];face=0;sel=null;askAll=!!G().length;PC.rv=null;confirmDel=false;drag=null;HIST.length=0;$("undo").disabled=true;$("dock").classList.remove("open");lvl0=-1;
  cat=firstCat();ui();const t0=performance.now()+180;M.items.forEach((it,j)=>{it._a={t:t0+j*70,d:0,dy:-140};it.settle=0});draw();anim();steps();if(!PC.coached){PC.coached=1;setTimeout(coach,5200)}}
 function saveSnap(){const s0=sel;sel=null;M.items.forEach(i=>delete i._a);draw();const s=$("wall").cloneNode(true);s.removeAttribute("id");s.removeAttribute("style");M.snap=s.outerHTML;sel=s0}
-function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,reponses:qzExp(w),elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
+function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,reponses:qzExp(w),elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:cI(it).bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
 // ---------- Récap ----------
 function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});if(msg)setTimeout(()=>toast(msg,2400),200)}
 function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
@@ -916,7 +921,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  if(p==="sol"){const ch=/change|pas encore/.test(a.etat||"");
   if(ch&&a.revet==="Carrelage"){const f=(a.carFmt&&a.carFmt!==DKs?a.carFmt:"45 × 45").split("×").map(v=>parseFloat(v)),cw=Math.max(f[0],f[1]),chh=Math.min(f[0],f[1]);
    h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${cw}" height="${chh}"><rect width="${cw}" height="${chh}" fill="var(--tile,#E6E9EE)"/><path d="M0 0H${cw}M0 0V${chh}" stroke="var(--joint,#B9BFCB)" stroke-width="${Math.max(1.2,1.6*k)}"/></pattern>`;fill=`url(#${uid}p)`}
-  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--wood,#D9B98A)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--parq,#E2C9A0)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--parq2,#BE9866)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--parq2,#BE9866)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
   else if(ch&&/souple/.test(a.revet||""))fill="var(--soft-floor,#CFD8E6)";
   else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
   lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
@@ -924,18 +929,24 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
   lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
  h2+=`</defs>`;
- GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--wall2)" opacity=".7"/>`});
- h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--wall)"}"/>`;
+ /* Cyril 25/11 « le plan ici ne ressemble pas au vrai » : même dessin que le plan (murs bleu nuit arrondis, sol gris clair, portes, fenêtres, trappe) */
+ const WE=14,WC=7,SC=Math.max(.5,(w+2*pad)/Math.max(1,s.getBoundingClientRect().width||600)),PL=(a,b,st,sw,x="")=>`<path d="M${a[0]} ${a[1]}L${b[0]} ${b[1]}" stroke="${st}" stroke-width="${sw}" fill="none" ${x}/>`;
+ const OPS=(ext,arc)=>{let z="";GEO[lv].segs.forEach(g=>{if((g.k!=="clo")!==ext)return;const Tt=(g.k==="clo"?WC:WE)*2,dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
+  if(op.k==="fenetre"){if(arc)return;z+=PL(A1,B1,"var(--glass)",Tt)+PL(A1,B1,"var(--pwall)",Math.max(2,.7*SC));[A1,B1].forEach(R=>{z+=PL([R[0]-u[1]*Tt/2,R[1]+u[0]*Tt/2],[R[0]+u[1]*Tt/2,R[1]-u[0]*Tt/2],"var(--pwall)",Math.max(2,.7*SC))});return}
+  if(!arc){z+=PL(A1,B1,"var(--pfloor)",Tt+1);return}const n=[-u[1],u[0]],rr=op.w*.9;z+=`<path d="M${A1[0]} ${A1[1]}L${A1[0]+n[0]*rr} ${A1[1]+n[1]*rr}A${rr} ${rr} 0 0 1 ${B1[0]} ${B1[1]}" fill="none" stroke="var(--muted)" stroke-width="${Math.max(1.5,.7*SC)}" stroke-dasharray="${2.5*SC} ${2*SC}"/>`})});return z};
+ GEO[lv].segs.forEach(g=>{if(g.k!=="clo")h2+=PL(g.a,g.b,"var(--pwall)",WE*2,'stroke-linecap="round"')});h2+=OPS(true,0);
+ GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--pfloor)"/>`});
+ h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--pfloor)"}"/>`;
  if(fill)h2+=`<g clip-path="url(#${uid}c)" class="${o.still?"":"fillin"}"><rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="${fill}"/></g>`;
  if(p==="pf"){const cx=cen(r)[0],cy=y0+h*.2;h2+=`<circle cx="${cx}" cy="${cy}" r="${9*k}" fill="var(--laiton)" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${20*k}" fill="none" stroke="var(--laiton)" stroke-width="${1.4*k}" opacity=".35"/>`}
- GEO[lv].segs.forEach(g=>{h2+=`<path d="M${g.a[0]} ${g.a[1]}L${g.b[0]} ${g.b[1]}" stroke="var(--fg)" stroke-width="${g.k==="clo"?Math.max(6,7*k):Math.max(10,12*k)}" stroke-linecap="square"/>`;
-  const dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
-   h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="${op.k==="fenetre"?"var(--glass)":"var(--surface)"}" stroke-width="${Math.max(10,12*k)+1}"/>`;if(op.k==="fenetre")h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="var(--fg)" stroke-width="${Math.max(2,2*k)}"/>`})});
+ GEO[lv].segs.forEach(g=>{if(g.k==="clo")h2+=PL(g.a,g.b,"var(--pwall)",WC*2,'stroke-linecap="round"')});
+ (GEO[lv].esc||[]).forEach(e=>{h2+=`<path d="M${e.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--laiton-soft)" stroke="var(--fg)" stroke-width="${Math.max(2,.8*SC)}" stroke-dasharray="${3*SC} ${2*SC}"/>`;const c=e.pts.reduce((m,v)=>[m[0]+v[0]/e.pts.length,m[1]+v[1]/e.pts.length],[0,0]);h2+=`<text x="${c[0]}" y="${c[1]+4*SC}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="700" font-size="${11*SC}" fill="var(--fg)">${e.t}</text>`});
+ h2+=OPS(true,1)+OPS(false,0)+OPS(false,1);
  if(p==="fai"&&PC.R[q.id]){const W=PC.R[q.id],E=edges(r),on=/^Oui/.test(a.fai||"")?a.faiM||[]:[],[cx0,cy0]=cen(r);
   W.forEach((w,j)=>{const e=E[w.side];if(!e)return;const sel=on.includes(j),mx=(e[0]+e[2])/2,my=(e[1]+e[3])/2,dx=cx0-mx,dy=cy0-my,dl=Math.hypot(dx,dy)||1,ox=mx+dx/dl*26*k,oy=my+dy/dl*26*k;
    if(sel)h2+=`<line x1="${e[0]}" y1="${e[1]}" x2="${e[2]}" y2="${e[3]}" stroke="var(--laiton)" stroke-width="${Math.max(8,10*k)}" stroke-linecap="round" opacity=".9"/>`;
    if(!o.nolab)h2+=`<circle cx="${ox}" cy="${oy}" r="${12*k}" fill="${sel?"var(--laiton)":"var(--surface)"}" stroke="var(--fg)" stroke-width="${1.2*k}"/><text x="${ox}" y="${oy+4.5*k}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="800" font-size="${13*k}" fill="var(--fg)">${j+1}</text>`})}
- if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(30*k+8,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
+ if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(20*SC,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
   h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
