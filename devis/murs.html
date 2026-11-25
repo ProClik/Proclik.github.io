@@ -300,7 +300,7 @@ const CAT={
  rj:{n:"Prise internet (RJ45)",s:"Prise internet",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",pfk:"rj",info:"Axe à 30 cm du sol"},
  applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",pfk:"app",info:"À 180 cm du sol"},
  iph:{n:"Interphone",c:"elec",r:ALL,h:20,bas:140,w:[12],petit:1,ic:"inter",pfk:"iph",info:"À 150 cm du sol"},
- tab:{n:"Tableau électrique",c:"elec",r:ALL,h:80,bas:120,w:[60],ic:"inter",pfk:"tab",info:"Le tableau avec les disjoncteurs"},
+ tab:{n:"Tableau électrique",c:"elec",r:ALL,h:50,bas:120,w:[35],ic:"inter",pfk:"tab",libre:1,info:"Le tableau avec les disjoncteurs. Glissez-le où vous voulez, aussi en hauteur"},
  sortie:{n:"Sortie de câble",c:"elec",r:[],h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"sortie",info:"Pour un appareil branché en direct (volet, chauffe-eau, hotte…)"},
  // chauffage et clim
  radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
@@ -313,6 +313,7 @@ const hBase=k=>CAT[k].hautV||k,hHaut=k=>PHI.includes(hBase(k));
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
 const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
 const bas=(c)=>c.top!=null?M.H-c.top-c.h:c.bas;
+/* hauteur propre à un élément (tableau électrique placé où on veut, Cyril 25/11) */const cI=it=>it&&it.yb!=null?{...CAT[it.k],bas:it.yb,top:null}:CAT[it.k];
 const needH=(c,n)=>c.top!=null?bas(c)+c.h/2:n[2];
 // ---------- Icônes du menu ----------
 const I={
@@ -481,7 +482,7 @@ function PFs(t,n){n=n||1;
 function pfIc(x){const c=CAT[x];if(c&&!c.pfk)try{const NS="http://www.w3.org/2000/svg",sv=document.createElementNS(NS,"svg"),g=document.createElementNS(NS,"g");sv.appendChild(g);const w=c.w[Math.min(1,c.w.length-1)];drawItem(g,{k:x,w},0,0,c);const top=Math.min(0,-(c.top||0))-24,m=Math.max(w,c.h-top)+10;return`<svg class="pfi" viewBox="${w/2-m/2} ${(c.h+top)/2-m/2} ${m} ${m}" aria-hidden="true">${g.innerHTML}</svg>`}catch(e){}if(!c||!c.pfk)return qIc(c&&c.ic);if(c.pfk==="tab")return'<svg class="pfi" viewBox="-13 -13 26 26" aria-hidden="true"><g class="pf"><rect class="bx" x="-10" y="-11" width="20" height="22" rx="3"/><path class="gl" d="M-6 -5h12M-6 0h12M-6 5h12"/></g></svg>';const n=c.np||1,Z={ge:[86,66],gs:[44,18],grp:[54,28],nour:[32,22],mit:[28,20],iph:[22,28]}[c.pfk],W=Z?Z[0]/2:Math.max(13,9*n+4),Hh=Z?Z[1]/2:13;return`<svg class="pfi" viewBox="${-W} ${-Hh} ${2*W} ${2*Hh}" aria-hidden="true"><g class="pf">${PFs(c.pfk,n)}</g></svg>`}
 function pf(g,t,cx,cy,k,n){const s=el("g",{class:"pf",transform:`translate(${cx} ${cy}) scale(${k})`},g);s.innerHTML=PFs(t,n);return s}
 const dotC={ef:"var(--ef)",ec:"var(--ec)",ev:"var(--ev)",el:"var(--el)"};
-function overlaps(a,b){const ca=CAT[a.k],cb=CAT[b.k];const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function overlaps(a,b){const ca=cI(a),cb=cI(b);const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
 function draw(){
  const s=$("wall");s.innerHTML="";const L=M.L,H=M.H,pr=14;let pl,pt,pb;
  for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
@@ -505,10 +506,10 @@ function draw(){
  const order=M.items.map((it,i)=>i).filter(i=>visible(M.items[i])).sort((a,b)=>(CAT[M.items[a].k].petit?1:0)-(CAT[M.items[b].k].petit?1:0));
  if(drag){const k=order.indexOf(sel);if(k>=0){order.splice(k,1);order.push(sel)}}
  const now0=performance.now();
- if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
+ if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=cI(it),gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
  if(drag&&sel!=null&&M.items[sel]){const zz=wetZones(M.items[sel]);zz.forEach(z=>{const a=Math.max(0,z.a),b=Math.min(L,z.b);if(b<=a)return;el("rect",{x:a,y:H-z.y1,width:b-a,height:z.y1-z.y0,rx:6,fill:"var(--bad)","fill-opacity":.07,stroke:"var(--bad)","stroke-opacity":.35,"stroke-width":1,"stroke-dasharray":"4 4","pointer-events":"none"},g)});
   if(zz.length){const z=zz[0],a=Math.max(0,z.a),b=Math.min(L,z.b);txt(g,(a+b)/2,H-z.y1+16*U,"Interdit près de l'eau",{fs:10.5,c:"var(--bad)",w:700})}}
- order.forEach(i=>{const it=M.items[i],c=CAT[it.k],x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
+ order.forEach(i=>{const it=M.items[i],c=cI(it),x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
   const e=el("g",{"data-i":i,style:"cursor:grab"},g);
   if(drag&&on){e.setAttribute("class","lift");e.style.animationDelay=-(now0-drag.t0)+"ms"}
   else if(hold&&hold.i===i){e.setAttribute("class","press");e.style.animationDelay=-(now0-hold.t0)+"ms"}
@@ -533,7 +534,7 @@ function draw(){
   pf(m,pt,x,y,8.5*U/18);
   if(tech&&n[3])txt(m,x,y-7*U,n[3],{fs:9,c:col})})});
  // cotes de l'élément touché
- if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],x=vx(it),y=H-bas(c)-c.h;
+ if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=cI(it),x=vx(it),y=H-bas(c)-c.h;
   cote(g,0,x,H+26*U,R(x),"var(--laiton)");if(it.w>=30)cote(g,x,x+it.w,H+26*U,R(it.w),"var(--laiton)");cote(g,x+it.w,L,H+26*U,R(L-x-it.w),"var(--laiton)");
   const b=bas(c);if(b>0){const ax=x+it.w+12>L-20?x-10:x+it.w+10,axe=c.petit?R(b+c.h/2):R(b);el("path",{d:`M${ax} ${H}V${c.petit?y+c.h/2:y+c.h}`,stroke:"var(--laiton)","stroke-width":1.2,"stroke-dasharray":"3 3"},g);txt(g,ax+(ax>x?4:-4),H-8,axe+" cm",{a:ax>x?"start":"end",c:"var(--laiton)",fs:12})}
  }
@@ -592,27 +593,27 @@ function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=
  (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st="faire">Non, c'est ${FEM.test(c.n)?"une nouvelle":"un nouveau"} ${c.n.toLowerCase()}</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
  (hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
 // ---------- Placement : jamais l'un sur l'autre, au plus collés ----------
-function band(a,b){const ca=CAT[a.k],cb=CAT[b.k],ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function band(a,b){const ca=cI(a),cb=cI(b),ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
 // ---------- Électricité près de l'eau (NF C 15-100) ----------
 // salle d'eau : rien sur la douche ou la baignoire (volumes 0 et 1), et prises/interrupteurs interdits à moins de 60 cm (volume 2) ;
 // cuisine : pas de prise ni d'appareil branché au-dessus de l'évier ou de la plaque.
 const CL2=["Miroir lumineux","Sèche-serviettes","Radiateur","Applique","Clim murale","Chauffe-eau","Hotte cheminée","Hotte intégrée au meuble"];// appareils fixes autorisés en volume 2 (classe II) : l'artisan vérifie
 const FEM=/^(Prise|Plaque|Colonne|Hotte|Fenêtre|Porte|Douche|Baignoire|Applique|Clim)/,ilElle=c=>FEM.test(c.n)?"Elle":"Il",leLa=c=>FEM.test(c.n)?"la":"le";
 const plugEl=c=>!CL2.includes(c.n)&&(c.need||[]).some(n=>n[0]==="el"&&!/sortie|liaison/.test(n[3]||""));
-function wetZones(it){const c=CAT[it.k],z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
+function wetZones(it){const c=cI(it),z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
  M.items.forEach(o=>{if(o===it||!visible(o))return;const x=vx(o);
   if(o.k==="douche"||o.k==="baignoire"){const m=sm||(plugEl(c)&&c.c!=="elec")?60:0;z.push({a:x-m,b:x+o.w+m,y0:0,y1:Math.min(M.H,225),t:"eau",o})}
   if((o.k==="mevier"||o.k==="mplaque")&&(c.c==="elec"||it.k==="mo")&&bas(c)>=88)z.push({a:x,b:x+o.w,y0:90,y1:M.H,t:o.k==="mevier"?"evier":"plaque",o})});return z}
 function wetBad(it){const x=vx(it);return wetZones(it).find(z=>x<z.b-.5&&x+it.w>z.a+.5)}
-function place(it,want){const c=CAT[it.k],m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
+function place(it,want){const c=cI(it),m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
  const bl=M.items.filter(o=>o!==it&&visible(o)&&band(it,o)).map(o=>[vx(o),vx(o)+o.w]).concat(wetZones(it).map(z=>[z.a,z.b])).sort((a,b)=>a[0]-b[0]);
  const gaps=[];let cur=lo;bl.forEach(([a,b])=>{if(a-it.w>=cur-1e-6)gaps.push([cur,a-it.w]);cur=Math.max(cur,b)});if(hi>=cur-1e-6)gaps.push([cur,hi]);
  let best=null;gaps.forEach(([a,b])=>{if(b<a)return;const x=Math.min(b,Math.max(a,want)),d=Math.abs(x-want);if(!best||d<best[0])best=[d,x]});return best?best[1]:null}
 // ---------- Glisser ----------
 function svgX(ev){const s=$("wall"),p=s.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(s.getScreenCTM().inverse()).x}
 function clamp(it,x){return Math.max(0,Math.min(M.L-it.w,x))}
-function snapX(it,x){const c=CAT[it.k],L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
- M.items.forEach(o=>{if(o===it||!visible(o))return;const co=CAT[o.k],ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
+function snapX(it,x){const c=cI(it),L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
+ M.items.forEach(o=>{if(o===it||!visible(o))return;const co=cI(o),ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
   if(sameBand||(!c.petit&&!co.petit)){cand.push([ox+o.w,ox+o.w],[ox-it.w,ox])}
   if(!c.petit&&!co.petit&&!sameBand)cand.push([ox,ox],[ox+o.w-it.w,ox+o.w]);
   if(c.petit&&!co.petit)cand.push([ox+o.w/2-it.w/2,ox+o.w/2])});
@@ -651,18 +652,18 @@ let looping=false;
 function anim(){setTimeout(draw,420);if(looping)return;looping=true;const step=()=>{draw();if(M.items.some(o=>o._a||(o.settle&&performance.now()-o.settle<320))||hold)requestAnimationFrame(step);else looping=false};requestAnimationFrame(step)}
 function nom(it){return CAT[it.k].n}
 function lift(ev){const i=hold.i,it=M.items[i];snap();liftSnap=HIST[HIST.length-1];clearTimeout(hold.tm);hold=null;sel=i;confirmDel=false;it.relock=it.lock;it.lock=false;
- drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
+ drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
 $("wall").addEventListener("pointerdown",ev=>{$("dock").classList.remove("open");const g=ev.target.closest("[data-i]");if(!g){deselect();draw();return}
  const i=+g.dataset.i,it=M.items[i];if(sel!==i)confirmDel=false;
  if(sel!=null&&sel!==i)deselect();
  $("wall").setPointerCapture(ev.pointerId);
- if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
+ if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
  hold={id:ev.pointerId,i,x0:ev.clientX,y0:ev.clientY,t0:performance.now(),mouse:ev.pointerType==="mouse",last:ev};
  hold.tm=setTimeout(()=>{if(hold&&hold.i===i)lift(hold.last)},HOLD);anim()});
 $("wall").addEventListener("pointermove",ev=>{
  if(hold&&ev.pointerId===hold.id){hold.last=ev;const d=Math.hypot(ev.clientX-hold.x0,ev.clientY-hold.y0);
   if(d>6){if(hold.mouse){lift(ev)}else{clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`Maintenez le doigt sur <b>${nom(it)}</b> un instant, puis glissez`);draw();return}}else return}
- if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;
+ if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;if(CAT[it.k].libre){const c0=CAT[it.k],hb=Math.max(0,Math.min(M.H-c0.h,Math.round((drag.b0+(drag.y0-svgY(ev)))/5)*5));if(hb!==bas(cI(it))){const ob=it.yb;it.yb=hb;if(place(it,vx(it))==null)it.yb=ob}}
  // meuble lâché sur un autre meuble de la même hauteur : ils échangeront leur place
  const t0=drag.tgt;drag.tgt=null;if(!CAT[it.k].petit){const t=M.items.findIndex(o=>o!==it&&visible(o)&&!CAT[o.k].petit&&!CAT[o.k].deux&&band(it,o)&&fx>=vx(o)&&fx<=vx(o)+o.w);if(t>=0)drag.tgt=t}
  if(drag.tgt!=null&&drag.tgt!==t0)vib(6);
@@ -830,7 +831,7 @@ function startRoom(){const q=PC.queue[PC.qn];if(!q){showRecap();return}if(!PC.R[
 function goWall(i){wi=i;M=WALLS[wi];face=0;sel=null;askAll=!!G().length;PC.rv=null;confirmDel=false;drag=null;HIST.length=0;$("undo").disabled=true;$("dock").classList.remove("open");lvl0=-1;
  cat=firstCat();ui();const t0=performance.now()+180;M.items.forEach((it,j)=>{it._a={t:t0+j*70,d:0,dy:-140};it.settle=0});draw();anim();steps();if(!PC.coached){PC.coached=1;setTimeout(coach,5200)}}
 function saveSnap(){const s0=sel;sel=null;M.items.forEach(i=>delete i._a);draw();const s=$("wall").cloneNode(true);s.removeAttribute("id");s.removeAttribute("style");M.snap=s.outerHTML;sel=s0}
-function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,reponses:qzExp(w),elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
+function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,reponses:qzExp(w),elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:cI(it).bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
 // ---------- Récap ----------
 function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});if(msg)setTimeout(()=>toast(msg,2400),200)}
 function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
