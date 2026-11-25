@@ -832,6 +832,8 @@ function solConv(a){if(!a.etat)return null;const E={"On le garde":"Déjà en pla
 // Faïence (Cyril 18/11) : murs choisis × hauteur, moins les portes ; renvoyée au plan (pc.faience) pour le calcul.
 const WET=["sdb","wc","cuisine","buanderie"];
 const faiWalls=q=>PC.R[q.id]||[];
+/* Cyril 25/11 : la faïence n'est demandée que si c'est lié aux travaux : sol coché, ou cuisine / salle de bain qui change (ou « Je ne sais pas »). */
+const faiLie=rt=>{const T=A.trav||[],x=v=>/change|créer|sais pas/i.test(v||"");if(!A.trav)return true;if(T.includes("sol"))return true;if(rt==="cuisine")return x(A.cuis);if(rt==="sdb"||rt==="wc")return x(A.sdb);return false};
 const faiLab=(a,q)=>{const W=faiWalls(q),m=a.faiM||[];return !m.length?"—":m.length===W.length?"Tous les murs":"Mur"+(m.length>1?"s ":" ")+m.map(j=>j+1).join(", ")};
 function faiConv(a,q){if(!a.fai)return null;if(a.fai===DKs)return{a_voir:true};if(!/^Oui/.test(a.fai))return{non:true};
  const W=faiWalls(q),H=GEO[q.lv].H,h=a.faiH==="À mi-hauteur (1,20 m)"?120:a.faiH==="Une crédence (60 cm)"?60:H,m=(a.faiM||[]).filter(j=>W[j]);
@@ -874,7 +876,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
 // ---------- Parcours ----------
-function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(p=>needPart(p)&&!soA(q.id,p)._plan)).concat(["fin"]);
+function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)&&faiLie(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(p=>needPart(p)&&!soA(q.id,p)._plan)).concat(["fin"]);
  PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="fai"?"Maintenant, la faïence":parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
 function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
  if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
