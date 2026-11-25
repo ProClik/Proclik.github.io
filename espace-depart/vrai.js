@@ -82,6 +82,7 @@ css.textContent=[
 'details.vcomm>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}details.vcomm>summary::-webkit-details-marker{display:none}.vred{flex:none;font:800 12px var(--f,inherit);padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--fg)}.vred::after{content:"Afficher"}details.vcomm[open] .vred::after{content:"Réduire"}',
 '.vtotc details.vd{margin-top:8px}.vtotc details.vd>summary{font-size:13px;color:var(--muted)}',
 '.vpart-h{display:grid;gap:2px;margin:0 0 6px}.vpart-h h3{margin:0}.vpart-h small{font-size:12.5px;color:var(--muted)}',
+'.vgt{margin:16px 0 4px}.vgt:first-of-type{margin-top:8px}.vgt-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 0 6px;margin:0 0 2px;border-bottom:2px solid currentColor}.vgt-h b{font-size:15.5px}.vgt-h span{font-size:13.5px;font-weight:700;opacity:.7;white-space:nowrap}',
 '.vedit{position:relative;padding-right:96px!important}.vedit .vmod{position:absolute;right:0;top:50%;transform:translateY(-50%);appearance:none;cursor:pointer;min-height:38px;font:800 12.5px var(--f,inherit);padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--accx,var(--fg))}.vedit.fige{padding-right:0!important}',
 '.vedit .x{margin-right:0}.vli.vv.vedit{padding-right:92px!important}',
 '.vadd{width:100%;margin-top:8px;border:1.5px dashed var(--line);background:transparent}',
@@ -89,7 +90,7 @@ css.textContent=[
 '.vsug{display:grid;gap:6px}.vsug-t{font-size:12.5px;color:var(--muted);font-weight:700}',
 '.vsug-i{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:14px;cursor:pointer}',
 '.vsug-i>span{flex:1;min-width:0}.vsug-i small{display:block;font-size:12px;color:var(--muted)}.vsug-i>b{white-space:nowrap;font-size:13px}.vsug-i svg{width:22px;height:22px;flex:none}',
-'.vsug-new{justify-self:start}',
+'.vsug-new{justify-self:start}.vsug-ok{color:var(--fg)}.vchg{display:grid;gap:8px;padding:12px;border-radius:14px;border:1px dashed var(--line)}.vchg>label{margin:0}',
 '.vfg{margin-top:6px}.vfg .vh h2{font-size:15.5px;display:flex;align-items:center;gap:8px}.vfg-env{padding:10px 12px;margin:6px -4px 10px;border-radius:14px;background:var(--soft)}',
 '.vrouge{display:inline-block;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#D9534F;color:#fff;font:800 11.5px/20px var(--f,inherit);font-style:normal;text-align:center}',
 '.vminis{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;margin:0 -2px 6px;scroll-snap-type:x mandatory}.vmini{appearance:none;border:0;background:none;padding:0;text-align:left;cursor:pointer;flex:0 0 auto;width:min(46%,190px);scroll-snap-align:start;color:var(--fg);font:inherit}.vminis .vmini:only-child{width:min(62%,240px)}',
@@ -295,7 +296,7 @@ var ED=null,VTAB='devis',MODE='pre',ND=null;
 function T(){return MODE==='nd'?ND:ED}
 function retour(){return MODE==='nd'?rendreND():afficher(COUR)}
 function cleLg(){return 'pc-lg-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
-function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){return {libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier}})};
+function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;return o})};
  var e={le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0,four:{}},R=lsG(cleRt());
  /* Après un recalcul : les retouches de l'artisan sont remises par-dessus le nouveau calcul */
  if(R&&R.avant!==p.le){e.materiaux=appliquerRt(e.materiaux,R.materiaux);e.main_oeuvre=appliquerRt(e.main_oeuvre,R.main_oeuvre);e.touche=1;if(R.att===JSON.stringify((p.attente||[]).map(function(a){return a.libelle})))e.four=R.four||{};lsS(cleRt(),null);lsS(cleLg(),e)}
@@ -358,8 +359,15 @@ function totauxEd(p,E){E=E||ED;var t=p.totaux||{},s=function(L){return L.reduce(
  var sm=s(E.materiaux),so=s(E.main_oeuvre),mg=sm*tm,b=sm+mg+so+(t.deplacement||0),fg=b*tf,r=function(x){return Math.round(x*100)/100};
  return {materiaux:r(sm),marge:r(mg),main_oeuvre:r(so),deplacement:t.deplacement||0,frais_generaux:r(fg),total_ht:r(b+fg)}}
 /* Une partie du pré-devis : on voit tout de suite que chaque ligne se modifie, et chaque partie a son « + Ajouter » */
-function lignesEd(cle,titre,aide,ajout){var L=ED[cle];
- return '<div class="card vsec vpart"><div class="vpart-h"><h3>'+titre+'</h3><small>'+aide+'</small></div>'+(L.length?L.map(function(l,i){return '<div class="vli vedit'+(l.a_verifier?' vv':'')+'"><span>'+esc(l.libelle)+(l.four!=null?' <span class="vp t">prix fournisseur</span>':'')+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small><button type="button" class="vmod" data-vlg="'+cle+'|'+i+'">Modifier</button></div>'}).join(''):'<p class="vst">Aucune ligne pour l\'instant.</p>')+
+/* Rangé par travaux (Cyril 25/11) : un titre par travail (Isolation des rampants, Doublage, Fenêtres…) avec son sous-total.
+   Le titre vient du calcul (note « — Travail — ») ; une ligne ajoutée à la main va dans le travail choisi. */
+var AUTRE_G='Autres travaux';
+function groupes(L){var G=[],M={};L.forEach(function(l,i){var g=l.groupe||AUTRE_G;if(!M[g]){M[g]={t:g,L:[],s:0};G.push(M[g])}M[g].L.push([l,i]);M[g].s+=+l.total||0});
+ var a=G.filter(function(g){return g.t===AUTRE_G});return G.filter(function(g){return g.t!==AUTRE_G}).concat(a)}
+function titresGroupes(){if(!ED)return [];var v={},o=[];['materiaux','main_oeuvre'].forEach(function(c){(ED[c]||[]).forEach(function(l){if(l.groupe&&!v[l.groupe]){v[l.groupe]=1;o.push(l.groupe)}})});return o}
+function lignesEd(cle,titre,aide,ajout){var L=ED[cle],li=function(x){var l=x[0],i=x[1];return '<div class="vli vedit'+(l.a_verifier?' vv':'')+'"><span>'+esc(l.libelle)+(l.four!=null?' <span class="vp t">prix fournisseur</span>':'')+'</span><span class="x">'+eur(l.total)+'</span><small>'+qte(l.quantite)+' '+esc(l.unite)+' × '+eur(l.pu,4)+(l.a_verifier?' · ⚠ à vérifier':'')+'</small><button type="button" class="vmod" data-vlg="'+cle+'|'+i+'">Modifier</button></div>'},
+  G=groupes(L),par=L.some(function(l){return l.groupe});
+ return '<div class="card vsec vpart"><div class="vpart-h"><h3>'+titre+'</h3><small>'+aide+'</small></div>'+(L.length?(par?G.map(function(g){return '<section class="vgt"><div class="vgt-h"><b>'+esc(g.t)+'</b><span>'+eur(Math.round(g.s*100)/100)+'</span></div>'+g.L.map(li).join('')+'</section>'}).join(''):L.map(function(l,i){return li([l,i])}).join('')):'<p class="vst">Aucune ligne pour l\'instant.</p>')+
   '<button class="vbtn vadd" type="button" data-vlg="+'+cle+'">＋ '+ajout+'</button></div>'}
 /* ---------- À vérifier : rangé par qui répond (option Cliky). Une case « c'est bon » par question,
    « Modifier » quand la question touche une ligne qu'on retrouve, questions du client envoyées en un message. ---------- */
@@ -457,20 +465,27 @@ function onglet(t){VTAB=t;$$('#vov-b [data-vtabd]').forEach(function(b){b.setAtt
 /* ---------- ajouter ou modifier une ligne : le libellé propose votre base (les plus utilisés d'abord) ---------- */
 function base(){var B=[];try{B=(window.PCX&&window.PCX.base&&window.PCX.base())||[]}catch(e){}return B}
 function usage(){return lsG('pc-base-usage')||{}}
-function suggestions(q,cle){var U=usage(),B=base().filter(function(b){return b&&b.d}).map(function(b){return {d:b.d,u:b.u,p:cle==='materiaux'&&b.ach?b.ach:b.p,t:b.f||b.t,i:b.i,n:U[b.d.toLowerCase()]||0}});
+/* Changer de produit (Cyril 25/11) : on cherche dans ses produits ET dans la base Cliky, par mots (« laine 160 »),
+   sans tenir compte des accents ; à l'ouverture d'une ligne, on propose déjà les produits du même genre. */
+function sans(x){return String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
+function motsCle(lib,cle){var M=sans(String(lib||'').split(/[(:,]/)[0]).split(/[^a-z0-9]+/).filter(function(w){return w.length>=3&&!/^(les|des|une|pour|avec|sur|dans|standard)$/.test(w)});return M.slice(0,cle==='materiaux'?1:2).join(' ')}
+function suggestions(q,cle,exclu){var U=usage(),B=base().filter(function(b){return b&&b.d}).map(function(b){return {d:b.d,u:b.u,p:cle==='materiaux'&&b.ach?b.ach:b.p,t:b.f||b.t,i:b.i,n:U[b.d.toLowerCase()]||0,src:'moi'}});
  /* les lignes déjà vues dans ce pré-devis comptent aussi : l'artisan retrouve ce qu'il vient de taper */
- if(T())T()[cle==='materiaux'?'materiaux':'main_oeuvre'].forEach(function(l){if(!B.some(function(b){return b.d.toLowerCase()===l.libelle.toLowerCase()}))B.push({d:l.libelle,u:l.unite,p:l.pu,t:'Dans ce pré-devis',n:U[l.libelle.toLowerCase()]||0})});
- q=(q||'').trim().toLowerCase();var m=function(b){return !q||(b.d+' '+(b.t||'')).toLowerCase().indexOf(q)>=0};
- var R=B.filter(m).sort(function(a,b){return b.n-a.n});
+ if(T())T()[cle==='materiaux'?'materiaux':'main_oeuvre'].forEach(function(l){if(!B.some(function(b){return b.d.toLowerCase()===l.libelle.toLowerCase()}))B.push({d:l.libelle,u:l.unite,p:l.pu,t:'Dans ce pré-devis',n:U[l.libelle.toLowerCase()]||0,src:'ici'})});
+ var W=sans(q).split(/\s+/).filter(Boolean),ex=sans(exclu||'').trim(),m=function(txt){txt=sans(txt);return W.every(function(w){return txt.indexOf(w)>=0})};
+ var R=B.filter(function(b){return sans(b.d).trim()!==ex&&m(b.d+' '+(b.t||''))}).sort(function(a,b){return b.n-a.n}).slice(0,W.length?5:5);
  /* puis la base de Cliky (prix de son fournisseur, ou le sien s'il l'a changé dans Produits) */
- if(q.length>1&&window.PCPROD&&PCPROD.cliky){var k=cle==='materiaux'?'produit':'prestation';
-  (PCPROD.cliky()||[]).forEach(function(a){if(a.k===k&&R.length<12&&!R.some(function(b){return b.d.toLowerCase()===a.d.toLowerCase()})){var b={d:a.d,u:PCPROD.parCond(a),p:a.pc,t:'Base Cliky · '+a.cond,n:0};if(m(b)||(a.c+' '+a.f).toLowerCase().indexOf(q)>=0)R.push(b)}})}
- return R.slice(0,q?8:5)}
-function sugHTML(cle){var L=suggestions(($('#vl-l')||{}).value,cle),q=(($('#vl-l')||{}).value||'').trim();
- return (L.length?'<small class="vsug-t">'+(q?'Dans votre base':'Les plus utilisés')+'</small>'+L.map(function(b,i){return '<button type="button" class="vsug-i" data-vsug="'+i+'">'+((window.PCPROD&&window.PCPROD.icone&&b.i&&window.PCPROD.icone(b.i))||'')+'<span>'+esc(b.d)+'<small>'+esc(b.t||'')+(b.n?' · utilisé '+b.n+' fois':'')+'</small></span><b>'+eur(b.p)+' / '+esc(b.u||'u')+'</b></button>'}).join(''):'<small class="vsug-t">Rien de tel dans votre base.</small>')+
-  '<button type="button" class="vbtn sm vsug-new" data-vsugnew>＋ Créer « '+(q?esc(q.length>40?q.slice(0,40)+'…':q):'un produit')+' » dans mes produits</button>'}
+ if(W.length&&sans(q).trim().length>1&&window.PCPROD&&PCPROD.cliky){var k=cle==='materiaux'?'produit':'prestation',n=0;
+  (PCPROD.cliky()||[]).forEach(function(a){if(a.k===k&&n<6&&sans(a.d).trim()!==ex&&!R.some(function(b){return b.d.toLowerCase()===a.d.toLowerCase()})&&m(a.d+' '+(a.c||'')+' '+(a.f||''))){R.push({d:a.d,u:PCPROD.parCond(a),p:a.pc,t:a.cond,n:0,src:'cliky'});n++}})}
+ return R}
+var SRC=[['moi','Dans mes produits'],['ici','Déjà dans ce pré-devis'],['cliky','Dans la base Cliky']];
+function sugHTML(cle){var q=(($('#vl-s')||{}).value||'').trim(),L=SUG,h='';
+ SRC.forEach(function(S){var I=[];L.forEach(function(b,i){if(b.src===S[0])I.push(i)});if(!I.length)return;
+  h+='<small class="vsug-t">'+S[1]+'</small>'+I.map(function(i){var b=L[i];return '<button type="button" class="vsug-i" data-vsug="'+i+'">'+((window.PCPROD&&window.PCPROD.icone&&b.i&&window.PCPROD.icone(b.i))||'')+'<span>'+esc(b.d)+'<small>'+esc(b.t||'')+(b.n?' · utilisé '+b.n+' fois':'')+'</small></span><b>'+eur(b.p)+' / '+esc(b.u||'u')+'</b></button>'}).join('')});
+ if(!h)h='<small class="vsug-t">'+(q?'Rien trouvé pour « '+esc(q)+' ». Essayez un autre mot, ou créez le produit.':'Tapez un mot pour chercher.')+'</small>';
+ return h+'<button type="button" class="vbtn sm vsug-new" data-vsugnew>＋ Créer un nouveau produit</button>'}
 var SUG=[],NOUVP=false;
-function majSug(cle){var z=$('#vl-sug');if(!z)return;SUG=suggestions(($('#vl-l')||{}).value,cle);z.innerHTML=sugHTML(cle)}
+var SUGEX='',SUGC='materiaux';function majSug(cle){var z=$('#vl-sug');if(!z)return;SUGC=cle;SUG=suggestions(($('#vl-s')||{}).value,cle,SUGEX);z.innerHTML=sugHTML(cle)}
 function ligneV(ref){var p=MODE==='nd'?{attente:[]}:COUR&&COUR.pre_devis[0];if(MODE!=='nd'&&(!p||!ED))return;
  if(ref==='raz'){lsS(cleLg(),null);toastV('Calcul de Cliky remis','Vos retouches sont effacées.');return retour()}
  var fo=/^f\|/.test(ref)?+ref.slice(2):null,nv=ref.charAt(0)==='+'||fo!=null,c,i,l;NOUVP=false;
@@ -480,22 +495,27 @@ function ligneV(ref){var p=MODE==='nd'?{attente:[]}:COUR&&COUR.pre_devis[0];if(M
  if(!l)return;
  var h='<div class="card vform">'+(fo!=null?'<p class="vst" style="padding:0">Recopiez le prix d\'achat HT écrit sur le devis du fournisseur.</p>':'')+
   '<label>'+(c==='materiaux'?'Le matériau':'Ce qui est fait')+'<textarea id="vl-l" rows="2" autocomplete="off" placeholder="'+(c==='materiaux'?'Tapez : ba13, rail, laine…':'Tapez : pose, cloison, joints…')+'">'+esc(l.libelle)+'</textarea></label>'+
-  (fo!=null?'':'<div class="vsug" id="vl-sug"></div>')+
   '<div class="vrow"><label>Quantité<input id="vl-q" inputmode="decimal" value="'+qte(l.quantite)+'"></label><label>Unité<input id="vl-u" value="'+esc(l.unite||'')+'"></label></div>'+
   '<label>Prix unitaire HT'+(c==='materiaux'?' (achat)':MODE==='nd'?' (vente)':'')+'<input id="vl-p" inputmode="decimal" value="'+(l.pu?String(Math.round(l.pu*10000)/10000).replace('.',','):'')+'" placeholder="0,00"></label>'+
-  '<p class="vst" style="padding:0">Total de la ligne : <b id="vl-t">'+eur((+l.quantite||0)*(+l.pu||0))+'</b>. La marge et les frais généraux s\'ajoutent comme dans le calcul de Cliky.</p></div>';
+  '<p class="vst" style="padding:0">Total de la ligne : <b id="vl-t">'+eur((+l.quantite||0)*(+l.pu||0))+'</b>. La marge et les frais généraux s\'ajoutent comme dans le calcul de Cliky.</p>'+
+  (fo!=null||MODE==='nd'||!titresGroupes().length?'':'<label>Pour quel travail<select id="vl-g">'+titresGroupes().concat(titresGroupes().indexOf(AUTRE_G)<0?[AUTRE_G]:[]).map(function(g){return '<option'+((l.groupe||AUTRE_G)===g?' selected':'')+'>'+esc(g)+'</option>'}).join('')+'</select></label>')+
+  (fo!=null?'':'<div class="vchg"><label>'+(nv?'Chercher un produit':'Changer de produit')+'<input id="vl-s" type="search" autocomplete="off" enterkeyhint="search" placeholder="'+(c==='materiaux'?'Un mot : laine, rail, ba13…':'Un mot : pose, joints, dépose…')+'" value="'+esc(nv?'':motsCle(l.libelle,c))+'"></label><div class="vsug" id="vl-sug"></div></div>')+
+  '</div>';
  var r=fo!=null?'f|'+fo:nv?'+'+c:c+'|'+i;
  ouvrir((MODE==='nd'&&nv?'Ajouter une ligne':fo!=null?'Prix du fournisseur':nv?(c==='materiaux'?'Ajouter un matériau':'Ajouter de la main-d\'œuvre'):'Modifier la ligne')+'<small>'+esc(MODE==='nd'?'Nouveau devis':k0())+'</small>',h,'<button class="vbtn" type="button" data-vretour>‹ Retour</button>'+(nv?'':'<button class="vbtn" type="button" data-vlsup="'+c+'|'+i+'">Enlever</button>')+'<button class="vbtn go" type="button" data-vlok="'+r+'">Enregistrer</button>');
  ['#vl-q','#vl-p'].forEach(function(s){$(s).addEventListener('input',function(){$('#vl-t').textContent=eur(nb($('#vl-q').value)*nb($('#vl-p').value))})});
- if(fo==null){$('#vl-l').addEventListener('input',function(){majSug(c)});majSug(c)}
+ if(fo==null){SUGEX=nv?'':l.libelle;var vs=$('#vl-s');vs.addEventListener('input',function(){vs._touche=1;majSug(c)});$('#vl-l').addEventListener('input',function(){if(!vs._touche){vs.value=nv?$('#vl-l').value:motsCle($('#vl-l').value,c);majSug(c)}});majSug(c)
+  /* la base Cliky arrive du service la 1re fois : on remet la liste à jour quand elle est là */
+  if(window.PCPROD&&PCPROD.cliky&&!(PCPROD.cliky()||[]).length)[900,2500].forEach(function(t){setTimeout(function(){if($('#vl-s')&&SUGC===c)majSug(c)},t)})}
  if(fo!=null)setTimeout(function(){try{$('#vl-p').focus()}catch(e){}},200);}
-function choisirSug(i){var b=SUG[i];if(!b)return;$('#vl-l').value=b.d;$('#vl-u').value=b.u||'u';if(b.p)$('#vl-p').value=String(b.p).replace('.',',');$('#vl-t').textContent=eur(nb($('#vl-q').value)*nb($('#vl-p').value));var z=$('#vl-sug');if(z)z.innerHTML='<small class="vsug-t">✓ Repris de votre base : vérifiez la quantité et le prix.</small>'}
+function choisirSug(i){var b=SUG[i];if(!b)return;$('#vl-l').value=b.d;$('#vl-u').value=b.u||'u';if(b.p)$('#vl-p').value=String(b.p).replace('.',',');$('#vl-t').textContent=eur(nb($('#vl-q').value)*nb($('#vl-p').value));var z=$('#vl-sug');if(z)z.innerHTML='<small class="vsug-t vsug-ok">✓ « '+esc(b.d)+' » '+(b.src==='cliky'?'repris de la base Cliky':b.src==='ici'?'repris de ce pré-devis':'repris de vos produits')+'. Vérifiez la quantité'+(b.u?' (en '+esc(b.u)+')':'')+' et le prix.</small><button type="button" class="vbtn sm vsug-new" data-vsugre>Choisir un autre produit</button>'}
 function k0(){return COUR&&COUR.contact?COUR.contact.nom:''}
 function nb(s){var n=parseFloat(String(s||'').replace(/\s/g,'').replace(',','.'));return isFinite(n)?n:0}
 function ligneVok(ref){var lib=$('#vl-l').value.trim(),q=nb($('#vl-q').value),pu=nb($('#vl-p').value);
  if(!lib){toastV('Il manque la description','Une ligne suffit.');return $('#vl-l').focus()}
  if(!(q>0)||!(pu>0)){toastV('Il manque la quantité ou le prix','Hors taxes, en euros.');return}
- var l={libelle:lib,quantite:q,unite:$('#vl-u').value.trim(),pu:pu,total:Math.round(q*pu*100)/100};
+ var l={libelle:lib,quantite:q,unite:$('#vl-u').value.trim(),pu:pu,total:Math.round(q*pu*100)/100},vg=$('#vl-g');
+ if(vg&&vg.value)l.groupe=vg.value;else if(!/^[f+]/.test(ref)){var av0=T()[ref.split('|')[0]][+ref.split('|')[1]];if(av0&&av0.groupe)l.groupe=av0.groupe}
  if(/^f\|/.test(ref)){var fo=+ref.slice(2);l.four=fo;ED.four[fo]=1;ED.materiaux.push(l)}
  else if(ref.charAt(0)==='+')T()[ref.slice(1)==='materiaux'?'materiaux':'main_oeuvre'].push(l);
  else{var c=ref.split('|')[0],i=+ref.split('|')[1],av=T()[c][i];if(av&&av.four!=null)l.four=av.four;T()[c][i]=l}
@@ -639,7 +659,7 @@ function chargerFa(){var v=$('#v-factures');if(!v)return;var z=$('#vfa');if(!z){
   function(err){z.innerHTML='<h3>Vos vraies factures</h3><p class="vst" style="padding:0">'+esc(/pas encore branché/i.test(err.message)?'Bientôt ici : vos vraies factures (branchement en cours).':err.message)+'</p>'})}
 
 /* ---------- clics ---------- */
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vnoplan],[data-vplannew],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok],[data-vcad],[data-vcadl]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc],[data-vfermer],[data-vetapes],[data-vset],[data-vretour],[data-vplan],[data-vnoplan],[data-vplannew],[data-vrefresh],[data-vout],[data-vtab],[data-vlogin],[data-vdoc],[data-vseg],[data-vlg],[data-vlok],[data-vlsup],[data-vtabd],[data-vsug],[data-vsugnew],[data-vsugre],[data-vnd],[data-vndok],[data-vrecalc],[data-vrecalcok],[data-vcad],[data-vcadl]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vc'))ouvrirDemande(b.getAttribute('data-vc'));
  else if(b.hasAttribute('data-vfermer'))fermer();
  else if(b.hasAttribute('data-vetapes'))etapes();
@@ -663,7 +683,8 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  else if(b.hasAttribute('data-vlsup'))ligneVsup(b);
  else if(b.hasAttribute('data-vtabd'))onglet(b.getAttribute('data-vtabd'));
  else if(b.hasAttribute('data-vsug'))choisirSug(+b.getAttribute('data-vsug'));
- else if(b.hasAttribute('data-vsugnew')){NOUVP=true;var sz=$('#vl-sug');if(sz)sz.innerHTML='<small class="vsug-t">✓ Nouveau produit : complétez la quantité, l\'unité et le prix. Il sera rangé dans vos produits à l\'enregistrement.</small>';var ok=$('#vov-f [data-vlok]');if(ok)ok.textContent='Enregistrer et ranger';try{$('#vl-u').focus()}catch(e){}}
+ else if(b.hasAttribute('data-vsugre')){majSug(SUGC);try{$('#vl-s').focus()}catch(e){}}
+ else if(b.hasAttribute('data-vsugnew')){NOUVP=true;var sz=$('#vl-sug');if(sz)sz.innerHTML='<small class="vsug-t vsug-ok">✓ Nouveau produit : écrivez son nom en haut, puis la quantité, l\'unité et le prix. Il sera rangé dans vos produits à l\'enregistrement.</small>';var ok=$('#vov-f [data-vlok]');if(ok)ok.textContent='Enregistrer et ranger';try{var tl=$('#vl-l');tl.focus();tl.select()}catch(e){}}
  else if(b.hasAttribute('data-vnd')){if(ND&&ND.arme){ND.arme=0;rendreND()}else nouveauDevis()}
  else if(b.hasAttribute('data-vndok'))ndOk(b);
 },true);
@@ -693,7 +714,7 @@ if(!SERVICE){if(lienDirect())setTimeout(function(){ouvrir('Espace pas encore bra
 window.PCV={nouveauDevis:function(k,t){nouveauDevis(k,t)},api:function(c,o){return SERVICE?api(c,o):Promise.reject(new Error('Service ProClik pas encore réglé.'))},ouvrirDemande:ouvrirDemande,pdf:pdfDoc,
  demandes:function(){return (LISTE&&LISTE.demandes)||[]},cour:function(){return COUR},recalc:function(){recalc()},toast:function(a,b){toastV(a,b)},
  questionsClient:function(p){var ok=lsG(vokCle(p))||[];return (p.a_verifier||[]).map(vcourt).map(function(x,i){return [x,i]}).filter(function(z){return z[0].g==='cli'&&ok.indexOf(z[1])<0}).map(function(z){return z[0].q})},artisan:function(){return lsG(KA)||{}},
- prendre:function(np){if(!ED||!COUR||!np)return;var c=function(L){return (L||[]).map(function(l){return {libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier}})};ED.materiaux=c(np.materiaux);ED.main_oeuvre=c(np.main_oeuvre);garderEd();afficher(COUR)}};
+ prendre:function(np){if(!ED||!COUR||!np)return;var c=function(L){return (L||[]).map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;return o})};ED.materiaux=c(np.materiaux);ED.main_oeuvre=c(np.main_oeuvre);garderEd();afficher(COUR)}};
 if(AP){var bd=document.createElement('div');bd.id='vapercu';bd.setAttribute('role','status');bd.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);padding:8px 8px 8px 14px;border-radius:14px;font:600 13px var(--f);display:flex;gap:10px;align-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);max-width:calc(100% - 24px)';
  bd.innerHTML='<span id="vapn" style="overflow:hidden;text-overflow:ellipsis">Aperçu (lecture seule)</span><button type="button" style="flex:none;border:0;border-radius:10px;padding:6px 10px;font:700 13px var(--f);background:rgba(255,255,255,.18);color:inherit;cursor:pointer">Quitter</button>';
  document.body.appendChild(bd);bd.querySelector('button').addEventListener('click',quitterApercu);
