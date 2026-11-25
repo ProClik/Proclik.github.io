@@ -921,7 +921,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  if(p==="sol"){const ch=/change|pas encore/.test(a.etat||"");
   if(ch&&a.revet==="Carrelage"){const f=(a.carFmt&&a.carFmt!==DKs?a.carFmt:"45 × 45").split("×").map(v=>parseFloat(v)),cw=Math.max(f[0],f[1]),chh=Math.min(f[0],f[1]);
    h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${cw}" height="${chh}"><rect width="${cw}" height="${chh}" fill="var(--tile,#E6E9EE)"/><path d="M0 0H${cw}M0 0V${chh}" stroke="var(--joint,#B9BFCB)" stroke-width="${Math.max(1.2,1.6*k)}"/></pattern>`;fill=`url(#${uid}p)`}
-  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--wood,#D9B98A)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--parq,#E2C9A0)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--parq2,#BE9866)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--parq2,#BE9866)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
   else if(ch&&/souple/.test(a.revet||""))fill="var(--soft-floor,#CFD8E6)";
   else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
   lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
@@ -929,18 +929,24 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
   lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
  h2+=`</defs>`;
- GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--wall2)" opacity=".7"/>`});
- h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--wall)"}"/>`;
+ /* Cyril 25/11 « le plan ici ne ressemble pas au vrai » : même dessin que le plan (murs bleu nuit arrondis, sol gris clair, portes, fenêtres, trappe) */
+ const WE=14,WC=7,SC=Math.max(.5,(w+2*pad)/Math.max(1,s.getBoundingClientRect().width||600)),PL=(a,b,st,sw,x="")=>`<path d="M${a[0]} ${a[1]}L${b[0]} ${b[1]}" stroke="${st}" stroke-width="${sw}" fill="none" ${x}/>`;
+ const OPS=(ext,arc)=>{let z="";GEO[lv].segs.forEach(g=>{if((g.k!=="clo")!==ext)return;const Tt=(g.k==="clo"?WC:WE)*2,dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
+  if(op.k==="fenetre"){if(arc)return;z+=PL(A1,B1,"var(--glass)",Tt)+PL(A1,B1,"var(--pwall)",Math.max(2,.7*SC));[A1,B1].forEach(R=>{z+=PL([R[0]-u[1]*Tt/2,R[1]+u[0]*Tt/2],[R[0]+u[1]*Tt/2,R[1]-u[0]*Tt/2],"var(--pwall)",Math.max(2,.7*SC))});return}
+  if(!arc){z+=PL(A1,B1,"var(--pfloor)",Tt+1);return}const n=[-u[1],u[0]],rr=op.w*.9;z+=`<path d="M${A1[0]} ${A1[1]}L${A1[0]+n[0]*rr} ${A1[1]+n[1]*rr}A${rr} ${rr} 0 0 1 ${B1[0]} ${B1[1]}" fill="none" stroke="var(--muted)" stroke-width="${Math.max(1.5,.7*SC)}" stroke-dasharray="${2.5*SC} ${2*SC}"/>`})});return z};
+ GEO[lv].segs.forEach(g=>{if(g.k!=="clo")h2+=PL(g.a,g.b,"var(--pwall)",WE*2,'stroke-linecap="round"')});h2+=OPS(true,0);
+ GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--pfloor)"/>`});
+ h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--pfloor)"}"/>`;
  if(fill)h2+=`<g clip-path="url(#${uid}c)" class="${o.still?"":"fillin"}"><rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="${fill}"/></g>`;
  if(p==="pf"){const cx=cen(r)[0],cy=y0+h*.2;h2+=`<circle cx="${cx}" cy="${cy}" r="${9*k}" fill="var(--laiton)" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${20*k}" fill="none" stroke="var(--laiton)" stroke-width="${1.4*k}" opacity=".35"/>`}
- GEO[lv].segs.forEach(g=>{h2+=`<path d="M${g.a[0]} ${g.a[1]}L${g.b[0]} ${g.b[1]}" stroke="var(--fg)" stroke-width="${g.k==="clo"?Math.max(6,7*k):Math.max(10,12*k)}" stroke-linecap="square"/>`;
-  const dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
-   h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="${op.k==="fenetre"?"var(--glass)":"var(--surface)"}" stroke-width="${Math.max(10,12*k)+1}"/>`;if(op.k==="fenetre")h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="var(--fg)" stroke-width="${Math.max(2,2*k)}"/>`})});
+ GEO[lv].segs.forEach(g=>{if(g.k==="clo")h2+=PL(g.a,g.b,"var(--pwall)",WC*2,'stroke-linecap="round"')});
+ (GEO[lv].esc||[]).forEach(e=>{h2+=`<path d="M${e.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--laiton-soft)" stroke="var(--fg)" stroke-width="${Math.max(2,.8*SC)}" stroke-dasharray="${3*SC} ${2*SC}"/>`;const c=e.pts.reduce((m,v)=>[m[0]+v[0]/e.pts.length,m[1]+v[1]/e.pts.length],[0,0]);h2+=`<text x="${c[0]}" y="${c[1]+4*SC}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="700" font-size="${11*SC}" fill="var(--fg)">${e.t}</text>`});
+ h2+=OPS(true,1)+OPS(false,0)+OPS(false,1);
  if(p==="fai"&&PC.R[q.id]){const W=PC.R[q.id],E=edges(r),on=/^Oui/.test(a.fai||"")?a.faiM||[]:[],[cx0,cy0]=cen(r);
   W.forEach((w,j)=>{const e=E[w.side];if(!e)return;const sel=on.includes(j),mx=(e[0]+e[2])/2,my=(e[1]+e[3])/2,dx=cx0-mx,dy=cy0-my,dl=Math.hypot(dx,dy)||1,ox=mx+dx/dl*26*k,oy=my+dy/dl*26*k;
    if(sel)h2+=`<line x1="${e[0]}" y1="${e[1]}" x2="${e[2]}" y2="${e[3]}" stroke="var(--laiton)" stroke-width="${Math.max(8,10*k)}" stroke-linecap="round" opacity=".9"/>`;
    if(!o.nolab)h2+=`<circle cx="${ox}" cy="${oy}" r="${12*k}" fill="${sel?"var(--laiton)":"var(--surface)"}" stroke="var(--fg)" stroke-width="${1.2*k}"/><text x="${ox}" y="${oy+4.5*k}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="800" font-size="${13*k}" fill="var(--fg)">${j+1}</text>`})}
- if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(30*k+8,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
+ if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(20*SC,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
   h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
