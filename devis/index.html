@@ -722,7 +722,9 @@ const D={
    {k:"L",t:"num",ill:"toitL",l:"Longueur de la pièce sous le toit",u:"m",st:.1,dk:1,pre:[3,4,5,6,8],h:"Mesurée au sol, dans le sens du haut du toit. Plusieurs pièces : mesurez tout l'étage.",sh:()=>!RPLAN()},
    {k:"l",t:"num",ill:i=>"toit:"+(i.forme||"")+":l",l:"Largeur de la pièce",u:"m",st:.1,dk:1,pre:[3,4,5,6],hf:i=>{const r=RSURF(i);return r?`C'est tout : ≈ ${fr(r)} m² de pente à isoler, calculés pour vous.`:"Mesurée au sol, d'un côté bas à l'autre."},sh:()=>!RPLAN()},
    {k:"ft",t:"chips",brk:1,ic:'<path d="M2.5 13.5 12 5l9.5 8.5"/><path d="M5 11.3v8.2h14v-8.2"/><path d="m13.6 7 3.4 3-1.5 1.8-3.4-3z" fill="currentColor" fill-opacity=".25"/><path d="M10 19.5v-4h4v4"/>',l:"Combien de fenêtres de toit en tout ?",lf:i=>i.forme==="1 pente"?"Combien de fenêtres dans la pente du toit ?":"Combien de fenêtres de toit en tout ?",h:"En comptant les 2 côtés du toit.",hf:i=>i.forme==="1 pente"?"Les fenêtres posées dans la pente, au-dessus de la pièce.":"En comptant les 2 côtés du toit.",o:["Aucune","1","2","3","4 ou plus",DK]},
-   {k:"ftc",t:"chips",l:"Elles sont…",h:"Sur le même côté du toit, ou réparties des deux côtés ?",o:["Toutes du même côté","Des deux côtés",DK],sh:i=>i.forme!=="1 pente"&&/^(2|3|4 ou plus)$/.test(i.ft||"")}]},
+   {k:"ftc",t:"chips",l:"Elles sont…",h:"Sur le même côté du toit, ou réparties des deux côtés ?",o:["Toutes du même côté","Des deux côtés",DK],sh:i=>i.forme!=="1 pente"&&/^(2|3|4 ou plus)$/.test(i.ft||"")},
+   /* Cyril 25/11 : on demande si les fenêtres de toit sont à changer ; « Non » = rien au chiffrage */
+   {k:"ftetat",t:"chips",l:"Faut-il changer ces fenêtres de toit ?",lf:i=>/^1$/.test(i.ft||"")?"Faut-il changer cette fenêtre de toit ?":"Faut-il changer ces fenêtres de toit ?",o:["À changer","Déjà en place",DK],ol:{"À changer":"Oui, à changer","Déjà en place":"Non, on garde"},sh:i=>/^(1|2|3|4 ou plus)$/.test(i.ft||"")}]},
  fenetres:{t:"Vos fenêtres",s:"Fenêtre par fenêtre. Mesurez à l'intérieur, d'un bord du mur à l'autre. Les cotes exactes seront reprises avant la commande.",cheer:"Bientôt la lumière",sch:"fenetre",
   g:{n:"Fenêtre",cnt:"Combien de fenêtres ?",add:"+ Ajouter une autre fenêtre",copy:1,f:[
    {k:"piece",t:"text",l:"Pièce",ph:"Ex. cuisine"},
@@ -1342,7 +1344,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
 
 // 18/11 (Cyril) : après le plan, « Vos murs, vus de face » (devis/murs.html), pré-remplis par le tracé et les réponses du logement.
 function mursOK(){const g=S.plan&&S.plan.trace&&S.plan.trace.geo;return!!(g&&g.some(f=>f.rooms&&f.rooms.length))}
-function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=16");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
+function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=17");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
 function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:Object.assign({},S.logement,{trav:S.travaux||[]})},"*")}catch(e){}}
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-murs-ready")mursLoad();  if(d.type==="proclik-murs-photo"&&d.img){/* photo prise à la fin d'une pièce (Cyril 18/11) : rangée avec les photos du chantier */if(files.photos.length<10)files.photos.push({name:(d.piece||"Pièce")+".jpg",img:d.img,file:null,tag:d.piece||null});return}
