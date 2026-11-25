@@ -1645,7 +1645,7 @@ function showInstall(){
 
 /* ---------- démarrage ---------- */
 renderList();netUI();
-(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.',function(){go('devis');open('0044')})},(window.PC_OUV_MS||0)+2100)})();
+(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();/* 25/11 (Cyril : « plus de fausses notifications ») : connecté, plus de demande d'exemple ; les vraies arrivent par notifs.js */if(document.documentElement.classList.contains('pcvrai'))return;toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.',function(){go('devis');open('0044')})},(window.PC_OUV_MS||0)+2100)})();
 })();
 </script>
 
@@ -1705,7 +1705,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 
 <script src="config.js?v=2"></script><script src="sync.js?v=7"></script>
 <script src="options.js?v=3"></script>
-<script src="profil.js?v=1"></script><script src="notifs.js?v=1"></script><script src="vrai.js?v=110"></script>
+<script src="profil.js?v=1"></script><script src="notifs.js?v=2"></script><script src="vrai.js?v=110"></script>
 <link rel="stylesheet" href="relief.css?v=18">
 <link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=14"></script>
 <link rel="stylesheet" href="planning.css?v=3">
