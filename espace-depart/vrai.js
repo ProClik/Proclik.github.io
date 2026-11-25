@@ -82,6 +82,8 @@ css.textContent=[
 'details.vcomm>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}details.vcomm>summary::-webkit-details-marker{display:none}.vred{flex:none;font:800 12px var(--f,inherit);padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--fg)}.vred::after{content:"Afficher"}details.vcomm[open] .vred::after{content:"Réduire"}',
 '.vtotc details.vd{margin-top:8px}.vtotc details.vd>summary{font-size:13px;color:var(--muted)}',
 '.vpart-h{display:grid;gap:2px;margin:0 0 6px}.vpart-h h3{margin:0}.vpart-h small{font-size:12.5px;color:var(--muted)}',
+'.vtrv-g{border-bottom:1px solid var(--line)}.vtrv-g>summary{list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 0;cursor:pointer}.vtrv-g>summary::-webkit-details-marker{display:none}.vtrv-g>summary b{font-size:15.5px}.vtrv-g>summary span{font-weight:800;font-size:15.5px;white-space:nowrap}.vtrv-g>summary i{font-style:normal;font-size:12.5px;color:var(--muted);grid-column:1/-1}.vtrv-g>summary b::before{content:"›";display:inline-block;width:14px;transition:transform .2s;opacity:.6}.vtrv-g[open]>summary b::before{transform:rotate(90deg)}',
+'.vtrv-k{margin:2px 0 2px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}.vtrv-l{display:flex;width:100%;gap:10px;align-items:baseline;text-align:left;padding:8px 0;border:0;border-top:1px dashed var(--line);background:none;color:var(--fg);font:inherit;font-size:14px;cursor:pointer}.vtrv-l>span{flex:1;min-width:0}.vtrv-l small{display:block;font-size:12px;color:var(--muted)}.vtrv-l>b{white-space:nowrap;font-size:13.5px}.vtrv-g[open]{padding-bottom:10px}.vtrv-d{display:flex;justify-content:space-between;padding:12px 0 0;font-size:14px}.vtrv-d b{font-weight:800}',
 '.vgt{margin:16px 0 4px}.vgt:first-of-type{margin-top:8px}.vgt-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 0 6px;margin:0 0 2px;border-bottom:2px solid currentColor}.vgt-h b{font-size:15.5px}.vgt-h span{font-size:13.5px;font-weight:700;opacity:.7;white-space:nowrap}',
 '.vedit{position:relative;padding-right:96px!important}.vedit .vmod{position:absolute;right:0;top:50%;transform:translateY(-50%);appearance:none;cursor:pointer;min-height:38px;font:800 12.5px var(--f,inherit);padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--accx,var(--fg))}.vedit.fige{padding-right:0!important}',
 '.vedit .x{margin-right:0}.vli.vv.vedit{padding-right:92px!important}',
@@ -359,9 +361,26 @@ function totauxEd(p,E){E=E||ED;var t=p.totaux||{},s=function(L){return L.reduce(
  var sm=s(E.materiaux),so=s(E.main_oeuvre),mg=sm*tm,b=sm+mg+so+(t.deplacement||0),fg=b*tf,r=function(x){return Math.round(x*100)/100};
  return {materiaux:r(sm),marge:r(mg),main_oeuvre:r(so),deplacement:t.deplacement||0,frais_generaux:r(fg),total_ht:r(b+fg)}}
 /* Une partie du pré-devis : on voit tout de suite que chaque ligne se modifie, et chaque partie a son « + Ajouter » */
+/* Résumé par travaux (Cyril 25/11) : pour chaque travail, la fourniture ET la pose ensemble, au prix HT pour le client
+   (marge et frais généraux compris, comme le total). Le déplacement reste à part. Toucher une ligne = la modifier. */
+function travauxHTML(p){if(!ED)return '';var L=[];['materiaux','main_oeuvre'].forEach(function(c){ED[c].forEach(function(l,i){L.push({l:l,c:c,i:i})})});
+ if(!L.some(function(x){return x.l.groupe}))return '';
+ var t=p.totaux||{},s=function(A){return A.reduce(function(a,l){return a+(+l.total||0)},0)},sm0=s(p.materiaux),so0=s(p.main_oeuvre),tm=sm0>0&&t.marge?t.marge/sm0:0,b0=sm0*(1+tm)+so0+(t.deplacement||0),tf=b0>0&&t.frais_generaux?t.frais_generaux/b0:0;
+ var vente=function(x){return (+x.l.total||0)*(x.c==='materiaux'?1+tm:1)*(1+tf)},G=[],M={};
+ L.forEach(function(x){var g=x.l.groupe||AUTRE_G;if(!M[g]){M[g]={t:g,L:[],v:0};G.push(M[g])}M[g].L.push(x);M[g].v+=vente(x)});
+ var rg=function(g){var k=ORDRE_G.indexOf(g.t);return g.t===AUTRE_G?999:k<0?500:k};G.sort(function(a,b){return rg(a)-rg(b)});
+ var dep=(t.deplacement||0)*(1+tf),r=function(n){return Math.round(n*100)/100};
+ return '<div class="card vsec vtrv"><div class="vpart-h"><h3>Par travaux</h3><small>fourniture et pose ensemble · prix HT pour le client, marge et frais généraux compris · touchez une ligne pour la changer</small></div>'+
+  G.map(function(g){var f=g.L.filter(function(x){return x.c==='materiaux'}),po=g.L.filter(function(x){return x.c!=='materiaux'});
+   var li=function(x){return '<button type="button" class="vtrv-l" data-vlg="'+x.c+'|'+x.i+'"><span>'+esc(x.l.libelle)+'<small>'+qte(x.l.quantite)+' '+esc(x.l.unite||'')+(x.l.a_verifier?' · ⚠ à vérifier':'')+'</small></span><b>'+eur(r(vente(x)))+'</b></button>'};
+   return '<details class="vtrv-g"><summary><b>'+esc(g.t)+'</b><span>'+eur(r(g.v))+'</span><i>'+(f.length?f.length+' produit'+(f.length>1?'s':''):'')+(f.length&&po.length?' · ':'')+(po.length?'pose':'')+'</i></summary>'+
+    (f.length?'<p class="vtrv-k">Fourniture</p>'+f.map(li).join(''):'')+(po.length?'<p class="vtrv-k">Pose</p>'+po.map(li).join(''):'')+'</details>'}).join('')+
+  (dep>0?'<div class="vtrv-d"><span>Déplacement</span><b>'+eur(r(dep))+'</b></div>':'')+'</div>'}
 /* Rangé par travaux (Cyril 25/11) : un titre par travail (Isolation des rampants, Doublage, Fenêtres…) avec son sous-total.
    Le titre vient du calcul (note « — Travail — ») ; une ligne ajoutée à la main va dans le travail choisi. */
 var AUTRE_G='Autres travaux';
+/* même ordre que le calcul (proclik-cliky calcul/groupes.js) */
+var ORDRE_G=['Isolation des rampants','Isolation des combles',"Trappe d'accès",'Doublage et isolation des murs','Cloisons','Plafonds','Caissons, retombées et habillages','Fenêtres','Fenêtres de toit','Portes','Verrières','Escaliers et trémies','Sols','Plinthes','Électricité, plomberie et équipements','Bandes, enduit et vis (toutes les plaques)','Protection, nettoyage et évacuation'];
 function groupes(L){var G=[],M={};L.forEach(function(l,i){var g=l.groupe||AUTRE_G;if(!M[g]){M[g]={t:g,L:[],s:0};G.push(M[g])}M[g].L.push([l,i]);M[g].s+=+l.total||0});
  var a=G.filter(function(g){return g.t===AUTRE_G});return G.filter(function(g){return g.t!==AUTRE_G}).concat(a)}
 function titresGroupes(){if(!ED)return [];var v={},o=[];['materiaux','main_oeuvre'].forEach(function(c){(ED[c]||[]).forEach(function(l){if(l.groupe&&!v[l.groupe]){v[l.groupe]=1;o.push(l.groupe)}})});return o}
@@ -442,7 +461,7 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
  else{ED=edition(p);var t=totauxEd(p);
   dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+controleHTML(p)+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
-   cadHTML(p)+recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+
+   travauxHTML(p)+cadHTML(p)+recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+
    (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
   mat=listeMatHTML(p)+lignesEd('materiaux','Matériaux · '+eur(t.materiaux),'prix d\'achat HT · touchez « Modifier » pour changer une ligne','Ajouter un matériau')+raz;
