@@ -130,7 +130,7 @@ function rendu(){
 }
 /* Frais par jour de chantier (Cyril 25/11) : repas, carburant… × jours de pose estimés = « marge réelle estimée » du pré-devis.
    Simple estimation, vide par défaut (aucun chiffre inventé), gardée sur cet appareil. */
-var FJK=[['repas','Repas','par personne et par jour de travail'],['carbu','Carburant, trajet','par jour de chantier, aller-retour'],['autres','Autres frais','par jour de chantier : péage, parking…']];
+var FJK=[['repas','Repas','par personne et par jour de travail'],['carbu','Carburant, trajet','par jour de chantier, si Cliky ne peut pas le calculer (adresse ou véhicule manquant)'],['autres','Autres frais','par jour de chantier : péage, parking…']];
 function fraisJour(){var f=lsG('pc-frais-jour',{})||{},o={total:0};FJK.forEach(function(k){var v=+f[k[0]]||0;o[k[0]]=v;o.total+=v});o.total=Math.round(o.total*100)/100;o.equipe=Math.max(1,Math.round(+f.equipe||1));o.salarie=+f.salarie||0;return o}
 var eu=function(v){return (Math.round(v*100)/100).toFixed(2).replace('.',',').replace(/,00$/,'')+' €'};
 function champ(k,t,sm,v,u){return '<label class="hb-fl"><span><b>'+t+'</b><small>'+sm+'</small></span><span class="hb-fi"><input type="text" inputmode="'+(u?'decimal':'numeric')+'" data-fj="'+k+'" value="'+(v?String(v).replace('.',','):'')+'" placeholder="'+(u?'0':'1')+'">'+(u?' €':' <i>pers.</i>')+'</span></label>'}

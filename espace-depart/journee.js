@@ -532,5 +532,17 @@ function entreesMenu(){var nav=$('nav.nav');if(!nav)return false;var ch=false;
  return ch}
 entreesMenu();
 function majMenu(){if(entreesMenu()&&window.PCBarre&&PCBarre.applique)PCBarre.applique()}
-window.PCJR={aide:function(){return REG.apprend!==false},joursPose:joursPose,cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+/* Carburant du pré-devis (Cyril 25/11) : vrai trajet dépôt → adresse du client (Google Routes, gardé), véhicule de « Mes véhicules »
+   (celui de l'artisan d'abord), prix du jour à la pompe. Aller-retour × consommation × prix = carburant par jour de chantier.
+   Rien de prêt (pas d'adresse, de véhicule ou de trajet) : null, et le pré-devis garde la case « Carburant » de Mes habitudes. */
+function carbChantier(adr){adr=String(adr||'').trim();if(!adr)return null;
+ var V=VEHS().filter(vehPret),v=V.filter(function(x){return (x.ass||[]).indexOf('moi')>=0})[0]||V[0];if(!v)return null;
+ var de=depart(),k=(de+'|'+adr).toLowerCase(),R=ROUTES[k];
+ if(!R){if(!enCours[k]&&window.PCV&&PCV.api&&document.documentElement.classList.contains('pcvrai')){enCours[k]=1;
+   PCV.api('/espace/trajet?de='+encodeURIComponent(de)+'&a='+encodeURIComponent(adr)).then(function(x){if(x&&x.km>0){ROUTES[k]={km:x.km,min:x.min};lset('pc-routes',ROUTES);try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}}},function(){})}
+  return null}
+ var P=null,sync=true;prixCarb(v,function(p){P=p;if(!sync&&p){try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}}});sync=false;if(!P)return null;
+ var km=Math.round(R.km),q=Math.round(km*2*v.conso/100*100)/100;
+ return {km:km,veh:v.nom||carbNom(v.type),conso:v.conso,u:uniteV(v),q:q,prix:P.prix,src:P.src,eur:Math.round(q*P.prix*100)/100}}
+window.PCJR={carbChantier:carbChantier,aide:function(){return REG.apprend!==false},joursPose:joursPose,cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
