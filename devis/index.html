@@ -49,9 +49,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16
 
 .brand small{display:block;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.02em}
 .demo-badge[hidden]{display:none}
-.demo-badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);padding:4px 8px;border-radius:999px}
-.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden}
-.progress b{display:block;height:100%;background:var(--mint);border-radius:999px;transition:width .35s ease}
+.demo-badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);padding:4px 8px;border-radius:28px}
+.progress{height:6px;background:var(--line);border-radius:28px;overflow:hidden}
+.progress b{display:block;height:100%;background:var(--mint);border-radius:28px;transition:width .35s ease}
 .step-meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);padding-block:8px 4px;font-variant-numeric:tabular-nums}
 .cheer{color:var(--mint-ink);font-weight:700}
 h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,34px);line-height:1.15;letter-spacing:-.02em;margin:14px 0 6px;text-wrap:balance}
@@ -61,7 +61,7 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,34px);l
 .hint{font-size:13px;color:var(--muted);margin:-2px 0 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .q:has(> .geo){position:relative}.geo{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--bg);border-radius:16px;box-shadow:var(--up-s),0 14px 30px rgba(14,19,34,.18);padding:6px;max-height:300px;overflow:auto;animation:geoIn .25s ease}.geo:empty{display:none}@keyframes geoIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.geo.up{top:auto;bottom:calc(100% + 6px);animation-name:geoUp}@keyframes geoUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.geo .gh{font-size:12px;color:var(--muted);margin:4px 10px 6px}html body .geo button.gi{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:10px 12px;border:0;border-radius:12px;background:transparent;box-shadow:none;color:var(--fg);font:inherit;font-weight:600;font-size:16px;text-align:left;cursor:pointer}html body .geo button.gi+button.gi{border-top:1px solid var(--line);border-radius:0 0 12px 12px}html body .geo button.gi:hover,html body .geo button.gi:focus-visible{background:var(--line)}html body .geo button.gi:active{box-shadow:var(--in)}.geo .gi small{color:var(--muted);font-weight:500;font-size:14px}
-.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:600 15px/1.2 var(--f-body);padding:11px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:600 15px/1.2 var(--f-body);padding:11px 14px;border-radius:28px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
 .chip:hover{border-color:var(--mint)}
 .chip:active{transform:scale(.97)}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -94,7 +94,7 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .item{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:16px;margin-block:12px;box-shadow:var(--shadow)}
 .item-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .item-h h3{margin:0;font-size:17px;font-weight:800}
-.badge{font-size:13px;font-weight:700;color:var(--mint-ink);background:var(--soft);padding:4px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.badge{font-size:13px;font-weight:700;color:var(--mint-ink);background:var(--soft);padding:4px 10px;border-radius:28px;font-variant-numeric:tabular-nums}
 .del{appearance:none;border:0;background:transparent;color:var(--muted);font:600 13px var(--f-body);cursor:pointer;text-decoration:underline}
 .add{appearance:none;width:100%;border:1.5px dashed var(--mint-ink);background:transparent;color:var(--mint-ink);font:700 15px var(--f-body);border-radius:var(--r);padding:14px;cursor:pointer}
 .add:hover{background:var(--soft)}
@@ -116,11 +116,11 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .lq .chip .ci{width:1.6em;height:1.6em;vertical-align:-.45em;margin-right:.7em}.lq .chip .ci.sw{width:1.3em;height:1.3em}
 .item.mini{appearance:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;font:inherit;color:var(--fg);padding:12px 16px;margin-block:8px;cursor:pointer}.item.mini .mi-t{font-weight:800;font-size:15px}.item.mini.ok .mi-t{color:var(--mint-ink)}.item.mini .mi-s{grid-column:1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item.mini .mi-m{grid-column:2;grid-row:1/3;align-self:center;font-size:13px;font-weight:700;color:var(--mint-ink)}
 .q.miss{position:relative;border-radius:18px;box-shadow:0 0 0 2px var(--mint),0 0 0 6px color-mix(in srgb,var(--mint) 18%,transparent);padding:10px 12px;margin-inline:-12px}
-.q.miss>.lab::after,.q.miss>label::after{content:"À répondre";margin-left:8px;font-size:12px;font-weight:800;color:var(--mint-ink);background:color-mix(in srgb,var(--mint) 16%,transparent);padding:2px 8px;border-radius:999px;vertical-align:2px;white-space:nowrap;display:inline-block}
+.q.miss>.lab::after,.q.miss>label::after{content:"À répondre";margin-left:8px;font-size:12px;font-weight:800;color:var(--mint-ink);background:color-mix(in srgb,var(--mint) 16%,transparent);padding:2px 8px;border-radius:28px;vertical-align:2px;white-space:nowrap;display:inline-block}
 .q.miss-a{animation:missA .5s ease}@keyframes missA{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 @media (prefers-reduced-motion:reduce){.q.miss-a{animation:none}}
 .iok{width:100%;margin-top:14px}.cnt.cmini{display:flex;align-items:center;justify-content:space-between;gap:10px}.cnt.cmini b{font-size:17px;color:var(--mint-ink);margin-left:4px}
-.qph{margin-top:16px;display:grid;gap:8px}.phb{position:relative;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:9px 16px 9px 12px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.12));color:var(--fg);font-weight:700;font-size:14px;cursor:pointer}.phb svg{color:var(--mint-ink);flex:none}.phb span{display:grid;line-height:1.2}.phb small{font-weight:500;font-size:12px;color:var(--muted)}.phb input{position:absolute;opacity:0;width:1px;height:1px}.qph .thumbs img{width:56px;height:56px}.qph .thumbs figure{width:56px}
+.qph{margin-top:16px;display:grid;gap:8px}.phb{position:relative;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:9px 16px 9px 12px;border-radius:28px;background:var(--bg);box-shadow:var(--up-s,0 1px 3px rgba(0,0,0,.12));color:var(--fg);font-weight:700;font-size:14px;cursor:pointer}.phb svg{color:var(--mint-ink);flex:none}.phb span{display:grid;line-height:1.2}.phb small{font-weight:500;font-size:12px;color:var(--muted)}.phb input{position:absolute;opacity:0;width:1px;height:1px}.qph .thumbs img{width:56px;height:56px}.qph .thumbs figure{width:56px}
 .thumbs figure{margin:0;width:76px;display:grid;gap:4px}
 .thumbs img,.thumbs .pdf{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--muted);background:var(--surface)}
 .thumbs figcaption{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -133,7 +133,7 @@ input:focus,textarea:focus,.chip:focus-visible,.card:focus-visible,button:focus-
 .nav{position:fixed;left:0;right:0;bottom:var(--vb,0px);transition:bottom .15s;background:var(--surface);border-top:1px solid var(--line);
   padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
 .nav .wrap{display:flex;gap:10px;justify-content:space-between;align-items:center}
-.btn{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px 22px;cursor:pointer;transition:transform .1s}
+.btn{appearance:none;border:0;border-radius:28px;font:800 16px var(--f-body);padding:14px 22px;cursor:pointer;transition:transform .1s}
 .btn:active{transform:scale(.97)}
 .btn.go{background:var(--ink);color:#fff;flex:1;max-width:340px;margin-left:auto}
 :root[data-theme="dark"] .btn.go{background:var(--mint);color:var(--ink)}
@@ -179,7 +179,7 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 .mcard b{font-size:17px;line-height:1.25}
 .mcard>span{font-size:14px;color:var(--muted)}.mcard>span.mwarn{color:var(--ink,#1B2440);font-weight:600;font-size:13.5px;border-top:1px solid rgba(27,36,64,.12);padding-top:8px;margin-top:2px}
 .mcard ul{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:2px}
-.mcard .rb{position:absolute;top:-12px;left:14px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px}
+.mcard .rb{position:absolute;top:-12px;left:14px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:800;padding:3px 10px;border-radius:28px}
 .mcard svg.mini{width:100%;height:auto;max-height:130px}
 .mcard b{display:flex;align-items:center;gap:8px}.mcard svg.mic{width:26px;height:26px;flex:none;color:#A8823F}
 :root[data-theme="dark"] .mcard svg.mic{color:#D4B483}
@@ -215,8 +215,8 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 .pview{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:10px;display:grid;gap:8px}
 .pview svg{display:block;width:100%;height:auto;color:var(--fg)}
 .pview g[data-pjmp]{cursor:pointer}
-.ptabs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;justify-self:start}
-.ptabs button{appearance:none;border:0;background:transparent;font:800 13px var(--f-body);padding:7px 14px;border-radius:999px;cursor:pointer;color:var(--fg)}
+.ptabs{display:inline-flex;border:1px solid var(--line);border-radius:28px;padding:3px;gap:2px;justify-self:start}
+.ptabs button{appearance:none;border:0;background:transparent;font:800 13px var(--f-body);padding:7px 14px;border-radius:28px;cursor:pointer;color:var(--fg)}
 .ptabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
 :root[data-theme="dark"] .ptabs button[aria-pressed="true"]{background:var(--mint);color:var(--ink)}
 .lq .q>.lab,.lq .q>label{font-size:19px;font-weight:800;margin-bottom:4px}.lq .q{margin-top:6px}
@@ -225,12 +225,12 @@ pre{overflow-x:auto;background:var(--surface);border:1px solid var(--line);borde
 #mursfull{position:fixed;inset:0;z-index:61;background:var(--bg)}#mursfull[hidden]{display:none}#mursfull iframe{width:100%;height:100%;border:0;display:block}
 .pf-bar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
 .pf-t{flex:1;min-width:0}.pf-t b{display:block;font-size:17px}.pf-t small{color:var(--muted);font-size:13px}
-@media (max-width:480px){#pf-sub{display:none}.pf-t{display:none}#pf-form{margin-left:0}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-form{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1.5px solid #A8823F;border-radius:999px;background:transparent;color:var(--fg);font:700 14px/1.1 var(--f-body);padding:6px 14px 6px 10px;min-height:44px;cursor:pointer;margin-left:auto;white-space:nowrap;text-align:left}#pf-form svg{color:#A8823F;flex:none}#pf-form .pff{display:flex;flex-direction:column}#pf-form small{font-size:11px;font-weight:600;color:var(--muted);line-height:1.15}@media (max-width:480px){html body #pf-done{white-space:nowrap;font-size:15px;padding-left:14px;padding-right:50px}html body #pf-done::after{width:32px;height:32px;margin-top:-16px}}@media (max-width:370px){.pf-bar{gap:6px}html body #pf-later{padding:10px 9px}html body #pf-done{font-size:14px;padding-left:12px;padding-right:44px}#pf-form{gap:5px;padding:5px 10px 5px 8px}#pf-form svg{width:17px;height:17px}}#pf-form+#pf-later{margin-left:0}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}@keyframes pcOnde{0%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:var(--rs,0 0 #0000),0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,0)}}
+@media (max-width:480px){#pf-sub{display:none}.pf-t{display:none}#pf-form{margin-left:0}#pf-later span{display:none}.pf-t b{white-space:nowrap}}#pf-form{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1.5px solid #A8823F;border-radius:28px;background:transparent;color:var(--fg);font:700 14px/1.1 var(--f-body);padding:6px 14px 6px 10px;min-height:44px;cursor:pointer;margin-left:auto;white-space:nowrap;text-align:left}#pf-form svg{color:#A8823F;flex:none}#pf-form .pff{display:flex;flex-direction:column}#pf-form small{font-size:11px;font-weight:600;color:var(--muted);line-height:1.15}@media (max-width:480px){html body #pf-done{white-space:nowrap;font-size:15px;padding-left:14px;padding-right:50px}html body #pf-done::after{width:32px;height:32px;margin-top:-16px}}@media (max-width:370px){.pf-bar{gap:6px}html body #pf-later{padding:10px 9px}html body #pf-done{font-size:14px;padding-left:12px;padding-right:44px}#pf-form{gap:5px;padding:5px 10px 5px 8px}#pf-form svg{width:17px;height:17px}}#pf-form+#pf-later{margin-left:0}#pf-later{appearance:none;border:1.5px solid var(--line);border-radius:28px;background:transparent;color:var(--fg);font:700 14px var(--f-body);padding:10px 12px;cursor:pointer;margin-left:auto}@keyframes pcOnde{0%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,.6)}70%{box-shadow:var(--rs,0 0 #0000),0 0 0 12px rgba(168,130,63,0)}100%{box-shadow:var(--rs,0 0 #0000),0 0 0 0 rgba(168,130,63,0)}}
 /* L'onde guide le client : bouton principal de chaque écran, et « J'ai terminé » quand le plan est fini. */
 .btn.go:not([disabled]),.bigbtn,.bc-ok,#pf-done.fin{animation:pcOnde 1.8s ease-out infinite}.bigbtn.fait{animation:none!important}
 /* l'onde garde le relief du bouton (Cyril 11/11 : « Continuer » perdait son bouton) */
 .btn.go,.bigbtn,#pf-done{--rs:var(--up)}.bc-ok{--rs:var(--up-s)}
-#pf-done:not(.fin){display:none!important} #pf-done{appearance:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
+#pf-done:not(.fin){display:none!important} #pf-done{appearance:none;border:0;border-radius:28px;background:var(--ink);color:#fff;font:800 16px var(--f-body);padding:12px 18px;cursor:pointer}
 :root[data-theme="dark"] #pf-done{background:var(--mint);color:var(--ink)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pf-done{background:var(--mint);color:var(--ink)}}
 #planfull iframe{flex:1 1 0;width:100%;border:0;display:block;min-height:0}
@@ -264,7 +264,7 @@ html body #planfull #pf-done::after,html body #planfull #pf-done::before{display
 /* Cyril 19/11 : aperçu du plan au style ProClik (murs bleu nuit doux arrondis, niveau en pastille comme dans le plan) */
 .pcardp .pfl{display:grid;gap:8px;justify-items:start;background:var(--bg);border-radius:16px;padding:12px;box-shadow:var(--in)}
 .pcardp .pfl svg{max-height:min(26vh,200px);justify-self:center;filter:drop-shadow(0 2px 4px rgba(14,19,34,.10))}
-.pcardp .pfl-n{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:800 13px var(--f-body)}
+.pcardp .pfl-n{display:inline-block;padding:4px 12px;border-radius:28px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:800 13px var(--f-body)}
 .pempty{display:grid;place-items:center;text-align:center;gap:6px;padding:18px 8px;color:var(--muted);font-size:14px}
 .bigbtn{appearance:none;border:0;border-radius:16px;background:var(--hot,#E8590C);color:#fff;font:800 19px var(--f-body);padding:18px;cursor:pointer;width:100%}
 .howto{display:grid;gap:8px;margin:2px 0 0;padding:0;list-style:none}
@@ -276,7 +276,7 @@ html body #planfull #pf-done::after,html body #planfull #pf-done::before{display
 .bigconf[hidden]{display:none}
 .bc-in{background:var(--surface);color:var(--fg);border:2px solid #E5484D;border-radius:22px;padding:22px 20px;max-width:420px;width:100%;display:grid;gap:10px;text-align:center}
 .bc-ic{font-size:40px;line-height:1}.bc-in h2{margin:0;font-size:21px;font-weight:800}.bc-in p{margin:0;color:var(--muted);font-size:15px}
-.bc-b{display:grid;gap:8px;margin-top:6px}.bc-b button{appearance:none;border:0;border-radius:999px;font:800 16px var(--f-body);padding:14px;cursor:pointer}
+.bc-b{display:grid;gap:8px;margin-top:6px}.bc-b button{appearance:none;border:0;border-radius:28px;font:800 16px var(--f-body);padding:14px;cursor:pointer}
 .bc-ok{background:#E5484D;color:#fff}.bigconf.soft .bc-in{border-color:var(--mint)}.bigconf.soft .bc-ok{background:var(--mint);color:var(--ink)}.bc-no{background:var(--bg);color:var(--fg);border:1.5px solid var(--line)!important}
 #planhost{margin-top:4px}
 #planhost[hidden]{display:none}
@@ -310,17 +310,17 @@ body.planmode .nav{position:static;border-top:0;background:transparent;padding-i
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 .hero9{border-radius:20px;background:var(--surface,#fff);box-shadow:var(--up-s,0 2px 8px rgba(27,36,64,.1));padding:14px 14px 12px;margin-bottom:12px;display:grid;gap:8px;text-align:center}
 .hero9>b{font-size:19px;font-weight:800;line-height:1.25}.hero9 .hplan{display:flex;gap:10px;justify-content:center;align-items:flex-end}.hero9 .hplan>div{flex:1 1 0;min-width:0;max-width:340px}.hero9 .hplan p{font-size:12px!important;color:var(--muted)}.hero9 .hplan svg{height:150px;width:100%;max-width:100%}@media (max-width:600px),(max-height:520px){.hero9{padding:10px 10px 9px;gap:6px}.hero9>b{font-size:17px}.hero9 .hplan svg{height:80px}.hero9 .htiles{gap:4px}.hero9 .htiles span{padding:3px 9px;font-size:12px}.hero9 .htiles i{font-size:13.5px}.hero9 p{font-size:13px}}
-.hero9 .htiles{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}.hero9 .htiles span{display:inline-flex;align-items:baseline;gap:5px;background:var(--bg,#EEF0F5);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;color:var(--muted,#5B6478)}.hero9 .htiles i{font-style:normal;font-weight:800;color:var(--fg,#1B2440);font-size:15px}
+.hero9 .htiles{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}.hero9 .htiles span{display:inline-flex;align-items:baseline;gap:5px;background:var(--bg,#EEF0F5);border-radius:28px;padding:5px 11px;font-size:13px;font-weight:700;color:var(--muted,#5B6478)}.hero9 .htiles i{font-style:normal;font-weight:800;color:var(--fg,#1B2440);font-size:15px}
 .hero9 p{margin:0;font-weight:700;color:var(--fg,#1B2440);font-size:14px}
 html body .chips.pics{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media (max-width:600px){html body .chips.pics{gap:6px}html body .chips.pics .chip.pic{padding:4px!important;border-radius:16px}}html body .chips.pics .chip.dk{grid-column:1/-1}html body .chips.pics .chip.pic{display:block!important;width:auto!important;max-width:none!important;padding:10px!important;border-radius:22px;min-height:0!important;height:auto!important;flex:none}html body .chips.pics .chip.pic svg{display:block!important;width:100%!important;height:auto!important;max-height:min(22vh,190px);margin:0 auto!important;color:var(--fg)}
 
 
 /* poignée « Glissez vers le haut » (iPhone Safari) : la page devient un peu plus haute que l'écran pour que Safari range ses barres */
 html.pfsc-top body{min-height:calc(100lvh + 200px)!important;overflow:visible!important}
-#pf-swipe{position:absolute;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:700 13.5px/1.2 var(--f-body);box-shadow:0 6px 18px rgba(14,19,34,.25);white-space:nowrap;touch-action:pan-y;animation:pfSw 1.6s ease-in-out infinite}
+#pf-swipe{position:absolute;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:28px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:700 13.5px/1.2 var(--f-body);box-shadow:0 6px 18px rgba(14,19,34,.25);white-space:nowrap;touch-action:pan-y;animation:pfSw 1.6s ease-in-out infinite}
 #pf-swipe[hidden]{display:none}
 /* Cyril 19/11 : iPad / tablette, bouton pour cacher les barres du navigateur si le plein écran n'a pas pu se lancer tout seul */
-#pf-fs{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:25;display:flex;align-items:center;gap:8px;padding:11px 16px;border:0;border-radius:999px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:700 14px/1.2 var(--f-body);box-shadow:0 6px 18px rgba(27,36,64,.28);cursor:pointer}
+#pf-fs{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:25;display:flex;align-items:center;gap:8px;padding:11px 16px;border:0;border-radius:28px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:700 14px/1.2 var(--f-body);box-shadow:0 6px 18px rgba(27,36,64,.28);cursor:pointer}
 #pf-fs[hidden]{display:none}
 @keyframes pfSw{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-5px)}}
 @media (prefers-reduced-motion:reduce){#pf-swipe{animation:none}}
@@ -335,7 +335,7 @@ html body #pf-form,html body #pf-later{display:none!important}
 @media (orientation:landscape) and (max-height:520px){#planfull .pf-bar:not(:has(#pf-done.fin)){display:none}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="relief.css?v=7">
-<link rel="stylesheet" href="espace2.css?v=17">
+<link rel="stylesheet" href="espace2.css?v=18">
 <style>@media (max-width:600px),(orientation:landscape) and (max-height:520px){html body.grow #app section .q:not(.cnt) .chips .chip:not(.dk){min-height:var(--ch);display:flex;align-items:center}html body.grow #app section .chips .chip.dk{display:flex;align-items:center;justify-content:center}}</style>
 <style>
 /* Téléphone : chaque écran tient sur l'écran, sans défiler (Cyril 11/11) */
@@ -398,7 +398,7 @@ html body.intro{min-height:100dvh;display:flex;flex-direction:column;padding-bot
 @keyframes fil7o{0%{opacity:.6;transform:scale(.92)}100%{opacity:0;transform:scale(1.25)}}
 .n7{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.fil7 .on .n7{color:var(--mint-ink)}
 .fil7 b{font-size:16.5px;line-height:1.25}
-.pt7{font-size:12.5px;font-weight:800;color:var(--mint-ink);padding:3px 10px;border-radius:999px;box-shadow:inset 2px 2px 4px var(--ilo,rgba(0,0,0,.1)),inset -2px -2px 4px var(--ihi,#fff)}
+.pt7{font-size:12.5px;font-weight:800;color:var(--mint-ink);padding:3px 10px;border-radius:28px;box-shadow:inset 2px 2px 4px var(--ilo,rgba(0,0,0,.1)),inset -2px -2px 4px var(--ihi,#fff)}
 .carte7{width:100%;max-width:500px;display:grid;gap:12px;padding:clamp(16px,2.4vh,24px);border-radius:26px;background:var(--bg);box-shadow:var(--up);text-align:left;animation:fil7m .6s .7s both}
 .carte7 input{width:100%}.carte7 .btn.go{width:100%;max-width:none;margin:0}
 .mini7{display:flex;justify-content:center;align-items:center;gap:6px 16px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}.mini7 span{display:flex;gap:5px;align-items:center}.mini7 svg{color:var(--mint)}
@@ -933,7 +933,7 @@ function planCard(){const n=nPieces(),sv=planSVG(),surf=tPieces().reduce((a,p)=>
  <button type="button" class="bigbtn${n?" fait":""}" data-openplan="1">${n?"Modifier mon plan":"Dessiner mon plan"}</button>
  ${n?"":`<ul class="howto"><li><i>1</i>Mesurez l'intérieur du logement, d'un mur extérieur à l'autre</li><li><i>2</i>« Cloison » pour séparer les pièces, « Pièce » pour en ajouter une</li><li><i>3</i>« Fenêtre », « Porte » : touchez le mur, c'est posé</li><li><i>4</i>« Travaux » : touchez les murs à refaire</li></ul>`}</div>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#pf-rot-x")){document.getElementById("planfull").classList.add("rotok");try{sessionStorage.setItem("pk-rotok","1")}catch(_){}}});
-function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");/* Cyril 25/11 : plus de saccade en ouvrant le plan : il reste caché le temps que le plein écran et la mise en page se posent, puis apparaît en fondu */pf.classList.add("pfin");{let k=0;const shw=()=>{if(k++)return;document.removeEventListener("fullscreenchange",fsc);document.removeEventListener("webkitfullscreenchange",fsc);requestAnimationFrame(()=>requestAnimationFrame(()=>pf.classList.remove("pfin")))},fsc=()=>setTimeout(shw,280);document.addEventListener("fullscreenchange",fsc);document.addEventListener("webkitfullscreenchange",fsc);setTimeout(shw,fsOk()&&!fsOn()?900:350)}if(fsOk()&&!fsOn())fsGo();if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=93");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;setTimeout(fsUpd,500);if(pfSc()){document.documentElement.classList.add("pfsc");if(window.top===window)document.documentElement.classList.add("pfsc-top");else document.body.style.overflow="hidden";pfScUpd.h0=innerHeight;pfScUpd.y=0;pfScUpd()}else document.body.style.overflow="hidden";updSub()}
+function openPlan(){const pf=document.getElementById("planfull"),fr_=document.getElementById("pframe");/* Cyril 25/11 : plus de saccade en ouvrant le plan : il reste caché le temps que le plein écran et la mise en page se posent, puis apparaît en fondu */pf.classList.add("pfin");{let k=0;const shw=()=>{if(k++)return;document.removeEventListener("fullscreenchange",fsc);document.removeEventListener("webkitfullscreenchange",fsc);requestAnimationFrame(()=>requestAnimationFrame(()=>pf.classList.remove("pfin")))},fsc=()=>setTimeout(shw,280);document.addEventListener("fullscreenchange",fsc);document.addEventListener("webkitfullscreenchange",fsc);setTimeout(shw,fsOk()&&!fsOn()?900:350)}if(fsOk()&&!fsOn())fsGo();if(!fr_.getAttribute("src"))fr_.setAttribute("src","plan.html?embed=1&client=1&leger=1&murs=1&v=95");try{if(sessionStorage.getItem("pk-rotok"))pf.classList.add("rotok")}catch(_){}pf.hidden=false;setTimeout(fsUpd,500);if(pfSc()){document.documentElement.classList.add("pfsc");if(window.top===window)document.documentElement.classList.add("pfsc-top");else document.body.style.overflow="hidden";pfScUpd.h0=innerHeight;pfScUpd.y=0;pfScUpd()}else document.body.style.overflow="hidden";updSub()}
 /* Cyril 19/11 : sur iPhone (Safari, page ouverte directement), les barres de Safari se rétrécissent quand on fait glisser la page.
    Le plan garde ses gestes ; une petite poignée en bas sert à faire glisser la page. Dans un cadre (site de l'artisan) Safari ne le permet pas. */
 /* Dans le cadre de la page GHL : le glisser sur la poignée passe à la page GHL (qui doit être un peu plus haute que l'écran, voir le bloc GHL v2) ;
@@ -1309,7 +1309,7 @@ function validate(){const e=(m,k)=>{document.getElementById("err").textContent=m
 function fitBlocks(){const sec=document.querySelector("#app>section");if(!sec)return[];return[...sec.children].flatMap(e=>e.classList.contains("recap")||(e.classList.contains("item")&&!e.classList.contains("mini"))?[...e.children]:[e]).filter(e=>!e.matches("h1,.tete9,.sub,.err,.hp,.qph,.iok"))}
 // Petit écran : si une page déborde encore, on resserre les choix (classe tight) et on refait la mise en page.
 const SM=()=>innerWidth<=600||(innerHeight<=520&&innerWidth>innerHeight);
-function fitItem(){const b=document.body;b.classList.remove("iq1","iq2","iq3","iq4","iq5");if(!iqKey())return;const nav=document.querySelector(".nav"),
+function fitItem(){const b=document.body;/* Cyril 25/11 : saccades au toucher d'une réponse → on ne refait le calcul que si l'écran a vraiment changé (autre question, autres réponses affichées, autre taille d'écran) */const kk=cur+"|"+iqKey()+"|"+innerWidth+"x"+innerHeight+"|"+document.querySelectorAll("#app .item:not(.mini) .chip,#app .item:not(.mini) input").length;if(kk===fitItem.k)return;fitItem.k=kk;b.classList.remove("iq1","iq2","iq3","iq4","iq5");if(!iqKey())return;const nav=document.querySelector(".nav"),
  /* bas de la dernière réponse de la fiche, page en haut, comparé au haut de la barre Retour/Continuer */
  low=()=>{const E=[...document.querySelectorAll("#app .item:not(.mini) .chip,#app .item:not(.mini) input,#app .item:not(.mini) .iok,#app .item:not(.mini) .step")].filter(e=>e.offsetParent);return E.length?Math.max(...E.map(e=>e.getBoundingClientRect().bottom))+scrollY:0},
  lim=()=>(nav&&getComputedStyle(nav).position==="fixed"?nav.getBoundingClientRect().top:innerHeight)-6;
@@ -1387,7 +1387,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
 
 // 18/11 (Cyril) : après le plan, « Vos murs, vus de face » (devis/murs.html), pré-remplis par le tracé et les réponses du logement.
 function mursOK(){const g=S.plan&&S.plan.trace&&S.plan.trace.geo;return!!(g&&g.some(f=>f.rooms&&f.rooms.length))}
-function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=19");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
+function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=20");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
 function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:Object.assign({},S.logement,{trav:S.travaux||[]})},"*")}catch(e){}}
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-murs-ready")mursLoad();  if(d.type==="proclik-murs-photo"&&d.img){/* photo prise à la fin d'une pièce (Cyril 18/11) : rangée avec les photos du chantier */if(files.photos.length<10)files.photos.push({name:(d.piece||"Pièce")+".jpg",img:d.img,file:null,tag:d.piece||null});return}
