@@ -56,7 +56,7 @@ function depuisDemo(){
 }
 function appel(corps){
   return fetch(SERVICE+'/espace/habitudes',{method:corps?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+jeton()},body:corps?JSON.stringify(corps):undefined,cache:'no-store'})
-   .then(function(r){return r.json().catch(function(){return {}}).then(function(x){if(!r.ok||!x.ok)throw new Error(x.erreur||('Service '+r.status));G=x.groupes;V=x.valeurs||{};ORI=x.origine||{};return x})});
+   .then(function(r){return r.json().catch(function(){return {}}).then(function(x){if(!r.ok||!x.ok)throw new Error(x.erreur||('Service '+r.status));G=x.groupes;V=x.valeurs||{};ORI=x.origine||{};if(!corps||corps.frais)fraisCompte(x);return x})});
 }
 /* valeur affichée : celle de l'artisan, sinon le réglage de départ du calcul (defaut) */
 function val(q){var v=V[q.id];if(v==null||v==='')v=q.defaut;if(q.type==='multi')return Array.isArray(v)?v:String(v||'').split(/[,;]\s*/).filter(Boolean);return v==null||v===''?(q.choix[0]||[])[0]:String(v)}
@@ -126,8 +126,23 @@ function rendu(){
    (enDirect()?'':'<p class="hb-demo">Exemple : en démo, vos choix restent sur cet appareil.</p>')+
    '<div class="hb-tabs" role="tablist" aria-label="Mes métiers">'+mets.map(function(x){return '<button type="button" class="hb-tab" role="tab" data-t="'+x[0]+'" aria-selected="'+(x[0]===onglet)+'">'+(IC[x[3]]||'')+esc(x[1])+'</button>'}).join('')+'</div>'+
    '<div class="hb-l">'+(G||[]).filter(function(g){return m[2].indexOf(g.id)>=0}).map(fiche).join('')+'</div>'+
-   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>';
+   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>'+fraisHTML();
 }
+/* Frais par jour de chantier (Cyril 25/11) : repas, carburant… × jours de pose estimés = « marge réelle estimée » du pré-devis.
+   Simple estimation, vide par défaut (aucun chiffre inventé), gardée sur cet appareil. */
+var FJK=[['repas','Repas','par personne et par jour de travail'],['carbu','Carburant, trajet','par jour de chantier, aller-retour'],['autres','Autres frais','par jour de chantier : péage, parking…']];
+function fraisJour(){var f=lsG('pc-frais-jour',{})||{},o={total:0};FJK.forEach(function(k){var v=+f[k[0]]||0;o[k[0]]=v;o.total+=v});o.total=Math.round(o.total*100)/100;o.equipe=Math.max(1,Math.round(+f.equipe||1));o.salarie=+f.salarie||0;return o}
+var eu=function(v){return (Math.round(v*100)/100).toFixed(2).replace('.',',').replace(/,00$/,'')+' €'};
+function champ(k,t,sm,v,u){return '<label class="hb-fl"><span><b>'+t+'</b><small>'+sm+'</small></span><span class="hb-fi"><input type="text" inputmode="'+(u?'decimal':'numeric')+'" data-fj="'+k+'" value="'+(v?String(v).replace('.',','):'')+'" placeholder="'+(u?'0':'1')+'">'+(u?' €':' <i>pers.</i>')+'</span></label>'}
+function fraisHTML(){var f=fraisJour();
+  return '<div class="hb-f hb-fj" id="hb-fj"><div class="hb-ft"><h3>Frais de chantier</h3></div>'+
+   '<p class="hb-tj">Le pré-devis les retire du prix pour vous montrer <b>ce qu\'il vous reste</b>. Ce n\'est qu\'une estimation.</p>'+
+   FJK.map(function(k){return champ(k[0],k[1],k[2],f[k[0]],1)}).join('')+
+   champ('equipe','Votre équipe','personnes sur le chantier, vous compris',f.equipe>1?f.equipe:'',0)+
+   (f.equipe>1?champ('salarie','Coût d\'un salarié','par jour, charges comprises',f.salarie,1):'')+
+   '<p class="hb-demo">'+(enDirect()?'Enregistré sur votre compte.':'En démo : gardé sur cet appareil.')+'</p></div>'}
+/* au démarrage (en direct) : on reprend les frais du compte, pour que le pré-devis les ait sans ouvrir cet écran */
+function fraisCompte(x){if(x&&x.frais&&typeof x.frais==='object'){lsS('pc-frais-jour',x.frais);try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}}}
 /* les autres travaux qu'on peut ne pas faire (fenêtres, portes, escaliers) : dans « Partout » */
 function nfPartout(){
   var q=tout().filter(function(y){return y.id==='non_faits'})[0];if(!q)return '';
@@ -151,14 +166,21 @@ function lier(c){
     else{if(val(q)===b.dataset.v)return;o[q.id]=b.dataset.v}
     enregistre(o);
   })});
+  $$('[data-fj]',c).forEach(function(i){i.addEventListener('change',function(){var k=i.dataset.fj,v=parseFloat(String(i.value||'').replace(/\s/g,'').replace(',','.'));if(!isFinite(v)||v<0)v=0;
+    if(k==='equipe'){v=Math.round(v);if(v>20){toast('Équipe','Au plus 20 personnes.');v=1}}else if(v>2000){toast('Montant trop grand','Par jour, au plus 2 000 €.');v=0}
+    var f=lsG('pc-frais-jour',{})||{};f[k]=k==='equipe'?Math.max(1,v||1):Math.round(v*100)/100;lsS('pc-frais-jour',f);peindre();
+    try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}
+    if(!enDirect()){toast('Frais enregistrés','En démo : gardés sur cet appareil.');return}
+    file=file.then(function(){return appel({frais:f})}).then(function(){toast('Frais enregistrés','Le pré-devis en tient compte.')}).catch(function(e){toast('Pas enregistré',String(e.message||e))})})});
   $$('.hb-nf',c).forEach(function(b){b.addEventListener('click',function(){var v=nonFaits().slice(),k=b.dataset.nf,i=v.indexOf(k);if(i>=0)v.splice(i,1);else v.push(k);enregistre({non_faits:v})})});
 }
-function ouvrir(){
+function ouvrir(cible){
   X.xopen('Mes habitudes de chantier','Votre façon de faire, pour des pré-devis déjà presque finis','<div id="hb-x"><p class="hint">Chargement…</p></div>','<button class="btn" data-xclose>Fermer</button>');
   var go=enDirect()?appel().catch(function(e){toast('Habitudes en démo',String(e.message||e));depuisDemo()}):Promise.resolve(depuisDemo());
-  go.then(peindre);
+  go.then(peindre).then(function(){if(cible!=='frais')return;var e=$('#hb-fj');if(e&&e.scrollIntoView)e.scrollIntoView({block:'start',behavior:'smooth'})});
 }
-window.PCHabitudes={ouvrir:ouvrir};
+window.PCHabitudes={ouvrir:ouvrir,fraisJour:fraisJour};
+if(enDirect())setTimeout(function(){appel().then(function(){}).catch(function(){})},1500);
 
 /* ---------- la ligne dans les Réglages, juste après « Mes options » ---------- */
 var menu=$('#menu');
@@ -215,6 +237,9 @@ st.textContent=
  '.hb-pbl,.hb-tjl{display:flex;gap:10px;margin:0;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.4}'+
  '.hb-pbl{background:var(--warn-bg)}.hb-pbl b{color:var(--warn);flex:none}.hb-pbl i{font-style:normal;color:var(--muted)}'+
  '.hb-tjl{background:var(--soft)}.hb-tjl b{flex:none}.hb-tjl span{color:var(--muted)}.hb-cf{margin-top:12px}'+
+ '.hb-fj{margin-top:12px;gap:4px}.hb-fj .hb-tj{margin-bottom:6px}.hb-fl{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}.hb-fl>span:first-child{flex:1;min-width:0}.hb-fl b{display:block;font-size:15px}.hb-fl small{display:block;color:var(--muted);font-size:12.5px}'+
+ '.hb-fi{flex:none;white-space:nowrap;font-weight:800}.hb-fi i{font-style:normal;font-size:13px;color:var(--muted)}.hb-fi input{width:84px;min-height:44px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-weight:800;font-size:16px;text-align:right}'+
+ '.hb-fs{display:flex;justify-content:space-between;margin:0;padding-top:8px;border-top:1px solid var(--line);font-size:15px}.hb-fs b{font-size:17px}'+
  '.hb-off{margin:0;color:var(--muted);font-weight:700}.hb-f.off .hb-i{opacity:.5}'+
  '.hb-f .hb-b{display:flex;padding:0}.hb-ok{align-self:stretch;margin-top:4px}'+
  '.hb-mod:focus-visible,.hb-tab:focus-visible{outline:2px solid var(--accx,#A8823F);outline-offset:2px}'+
