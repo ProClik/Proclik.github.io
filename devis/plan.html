@@ -950,7 +950,7 @@ function ptrEnd(e,cancel){PTR.delete(e.pointerId);const D=PD;if(!D)return;
  if(D.type==="cdist"){openCd(D.w);return}
  if(D.type==="seg"){if(ST.mode==="todo"){toggleTodo(D.idx);return}if(ST.mode==="win"||ST.mode==="door"){addOpAt(D.idx,D.p||p,ST.mode);return}openWall(D.idx);return}
  if(D.type==="grab"){ST.frozen=false;all();return}
- if(D.type==="room"){ST.ri=D.ri;tabs();const rz=F().rooms[D.ri],z=rz&&zoneAt(rz,p,true);openRoom(D.ri);/* outil Sol : seulement la fiche du sol ; sinon la fiche de la pièce sans le sol (Cyril 12/11) */if(CL&&SH&&SH.type==="room"){SH.only=ST.mode==="sol"?"sol":(gStep()===6&&gNeed(6))?"pf":"piece";renderSheet()}if(z){SH.z=z;renderSheet()}draw();return}}
+ if(D.type==="room"){ST.ri=D.ri;tabs();const rz=F().rooms[D.ri],z=rz&&zoneAt(rz,p,true);openRoom(D.ri);/* outil Sol : seulement la fiche du sol ; sinon la fiche de la pièce sans le sol (Cyril 12/11) */if(CL&&SH&&SH.type==="room"){SH.only=ST.mode==="sol"?"sol":((gStep()===6||(gStep()>GN()&&gMiss().some(x=>x[0]===6)))&&gNeed(6))?"pf":"piece";renderSheet()}if(z){SH.z=z;renderSheet()}draw();return}}
 svg.addEventListener("pointerup",e=>{if(demo)return;ptrEnd(e,false)});svg.addEventListener("pointercancel",e=>ptrEnd(e,true));
 svg.addEventListener("pointerleave",()=>{if(!PD&&!demo&&preview){preview=null;draw()}});
 svg.addEventListener("wheel",e=>{if(demo)return;e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY>0?1.12:1/1.12)},{passive:false});
