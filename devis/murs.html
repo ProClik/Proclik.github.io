@@ -300,21 +300,22 @@ const CAT={
  rj:{n:"Prise internet (RJ45)",s:"Prise internet",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",pfk:"rj",info:"Axe à 30 cm du sol"},
  applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",pfk:"app",info:"À 180 cm du sol"},
  iph:{n:"Interphone",c:"elec",r:ALL,h:20,bas:140,w:[12],petit:1,ic:"inter",pfk:"iph",info:"À 150 cm du sol"},
- tab:{n:"Tableau électrique",c:"elec",r:ALL,h:50,bas:120,w:[35],ic:"inter",pfk:"tab",libre:1,info:"Le tableau avec les disjoncteurs. Glissez-le où vous voulez, aussi en hauteur"},
+ tab:{n:"Tableau électrique",c:"elec",r:ALL,h:50,bas:120,w:[35],ic:"inter",pfk:"tab",libre:1,info:"Le tableau avec les disjoncteurs"},
  sortie:{n:"Sortie de câble",c:"elec",r:[],h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"sortie",info:"Pour un appareil branché en direct (volet, chauffe-eau, hotte…)"},
  // chauffage et clim
  radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
  seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
- clim:{n:"Clim murale",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
+ clim:{n:"Clim murale",libre:1,c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
 };
 /* Cyril 25/11 : une prise peut se mettre à la hauteur des interrupteurs (axe 110 cm). Variante interne « …H » : même nom pour le devis, autre hauteur. */
 const PHI=["prise","prise2","prise3","prise4","tv","rj"];PHI.forEach(k=>{CAT[k+"H"]={...CAT[k],bas:CAT.inter.bas,info:"Axe à 110 cm, à la hauteur des interrupteurs",hautV:k}});
+const hyRow=it=>CAT[it.k].libre?`<div class="row hy"><span class="k">Hauteur</span><button class="chip" data-hy="-10" aria-label="Descendre de 10 cm">▼</button><b>${R(bas(cI(it)))} cm du sol</b><button class="chip" data-hy="10" aria-label="Monter de 10 cm">▲</button></div>`:"";
 const hBase=k=>CAT[k].hautV||k,hHaut=k=>PHI.includes(hBase(k));
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
 const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
 const bas=(c)=>c.top!=null?M.H-c.top-c.h:c.bas;
-/* hauteur propre à un élément (tableau électrique placé où on veut, Cyril 25/11) */const cI=it=>it&&it.yb!=null?{...CAT[it.k],bas:it.yb,top:null}:CAT[it.k];
-const needH=(c,n)=>c.top!=null?bas(c)+c.h/2:n[2];
+/* hauteur propre à un élément (tableau électrique placé où on veut, Cyril 25/11) */const cI=it=>it&&it.yb!=null?{...CAT[it.k],bas:it.yb,top:null,own:CAT[it.k].top!=null}:CAT[it.k];
+const needH=(c,n)=>c.top!=null||c.own?bas(c)+c.h/2:n[2];
 // ---------- Icônes du menu ----------
 const I={
  porte:'<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1" fill="currentColor"/>',
@@ -527,7 +528,7 @@ function draw(){
  });
  // ce que chaque meuble ou appareil apporte avec lui (prises, arrivées et évacuations d'eau) : toujours visible, très discret
  const now=Date.now();
- M.items.forEach((it,ii)=>{if(!visible(it))return;const c=CAT[it.k],fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
+ M.items.forEach((it,ii)=>{if(!visible(it))return;const c=cI(it),fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
   const m=el("g",{"pointer-events":"none",opacity:sel===ii||fresh||tech?1:.75},g);
   if(fresh){const r=el("circle",{cx:x,cy:y,r:5*U,fill:"none",stroke:col,"stroke-width":1.5},m);el("animate",{attributeName:"r",values:`${4*U};${13*U}`,dur:"1.1s",repeatCount:"2"},r);el("animate",{attributeName:"opacity",values:"0.9;0",dur:"1.1s",repeatCount:"2"},r)}
   const lab=n[3]||"",pt=n[0]==="el"?(lab==="32 A"?"p32":/sortie/.test(lab)?"sortie":lab==="liaison"?"liai":"pc"):lab==="condensats"?"cond":n[0];
@@ -562,7 +563,7 @@ const qIc=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
  if(qzSt()){const it=M.items[q.it],c=CAT[it.k],ce=FEM.test(c.n)?"Cette":"Ce",nm=(c.s||c.n).toLowerCase();
   const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
-  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
+  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hyRow(it)}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
  if(q.i>=L.length){k.innerHTML=`<div class="t"><span>Tout est noté pour ce mur <small>Un oubli ? Touchez ce qu'il faut ajouter</small></span></div><div class="qg">${L.map(c=>`<button class="btn" data-qplus="${c}">${qIc(I[QI[c]]?QI[c]:"prise")}+ ${CATS[c]}</button>`).join("")}</div>`;return}
  const c=L[q.i],has=qzHas(c),bar=`<div class="qp" aria-label="Question ${q.i+1} sur ${L.length}">${L.map((x,j)=>`<i class="${j<q.i?"ok":j===q.i?"cur":""}"></i>`).join("")}</div>`;
  if(q.mode==="pick"){const a=avail(),all=availAll().filter(x=>CAT[x].c===c),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
@@ -585,13 +586,13 @@ function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=
  if(!it.lock){
   k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+
   (c.w.length>1?`<div class="row"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"")+
-  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+auto+
+  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+hyRow(it)+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+auto+
   `<button class="go" data-place="1" style="padding:11px 16px;font-size:15px">C'est bien placé</button>`;return}
  if(it.askN){k.innerHTML=`<div class="t"><span>Combien de ${it.k==="mhaut"?"meubles hauts":"meubles bas"} de ${it.w} cm, côte à côte ?</span><span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button></span></div><button class="go all" data-n="full">Sur toute la longueur possible</button><div class="row">${[1,2,3,4,5].map(n=>`<button class="chip" data-n="${n}">${n}</button>`).join("")}</div>`;return}
  const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
  k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+wrow+
  (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st="faire">Non, c'est ${FEM.test(c.n)?"une nouvelle":"un nouveau"} ${c.n.toLowerCase()}</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
- (hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
+ hyRow(it)+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
 // ---------- Placement : jamais l'un sur l'autre, au plus collés ----------
 function band(a,b){const ca=cI(a),cb=cI(b),ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
 // ---------- Électricité près de l'eau (NF C 15-100) ----------
@@ -663,7 +664,7 @@ $("wall").addEventListener("pointerdown",ev=>{$("dock").classList.remove("open")
 $("wall").addEventListener("pointermove",ev=>{
  if(hold&&ev.pointerId===hold.id){hold.last=ev;const d=Math.hypot(ev.clientX-hold.x0,ev.clientY-hold.y0);
   if(d>6){if(hold.mouse){lift(ev)}else{clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`Maintenez le doigt sur <b>${nom(it)}</b> un instant, puis glissez`);draw();return}}else return}
- if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;if(CAT[it.k].libre){const c0=CAT[it.k],hb=Math.max(0,Math.min(M.H-c0.h,Math.round((drag.b0+(drag.y0-svgY(ev)))/5)*5));if(hb!==bas(cI(it))){const ob=it.yb;it.yb=hb;if(place(it,vx(it))==null)it.yb=ob}}
+ if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;
  // meuble lâché sur un autre meuble de la même hauteur : ils échangeront leur place
  const t0=drag.tgt;drag.tgt=null;if(!CAT[it.k].petit){const t=M.items.findIndex(o=>o!==it&&visible(o)&&!CAT[o.k].petit&&!CAT[o.k].deux&&band(it,o)&&fx>=vx(o)&&fx<=vx(o)+o.w);if(t>=0)drag.tgt=t}
  if(drag.tgt!=null&&drag.tgt!==t0)vib(6);
@@ -702,6 +703,7 @@ const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);con
 $("card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
  if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
  if(b.dataset.w){const ow=it.w,ox=it.x,nw=+b.dataset.w;it.w=nw;const cx=vx({...it,w:ow,x:ox});const px=place(it,cx);if(px==null){it.w=ow;$("hint").textContent="Pas assez de place pour cette largeur";return}it.x=face===1&&CAT[it.k].deux?M.L-px-nw:px;it.x=R(it.x)}
+ if(b.dataset.hy!=null){const c0=CAT[it.k],ob=it.yb,cur=bas(cI(it)),nb=Math.max(0,Math.min(M.H-c0.h,cur+(+b.dataset.hy)));if(nb===cur)return;snap();it.yb=nb;if(place(it,vx(it))==null||Math.abs(place(it,vx(it))-vx(it))>.5){if(ob==null)delete it.yb;else it.yb=ob;HIST.pop();toast("Un autre élément gêne à cette hauteur",2000);return}draw();return}
  if(b.dataset.hh!=null){const nk=b.dataset.hh==="1"?hBase(it.k)+"H":hBase(it.k);if(nk!==it.k){snap();const ok=it.k,ox=it.x;it.k=nk;const px=place(it,vx(it)+it.w/2-it.w/2);if(px==null){it.k=ok;it.x=ox;toast("Plus de place à cette hauteur sur ce mur",2400);return}it.x=R(face===1&&CAT[it.k].deux?M.L-px-it.w:px);draw()}return}
  if(b.dataset.trash){confirmDel=true;card();gauge();return}if(b.dataset.nodel){confirmDel=false;card();return}
  if(b.dataset.unlock){it.lock=false;if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}}
