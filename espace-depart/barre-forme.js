@@ -66,23 +66,26 @@ function groupes(){var ok=horsBarre(),vus={};
 function totalMenu(){var ok=horsBarre(),t=0;FAM.forEach(function(f){f.v.forEach(function(v){if(ok(v))t+=badge(v)})});return t}
 function bouton(v){var i=info(v);if(!i)return "";var n=badge(v);
   return '<button type="button" data-f2m="'+v+'" data-nom="'+esc(sa(i.nom))+'"><span class="r">'+i.ico+optm(v)+"</span>"+esc(i.nom)+(n?"<em>"+n+"</em>":"")+"</button>"}
-function bloc(g,cls){if(!g.v.length)return "";return '<div class="f2m-g"><h3>'+esc(g.t)+'</h3><div class="gr4'+(cls||"")+'">'+g.v.map(bouton).join("")+"</div></div>"}
+function bloc(g){if(!g.v.length)return "";var k=Math.min(5,g.v.length);
+  return '<div class="f2m-g" style="grid-column:span '+k+'"><h3>'+esc(g.t)+'</h3><div class="gr4" style="grid-template-columns:repeat('+k+',minmax(0,1fr))">'+g.v.map(bouton).join("")+"</div></div>"}
 function scanner(){var b=$("#nb-cliky");if(!b||b.hidden)return "";var ic=$(".ico",b);
   return '<button type="button" class="f2m-sc" data-f2m="cliky"><span class="rond">'+(ic?ic.innerHTML:"")+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+I.d+"</button>"}
 function contenu(){var G=groupes(),h="";
   h+='<div class="tete"><b>Tout l\'Espace</b><button type="button" class="xr" data-f2m="x" aria-label="Fermer">'+I.x+"</button></div>";
   h+='<label class="cherche">'+I.loupe+'<input type="search" id="f2m-q" autocomplete="off" enterkeyhint="go" placeholder="Chercher ou dire un écran…"><button type="button" class="mic2" id="f2m-mic" aria-label="Dire le nom d\'un écran">'+I.mic+"</button></label>";
   h+='<div class="defile">'+scanner();
-  var a=G[0],b=G[1];
-  if(a.v.length&&b.v.length&&a.v.length<=2&&b.v.length<=3)h+='<div class="duo2">'+bloc(a," g2")+bloc(b," g3")+"</div>";
-  else h+=bloc(a)+bloc(b);
-  h+=bloc(G[2])+bloc(G[3]);
+  /* 26/11 Cyril : « les menus et options doivent tenir sans faire défiler » : les familles se rangent côte à côte sur 5 colonnes
+     quand elles ont la place (2 + 3, 1 + 4…), puis le panneau se resserre par paliers (serre()) jusqu'à tout tenir */
+  h+='<div class="f2m-pack">'+G.map(function(g){return bloc(g)}).join("")+"</div>";
   h+='<p class="f2m-vide" hidden>Aucun écran ne porte ce nom. Essayez « factures », « plans », « produits »…</p></div>';
   pan.innerHTML=h;
   var inp=$("#f2m-q",pan);inp.addEventListener("input",function(){filtre(inp.value)});
   inp.addEventListener("keydown",function(e){if(e.key==="Enter"){var v=$$("[data-f2m]:not([hidden])",$(".defile",pan)).filter(function(x){return x.dataset.f2m!=="x"});if(v.length===1||(v.length&&q)){e.preventDefault();ferme();agit(v[0].dataset.f2m)}}});
-  dictee($("#f2m-mic",pan),inp)}
-function filtre(t){q=sa(t).trim();var vide=true;
+  dictee($("#f2m-mic",pan),inp);serre()}
+function serre(){pan.classList.remove("s1","s2","s3","s4");root.classList.remove("f2m-s4");if(q)return;var df=$(".defile",pan);if(!df)return;
+  for(var n=1;n<=4&&df.scrollHeight>df.clientHeight+8;n++){pan.classList.add("s"+n);if(n===4)root.classList.add("f2m-s4")}}
+addEventListener("resize",function(){if(ouvert)serre()});
+function filtre(t){q=sa(t).trim();var vide=true;if(q){pan.classList.remove("s1","s2","s3","s4");root.classList.remove("f2m-s4")}
   $$(".gr4 button",pan).forEach(function(b){var on=!q||b.dataset.nom.indexOf(q)>=0;b.hidden=!on;if(on)vide=false});
   $$(".f2m-g",pan).forEach(function(g){g.hidden=!$$("button:not([hidden])",g).length});
   var sc=$(".f2m-sc",pan);if(sc){var on=!q||/^(scan|cliky|photo)/.test(q)||"scanner cliky photo".indexOf(q)>=0;sc.hidden=!on;if(on)vide=false}
@@ -99,10 +102,10 @@ pan.addEventListener("click",function(e){var b=e.target.closest("[data-f2m]");if
 scrim.addEventListener("click",ferme);
 d.addEventListener("keydown",function(e){if(e.key==="Escape"&&ouvert)ferme()});
 
-function ouvre(){if(ouvert)return;ouvert=true;q="";contenu();scrim.hidden=false;pan.hidden=false;mic.hidden=false;pan.setAttribute("aria-modal","true");
+function ouvre(){if(ouvert)return;ouvert=true;q="";contenu();scrim.hidden=false;pan.hidden=false;mic.hidden=false;serre();pan.setAttribute("aria-modal","true");
   root.classList.add("f2m-on");requestAnimationFrame(function(){pan.classList.add("in");scrim.classList.add("in");mic.classList.add("in")});barre();
   try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}}
-function ferme(){if(!ouvert)return;ouvert=false;pan.classList.remove("in");scrim.classList.remove("in");mic.classList.remove("in");root.classList.remove("f2m-on");pan.removeAttribute("aria-modal");
+function ferme(){if(!ouvert)return;ouvert=false;pan.classList.remove("in");scrim.classList.remove("in");mic.classList.remove("in");root.classList.remove("f2m-on","f2m-s4");pan.removeAttribute("aria-modal");
   setTimeout(function(){if(!ouvert){pan.hidden=true;scrim.hidden=true;mic.hidden=true}},220);barre()}
 
 /* le galet du menu de côté (iPad/PC, familles.js) et tout ce qui appelait l'ancien panneau ouvrent maintenant celui-ci */
