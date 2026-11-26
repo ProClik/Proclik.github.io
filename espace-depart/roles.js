@@ -216,7 +216,7 @@ d.addEventListener('click',function(e){var b=e.target.closest('[data-pers]');if(
 
 /* ---------- « Où êtes-vous ? » (pour tout le monde) ---------- */
 function ouHTML(n,court){var o=Q.ouSuis(n);
-  return '<div class="rl-ou'+(court?' court':'')+'"><b class="rl-ot">'+ic('pin')+'Où êtes-vous ?</b><div class="tr-chips">'+Object.keys(Q.OU).map(function(k){return '<button type="button" data-ou="'+k+'" aria-pressed="'+(!!o&&o.v===k)+'">'+Q.OU[k]+'</button>'}).join('')+'</div>'+
+  return '<div class="rl-ou'+(court?' court':'')+'"><b class="rl-ot">'+ic('pin')+'Où êtes-vous ?</b><div class="tr-chips">'+Object.keys(Q.OU).map(function(k){return '<button type="button" data-ou="'+k+'" aria-pressed="'+(!!o&&o.v===k)+'">'+(court?Q.OU[k].replace(/ \(devis\)$/,''):Q.OU[k])+'</button>'}).join('')+'</div>'+
     (court?(o?'<p class="tr-h">Toute l\'équipe voit « '+Q.OU[o.v]+' » depuis '+o.h+'.</p>':''):'<p class="tr-h">'+(o?'Toute l\'équipe voit « '+Q.OU[o.v]+' » depuis '+o.h+'.':'Un toucher suffit : chacun sait qui est où. Ce n\'est pas un pointage.')+'</p>')+'</div>'}
 var ouA=d.createElement('div');ouA.id='rl-oua';
 /* l'Accueil est dessiné dans #f2acc (accueil-forme.js) : on pose la carte juste sous la case « Que voulez-vous faire ? » */
@@ -229,7 +229,7 @@ function placer(){var f=$('#f2acc')||$('#v-accueil');if(!f)return;
   if(t&&t.parentNode){if(ouA.nextElementSibling!==t)t.parentNode.insertBefore(ouA,t)}else if(ouA.parentNode!==f)f.appendChild(ouA)}
 placer();(function(){var f=$('#f2acc');if(f&&window.MutationObserver)new MutationObserver(function(){if(!ouA.isConnected||!ouA.nextElementSibling||!/Le point/.test(ouA.nextElementSibling.textContent))placer()}).observe(f,{childList:true,subtree:true})})();
 ouA.addEventListener('click',function(e){var b=e.target.closest('[data-ou]');if(b)Q.setOu(R.qui,b.dataset.ou)});
-function rendOuA(){if(moi().g==='ter'){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0)}
+function rendOuA(){if(moi().g==='ter'){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c&&c.parentNode.scrollWidth>c.parentNode.clientWidth)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0)}
 
 /* ---------- icônes ---------- */
 var IC={
@@ -376,6 +376,13 @@ st.textContent=
  '.tr-h{margin:10px 2px 0;font-size:13px;color:var(--muted)}'+
  '.rl-ph{display:flex;align-items:center;gap:14px;margin:0 0 14px}.rl-ph .eqa.xl{width:72px;height:72px;font-size:28px;color:#fff}.rl-tph{display:flex;align-items:center;gap:14px}.rl-maph{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;border:0;background:none;box-shadow:none;color:var(--muted);min-height:0}.rl-maph .eqa{width:54px;height:54px;font-size:21px;color:#fff;box-shadow:0 0 0 2px var(--z-tile,var(--card)),0 0 0 3.5px var(--n1-laiton,#A8823F)}.rl-maph em{font-style:normal;font-size:11.5px;font-weight:700}'+
 'html body .rl-ou .tr-chips button{background:var(--bg)!important;box-shadow:var(--n1-pk)!important;color:var(--fg)!important;border:0!important;border-radius:99px!important}html body .rl-ou .tr-chips button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440)!important;color:#fff!important;box-shadow:none!important}'+'.rl-ouc{margin:0 0 14px;padding:12px 14px}.rl-ou.court .rl-ot{font-size:14.5px;margin:0 0 8px}.rl-ou.court .tr-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none}.rl-ou.court .tr-chips button{flex:none;min-height:38px;padding:0 13px;font-size:13.5px}.rl-ou.court .tr-h{margin-top:6px}'+
+/* Accueil (nouvelle forme) : même carte que « Scanner », boutons qui passent à la ligne au lieu d'être coupés */
+'.f2 .f2a #rl-oua .rl-ouc{margin:10px 0 0!important;padding:14px 14px 14px 16px!important;border:0!important;border-radius:22px!important;background:var(--tile)!important;box-shadow:0 1px 2px rgba(23,24,29,.04),0 10px 26px -18px rgba(23,24,29,.28)!important}'+
+':root[data-theme="dark"] .f2 .f2a #rl-oua .rl-ouc{background:#1F232D!important;box-shadow:none!important}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a #rl-oua .rl-ouc{background:#1F232D!important;box-shadow:none!important}}'+
+'.f2 .f2a #rl-oua .rl-ot{font-size:15px;font-weight:600;margin:0 0 10px}.f2 .f2a #rl-oua .rl-ot svg{color:var(--mut)}'+
+'.f2 .f2a #rl-oua .tr-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin:0;padding:0;gap:8px}.f2 .f2a #rl-oua .tr-chips button{min-height:46px;padding:6px 8px;font-size:14px;line-height:1.2;white-space:normal;text-align:center;justify-content:center}@media (max-width:420px){.f2 .f2a #rl-oua .tr-chips button{font-size:13px;padding:5px 4px}}'+
+'html[data-theme="dark"] body .f2 .f2a #rl-oua .tr-chips button:not([aria-pressed="true"]){background:#2A2F3B!important;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 6px rgba(0,0,0,.35)!important}@media (prefers-color-scheme:dark){html:not([data-theme="light"]) body .f2 .f2a #rl-oua .tr-chips button:not([aria-pressed="true"]){background:#2A2F3B!important;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 6px rgba(0,0,0,.35)!important}}'+
+'.f2 .f2a #rl-oua .tr-h{margin:10px 2px 0;font-size:13px}html body .f2 .f2a #rl-oua .tr-chips button[aria-pressed="true"]{background:var(--nuit)!important;color:var(--sur-nuit)!important;box-shadow:none!important}'+
  '#terrain .tr-auj{box-shadow:inset 5px 0 0 var(--cc),var(--z-ombre-s,0 1px 3px rgba(0,0,0,.08));padding-left:20px}'+
  '#terrain .tr-ch{display:flex;gap:10px;margin-bottom:6px}#terrain .tr-ch i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--cc);margin-top:8px}#terrain .tr-ch span{display:flex;flex-direction:column}#terrain .tr-ch b{font-size:21px}#terrain .tr-ch small{font-size:14px;color:var(--muted)}'+
  '#terrain .tr-l{display:flex;gap:10px;padding:8px 0 0 22px;font-size:15px}#terrain .tr-l>span{flex:none;width:72px;color:var(--muted);font-size:13.5px;padding-top:1px}#terrain .tr-l b small{display:block;font-weight:600;color:var(--muted);font-size:13px}'+
