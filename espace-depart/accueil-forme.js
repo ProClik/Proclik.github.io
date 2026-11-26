@@ -97,43 +97,65 @@ function ligneAF(x){var n=x[0],lab=String(x[2]).toLowerCase();
 
 /* ---------- l'Accueil ---------- */
 var CACHE={};
-function blocs(){return Object.assign({jour:true,afaire:true,chiffres:true,chantiers:true,creer:true},lsG("pc-f2-blocs",{}))}
-function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
+/* 26/11 (Cyril : « l'Accueil modifiable, chaque bloc qu'on veut, où on le veut ») : dans « Personnaliser l'accueil »,
+   chaque bloc s'affiche ou se cache, monte ou descend (flèches), et sur iPad couché/PC passe à gauche ou à droite.
+   Des blocs d'autres pages s'ajoutent (Ma semaine, À encaisser, Dépenses du mois). Gardé avec le compte (tiroir pc-f2-acc). */
+var BL=[["scanner","Scanner","g",1],["ouetes","Où êtes-vous ?","g",1],["jour","Ma journée","g",1],["afaire","À faire","g",1],
+  ["chiffres","Mes chiffres","d",1],["chantiers","Chantiers en cours","d",1],["creer","Créer","d",1],
+  ["semaine","Ma semaine","d",0],["encaisser","À encaisser","d",0],["depenses","Dépenses du mois","g",0]];
+var BLN={};BL.forEach(function(x){BLN[x[0]]=x});
+function conf(){var c=lsG("pc-f2-acc",null),v=lsG("pc-f2-blocs",{}),o=[],on={},col={};c=c&&typeof c==="object"?c:{};
+  (c.ordre||[]).forEach(function(k){if(BLN[k]&&o.indexOf(k)<0)o.push(k)});
+  BL.forEach(function(x,i){if(o.indexOf(x[0])<0){var j=-1;for(var n=i-1;n>=0&&j<0;n--)j=o.indexOf(BL[n][0]);o.splice(j+1,0,x[0])}
+    on[x[0]]=c.on&&c.on[x[0]]!=null?!!c.on[x[0]]:(v[x[0]]!=null?!!v[x[0]]:!!x[3]);
+    col[x[0]]=c.col&&(c.col[x[0]]==="g"||c.col[x[0]]==="d")?c.col[x[0]]:x[2]});
+  return {ordre:o,on:on,col:col}}
+function blocs(){return conf().on}
+/* un bloc qui n'a pas lieu d'être chez cet artisan n'apparaît ni sur l'Accueil ni dans « Personnaliser » */
+function dispo(k){if(k==="scanner")return clikyOn();if(k==="ouetes")return !window.PCOU||PCOU.dispo();return true}
+var MQ=window.matchMedia?matchMedia("(min-width:900px) and (min-aspect-ratio:1/1)"):null;
+function large(){return !!(MQ&&MQ.matches)}
+if(MQ){var mqf=function(){CACHE.h=null;rendre()};if(MQ.addEventListener)MQ.addEventListener("change",mqf);else if(MQ.addListener)MQ.addListener(mqf)}
+function fa(){try{return (X.cf&&X.cf.FA&&X.cf.FA())||[]}catch(e){return []}}
+function nomCli(k){var o=X.DOS&&X.DOS[k];return o&&o.n?o.n:String(k||"")}
+function eur0(n){return Math.round(n).toLocaleString("fr-FR")}
+function rendre(){var D=A.donnees(),J=jour(),C0=conf(),B=C0.on,h="",H={};
   /* bonjour */
   h+='<div class="titre"><div><div class="date">'+esc(jourTxt(J.j))+"</div><h1>"+esc(salut())+"</h1></div></div>";
   var vco=$("#vco");
   if(vco&&!vco.hidden){var sp=vco.querySelector("span");h+='<div class="demo-b"><span>'+(sp?sp.innerHTML:"<b>Mode démo.</b>")+'</span><button class="pill" type="button" data-f2="connexion" style="height:34px;padding:0 14px;font-size:12.5px">Se connecter</button></div>'}
   h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
   /* 24/11 (Cyril : « ça fait vide sur iPad ou PC ») : deux colonnes sur grand écran. À gauche ce qu'on fait (demander, scanner, la journée, à faire), à droite ce qu'on regarde (chiffres, chantiers, créer). Sur téléphone : rien ne change, tout reste l'un sous l'autre. */
-  h+='<div class="f2cols"><div class="f2c f2c1">';
-  h+='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
+  var ask='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
      et Cliky crée ce qu'il sait créer (plan, prix fournisseur, mur…). Remplace « Déposer un document ». */
-  if(clikyOn())h+='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+SCI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
+  if(clikyOn())H.scanner='<button class="f2doc" type="button" data-f2="doc"><span class="rond">'+SCI+'</span><span class="x"><b>Scanner</b><span>Un prix, un plan, une facture… Cliky s\'en occupe</span></span>'+ic("d")+"</button>";
 
   /* Lien négoce (24/11) : « Valcroix · 1 pose à accepter », une ligne seulement quand une pose attend (negoce.js) */
-  if(window.PCNEG&&PCNEG.accueilHTML)h+=PCNEG.accueilHTML();
+  if(window.PCNEG&&PCNEG.accueilHTML)ask+=PCNEG.accueilHTML();
+  /* « Où êtes-vous ? » : roles.js pose sa carte dans cette place */
+  H.ouetes='<div id="f2-slot-ouetes"></div>';
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
-  if(B.jour){var L=J.L;
-    h+='<section class="jr2"><button class="jr2-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée</span><b>'+
+  {var L=J.L,hj="";
+    hj+='<section class="jr2"><button class="jr2-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée</span><b>'+
       (L.length?L.length+" "+pl(L.length,"rendez-vous","rendez-vous")+" aujourd'hui":"Rien de prévu aujourd'hui")+"</b></span>"+ic("d")+"</button>";
     L.slice(0,4).forEach(function(e,k){var l=A.lieu(e),go=l&&e.k!=="pc"&&!J.soir;
-      h+='<div class="rv'+(k===J.on?" on":"")+'"><span class="hh">'+A.hTxt(e.s)+'</span><span class="x"><b>'+esc(titreEv(e))+"</b><span>"+esc(e.w||"")+"</span></span>"+
+      hj+='<div class="rv'+(k===J.on?" on":"")+'"><span class="hh">'+A.hTxt(e.s)+'</span><span class="x"><b>'+esc(titreEv(e))+"</b><span>"+esc(e.w||"")+"</span></span>"+
         (go?'<button class="rb2" type="button" data-gps="'+esc(l)+'" aria-label="Y aller : '+esc(l)+'">'+ic("nav")+"</button>":"")+"</div>"});
-    if(L.length>4)h+='<button class="dem" type="button" data-accv="planning"><span>Et</span><b>'+(L.length-4)+" autre"+(L.length-4>1?"s":"")+"</b>"+ic("d")+"</button>";
+    if(L.length>4)hj+='<button class="dem" type="button" data-accv="planning"><span>Et</span><b>'+(L.length-4)+" autre"+(L.length-4>1?"s":"")+"</b>"+ic("d")+"</button>";
     var dm=J.dem,nl=dm.filter(function(e){return e.k==="liv"}).length,nr=dm.length-nl;
-    if(dm.length)h+='<button class="dem" type="button" data-accv="planning"><span>Demain</span><b>'+[nr?nr+" rendez-vous":"",nl?nl+" livraison"+(nl>1?"s":""):""].filter(Boolean).join(" · ")+"</b>"+ic("d")+"</button>";
-    h+="</section>"}
+    if(dm.length)hj+='<button class="dem" type="button" data-accv="planning"><span>Demain</span><b>'+[nr?nr+" rendez-vous":"",nl?nl+" livraison"+(nl>1?"s":""):""].filter(Boolean).join(" · ")+"</b>"+ic("d")+"</button>";
+    hj+="</section>";H.jour=hj}
 
   /* 2. à faire : LE plus urgent en vedette, le reste en liste légère */
   var AF=aFaire(D),u=D.urgent,tot=nbAFaire(D);
-  if(B.afaire&&D.charge&&(u||AF.length)){
-    h+='<div class="sec"><h2>À faire</h2>'+(tot?'<button class="lien" type="button" data-accv="devis">'+tot+" en tout"+ic("d")+"</button>":"")+"</div>";
+  if(D.charge&&(u||AF.length)){var ha="";
+    ha+='<div class="sec"><h2>À faire</h2>'+(tot?'<button class="lien" type="button" data-accv="devis">'+tot+" en tout"+ic("d")+"</button>":"")+"</div>";
     var pd=AF.filter(function(x){return x[1]==="predevis"})[0],reste=AF.filter(function(x){return x[1]!=="predevis"}),rows=[];
     if(u){var qui=String(u.qui||"").split(" · ")[0];
       /* 25/11 (Cyril) : pastille « Nouveau » tant que la demande n'a pas été ouverte (notifs.js) */
       var uc=(String(u.attr||"").match(/data-vc="([^"]*)"/)||[])[1],nv=!!(uc&&window.PCNotif&&PCNotif.estNouveau(uc.replace(/&amp;/g,"&")));
-      h+='<section class="hero'+(nv?" nv":"")+'"><div class="lab"><span class="pt2"></span>'+(J.soir?"À valider ce soir":"Le plus urgent · à valider")+(nv?PCNotif.pastille():"")+"</div>"+
+      ha+='<section class="hero'+(nv?" nv":"")+'"><div class="lab"><span class="pt2"></span>'+(J.soir?"À valider ce soir":"Le plus urgent · à valider")+(nv?PCNotif.pastille():"")+"</div>"+
         (u.prix!=null?'<div class="hero-n">'+eur2(u.prix)+"<small>€ HT</small></div>":"")+'<div class="hero-t">'+esc(qui)+"</div>"+
         '<div class="s mut">'+esc(["Pré-devis",u.quoi,pd&&pd[0]>1?pd[0]+" à valider":""].filter(Boolean).join(" · "))+"</div>"+
         '<button class="pill l" type="button" '+u.attr+' style="margin-top:18px">Vérifier</button></section>'}
@@ -146,13 +168,12 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
     var VB={valider:"Vérifier",envoyer:"Envoyer",ranger:"Ranger",suivre:"Voir"};
     reste.forEach(function(x){rows.push('<button type="button" data-accv="'+x[5]+'"><span class="rond">'+ic(AIC[x[1]]||"doc")+'</span><span class="x"><b>'+esc(ligneAF(x))+"</b>"+(x[6]?"<span>"+esc(x[6])+"</span>":"")+'</span><span class="vb">'+(VB[x[4]]||"Voir")+"</span></button>")});
     if(rows.length>4){var plus=rows.length-3;rows=rows.slice(0,3);rows.push('<button type="button" data-accv="devis"><span class="rond">'+ic("grille")+'</span><span class="x"><b>Et '+plus+" autre"+(plus>1?"s":"")+"</b></span>"+ic("d")+"</button>")}
-    if(rows.length)h+='<div class="liste">'+rows.join("")+"</div>"}
-  else if(B.afaire&&D.charge)h+='<div class="sec"><h2>À faire</h2></div><section class="hero"><div class="lab">Tout est à jour</div><div class="hero-t">Rien à valider ni à envoyer</div><div class="s mut">Le café peut rester chaud.</div></section>';
+    if(rows.length)ha+='<div class="liste">'+rows.join("")+"</div>";H.afaire=ha}
+  else if(D.charge)H.afaire='<div class="sec"><h2>À faire</h2></div><section class="hero"><div class="lab">Tout est à jour</div><div class="hero-t">Rien à valider ni à envoyer</div><div class="s mut">Le café peut rester chaud.</div></section>';
 
-  h+='</div><div class="f2c f2c2">';
   /* 3. mes chiffres (exemple de l'Espace, comme avant) : un seul langage, des barres */
-  if(B.chiffres){var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][(window.PCDEMO?PCDEMO.today():new Date()).getMonth()],sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
-    h+='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
+  {var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][(window.PCDEMO?PCDEMO.today():new Date()).getMonth()],sr=(D.afaire||[]).filter(function(x){return x[1]==="attente"})[0],nsr=D.demo&&sr?sr[0]:0;
+    H.chiffres='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
       '<section class="chif2 cv1"><button class="chq" type="button" data-accv="factures"><span class="pt3"></span><span class="x"><b>2 760 € à encaisser</b><span>'+(nsr?"1 facture et "+nsr+" devis sans réponse":"1 facture en attente")+'</span></span><span class="vb">Relancer</span></button><div class="lab">Encaissé en '+MN+'</div><div class="gros">8 640<small>€</small></div><div class="s mut">sur 14 210 € signés</div>'+
       '<div class="seg"><i style="flex:8640"></i><i class="r" style="flex:2760"></i><i class="v" style="flex:2810"></i></div>'+
       '<div class="leg"><span><i></i>Encaissé</span><span><i class="r"></i>À encaisser 2 760 €</span><span><i class="v"></i>Pas encore facturé</span></div>'+
@@ -167,22 +188,51 @@ function rendre(){var D=A.donnees(),J=jour(),B=blocs(),h="";
     if(m){et[c.id]=[(m.n?m.n+" ":"")+m.art.toLowerCase()+" manquant"+(m.n>1?"es":"")+" · à relancer",1];nPb++}
     else if(ap){et[c.id]=["Commande à passer : "+String(ap[0]).split(" · ")[0],1];nPb++}
     else if(c.st==="start")et[c.id]=["Prêt à démarrer · rien à faire",0]});
-  if(B.chantiers&&CL.length){
-    h+='<div class="sec"><h2>Chantiers en cours'+(nPb?'<span class="f2etat f2pb">'+nPb+" à régler</span>":'<span class="f2etat ok">À jour ✓</span>')+'</h2><button class="lien" type="button" data-accv="chantiers">'+CL.length+" en cours"+ic("d")+"</button></div><div class=\"liste\">"+
+  if(CL.length){
+    H.chantiers='<div class="sec"><h2>Chantiers en cours'+(nPb?'<span class="f2etat f2pb">'+nPb+" à régler</span>":'<span class="f2etat ok">À jour ✓</span>')+'</h2><button class="lien" type="button" data-accv="chantiers">'+CL.length+" en cours"+ic("d")+"</button></div><div class=\"liste\">"+
       CL.slice(0,4).map(function(c){var p=c.st==="run"?Math.round(av(c)||0):0;
         return '<button type="button" data-chouv="'+esc(c.id)+'">'+(c.st==="run"?'<span class="ann2" style="--p:'+p+'">'+p+"</span>":'<span class="rond">'+ic("cal")+"</span>")+
           '<span class="x"><b>'+esc(c.n)+"</b><span>"+esc([c.v||"",c.st==="run"?(c.dates||""):"à démarrer "+debut(c.dates)].filter(Boolean).join(" · "))+"</span>"+
           (et[c.id]?'<span class="f2et'+(et[c.id][1]?" f2pb":"")+'">'+(et[c.id][1]?'<i class="pt3"></i>':"")+esc(et[c.id][0])+"</span>":"")+"</span>"+ic("d")+"</button>"}).join("")+"</div>"}
 
   /* 5. créer : 5 ronds */
-  if(B.creer)h+='<div class="sec"><h2>Créer</h2></div><div class="ronds r5">'+
+  H.creer='<div class="sec"><h2>Créer</h2></div><div class="ronds r5">'+
     [["predevis","plan","Pré-devis"],["facture","facture","Facture"],["depense","photo","Dépense"],["client","user","Client"],["rdv","cal","RDV"]].map(function(x){
       return '<button type="button" data-f2cree="'+x[0]+'"><span>'+ic(x[1])+"</span>"+x[2]+"</button>"}).join("")+"</div>";
-  h+="</div></div>";
+  /* blocs venus d'autres pages (cachés au départ, à ajouter dans « Personnaliser ») */
+  if(B.semaine)H.semaine=blocSemaine(J);
+  if(B.encaisser)H.encaisser=blocEncaisser();
+  if(B.depenses)H.depenses=blocDepenses();
+  /* rangés dans l'ordre choisi ; iPad couché/PC : chacun dans sa colonne */
+  var g=[],dr=[],lg=large();
+  C0.ordre.forEach(function(k){if(!B[k]||!H[k]||!dispo(k))return;var x='<div class="f2k f2k-'+k+'">'+H[k]+"</div>";if(lg&&C0.col[k]==="d")dr.push(x);else g.push(x)});
+  h+='<div class="f2cols"><div class="f2c f2c1">'+ask+g.join("")+'</div><div class="f2c f2c2">'+dr.join("")+"</div></div>";
   h+='<div class="f2pied"><button class="lien" type="button" data-f2="perso">'+ic("grille")+"Personnaliser l'accueil</button></div>";
   if(CACHE.h===h)return;CACHE.h=h;app.innerHTML=h;
   CACHE.D=D;CACHE.J=J}
 A.apres=function(){rendre();pjMaj()};
+window.PCF2Rendre=function(){CACHE.h=null;rendre()};
+/* Ma semaine : les 7 prochains jours, le 1er rendez-vous de chaque jour (+ combien d'autres), touche = Planning */
+function blocSemaine(J){var j0=J.j,rows=[],n=0;
+  for(var i=1;i<=7;i++){var dj=new Date(j0.getTime()+i*864e5),L=A.evs(A.iso(dj));if(!L.length)continue;n+=L.length;
+    rows.push('<button type="button" data-accv="planning"><span class="f2jr"><b>'+cap(dj.toLocaleDateString("fr-FR",{weekday:"short"}).replace(".",""))+"</b>"+dj.getDate()+'</span><span class="x"><b>'+esc(A.hTxt(L[0].s)+" · "+titreEv(L[0]))+"</b><span>"+(L.length>1?"et "+(L.length-1)+" autre"+(L.length>2?"s":"")+" rendez-vous":esc(L[0].w||""))+"</span></span>"+ic("d")+"</button>")}
+  return '<div class="sec"><h2>Ma semaine</h2><button class="lien" type="button" data-accv="planning">'+(n?n+" rendez-vous":"Planning")+ic("d")+"</button></div>"+
+    (rows.length?'<div class="liste">'+rows.slice(0,5).join("")+"</div>":'<section class="hero"><div class="hero-t">Rien de prévu cette semaine</div><div class="s mut">Ajoutez un rendez-vous depuis « Créer ».</div></section>')}
+/* À encaisser : factures envoyées pas encore payées, et celles prêtes à partir */
+function blocEncaisser(){var F=fa(),att=F.filter(function(f){return f.st==="attente"}),pr=F.filter(function(f){return f.st==="pret"}),tot=0,t=function(f){try{return X.cf.ftot(f).ttc}catch(e){return 0}};
+  att.forEach(function(f){tot+=t(f)});
+  var rows=att.slice(0,3).map(function(f){return '<button type="button" data-accv="factures"><span class="rond">'+ic("facture")+'</span><span class="x"><b>'+esc(nomCli(f.cli))+" · "+eur2(t(f))+" €</b><span>Envoyée "+esc(f.env||"")+'</span></span><span class="vb">Relancer</span></button>'})
+    .concat(pr.slice(0,2).map(function(f){return '<button type="button" data-accv="factures"><span class="rond">'+ic("envoi")+'</span><span class="x"><b>'+esc(nomCli(f.cli))+" · "+eur2(t(f))+' €</b><span>Prête, pas encore envoyée</span></span><span class="vb">Envoyer</span></button>'}));
+  return '<div class="sec"><h2>À encaisser</h2><button class="lien" type="button" data-accv="factures">Factures'+ic("d")+"</button></div>"+
+    (rows.length?'<section class="f2tot"><span class="lab">Attendu de vos clients</span><b>'+eur0(tot)+"<small>€ TTC</small></b></section>"+'<div class="liste">'+rows.join("")+"</div>":'<section class="hero"><div class="hero-t">Tout est encaissé</div><div class="s mut">Aucune facture en attente.</div></section>')}
+/* Dépenses du mois : total, tickets à ranger, bouton Ajouter */
+function blocDepenses(){var L=(window.PCDEP&&PCDEP.liste())||[],n=A.AUJ(),m=n.getFullYear()+"-"+("0"+(n.getMonth()+1)).slice(-2),M=L.filter(function(x){return String(x.j||"").slice(0,7)===m}),tot=0,ar=L.filter(function(x){return x.ranger}).length;
+  M.forEach(function(x){tot+=+x.ttc||0});
+  var MN=n.toLocaleDateString("fr-FR",{month:"long"});
+  return '<div class="sec"><h2>Dépenses du mois</h2><button class="lien" type="button" data-accv="depenses">'+M.length+" en "+MN+ic("d")+"</button></div>"+
+    '<section class="f2tot"><span class="lab">Dépensé en '+MN+'</span><b>'+eur0(tot)+'<small>€ TTC</small></b>'+(ar?'<button type="button" class="f2et f2pb" data-accv="depenses"><i class="pt3"></i>'+ar+" ticket"+(ar>1?"s":"")+" à ranger</button>":"")+
+    '<button class="pill l" type="button" data-f2cree="depense" style="margin-top:14px">Ajouter une dépense</button></section>'}
+
 
 /* ---------- les appuis ---------- */
 function nav(v){var n=$("#nb-"+v)||$("#tt-"+v);if(n)n.click()}
@@ -193,11 +243,26 @@ function cree(k){
   if(k==="depense"){nav("depenses");apres(function(){var b=$("[data-depadd]");if(b)b.click()});return}
   if(k==="client"){nav("clients");apres(function(){var b=$("[data-cadd]");if(b)b.click()});return}
   if(k==="rdv"){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({d:A.iso(A.AUJ())});else nav("planning")}}
-function perso(){var B=blocs(),N=[["jour","Ma journée"],["afaire","À faire"],["chiffres","Mes chiffres"],["chantiers","Chantiers en cours"],["creer","Créer"]];
-  X.xopen("Personnaliser l'accueil","Touchez pour afficher ou cacher un bloc",
-    '<div class="f2perso">'+N.map(function(x){return '<button type="button" role="switch" aria-checked="'+(B[x[0]]!==false)+'" data-f2b="'+x[0]+'"><span>'+x[1]+'</span><i aria-hidden="true"></i></button>'}).join("")+"</div>",
-    '<button class="btn go" data-xclose style="width:100%">C\'est bon</button>',function(){
-      $$("[data-f2b]").forEach(function(b){b.addEventListener("click",function(){var on=b.getAttribute("aria-checked")!=="true";b.setAttribute("aria-checked",String(on));B[b.dataset.f2b]=on;lsS("pc-f2-blocs",B);CACHE.h=null;rendre()})})})}
+function perso(){X.xopen("Personnaliser l'accueil",large()?"Affichez, cachez, montez ou descendez un bloc, ou changez-le de côté":"Affichez, cachez, montez ou descendez un bloc",
+    '<div class="f2perso" id="f2perso"></div>','<button class="btn go" data-xclose style="width:100%">C\'est bon</button>',function(){persoRemplir()})}
+function persoRemplir(){var box=$("#f2perso");if(!box)return;var c=conf(),lg=large(),UP='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>',DN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  var ks=c.ordre.filter(dispo);
+  function ligne(k,L,i){var on=c.on[k];
+    return '<div class="f2pl'+(on?"":" off")+'"><button type="button" class="f2sw" role="switch" aria-checked="'+on+'" data-f2b="'+k+'"><i aria-hidden="true"></i><span>'+esc(BLN[k][1])+"</span></button>"+
+      (lg?'<button type="button" class="f2fl f2cote" data-f2c="'+k+'">'+(c.col[k]==="d"?"À gauche":"À droite")+"</button>":"")+
+      '<button type="button" class="f2fl" data-f2m="'+k+'" data-s="-1"'+(i===0?" disabled":"")+' aria-label="Monter '+esc(BLN[k][1])+'">'+UP+"</button>"+
+      '<button type="button" class="f2fl" data-f2m="'+k+'" data-s="1"'+(i===L.length-1?" disabled":"")+' aria-label="Descendre '+esc(BLN[k][1])+'">'+DN+"</button></div>"}
+  function liste(L){return L.map(function(k,i){return ligne(k,L,i)}).join("")}
+  if(lg){var G=ks.filter(function(k){return c.col[k]==="g"}),Dd=ks.filter(function(k){return c.col[k]==="d"});
+    box.innerHTML='<div class="f2pt">Colonne de gauche</div>'+(G.length?liste(G):'<div class="f2pv">Aucun bloc</div>')+'<div class="f2pt">Colonne de droite</div>'+(Dd.length?liste(Dd):'<div class="f2pv">Aucun bloc</div>')}
+  else box.innerHTML=liste(ks);
+  function garde(){var sc=box.closest("[class*=x-in],#x-in")||box.parentNode,y=sc?sc.scrollTop:0;lsS("pc-f2-acc",c);CACHE.h=null;rendre();persoRemplir();if(sc)sc.scrollTop=y}
+  $$("[data-f2b]",box).forEach(function(b){b.onclick=function(){c.on[b.dataset.f2b]=!c.on[b.dataset.f2b];garde()}});
+  $$("[data-f2c]",box).forEach(function(b){b.onclick=function(){var k=b.dataset.f2c;c.col[k]=c.col[k]==="d"?"g":"d";garde()}});
+  $$("[data-f2m]",box).forEach(function(b){b.onclick=function(){var k=b.dataset.f2m,st=+b.dataset.s,
+      L=c.ordre.filter(function(x){return dispo(x)&&(!lg||c.col[x]===c.col[k])}),i=L.indexOf(k),o=L[i+st];if(!o)return;
+      var a1=c.ordre.indexOf(k),a2=c.ordre.indexOf(o);c.ordre[a1]=o;c.ordre[a2]=k;garde();
+      var nb=$('[data-f2m="'+k+'"][data-s="'+st+'"]');if(nb&&!nb.disabled)nb.focus()}})}
 /* « Déposer un document » : un seul endroit pour tout ce qu'on photographie (Cyril 22/11 : « le chemin doit être plus simple et plus visible »).
    Fournisseur : Cliky lit la facture, le devis, le bon ou le tarif (sans choisir le fournisseur d'abord).
    Plan : la photo est prise ici, un nouveau plan s'ouvre et Cliky la lit tout de suite (plan-photo.js).

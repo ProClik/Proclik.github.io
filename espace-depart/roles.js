@@ -221,16 +221,20 @@ function ouHTML(n,court){var o=Q.ouSuis(n);
 var ouA=d.createElement('div');ouA.id='rl-oua';
 /* l'Accueil est dessiné dans #f2acc (accueil-forme.js) : on pose la carte juste sous la case « Que voulez-vous faire ? » */
 function placer(){var f=$('#f2acc')||$('#v-accueil');if(!f)return;
+  /* 26/11 : l'Accueil se personnalise (accueil-forme.js) ; la carte va dans sa place, et nulle part si le bloc est caché */
+  if($('#f2acc')){var sl=$('#f2-slot-ouetes');if(sl){if(ouA.parentNode!==sl)sl.appendChild(ouA)}else if(ouA.parentNode)ouA.parentNode.removeChild(ouA);
+    $$('h1,h2',f).forEach(function(h){var m=/^Bonjour (.+)$/.exec(h.textContent.trim());if(m&&m[1]!==moi().n&&(m[1]===PATRON||PERS.some(function(p){return p.n===m[1]})))h.textContent='Bonjour '+moi().n});return}
   /* « Bonjour Julien » devient le prénom de la personne qui regarde */
   $$('h1,h2',f).forEach(function(h){var m=/^Bonjour (.+)$/.exec(h.textContent.trim());if(m&&m[1]!==moi().n&&(m[1]===PATRON||PERS.some(function(p){return p.n===m[1]})))h.textContent='Bonjour '+moi().n});
   /* juste avant « Le point de la journée », dans le même bloc que la case « Que voulez-vous faire ? » */
   var t=[].slice.call(f.querySelectorAll('*')).filter(function(x){return !ouA.contains(x)&&x.children.length<4&&/Le point de la journée/.test(x.textContent)}).pop();
   while(t&&t.parentNode&&t.parentNode!==f&&!/Que voulez-vous faire/.test(t.parentNode.textContent))t=t.parentNode;
   if(t&&t.parentNode){if(ouA.nextElementSibling!==t)t.parentNode.insertBefore(ouA,t)}else if(ouA.parentNode!==f)f.appendChild(ouA)}
-placer();(function(){var f=$('#f2acc');if(f&&window.MutationObserver)new MutationObserver(function(){if(!ouA.isConnected||!ouA.nextElementSibling||!/Le point/.test(ouA.nextElementSibling.textContent))placer()}).observe(f,{childList:true,subtree:true})})();
+placer();(function(){var f=$('#f2acc');if(f&&window.MutationObserver)new MutationObserver(function(){var sl=$('#f2-slot-ouetes');if(sl?ouA.parentNode!==sl:!!ouA.parentNode)placer()}).observe(f,{childList:true,subtree:true})})();
 ouA.addEventListener('click',function(e){var b=e.target.closest('[data-ou]');if(b)Q.setOu(R.qui,b.dataset.ou)});
 /* l'Admin peut retirer le bloc de l'Accueil (fiche du client : menus.ouetes=false), par ex. pour quelqu'un qui travaille seul */
 function ouOff(){try{var k=sessionStorage.getItem('pc-apercu')==='1'?sessionStorage.getItem('ap:pc-vrai-artisan'):localStorage.getItem('pc-vrai-artisan');var a=JSON.parse(k)||{};return !!(a.menus&&a.menus.ouetes===false)}catch(e){return false}}
+window.PCOU={dispo:function(){return moi().g!=='ter'&&!ouOff()}};
 function rendOuA(){if(moi().g==='ter'||ouOff()){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c&&c.parentNode.scrollWidth>c.parentNode.clientWidth)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0)}
 
 /* ---------- icônes ---------- */
@@ -314,7 +318,7 @@ tr.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||
   if(b.dataset.trhs!=null){if(window.PCJR&&PCJR.heuresSup)PCJR.heuresSup(Q.iso(Q.auj()));return}
   if(b.dataset.trfull!=null){R.full=true;garde();applique();return}
   if(b.dataset.tra!=null)return demande()});
-Q.ecoute(function(){if(!tr.hidden)rendTer();rendOuA()});d.addEventListener('pc-menus',function(){rendOuA()});
+Q.ecoute(function(){if(!tr.hidden)rendTer();rendOuA()});d.addEventListener('pc-menus',function(){rendOuA();if(window.PCF2Rendre)PCF2Rendre()});
 
 /* ---------- appliquer : qui je suis, ce que je vois ---------- */
 var VUE_DROIT={devis:'prix',produits:'prix',factures:'fact',depenses:'achats',prix:'achats',clients:'clients',reseaux:'reglages'};
@@ -379,7 +383,7 @@ st.textContent=
  '.rl-ph{display:flex;align-items:center;gap:14px;margin:0 0 14px}.rl-ph .eqa.xl{width:72px;height:72px;font-size:28px;color:#fff}.rl-tph{display:flex;align-items:center;gap:14px}.rl-maph{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;border:0;background:none;box-shadow:none;color:var(--muted);min-height:0}.rl-maph .eqa{width:54px;height:54px;font-size:21px;color:#fff;box-shadow:0 0 0 2px var(--z-tile,var(--card)),0 0 0 3.5px var(--n1-laiton,#A8823F)}.rl-maph em{font-style:normal;font-size:11.5px;font-weight:700}'+
 'html body .rl-ou .tr-chips button{background:var(--bg)!important;box-shadow:var(--n1-pk)!important;color:var(--fg)!important;border:0!important;border-radius:99px!important}html body .rl-ou .tr-chips button[aria-pressed="true"]{background:var(--n1-nuit,#1B2440)!important;color:#fff!important;box-shadow:none!important}'+'.rl-ouc{margin:0 0 14px;padding:12px 14px}.rl-ou.court .rl-ot{font-size:14.5px;margin:0 0 8px}.rl-ou.court .tr-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none}.rl-ou.court .tr-chips button{flex:none;min-height:38px;padding:0 13px;font-size:13.5px}.rl-ou.court .tr-h{margin-top:6px}'+
 /* Accueil (nouvelle forme) : même carte que « Scanner », boutons qui passent à la ligne au lieu d'être coupés */
-'.f2 .f2a #rl-oua .rl-ouc{margin:10px 0 0!important;padding:14px 14px 14px 16px!important;border:0!important;border-radius:22px!important;background:var(--tile)!important;box-shadow:0 1px 2px rgba(23,24,29,.04),0 10px 26px -18px rgba(23,24,29,.28)!important}'+
+'.f2 .f2a #rl-oua .rl-ouc{margin:0!important;padding:14px 14px 14px 16px!important;border:0!important;border-radius:22px!important;background:var(--tile)!important;box-shadow:0 1px 2px rgba(23,24,29,.04),0 10px 26px -18px rgba(23,24,29,.28)!important}'+
 ':root[data-theme="dark"] .f2 .f2a #rl-oua .rl-ouc{background:#1F232D!important;box-shadow:none!important}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a #rl-oua .rl-ouc{background:#1F232D!important;box-shadow:none!important}}'+
 '.f2 .f2a #rl-oua .rl-ot{font-size:15px;font-weight:600;margin:0 0 10px}.f2 .f2a #rl-oua .rl-ot svg{color:var(--mut)}'+
 '.f2 .f2a #rl-oua .tr-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin:0;padding:0;gap:8px}.f2 .f2a #rl-oua .tr-chips button{min-height:46px;padding:6px 8px;font-size:14px;line-height:1.2;white-space:normal;text-align:center;justify-content:center}@media (max-width:420px){.f2 .f2a #rl-oua .tr-chips button{font-size:13px;padding:5px 4px}}'+
