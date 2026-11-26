@@ -552,7 +552,7 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 /* 26/11 (Cyril) : Accueil personnalisable. Chaque bloc est rangé dans .f2k, dans l'ordre et la colonne choisis. */
 .f2 .f2a .f2k-ouetes{margin-top:10px}
 /* 26/11 : la place de « Où êtes-vous ? » est gardée dès le premier dessin (la carte arrive juste après) : rien ne descend */
-.f2 .f2a #f2-slot-ouetes:empty{min-height:159px}
+.f2 .f2a #f2-slot-ouetes:empty{min-height:var(--ouh,200px)}
 /* téléphone et iPad debout : une seule liste, dans l'ordre choisi */
 @media not all and (min-width:900px) and (min-aspect-ratio:1/1){.f2 .f2a .f2cols{display:flex;flex-direction:column}.f2 .f2a .f2c{display:contents}.f2 .f2a .ask2{order:0}}
 @media (min-width:900px) and (min-aspect-ratio:1/1){.f2 .f2a .f2c2>.f2k:first-child>:first-child,.f2 .f2a .f2c2>.f2k-ouetes:first-child{margin-top:0}}
