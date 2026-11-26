@@ -272,7 +272,19 @@ function blocOuvrages(){if(!S.ouvrages.length)return '';var c=S.calc,ch=S.calcEt
  h+='<button type="button" class="ds-row ds-tc" data-ds="det"><span class="ds-tx"><b>Fournitures et pose</b><small>'+(ch?'Cliky calcule…':er?'Calcul impossible : '+esc(S.calcEtat.slice(4)):L.length+' lignes, tout compté une seule fois · '+(S.det?'masquer le détail':'voir le détail'))+'</small></span><span class="ds-pr">'+(ch?'…':c&&!er?eur(c.total_ht):'')+'</span><span class="ds-rond p">'+(S.det?IC.bas:IC.ch)+'</span></button>';
  if(S.det&&c&&!ch)h+='<div class="ds-det">'+c.groupes.map(function(g){return '<div class="ds-dg"><b>'+esc(g.groupe)+'</b><span>'+eur(g.total)+'</span></div>'+g.lignes.map(function(l){return '<div class="ds-dl"><span>'+esc(libC(l.libelle))+'<small>'+qf(l.quantite)+' '+esc(pluriel(l.unite||'',l.quantite))+' × '+eur(l.pu)+(l.provisoire?' <em class="ds-tag">à confirmer</em>':'')+'</small></span><b>'+eur(l.total)+'</b></div>'}).join('')}).join('')+'</div>';
  h+='</div>';
- if(c&&c.a_verifier&&c.a_verifier.length&&!ch)h+='<div class="ds-ver"><b>À vérifier ('+c.a_verifier.length+')</b>'+c.a_verifier.slice(0,6).map(function(v){return '<span>'+esc(v)+'</span>'}).join('')+'</div>';
+ if(c&&!ch)h+=blocSansPrix(c);
+ return h}
+/* Ce qui n’a pas encore de prix (Cyril : « vérifie qu’il ne manque rien ») : chaque article a son « ＋ Mon prix »,
+   qui ouvre une ligne déjà remplie (nom, quantité, unité) ; il ne reste qu’à taper le prix. Rien ne disparaît en silence. */
+function sansPrixRestants(){var A=S.calc&&S.calc.a_chiffrer||[];return A.filter(function(x){return !dejaPrix(x)}).length}
+function dejaPrix(x){return S.lignes.some(function(l){return l.libelle===x.libelle})}
+function blocSansPrix(c){var A=c.a_chiffrer||[],V=(c.a_verifier||[]).filter(function(v){return !/^(À chiffrer|Prix fournisseur à demander) : /.test(v)});
+ if(!A.length&&!V.length)return '';var tout=S.verT,n=sansPrixRestants(),h='';
+ if(A.length){h+='<div class="ds-ver ds-sp"><b>Sans prix pour l’instant ('+n+(n<A.length?' sur '+A.length:'')+')</b><small>Pas sur le devis tant que vous n’avez pas mis votre prix.</small>';
+  h+=A.map(function(x,k){if(!tout&&k>=6)return '';var ok=dejaPrix(x);return '<div class="ds-spl'+(ok?' ok':'')+'"><span>'+esc(x.libelle)+'<small>'+(x.fournisseur?'au devis du fournisseur':qf(x.quantite)+' '+esc(pluriel(x.unite||'u',x.quantite)))+'</small></span>'+(ok?'<em>Prix mis</em>':'<button type="button" class="ds-mp" data-ds="ach" data-id="'+k+'">＋ Mon prix</button>')+'</div>'}).join('');
+  if(A.length>6)h+='<button type="button" class="ds-voir c" data-ds="vert">'+(tout?'Masquer':'Voir les '+A.length)+'</button>';
+  h+='</div>'}
+ if(V.length)h+='<div class="ds-ver"><b>À vérifier ('+V.length+')</b>'+V.slice(0,tout?99:6).map(function(v){return '<span>'+esc(v)+'</span>'}).join('')+(V.length>6&&!A.length?'<button type="button" class="ds-voir c" data-ds="vert">'+(tout?'Masquer':'Voir les '+V.length)+'</button>':'')+'</div>';
  return h}
 function ecranLignes(cote){var t=total(),n=S.lignes.length+S.ouvrages.length;
  var h=tete('Devis de '+esc(S.nom||'…'),cote?'Étape '+(n?3:2)+' sur 3 · '+(n?'Vérifiez et créez':'Ajoutez à droite'):'Étape 3 sur 3 · Vérifiez et créez',!cote)+fil(cote?(n?3:2):3)+(cote?bandeauReprise():'')+'<div class="ds-liste ds-lg">';
@@ -284,7 +296,7 @@ function ecranLignes(cote){var t=total(),n=S.lignes.length+S.ouvrages.length;
  if(n)h+='<p class="ds-note">Touchez une ligne ou un travail pour le changer ou l’enlever.</p>';
  h+='<label class="ds-titre">Le titre du devis <span>(facultatif)</span><input data-dsi="titre" value="'+esc(S.titre)+'" placeholder="Ex. : cloison du bureau" autocomplete="off"></label>';
  var att=S.calcEtat==='charge';
- h+='</div><div class="ds-bas"><div class="ds-tot"><span>Total HT</span><b>'+(att?'…':eur(t))+'</b></div><button type="button" class="ds-btn'+(S.arme?' arme':'')+'" data-ds="creer"'+(n&&!att?'':' disabled')+'>'+(S.arme?'Oui, créer le devis':'Créer le devis')+'</button>'+(S.arme?'<button type="button" class="ds-lien" data-ds="desarme">Pas encore</button>':'<p class="ds-note c">Il ne part pas chez le client tant que vous ne l’envoyez pas.</p>')+'</div>';
+ h+='</div><div class="ds-bas"><div class="ds-tot"><span>Total HT</span><b>'+(att?'…':eur(t))+'</b></div><button type="button" class="ds-btn'+(S.arme?' arme':'')+'" data-ds="creer"'+(n&&!att?'':' disabled')+'>'+(S.arme?'Oui, créer le devis':'Créer le devis')+'</button>'+(S.arme?(sansPrixRestants()?'<p class="ds-note c ds-avert">'+sansPrixRestants()+' article'+(sansPrixRestants()>1?'s':'')+' sans prix ne ser'+(sansPrixRestants()>1?'ont':'a')+' pas sur ce devis.</p>':'')+'<button type="button" class="ds-lien" data-ds="desarme">Pas encore</button>':'<p class="ds-note c">Il ne part pas chez le client tant que vous ne l’envoyez pas.</p>')+'</div>';
  return h}
 
 /* ---------- l'écran « Mes prix à confirmer » : un prix à la fois ---------- */
@@ -453,7 +465,9 @@ function clic(e){var b=e.target.closest('[data-ds]');if(!b||!S)return;var a=b.ge
  else if(a==='pxpasse'){S.P.i++;rendre()}
  else if(a==='finprix'){if(S.solo)fermer();else{S.mode='devis';rendre()}}
  else if(a==='creer')creer(b);
- else if(a==='desarme'){S.arme=0;rendre()}}
+ else if(a==='desarme'){S.arme=0;rendre()}
+ else if(a==='vert'){S.verT=!S.verT;rendre()}
+ else if(a==='ach'){var x=S.calc&&S.calc.a_chiffrer&&S.calc.a_chiffrer[+id];if(!x)return;feuilleArt(null,null);F.lib=x.libelle;F.q=x.fournisseur?1:x.quantite;F.u=x.unite||'u';F.pu=0;F.pu0=0;dessinerF();setTimeout(function(){var z=ov&&ov.querySelector('[data-dsf="pu"]');if(z)z.focus()},250)}}
 function feuilleAnciens(){var A=anciens();F={anc:1};
  S.feuille='<div class="ds-grab"></div><div class="ds-fq">Repartir d’un devis déjà fait</div><p class="ds-note c">Les produits de votre base reprennent le prix d’aujourd’hui. Vous changez ensuite ce que vous voulez.</p><div class="ds-card">'+A.map(function(D,i){var n=(D.lignes||[]).length+(D.ouvrages||[]).length;return '<button type="button" class="ds-row" data-ds="ancien" data-id="'+i+'"><span class="ds-ic">'+IC.hist+'</span><span class="ds-tx"><b>'+esc(D.titre||'Devis'+(D.nom?' de '+D.nom:''))+'</b><small>'+esc((D.nom||'')+(D.numero?' · n° '+D.numero:'')+' · '+dateC(D.le)+' · '+n+' ligne'+(n>1?'s':''))+'</small></span><span class="ds-pr">'+eur(D.total)+'</span></button>'}).join('')+'</div><button type="button" class="ds-lien" data-ds="ferf">Annuler</button>';rendre()}
 function saisie(e){var t=e.target,k=t.getAttribute('data-dsi'),f=t.getAttribute('data-dsf'),o=t.getAttribute('data-dso');if(!S)return;
@@ -537,7 +551,7 @@ var css=document.createElement('style');css.textContent=[
 '#dsv .ds-tc{background:color-mix(in srgb,var(--n1-nuit,#1B2440) 5%,transparent)}#dsv .ds-tc .ds-pr{font-size:17px}',
 '#dsv .ds-det{padding:4px 14px 10px 14px;border-top:1px solid var(--n1-line,rgba(14,19,34,.09))}#dsv .ds-det.f{margin:0 16px 10px;border:0;border-radius:14px;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 4%,transparent)}',
 '#dsv .ds-dg{display:flex;justify-content:space-between;font-weight:800;font-size:13.5px;padding:10px 0 4px}#dsv .ds-dl{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:4px 0 4px 8px}#dsv .ds-dl small{display:block;color:var(--n1-muted,#565E73);font-size:12px}#dsv .ds-dl b{white-space:nowrap;font-weight:700}',
-'#dsv .ds-ver{margin:0 16px 14px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--n1-laiton,#A8823F) 10%,transparent);font-size:13px}#dsv .ds-ver b{display:block;color:var(--n1-laiton,#A8823F);margin-bottom:4px}#dsv .ds-ver span{display:block;padding:2px 0}',
+'#dsv .ds-ver{margin:0 16px 14px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--n1-laiton,#A8823F) 10%,transparent);font-size:13px}#dsv .ds-ver b{display:block;color:var(--n1-laiton,#A8823F);margin-bottom:4px}#dsv .ds-ver span{display:block;padding:2px 0}#dsv .ds-sp small{display:block;opacity:.75;margin-bottom:6px}#dsv .ds-spl{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid color-mix(in srgb,currentColor 10%,transparent)}#dsv .ds-spl span{flex:1;min-width:0}#dsv .ds-spl span small{margin:0}#dsv .ds-spl em{flex:none;font-style:normal;font-size:12px;color:var(--n1-ok,#2E7D4F);white-space:nowrap}#dsv .ds-spl.ok span{opacity:.6}#dsv .ds-mp{flex:none;border:0;border-radius:999px;padding:7px 12px;font:600 13px inherit;font-family:inherit;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);box-shadow:var(--n1-go-sh);cursor:pointer}#dsv .ds-avert{color:#B3412E;font-weight:600}',
 '#dsv .ds-pb{flex:none;height:6px;margin:0 16px 14px;border-radius:3px;background:color-mix(in srgb,var(--n1-fg,#0E1322) 12%,transparent);overflow:hidden}#dsv .ds-pb span{display:block;height:100%;background:var(--n1-laiton,#A8823F);transition:width .3s}',
 '#dsv .ds-pc{margin:6px 16px 18px;padding:20px 18px;border-radius:22px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-calme-sh);text-align:center}#dsv .ds-pc>b{display:block;font-size:19px;margin-top:10px}#dsv .ds-pc>small{display:block;color:var(--n1-muted,#565E73);margin-top:4px}#dsv .ds-ic.g{width:56px;height:56px;margin:0 auto;border-radius:16px}',
 '#dsv .ds-pv{font-size:40px;font-weight:800;margin:16px 0 4px}#dsv .ds-pv small{display:block;font-size:13px;font-weight:600;color:var(--n1-muted,#565E73)}#dsv .ds-pv input{max-width:220px;margin:0 auto!important;text-align:center;font-size:34px!important;font-weight:800!important}',
