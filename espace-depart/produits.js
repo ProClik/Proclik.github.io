@@ -102,7 +102,12 @@ function prixU(n){return (+n||0).toLocaleString('fr-FR',{minimumFractionDigits:2
 function sourceBC(){var s=BC.source||'',m=/—\s*([^(,]+)/.exec(s),d=/relevé du ([\d/]+)/.exec(s),t=m?m[1].trim().toLowerCase():'';
  return t?'Prix de votre fournisseur ('+t.charAt(0).toUpperCase()+t.slice(1)+(d?', relevés le '+d[1]:'')+').':''}
 function ligneBC(a){return '<button class="cf-li pr-li bc-li" type="button" data-bc="'+esc(a.c)+'"><span class="tx"><b>'+esc(a.d)+'</b><small>'+esc(a.cond)+
-  (a.modifie?' · <em class="bc-m">votre prix</em>':a.ajoute?' · <em class="bc-m">ajouté par vous</em>':a.provisoire?' · <em class="bc-p">prix provisoire</em>':'')+'</small></span><span class="cf-m"><b>'+prix(a.pc)+'</b><small>/ '+esc(parCond(a))+'</small></span></button>'}
+  (a.modifie?' · <em class="bc-m">votre prix</em>':a.ajoute?' · <em class="bc-m">ajouté par vous</em>':a.provisoire?' · <em class="bc-p">prix provisoire</em>':'')+'</small></span><span class="cf-m"><b>'+prix(a.pc)+'</b><small>/ '+esc(parCond(a))+'</small>'+(mesBC(a)?'<small class="bc-mes">'+mesBC(a)+'</small>':'')+'</span></button>'}
+/* Le prix au m², au ml, au kg ou à la pièce sous le prix du conditionnement (Cyril 26/11) : « plaque (3 m²) » → 3,16 € / m² */
+function mesBC(a){var c=String(a.cond||'').trim(),m;if(/^(m²|ml|m|m³|u|kg|h|forfait|unité)$/i.test(c)||!(a.pc>0))return '';
+ m=/(\d+(?:[.,]\d+)?)\s*(m²|m³|kg|m)(?![a-zà-ÿ²³])/i.exec(c);var n,u;if(m){n=+m[1].replace(',','.');u=m[2]==='m'?'ml':m[2]}
+ else{m=/^(?:boîte|pack|lot|sachet|paquet|carton) de (\d+)\s*$/i.exec(c);if(m){n=+m[1];u='pièce'}}
+ return n>1||n>0&&n!==1&&u!=='pièce'?'soit '+prixU(Math.round(a.pc/n*1000)/1000)+' / '+u:''}
 /* ---------- Mes fournisseurs (17/11, Cyril) : une carte par fournisseur, on y glisse ses documents ---------- */
 var FO=lsG('pc-cliky-four',null),FOe='',LF='',LC='';
 function chargerFO(force){if(!enDirect()||FOe==='charge'||(FOe==='ok'&&!force))return;FOe='charge';
