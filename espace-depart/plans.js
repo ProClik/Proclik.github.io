@@ -57,7 +57,7 @@ function pour(id,cli){var p=id&&un(id);if(!p){p={id:'pl'+Date.now().toString(36)
 var COUR=null;
 function ouvrirPlan(id,photo){var p=un(id);if(!p)return;COUR=id;var c=client(p.cli),M=manque(p).filter(function(x){return x!=='le dessin'});
  X.xopen('📐 '+(c?c.n:'Plan sans client'),M.length?'Manque '+M.join(', ')+' : vous pourrez compléter plus tard':(c&&c.adr)||'',
-  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=80&chantier='+encodeURIComponent(p.id)+(c?'&cn='+encodeURIComponent(c.n):'')+(p.rel?'&rel='+encodeURIComponent(p.rel):'')+(photo?'&photo=1':'')+'"></iframe>',
+  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=81&chantier='+encodeURIComponent(p.id)+(c?'&cn='+encodeURIComponent(c.n):'')+(p.rel?'&rel='+encodeURIComponent(p.rel):'')+(photo?'&photo=1':'')+'"></iframe>',
   '<button class="btn" type="button" data-pllist>← Mes plans</button>'+(p.cli?'':'<button class="btn go" type="button" data-plcomp="'+esc(p.id)+'">Choisir le client</button>')+'<button class="btn pl-supb" type="button" data-plsup="'+esc(p.id)+'" aria-label="Supprimer ce plan">'+ICSUP+'<span>Supprimer</span></button>',null);}
 addEventListener('message',function(e){var f=d.getElementById('pl-frame');if(!f||e.source!==f.contentWindow||!COUR)return;var m=e.data||{},p=un(COUR);if(!p)return;
  if(m.type==='proclik-plan-ready'){var c=client(p.cli);f.contentWindow.postMessage({type:'proclik-plan-load',plan:p.plan||null,nouveau:true,prenom:''},'*')}
