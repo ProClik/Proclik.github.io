@@ -215,14 +215,21 @@ window.PCPERS={fiche:fiche,droit:droit,peut:peut,moi:function(){return moi()}};
 d.addEventListener('click',function(e){var b=e.target.closest('[data-pers]');if(!b)return;e.preventDefault();e.stopPropagation();fiche(b.dataset.pers)},true);
 
 /* ---------- « Où êtes-vous ? » (pour tout le monde) ---------- */
+/* 26/11 (Cyril) : une petite icône par endroit */
+var OUI={chantier:'<path d="M3 17.5h18"/><path d="M5 17.5V15a7 7 0 0 1 14 0v2.5"/><path d="M10 8.3V6h4v2.3"/><path d="M12 8.5v3.5"/>',
+ route:'<path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.7"/><circle cx="17" cy="17.5" r="1.7"/>',
+ depot:'<path d="M3 20V9l9-5 9 5v11"/><path d="M7 20v-7h10v7M7 16.5h10"/>',
+ client:'<path d="M4 11l8-6 8 6v9H4z"/><path d="M10 20v-5h4v5"/>',
+ four:'<path d="M4 9l1.5-4h13L20 9z"/><path d="M4 9v1.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0V9"/><path d="M5.5 13v7h13v-7"/>',
+ bureau:'<rect x="4.5" y="5" width="15" height="10" rx="1.5"/><path d="M3 19h18M10 15v4M14 15v4"/>'};
 function ouHTML(n,court){var o=Q.ouSuis(n);
-  return '<div class="rl-ou'+(court?' court':'')+'"><b class="rl-ot">'+ic('pin')+'Où êtes-vous ?</b><div class="tr-chips">'+Object.keys(Q.OU).map(function(k){return '<button type="button" data-ou="'+k+'" aria-pressed="'+(!!o&&o.v===k)+'">'+(court?Q.OU[k].replace(/ \(devis\)$/,''):Q.OU[k])+'</button>'}).join('')+'</div>'+
+  return '<div class="rl-ou'+(court?' court':'')+'"><b class="rl-ot">'+ic('pin')+'Où êtes-vous ?</b><div class="tr-chips">'+Object.keys(Q.OU).map(function(k){return '<button type="button" data-ou="'+k+'" aria-pressed="'+(!!o&&o.v===k)+'">'+(OUI[k]?'<svg class="tri ouic" viewBox="0 0 24 24" aria-hidden="true">'+OUI[k]+'</svg>':'')+'<span>'+(court?Q.OU[k].replace(/ \(devis\)$/,''):Q.OU[k])+'</span></button>'}).join('')+'</div>'+
     (court?(o?'<p class="tr-h">Toute l\'équipe voit « '+Q.OU[o.v]+' » depuis '+o.h+'.</p>':''):'<p class="tr-h">'+(o?'Toute l\'équipe voit « '+Q.OU[o.v]+' » depuis '+o.h+'.':'Un toucher suffit : chacun sait qui est où. Ce n\'est pas un pointage.')+'</p>')+'</div>'}
 var ouA=d.createElement('div');ouA.id='rl-oua';
 /* l'Accueil est dessiné dans #f2acc (accueil-forme.js) : on pose la carte juste sous la case « Que voulez-vous faire ? » */
 function placer(){var f=$('#f2acc')||$('#v-accueil');if(!f)return;
   /* 26/11 : l'Accueil se personnalise (accueil-forme.js) ; la carte va dans sa place, et nulle part si le bloc est caché */
-  if($('#f2acc')){var sl=$('#f2-slot-ouetes');if(sl){if(ouA.parentNode!==sl)sl.appendChild(ouA)}else if(ouA.parentNode)ouA.parentNode.removeChild(ouA);
+  if($('#f2acc')){var sl=$('#f2-slot-ouetes');if(sl){if(ouA.parentNode!==sl)sl.appendChild(ouA);ouH()}else if(ouA.parentNode)ouA.parentNode.removeChild(ouA);
     $$('h1,h2',f).forEach(function(h){var m=/^Bonjour (.+)$/.exec(h.textContent.trim());if(m&&m[1]!==moi().n&&(m[1]===PATRON||PERS.some(function(p){return p.n===m[1]})))h.textContent='Bonjour '+moi().n});return}
   /* « Bonjour Julien » devient le prénom de la personne qui regarde */
   $$('h1,h2',f).forEach(function(h){var m=/^Bonjour (.+)$/.exec(h.textContent.trim());if(m&&m[1]!==moi().n&&(m[1]===PATRON||PERS.some(function(p){return p.n===m[1]})))h.textContent='Bonjour '+moi().n});
@@ -235,7 +242,9 @@ ouA.addEventListener('click',function(e){var b=e.target.closest('[data-ou]');if(
 /* l'Admin peut retirer le bloc de l'Accueil (fiche du client : menus.ouetes=false), par ex. pour quelqu'un qui travaille seul */
 function ouOff(){try{var k=sessionStorage.getItem('pc-apercu')==='1'?sessionStorage.getItem('ap:pc-vrai-artisan'):localStorage.getItem('pc-vrai-artisan');var a=JSON.parse(k)||{};return !!(a.menus&&a.menus.ouetes===false)}catch(e){return false}}
 window.PCOU={dispo:function(){return moi().g!=='ter'&&!ouOff()}};
-function rendOuA(){if(moi().g==='ter'||ouOff()){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c&&c.parentNode.scrollWidth>c.parentNode.clientWidth)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0)}
+/* 26/11 : la hauteur de la carte est retenue sur l'appareil ; l'Accueil lui garde exactement cette place à l'ouverture (rien ne bouge) */
+function ouH(){requestAnimationFrame(function(){var h=ouA.isConnected?ouA.offsetHeight:0;if(h>40)try{localStorage.setItem('pc-oua-h',String(Math.round(h)))}catch(e){}})}
+function rendOuA(){if(moi().g==='ter'||ouOff()){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c&&c.parentNode.scrollWidth>c.parentNode.clientWidth)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0);ouH()}
 
 /* ---------- icônes ---------- */
 var IC={
@@ -386,7 +395,7 @@ st.textContent=
 '.f2 .f2a #rl-oua .rl-ouc{margin:0!important;padding:14px 14px 14px 16px!important;border:0!important;border-radius:22px!important;background:var(--tile)!important;box-shadow:0 1px 2px rgba(23,24,29,.04),0 10px 26px -18px rgba(23,24,29,.28)!important}'+
 ':root[data-theme="dark"] .f2 .f2a #rl-oua .rl-ouc{background:#1F232D!important;box-shadow:none!important}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .f2a #rl-oua .rl-ouc{background:#1F232D!important;box-shadow:none!important}}'+
 '.f2 .f2a #rl-oua .rl-ot{font-size:15px;font-weight:600;margin:0 0 10px}.f2 .f2a #rl-oua .rl-ot svg{color:var(--mut)}'+
-'.f2 .f2a #rl-oua .tr-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin:0;padding:0;gap:8px}.f2 .f2a #rl-oua .tr-chips button{min-height:46px;padding:6px 8px;font-size:14px;line-height:1.2;white-space:normal;text-align:center;justify-content:center}@media (max-width:420px){.f2 .f2a #rl-oua .tr-chips button{font-size:13px;padding:5px 4px}}'+
+'.f2 .f2a #rl-oua .tr-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin:0;padding:0;gap:8px}.f2 .f2a #rl-oua .tr-chips button{min-height:46px;padding:6px 8px;font-size:14px;line-height:1.2;white-space:normal;text-align:center;justify-content:center;display:flex!important;flex-direction:column;align-items:center;gap:4px}.f2 .f2a #rl-oua .tr-chips .ouic{width:19px;height:19px;margin:0}.tr-chips button[data-ou]{display:inline-flex;align-items:center;gap:6px}.tr-chips button[data-ou] .ouic{width:17px;height:17px;flex:none}@media (max-width:420px){.f2 .f2a #rl-oua .tr-chips button{font-size:13px;padding:5px 4px}}'+
 'html[data-theme="dark"] body .f2 .f2a #rl-oua .tr-chips button:not([aria-pressed="true"]){background:#2A2F3B!important;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 6px rgba(0,0,0,.35)!important}@media (prefers-color-scheme:dark){html:not([data-theme="light"]) body .f2 .f2a #rl-oua .tr-chips button:not([aria-pressed="true"]){background:#2A2F3B!important;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 6px rgba(0,0,0,.35)!important}}'+
 '.f2 .f2a #rl-oua .tr-h{margin:10px 2px 0;font-size:13px}html body .f2 .f2a #rl-oua .tr-chips button[aria-pressed="true"]{background:var(--nuit)!important;color:var(--sur-nuit)!important;box-shadow:none!important}'+
  '#terrain .tr-auj{box-shadow:inset 5px 0 0 var(--cc),var(--z-ombre-s,0 1px 3px rgba(0,0,0,.08));padding-left:20px}'+

@@ -155,7 +155,8 @@ function rendre(){var D=A.donnees(),J=jour(),C0=conf(),B=C0.on,h="",H={};
   /* Lien négoce (24/11) : « Valcroix · 1 pose à accepter », une ligne seulement quand une pose attend (negoce.js) */
   if(window.PCNEG&&PCNEG.accueilHTML)ask+=PCNEG.accueilHTML();
   /* « Où êtes-vous ? » : roles.js pose sa carte dans cette place */
-  H.ouetes='<div id="f2-slot-ouetes"></div>';
+  var ouh=0;try{ouh=+localStorage.getItem("pc-oua-h")||0}catch(e){}
+  H.ouetes='<div id="f2-slot-ouetes"'+(ouh>40&&ouh<600?' style="--ouh:'+ouh+'px"':"")+"></div>";
   /* 1. la journée : un seul endroit pour les rendez-vous, ouvre la fenêtre « Le point de la journée » */
   {var L=J.L,hj="";
     hj+='<section class="jr2"><button class="jr2-h" type="button" id="f2-ouvre"><span class="rond">'+ic("cafe")+'</span><span style="flex:1"><span class="lab">Le point de la journée</span><b>'+
