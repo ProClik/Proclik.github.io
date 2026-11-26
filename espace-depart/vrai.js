@@ -18,6 +18,14 @@ var AP=(function(){var m=/[#&]apercu=([A-Za-z0-9_.-]{20,})/.exec(location.hash);
 if(AP){var AK={'pc-vrai-jeton':1,'pc-vrai-artisan':1,'pc-vrai-liste':1},g0=lsG,s0=lsS;
  lsG=function(k){if(AK[k]){try{return JSON.parse(sessionStorage.getItem('ap:'+k)||'null')}catch(e){return null}}return g0(k)};
  lsS=function(k,v){if(AK[k]){try{v==null?sessionStorage.removeItem('ap:'+k):sessionStorage.setItem('ap:'+k,JSON.stringify(v))}catch(e){}return}s0(k,v)}}
+/* Retouches du pré-devis gardées dans le compte (Cyril 26/11) : chaque retouche (pc-lg-…, pc-rt-…) part aussi au service,
+   1,5 s après la dernière ; en ouvrant la demande sur un autre appareil, la plus récente est reprise. Rien en aperçu Admin. */
+var RTS={};
+(function(){var s1=lsS;lsS=function(k,v){s1(k,v);var m=/^pc-(lg|rt)-([A-Za-z0-9_-]{6,64})$/.exec(k);if(!m||AP||RTS.calme)return;var id=m[2];s1('pc-rtt-'+id,Date.now());clearTimeout(RTS[id]);RTS[id]=setTimeout(function(){rtEnvoyer(id)},1500)}})();
+function rtEnvoyer(id){var lg=lsG('pc-lg-'+id),rt=lsG('pc-rt-'+id),t=lsG('pc-rtt-'+id)||Date.now();api('/espace/retouches',{method:'POST',body:{contact:id,retouches:lg||rt?{lg:lg,rt:rt,t:t}:null}}).catch(function(){/* hors ligne : repart à la prochaine retouche */})}
+function rtRecevoir(d){var id=d&&d.contact&&d.contact.id;if(!id||AP||!('retouches' in d))return;var r=d.retouches,t=+lsG('pc-rtt-'+id)||0;
+ if(!r){if(!t&&(lsG('pc-lg-'+id)||lsG('pc-rt-'+id)))rtEnvoyer(id);return}
+ if(!(+r.t>t))return;RTS.calme=1;lsS('pc-lg-'+id,r.lg||null);lsS('pc-rt-'+id,r.rt||null);RTS.calme=0;lsS('pc-rtt-'+id,+r.t)}
 function quitterApercu(){try{['pc-apercu','ap:pc-vrai-jeton','ap:pc-vrai-artisan','ap:pc-vrai-liste'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}location.reload()}
 var eur=function(n,d){return n==null?'—':Number(n).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:d||2})+' €'};
 var qte=function(n){return n==null?'':String(n).replace('.',',')};
@@ -115,7 +123,7 @@ var ov=document.createElement('div');ov.className='pcov vov';ov.hidden=true;ov.s
 ov.innerHTML='<div class="pcov-h"><b id="vov-t"></b><button class="pcov-x" id="vov-x" type="button">Fermer</button></div><div class="pcbody" id="vov-b"></div><div class="vfoot" id="vov-f" hidden></div>';
 document.body.appendChild(ov);
 function ouvrir(titre,html,foot){$('#vov-b').style.padding='';$('#vov-b').style.maxWidth='';$('#vov-t').innerHTML=titre;$('#vov-b').innerHTML=html;var f=$('#vov-f');f.innerHTML=foot||'';f.hidden=!foot;ov.hidden=false;document.body.style.overflow='hidden';$('#vov-b').scrollTop=0}
-function fermer(){ov.hidden=true;document.body.style.overflow='';if(/#c=/.test(location.hash))try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+function fermer(){if(planFini())return;ov.hidden=true;document.body.style.overflow='';if(/#c=/.test(location.hash))try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
 $('#vov-x').addEventListener('click',fermer);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)fermer()});
 
@@ -297,12 +305,12 @@ var COUR=null;
    Les retouches de l'artisan restent sur cet appareil (une sauvegarde par client). */
 var VPNEW=false;
 function voirPlan(nouveau){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan,pm=lsG(clePm());if(!P&&!pm&&!nouveau)return;var k=COUR.contact||{},nom=k.nom||'le client',moi=!P;VPNEW=moi;
- ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=82&chantier=c-'+encodeURIComponent(k.id||'')+'&cn='+encodeURIComponent(nom||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
+ VPOUV=1;VPMOD=0;ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=82&chantier=c-'+encodeURIComponent(k.id||'')+'&cn='+encodeURIComponent(nom||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
  if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||'',nouveau:VPNEW},'*')}
  /* Plan retouché par l'artisan : gardé ici jusqu'au recalcul (sauf s'il est identique au plan déjà recalculé) */
- if(d.type==='proclik-plan-modifie'&&d.plan&&COUR&&COUR.contact){var D2=COUR.demande,P2=D2&&D2.plan_corrige_le&&D2.details&&D2.details.plan;if(P2&&JSON.stringify(P2)===JSON.stringify(d.plan))lsS(clePm(),null);else pmGarder(clePm(),d.plan)}});
+ if(d.type==='proclik-plan-modifie'&&d.plan&&COUR&&COUR.contact){var D2=COUR.demande,P2=D2&&D2.plan_corrige_le&&D2.details&&D2.details.plan;if(P2&&JSON.stringify(P2)===JSON.stringify(d.plan))lsS(clePm(),null);else{pmGarder(clePm(),d.plan);VPMOD=1}}});
 /* Appareil plein (22/11) : on garde le plan sans ses photos et on le dit, au lieu de tout perdre sans rien dire */
 function pmSansPh(k,v){if(typeof v==='string'&&/^data:image/.test(v))return undefined;if(Array.isArray(v)&&v.length&&v.every(function(x){return x&&typeof x.u==='string'&&/^data:image/.test(x.u)}))return undefined;return v}
 var pmAv=0;function pmGarder(k,plan){var o={t:Date.now(),plan:plan},n=0;try{localStorage.setItem(k,JSON.stringify(o))}catch(e){try{localStorage.setItem(k,JSON.stringify(o,pmSansPh));n=1}catch(e2){n=2}}if(n&&Date.now()-pmAv>90000&&window.PCX&&PCX.toast){pmAv=Date.now();PCX.toast(n===2?'Plan pas gardé':'Photos du plan pas gardées',n===2?'Plus de place sur cet appareil. Ne fermez pas la page et libérez de la place.':'Plus de place sur cet appareil. Le plan est gardé, mais pas ses photos : gardez-les aussi dans votre galerie.')}}
@@ -311,7 +319,12 @@ var pmAv=0;function pmGarder(k,plan){var o={t:Date.now(),plan:plan},n=0;try{loca
    Les retouches restent sur cet appareil jusqu'à la création du devis, qui les envoie (mêmes taux de marge et de frais généraux). */
 var ED=null,VTAB='devis',MODE='pre',ND=null;
 function T(){return MODE==='nd'?ND:ED}
-function retour(){return MODE==='nd'?rendreND():afficher(COUR)}
+function retour(){if(planFini())return;return MODE==='nd'?rendreND():afficher(COUR)}
+/* Recalcul tout seul (Cyril 26/11) : en sortant du plan qu'il vient de modifier, l'artisan arrive directement sur le nouveau calcul
+   (nouveau total, d'où vient l'écart, lignes à garder), sans chercher « ↻ Recalculer ». Rien n'est enregistré sans « Garder ce calcul ». */
+var VPOUV=0,VPMOD=0;
+function planFini(){if(!VPOUV)return false;var m=VPMOD;VPOUV=0;VPMOD=0;var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];
+ if(!m||!lsG(clePm())||!p||!p.lue||MODE!=='pre')return false;afficher(COUR);recalc();return true}
 function cleLg(){return 'pc-lg-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
 function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;if(l.m2)o.m2=l.m2;return o})};
  var e={le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0,four:{}},R=lsG(cleRt());
@@ -325,7 +338,7 @@ function retouches(p){if(!ED||!ED.touche||!p)return null;var R={n:0};['materiaux
   var pris={};ch=ch.map(function(l){for(var j=0;j<o.length;j++)if(o[j]&&!pris[j]&&o[j].libelle===l.libelle){pris[j]=1;return Object.assign({},l,{oq:o[j].quantite,opu:o[j].pu})}return l});
   var sup=o.filter(Boolean).map(function(x){return x.libelle});R[k]={ch:ch,sup:sup};R.n+=ch.length+sup.filter(function(x){return !ch.some(function(l){return l.libelle===x})}).length});return R.n?R:null}
 function uPl(u,n){u=String(u||'');if(!(n>1)||/[sx]$/i.test(u)||/\s/.test(u)||u.length<3)return u;return /eau$|au$/i.test(u)?u+'x':u+'s'}
-function rtFus(n,l,k,choix,cf){if(l.oq==null||n.quantite===l.oq)return l;
+function rtFus(n,l,k,choix,cf){/* une retouche faite avant les titres par travaux reprend le travail de la ligne qu'elle remplace (sinon « Autres travaux ») */if(!l.groupe&&n.groupe)l=Object.assign({},l,{groupe:n.groupe});if(l.oq==null||n.quantite===l.oq)return l;
  var pl=Object.assign({},l,{quantite:n.quantite,total:R2(n.quantite*l.pu)});if(n.m2)pl.m2=n.m2;else delete pl.m2;
  if(l.quantite===l.oq){if(cf)cf.push({p:1});return pl}
  var c=(choix||{})[k+'|'+l.libelle];if(cf)cf.push({k:k,lib:l.libelle,plan:n.quantite,moi:l.quantite,u:l.unite||'',c:c==='moi'?'moi':'plan'});return c==='moi'?l:pl}
@@ -347,7 +360,7 @@ function rendreRc(){var x=RC,ch=x.changements||{},R=retouches(COUR.pre_devis[0])
   gl=(x.gardees_lignes||[]).filter(function(l){return !(x.garder||[]).some(function(g){return g===l.libelle})}),nL=(ch.modifiees||[]).length+(ch.ajoutees||[]).length+gl.length;
  var h='<div class="card vsec vrc-h"><small>Nouveau total HT</small><b>'+eur(ap)+'</b><span class="vrc-e'+(Math.abs(d)<0.005?'':d>0?' up':' down')+'">'+(Math.abs(d)<0.005?'Le total ne change pas':sg(d)+' par rapport à avant ('+eur(av)+')')+'</span></div>'+
   (P.length?'<div class="card vsec vrc-p"><h3>D\'où vient l\'écart</h3>'+P.map(function(p){return '<div class="vrc-r"><span>'+p.t+'<small>'+eur(p.a)+' → '+eur(p.b)+'</small></span><b>'+sg(p.e)+'</b></div>'}).join('')+'</div>':'')+
-  (x.ret&&x.ret.length?'<div class="card vsec vrc-g"><h3>'+(x.ret.length>1?x.ret.length+' lignes ne sont plus comptées':'Une ligne n\'est plus comptée')+'</h3><p class="vrc-x">'+(x.ret.length>1?'Le nouveau calcul ne les compte plus. Touchez « Garder » pour celles qui doivent rester.':'Le nouveau calcul ne la compte plus. Touchez « Garder » si elle doit rester.')+'</p>'+x.ret.map(function(l,i){var on=x.garder.indexOf(l.libelle)>=0;return '<div class="vrc-r"><span>'+esc(nomLigne(l).n)+'<small>'+eur(l.total)+'</small></span><button type="button" class="vbtn vrc-k'+(on?' on':'')+'" data-vrcg="'+i+'">'+(on?'✓ Gardée':'Garder')+'</button></div>'}).join('')+'</div>':'')+
+  (x.ret&&x.ret.length?'<div class="card vsec vrc-g"><h3>'+(x.ret.length>1?x.ret.length+' lignes ne sont plus comptées':'Une ligne n\'est plus comptée')+'</h3><p class="vrc-x">'+(x.ret.length>1?'Le nouveau calcul ne les compte plus. Touchez « Garder » pour celles qui doivent rester.':'Le nouveau calcul ne la compte plus. Touchez « Garder » si elle doit rester.')+'</p>'+x.ret.map(function(l,i){var on=x.garder.indexOf(l.libelle)>=0,dj=np&&[].concat(np.materiaux||[],np.main_oeuvre||[]).filter(function(m){return m.libelle===l.libelle});return '<div class="vrc-r"><span>'+esc(nomLigne(l).n)+'<small>'+eur(l.total)+(dj&&dj.length?' · <b class="vrc-dj">déjà dans le nouveau calcul ('+qte(dj.reduce(function(a,m){return a+(+m.quantite||0)},0))+' '+esc(dj[0].unite||'')+') : le garder le compterait 2 fois</b>':'')+'</small></span><button type="button" class="vbtn vrc-k'+(on?' on':'')+'" data-vrcg="'+i+'">'+(on?'✓ Gardée':'Garder')+'</button></div>'}).join('')+'</div>':'')+
   ((pg=cf.filter(function(c){return c.p}).length,cf=cf.filter(function(c){return !c.p})).length?'<div class="card vsec vrcq"><h3>'+(cf.length>1?cf.length+' quantités à choisir':'Une quantité à choisir')+'</h3><p class="vst" style="padding:0 0 6px">Vous aviez changé '+(cf.length>1?'ces quantités':'cette quantité')+' à la main, et le plan donne maintenant autre chose.</p>'+cf.map(function(c,i){RC.cf=cf;var u=function(n){return c.u?' '+esc(uPl(c.u,n)):''};return '<div class="vrcq-l"><b>'+esc(nomLigne({libelle:c.lib}).n)+'</b><small>Le plan donne '+qte(c.plan)+u(c.plan)+' · vous aviez mis '+qte(c.moi)+u(c.moi)+'</small><div class="vrcq-b"><button type="button" class="vbtn'+(c.c==='plan'?' go':'')+'" data-vrcq="'+i+'|plan">Prendre '+qte(c.plan)+'</button><button type="button" class="vbtn'+(c.c==='moi'?' go':'')+'" data-vrcq="'+i+'|moi">Garder '+qte(c.moi)+'</button></div></div>'}).join('')+'</div>':'')+
   (nL?'<details class="card vsec vrc-d"><summary>Voir les lignes en détail <i>'+nL+'</i></summary>'+
    ((ch.modifiees||[]).length?'<p class="vrc-t">Quantités qui changent</p>'+li(ch.modifiees,function(l){return '<li><span>'+esc(nomLigne(l).n)+'<small>'+qte(l.avant.quantite)+' → '+qte(l.apres.quantite)+' '+esc(l.unite||'')+'</small></span><b>'+sg(Math.round((l.apres.total-l.avant.total)*100)/100)+'</b></li>'}):'')+
@@ -479,7 +492,9 @@ function travauxHTML(p,haut,bas){if(!ED)return '';var L=[];['materiaux','main_oe
     Réglable dans Mes cadences : à l'heure (taux horaire, celui du pré-devis par défaut, × heures par jour, 8 par défaut) ou à la journée (€ HT la journée). */
  /* Point 3 : poids du travail dans le total (petite barre) ; point 5 : prix au m² quand la pose est comptée en m². */
  var TOT=0;G.forEach(function(g){TOT+=g.v});TOT=TOT||1;
- var m2g=function(po){var m=0;po.forEach(function(x){if(/m²|m2/.test(x.l.unite||''))m=Math.max(m,+x.l.quantite||0)});return m};
+ /* m² du travail : une pose coupée mur par mur (« Pose doublage (Mur 1) », « (Mur 2) »…) est additionnée ; entre poses différentes, la plus grande
+    (Cyril 26/11 : doublage affiché à 189,79 €/m² car un seul mur comptait). */
+ var m2g=function(po){var S={};po.forEach(function(x){if(/m²|m2/.test(x.l.unite||'')){var k=String(x.l.libelle||'').replace(/\s*\([^)]*\)\s*$/,'').replace(/\s*\([^)]*\)\s*$/,'');S[k]=(S[k]||0)+(+x.l.quantite||0)}});var m=0;for(var k in S)m=Math.max(m,S[k]);return m};
  var JP=window.PCJR&&PCJR.joursPose?PCJR.joursPose():{m:'h',h:0,hj:8,j:0},prixJour=JP.m==='j'?JP.j:(JP.h||+t.taux_horaire||0)*(JP.hj||8);
  var joursN=function(po){if(!(prixJour>0)||!po.length)return 0;return Math.max(.5,Math.round(po.reduce(function(a,x){return a+(+x.l.total||0)},0)/prixJour*2)/2)};
  var jours=function(po){var j=joursN(po);if(!j)return '';return 'Pose : environ '+String(j).replace('.',',')+' jour'+(j>1?'s':'')};
@@ -571,7 +586,7 @@ function recalcHTML(d){if(lsG(clePm()))return '<div class="card vsec vrc"><b>�
 function boutonPlan(a){if(!a)return '<button type="button" class="vtab-plan vnew" data-vplannew aria-label="Créer un plan pour ce client">'+ICPLAN+'<span>Plan</span><i class="vplus" aria-hidden="true">+</i></button>';return '<button type="button" class="vtab-plan'+(a?'':' vsans')+'" '+(a?'data-vplan':'data-vnoplan')+' aria-label="'+(a?'Voir le plan':'Pas de plan dessiné')+'">'+ICPLAN+'<span>Plan</span>'+(a?'':'<i class="vx" aria-hidden="true">×</i>')+'</button>'}
 var ICPLAN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 12h7v8M11 4v5M15 12h5"/></svg>';
 (function(){var s=document.createElement('style');s.textContent='html body .cf .dv-seg button.vtab-plan.vsans{opacity:.5;box-shadow:none}html body .cf .dv-seg button.vtab-plan .vx{position:absolute;top:3px;right:calc(50% - 24px);width:17px;height:17px;min-width:0;padding:0;border-radius:50%;background:var(--muted,#8A90A0);color:#fff;font:700 13px/17px var(--f,inherit);text-align:center}';document.head.appendChild(s)})();
-function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});if(!aPlan){var pm0=lsG(clePm());aPlan=!!(pm0&&pm0.plan&&(pm0.plan.floors||[]).some(function(f){return (f.pieces||[]).length}))}
+function afficher(d){rtRecevoir(d);MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});if(!aPlan){var pm0=lsG(clePm());aPlan=!!(pm0&&pm0.plan&&(pm0.plan.floors||[]).some(function(f){return (f.pieces||[]).length}))}
  var plan=aPlan?'<button class="vbtn" type="button" data-vplan style="width:100%">📐 '+(d.demande.plan_corrige_le?'Voir le plan (retouché par vous)':'Voir le plan dessiné par le client')+'</button>':'';
  /* Le client : ses coordonnées, ses réponses, ses photos, son plan */
  var cl=ficheCliHTML(k,o,d,aPlan);
@@ -583,12 +598,12 @@ function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,
   var comment='<details class="vd vcomm"><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div>'+(p.resume?'<p class="vst" style="padding:6px 0 0">'+esc(p.resume)+'</p>':'')+'</details>';
   /* Résumé épuré (Cyril 25/11 « beaucoup trop brouillon ») : un seul total (celui collé en bas de « Par travaux »), la vérification et « Comment ce total est fait » rangés dedans, fermés. */
   var trv=travauxHTML(p,'',vueClient(p)+comment);
-  if(trv)dv=filEtapes(p)+alerteFour(p)+trv+cadHTML(p)+recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+(ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
+  if(trv)dv=filEtapes(p)+alerteFour(p)+trv+cadHTML(p)+recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+(ED.touche?'<p class="vst" style="padding:0">Vos retouches sont gardées dans votre compte jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
   else dv=alerteFour(p)+'<div class="card vsec vtotc">'+(window.PCTAG?PCTAG('cliky','a préparé ce pré-devis'):'')+'<div class="vtot1"><span>Total HT'+(ED.touche?' · <span class="vp t">retouché par vous</span>':'')+'</span><b>'+eur(t.total_ht)+'</b></div>'+(p.resume?'<p class="vst" style="padding:4px 0 0">'+esc(p.resume)+'</p>':'')+controleHTML(p)+
    '<details class="vd vcomm"'+(lsG('pc-calc-ferme')?'':' open')+'><summary>Comment ce total est fait<span class="vred"></span></summary><div class="vtot" style="margin-top:8px"><span>Matériaux (achat)</span><b>'+eur(t.materiaux)+'</b><span>'+esc((p.totaux||{}).marge_libelle||'Marge')+'</span><b>'+eur(t.marge)+'</b><span>Main-d\'œuvre</span><b>'+eur(t.main_oeuvre)+'</b><span>Déplacement</span><b>'+eur(t.deplacement)+'</b><span>'+esc((p.totaux||{}).frais_generaux_libelle||'Frais généraux')+'</span><b>'+eur(t.frais_generaux)+'</b></div><p class="vst" style="padding:6px 0 0">TVA non comprise : c\'est vous qui la fixez.</p></details></div>'+
    cadHTML(p)+recalcHTML(d)+verifHTML(p)+'<div id="vsuivi"></div>'+
-   (ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
-  var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches restent sur cet appareil jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
+   (ED.touche?'<p class="vst" style="padding:0">Vos retouches sont gardées dans votre compte jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'')+plan;
+  var raz=ED.touche?'<p class="vst" style="padding:0">Vos retouches sont gardées dans votre compte jusqu\'à la création du devis. <a href="#" data-vlg="raz">Revenir au calcul de Cliky</a></p>':'';
   /* Point 7 : la liste du matériel part au fournisseur en un geste (même envoi que dans « Liste du matériel »). */
   mat=(lignesListe(p).length?'<button type="button" class="vbtn go" data-vlmenv style="width:100%;margin:0 0 12px">✉️ Envoyer la liste au fournisseur</button>':'')+listeMatHTML(p)+lignesEd('materiaux','Matériaux','prix d\'achat HT · touchez un travail, puis une ligne pour la changer','Ajouter un matériau')+raz;
   mo=lignesEd('main_oeuvre','Main-d\'œuvre','prix HT · touchez un travail, puis une ligne pour la changer','Ajouter de la main-d\'œuvre')+raz;
