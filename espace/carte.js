@@ -5,7 +5,7 @@
    Même interface que ProClikMap : zone(), full(), reg(), redraw(), select(i), setPins(p). */
 (function(){
   "use strict";
-  var LIB="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl",STYLE="https://tiles.openfreemap.org/styles/positron";
+  var LIB="/lib/maplibre-gl-4.7.1/maplibre-gl",STYLE="https://tiles.openfreemap.org/styles/positron";
   var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
   var charge=null;
   function bibliotheque(){
