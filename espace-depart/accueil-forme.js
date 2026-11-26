@@ -112,10 +112,31 @@ function conf(){var c=lsG("pc-f2-acc",null),v=lsG("pc-f2-blocs",{}),o=[],on={},c
   return {ordre:o,on:on,col:col}}
 function blocs(){return conf().on}
 /* un bloc qui n'a pas lieu d'être chez cet artisan n'apparaît ni sur l'Accueil ni dans « Personnaliser » */
-function dispo(k){if(k==="scanner")return clikyOn();if(k==="ouetes")return !window.PCOU||PCOU.dispo();return true}
+function ouOff0(){try{var k=sessionStorage.getItem("pc-apercu")==="1"?sessionStorage.getItem("ap:pc-vrai-artisan"):localStorage.getItem("pc-vrai-artisan");var a=JSON.parse(k)||{};return !!(a.menus&&a.menus.ouetes===false)}catch(e){return false}}
+function dispo(k){if(k==="scanner")return clikyOn();if(k==="ouetes")return window.PCOU?PCOU.dispo():!ouOff0();return true}
+/* 26/11 (Cyril : « les blocs sautent de partout à l'ouverture ») : on ne refait plus tout l'Accueil à chaque petite nouvelle
+   (badge, bonjour, données qui arrivent). On compare l'ancien et le nouveau dessin et on ne change QUE ce qui a changé :
+   les autres blocs restent exactement à leur place, sans clignoter. La carte « Où êtes-vous ? » (roles.js) n'est jamais retirée. */
+function morph(o,n,dep){
+  if(o.nodeType===1&&o.id==="f2-slot-ouetes"&&n.id==="f2-slot-ouetes")return;
+  if(o.nodeType!==n.nodeType||o.nodeName!==n.nodeName){o.parentNode.replaceChild(n,o);return}
+  if(o.nodeType===3||o.nodeType===8){if(o.nodeValue!==n.nodeValue)o.nodeValue=n.nodeValue;return}
+  if(o.nodeType!==1)return;
+  var oc=[].slice.call(o.childNodes),nc=[].slice.call(n.childNodes);
+  if(dep>5||o.className!==n.className||oc.length!==nc.length){if(!o.isEqualNode(n))o.parentNode.replaceChild(n,o);return}
+  [].slice.call(o.attributes).forEach(function(at){if(!n.hasAttribute(at.name))o.removeAttribute(at.name)});
+  [].slice.call(n.attributes).forEach(function(at){if(o.getAttribute(at.name)!==at.value)o.setAttribute(at.name,at.value)});
+  for(var i=0;i<oc.length;i++)morph(oc[i],nc[i],dep+1)}
+function poser(app,h){
+  if(!app.firstChild){app.innerHTML=h;return}
+  var t=document.createElement("div");t.innerHTML=h;
+  var oc=[].slice.call(app.childNodes),nc=[].slice.call(t.childNodes);
+  if(oc.length!==nc.length){app.innerHTML=h;return}
+  for(var i=0;i<oc.length;i++)morph(oc[i],nc[i],0)}
 var MQ=window.matchMedia?matchMedia("(min-width:900px) and (min-aspect-ratio:1/1)"):null;
 function large(){return !!(MQ&&MQ.matches)}
-if(MQ){var mqf=function(){CACHE.h=null;rendre()};if(MQ.addEventListener)MQ.addEventListener("change",mqf);else if(MQ.addListener)MQ.addListener(mqf)}
+/* le dessin ne dépend plus de la taille de l'écran (CSS) ; seule la fenêtre « Personnaliser » ouverte se redessine */
+if(MQ){var mqf=function(){if($("#f2perso"))persoRemplir()};if(MQ.addEventListener)MQ.addEventListener("change",mqf);else if(MQ.addListener)MQ.addListener(mqf)}
 function fa(){try{return (X.cf&&X.cf.FA&&X.cf.FA())||[]}catch(e){return []}}
 function nomCli(k){var o=X.DOS&&X.DOS[k];return o&&o.n?o.n:String(k||"")}
 function eur0(n){return Math.round(n).toLocaleString("fr-FR")}
@@ -204,11 +225,13 @@ function rendre(){var D=A.donnees(),J=jour(),C0=conf(),B=C0.on,h="",H={};
   if(B.encaisser)H.encaisser=blocEncaisser();
   if(B.depenses)H.depenses=blocDepenses();
   /* rangés dans l'ordre choisi ; iPad couché/PC : chacun dans sa colonne */
-  var g=[],dr=[],lg=large();
-  C0.ordre.forEach(function(k){if(!B[k]||!H[k]||!dispo(k))return;var x='<div class="f2k f2k-'+k+'">'+H[k]+"</div>";if(lg&&C0.col[k]==="d")dr.push(x);else g.push(x)});
+  /* 26/11 : chaque bloc est TOUJOURS dans sa colonne ; sur téléphone et iPad debout, le CSS remet les deux colonnes en une seule
+     liste dans l'ordre choisi (style order). Plus de décalage entre le dessin et la taille de l'écran (aperçu iPad à moitié vide). */
+  var g=[],dr=[],n=0;
+  C0.ordre.forEach(function(k){if(!B[k]||!H[k]||!dispo(k))return;n++;var x='<div class="f2k f2k-'+k+'" style="order:'+n+'">'+H[k]+"</div>";if(C0.col[k]==="d")dr.push(x);else g.push(x)});
   h+='<div class="f2cols"><div class="f2c f2c1">'+ask+g.join("")+'</div><div class="f2c f2c2">'+dr.join("")+"</div></div>";
   h+='<div class="f2pied"><button class="lien" type="button" data-f2="perso">'+ic("grille")+"Personnaliser l'accueil</button></div>";
-  if(CACHE.h===h)return;CACHE.h=h;app.innerHTML=h;
+  if(CACHE.h===h)return;CACHE.h=h;poser(app,h);
   CACHE.D=D;CACHE.J=J}
 A.apres=function(){rendre();pjMaj()};
 window.PCF2Rendre=function(){CACHE.h=null;rendre()};
