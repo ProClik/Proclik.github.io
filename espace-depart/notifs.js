@@ -42,9 +42,22 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 var IC='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 21H6V3h8l4 4v4"/><path d="M14 3v4h4M9 9h4M9 13h3"/><path d="M19.5 13.5l-5.5 5.5-.6 2.6 2.6-.6 5.5-5.5z"/></svg>',
   ICX='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>';
 
+/* ---------- LA PASTILLE DE L'ICÔNE (Cyril 26/11 : « le nombre de notifications arrivées » sur l'icône de l'écran d'accueil) ----------
+   Espace ouvert : tout ce qui est arrivé est vu (bandeau) ; le chiffre = les pré-devis pas encore ouverts.
+   Le service le garde (/espace/nouvelles/lu) : chaque notification suivante pose « ce qui reste + ce qui est arrivé depuis »
+   sur l'icône, même Espace fermé (sw.js). iPhone/iPad : iOS 16.4+, Espace sur l'écran d'accueil, notifications autorisées. */
+var tmI=0;
+function icone(){clearTimeout(tmI);tmI=setTimeout(function(){
+  var nav=navigator;if(!nav.setAppBadge)return;
+  var n=vrai()?nouveaux().length:0;
+  try{(n?nav.setAppBadge(n):nav.clearAppBadge()).catch(function(){})}catch(e){}
+  if(!vrai()||d.hidden||!lit('pc-vrai-jeton'))return;
+  /* au service : à chaque ouverture, et quand le chiffre change */
+  api('/espace/nouvelles/lu',{method:'POST',body:{reste:n}}).catch(function(){})},400)}
+
 /* ---------- prévenir les autres écrans ---------- */
 var sig='';
-function signale(){sig=signature();try{d.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}}
+function signale(){sig=signature();icone();try{d.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}}
 function signature(){return vrai()?nouveaux().map(cle).join(','):''}
 
 /* ---------- LE BANDEAU EN HAUT (Cyril 25/11 : « à l'ouverture, en haut de l'Espace, qui disparaît après quelques
@@ -87,7 +100,7 @@ function annonce(){if(!vrai())return;var L=nouveaux().filter(function(x){return 
     sous:plus?'Touchez pour les voir':[x.total_ht!=null?eur(x.total_ht):'',quand(x.pre_devis_le||x.cree_le)].filter(Boolean).join(' · '),
     go:plus?'Voir':'Vérifier',encore:function(){return L.some(function(y){return estNouveau(y.contact)})},
     act:function(){if(plus){var t=d.getElementById('nb-devis');if(t)t.click();return}marquerVu(x.contact);if(window.PCV&&PCV.ouvrirDemande)PCV.ouvrirDemande(x.contact)}})}
-function suit(){var s=signature();if(s!==sig){sig=s;annonce();try{d.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}}}
+function suit(){var s=signature();if(s!==sig){sig=s;annonce();icone();try{d.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}}}
 
 /* aller là où la nouvelle le dit : une demande (c), un écran (vue) et un chantier (ch) */
 function va(n){if(!n)return;
@@ -104,12 +117,12 @@ var KD='pc-nf-depuis',chargeF=0;
 function api(c,o){return window.PCV&&PCV.api?PCV.api(c,o):Promise.reject(new Error('hors ligne'))}
 function fil(){if(!vrai()||!lit('pc-vrai-jeton'))return;chargeF=Date.now();
   var dep=+lit(KD)||0;if(!dep){dep=Date.now()-864e5;ecrit(KD,dep)} /* 1re fois : seulement les dernières 24 h */
-  api('/espace/nouvelles?depuis='+dep).then(function(x){var L=(x&&x.nouvelles)||[];if(!L.length)return;
+  api('/espace/nouvelles?depuis='+dep).then(function(x){var L=(x&&x.nouvelles)||[];icone();if(!L.length)return;
     ecrit(KD,Math.max.apply(null,L.map(function(n){return n.t}).concat([dep])));
     L.slice().reverse().filter(function(n){return n.type!=='predevis'}).slice(-5).forEach(function(n){
       pousse({k:'nf:'+n.id,ic:ICT[n.type]||ICT.cloche,sur:SUR[n.type]||'Nouveau',titre:/^(demande|signe)$/.test(n.type)?String(n.titre||'').split(' · ').slice(1).join(' · ')||n.titre:String(n.titre||''),
         sous:n.texte||'',go:n.c?'Ouvrir':'Voir',act:function(){va(n)}})})},function(){})}
-function auRetour(){if(!d.hidden){suit();if(Date.now()-chargeF>120000)fil()}}
+function auRetour(){if(!d.hidden){suit();icone();if(Date.now()-chargeF>120000)fil()}}
 
 /* ouvrir une demande (Accueil, Devis, bandeau…) = elle n'est plus nouvelle */
 d.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vc]');if(b)marquerVu(b.getAttribute('data-vc'))},true);
@@ -154,7 +167,10 @@ function invite(){var e=etatPush();if(!vrai()||(e!=='off'&&e!=='installer'))retu
     sous:e==='installer'?'Ajoutez d\'abord l\'Espace à l\'écran d\'accueil : nouvelles demandes, pré-devis, messages arrivent même Espace fermé.':'Nouvelles demandes, pré-devis, messages… même Espace fermé.',
     go:e==='installer'?'Comment ?':'Activer',ms:12000,act:activer,non:function(){ecrit(KN,Date.now())}})}
 /* les clics sur une notification du téléphone quand l'Espace est déjà ouvert (sw.js) */
-if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){var u=e.data&&e.data.pcUrl;if(!u)return;
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){
+  /* une notification arrive pendant que l'Espace est ouvert : bandeau tout de suite, et la pastille revient au bon chiffre */
+  if(e.data&&e.data.pcNouvelle){if(!d.hidden)fil();return}
+  var u=e.data&&e.data.pcUrl;if(!u)return;
   var h=String(u).split('#')[1];if(h){location.hash=h;lienHash()}});
 
 /* dans les Réglages ☰ : une ligne « Notifications » */
@@ -194,5 +210,5 @@ d.head.appendChild(st);
 
 window.PCNotif={nouveaux:nouveaux,estNouveau:estNouveau,vu:marquerVu,activer:activer,etat:etatPush,montre:pousse,nb:function(){return nouveaux().length},
   pastille:function(){return '<span class="pc-nv">Nouveau</span>'}};
-sig=signature();setTimeout(function(){annonce();sig=signature();fil();lienHash();garder();setTimeout(invite,2500)},1200);
+sig=signature();setTimeout(function(){annonce();sig=signature();icone();fil();lienHash();garder();setTimeout(invite,2500)},1200);
 })();
