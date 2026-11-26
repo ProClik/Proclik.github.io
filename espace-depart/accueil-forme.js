@@ -323,8 +323,10 @@ function deposer(){
         if(k==="four"){X.xclose();if(window.PCPROD&&PCPROD.deposer)PCPROD.deposer("");return}
         if(k==="plan"){
           if(!fiPlan){fiPlan=d.createElement("input");fiPlan.type="file";fiPlan.accept="image/*,application/pdf";fiPlan.hidden=true;d.body.appendChild(fiPlan);
-            fiPlan.addEventListener("change",function(){var f=fiPlan.files&&fiPlan.files[0];fiPlan.value="";if(!f)return;window.PC_PLAN_PHOTO=f;X.xclose();
-              var o=$('[data-openplan="Nouveau relevé"]');if(o)o.click();
+            fiPlan.addEventListener("change",function(){var f=fiPlan.files&&fiPlan.files[0];fiPlan.value="";if(!f)return;X.xclose();
+              /* 26/11 (Cyril) : un plan NEUF dans Mes plans, plus le brouillon partagé « Nouveau relevé » (il gardait l'ancien plan et ses fenêtres) */
+              if(window.PCPLANS&&PCPLANS.photo){PCPLANS.photo(f);return}
+              window.PC_PLAN_PHOTO=f;var o=$('[data-openplan="Nouveau relevé"]');if(o)o.click();
               var fr=$("#pcov-f");setTimeout(function(){try{if(fr&&fr.contentWindow)fr.contentWindow.postMessage({pcPlanPhoto:1},"*")}catch(e){}},700)})}
           fiPlan.click();return}
         if(k==="mur"){X.xclose();if(window.PCPLANS&&PCPLANS.liste)PCPLANS.liste();X.toast("La photo d'un mur","Ouvrez le plan du client, touchez le mur, puis « Photo » : Cliky la lit.")}})})})}

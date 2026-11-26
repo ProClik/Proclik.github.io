@@ -59,7 +59,10 @@ function ouvrir(id){var r=tous()[id]||{};var q='r='+encodeURIComponent(id)+'&emb
 function fermer(){ov.hidden=true;d.body.style.overflow='';fr.src='about:blank';rendre()}
 addEventListener('message',function(e){if(e.source!==fr.contentWindow)return;var m=e.data||{};
  if(m.type==='proclik-cotes-close')fermer();
- if(m.type==='proclik-cotes-plan'){fermer();try{sessionStorage.setItem('pk-cotes-liste','1')}catch(x){}var b=d.createElement('button');b.hidden=true;b.setAttribute('data-openplan','Plan · '+(m.c||'chantier'));d.body.appendChild(b);b.click();b.remove()}});
+ if(m.type==='proclik-cotes-plan'){fermer();try{sessionStorage.setItem('pk-cotes-liste','1')}catch(x){}
+  /* 26/11 (Cyril) : le plan de CE chantier (Mes plans), plus un plan d'exemple partagé où arrivaient les cotes de tous les chantiers */
+  if(window.PCPLANS&&PCPLANS.depuisCotes){PCPLANS.depuisCotes(m.r,m.c);return}
+  var b=d.createElement('button');b.hidden=true;b.setAttribute('data-openplan','Plan · '+(m.c||'chantier'));d.body.appendChild(b);b.click();b.remove()}});
 
 /* ---------- nouveau relevé : pour quel chantier ? ---------- */
 var nouv={c:''};
