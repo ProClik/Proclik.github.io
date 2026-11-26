@@ -492,7 +492,9 @@ function travauxHTML(p,haut,bas){if(!ED)return '';var L=[];['materiaux','main_oe
     Réglable dans Mes cadences : à l'heure (taux horaire, celui du pré-devis par défaut, × heures par jour, 8 par défaut) ou à la journée (€ HT la journée). */
  /* Point 3 : poids du travail dans le total (petite barre) ; point 5 : prix au m² quand la pose est comptée en m². */
  var TOT=0;G.forEach(function(g){TOT+=g.v});TOT=TOT||1;
- var m2g=function(po){var m=0;po.forEach(function(x){if(/m²|m2/.test(x.l.unite||''))m=Math.max(m,+x.l.quantite||0)});return m};
+ /* m² du travail : une pose coupée mur par mur (« Pose doublage (Mur 1) », « (Mur 2) »…) est additionnée ; entre poses différentes, la plus grande
+    (Cyril 26/11 : doublage affiché à 189,79 €/m² car un seul mur comptait). */
+ var m2g=function(po){var S={};po.forEach(function(x){if(/m²|m2/.test(x.l.unite||'')){var k=String(x.l.libelle||'').replace(/\s*\([^)]*\)\s*$/,'').replace(/\s*\([^)]*\)\s*$/,'');S[k]=(S[k]||0)+(+x.l.quantite||0)}});var m=0;for(var k in S)m=Math.max(m,S[k]);return m};
  var JP=window.PCJR&&PCJR.joursPose?PCJR.joursPose():{m:'h',h:0,hj:8,j:0},prixJour=JP.m==='j'?JP.j:(JP.h||+t.taux_horaire||0)*(JP.hj||8);
  var joursN=function(po){if(!(prixJour>0)||!po.length)return 0;return Math.max(.5,Math.round(po.reduce(function(a,x){return a+(+x.l.total||0)},0)/prixJour*2)/2)};
  var jours=function(po){var j=joursN(po);if(!j)return '';return 'Pose : environ '+String(j).replace('.',',')+' jour'+(j>1?'s':'')};
