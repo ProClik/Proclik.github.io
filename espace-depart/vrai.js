@@ -115,7 +115,7 @@ var ov=document.createElement('div');ov.className='pcov vov';ov.hidden=true;ov.s
 ov.innerHTML='<div class="pcov-h"><b id="vov-t"></b><button class="pcov-x" id="vov-x" type="button">Fermer</button></div><div class="pcbody" id="vov-b"></div><div class="vfoot" id="vov-f" hidden></div>';
 document.body.appendChild(ov);
 function ouvrir(titre,html,foot){$('#vov-b').style.padding='';$('#vov-b').style.maxWidth='';$('#vov-t').innerHTML=titre;$('#vov-b').innerHTML=html;var f=$('#vov-f');f.innerHTML=foot||'';f.hidden=!foot;ov.hidden=false;document.body.style.overflow='hidden';$('#vov-b').scrollTop=0}
-function fermer(){ov.hidden=true;document.body.style.overflow='';if(/#c=/.test(location.hash))try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+function fermer(){if(planFini())return;ov.hidden=true;document.body.style.overflow='';if(/#c=/.test(location.hash))try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
 $('#vov-x').addEventListener('click',fermer);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)fermer()});
 
@@ -297,12 +297,12 @@ var COUR=null;
    Les retouches de l'artisan restent sur cet appareil (une sauvegarde par client). */
 var VPNEW=false;
 function voirPlan(nouveau){var D=COUR&&COUR.demande,P=D&&D.details&&D.details.plan,pm=lsG(clePm());if(!P&&!pm&&!nouveau)return;var k=COUR.contact||{},nom=k.nom||'le client',moi=!P;VPNEW=moi;
- ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=82&chantier=c-'+encodeURIComponent(k.id||'')+'&cn='+encodeURIComponent(nom||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
+ VPOUV=1;VPMOD=0;ouvrir('📐 Plan de '+esc(nom)+(moi?'<small>Dessiné par vous · le pré-devis le reprend quand vous recalculez</small>':'<small>Dessiné par le client avec sa demande · tailles à confirmer à la visite</small>'),'<iframe id="vplanf" title="Plan du client" allow="microphone" style="flex:none;width:100%;height:calc(100vh - 150px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=82&chantier=c-'+encodeURIComponent(k.id||'')+'&cn='+encodeURIComponent(nom||'')+'"></iframe>','<button class="vbtn" type="button" data-vretour>← Retour à la demande</button>');
  $('#vov-b').style.padding='8px';$('#vov-b').style.maxWidth='none';$('#vplanf').style.setProperty('height','calc(100vh - 150px)','important')}
 addEventListener('message',function(e){var f=document.getElementById('vplanf');if(!f||e.source!==f.contentWindow)return;var d=e.data||{};
  if(d.type==='proclik-plan-ready'){var D=COUR&&COUR.demande,k=COUR&&COUR.contact||{};f.contentWindow.postMessage({type:'proclik-plan-load',plan:D&&D.details&&D.details.plan,prenom:k.prenom||'',nouveau:VPNEW},'*')}
  /* Plan retouché par l'artisan : gardé ici jusqu'au recalcul (sauf s'il est identique au plan déjà recalculé) */
- if(d.type==='proclik-plan-modifie'&&d.plan&&COUR&&COUR.contact){var D2=COUR.demande,P2=D2&&D2.plan_corrige_le&&D2.details&&D2.details.plan;if(P2&&JSON.stringify(P2)===JSON.stringify(d.plan))lsS(clePm(),null);else pmGarder(clePm(),d.plan)}});
+ if(d.type==='proclik-plan-modifie'&&d.plan&&COUR&&COUR.contact){var D2=COUR.demande,P2=D2&&D2.plan_corrige_le&&D2.details&&D2.details.plan;if(P2&&JSON.stringify(P2)===JSON.stringify(d.plan))lsS(clePm(),null);else{pmGarder(clePm(),d.plan);VPMOD=1}}});
 /* Appareil plein (22/11) : on garde le plan sans ses photos et on le dit, au lieu de tout perdre sans rien dire */
 function pmSansPh(k,v){if(typeof v==='string'&&/^data:image/.test(v))return undefined;if(Array.isArray(v)&&v.length&&v.every(function(x){return x&&typeof x.u==='string'&&/^data:image/.test(x.u)}))return undefined;return v}
 var pmAv=0;function pmGarder(k,plan){var o={t:Date.now(),plan:plan},n=0;try{localStorage.setItem(k,JSON.stringify(o))}catch(e){try{localStorage.setItem(k,JSON.stringify(o,pmSansPh));n=1}catch(e2){n=2}}if(n&&Date.now()-pmAv>90000&&window.PCX&&PCX.toast){pmAv=Date.now();PCX.toast(n===2?'Plan pas gardé':'Photos du plan pas gardées',n===2?'Plus de place sur cet appareil. Ne fermez pas la page et libérez de la place.':'Plus de place sur cet appareil. Le plan est gardé, mais pas ses photos : gardez-les aussi dans votre galerie.')}}
@@ -311,7 +311,12 @@ var pmAv=0;function pmGarder(k,plan){var o={t:Date.now(),plan:plan},n=0;try{loca
    Les retouches restent sur cet appareil jusqu'à la création du devis, qui les envoie (mêmes taux de marge et de frais généraux). */
 var ED=null,VTAB='devis',MODE='pre',ND=null;
 function T(){return MODE==='nd'?ND:ED}
-function retour(){return MODE==='nd'?rendreND():afficher(COUR)}
+function retour(){if(planFini())return;return MODE==='nd'?rendreND():afficher(COUR)}
+/* Recalcul tout seul (Cyril 26/11) : en sortant du plan qu'il vient de modifier, l'artisan arrive directement sur le nouveau calcul
+   (nouveau total, d'où vient l'écart, lignes à garder), sans chercher « ↻ Recalculer ». Rien n'est enregistré sans « Garder ce calcul ». */
+var VPOUV=0,VPMOD=0;
+function planFini(){if(!VPOUV)return false;var m=VPMOD;VPOUV=0;VPMOD=0;var p=COUR&&COUR.pre_devis&&COUR.pre_devis[0];
+ if(!m||!lsG(clePm())||!p||!p.lue||MODE!=='pre')return false;afficher(COUR);recalc();return true}
 function cleLg(){return 'pc-lg-'+(COUR&&COUR.contact&&COUR.contact.id||'')}
 function edition(p){var s=lsG(cleLg());if(s&&s.le===p.le){s.four=s.four||{};return s}var c=function(L){return L.map(function(l){var o={libelle:l.libelle,quantite:l.quantite,unite:l.unite,pu:l.pu,total:l.total,a_verifier:l.a_verifier};if(l.groupe)o.groupe=l.groupe;if(l.m2)o.m2=l.m2;return o})};
  var e={le:p.le,materiaux:c(p.materiaux),main_oeuvre:c(p.main_oeuvre),touche:0,four:{}},R=lsG(cleRt());
