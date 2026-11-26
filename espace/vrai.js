@@ -560,7 +560,7 @@ function suite(L,pre){var dv=L.filter(function(d){return d.type==='devis'&&d.sta
  if(aPay)return {t:'Facture n° '+aPay.numero+' payée',a:'paid',id:aPay.id};
  return null}
 // Miniature de la 1re page du vrai PDF (pdf.js chargé à la demande) : le devis saute aux yeux, un appui l'ouvre en grand.
-var PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',MINI={},pdfjsP=null;
+var PDFJS='/lib/pdfjs-3.11.174/',MINI={},pdfjsP=null;
 function chargerPdfjs(){if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);if(pdfjsP)return pdfjsP;
  pdfjsP=new Promise(function(ok,ko){var s=document.createElement('script');s.crossOrigin='anonymous';s.src=PDFJS+'pdf.min.js';s.onload=function(){if(!window.pdfjsLib)return ko(new Error('pdf.js'));window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+'pdf.worker.min.js';ok(window.pdfjsLib)};s.onerror=function(){pdfjsP=null;ko(new Error('pdf.js'))};document.head.appendChild(s)});return pdfjsP}
 function miniature(id){if(MINI[id])return MINI[id];var j=lsG(KJ);

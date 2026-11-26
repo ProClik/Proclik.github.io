@@ -1,7 +1,7 @@
 /* Vraie carte de l'Espace ProClik (même fond que l'Espace : OpenFreeMap + MapLibre, recoloré jour/nuit, Isère et Drac marqués).
    Si le fond ne peut pas se charger (aperçu sans réseau), la carte dessinée reste affichée. */
 (function(){
-  var LIB="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl",STYLE="https://tiles.openfreemap.org/styles/positron",charge=null;
+  var LIB="/lib/maplibre-gl-4.7.1/maplibre-gl",STYLE="https://tiles.openfreemap.org/styles/positron",charge=null;
   function lib(){if(window.maplibregl)return Promise.resolve();if(charge)return charge;
     charge=new Promise(function(ok,ko){var l=document.createElement("link");l.rel="stylesheet";l.href=LIB+".css";document.head.appendChild(l);
       var s=document.createElement("script");s.crossOrigin="anonymous";s.src=LIB+".js";s.onload=function(){window.maplibregl?ok():ko()};s.onerror=ko;document.head.appendChild(s)});
