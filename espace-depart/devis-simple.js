@@ -39,7 +39,11 @@ var ICT={cloison:I('<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9
  combles:I('<path d="M3 12l9-8 9 8"/><path d="M6 12c2 0 2 2 4 2s2-2 4-2 2 2 4 2"/><path d="M5 12v8h14v-8"/>'),
  rampants:I('<path d="M3 20L12 4l9 16"/><path d="M8 14c1.5 0 2 1.5 3.5 1.5S13.5 14 15 14"/>'),
  portes:I('<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1"/>'),
- fenetres:I('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v16M4 12h16"/>')};
+ fenetres:I('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v16M4 12h16"/>'),
+ sol:I('<path d="M3 20h18M5 20l3-9h8l3 9M9.5 11l-1 9M14.5 11l1 9M6.5 15.5h11"/>'),
+ elec:I('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>'),
+ plomb:I('<path d="M7 4v6a5 5 0 0 0 10 0V4"/><path d="M5 4h4M15 4h4M12 15v5M9 20h6"/>'),
+ clim:I('<rect x="3" y="5" width="18" height="8" rx="2"/><path d="M6 10h12M8 16c0 1.5-1 2-1 3M12 16c0 1.5-1 2-1 3M16 16c0 1.5-1 2-1 3"/>')};
 function iconeFam(f,k){var P=window.PCPROD&&PCPROD.icone,t=sans(f),c=k==='prestation'?'casque':/plaque|doublage colle/.test(t)?'ba13':/ossature|suspente|appui/.test(t)?'ossature':/laine|isol|soufflage|combles/.test(t)?'laine':/porte|chassis|quincaill/.test(t)?'porte':/vis|fixation|cheville/.test(t)?'vis':/enduit|bande|colle/.test(t)?'enduit':/mousse|mastic|joint/.test(t)?'cartouche':/sol|plancher|plinthe/.test(t)?'parquet':/protection|proprete|outil/.test(t)?'protection':/trappe/.test(t)?'fenetre':/vapeur|etanch/.test(t)?'protection':/electri|cable|gaine/.test(t)?'elec':/plomb|sanitaire|eau|clim/.test(t)?'eau':'colis';
  return (P&&P(c))||''}
 
@@ -105,23 +109,35 @@ var OUV={
  combles:{nom:'Combles perdus',mes:[['surface','Surface au sol','m²']],q:[],fixe:{type:'Perdus (grenier non habité)'}},
  rampants:{nom:'Rampants',mes:[['surface','Surface des rampants','m²']],q:[]},
  portes:{nom:'Porte',mes:[],q:[['largeur','Largeur',[['63 cm','63 cm'],['73 cm','73 cm'],['83 cm','83 cm'],['93 cm','93 cm']],2],['bati','La pose',[['Bloc-porte neuf','Oui'],['Remplace l’ancienne','Dépose de l’ancienne'],['Porte seule','Non']]],['sens','Sens',[['Gauche poussant','Gauche poussant'],['Droite poussant','Droite poussant']]],['type','Porte',[['Standard','Standard'],['Plus isolante','Isolante (bruit)']]]]},
+ sol:{nom:'Sol',mes:[['surface','Surface','m²']],q:[['neuf','Revêtement',[['Carrelage','Carrelage'],['Parquet','Parquet'],['Stratifié','Stratifié'],['Vinyle','Sol souple (vinyle)']]],['format','Format du carrelage',[['30 × 60','30 × 60'],['45 × 45','45 × 45'],['60 × 60','60 × 60'],['75 × 75','75 × 75']],2,function(d){return d.neuf==='Carrelage'}],['depose','Ancien sol à enlever ?',[['Non','Non'],['Oui','Oui']]],['actuel','Ancien sol',[['Carrelage','Carrelage'],['Parquet','Parquet'],['Moquette','Moquette'],['Lino','Lino']],0,function(d){return d.depose==='Oui'}],['plinthes','Plinthes neuves',[['Oui','Oui'],['Non','Non']]]]},
+ elec:{nom:'Électricité',eq:1,compte:[['Prise','Prise'],['Prise double','Prise double'],['Prise plan de travail','Prise plan de travail'],['Interrupteur','Interrupteur'],['Va-et-vient','Va-et-vient'],['Prise TV','Prise TV'],['Prise internet (RJ45)','Prise internet'],['Applique','Applique'],['Tableau électrique','Tableau électrique']]},
+ plomb:{nom:'Plomberie',eq:1,compte:[['WC suspendu','WC suspendu'],['Lave-mains','Lave-mains'],['Douche','Douche'],['Baignoire','Baignoire'],['Meuble vasque','Meuble vasque'],['Meuble évier','Évier'],['Chauffe-eau','Chauffe-eau'],['Lave-linge','Lave-linge'],['Lave-vaisselle','Lave-vaisselle']]},
+ clim:{nom:'Chauffage, clim',eq:1,compte:[['Clim murale','Clim murale'],['Radiateur','Radiateur'],['Sèche-serviettes','Sèche-serviettes']]},
  fenetres:{nom:'Fenêtre (pose)',mes:[['Lc','Largeur','cm'],['Hc','Hauteur','cm']],q:[['mat','Matière',[['PVC','PVC'],['Alu','Alu'],['Bois','Bois']]],['pose','La pose',[['Sur l’ancien cadre','Sur ancien cadre'],['Dépose complète','Dépose complète']]]]}};
-var ORDRE=['cloison','doublage','plafond','combles','rampants','portes','fenetres'];
-function dOuv(t,pre){var o=OUV[t],d={};o.mes.forEach(function(m){d[m[0]]=m[3]!=null?m[3]:0});o.q.forEach(function(q){d[q[0]]=q[2][q[3]||0][1]});if(o.fixe)for(var k in o.fixe)d[k]=o.fixe[k];if(pre)for(var p in pre)d[p]=pre[p];return d}
-function pret(o){return OUV[o.travail].mes.every(function(m){return nb(o.d[m[0]])>0})}
+var ORDRE=['cloison','doublage','plafond','combles','rampants','portes','fenetres','sol','elec','plomb','clim'];
+['elec','plomb','clim'].forEach(function(t){OUV[t].mes=[];OUV[t].q=[['etat','Travaux',[['À créer','À créer'],['À changer','À changer']]]]});
+/* Électricité, plomberie, clim : des compteurs ; envoyés au calcul comme « Prise:2;Clim murale:1 » */
+function nEq(d){var n=0;for(var k in d.c||{})n+=+d.c[k]||0;return n}
+function serv(o){if(!OUV[o.travail].eq)return {travail:o.travail,d:o.d};var c=o.d.c||{};return {travail:'equipements',d:{etat:o.d.etat,liste:Object.keys(c).filter(function(k){return c[k]>0}).map(function(k){return k+':'+c[k]}).join(';')}}}
+function listeEq(o){var c=o.d.c||{},t=OUV[o.travail];return t.compte.filter(function(x){return c[x[0]]>0}).map(function(x){var n=c[x[0]];return n+' '+(n>1?x[1].toLowerCase().replace(/^(\S+)/,function(m){return /[sx]$/.test(m)?m:m+'s'}):x[1].toLowerCase())})}
+function dOuv(t,pre){var o=OUV[t],d={};if(o.compte)d.c={};o.mes.forEach(function(m){d[m[0]]=m[3]!=null?m[3]:0});o.q.forEach(function(q){d[q[0]]=q[2][q[3]||0][1]});if(o.fixe)for(var k in o.fixe)d[k]=o.fixe[k];if(pre)for(var p in pre)d[p]=pre[p];return d}
+function pret(o){if(OUV[o.travail].eq)return nEq(o.d)>0;return OUV[o.travail].mes.every(function(m){return nb(o.d[m[0]])>0})}
 function titreOuv(o){var t=OUV[o.travail],d=o.d,m=t.mes;
+ if(t.eq)return t.nom+' · '+nEq(d)+' élément'+(nEq(d)>1?'s':'');
+ if(o.travail==='sol')return 'Sol '+String(d.neuf==='Sol souple (vinyle)'?'vinyle':d.neuf).toLowerCase()+' '+cm2(d.surface)+' m²';
  if(o.travail==='portes')return 'Porte '+d.largeur;
  if(o.travail==='fenetres')return 'Fenêtre '+cm2(d.Lc)+' × '+cm2(d.Hc)+' cm';
  if(m.length===1)return t.nom+' '+cm2(d[m[0][0]])+' m²';
  return t.nom+' '+cm2(d[m[0][0]])+' × '+cm2(d[m[1][0]])+' m'}
-function resumeOuv(o){var t=OUV[o.travail],R=[];if(o.travail==='plafond')R.push('hauteur '+cm2(o.d.H)+' m');
- t.q.forEach(function(q){if(q[0]==='largeur')return;var v=o.d[q[0]],c=q[2].filter(function(x){return x[1]===v})[0];if(!c)return;
+function resumeOuv(o){var t=OUV[o.travail],R=[];if(t.eq)return listeEq(o).join(', ')+' · '+String(o.d.etat).toLowerCase();
+ if(o.travail==='sol'){var d0=o.d;return [d0.neuf==='Carrelage'?d0.format:'',d0.depose==='Oui'?'dépose '+String(d0.actuel).toLowerCase():'sans dépose',d0.plinthes==='Oui'?'plinthes neuves':''].filter(Boolean).join(' · ')}if(o.travail==='plafond')R.push('hauteur '+cm2(o.d.H)+' m');
+ t.q.forEach(function(q){if(q[0]==='largeur'||q[4]&&!q[4](o.d))return;var v=o.d[q[0]],c=q[2].filter(function(x){return x[1]===v})[0];if(!c)return;
   if(q[0]==='portes')R.push(v?c[0]:'sans porte');else if(q[0]==='hydro'||q[0]==='humide'){if(v===true||v==='Oui')R.push(q[0]==='hydro'?'salle d’eau':'pièce humide')}
   else if(q[0]==='fen'){if(v)R.push(v+' fenêtre'+(v>1?'s':''))}else if(q[0]==='ext')R.push('mur '+c[0].toLowerCase());else R.push(c[0].toLowerCase())});
  return R.join(' · ')}
 /* Le calcul : tout ensemble (vis, bandes, protection et nettoyage comptés une seule fois). Mémorisé par contenu. */
 var CACHE={};
-function chiffrer(liste){var L=liste.filter(pret).map(function(o){return {travail:o.travail,d:o.d}});if(!L.length)return Promise.resolve({total_ht:0,groupes:[],a_verifier:[]});
+function chiffrer(liste){var L=liste.filter(pret).map(serv);if(!L.length)return Promise.resolve({total_ht:0,groupes:[],a_verifier:[]});
  var k=JSON.stringify(L);if(!CACHE[k])CACHE[k]=PCV.api('/espace/ouvrages',{method:'POST',body:{ouvrages:L}}).then(function(x){if(x&&x.ok===false)throw new Error(x.erreur||'Calcul impossible');return x},function(e){delete CACHE[k];throw e});return CACHE[k]}
 function recalculer(){if(!S)return;var n=++recalculer.n;if(!S.ouvrages.length){S.calc=null;S.calcEtat='';rendre();return}S.calcEtat='charge';
  chiffrer(S.ouvrages).then(function(x){if(!S||n!==recalculer.n)return;S.calc=x;S.calcEtat='';rendre()},function(e){if(!S||n!==recalculer.n)return;S.calcEtat='err:'+e.message;rendre()})}
@@ -304,6 +320,7 @@ function feuilleOuv(t,i,pre){var o=i!=null?S.ouvrages[i]:null;F={o:1,t:o?o.trava
 function dessinerO(){var o=OUV[F.t],d=F.d;
  var h='<div class="ds-grab"></div><div class="ds-row ds-fhd"><span class="ds-ic">'+ICT[F.t]+'</span><span class="ds-tx"><b>'+esc(o.nom)+'</b><small>Cliky compte les fournitures et la pose, avec vos prix</small></span></div>';
  if(o.mes.length)h+='<div class="ds-mes">'+o.mes.map(function(m){return '<label class="ds-champ">'+esc(m[1])+'<span class="ds-u"><input data-dso="'+m[0]+'" inputmode="decimal" value="'+(nb(d[m[0]])?qf(d[m[0]]):'')+'" placeholder="0"><i>'+esc(m[2])+'</i></span></label>'}).join('')+'</div>';
+ if(o.compte)h+='<div class="ds-card ds-cpt">'+o.compte.map(function(x){var n=d.c[x[0]]||0;return '<div class="ds-row"><span class="ds-tx"><b>'+esc(x[1])+'</b></span><button type="button" class="ds-mb p" data-ds="cpt" data-k="'+esc(x[0])+'" data-id="-1" aria-label="Un de moins"'+(n?'':' disabled')+'>−</button><b class="ds-cn">'+n+'</b><button type="button" class="ds-mb p" data-ds="cpt" data-k="'+esc(x[0])+'" data-id="1" aria-label="Un de plus">＋</button></div>'}).join('')+'</div>';
  o.q.forEach(function(q){if(q[4]&&!q[4](d))return;h+='<div class="ds-oq"><span>'+esc(q[1])+'</span><div class="ds-seg">'+q[2].map(function(c,k){return '<button type="button" class="'+(d[q[0]]===c[1]?'on':'')+'" data-ds="oq" data-k="'+q[0]+'" data-id="'+k+'">'+esc(c[0])+'</button>'}).join('')+'</div></div>'});
  h+='<div data-dsp>'+zonePrix()+'</div>';
  h+='<button type="button" class="ds-btn" data-ds="okfo">'+(F.i!=null?'Enregistrer':'Ajouter au devis')+'</button>';
@@ -311,7 +328,7 @@ function dessinerO(){var o=OUV[F.t],d=F.d;
  S.feuille=h;rendre();
  if(o.mes.length&&!nb(d[o.mes[0][0]]))setTimeout(function(){var x=ov&&ov.querySelector('[data-dso]');if(x)x.focus()},250)}
 function zonePrix(){if(!F||!F.o)return '';
- if(!pret({travail:F.t,d:F.d}))return '<p class="ds-note c">Tapez les mesures : le prix s’affiche ici.</p>';
+ if(!pret({travail:F.t,d:F.d}))return '<p class="ds-note c">'+(OUV[F.t].eq?'Touchez ＋ sur ce qu’il faut poser':'Tapez les mesures')+' : le prix s’affiche ici.</p>';
  if(F.pe==='charge')return '<div class="ds-ln big"><span>Cliky calcule…</span><b>…</b></div>';
  if(/^err/.test(F.pe||''))return '<p class="ds-note c">'+esc(F.pe.slice(4))+'</p>';
  var x=F.px;if(!x)return '';
@@ -324,24 +341,34 @@ function zonePrix(){if(!F||!F.o)return '';
 function majPrix(){var z=ov&&ov.querySelector('[data-dsp]');if(z)z.innerHTML=zonePrix()}
 /* « Ce travail ajoute » = le devis avec ce travail − le devis sans lui (les vis et la protection déjà comptées ne sont pas recomptées) */
 function prixO(){clearTimeout(prixO.t);if(!F||!F.o)return;if(!pret({travail:F.t,d:F.d})){F.px=null;majPrix();return}F.pe='charge';majPrix();
- prixO.t=setTimeout(function(){if(!F||!F.o)return;var moi={travail:F.t,d:F.d},autres=S.ouvrages.filter(function(_,k){return k!==F.i}),cle3=JSON.stringify(moi);
+ prixO.t=setTimeout(function(){if(!F||!F.o)return;var moi={travail:F.t,d:JSON.parse(JSON.stringify(F.d))},autres=S.ouvrages.filter(function(_,k){return k!==F.i}),cle3=JSON.stringify(moi);
   Promise.all([chiffrer(autres.concat([moi])),chiffrer(autres),chiffrer([moi])]).then(function(r){if(!F||!F.o||JSON.stringify({travail:F.t,d:F.d})!==cle3)return;F.pe='';F.px={marg:r2(r[0].total_ht-r[1].total_ht),seul:r[2]};majPrix()},
    function(e){if(!F||!F.o)return;F.pe='err:'+e.message;majPrix()})},350)}
-function okFO(){if(!pret({travail:F.t,d:F.d})){toast('Il manque une mesure',OUV[F.t].mes.map(function(m){return m[1]}).join(', ')+'.');return}
+function okFO(){if(!pret({travail:F.t,d:F.d})){if(OUV[F.t].eq)toast('Rien à poser','Touchez ＋ sur au moins un élément.');else toast('Il manque une mesure',OUV[F.t].mes.map(function(m){return m[1]}).join(', ')+'.');return}
  var o={travail:F.t,d:F.d};if(F.i!=null){S.ouvrages[F.i]=o;S.ok='Travail modifié : '+titreOuv(o)}else{S.ouvrages.push(o);S.ok='Ajouté : '+titreOuv(o)}
  recalculer();fini()}
 
 /* ---------- la dictée : « cloison 4 mètres sur 2,50 » → la cloison déjà remplie ; sinon, la recherche ---------- */
 function comprendre(txt){var s=sans(txt).replace(/virgule/g,',').replace(/(\d+)\s*(?:m|metres?)\s+(\d{1,2})\b/g,'$1,$2').replace(/(\d+)\s*(?:m|metres?)(\d{2})\b/g,'$1,$2');
- var t=/cloison/.test(s)?'cloison':/doubl|isol\w*\s+(?:d.un\s+|du\s+|le\s+|les\s+)?mur/.test(s)?'doublage':/rampant|sous (?:la )?toiture/.test(s)?'rampants':/comble/.test(s)?'combles':/plafond/.test(s)?'plafond':/fenetre/.test(s)?'fenetres':/porte/.test(s)?'portes':'';
+ var t=/cloison/.test(s)?'cloison':/\bclim|radiateur|seche.serviette/.test(s)?'clim':/prise|interrupteur|va.et.vient|tableau electrique|applique/.test(s)?'elec':/\bwc\b|toilette|douche|baignoire|lavabo|vasque|lave.mains|chauffe.eau|evier/.test(s)?'plomb':/carrelage|parquet|stratifie|vinyle|\bsol\b/.test(s)&&!/plafond/.test(s)?'sol':/doubl|isol\w*\s+(?:d.un\s+|du\s+|le\s+|les\s+)?mur/.test(s)?'doublage':/rampant|sous (?:la )?toiture/.test(s)?'rampants':/comble/.test(s)?'combles':/plafond/.test(s)?'plafond':/fenetre/.test(s)?'fenetres':/porte/.test(s)?'portes':'';
  if(!t)return null;var N=(s.match(/\d+(?:[.,]\d+)?/g)||[]).map(nb),p={};
  if(t==='cloison'||t==='doublage'){if(N[0])p.L=N[0];if(N[1])p.H=N[1];if(t==='cloison'){if(/porte/.test(s))p.portes=/deux portes|2 portes/.test(s)?2:1;if(/salle d.eau|salle de bain|douche/.test(s))p.hydro=true;if(/renforc|phoniq|bruit/.test(s))p.phonique='Renforcée'}
   if(t==='doublage'&&/interieur/.test(s))p.ext='Non'}
  else if(t==='plafond'){if(N[0])p.L=N[0];if(N[1])p.l=N[1];if(N[2])p.H=N[2]}
  else if(t==='combles'||t==='rampants'){if(N[0])p.surface=N[1]&&/ sur | par | x /.test(s)?r2(N[0]*N[1]):N[0]}
+ else if(OUV[t].eq){p.c=compterEq(s,t);if(/changer|remplacer/.test(s))p.etat='À changer'}
+ else if(t==='sol'){if(N[0])p.surface=N[1]&&/ sur | par | x /.test(s)?r2(N[0]*N[1]):N[0];p.neuf=/parquet/.test(s)?'Parquet':/stratifie/.test(s)?'Stratifié':/vinyle/.test(s)?'Sol souple (vinyle)':'Carrelage'}
  else if(t==='portes'){var w=N.filter(function(x){return x>=55&&x<=100})[0];if(w)p.largeur=[63,73,83,93].reduce(function(a,b){return Math.abs(b-w)<Math.abs(a-w)?b:a})+' cm'}
  else if(t==='fenetres'){var c=function(x){return x<10?r2(x*100):x};if(N[0])p.Lc=c(N[0]);if(N[1])p.Hc=c(N[1]);if(/alu/.test(s))p.mat='Alu';if(/bois/.test(s))p.mat='Bois'}
  return {t:t,p:p}}
+/* « 3 prises et 2 interrupteurs » → {Prise:3, Interrupteur:2} ; « une prise double » ne compte pas comme une prise simple */
+var MOTS={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10};
+function compterEq(s,t){var c={},L=OUV[t].compte.map(function(x){return [x[0],sans(x[1]).replace(/[()]/g,'').replace(/-/g,' ')]}).sort(function(a,b){return b[1].length-a[1].length});
+ var r=s.replace(/-/g,' ');
+ L.forEach(function(x){var w=x[1].split(' '),re=new RegExp('(?:(\\d+|'+Object.keys(MOTS).join('|')+')\\s+)?'+w[0]+'s?'+(w.length>1?'\\s+'+w.slice(1).join('\\s+')+'s?':'')+'\\b','g'),m;
+  while((m=re.exec(r))){c[x[0]]=(c[x[0]]||0)+(m[1]?(+m[1]||MOTS[m[1]]):1)}
+  r=r.replace(re,' ')});
+ return c}
 function dicter(){if(!SR||S.ecoute)return;try{var r=new SR();r.lang='fr-FR';r.interimResults=false;r.maxAlternatives=1;S.ecoute=1;rendre();
   r.onresult=function(ev){var txt=(ev.results[0][0].transcript||'').trim();if(!S)return;S.ecoute=0;entendu(txt)};
   r.onerror=function(ev){if(!S)return;S.ecoute=0;rendre();if(ev&&ev.error&&ev.error!=='no-speech'&&ev.error!=='aborted')toast('Micro indisponible','Autorisez le micro, ou tapez votre recherche. ('+ev.error+')')};
@@ -376,6 +403,7 @@ function clic(e){var b=e.target.closest('[data-ds]');if(!b||!S)return;var a=b.ge
  else if(a==='ouv')feuilleOuv(id,null);
  else if(a==='ouvl'){if(S.ouvrages[+id])feuilleOuv(null,+id)}
  else if(a==='oq'){var k=b.getAttribute('data-k'),qq=OUV[F.t].q.filter(function(z){return z[0]===k})[0];if(qq){F.d[k]=qq[2][+id][1];dessinerO();prixO()}}
+ else if(a==='cpt'){var kk=b.getAttribute('data-k');F.d.c[kk]=Math.max(0,(F.d.c[kk]||0)+(+id));dessinerO();prixO()}
  else if(a==='vdet'){F.vd=!F.vd;majPrix()}
  else if(a==='okfo')okFO();
  else if(a==='enlevo'){if(!F.arme){F.arme=1;dessinerO();return}var o2=S.ouvrages.splice(F.i,1)[0];S.ok='Travail enlevé : '+titreOuv(o2);recalculer();S.feuille=null;F=null;rendre()}
@@ -489,6 +517,7 @@ var css=document.createElement('style');css.textContent=[
 '#dsv .ds-oq{padding:0 16px 12px}#dsv .ds-oq>span{display:block;font-size:13px;font-weight:700;color:var(--n1-muted,#565E73);margin-bottom:6px}#dsv .ds-seg{display:flex;flex-wrap:wrap;gap:8px}#dsv .ds-seg button{flex:1 1 auto;min-height:44px;padding:8px 12px;border-radius:14px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-pk);font-weight:700;font-size:14.5px;text-align:center!important}#dsv .ds-seg button.on{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);box-shadow:none}',
 '#dsv .ds-voir.c{text-align:center!important;border:0;padding:4px 0 10px}',
 '#dsv .ds-pr small.m{color:var(--n1-fg,#0E1322);font-weight:700;margin-top:3px;font-size:12.5px}#dsv .ds-enm{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--n1-muted,#565E73);white-space:nowrap}#dsv .ds-enm input{width:88px!important;margin:0!important;padding:8px 10px!important;font-size:15px!important;text-align:right}',
+'#dsv .ds-cpt{margin:0 16px 12px}#dsv .ds-cpt .ds-row{padding:6px 10px 6px 14px}#dsv .ds-mb.p{width:44px;height:44px;font-size:24px}#dsv .ds-mb[disabled]{opacity:.35}#dsv .ds-cn{min-width:28px;text-align:center;font-size:19px}',
 '@media (max-width:360px){#dsv .ds-tuiles{grid-template-columns:repeat(3,1fr)}}'
 ].join('\n');document.head.appendChild(css);
 
