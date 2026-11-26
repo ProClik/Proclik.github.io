@@ -141,11 +141,13 @@ function etat(c){var p=[];
  p.push('<span class="pill '+(c.acces==='mot de passe choisi'?'ok':c.acces==='pas encore d\'accès'?'w':'')+'">'+esc(c.acces)+'</span>');
  if(!c.secrets.ghl.pose)p.push('<span class="pill w">Clé GHL à poser</span>');
  if(!c.secrets.vf.pose)p.push('<span class="pill w">Clé VosFactures à poser</span>');
+ var sv=c.sauvegarde;if(sv)p.push(sv.ok?'<span class="pill ok">● Sauvegardes OK</span>':sv.attente?'<span class="pill w">● Sauvegarde : 1re cette nuit</span>':'<span class="pill al">● Sauvegarde à régler</span>');
  return p.join('')}
 var ARCH=false;
 function depuis(iso){if(!iso)return 'jamais';var m=Math.round((Date.now()-Date.parse(iso))/60000);if(m<2)return 'à l\'instant';if(m<60)return 'il y a '+m+' min';var h=Math.round(m/60);if(h<48)return 'il y a '+h+' h';return 'il y a '+Math.round(h/24)+' j'}
 function alerte(c){var a=[];if(c.sante&&c.sante.ghl&&!c.sante.ghl.ok&&c.secrets.ghl.pose)a.push('GHL ne répond pas');if(c.sante&&c.sante.vf&&!c.sante.vf.ok&&c.secrets.vf.pose)a.push('VosFactures ne répond pas');
- if(c.abo&&c.abo.statut==='retard')a.push('Paiement en retard');if(c.abo&&c.abo.statut==='suspendu')a.push('Espace en pause');return a}
+ if(c.abo&&c.abo.statut==='retard')a.push('Paiement en retard');if(c.abo&&c.abo.statut==='suspendu')a.push('Espace en pause');
+ if(c.sauvegarde&&!c.sauvegarde.ok&&!c.sauvegarde.attente)(c.sauvegarde.problemes||[]).forEach(function(x){a.push(x)});return a}
 function rendreListe(){var tous=DATA.clients.filter(function(c){return !!c.archive===ARCH}),na=DATA.clients.filter(function(c){return c.archive}).length;
  var va=$('#voirarch');va.hidden=!na&&!ARCH;va.textContent=ARCH?'‹ Revenir aux clients':'Voir les archivés ('+na+')';
  var L=tous.sort(function(a,b){return alerte(b).length-alerte(a).length||a.entreprise.localeCompare(b.entreprise)});
@@ -193,7 +195,7 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
   h+='<div class="card"><h2>Archiver</h2><p class="mu" style="margin:0 0 10px">'+(c.archive?'Ce client est archivé : accès coupé, rien n\'est effacé.':'Le client part (ou fin de contrat) : accès coupé, fiche gardée. Rien n\'est effacé, vous pouvez le ressortir.')+'</p><button class="btn sm al" type="button" data-act="archiver">'+(c.archive?'Sortir des archives':'Archiver ce client')+'</button></div>';
  }
  $('#fiche').innerHTML=h;
- if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);if(window.PCDonnees)PCDonnees.fiche(c.id);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
+ if(!n){brancheMes(c);brancheSm(c);brancheAutres(c);if(window.PCCliky)PCCliky.fiche(c.id);if(window.PCDonnees)PCDonnees.fiche(c.id,c);$('#fnsave').addEventListener('click',function(){var b=this;b.disabled=true;api('/admin/client',{method:'POST',body:{id:c.id,telephone:$('#ftel').value,notes:$('#fnote').value}}).then(function(){toast('Notes enregistrées');return charger()},function(e){toast(e.message)}).then(function(){b.disabled=false})})}
  $('#fsave').addEventListener('click',function(){var b=this,o={};[].forEach.call(document.querySelectorAll('[data-opt]'),function(x){o[x.dataset.opt]=x.checked});
   var body={entreprise:$('#fe').value,prenom:$('#fp').value,activite:$('#fact').value,email:$('#fm').value,locationId:$('#fl').value,vfCompte:$('#fv').value,tva:Number(String($('#ft').value).replace(',','.')),acomptePourcent:Number(String($('#fa').value).replace(',','.')),options:o};
   var mn={};[].forEach.call(document.querySelectorAll('[data-menu]'),function(x){mn[x.dataset.menu]=x.checked});body.menus=mn;body.effectif=Number($('#fn').value)||null;body.profil=$('#fpr').value;
@@ -259,11 +261,19 @@ function brancheAutres(c){
 /* ---------- double sécurité ---------- */
 function bandeau2fa(){$('#deuxfa-bandeau').innerHTML=DATA.deuxfa?'':'<div class="card" style="border:1.5px solid var(--n1-warn)"><h2>Activez la double sécurité</h2><p class="mu" style="margin:0 0 10px">Cette page ouvre ou coupe tous vos clients. Avec la double sécurité, votre code seul ne suffit plus : il faut aussi votre téléphone.</p><button class="btn sm go" type="button" id="b2fa">Mettre en place (2 minutes)</button></div>';
  if($('#b2fa'))$('#b2fa').onclick=function(){document.querySelector('[data-tab=reglages]').click()}}
+/* Sauvegardes des Espaces (Cyril 20/11 : « je veux tout voir sur l'Admin », voyants vert/rouge) */
+function sauvRegl(){var L=(DATA.clients||[]).filter(function(c){return !c.archive&&c.sauvegarde}),ok=L.filter(function(c){return c.sauvegarde.ok}).length,ko=L.filter(function(c){return !c.sauvegarde.ok&&!c.sauvegarde.attente});
+ return '<div class="card"><h2>Sauvegardes des Espaces</h2>'+
+  '<p style="margin:0 0 6px">'+(DATA.coffre?'<span class="pill ok">● Coffre Cloudflare : branché</span>':'<span class="pill al">● Coffre Cloudflare : absent</span>')+(DATA.second?'<span class="pill ok">● 2e copie Scaleway : branchée</span>':'<span class="pill w">● 2e copie Scaleway : pas encore branchée</span>')+'</p>'+
+  '<p class="mu" style="margin:0 0 6px">Chaque nuit à 3 h : tout l\'Espace de chaque client dans le coffre (30 nuits, le 1er de chaque mois sur un an, la 1re nuit de chaque année pour toujours).'+(DATA.second?' Chaque semaine : une copie chiffrée chez Scaleway, à Paris, impossible à effacer, photos comprises.':'')+'</p>'+
+  '<p style="margin:0">'+(L.length?'<span class="pill ok">'+ok+' client'+(ok>1?'s':'')+' au vert</span>'+(ko.length?'<span class="pill al">'+ko.length+' à régler : '+ko.map(function(c){return esc(c.entreprise||c.id)}).join(', ')+'</span>':''):'<span class="mu">Première sauvegarde cette nuit.</span>')+'</p>'+
+  (DATA.second?'':'<p class="mu" style="margin:10px 0 0">Pour brancher la 2e copie : créez le coffre Scaleway (voir les étapes envoyées par Claude), puis posez dans Cloudflare, sur proclik-calcul : SCW_ACCESS_KEY, SCW_SECRET_KEY, SCW_BUCKET et SCW_PHRASE (votre phrase secrète, à garder aussi dans vos Mots de passe et sur papier).</p>')+'</div>'}
 function reglages(){var R=$('#reglages');
  R.innerHTML='<div class="card"><h2>Double sécurité</h2>'+(DATA.deuxfa?'<p class="mu" style="margin:0"><span class="pill ok">Activée</span> Chaque connexion demande votre code + le code à 6 chiffres de votre téléphone. Téléphone perdu : posez ADMIN_2FA_OFF = 1 dans Cloudflare, reconnectez-vous, remettez-la en place, puis retirez ADMIN_2FA_OFF.</p>':
   '<p class="mu" style="margin:0 0 10px">1. Installez une appli d\'authentification (sur iPhone : l\'appli « Mots de passe » le fait déjà, ou Google Authenticator). 2. Scannez le carré ou touchez le lien. 3. Tapez le code à 6 chiffres.</p><button class="btn sm go" type="button" id="d2go">Commencer</button><div id="d2z"></div>')+'</div>'+
   '<div class="card"><h2>Poser les clés depuis l\'Admin</h2><p class="mu" style="margin:0">'+(DATA.posecles?'<span class="pill ok">Branché</span> Les clés GHL et VosFactures se posent depuis la fiche du client.':'Pas encore branché. Une seule fois : créez dans Cloudflare un « jeton d\'API » avec le droit « Workers Scripts : Modifier », puis posez deux secrets sur proclik-calcul : CF_API_TOKEN (le jeton) et CF_ACCOUNT_ID (l\'identifiant du compte, visible à droite de la page Workers).')+'</p></div>'+
   '<div class="card"><h2>E-mail d\'invitation automatique</h2><p class="mu" style="margin:0">'+(DATA.envoiMail?'<span class="pill ok">Branché</span> Le bouton « Envoyer l\'e-mail » part de votre GHL ProClik.':'Pas encore branché : il faut la clé GHL de votre sous-compte ProClik (GHL_PIT_PROCLIK, avec le droit « conversations ») et PROCLIK_LOCATION_ID dans Cloudflare. En attendant : « Envoyer… » ou « Copier ».')+'</p></div>'+
+  sauvRegl()+
   '<div class="card"><h2>Sauvegarde</h2><p class="mu" style="margin:0 0 10px">Le registre est gardé par Cloudflare. Pour une copie chez vous : toutes les fiches et le journal, sans aucun mot de passe.</p><button class="btn sm" type="button" id="exp">Télécharger la sauvegarde</button></div>';
  var ckb=document.createElement('div');ckb.className='card';R.appendChild(ckb);if(window.PCCliky)PCCliky.base(ckb);
  if($('#exp'))$('#exp').onclick=function(){var b=this;b.disabled=true;api('/admin/export').then(function(j){var u=URL.createObjectURL(new Blob([JSON.stringify(j,null,1)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download='proclik-admin-'+j.le.slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)},function(e){toast(e.message)}).then(function(){b.disabled=false})};
@@ -351,6 +361,6 @@ if(!S){vue('login');$('#aerr').textContent='Adresse du service ProClik absente.'
 else if(lj())charger().then(function(){if(!lj())vue('login')});else vue('login');
 })();
 </script>
-<script src="cliky.js?v=3"></script><script src="banc.js?v=1"></script><script src="donnees.js?v=2"></script>
+<script src="cliky.js?v=3"></script><script src="banc.js?v=1"></script><script src="donnees.js?v=7"></script>
 </body>
 </html>
