@@ -734,7 +734,8 @@ function pctDef(){var v=lsG('pc-acompte');return v!=null&&v>=0&&v<100?v:30}
 var TYP={devis:'Devis',facture:'Facture',acompte:'Facture d\'acompte',solde:'Facture finale',avoir:'Avoir'},DOCS=null,DOCC=null,ARME='',ERRDOC='';
 function pillDoc(d){var c=d.statut==='paid'||d.statut==='accepted'?'t':d.statut==='rejected'||d.statut==='issued'?'w':'';return '<span class="vp '+c+'">'+esc(d.statut_libelle||d.statut)+'</span>'}
 function jourDoc(s){var m=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||'');return m?m[3]+'/'+m[2]+'/'+m[1]:''}
-function ligneDoc(d){return '<div class="vli"><span>'+esc(TYP[d.type]||d.type)+' n° '+esc(d.numero)+'</span><span class="x">'+eur(d.ht)+' HT</span><small>'+esc(jourDoc(d.date))+' · '+pillDoc(d)+' · <a href="#" style="color:inherit;font-weight:800" data-vdoc="pdf" data-id="'+d.id+'">📄 Voir le PDF</a></small></div>'}
+/* Devis pas encore accepté : « Modifier » rouvre le devis DÉTAILLÉ (gardé dans l'Espace) ; le devis du client suit (Cyril 26/11). */
+function ligneDoc(d){var md=d.type==='devis'&&(d.statut==='issued'||d.statut==='sent')&&window.PCDS&&PCDS.modifier;return '<div class="vli"><span>'+esc(TYP[d.type]||d.type)+' n° '+esc(d.numero)+'</span><span class="x">'+eur(d.ht)+' HT</span><small>'+esc(jourDoc(d.date))+' · '+pillDoc(d)+' · <a href="#" style="color:inherit;font-weight:800" data-vdoc="pdf" data-id="'+d.id+'">📄 Voir le PDF</a>'+(md?' · <a href="#" style="color:inherit;font-weight:800" data-vdoc="mdet" data-id="'+d.id+'" data-num="'+esc(d.numero)+'">✏️ Modifier</a>':'')+'</small></div>'}
 function suite(L,pre){var dv=L.filter(function(d){return d.type==='devis'&&d.statut!=='rejected'})[0],F=L.filter(function(d){return d.type!=='devis'&&d.type!=='avoir'});
  var aEnv=F.filter(function(d){return d.statut==='issued'})[0],aPay=F.filter(function(d){return d.statut==='sent'||d.statut==='partial'})[0],solde=F.filter(function(d){return d.type==='solde'||d.type==='facture'})[0],ac=F.filter(function(d){return d.type==='acompte'})[0];
  if(!dv)return pre?{t:'Valider le pré-devis et créer le devis',a:'creer',s:'Le devis est créé dans vos documents. Il ne part pas chez le client tant que vous ne l\'envoyez pas.'}:null;
@@ -796,6 +797,7 @@ function pdfDoc(id){var w=null;try{w=window.open('','_blank')}catch(e){}var j=ls
 function actionDoc(a,id){var c=DOCC,k=COUR&&COUR.contact;if(!c)return;
  if(a==='annuler'){ARME='';return rendreDocs()}
  if(a==='pdf')return pdfDoc(id);
+ if(a==='mdet'){var nu=(DOCS||[]).filter(function(d){return d.id==id})[0];if(window.PCDS&&PCDS.modifier)PCDS.modifier(id,nu&&nu.numero,c);return}
  if(a==='aj'){garderAj(+id);if(ARME==='creer')ARME='';return rendreDocs()}
  if(a==='acompte'){ARME='acompte'+id;rendreDocs();var i=$('#vpct');if(i)i.focus();return}
  if((a==='envoyer'||a==='creer'||a==='accepted'||a==='rejected'||a==='paid'||a==='finale')&&ARME!==a+(id||'')){ARME=a+(id||'');return rendreDocs()}

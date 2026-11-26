@@ -28,11 +28,14 @@ var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 
 /* ---------- les icônes ---------- */
 var I=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'};
-var IC={loupe:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),pers:I('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'),
+var IC={cad:I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'),doc:I('<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>'),loupe:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),pers:I('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'),
  x:I('<path d="M6 6l12 12M18 6L6 18"/>'),dos:I('<path d="M15 5l-7 7 7 7"/>'),ch:I('<path d="M9 5l7 7-7 7"/>'),bas:I('<path d="M5 9l7 7 7-7"/>'),
  mic:I('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),ok:I('<path d="M5 12l5 5 9-10"/>'),
  hist:I('<path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4M12 8v4l3 2"/>'),etoile:I('<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>'),
- prix:I('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>')};
+ prix:I('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>'),
+ pose:I('<path d="M4 15a8 8 0 0 1 16 0"/><path d="M3 15h18v3H3zM12 7V4M9 8l-1-2M15 8l1-2"/>'),
+ prod:I('<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
+ tr:I('<path d="M4 20V9l8-5 8 5v11z"/><path d="M9 20v-6h6v6"/>'),plus:I('<path d="M12 5v14M5 12h14"/>')};
 var ICT={cloison:I('<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 3v18M15 3v18"/>'),
  doublage:I('<rect x="3" y="3" width="6" height="18" rx="1"/><path d="M12 6c3 0 3 2 6 2M12 11c3 0 3 2 6 2M12 16c3 0 3 2 6 2"/>'),
  plafond:I('<path d="M3 5h18M7 5v4M12 5v4M17 5v4M4 9h16"/><path d="M8 20v-6h8v6"/>'),
@@ -169,12 +172,92 @@ function lignesCalc(){var R=[];(S&&S.calc&&S.calc.groupes||[]).forEach(function(
 /* « Pose bloc-porte (prix moyen, provisoire) » → « Pose bloc-porte » : la mention reste en étiquette pour vous, pas sur le devis du client */
 function libC(x){return String(x||'').replace(/\s*\((?:prix moyen(?:,\s*provisoire)?|tarif provisoire|provisoire)\)\s*$/i,'')}
 
+/* ---------- DEUX DEVIS (Cyril 26/11) : « le devis final pour le client n'affichera pas les produits, juste des lignes qui expliquent
+   les travaux et le prix, tout se fond dedans » + « un devis qui ne peut pas quitter l'Espace, détaillé à 100 % pour l'artisan ».
+   « Pour moi » = tout le détail (produits, quantités, prix), il reste dans l'Espace.
+   « Pour le client » = une ligne par travail : un titre, une phrase écrite par Cliky depuis les réglages, le prix (fournitures fondues).
+   On change un réglage (laine 45 → 100 mm) dans le détaillé : le prix ET la phrase du client se mettent à jour tout seuls.
+   Une phrase changée à la main est gardée ; si Cliky aurait écrit autre chose depuis, on le signale (« Mettre à jour »). ---------- */
+var GCL={'Cloisons':'cloison','Doublage et isolation des murs':'doublage','Plafonds':'plafond','Isolation des combles':'combles','Trappe d’accès':'combles',"Trappe d'accès":'combles',
+ 'Isolation des rampants':'rampants','Portes':'portes','Fenêtres':'fenetres','Fenêtres de toit':'fenetres','Sols':'sol','Plinthes':'sol','Peinture':'peinture',
+ 'Électricité, plomberie et équipements':'eq','Bandes, enduit et vis (toutes les plaques)':'*plaque','Protection, nettoyage et évacuation':'chantier','Déplacement':'dep'};
+var PLAQ=['cloison','doublage','plafond','rampants','combles'];
+var RANGS=['cloison','doublage','plafond','combles','rampants','portes','fenetres','sol','peinture','eq'];
+function bkO(o){return /^(elec|plomb|clim)$/.test(o.travail)?'eq':o.travail}
+var TCL={cloison:['Création d’une cloison','Création de cloisons'],doublage:['Doublage et isolation des murs'],plafond:['Faux plafond','Faux plafonds'],combles:['Isolation des combles'],rampants:['Isolation des rampants'],
+ portes:['Fourniture et pose d’une porte','Fourniture et pose de portes'],fenetres:['Fourniture et pose d’une fenêtre','Fourniture et pose de fenêtres'],sol:['Revêtement de sol','Revêtements de sol'],peinture:['Peinture'],
+ chantier:['Protection, nettoyage et évacuation du chantier'],dep:['Déplacement']};
+function titreBk(k,O){if(k==='eq'){var n={elec:'Électricité',plomb:'Plomberie',clim:'Climatisation'},T=[];O.forEach(function(o){var x=n[o.travail];if(x&&T.indexOf(x)<0)T.push(x)});return T.length?T.join(', ').replace(/, ([^,]*)$/,' et $1'):'Électricité, plomberie et équipements'}
+ if(k==='sol'&&O.length&&O.every(function(o){return o.d.neuf==='Aucun'}))return 'Création d’un plancher';var t=TCL[k];return t?(O.length>1&&t[1]?t[1]:t[0]):k}
+function maj1(x){x=String(x||'').trim();return x.charAt(0).toUpperCase()+x.slice(1)}
+/* La phrase du client, en mots simples, depuis les réglages du travail (jamais un nom de produit). */
+function phraseO(o){var d=o.d||{},t=o.travail,x=function(v){return cm2(nb(v))},P=[];
+ if(t==='cloison'){P.push('Cloison de '+x(d.L)+' × '+x(d.H)+' m sur ossature métallique avec isolant phonique'+(d.phonique==='Renforcée'?' renforcé':''));if(d.hydro===true)P.push('plaques hydrofuges côté salle d’eau');if(+d.portes>0)P.push((+d.portes>1?d.portes+' portes':'une porte')+(d.largeur?' de '+d.largeur:''))}
+ else if(t==='doublage'){P.push('Doublage isolant du mur '+(d.ext==='Non'?'intérieur':'extérieur')+' de '+x(d.L)+' × '+x(d.H)+' m');if(d.objectif==='Aides')P.push('isolation éligible aux aides (R ≥ 3,7)');if(+d.fen>0)P.push('avec le tour de '+(+d.fen>1?d.fen+' fenêtres':'la fenêtre'))}
+ else if(t==='plafond')P.push('Faux plafond de '+x(d.L)+' × '+x(d.l)+' m sur ossature métallique');
+ else if(t==='combles')P.push('Isolation des combles perdus sur '+x(d.surface)+' m²');
+ else if(t==='rampants')P.push('Isolation des rampants sous toiture sur '+x(d.surface)+' m²');
+ else if(t==='portes'){P.push((d.bati==='Non'?'Porte seule':'Bloc-porte')+(d.largeur?' de '+d.largeur:'')+(d.type&&d.type!=='Standard'?', isolant contre le bruit':''));if(/Dépose/.test(d.bati||''))P.push('dépose de l’ancienne porte')}
+ else if(t==='fenetres'){P.push('Fenêtre'+(d.mat?' '+d.mat:'')+' de '+x(d.Lc)+' × '+x(d.Hc)+' cm');P.push(/Dépose/.test(d.pose||'')?'pose en dépose complète':'pose sur l’ancien cadre')}
+ else if(t==='sol'){if(d.neuf==='Aucun')P.push('Plancher neuf sur lambourdes sur '+x(d.surface)+' m²');else{var nm={'Sol souple (vinyle)':'Sol vinyle'}[d.neuf]||d.neuf||'Sol';P.push(nm+(d.neuf==='Carrelage'&&d.format?' '+d.format:'')+' sur '+x(d.surface)+' m²');if(d.plancher==='Oui')P.push('sur plancher neuf (lambourdes et panneaux)')}
+  if(d.depose==='Oui')P.push('dépose de l’ancien sol');if(d.plinthes==='Oui'&&d.neuf!=='Aucun')P.push('plinthes neuves')}
+ else if(t==='peinture'){var sp=String(d.support||'Murs');if(!MP(d))P.push('Peinture '+(/s$/.test(sp)?'des ':'du ')+sp.toLowerCase()+(nb(d.n)?' ('+x(d.n)+(/Plinthes/.test(sp)?' m':'')+')':'')+(d.finition?', finition '+String(d.finition).toLowerCase():''));
+  else{var Q=[(sp==='Plafond'?'Plafond':'Murs')+', '+x(d.n)+' m² :'],pr=[];if(d.depose==='Oui')pr.push('dépose de l’ancien papier peint');pr.push(d.etat==='Abîmé'?'reprise des supports abîmés':d.etat==='Neuf (placo)'?'':'préparation des supports');if(d.enduit==='Oui')pr.push('enduit de lissage');
+   if(d.revetement==='Papier peint')pr.push('pose de papier peint');else{if(d.revetement&&/Toile/.test(d.revetement))pr.push('pose de toile de verre');if(d.etat!=='Bon état')pr.push('une couche d’impression');pr.push('deux couches de peinture'+(d.finition?' '+String(d.finition).toLowerCase():''))}
+   P.push(Q[0]+' '+pr.filter(Boolean).join(', ').replace(/, ([^,]*)$/,' et $1'))}}
+ else if(OUV[t]&&OUV[t].eq){var le=listeEq(o);P.push(le.length?maj1(le.join(', ').replace(/, ([^,]*)$/,' et $1')):OUV[t].nom);if(d.etat==='À changer')P.push('en remplacement de l’existant')}
+ else{var r=resumeOuv(o).split(' · ').filter(Boolean).join(', ');P.push(titreOuv(o)+(r?', '+r:''))}
+ return maj1(P.join(', '))+'.'}
+function phraseBk(k,O,plaque){if(k==='chantier')return 'Protection des sols et des meubles, nettoyage en fin de chantier et évacuation des déchets.';if(k==='dep')return '';
+ var p=O.map(phraseO).join(' ');if(plaque)p+=' Bandes et enduit des joints compris.';
+ if(O.length)p+=k==='peinture'?' Fourniture et application.':' Fourniture et pose.';return p.trim()}
+function uidL(l){if(!l.uid)l.uid='l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);return l.uid}
+/* Les lignes du devis du client, dans l'ordre d'un chantier. Le total est exactement celui du devis détaillé. */
+function lignesClient(){var B={},ordre=[],sansT=[],c=S.calc&&!S.calcEtat?S.calc:null,plq=0;
+ function bk(k){if(!B[k]){B[k]={k:k,O:[],total:0,pl:0,L:[]};ordre.push(k)}return B[k]}
+ S.ouvrages.forEach(function(o){if(pret(o))bk(bkO(o)).O.push(o)});
+ if(c)c.groupes.forEach(function(g){var k=GCL[g.groupe];if(k==='*plaque'){plq+=g.total;return}
+  if(!k){var x=bk('g:'+g.groupe);x.total+=g.total;x.nom=g.groupe;return}
+  if(!B[k]&&(k==='portes'||k==='fenetres')){var h=PLAQ.filter(function(p){return B[p]})[0];if(h)k=h}
+  bk(k).total+=g.total});
+ S.lignes.forEach(function(l){uidL(l);var k=l.rg||(l.gr&&GCL[l.gr]);if(k==='*plaque')k=PLAQ.filter(function(p){return B[p]})[0];
+  if(k&&k!=='seule'&&(B[k]||l.rg)){var x=bk(k);x.total+=l.total;x.L.push(l)}else sansT.push(l)});
+ if(plq>0){var P=PLAQ.filter(function(p){return B[p]&&B[p].total>0});if(!P.length){var y=bk('*plaque');y.total+=plq;y.nom='Bandes, enduit et vis'}
+  else{var tp=P.reduce(function(s2,p){return s2+B[p].total},0),reste=r2(plq);P.forEach(function(p,i){var v=i===P.length-1?reste:r2(plq*B[p].total/tp);reste=r2(reste-v);B[p].total+=v;B[p].pl=1})}}
+ var rg=function(k){var i=RANGS.indexOf(k);return i<0?(k==='chantier'?90:k==='dep'?95:80):i};
+ ordre.sort(function(a,b){return rg(a)-rg(b)});
+ var R=ordre.map(function(k){var x=B[k],auto=k.indexOf('g:')===0||k==='*plaque'?{t:x.nom,p:''}:{t:titreBk(k,x.O),p:phraseBk(k,x.O,x.pl)},e=(S.cl||{})[k]||{};
+  return {k:k,titre:e.t||auto.t,phrase:e.p!=null?e.p:auto.p,auto:auto,perso:e.p!=null,vieux:e.p!=null&&e.pb!==auto.p,total:r2(x.total),quantite:1,unite:'forfait',L:x.L}}).filter(function(x){return x.total>0||x.L.length});
+ sansT.forEach(function(l){var e=(S.cl||{})[l.uid]||{};R.push({k:l.uid,seule:1,titre:e.t||l.libelle,phrase:e.p||'',auto:{t:l.libelle,p:''},perso:e.p!=null,total:l.total,quantite:l.quantite,unite:l.unite})});
+ return R}
+function bkPresents(){var K=[];lignesClient().forEach(function(x){if(!x.seule&&x.k.indexOf('g:')<0&&x.k!=='*plaque'&&x.k!=='chantier'&&x.k!=='dep')K.push(x)});return K}
+function vueClient(){var R=lignesClient(),t=total(),vieux=R.filter(function(x){return x.vieux}).length,h='';
+ h+='<p class="ds-note c">C’est ce devis-là que '+esc(S.nom||'le client')+' recevra. Le détail reste dans votre Espace.</p>';
+ if(vieux)h+='<div class="ds-ver ds-sp"><b>'+vieux+' phrase'+(vieux>1?'s':'')+' à revoir</b><small>Vous avez changé un réglage après avoir écrit la phrase vous-même. Touchez la ligne marquée pour la mettre à jour.</small></div>';
+ h+='<div class="ds-pap">'+(S.titre?'<div class="ds-pt">'+esc(S.titre)+'</div>':'')+R.map(function(x){return '<button type="button" class="ds-pl" data-ds="cll" data-id="'+esc(x.k)+'"><span><b>'+esc(x.titre)+(x.vieux?' <em class="ds-tag r">à revoir</em>':'')+'</b>'+(x.phrase?'<small>'+esc(x.phrase)+'</small>':'')+(x.seule?'<small class="ds-pq">'+qf(x.quantite)+' '+esc(pluriel(x.unite||'u',x.quantite))+' · ligne seule, <u>la ranger dans un travail</u></small>':'')+'</span><b class="ds-pr">'+eur(x.total)+'</b></button>'}).join('')+
+  '<div class="ds-ptot"><span>Total HT</span><b>'+eur(t)+'</b></div></div>';
+ h+='<p class="ds-note">Touchez une ligne pour changer son titre ou sa phrase.</p>';return h}
+function feuilleCl(k){var x=lignesClient().filter(function(z){return z.k===k})[0];if(!x)return;F={cl:k,t:x.titre,p:x.phrase,seule:x.seule};
+ var P=x.seule?bkPresents():[];
+ S.feuille='<div class="ds-grab"></div><div class="ds-fq">Sur le devis du client</div>'+
+  '<label class="ds-titre">Le titre<input data-dsc="t" value="'+esc(x.titre)+'" autocomplete="off"></label>'+
+  '<label class="ds-titre">La phrase qui explique<textarea data-dsc="p" rows="5" placeholder="Ce qui est fait, en mots simples">'+esc(x.phrase)+'</textarea></label>'+
+  (x.vieux?'<div class="ds-ver ds-sp"><b>Cliky écrirait maintenant :</b><small>'+esc(x.auto.p)+'</small></div>':'')+
+  (x.perso||x.titre!==x.auto.t?'<button type="button" class="ds-btn cl" data-ds="clrem">'+IC.hist+' Reprendre le texte de Cliky</button>':'')+
+  (P.length?'<div class="ds-sec" style="margin:12px 0 6px">FONDRE CETTE LIGNE DANS UN TRAVAIL</div><div class="ds-chips">'+P.map(function(b){return '<button type="button" class="ds-chip" data-ds="clrg" data-id="'+esc(b.k)+'">'+esc(b.titre)+'</button>'}).join('')+'</div><p class="ds-note c">Le client ne la voit plus : son prix s’ajoute à ce travail.</p>':'')+
+  (!x.seule&&x.L&&x.L.some(function(l){return l.rg})?'<button type="button" class="ds-lien" data-ds="clsort">Remettre mes lignes ajoutées à part</button>':'')+
+  '<button type="button" class="ds-btn" data-ds="clok">C’est bon</button><button type="button" class="ds-lien" data-ds="ferf">Annuler</button>';rendre()}
+function okCl(){var x=lignesClient().filter(function(z){return z.k===F.cl})[0];if(!x){S.feuille=null;F=null;rendre();return}
+ S.cl=S.cl||{};var e={},t=String(F.t||'').trim(),p=String(F.p||'').trim();
+ if(t&&t!==x.auto.t)e.t=t.slice(0,200);if(p!==x.auto.p){e.p=p.slice(0,2000);e.pb=x.auto.p}
+ if(e.t||e.p!=null)S.cl[F.cl]=e;else delete S.cl[F.cl];S.feuille=null;F=null;S.ok='Devis du client modifié';rendre()}
+
 /* ---------- vos habituels, vos anciens devis, le devis commencé ---------- */
 function usage(){return lsG('pc-ds-usage')||{}}
 function compter(c){var u=usage();u[c]=(u[c]||0)+1;lsS('pc-ds-usage',u)}
 function habituels(){var u=usage();return Object.keys(u).sort(function(a,b){return u[b]-u[a]}).map(trouveArt).filter(Boolean).slice(0,6)}
 function anciens(){var L=lsG('pc-ds-devis');return Array.isArray(L)?L:[]}
-function garder(){if(!S||S.mode==='prix')return;if(S.lignes.length||S.ouvrages.length){S.aGarde=1;S.reprise=null}else if(S.aGarde){lsS('pc-ds-brouillon',null);return}else return;lsS('pc-ds-brouillon',{contact:S.contact,nom:S.nom,titre:S.titre,lignes:S.lignes,ouvrages:S.ouvrages,le:Date.now()})}
+function garder(){if(!S||S.mode==='prix'||S.maj)return;if(S.lignes.length||S.ouvrages.length){S.aGarde=1;S.reprise=null}else if(S.aGarde){lsS('pc-ds-brouillon',null);return}else return;lsS('pc-ds-brouillon',{contact:S.contact,nom:S.nom,titre:S.titre,lignes:S.lignes,ouvrages:S.ouvrages,cl:S.cl||{},le:Date.now()})}
 function dateC(t){try{return new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}catch(e){return ''}}
 /* Repartir d'un devis : les produits de la base reprennent le prix d'aujourd'hui (sauf un prix changé à la main) */
 function reprendre(D){var n=0;S.lignes=(D.lignes||[]).map(function(l){var a=l.c&&trouveArt(l.c);l=JSON.parse(JSON.stringify(l));
@@ -183,7 +266,7 @@ function reprendre(D){var n=0;S.lignes=(D.lignes||[]).map(function(l){var a=l.c&
 
 /* ---------- l'état du devis ---------- */
 var S=null;
-function etat0(){return {mode:'devis',contact:'',nom:'',titre:'',lignes:[],ouvrages:[],calc:null,calcEtat:'',etape:1,q:'',g:'tous',ouv:{},tout:{},arme:0,ok:'',det:0,tri:'fam'}}
+function etat0(){return {mode:'devis',contact:'',nom:'',titre:'',lignes:[],ouvrages:[],calc:null,calcEtat:'',etape:1,q:'',g:'tous',ouv:{},tout:{},arme:0,ok:'',det:0,tri:'fam',vue:'moi',cl:{}}}
 function ouvrirDevis(k,t){S=etat0();S.contact=typeof k==='string'?k:'';S.titre=typeof t==='string'?t.slice(0,120):'';
  var br=lsG('pc-ds-brouillon');if(br&&(br.lignes&&br.lignes.length||br.ouvrages&&br.ouvrages.length)&&(!S.contact||S.contact===br.contact))S.reprise=br;
  var C=clients();if(S.contact){var c=C.filter(function(x){return x.id===S.contact})[0];S.nom=c?c.n:nomDos(S.contact);S.etape=2}
@@ -225,17 +308,18 @@ function listeClients(){var C=clients(),q=sans(S.qc||'').trim(),L=q?C.filter(fun
 function groupes(){var G={},ordre=[];
  var met=function(id,nom,sous,a){if(!G[id]){G[id]={id:id,nom:nom,sous:sous,fam:{},nf:[],n:0};ordre.push(id)}var g=G[id],f=a.f||'Divers';if(!g.fam[f]){g.fam[f]=[];g.nf.push(f)}g.fam[f].push(a);g.n++};
  var hab=(FO.filter(function(x){return x.habituel})[0]||{id:'base'}).id;
- B.articles.forEach(function(a){if(!(a.pc>0))return;if(a.k==='prestation'&&!a.four)met('mo','Main-d’œuvre','vos prix de pose',a);else{var id=a.four||'base';met('f:'+id,nomFour(id),'',a)}});
- (B.complements||[]).forEach(function(a){if(a.pc>0)met('f:'+a.four,nomFour(a.four),'en plus de votre base',a)});
+ B.articles.forEach(function(a){if(!(a.pc>0))return;if(a.k==='prestation'&&!a.four)met('mo','Poses (main-d’œuvre)','vos prix de pose',a);else{var id=a.four||'base';met('f:'+id,nomFour(id),'',a)}});
+ (B.complements||[]).forEach(function(a){if(!(a.pc>0))return;if(a.k==='prestation')met('mo','Poses (main-d’œuvre)','vos prix de pose',a);else met('f:'+a.four,nomFour(a.four),'en plus de votre base',a)});
  vosProduits().forEach(function(a){met('vos','Vos produits','ajoutés par vous',a)});
- var rang=function(x){return x==='f:'+hab?0:x==='mo'?1:x==='f:castorama'||x==='f:clim'?3:/^f:/.test(x)?2:4};
+ /* Cyril 26/11 : « pourquoi je ne trouve pas au début les poses » → les poses d’abord, puis le fournisseur habituel */
+ var rang=function(x){return x==='mo'?0:x==='f:'+hab?1:x==='f:castorama'||x==='f:clim'?3:/^f:/.test(x)?2:4};
  ordre.sort(function(a,b){return rang(a)-rang(b)});
  return ordre.map(function(id){var g=G[id];if(id==='f:'+hab)g.hab=1;return g})}
 function court(n){return n.replace(' · prix publics','')}
 function ecranBase(cote){var G=groupes(),nT=G.reduce(function(s,g){return s+g.n},0);
  var h=(cote?'<div class="ds-top"><h1>Ajouter au devis<small>Travaux complets ou toute la base, rangée par fournisseur</small></h1></div>':tete('Ajouter au devis',esc(S.nom)+' · Étape 2 sur 3',true)+fil(2))+(cote?'':bandeauReprise())+
   '<label class="ds-srch">'+IC.loupe+'<input type="search" data-dsi="q" value="'+esc(S.q)+'" placeholder="Chercher, ou dites « cloison 4 m sur 2,50 »" autocomplete="off" enterkeyhint="search">'+(SR?'<button type="button" class="ds-mic'+(S.ecoute?' on':'')+'" data-ds="mic" aria-label="Dicter">'+IC.mic+'</button>':'')+'</label>'+
-  '<div class="ds-chips">'+[['tous','Tout',0]].concat(G.map(function(g){return [g.id,court(g.nom),g.n]})).map(function(c){return '<button type="button" class="ds-chip'+(S.g===c[0]?' on':'')+'" data-ds="grp" data-id="'+esc(c[0])+'">'+esc(c[1])+(c[2]?' · '+c[2]:'')+'</button>'}).join('')+
+  '<div class="ds-chips">'+[['tous','Accueil',0],['trav','Travaux complets',0],['mo','Poses',nPoses()],['prod','Produits',nProd()]].concat(S.g==='prod'||/^f:|^vos$/.test(S.g)?G.filter(function(g){return g.id!=='mo'}).map(function(g){return [g.id,court(g.nom),g.n]}):[]).map(function(c){return '<button type="button" class="ds-chip'+(S.g===c[0]?' on':'')+'" data-ds="grp" data-id="'+esc(c[0])+'">'+esc(c[1])+(c[2]?' · '+c[2]:'')+'</button>'}).join('')+
   '<button type="button" class="ds-chip t" data-ds="tri">'+(S.tri==='prix'?'Rangé par prix ↑':'Rangé par famille')+'</button></div>';
  return h+'<div class="ds-liste ds-lb">'+listeBase()+'</div>'}
 function aConfirmer(){return B.articles.filter(function(a){return a.provisoire&&a.pc>0}).sort(function(a,b){return (a.k==='prestation'?0:1)-(b.k==='prestation'?0:1)})}
@@ -245,11 +329,42 @@ function haut(){var h='',P=aConfirmer().length;
  var H=habituels();if(H.length)h+='<div class="ds-sec">'+IC.etoile+' VOS HABITUELS</div><div class="ds-card">'+H.map(article).join('')+'</div>';
  var A=anciens();if(A.length)h+='<button type="button" class="ds-btn cl ds-anc" data-ds="anciens">'+IC.hist+' Repartir d’un devis déjà fait</button>';
  return h}
+/* Écran de départ (Cyril 26/11 : « au départ, créer soit avec des poses soit avec des produits… simplicité et visuel beau à voir ») :
+   trois grandes cartes, une seule idée par carte ; le reste (habituels, anciens devis, prix à confirmer) en dessous. */
+function nPoses(){return groupes().filter(function(g){return g.id==='mo'}).reduce(function(s,g){return s+g.n},0)}
+function nProd(){return groupes().filter(function(g){return g.id!=='mo'}).reduce(function(s,g){return s+g.n},0)}
+function nFour(){return groupes().filter(function(g){return /^f:/.test(g.id)}).length}
+/* Variantes du départ à essayer (Cyril 26/11 « propose-moi plusieurs sortes ») : ?dv=B|C|D ou pc-ds-v sur l’appareil ; A par défaut. */
+function varDep(){var v='';try{v=(location.search.match(/[?&]dv=([A-D])/)||[])[1]||lsG('pc-ds-v','A')}catch(e){}return /^[A-D]$/.test(v)?v:'A'}
+function depart(){var v=varDep();if(v!=='A')return depart2(v);return departA()}
+function suiteDep(){var h='',H=habituels();if(H.length)h+='<div class="ds-sec">'+IC.etoile+' VOS HABITUELS</div><div class="ds-card">'+H.map(article).join('')+'</div>';
+ var A=anciens();if(A.length)h+='<button type="button" class="ds-btn cl ds-anc" data-ds="anciens">'+IC.hist+' Repartir d’un devis déjà fait</button>';
+ var P=aConfirmer().length;if(P)h+='<button type="button" class="ds-alerte" data-ds="prix"><span class="ds-ic">'+IC.prix+'</span><span class="ds-tx"><b>'+P+' prix à confirmer</b><small>Vérifiez-les une fois : vos devis seront justes.</small></span><span class="ds-rond p">'+IC.ch+'</span></button>';
+ return h}
+function depart2(v){var np=nPoses(),nr=nProd(),nf=nFour(),h='';
+ var C=[['trav',IC.tr,'Un travail complet','Cliky compte tout'],['mo',IC.pose,'Une pose',np+' prix de pose'],['prod',IC.prod,'Un produit',nr+' produits'+(nf>1?' · '+nf+' fournisseurs':'')]];
+ if(v==='B'){h+='<div class="ds-q">Qu’ajoutez-vous au devis ?</div><div class="ds-rgs">'+C.map(function(c,k){return '<button type="button" class="ds-rg'+(k===0?' sombre':'')+'" data-ds="grp" data-id="'+c[0]+'"><span class="ds-bi">'+c[1]+'</span><span class="ds-bt"><b>'+c[2]+'</b><small>'+esc(c[3])+'</small></span><span class="ds-bgo">'+IC.ch+'</span></button>'}).join('')+
+  '<button type="button" class="ds-rg cr" data-ds="main"><span class="ds-bi">'+IC.plus+'</span><span class="ds-bt"><b>Ma propre ligne</b><small>Une pose ou un produit que je crée</small></span></button></div>'}
+ else if(v==='C'){h+='<div class="ds-q">Qu’ajoutez-vous ?</div><div class="ds-g4">'+C.concat([['main',IC.plus,'Je crée','une pose ou un produit']]).map(function(c,k){return '<button type="button" class="ds-c4'+(k===0?' sombre':'')+(c[0]==='main'?' cr':'')+'" data-ds="'+(c[0]==='main'?'main':'grp')+'" data-id="'+(c[0]==='main'?'':c[0])+'"><span class="ds-bi">'+c[1]+'</span><b>'+c[2]+'</b><small>'+esc(c[3])+'</small></button>'}).join('')+'</div>'}
+ else{h+='<div class="ds-hero"><small>ÉTAPE 2</small><b>Qu’ajoutez-vous<br>au devis ?</b></div><div class="ds-pils">'+C.map(function(c,k){return '<button type="button" class="ds-pl'+(k===0?' plein':'')+'" data-ds="grp" data-id="'+c[0]+'"><span class="ds-pi">'+c[1]+'</span><span class="ds-bt"><b>'+c[2]+'</b><small>'+esc(c[3])+'</small></span>'+IC.ch+'</button>'}).join('')+'</div><div class="ds-cree"><button type="button" class="ds-pil" data-ds="main" data-id="pose">'+IC.plus+' Créer une pose</button><button type="button" class="ds-pil" data-ds="main" data-id="prod">'+IC.plus+' Créer un produit</button></div>'}
+ return '<div class="ds-dep v'+v+'">'+h+'</div>'+suiteDep()}
+function departA(){var np=nPoses(),nr=nProd(),nf=nFour(),h='<div class="ds-dep">';
+ h+='<button type="button" class="ds-big sombre" data-ds="grp" data-id="trav"><span class="ds-bi">'+IC.tr+'</span><span class="ds-bt"><b>Un travail complet</b><small>Cloison, sol, peinture… Cliky compte tout : fournitures, vis et pose.</small></span><span class="ds-bmini">'+['cloison','plafond','sol','peinture','elec'].map(function(t){return '<i>'+ICT[t]+'</i>'}).join('')+'</span><span class="ds-bgo">'+IC.ch+'</span></button>';
+ h+='<div class="ds-duo">'+
+  '<button type="button" class="ds-big" data-ds="grp" data-id="mo"><span class="ds-bi">'+IC.pose+'</span><b>Une pose</b><small>'+np+' prix de main-d’œuvre</small><span class="ds-bgo">'+IC.ch+'</span></button>'+
+  '<button type="button" class="ds-big" data-ds="grp" data-id="prod"><span class="ds-bi">'+IC.prod+'</span><b>Un produit</b><small>'+nr+' produits'+(nf>1?' · '+nf+' fournisseurs':'')+'</small><span class="ds-bgo">'+IC.ch+'</span></button></div>';
+ h+='<div class="ds-cree"><button type="button" class="ds-pil" data-ds="main" data-id="pose">'+IC.plus+' Créer une pose</button><button type="button" class="ds-pil" data-ds="main" data-id="prod">'+IC.plus+' Créer un produit</button></div></div>';
+ var H=habituels();if(H.length)h+='<div class="ds-sec">'+IC.etoile+' VOS HABITUELS</div><div class="ds-card">'+H.map(article).join('')+'</div>';
+ var A=anciens();if(A.length)h+='<button type="button" class="ds-btn cl ds-anc" data-ds="anciens">'+IC.hist+' Repartir d’un devis déjà fait</button>';
+ var P=aConfirmer().length;if(P)h+='<button type="button" class="ds-alerte" data-ds="prix"><span class="ds-ic">'+IC.prix+'</span><span class="ds-tx"><b>'+P+' prix à confirmer</b><small>Vérifiez-les une fois : vos devis seront justes.</small></span><span class="ds-rond p">'+IC.ch+'</span></button>';
+ return h}
+function tuilesTravaux(){return '<div class="ds-sec">UN TRAVAIL COMPLET <span>· Cliky compte tout : fournitures, vis, bandes, pose</span></div><div class="ds-tuiles">'+ORDRE.map(function(t){return '<button type="button" class="ds-tuile" data-ds="ouv" data-id="'+t+'"><span>'+ICT[t]+'</span>'+esc(OUV[t].nom.replace(' d’un mur','').replace(' (pose)',''))+'</button>'}).join('')+'</div>'}
 function listeBase(){var G=groupes(),q=sans(S.q).trim(),W=q.split(/\s+/).filter(Boolean),nT=G.reduce(function(s,g){return s+g.n},0),h='';
- if(!W.length&&S.g==='tous')h+=haut();
+ if(!W.length&&S.g==='tous')return depart();
+ if(!W.length&&S.g==='trav')return tuilesTravaux();
  if(!nT)h+='<p class="ds-note">'+(etatB==='charge'||!etatB?'Chargement de votre base…':/^err/.test(etatB)?'La base n’a pas pu être chargée : '+esc(etatB.slice(4))+'. Vous pouvez quand même écrire votre ligne.':'Votre base est vide pour l’instant.')+'</p>';
  var trouve=0;
- G.filter(function(g){return S.g==='tous'||S.g===g.id}).forEach(function(g){
+ G.filter(function(g){return S.g==='tous'||S.g==='trav'||S.g===g.id||(S.g==='prod'&&g.id!=='mo')}).forEach(function(g){
   var fams=g.nf.map(function(f){var A=g.fam[f];if(W.length)A=A.filter(function(a){var t=sans(lisible(a.d)+' '+a.d+' '+f+' '+(a.cond||''));return W.every(function(w){return t.indexOf(w)>=0})});
    if(S.tri==='prix')A=A.slice().sort(function(x,y){return prixVente(x)-prixVente(y)});return [f,A]}).filter(function(x){return x[1].length});
   if(!fams.length)return;trouve+=fams.length;
@@ -262,10 +377,10 @@ function listeBase(){var G=groupes(),q=sans(S.q).trim(),W=q.split(/\s+/).filter(
    h+='<div class="ds-sub">'+V.map(article).join('')+(tout?'':'<button type="button" class="ds-voir" data-ds="tout" data-id="'+esc(cle2)+'">Voir les '+(A.length-lim)+' autres ▾</button>')+'</div>'});
   h+='</div>'});
  if(nT&&W.length&&!trouve)h+='<p class="ds-note">Rien trouvé pour « '+esc(S.q)+' ». Essayez un autre mot, ou écrivez votre ligne.</p>';
- h+='<button type="button" class="ds-lien" data-ds="main">Je ne trouve pas : écrire ma ligne</button>'+(marge()?'<p class="ds-note">Prix de vente HT. Matériaux : prix d’achat chez le fournisseur + votre marge de '+qf(marge())+' %. Main-d’œuvre : votre prix.</p>':'');
+ h+='<button type="button" class="ds-lien" data-ds="main" data-id="'+(S.g==='mo'?'pose':S.g==='prod'?'prod':'')+'">'+(S.g==='mo'?'Je ne trouve pas : créer une pose':S.g==='prod'?'Je ne trouve pas : créer un produit':'Je ne trouve pas : écrire ma ligne')+'</button>'+(marge()?'<p class="ds-note">Prix de vente HT. Matériaux : prix d’achat chez le fournisseur + votre marge de '+qf(marge())+' %. Main-d’œuvre : votre prix.</p>':'');
  return h}
 function article(a){var u=unite(a),dt=detail(a),mc=moinsCher(a);
- var src=a.k==='prestation'?(a.vos?'votre prix':'votre prix de pose'):a.vos?'votre prix':'achat '+eur(a.pc)+(marge()?' + '+qf(marge())+' %':'');
+ var src=a.k==='prestation'?(a.vos?'votre prix':a.complement?'prix moyen France, à confirmer':'votre prix de pose'):a.vos?'votre prix':'achat '+eur(a.pc)+(marge()?' + '+qf(marge())+' %':'');
  return '<div class="ds-row ds-art"><span class="ds-tx"><b>'+esc(lisible(a.d))+'</b><small>'+(dt?esc(dt)+' · ':'')+esc(src)+(a.provisoire&&!a.complement?' <em class="ds-tag">à confirmer</em>':'')+(mc?' <em class="ds-tag v">moins cher chez '+esc(court(nomDe(mc)))+'</em>':'')+'</small></span><span class="ds-pr">'+eur(prixVente(a))+'<small>'+esc(parU(u))+'</small>'+(prixMesure(a)?'<small class="m">'+esc(prixMesure(a))+'</small>':'')+'</span><button type="button" class="ds-plus" data-ds="art" data-id="'+esc(a.c)+'" aria-label="Ajouter '+esc(lisible(a.d))+'">＋</button></div>'}
 function blocOuvrages(){if(!S.ouvrages.length)return '';var c=S.calc,ch=S.calcEtat==='charge',er=/^err/.test(S.calcEtat||''),L=lignesCalc();
  var h='<div class="ds-sec">TRAVAUX COMPLETS <span>· calculés par Cliky</span></div><div class="ds-card">'+S.ouvrages.map(function(o,i){return '<button type="button" class="ds-row" data-ds="ouvl" data-id="'+i+'"><span class="ds-ic">'+ICT[o.travail]+'</span><span class="ds-tx"><b>'+esc(titreOuv(o))+'</b><small>'+esc(resumeOuv(o))+'</small></span><span class="ds-rond p">'+IC.ch+'</span></button>'}).join('');
@@ -286,17 +401,22 @@ function blocSansPrix(c){var A=c.a_chiffrer||[],V=(c.a_verifier||[]).filter(func
   h+='</div>'}
  if(V.length)h+='<div class="ds-ver"><b>À vérifier ('+V.length+')</b>'+V.slice(0,tout?99:6).map(function(v){return '<span>'+esc(v)+'</span>'}).join('')+(V.length>6&&!A.length?'<button type="button" class="ds-voir c" data-ds="vert">'+(tout?'Masquer':'Voir les '+V.length)+'</button>':'')+'</div>';
  return h}
-function ecranLignes(cote){var t=total(),n=S.lignes.length+S.ouvrages.length;
- var h=tete('Devis de '+esc(S.nom||'…'),cote?'Étape '+(n?3:2)+' sur 3 · '+(n?'Vérifiez et créez':'Ajoutez à droite'):'Étape 3 sur 3 · Vérifiez et créez',!cote)+fil(cote?(n?3:2):3)+(cote?bandeauReprise():'')+'<div class="ds-liste ds-lg">';
+function ecranLignes(cote){var t=total(),n=S.lignes.length+S.ouvrages.length,vc=S.vue==='client'&&n;
+ var h=tete((S.maj?'Devis n° '+esc(S.maj.numero||'')+' · ':'Devis de ')+esc(S.nom||'…'),cote?'Étape '+(n?3:2)+' sur 3 · '+(n?'Vérifiez et '+(S.maj?'mettez à jour':'créez'):'Ajoutez à droite'):'Étape 3 sur 3 · Vérifiez et '+(S.maj?'mettez à jour':'créez'),!cote)+fil(cote?(n?3:2):3)+(cote&&!S.maj?bandeauReprise():'')+'<div class="ds-liste ds-lg">';
  if(S.ok)h+='<div class="ds-ok">✓ '+esc(S.ok)+'</div>';
+ if(n)h+='<div class="ds-vues" role="tablist"><button type="button" role="tab" aria-selected="'+!vc+'" data-ds="vue" data-id="moi">'+IC.cad+' Pour moi</button><button type="button" role="tab" aria-selected="'+!!vc+'" data-ds="vue" data-id="client">'+IC.doc+' Pour le client</button></div>';
+ if(vc){h+=vueClient();h+='</div>'+basLignes(t,n);return h}
+ if(n)h+='<p class="ds-note c ds-moi">Tout le détail, pour vous seul : il ne quitte jamais votre Espace.</p>';
  h+=blocOuvrages();
  if(S.lignes.length||!S.ouvrages.length)h+='<div class="ds-sec">'+(S.ouvrages.length?'LES AUTRES LIGNES':'LES LIGNES DU DEVIS')+'</div>';
  h+=S.lignes.length?'<div class="ds-card">'+S.lignes.map(function(l,i){return '<button type="button" class="ds-row" data-ds="ligne" data-id="'+i+'"><span class="ds-ic">'+(l.ic||'')+'</span><span class="ds-tx"><b>'+esc(l.libelle)+'</b><small>'+qf(l.quantite)+' '+esc(pluriel(l.unite,l.quantite))+' × '+eur(l.pu)+(l.m2u&&l.mu&&l.mu!=='pièce'?' · '+qf(r2(l.quantite*l.m2u))+' '+esc(l.mu):'')+(l.prov?' <em class="ds-tag">à confirmer</em>':'')+'</small></span><span class="ds-pr">'+eur(l.total)+'</span></button>'}).join('')+'</div>':!S.ouvrages.length?'<p class="ds-note">Pas encore de ligne.'+(cote?' Touchez un travail complet ou ＋ sur un produit, à droite.':'')+'</p>':'';
  if(!cote)h+='<button type="button" class="ds-btn cl" data-ds="ajout">＋ Ajouter</button>';
  if(n)h+='<p class="ds-note">Touchez une ligne ou un travail pour le changer ou l’enlever.</p>';
  h+='<label class="ds-titre">Le titre du devis <span>(facultatif)</span><input data-dsi="titre" value="'+esc(S.titre)+'" placeholder="Ex. : cloison du bureau" autocomplete="off"></label>';
- var att=S.calcEtat==='charge';
- h+='</div><div class="ds-bas"><div class="ds-tot"><span>Total HT</span><b>'+(att?'…':eur(t))+'</b></div><button type="button" class="ds-btn'+(S.arme?' arme':'')+'" data-ds="creer"'+(n&&!att?'':' disabled')+'>'+(S.arme?'Oui, créer le devis':'Créer le devis')+'</button>'+(S.arme?(sansPrixRestants()?'<p class="ds-note c ds-avert">'+sansPrixRestants()+' article'+(sansPrixRestants()>1?'s':'')+' sans prix ne ser'+(sansPrixRestants()>1?'ont':'a')+' pas sur ce devis.</p>':'')+'<button type="button" class="ds-lien" data-ds="desarme">Pas encore</button>':'<p class="ds-note c">Il ne part pas chez le client tant que vous ne l’envoyez pas.</p>')+'</div>';
+ h+='</div>'+basLignes(t,n);return h}
+function basLignes(t,n){var att=S.calcEtat==='charge',h='';
+ if(S.maj){h+='<div class="ds-bas"><div class="ds-tot"><span>Total HT</span><b>'+(att?'…':eur(t))+'</b></div><button type="button" class="ds-btn'+(S.arme?' arme':'')+'" data-ds="creer"'+(n&&!att?'':' disabled')+'>'+(S.arme?'Oui, mettre à jour':'Mettre à jour le devis n° '+esc(S.maj.numero||''))+'</button>'+(S.arme?'<p class="ds-note c">Le devis du client prend ces lignes et ce total. Il n’est pas renvoyé tout seul.</p><button type="button" class="ds-lien" data-ds="desarme">Pas encore</button>':'<p class="ds-note c">Changez ce que vous voulez : prix et phrases du client suivent tout seuls.</p>')+'</div>';return h}
+ h+='<div class="ds-bas"><div class="ds-tot"><span>Total HT</span><b>'+(att?'…':eur(t))+'</b></div><button type="button" class="ds-btn'+(S.arme?' arme':'')+'" data-ds="creer"'+(n&&!att?'':' disabled')+'>'+(S.arme?'Oui, créer le devis':'Créer le devis')+'</button>'+(S.arme?(sansPrixRestants()?'<p class="ds-note c ds-avert">'+sansPrixRestants()+' article'+(sansPrixRestants()>1?'s':'')+' sans prix ne ser'+(sansPrixRestants()>1?'ont':'a')+' pas sur ce devis.</p>':'')+'<button type="button" class="ds-lien" data-ds="desarme">Pas encore</button>':'<p class="ds-note c">Il ne part pas chez le client tant que vous ne l’envoyez pas.</p>')+'</div>';
  return h}
 
 /* ---------- l'écran « Mes prix à confirmer » : un prix à la fois ---------- */
@@ -322,7 +442,7 @@ function feuilleArt(a,i){var l=i!=null?S.lignes[i]:null;if(l&&l.c&&!a)a=trouveAr
  dessinerF()}
 function dessinerF(){if(!F.pu0)F.pu0=F.pu;var a=F.a,man=F.main,tot=r2(F.q*F.pu);
  var h='<div class="ds-grab"></div>';
- if(man)h+='<div class="ds-fq">'+(F.i!=null?'La ligne':'Écrire ma ligne')+'</div><label class="ds-champ">Ce que vous faites ou fournissez<textarea data-dsf="lib" rows="2" placeholder="Ex. : Dépose de l’ancien placard">'+esc(F.lib)+'</textarea></label>';
+ if(man)h+='<div class="ds-fq">'+(F.i!=null?'La ligne':F.kind==='pose'?'Créer une pose':F.kind==='prod'?'Créer un produit':'Écrire ma ligne')+'</div><label class="ds-champ">Ce que vous faites ou fournissez<textarea data-dsf="lib" rows="2" placeholder="Ex. : Dépose de l’ancien placard">'+esc(F.lib)+'</textarea></label>';
  else h+='<div class="ds-row ds-fhd"><span class="ds-ic">'+(F.ic||'')+'</span><span class="ds-tx"><b>'+esc(F.lib)+'</b><small>'+esc(a?nomDe(a):'')+(F.prov?' <em class="ds-tag">prix à confirmer</em>':'')+'</small></span></div>';
  h+='<div class="ds-fq">Combien ?</div><div class="ds-st"><button type="button" class="ds-mb" data-ds="moins" aria-label="Un de moins">−</button><label class="ds-qv"><input data-dsf="q" inputmode="decimal" value="'+qf(F.q)+'" aria-label="Quantité"><small>'+(man?'':esc(pluriel(F.u,F.q)))+(F.m2?' · soit '+qf(r2(F.q*F.m2))+' '+F.mu:'')+'</small></label><button type="button" class="ds-mb" data-ds="plus" aria-label="Un de plus">＋</button></div>';
  if(man)h+='<div class="ds-2"><label class="ds-champ">Unité<input data-dsf="u" value="'+esc(F.u)+'" placeholder="m², u, h…"></label><label class="ds-champ">Prix de vente HT<input data-dsf="pu" inputmode="decimal" value="'+(F.pu?qf(F.pu):'')+'" placeholder="0,00"></label></div>';
@@ -345,6 +465,7 @@ function okF(){var lib=String(F.lib||'').trim();
  if(!(F.q>0)||!(F.pu>0)){toast('Il manque la quantité ou le prix','Hors taxes, en euros.');return}
  var pm=F.pm||r2(F.pu)!==r2(F.pu0);
  var l={libelle:lib,quantite:r2(F.q),unite:String(F.u||'u').trim()||'u',pu:r2(F.pu),total:r2(F.q*F.pu),ic:F.ic,prov:!!F.prov&&!pm,m2u:F.m2,mu:F.mu,base:!F.main,c:F.a?F.a.c:'',pm:F.a?pm:true};
+ var av=F.i!=null?S.lignes[F.i]:null;if(F.gr||av&&av.gr)l.gr=F.gr||av.gr;if(av&&av.rg)l.rg=av.rg;if(av&&av.uid)l.uid=av.uid;
  if(F.i!=null){S.lignes[F.i]=l;S.ok='Ligne modifiée'}
  else{S.lignes.push(l);S.ok='Ajouté : '+lib+(l.quantite>1?' ('+qf(l.quantite)+' '+pluriel(l.unite,l.quantite)+')':'');if(F.a)compter(F.a.c);
   if(F.main&&window.PCPROD&&PCPROD.ajouter&&!vosProduits().some(function(p){return sans(p.d)===sans(lib)}))try{PCPROD.ajouter({d:lib,u:l.unite,p:l.pu,t:'Ajouté par vous',k:'prestation'})}catch(e){}}
@@ -423,11 +544,11 @@ function entendu(txt){var c=comprendre(txt);
 
 /* ---------- les gestes ---------- */
 function clic(e){var b=e.target.closest('[data-ds]');if(!b||!S)return;var a=b.getAttribute('data-ds'),id=b.getAttribute('data-id');
- if(a==='fermer'){if(!vide()&&S.mode!=='prix')toast('Devis gardé','Vous le retrouverez au prochain « Nouveau devis ».');fermer()}
+ if(a==='fermer'){if(S.maj)toast('Rien de changé','Le devis n° '+(S.maj.numero||'')+' reste comme il était.');else if(!vide()&&S.mode!=='prix')toast('Devis gardé','Vous le retrouverez au prochain « Nouveau devis ».');fermer()}
  else if(a==='retour'){if(S.mode==='prix'){S.mode='devis';rendre();return}S.feuille=null;S.etape=S.etape===3?2:S.etape===2&&!vide()?3:1;rendre()}
  else if(a==='client'){S.contact=id;var c=clients().filter(function(x){return x.id===id})[0];S.nom=c?c.n:nomDos(id);if(S.reprise&&S.reprise.contact!==id)S.reprise=null;S.etape=!vide()&&!large()?3:2;rendre()}
  else if(a==='nouvclient'){var X=window.PCX;if(X&&X.cf&&X.cf.nouveauClient){ov.hidden=true;document.body.style.overflow='';var garde=S;X.cf.nouveauClient(function(k){S=garde;S.contact=k;S.nom=nomDos(k)||'Nouveau client';S.etape=2;monter();rendre()})}}
- else if(a==='reprendre'){var r=S.reprise;S.reprise=null;if(!S.contact&&r.contact){S.contact=r.contact;S.nom=r.nom||nomDos(r.contact)}S.titre=S.titre||r.titre||'';S.lignes=r.lignes||[];S.ouvrages=r.ouvrages||[];recalculer();S.etape=S.contact?(large()?2:3):1;S.ok='Devis repris';rendre()}
+ else if(a==='reprendre'){var r=S.reprise;S.reprise=null;if(!S.contact&&r.contact){S.contact=r.contact;S.nom=r.nom||nomDos(r.contact)}S.titre=S.titre||r.titre||'';S.lignes=r.lignes||[];S.ouvrages=r.ouvrages||[];S.cl=r.cl||{};recalculer();S.etape=S.contact?(large()?2:3):1;S.ok='Devis repris';rendre()}
  else if(a==='nonrep'){S.reprise=null;lsS('pc-ds-brouillon',null);rendre()}
  else if(a==='grp'){S.g=id;rendre();var l=ov.querySelector('.ds-liste');if(l)l.scrollTop=0}
  else if(a==='tri'){S.tri=S.tri==='prix'?'fam':'prix';rendre()}
@@ -435,7 +556,7 @@ function clic(e){var b=e.target.closest('[data-ds]');if(!b||!S)return;var a=b.ge
  else if(a==='tout'){S.tout[id]=1;rendre()}
  else if(a==='art'){var x=trouveArt(id);if(x)feuilleArt(x,null)}
  else if(a==='swap'){var y=trouveArt(id);if(y&&F){var q=F.q,i0=F.i;feuilleArt(y,null);F.q=q;F.i=i0;dessinerF()}}
- else if(a==='main')feuilleArt(null,null);
+ else if(a==='main'){feuilleArt(null,null);if(id){F.kind=id;if(id==='pose')F.u='m²';dessinerF()}}
  else if(a==='ligne'){if(S.lignes[+id])feuilleArt(null,+id)}
  else if(a==='ajout'){S.etape=2;rendre()}
  else if(a==='ferf'){S.feuille=null;F=null;rendre()}
@@ -467,10 +588,17 @@ function clic(e){var b=e.target.closest('[data-ds]');if(!b||!S)return;var a=b.ge
  else if(a==='creer')creer(b);
  else if(a==='desarme'){S.arme=0;rendre()}
  else if(a==='vert'){S.verT=!S.verT;rendre()}
- else if(a==='ach'){var x=S.calc&&S.calc.a_chiffrer&&S.calc.a_chiffrer[+id];if(!x)return;feuilleArt(null,null);F.lib=x.libelle;F.q=x.fournisseur?1:x.quantite;F.u=x.unite||'u';F.pu=0;F.pu0=0;dessinerF();setTimeout(function(){var z=ov&&ov.querySelector('[data-dsf="pu"]');if(z)z.focus()},250)}}
+ else if(a==='vue'){S.vue=id;rendre();var lv=ov.querySelector('.ds-liste');if(lv)lv.scrollTop=0}
+ else if(a==='cll')feuilleCl(id);
+ else if(a==='clok'&&F&&F.cl!=null)okCl();
+ else if(a==='clrem'&&F&&F.cl!=null){if(S.cl)delete S.cl[F.cl];var kk=F.cl;feuilleCl(kk)}
+ else if(a==='clrg'&&F&&F.cl!=null){var lr=S.lignes.filter(function(l){return l.uid===F.cl})[0];if(lr){lr.rg=id;if(S.cl)delete S.cl[F.cl]}S.feuille=null;F=null;S.ok='Ligne fondue dans le travail';rendre()}
+ else if(a==='clsort'&&F&&F.cl!=null){var kc=F.cl;S.lignes.forEach(function(l){if(l.rg===kc)l.rg='seule'});S.feuille=null;F=null;rendre()}
+ else if(a==='ach'){var x=S.calc&&S.calc.a_chiffrer&&S.calc.a_chiffrer[+id];if(!x)return;feuilleArt(null,null);F.gr=x.groupe||'';F.lib=x.libelle;F.q=x.fournisseur?1:x.quantite;F.u=x.unite||'u';F.pu=0;F.pu0=0;dessinerF();setTimeout(function(){var z=ov&&ov.querySelector('[data-dsf="pu"]');if(z)z.focus()},250)}}
 function feuilleAnciens(){var A=anciens();F={anc:1};
  S.feuille='<div class="ds-grab"></div><div class="ds-fq">Repartir d’un devis déjà fait</div><p class="ds-note c">Les produits de votre base reprennent le prix d’aujourd’hui. Vous changez ensuite ce que vous voulez.</p><div class="ds-card">'+A.map(function(D,i){var n=(D.lignes||[]).length+(D.ouvrages||[]).length;return '<button type="button" class="ds-row" data-ds="ancien" data-id="'+i+'"><span class="ds-ic">'+IC.hist+'</span><span class="ds-tx"><b>'+esc(D.titre||'Devis'+(D.nom?' de '+D.nom:''))+'</b><small>'+esc((D.nom||'')+(D.numero?' · n° '+D.numero:'')+' · '+dateC(D.le)+' · '+n+' ligne'+(n>1?'s':''))+'</small></span><span class="ds-pr">'+eur(D.total)+'</span></button>'}).join('')+'</div><button type="button" class="ds-lien" data-ds="ferf">Annuler</button>';rendre()}
-function saisie(e){var t=e.target,k=t.getAttribute('data-dsi'),f=t.getAttribute('data-dsf'),o=t.getAttribute('data-dso');if(!S)return;
+function saisie(e){var t=e.target,k=t.getAttribute('data-dsi'),f=t.getAttribute('data-dsf'),o=t.getAttribute('data-dso'),cz=t.getAttribute('data-dsc');if(!S)return;
+ if(cz&&F&&F.cl!=null){F[cz]=t.value;return}
  if(k==='q'||k==='qc'){S[k]=t.value;var z=ov.querySelector(k==='q'?'.ds-lb':'.ds-lc');if(z){z.innerHTML=k==='q'?listeBase():listeClients();z.scrollTop=0}}
  else if(k==='titre')S.titre=t.value;
  else if(o&&F&&F.o){F.d[o]=nb(t.value);prixO()}
@@ -480,9 +608,14 @@ function creer(b){if(!S.contact){S.etape=1;rendre();toast('Pour qui ?','Choisiss
  if(vide()){toast('Il manque les lignes','Ajoutez au moins une ligne.');return}
  if(S.calcEtat){toast(S.calcEtat==='charge'?'Un instant':'Calcul impossible',S.calcEtat==='charge'?'Cliky finit le calcul des travaux.':S.calcEtat.slice(4));return}
  if(!S.arme){S.arme=1;rendre();return}
- b.disabled=true;b.textContent='En cours…';var nom=S.nom,copie={nom:S.nom,titre:S.titre,lignes:S.lignes,ouvrages:S.ouvrages,total:total(),le:Date.now()};
- var L=lignesCalc().map(function(l){return {libelle:libC(l.libelle),quantite:l.quantite,unite:l.unite,total:l.total}}).concat(S.lignes.map(function(l){return {libelle:l.libelle,quantite:l.quantite,unite:l.unite,total:l.total}}));
- PCV.api('/espace/devis',{method:'POST',body:{contact:S.contact,main:true,titre:S.titre,lignes:{materiaux:[],main_oeuvre:L}}}).then(function(x){
+ b.disabled=true;b.textContent='En cours…';var nom=S.nom,copie={nom:S.nom,titre:S.titre,lignes:S.lignes,ouvrages:S.ouvrages,cl:S.cl||{},total:total(),le:Date.now()};
+ /* Le client reçoit une ligne par travail (titre + phrase + prix) ; le détail part seulement dans le coffre de l'Espace. */
+ var L=lignesClient().map(function(x){return {libelle:x.titre,description:x.phrase||undefined,quantite:x.quantite,unite:x.unite,total:x.total}});
+ var det={v:1,contact:S.contact,nom:S.nom,titre:S.titre,lignes:S.lignes,ouvrages:S.ouvrages,cl:S.cl||{},le:Date.now()};
+ if(S.maj){var mj=S.maj;PCV.api('/espace/devis/maj',{method:'POST',body:{id:mj.id,contact:S.contact,titre:S.titre,lignes:{materiaux:[],main_oeuvre:L},detail:det}}).then(function(){
+   fermer();toast('Devis n° '+(mj.numero||'')+' mis à jour',nom+' · le devis du client a pris les nouveaux prix et les nouvelles phrases.');if(PCV.apresDevis)PCV.apresDevis()},
+   function(err){if(!S)return;S.arme=0;rendre();toast('Pas fait',err.message)});return}
+ PCV.api('/espace/devis',{method:'POST',body:{contact:S.contact,main:true,titre:S.titre,lignes:{materiaux:[],main_oeuvre:L},detail:det}}).then(function(x){
   copie.numero=x.devis&&x.devis.numero||'';lsS('pc-ds-devis',[copie].concat(anciens()).slice(0,15));lsS('pc-ds-brouillon',null);
   fermer();toast('Devis'+(x.devis&&x.devis.numero?' n° '+x.devis.numero:'')+' créé',nom+' · il vous attend dans ses documents, envoyez-le quand vous voulez.');if(PCV.apresDevis)PCV.apresDevis()},
   function(err){if(!S)return;S.arme=0;rendre();toast('Pas fait',err.message)})}
@@ -526,6 +659,21 @@ var css=document.createElement('style');css.textContent=[
 '#dsv .ds-titre{display:block;margin:6px 16px 0;font-size:13px;font-weight:700;color:var(--n1-muted,#565E73)}#dsv .ds-titre span{font-weight:500}',
 '#dsv input:not(.ds-srch input),#dsv textarea{display:block;width:100%;margin-top:6px;border:0;border-radius:14px;padding:13px 14px;font:600 16px var(--f,inherit);color:var(--n1-fg,#0E1322);background:color-mix(in srgb,var(--n1-nuit,#1B2440) 6%,var(--n1-bg,#ECEEF2));box-shadow:var(--n1-in);outline:none;resize:none}',
 '#dsv .ds-voile{position:absolute;inset:0;background:rgba(14,19,34,.4)}',
+/* deux devis : onglets « Pour moi » / « Pour le client », le devis du client en feuille de papier */
+'#dsv .ds-vues{display:flex;gap:6px;margin:0 16px 10px;padding:4px;border-radius:16px;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 6%,transparent)}',
+'#dsv .ds-vues button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border-radius:12px;font-weight:800;font-size:14.5px;color:var(--n1-muted,#565E73)}',
+'#dsv .ds-vues button svg{width:17px;height:17px}',
+'#dsv .ds-vues button[aria-selected="true"]{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}',
+'#dsv .ds-moi{margin:-2px 16px 10px;text-align:left}',
+'#dsv .ds-pap{margin:0 16px 10px;padding:14px 14px 10px;border-radius:12px;background:#fff;color:#141A2E;box-shadow:0 1px 2px rgba(20,26,46,.08),0 8px 24px rgba(20,26,46,.10)}',
+'#dsv .ds-pt{font-weight:800;font-size:15px;padding:0 0 8px;border-bottom:1px solid #E3E6EC;margin-bottom:4px}',
+'#dsv .ds-pap .ds-pl{display:flex;gap:10px;width:100%;text-align:left;padding:10px 0;margin:0;border:0;border-bottom:1px solid #EEF0F4;border-radius:0;background:none;box-shadow:none;color:inherit;align-items:flex-start;min-height:0}',
+'#dsv .ds-pap .ds-pl:active{background:#F4F5F8}',
+'#dsv .ds-pl>span{flex:1;min-width:0}#dsv .ds-pl b{display:block;font-size:14.5px;line-height:1.25}',
+'#dsv .ds-pl small{display:block;margin-top:3px;font-size:13px;line-height:1.4;color:#4A5266}#dsv .ds-pl small.ds-pq{color:#8A6A2E}',
+'#dsv .ds-pl .ds-pr{flex:none;font-variant-numeric:tabular-nums}',
+'#dsv .ds-ptot{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0 2px;font-weight:800}#dsv .ds-ptot b{font-size:17px;font-variant-numeric:tabular-nums}',
+'#dsv .ds-feuille .ds-titre{margin:10px 16px 0}#dsv .ds-feuille .ds-chips{padding:0 16px 6px;flex-wrap:wrap}#dsv .ds-feuille>.ds-btn.cl{margin:10px 16px 0;width:calc(100% - 32px)}',
 '#dsv .ds-feuille{position:absolute;left:0;right:0;bottom:0;max-height:92%;overflow-y:auto;background:var(--n1-calme,#F6F7F9);border-radius:26px 26px 0 0;padding:10px 0 calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.2);animation:dsup .22s ease-out}',
 '@media (min-width:700px){#dsv .ds-feuille{left:50%;right:auto;width:480px;margin-left:-240px;bottom:auto;top:50%;transform:translateY(-50%);border-radius:24px;animation:none}}',
 '@keyframes dsup{from{transform:translateY(40px);opacity:.4}}',
@@ -544,7 +692,7 @@ var css=document.createElement('style');css.textContent=[
 '#dsv .ds-chip.t{background:none;box-shadow:none;color:var(--n1-nuit,#1B2440);text-decoration:underline;text-underline-offset:3px}',
 '#dsv .ds-alerte{display:flex;width:calc(100% - 32px);margin:0 16px 14px;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--n1-laiton,#A8823F) 12%,var(--n1-calme,#F6F7F9));box-shadow:var(--n1-pk)}#dsv .ds-alerte .ds-ic{background:var(--n1-laiton,#A8823F);color:#fff}',
 '#dsv .ds-sec span{font-weight:600;letter-spacing:0;text-transform:none}#dsv .ds-sec svg{width:14px;height:14px;vertical-align:-2px;color:var(--n1-laiton,#A8823F)}',
-'#dsv .ds-tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 16px}#dsv .ds-tuile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border-radius:16px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-pk);font-weight:700;font-size:13px;text-align:center!important;line-height:1.15}#dsv .ds-tuile span{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);color:var(--n1-nuit,#1B2440)}#dsv .ds-tuile svg{width:26px;height:26px}',
+'#dsv .ds-dep{padding:4px 16px 6px;display:grid;gap:12px}#dsv .ds-big{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left!important;padding:18px 18px 16px;border-radius:26px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-calme-sh);min-height:132px}#dsv .ds-big b{font-size:19px;font-weight:800;letter-spacing:-.01em}#dsv .ds-big small{font-size:13px;opacity:.7;line-height:1.3}#dsv .ds-bi{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);margin-bottom:8px}#dsv .ds-bi svg{width:24px;height:24px}#dsv .ds-bgo{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}#dsv .ds-bgo svg{width:16px;height:16px}#dsv .ds-big.sombre{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);min-height:0;padding:20px 18px 18px;flex-direction:column}#dsv .ds-big.sombre .ds-bi{background:color-mix(in srgb,var(--n1-nuit-fg,#fff) 14%,transparent)}#dsv .ds-big.sombre .ds-bgo{background:var(--n1-laiton,#A8823F);color:#fff}#dsv .ds-bt{display:grid;gap:4px;padding-right:40px}#dsv .ds-bmini{display:flex;gap:8px;margin-top:12px}#dsv .ds-bmini i{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit-fg,#fff) 10%,transparent)}#dsv .ds-bmini svg{width:18px;height:18px}#dsv .ds-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}#dsv .ds-cree{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding:2px 0 6px}#dsv .ds-pil{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;font-weight:700;font-size:14px;background:transparent;border:1.5px dashed color-mix(in srgb,currentColor 28%,transparent)}#dsv .ds-pil svg{width:16px;height:16px}#dsv .ds-q{font-size:20px;font-weight:800;letter-spacing:-.01em;padding:4px 2px 2px}#dsv .ds-rgs{display:grid;gap:10px}#dsv .ds-rg{position:relative;display:flex;align-items:center;gap:14px;text-align:left!important;padding:16px;border-radius:22px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-calme-sh)}#dsv .ds-rg .ds-bi{margin:0;flex:none}#dsv .ds-rg .ds-bt{flex:1;padding:0}#dsv .ds-rg b{font-size:17px;font-weight:800}#dsv .ds-rg small{font-size:13px;opacity:.7}#dsv .ds-rg .ds-bgo{position:static;flex:none}#dsv .ds-rg.sombre{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}#dsv .ds-rg.sombre .ds-bi{background:color-mix(in srgb,var(--n1-nuit-fg,#fff) 14%,transparent)}#dsv .ds-rg.sombre .ds-bgo{background:var(--n1-laiton,#A8823F);color:#fff}#dsv .ds-rg.cr,#dsv .ds-c4.cr{background:transparent;box-shadow:none;border:1.5px dashed color-mix(in srgb,currentColor 25%,transparent)}#dsv .ds-g4{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}#dsv .ds-c4{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:150px;min-width:0;border-radius:28px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-calme-sh);text-align:center!important;padding:12px}#dsv .ds-c4 .ds-bi{width:60px;height:60px;border-radius:20px;margin:0 0 8px}#dsv .ds-c4 .ds-bi svg{width:30px;height:30px}#dsv .ds-c4 b{font-size:17px;font-weight:800}#dsv .ds-c4 small{font-size:12.5px;opacity:.7}#dsv .ds-c4.sombre{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}#dsv .ds-c4.sombre .ds-bi{background:var(--n1-laiton,#A8823F);color:#fff}#dsv .ds-hero{padding:10px 4px 6px}#dsv .ds-hero small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--n1-laiton,#A8823F)}#dsv .ds-hero b{display:block;font-size:30px;line-height:1.1;font-weight:800;letter-spacing:-.02em;margin-top:6px}#dsv .ds-pils{display:grid;gap:10px}#dsv .ds-pl{display:flex;align-items:center;gap:14px;padding:12px 18px 12px 12px;border-radius:999px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-calme-sh);text-align:left!important}#dsv .ds-pl>svg{width:18px;height:18px;opacity:.6;flex:none}#dsv .ds-pl .ds-bt{flex:1;padding:0;gap:1px}#dsv .ds-pl b{font-size:17px;font-weight:800}#dsv .ds-pl small{font-size:12.5px;opacity:.7}#dsv .ds-pi{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);flex:none}#dsv .ds-pi svg{width:22px;height:22px}#dsv .ds-pl.plein{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}#dsv .ds-pl.plein .ds-pi{background:var(--n1-laiton,#A8823F);color:#fff}#dsv .ds-tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 16px}#dsv .ds-tuile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border-radius:16px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-pk);font-weight:700;font-size:13px;text-align:center!important;line-height:1.15}#dsv .ds-tuile span{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);color:var(--n1-nuit,#1B2440)}#dsv .ds-tuile svg{width:26px;height:26px}',
 '#dsv .ds-anc{gap:8px;margin-bottom:16px}',
 '#dsv .ds-tag.r{color:var(--n1-alert,#B9577A);background:color-mix(in srgb,var(--n1-alert,#B9577A) 12%,transparent)}#dsv .ds-tag.v{color:var(--n1-ok,#3E8E6A);background:color-mix(in srgb,var(--n1-ok,#3E8E6A) 12%,transparent)}#dsv .ds-four .ds-tag{margin-top:2px}',
 '#dsv small.v{color:var(--n1-ok,#3E8E6A)!important;font-weight:700!important}#dsv small.r{color:var(--n1-alert,#B9577A)!important;font-weight:700!important}',
@@ -567,5 +715,11 @@ var css=document.createElement('style');css.textContent=[
 '@media (max-width:360px){#dsv .ds-tuiles{grid-template-columns:repeat(3,1fr)}}'
 ].join('\n');document.head.appendChild(css);
 
-window.PCDS={ouvrir:ouvrirDevis,prix:ouvrirPrix};
+/* Rouvrir le devis DÉTAILLÉ d'un devis déjà créé (gardé dans l'Espace), changer ce qu'on veut, et mettre à jour celui du client. */
+function modifierDevis(id,numero,k){return PCV.api('/espace/devis/detail?id='+encodeURIComponent(id)).then(function(x){var D=x&&x.detail;
+  if(!D){toast('Pas de détail pour ce devis','Il a été fait avant : faites un nouveau devis pour le changer.');return false}
+  S=etat0();S.maj={id:+id,numero:numero||''};S.contact=D.contact||k||'';S.nom=D.nom||nomDos(S.contact);S.titre=D.titre||'';
+  S.lignes=JSON.parse(JSON.stringify(D.lignes||[]));S.ouvrages=JSON.parse(JSON.stringify(D.ouvrages||[]));S.cl=D.cl||{};S.etape=3;
+  charger();monter();recalculer();rendre();return true},function(err){toast('Devis détaillé non ouvert',err.message);return false})}
+window.PCDS={ouvrir:ouvrirDevis,prix:ouvrirPrix,modifier:modifierDevis};
 })();
