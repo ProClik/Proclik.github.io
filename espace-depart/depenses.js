@@ -53,6 +53,7 @@ var DEP=X.lsGet('pc-dep1',null)||(window.PCDEMO?PCDEMO.deep(DEP0):DEP0);
 /* Chaque dépense a sa vraie date (j, AAAA-MM-JJ) : les anciennes « jeu. 29/10 » sont relues une fois */
 DEP.forEach(function(x){if(x.j)return;var m=/(\d{1,2})\/(\d{1,2})/.exec(x.d||''),n=new Date(),y=n.getFullYear();if(!m){x.j=isoJ(n);return}if(+m[2]>n.getMonth()+1)y--;x.j=y+'-'+p2(+m[2])+'-'+p2(+m[1])});
 function save(){X.lsSet('pc-dep1',DEP)}
+window.PCDEP={liste:function(){return DEP}};
 function dep(id){return DEP.filter(function(x){return x.id===id})[0]}
 var ht=function(x){return x.ht!=null?r2(x.ht):r2(x.ttc/(1+x.tva/100))};
 var lib=function(x){return x.ou||(x.cat?CAT[x.cat][0]:'Ticket à ranger')};

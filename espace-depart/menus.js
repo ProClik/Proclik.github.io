@@ -17,5 +17,5 @@ function applique(){
   if(cur&&cur.dataset.menuOff){var a=d.getElementById('nb-accueil');if(a)a.click()}
 }
 applique();
-window.PCMenus={applique:function(){applique();if(window.PCBarre&&window.PCBarre.applique)try{window.PCBarre.applique()}catch(e){}}};
+window.PCMenus={applique:function(){applique();try{d.dispatchEvent(new Event('pc-menus'))}catch(e){}if(window.PCBarre&&window.PCBarre.applique)try{window.PCBarre.applique()}catch(e){}}};
 })();

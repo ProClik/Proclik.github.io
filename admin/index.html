@@ -117,7 +117,7 @@ var $=function(s){return document.querySelector(s)},esc=function(s){return Strin
 function lj(){try{return sessionStorage.getItem(KJ)||''}catch(e){return ''}}
 function sj(v){try{v?sessionStorage.setItem(KJ,v):sessionStorage.removeItem(KJ)}catch(e){}}
 var NOMS={cliky:'Cliky',reservation:'Réservation',sms:'SMS',assistant:'Assistant du site',avis:'Avis Google',reseaux:'Réseaux sociaux',image:'Votre image',equipe:'Équipe',negoce:'Réseau négoce'};
-var MENUS={clients:'Clients',devis:'Devis',factures:'Factures',depenses:'Dépenses',planning:'Planning',chantiers:'Chantiers',prix:'Achats',produits:'Produits',cotes:'Cotes',reseaux:'Réseaux'};
+var MENUS={clients:'Clients',devis:'Devis',factures:'Factures',depenses:'Dépenses',planning:'Planning',chantiers:'Chantiers',prix:'Achats',produits:'Produits',cotes:'Cotes',reseaux:'Réseaux',ouetes:'« Où êtes-vous ? »'};
 var DATA={clients:[],options:Object.keys(NOMS),menus:Object.keys(MENUS)},COUR=null;
 function toast(t){var e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2400)}
 function api(ch,o){o=o||{};var h={};if(lj())h.Authorization='Bearer '+lj();if(o.body)h['Content-Type']='application/json';
@@ -177,7 +177,8 @@ function fiche(c){var n=!c;c=c||{id:'',entreprise:'',prenom:'',email:'',location
   '<label class="f" for="fn">Nombre de personnes dans l\'entreprise</label><input class="t" id="fn" type="number" inputmode="numeric" min="1" max="500" value="'+esc(c.effectif||'')+'" style="max-width:160px">'+
   '<div class="mu" style="margin-top:4px" id="fnh"></div>'+
   '<label class="f" for="fpr">Nom en haut de l\'Espace</label><select class="t" id="fpr" style="max-width:260px">'+[['','Automatique (activité, puis nombre de personnes)'],['archi','ARCHI'],['pro','PRO (seul)'],['team','TEAM (à plusieurs)']].map(function(o){return '<option value="'+o[0]+'"'+((c.profil||'')===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select>'+
-  '<label class="f">Menus de son Espace</label><div class="mu" style="margin-top:2px">Décochez ce qui ne lui sert pas : le menu disparaît de son Espace. L\'Accueil et les Réglages restent toujours.</div><div class="opts">'+(DATA.menus||Object.keys(MENUS)).map(function(k){return '<label class="sw">'+esc(MENUS[k]||k)+'<input type="checkbox" data-menu="'+k+'"'+(!c.menus||c.menus[k]!==false?' checked':'')+'></label>'}).join('')+'</div>'+
+  '<label class="f">Menus de son Espace</label><div class="mu" style="margin-top:2px">Décochez ce qui ne lui sert pas : le menu disparaît de son Espace. L\'Accueil et les Réglages restent toujours.</div><div class="opts">'+(DATA.menus||Object.keys(MENUS)).filter(function(k){return k!=='ouetes'}).map(function(k){return '<label class="sw">'+esc(MENUS[k]||k)+'<input type="checkbox" data-menu="'+k+'"'+(!c.menus||c.menus[k]!==false?' checked':'')+'></label>'}).join('')+'</div>'+
+  '<label class="f">Accueil de son Espace</label><div class="mu" style="margin-top:2px">« Où êtes-vous ? » sert surtout quand on est plusieurs. Pour quelqu\'un qui travaille seul, décochez-le.</div><div class="opts"><label class="sw">Bloc « Où êtes-vous ? »<input type="checkbox" data-menu="ouetes"'+(!c.menus||c.menus.ouetes!==false?' checked':'')+'></label></div>'+
   '<label class="f">Options</label><div class="opts">'+DATA.options.map(function(k){return '<label class="sw">'+esc(NOMS[k]||k)+'<input type="checkbox" data-opt="'+k+'"'+(c.options&&c.options[k]?' checked':'')+'></label>'}).join('')+'</div>'+
   '<div class="err" id="ferr"></div><button class="btn go" id="fsave" type="button" style="width:100%;margin-top:6px">'+(n?'Créer le client':'Enregistrer')+'</button></div>';
  if(!n){
