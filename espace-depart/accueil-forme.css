@@ -581,3 +581,81 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 :root[data-theme="dark"] .f2perso [aria-checked="true"] i::after{background:#1B2440}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2perso [aria-checked="true"] i::after{background:#1B2440}}
 .f2 .f2a .f2k:not(.f2k-scanner)+.f2k-ouetes{margin-top:22px}
+/* ===== 26/11 Cyril : fenêtre du matin, nouvelles formes (1 Liste, 2 Chiffres, 3 Fil). Rien ne déborde, la fenêtre prend la hauteur de son contenu. ===== */
+.f2 .pj.nv .f{height:auto;max-height:min(calc(100% - 20px - env(safe-area-inset-top,0px)),780px)}
+.f2 .pj.nv .vues{height:auto;max-height:inherit;display:flex;flex-direction:column}
+.f2 .pj.nv .v1{position:relative;inset:auto;height:auto;max-height:min(calc(100dvh - 30px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),778px);padding:28px 20px 16px}
+.f2 .pj.nv .v2{min-height:0}
+.f2 .pj.nv .top{align-items:flex-start}
+.f2 .pj.nv .nj{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--mut);margin-bottom:8px}
+.f2 .pj.nv .nj svg.i{width:14px;height:14px}
+.f2 .pj.nv .v1 h2{font-size:28px;line-height:1.1}
+.f2 .pj.nv .v1 h2 span{font-weight:500;font-size:20px;letter-spacing:-.02em;margin-top:2px}
+.f2 .pj.nv .v1 .resume{margin-top:16px;font-size:16px;max-width:none}
+.f2 .pj.nv .grt{margin:20px 4px 8px}
+.f2 .pj.nv .tu{opacity:0;transform:translateY(8px)}
+.f2 .pj.nv.on .tu{opacity:1;transform:none}
+.f2 .pj.nv .ntx{min-width:0;flex:1;text-align:left}
+.f2 .pj.nv .ntx b{display:block;font-size:15px;font-weight:650;line-height:1.25;color:var(--fg);overflow-wrap:anywhere}
+.f2 .pj.nv .ntx small{display:block;font-size:13px;color:var(--mut);margin-top:2px;line-height:1.3;overflow-wrap:anywhere}
+.f2 .pj.nv .nch{flex-shrink:0;color:var(--faint);display:grid;place-items:center}
+.f2 .pj.nv .nch svg.i{width:16px;height:16px}
+.f2 .pj.nv .v1 .tu::after{display:none}
+.f2 .pj.nv .bas{margin-top:18px}
+.f2 .pj.nv .go{margin-top:0}
+/* 1 · Liste : une ligne par chose, comme les Réglages de l'iPhone */
+.f2 .pj.nv .nl-box{border-radius:22px;background:color-mix(in srgb,var(--tile) 70%,transparent);box-shadow:0 8px 22px -18px rgba(0,0,0,.35);overflow:hidden}
+.f2 .pj.nv .v1 .tu.nl{display:flex;flex-direction:row;align-items:center;gap:12px;min-height:64px;width:100%;padding:12px 14px;border-radius:0;background:none;box-shadow:none;border-top:1px solid var(--line)}
+.f2 .pj.nv .v1 .tu.nl:first-child{border-top:0}
+.f2 .pj.nv .v1 .tu.nl:active{background:var(--tile2)}
+.f2 .pj.nv .tu.nl .nh{flex-shrink:0;width:46px;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--fg);text-align:left}
+.f2 .pj.nv .tu.nl.now .nh{color:var(--laiton)}
+.f2 .pj.nv .tu.nl.now{box-shadow:inset 3px 0 0 var(--laiton)!important}
+.f2 .pj.nv .nr{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--tile2);color:var(--fg)}
+.f2 .pj.nv .nr svg.i{width:17px;height:17px}
+.f2 .pj.nv .npt{flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--rose)}
+.f2 .pj.nv .att .npt{background:#D9A55B}
+/* 2 · Chiffres : le rendez-vous en bandeau, puis un gros chiffre par case */
+.f2 .pj.nv .v1 .tu.nrv{display:flex;flex-direction:row;align-items:center;gap:14px;width:100%;min-height:0;padding:14px 16px;border-radius:22px}
+.f2 .pj.nv .tu.nrv .nh{flex-shrink:0;font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--fg);padding-right:14px;border-right:1px solid var(--line)}
+.f2 .pj.nv .tu.nrv.now .nh{color:var(--laiton)}
+.f2 .pj.nv .nc{display:grid;gap:8px}
+.f2 .pj.nv .v1 .tu.ncc{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;min-height:0;padding:12px 12px 12px;border-radius:20px;text-align:left;min-width:0}
+.f2 .pj.nv .ncc .nv1{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:5px;max-width:100%}
+.f2 .pj.nv .ncc.urg .nv1{color:var(--rose)}
+.f2 .pj.nv .ncc.att .nv1{color:#B7791F}
+.f2 .pj.nv .ncc .nn{font-size:34px;font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-top:6px;color:var(--fg)}
+.f2 .pj.nv .ncc b{font-size:13.5px;font-weight:650;line-height:1.2;overflow-wrap:anywhere;hyphens:auto;max-width:100%}
+.f2 .pj.nv .ncc small{font-size:12px;color:var(--mut);margin-top:2px;line-height:1.25;overflow-wrap:anywhere;max-width:100%}
+/* 3 · Fil : la journée sur un trait, de haut en bas */
+.f2 .pj.nv .nf{position:relative;margin-top:16px}
+.f2 .pj.nv .nf::before{content:"";position:absolute;left:61px;top:22px;bottom:22px;width:2px;border-radius:1px;background:var(--line)}
+.f2 .pj.nv .nf2{margin-top:0}
+.f2 .pj.nv .v1 .tu.nfl{position:relative;display:flex;flex-direction:row;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 10px 8px 0;border-radius:16px;background:none;box-shadow:none}
+.f2 .pj.nv .v1 .tu.nfl:active{background:var(--tile2)}
+.f2 .pj.nv .tu.nfl .nh{flex-shrink:0;width:48px;text-align:right;font-size:16px;font-weight:700;letter-spacing:-.02em;color:var(--fg);display:flex;justify-content:flex-end}
+.f2 .pj.nv .tu.nft .nh{color:var(--mut)}
+.f2 .pj.nv .tu.nft .nh svg.i{width:18px;height:18px}
+.f2 .pj.nv .np{flex-shrink:0;position:relative;z-index:1;width:12px;height:12px;border-radius:50%;background:var(--bg);box-shadow:0 0 0 2px var(--faint)}
+.f2 .pj.nv .tu.nfl.now .np{background:var(--laiton);box-shadow:0 0 0 4px color-mix(in srgb,var(--laiton) 25%,transparent)}
+.f2 .pj.nv .tu.nfl.now .nh{color:var(--laiton)}
+.f2 .pj.nv .tu.nft.urg .np{box-shadow:0 0 0 2px var(--rose)}
+.f2 .pj.nv .tu.nft.att .np{box-shadow:0 0 0 2px #D9A55B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2 .pj.nv .nl-box{background:color-mix(in srgb,#2A2E3A 70%,transparent)}
+ :root:not([data-theme="light"]) .f2 .pj.nv .v1 .tu.nl,:root:not([data-theme="light"]) .f2 .pj.nv .v1 .tu.nfl{background:none!important;box-shadow:none}
+ :root:not([data-theme="light"]) .f2 .pj.nv .v1 .tu.nl.now{box-shadow:inset 3px 0 0 var(--laiton)!important}}
+:root[data-theme="dark"] .f2 .pj.nv .nl-box{background:color-mix(in srgb,#2A2E3A 70%,transparent)}
+:root[data-theme="dark"] .f2 .pj.nv .v1 .tu.nl,:root[data-theme="dark"] .f2 .pj.nv .v1 .tu.nfl{background:none!important;box-shadow:none}
+:root[data-theme="dark"] .f2 .pj.nv .v1 .tu.nl.now{box-shadow:inset 3px 0 0 var(--laiton)!important}
+@media (min-width:700px){.f2 .pj.nv .f{width:min(460px,100%)}}
+/* petits téléphones (iPhone SE…) : tout tient sans faire défiler */
+@media (max-height:720px),(max-width:380px){.f2 .pj.nv .v1{padding:24px 16px 12px}
+ .f2 .pj.nv .v1 h2{font-size:24px}.f2 .pj.nv .v1 h2 span{font-size:17px}
+ .f2 .pj.nv .v1 .resume{margin-top:10px;font-size:15px}.f2 .pj.nv .grt{margin:14px 4px 6px}
+ .f2 .pj.nv .v1 .tu.nl{min-height:54px;padding:9px 12px}.f2 .pj.nv .nr{width:32px;height:32px}
+ .f2 .pj.nv .v1 .tu.nrv{padding:10px 14px}.f2 .pj.nv .tu.nrv .nh{font-size:22px}
+ .f2 .pj.nv .v1 .tu.ncc{padding:10px 9px}.f2 .pj.nv .ncc .nn{font-size:28px;margin-top:3px}
+ .f2 .pj.nv .ncc .nv1{font-size:10px;letter-spacing:.03em}.f2 .pj.nv .ncc b{font-size:12.5px}.f2 .pj.nv .ncc small{font-size:11px}
+ .f2 .pj.nv .v1 .tu.nfl{min-height:50px;padding-top:5px;padding-bottom:5px}
+ .f2 .pj.nv .bas{margin-top:12px}.f2 .pj.nv .go{height:50px}}
+.f2 .pj.nv .ncc small,.f2 .pj.nv .ncc b{overflow-wrap:normal;word-break:normal}
