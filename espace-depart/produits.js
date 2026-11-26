@@ -181,19 +181,19 @@ function lireDoc(f){if(!f||!X)return;LU=null;var fo=fourDe(LF);
  X.xopen('Cliky lit votre document',fo?fo.nom:'Tarif, devis, facture ou bon de livraison','<div class="bc-lu"><p class="bc-att"><span class="bc-sp"></span>Cliky lit chaque ligne et la retrouve dans votre base. Comptez une demi-minute.</p></div>','<button class="btn" data-xclose>Annuler</button>');
  fichierB64(f).then(function(d){return PCV.api('/espace/lire-document',{method:'POST',body:{fichier:d,nom:f.name,fournisseur:LF}})}).then(function(x){LU=x;afficherLu()},
   function(e){var z=$('.bc-lu');if(z)z.innerHTML='<p class="hint">'+esc(e.message)+'</p>'})}
-function afficherLu(){var z=$('.bc-lu');if(!z||!LU)return;var d=LU.document||{},L=LU.lignes||[];
+function afficherLu(){var z=$('.bc-lu');if(!z||!LU)return;var d=LU.document||{},L=LU.lignes||[];var NL=L.length;/* toutes les lignes lues, même celles rangées plus bas (Cyril 22/11 : « 3 lignes lues » pour 7 produits) */
  /* document déposé chez un autre fournisseur que celui de l'article : son prix devient un article de CE fournisseur (on compare, on n'écrase pas) */
  var art=function(c){return (BC.articles||[]).filter(function(x){return x.c===c})[0]||{}},ailleurs=[];
- if(LU.fournisseur){L=L.filter(function(l){var a=art(l.code);if(l.code&&l.apres&&a.four&&a.four!==LU.fournisseur){var f0=fourDe(a.four);ailleurs.push({designation:l.article,cond_lu:l.conditionnement,famille:a.f,reference:l.reference,prix_ht:l.apres,compare:l.avant,chez:f0?f0.nom:'',sur:l.sur,note:l.note,u:a.u,pu:a.pu&&a.pc?Math.round(a.pu*l.apres/a.pc*1e6)/1e6:0});return false}return true})}
+ if(LU.fournisseur){L=L.filter(function(l){var a=art(l.code);if(l.code&&l.apres&&a.four&&a.four!==LU.fournisseur){var f0=fourDe(a.four);ailleurs.push({designation:l.article,quantite:l.quantite,cond_lu:l.conditionnement,famille:a.f,reference:l.reference,prix_ht:l.apres,compare:l.avant,chez:f0?f0.nom:'',sur:l.sur,note:l.note,u:a.u,pu:a.pu&&a.pc?Math.round(a.pu*l.apres/a.pc*1e6)/1e6:0});return false}return true})}
  var ch=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)>=0.005}),pareil=L.filter(function(l){return l.code&&l.apres&&Math.abs(l.apres-l.avant)<0.005}).length,hors=L.filter(function(l){return !l.code});
- var h='<p class="bc-d"><b>'+esc((d.type||'Document').replace(/^./,function(c){return c.toUpperCase()})+(d.fournisseur?' '+d.fournisseur:''))+'</b><small>'+esc([d.numero?'n° '+d.numero:'',d.date].filter(Boolean).join(' · '))+' · '+L.length+' ligne'+(L.length>1?'s':'')+' lue'+(L.length>1?'s':'')+'</small></p>';
+ var h='<p class="bc-d"><b>'+esc((d.type||'Document').replace(/^./,function(c){return c.toUpperCase()})+(d.fournisseur?' '+d.fournisseur:''))+'</b><small>'+esc([d.numero?'n° '+d.numero:'',d.date].filter(Boolean).join(' · '))+' · '+NL+' ligne'+(NL>1?'s':'')+' lue'+(NL>1?'s':'')+'</small></p>';
  h+=chantierLu();
  if(ch.length)h+='<p class="hint">Cochez les prix à mettre à jour. Ceux qui demandent un œil ne sont pas cochés.</p>'+ch.map(function(l,i){return '<label class="bc-lp'+(l.sur?'':' doute')+'"><input type="checkbox" data-bclp="'+i+'"'+(l.sur?' checked':'')+'><span><b>'+esc(l.article)+'</b><small>'+esc(l.conditionnement)+' · lu : « '+esc(l.designation)+' »</small>'+(l.note?'<em>'+esc(l.note)+'</em>':'')+'</span><i>'+prix(l.avant)+' → <b>'+prix(l.apres)+'</b><small>'+(l.ecart_pct>0?'+':'')+String(l.ecart_pct).replace('.',',')+' %</small></i></label>'}).join('');
  else h+='<p class="hint">Aucun prix à changer'+(pareil?' : '+pareil+' prix déjà à jour.':'.')+'</p>';
  if(ch.length&&pareil)h+='<p class="hint">'+pareil+' prix déjà à jour.</p>';
  var fo=fourDe(LU.fournisseur),nv=ailleurs.concat(hors).filter(function(l){return l.prix_ht>0&&!/livraison|transport|frais de port|\bport\b|éco-?participation|remise|acompte/i.test(l.designation)}),autres=hors.filter(function(l){return nv.indexOf(l)<0});
  if(nv.length)h+='<p class="bc-lab">'+nv.length+' produit'+(nv.length>1?'s':'')+' pas encore dans votre base</p><p class="hint">'+(fo?'Cochés : ils seront rangés chez '+esc(fo.nom)+'.':'Cochez ceux que vous reprenez souvent.')+'</p>'+
-  nv.map(function(l,i){return '<label class="bc-lp"><input type="checkbox" data-bcln="'+i+'"'+(fo&&l.sur!==false?' checked':'')+'><span><b>'+esc(l.designation)+'</b><small>'+esc([l.cond_lu,l.famille,l.reference?'réf. '+l.reference:''].filter(Boolean).join(' · '))+'</small>'+(l.compare?'<em class="bc-cmp">'+(l.prix_ht<l.compare?'Moins cher':'Plus cher')+' que chez '+esc(l.chez||'votre autre fournisseur')+' ('+prix(l.compare)+')</em>':'')+'</span><i><b>'+prix(l.prix_ht)+'</b><small>'+esc(l.cond_lu||'')+'</small></i></label>'}).join('');
+  nv.map(function(l,i){return '<label class="bc-lp"><input type="checkbox" data-bcln="'+i+'"'+(fo&&l.sur!==false&&!(+l.quantite<0)?' checked':'')+'><span><b>'+esc(l.designation)+'</b><small>'+esc([l.cond_lu,l.famille,l.reference?'réf. '+l.reference:''].filter(Boolean).join(' · '))+'</small>'+(+l.quantite<0?'<em>Retour de marchandise (rendu) : pas coché, cochez seulement pour garder ce prix</em>':'')+(l.compare?'<em class="bc-cmp">'+(Math.abs(l.prix_ht-l.compare)<0.005?'Même prix':l.prix_ht<l.compare?'Moins cher':'Plus cher')+' que chez '+esc(l.chez||'votre autre fournisseur')+' ('+prix(l.compare)+')</em>':'')+'</span><i><b>'+prix(l.prix_ht)+'</b><small>'+esc(l.cond_lu||'')+'</small></i></label>'}).join('');
  if(autres.length)h+='<details class="bc-hors"><summary>'+autres.length+' ligne'+(autres.length>1?'s':'')+' non reprise'+(autres.length>1?'s':'')+' (frais, lignes sans prix)</summary>'+autres.map(function(l){return '<p>'+esc(l.designation)+'</p>'}).join('')+'</details>';
  h+='<div class="bc-luf"><button class="btn go" type="button" data-bcluok>'+(ch.length||nv.length?'Enregistrer ce qui est coché':'Enregistrer')+'</button></div>';
  z.innerHTML=h;LU.ch=ch;LU.nv=nv}
@@ -233,7 +233,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
   if(!(pv>0)){var e2=$('#bc-p');if(e2)e2.focus();X.toast('Il manque le prix','Le prix HT, pour '+(c==='unité'?'une unité':'1 '+parCond({cond:c}))+'.');return}
   envoyerBC({ajout:{d:d,cond:c,u:uniteDe(c),prix:pv,f:FB.f||'Ajoutés par vous'}},['Article ajouté','Cliky le connaît dès le prochain pré-devis.'])}
 });
-function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="button" data-prod="'+esc(p.c)+'"><span class="cf-av pr-av'+(i?'':' vide')+'">'+(icone(i)||esc((p.d||'?').charAt(0).toUpperCase()))+'</span><span class="tx"><b>'+esc(p.d)+'</b><small>'+esc([p.x,famille(p)].filter(Boolean).join(' · '))+(p.ex?' · exemple':'')+'</small></span><span class="cf-m"><b>'+prix(p.p)+'</b><small>/ '+esc(p.u||'u')+'</small></span></button>'}
+function ligne(p){var i=icoDe(p);return '<button class="cf-li pr-li" type="button" data-prod="'+esc(p.c)+'"><span class="cf-av pr-av'+(i?'':' vide')+'">'+(icone(i)||esc((p.d||'?').charAt(0).toUpperCase()))+'</span><span class="tx"><b>'+esc(p.d)+'</b><small>'+esc([p.x,famille(p)].filter(Boolean).join(' · '))+(p.ex?' · exemple':'')+'</small></span><span class="cf-m pr-px" data-prpx="'+esc(p.c)+'" title="Changer le prix"><b>'+prix(p.p)+'</b><small>/ '+esc(p.u||'u')+'</small></span></button>'}
 function vue(){var v=$('#v-produits');if(!v)return;
  var L=chercher(q),P=L.filter(function(p){return genre(p)===(seg==='cliky'?'produit':seg)}),nP=liste().filter(function(p){return genre(p)==='produit'}).length,nS=liste().length-nP;
  var h='<div class="row cf-top"><h2>Produits</h2><span class="cf-n">'+liste().length+' dans votre base</span></div>'+
@@ -312,8 +312,25 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 });
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[role=tab][data-v="produits"]');if(t)vue()});
 
+/* ---------- prix changé en direct, sur la ligne (Cyril 22/11 : « modifier le prix directement sur le produit, même sans Cliky ») ---------- */
+function editPrix(row,c,fini){var p=liste().filter(function(x){return x.c===c})[0];if(!p||!row)return;
+ var ed=document.createElement('div');ed.className='pr-ed';
+ ed.innerHTML='<b class="pr-ed-n">'+esc(p.d)+'</b><div class="pr-ed-l"><label class="pr-ed-f"><input type="text" inputmode="decimal" autocomplete="off" value="'+(Math.round((+p.p||0)*100)/100).toFixed(2).replace('.',',')+'" aria-label="Prix HT"><span>€ HT / '+esc(p.u||'u')+'</span></label>'+
+  '<button type="button" class="btn sm" data-pred-x>Annuler</button><button type="button" class="btn sm go" data-pred-ok>OK</button></div>';
+ row.replaceWith(ed);var inp=ed.querySelector('input');inp.focus();try{inp.select()}catch(e){}
+ function fin(ch){if(fini)fini(ch);else vue()}
+ function ok(){var v=parseFloat(String(inp.value).replace(/\s/g,'').replace(',','.'));
+  if(!isFinite(v)||v<0){X&&X.toast('Prix à vérifier','Tapez un nombre, par exemple 11,40.');inp.focus();return}
+  var n={};for(var k in p)n[k]=p[k];n.p=Math.round(v*100)/100;ajouter(n);
+  X&&X.toast('Prix enregistré',p.d+' : '+prix(n.p)+' HT / '+(p.u||'u')+'. Vos prochains devis le prennent.');fin(true)}
+ ed.querySelector('[data-pred-ok]').addEventListener('click',ok);
+ ed.querySelector('[data-pred-x]').addEventListener('click',function(){fin(false)});
+ inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ok()}else if(e.key==='Escape')fin(false)})}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-prpx]');if(!t)return;
+ e.preventDefault();e.stopImmediatePropagation();editPrix(t.closest('.pr-li'),t.getAttribute('data-prpx'))},true);
+
 /* ---------- pour les autres écrans ---------- */
-window.PCPROD={deposer:function(contact){if(!X)return;chargerBC();deposer('',contact)},cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},
+window.PCPROD={deposer:function(contact){if(!X)return;chargerBC();deposer('',contact)},cliky:function(){chargerBC();return BC.articles||[]},parCond:parCond,icone:icone,icones:function(){return ORDRE.map(function(k){return {i:k,nom:ICO[k][0],famille:ICO[k][2]}})},liste:liste,chercher:chercher,ajouter:ajouter,famille:famille,iconeDe:function(p){return icone(icoDe(p))},editPrix:editPrix,
  creer:function(nom,rappel){if(!X)return;RAPPEL=typeof rappel==='function'?rappel:null;form(null,nom||'')}};
 vue();
 })();

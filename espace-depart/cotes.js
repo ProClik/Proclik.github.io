@@ -10,7 +10,7 @@ var d=document,$=function(s,r){return (r||d).querySelector(s)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var lsG=function(k,v){try{var x=JSON.parse(localStorage.getItem(k));return x==null?v:x}catch(e){return v}};
 var lsS=function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-var KEY='pc-cotes',V='1';
+var KEY='pc-cotes',V='3';
 var v=$('#v-cotes');if(!v)return;
 
 var S=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'};
@@ -59,7 +59,7 @@ function ouvrir(id){var r=tous()[id]||{};var q='r='+encodeURIComponent(id)+'&emb
 function fermer(){ov.hidden=true;d.body.style.overflow='';fr.src='about:blank';rendre()}
 addEventListener('message',function(e){if(e.source!==fr.contentWindow)return;var m=e.data||{};
  if(m.type==='proclik-cotes-close')fermer();
- if(m.type==='proclik-cotes-plan'){fermer();var b=d.createElement('button');b.hidden=true;b.setAttribute('data-openplan','Plan · '+(m.c||'chantier'));d.body.appendChild(b);b.click();b.remove()}});
+ if(m.type==='proclik-cotes-plan'){fermer();try{sessionStorage.setItem('pk-cotes-liste','1')}catch(x){}var b=d.createElement('button');b.hidden=true;b.setAttribute('data-openplan','Plan · '+(m.c||'chantier'));d.body.appendChild(b);b.click();b.remove()}});
 
 /* ---------- nouveau relevé : pour quel chantier ? ---------- */
 var nouv={c:''};

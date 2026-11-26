@@ -152,7 +152,7 @@ function liste(){cur=null;ong=null;if(X.setCurCh)X.setCurCh(null);
   '<div class="sec-h" style="margin:0"><h2>Vue d\'ensemble</h2><button class="hint" style="font-weight:700;color:var(--accx)" id="ch-map">Voir sur la carte ›</button></div>'+
   '<div class="kpis"><div class="kpi"><small>Chantiers en cours</small><b>'+act.length+'</b></div><div class="kpi"><small>Avancement moyen</small><b>'+(act.length?Math.round(sumA/act.length):0)+' %</b></div><div class="kpi"><small>Signé TTC</small><b>'+eur(sumT)+'</b></div><div class="kpi"><small>Reste à encaisser</small><b>'+eur(sumR)+'</b></div></div>'+
   '<div class="seg cf-seg dv-seg ch-seg" role="tablist" aria-label="Quels chantiers">'+[['cours','En cours',IC.chantier,act.length],['tous','Tous les chantiers',IC.docs,0]].map(function(x){return '<button role="tab" data-chv="'+x[0]+'" aria-selected="'+(vue===x[0])+'">'+x[2]+'<span>'+x[1]+'</span>'+(x[3]?'<i>'+x[3]+'</i>':'')+'</button>'}).join('')+'</div>'+
-  '<div class="col" style="gap:10px">'+(V.length?V.map(function(c){var a=avc(c),e=etat(c);return '<button class="chrow" data-showch="'+c.id+'"><span class="ring" style="--p:'+a+'"><span>'+a+'%</span></span><span class="tx"><b>'+esc(c.n)+' · '+esc(c.v)+'</b><small>'+esc(c.t)+'</small><small>'+esc(c.dates||'dates à fixer')+'</small></span><span class="pill '+e[1]+'">'+e[0]+'</span></button>'}).join(''):'<p class="hint">Aucun chantier en cours. Touchez « Créer un chantier » pour en ajouter un.</p>')+'</div></div>';
+  '<div class="col" style="gap:10px">'+(V.length?V.map(function(c){var a=avc(c),e=etat(c);return '<button class="chrow" data-showch="'+c.id+'"><span class="ring" style="--p:'+a+'"><span>'+a+'%</span></span><span class="tx"><b>'+esc(c.n)+' · '+esc(c.v)+'</b><small>'+esc(c.t)+'</small><small>'+esc(c.dates||'dates à fixer')+'</small></span><span class="pill '+e[1]+'">'+e[0]+'</span></button>'}).join(''):((window.PCROLE&&PCROLE.membre&&PCROLE.membre()&&PCROLE.membre().col!=='dir')?'<div class="card" style="text-align:center;padding:22px 18px"><b style="display:block;font-size:17px;margin-bottom:6px">Pas encore de chantier pour vous</b><span class="hint" style="margin:0">Votre patron ne vous a pas encore placé sur un chantier au planning. Dès qu\'il le fera, il apparaîtra ici, avec son adresse, sa liste et ses notes.</span></div>':'<p class="hint">Aucun chantier en cours. Touchez « Créer un chantier » pour en ajouter un.</p>'))+'</div></div>';
  $('#chx').innerHTML=h;
  $('#ch-map').addEventListener('click',function(){X.go('planning');var s=$('#seg-carte');if(s)s.click();});
  $('#ch-new').addEventListener('click',function(){nouveau()});
@@ -163,7 +163,7 @@ function liste(){cur=null;ong=null;if(X.setCurCh)X.setCurCh(null);
 function ouvrir(id,o){var c=CH[id];if(!c)return;if(cur!==id){edit=null;prevenir=null;}cur=id;ong=o||null;if(X.setCurCh)X.setCurCh(id);
  var e=etat(c),bad={four:aPrevoir(c),trav:c.st==='run'&&!c.pointSent?1:0,equipe:ong==='equipe'?0:nonLus(c)};
  var h='<div class="cf"><button class="xback" id="ch-back">‹ Tous les chantiers</button><div class="sec-h"><h2 style="font-size:20px">'+esc(c.n)+' · '+esc(c.v)+'</h2><span class="pill '+e[1]+'">'+e[0]+'</span></div><p class="lead" style="font-size:13.5px;margin-bottom:12px">'+esc(c.t)+' · '+esc(c.dates||'dates à fixer')+'</p>'+
-  '<div class="seg ch-menu" role="tablist" aria-label="Parties du chantier">'+ONG.map(function(x){return '<button role="tab" data-ong="'+x[0]+'" aria-selected="'+(ong===x[0])+'">'+IC[x[0]]+'<span>'+x[1]+'</span>'+(bad[x[0]]?'<i>'+bad[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'+
+  '<div class="seg ch-menu'+(ong?' ch-mini':'')+'" role="tablist" aria-label="Parties du chantier">'+ONG.map(function(x){return '<button role="tab" data-ong="'+x[0]+'" aria-selected="'+(ong===x[0])+'">'+IC[x[0]]+'<span>'+x[1]+'</span>'+(bad[x[0]]?'<i>'+bad[x[0]]+'</i>':'')+'</button>'}).join('')+'</div>'+
   '<div class="ch-pane" id="ch-pane">'+(ong?'<button class="ch-back2" id="ch-res">‹ Résumé du chantier</button>'+partie(c,ong):resume(c))+'</div></div>';
  $('#chx').innerHTML=h;window.scrollTo(0,0);
  $('#ch-back').addEventListener('click',function(){liste()});
@@ -183,6 +183,9 @@ function resume(c){var a=avc(c),f=cfin(c),o=dos(c),reel=(c.reel||[]).reduce(func
  var nl=nonLus(c);if(nl)T.push(['equipe',nl,nl>1?'Nouveaux messages des entreprises':'Nouveau message d\'une entreprise']);
  var sd=sitDu(c);if(sd)T.push(['fin','€','Facture de situation à préparer ('+sd+')']);
  var rc=resL(c).filter(function(r){return r.st==='corr'}).length;if(rc)T.push(['equipe',rc,rc>1?rc+' réserves corrigées à valider':'Une réserve corrigée à valider']);
+ if(eqcOn(c)){var EJ=PCEQ.jours(c.id);if(EJ.length){var k0=EJ[0],q0=PCEQ.qui(c.id,k0),man=EJ.filter(function(k){return PCEQ.qui(c.id,k).length<PCEQ.besoin(c.id,k)});
+  T.push(['agenda',q0.length||'!',PCEQ.relatif(k0)+' : '+(q0.length?q0.map(function(p){return p.n}).join(', '):'personne de l\'équipe')]);
+  if(man.length)T.push(['agenda','!','Il manque du monde '+man.slice(0,3).map(PCEQ.jourCourt).join(', ')+(man.length>3?'…':'')])}}
  var Lv=liv(c).filter(function(x){return !x.passe});if(Lv.length)T.push(['four',Lv.length,'Livraison'+(Lv.length>1?'s':'')+' prévue'+(Lv.length>1?'s':'')+' · '+Lv[0].quand]);
  var suite=c.st==='done'?'Chantier terminé.':a>=100?'Travaux finis : la facture de solde peut partir.':c.ouv.filter(function(x){return x[2]<100})[0];
  return '<div class="card ch-res"><span class="ring" style="--p:'+a+'"><span>'+a+'%</span></span><span class="tx"><b>Avancement</b><small>'+(typeof suite==='string'?suite:'En ce moment : '+esc(suite[0]).toLowerCase()+' ('+suite[2]+'\u00a0%)')+'</small></span></div>'+
@@ -248,7 +251,7 @@ function avisCard(c){var a=c.avis||(c.avis={on:true,quand:'lendemain'});
 var SITR=[['mois','Chaque fin de mois'],['quinz','Toutes les 2 semaines'],['palier','À chaque palier de 25 %'],['non','Jamais']];
 var SITS=[['15j','Chantiers de plus de 15 jours'],['5000','Chantiers de plus de 5 000 € HT'],['tous','Tous les chantiers']];
 function sitReg(){var r=X.lsGet('pc-sit-reg',null)||{};return {ry:r.ry||'mois',se:r.se||'15j'}}
-function sitDur(c){var a=c.d1||'',b=c.d2||'';if(c.id==='alpes'){a='2026-10-14';b='2026-10-19'}if(!a||!b)return 0;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5)+1}
+function sitDur(c){var a=c.d1||'',b=c.d2||'';if(c.id==='alpes'){a=PCDEMO.sh('2026-10-14');b=PCDEMO.sh('2026-10-19')}if(!a||!b)return 0;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5)+1}
 function sitPour(c){var R=sitReg();if(R.ry==='non'||c.sitOff||c.st==='done'||!c.fin||!c.fin.ht)return false;return R.se==='tous'||(R.se==='5000'&&c.fin.ht>=5000)||(R.se==='15j'&&sitDur(c)>=15)}
 function finMois(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
 function sitProchain(c){var R=sitReg(),t=X.TODAY||new Date(),a=avc(c);
@@ -328,9 +331,11 @@ function pfValider(){var b=$('#pf-ok'),c=CH[PF.c],t=pfTot();
  X.toast(ty==='pre'?'Brouillon enregistré':TYD[ty]+' créé'+(ty==='devis'?'':'e')+' : '+eur(t.ttc)+' TTC',ty==='pre'?'Retrouvez-le dans Documents.':en()?'Démo : dans votre Espace, VosFactures renvoie le PDF, rangé ici et dans Factures.':'Elle partira au retour du réseau.');}
 
 /* ---------- Notes : un bouton, on écrit ou on dicte, rangées par pièce ---------- */
+/* notes : un salarié écrit des notes signées de son prénom si la Direction le permet (Cyril 24/11, « Écrire des notes ») */
+function peutNoter(){var m=window.PCROLE&&PCROLE.membre?PCROLE.membre():null;return !m||m.col==='dir'||!window.PCROLE.peut||PCROLE.peut('notes_ecr')}
 function notes(c){var P={},ord=[];(c.notes||[]).forEach(function(n){var p=n[2]||'Tout le chantier';if(!P[p]){P[p]=[];ord.push(p)}P[p].push(n)});
- return '<button type="button" class="btn go cf-go" id="ch-nadd"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter une note</span></span></button>'+
-  '<div class="card ch-nt" id="ch-notes">'+(ord.length?ord.map(function(p){return '<h3>'+esc(p)+'</h3>'+P[p].slice().reverse().map(function(n){return '<div class="n">'+esc(n[1])+'<small>'+esc(n[0])+'</small></div>'}).join('')}).join(''):'<p class="hint">Aucune note pour l\'instant.</p>')+'</div>';}
+ return (peutNoter()?'<button type="button" class="btn go cf-go" id="ch-nadd"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter une note</span></span></button>':'')+
+  '<div class="card ch-nt" id="ch-notes">'+(ord.length?ord.map(function(p){return '<h3>'+esc(p)+'</h3>'+P[p].slice().reverse().map(function(n){return '<div class="n">'+esc(n[1])+'<small>'+esc(n[0])+(n[3]?' · '+esc(n[3]):'')+'</small></div>'}).join('')}).join(''):'<p class="hint">Aucune note pour l\'instant.</p>')+'</div>';}
 var NP=null;
 function choixPieces(c,sel,id){var P=pieces(c);return '<div class="ch-pcs" id="'+id+'">'+['Tout le chantier'].concat(P).map(function(p){return '<button type="button" class="btn" data-pc="'+esc(p)+'" aria-pressed="'+(sel===p)+'">'+esc(p)+'</button>'}).join('')+'<button type="button" class="btn" data-pcnew>+ Autre pièce</button></div>'}
 function lierPieces(c,id,cb){$$('#'+id+' [data-pc]').forEach(function(b){b.addEventListener('click',function(){$$('#'+id+' [data-pc]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});cb(b.dataset.pc)})});
@@ -343,7 +348,10 @@ function noteSheet(c){NP=pieces(c)[0]||'Tout le chantier';
   '<button class="btn" data-xclose>Annuler</button><button class="btn go" id="nt-ok">Ajouter la note</button>',function(){
   lierPieces(c,'np',function(p){NP=p});
   dictee($('#nt-d'),$('#nt-t'));
-  $('#nt-ok').addEventListener('click',function(){var v=$('#nt-t').value.trim();if(!v){$('#nt-t').focus();return}c.notes=c.notes||[];c.notes.push([maint(),v,NP]);saveCH();attente('note');X.xclose();recharger('notes');X.toast('Note ajoutée',NP+(en()?'':' · gardée sur le téléphone'));});});}
+  $('#nt-ok').addEventListener('click',function(){var v=$('#nt-t').value.trim();if(!v){$('#nt-t').focus();return}
+   var m=window.PCROLE&&PCROLE.membre?PCROLE.membre():null,b=this;
+   if(m){b.disabled=true;PCROLE.api('/espace/note',{ch:c.id,t:v,pc:NP,d:maint()}).then(function(x){b.disabled=false;if(!x||!x.ok){X.toast('Note pas ajoutée',(x&&x.erreur)||'');return}c.notes=c.notes||[];c.notes.push(x.note);X.xclose();recharger('notes');X.toast('Note ajoutée',NP+' · signée '+m.n)},function(){b.disabled=false;X.toast('Pas de réseau','Réessayez quand vous aurez du réseau.')});return}
+   c.notes=c.notes||[];c.notes.push([maint(),v,NP]);saveCH();attente('note');X.xclose();recharger('notes');X.toast('Note ajoutée',NP+(en()?'':' · gardée sur le téléphone'));});});}
 var REC=null;
 function dictee(btn,ta){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  btn.addEventListener('click',function(){
@@ -433,11 +441,45 @@ var TYC={run:'Chantier',plan:'Chantier prévu',done:'Chantier fait',visit:'Visit
 function evsCh(c){var L=(X.EV||[]).filter(function(e){if(e.k==='free'||e.k==='pc')return false;var x=e.x||{};
   return x.ch===c.id||(c.id==='alpes'&&x.ch===1)||(c.n&&String(e.t||'').indexOf(c.n)>-1)});
  return L.sort(function(a,b){return (a.d+a.s)<(b.d+b.s)?-1:1})}
+/* 24/11 (Cyril : « la gestion des employés sur le chantier ») : qui de l'équipe vient, jour par jour ; toucher un jour = cocher qui vient ;
+   « Prévenir l'équipe » (SMS / Espace de chacun, « ✓ vu ») ; mêmes données que Planning › Équipe (window.PCEQ, equipe.js). */
+function eqcOn(c){return !!(window.PCEQ&&equipeOn()&&c.st!=='done')}
+function eqcCard(c){if(!eqcOn(c))return '';var Q=PCEQ,J=Q.jours(c.id);if(!J.length)return '';var nm=0;
+ var rows=J.map(function(k){var L=Q.qui(c.id,k),b=Q.besoin(c.id,k),m=Math.max(0,b-L.length),x=new Date(k+'T12:00:00');if(m)nm++;
+  return '<button type="button" class="cheq-j'+(m?' manque':'')+'" data-eqj="'+k+'"><span class="ch-agd"><small>'+JC[x.getDay()]+'</small><b>'+x.getDate()+'</b><small>'+MC[x.getMonth()]+'</small></span>'+
+   '<span class="tx"><b>'+(L.length?L.map(function(p){return esc(p.n)}).join(', '):'Personne de prévu')+'</b><small>'+(m?'Il manque '+m+' personne'+(m>1?'s':''):L.length+' sur '+b+' prévu'+(b>1?'s':''))+'</small>'+
+   L.map(function(p){var t=Q.taches(k,p.n);return '<span class="cheq-tt"><em>'+esc(p.n)+'</em> '+(t.length?esc(t.join(', ').toLowerCase()):'<i>tâche à donner</i>')+'</span>'}).join('')+'</span>'+
+   '<span class="cheq-av">'+L.map(function(p){return '<i>'+(window.PCEQ&&PCEQ.ini?PCEQ.ini(p.n):esc(p.n.charAt(0)))+'</i>'}).join('')+'</span><span class="ch-vb">Changer</span></button>'}).join('');
+ var P=Q.prevenu(c.id),bas;
+ if(P&&!P.change)bas='<div class="cheq-vu">'+P.qui.map(function(n){var v=P.vu.indexOf(n)>-1;return '<span class="'+(v?'cheq-v':'')+'">'+esc(n)+(v?' · a vu':' · pas encore vu')+'</span>'}).join('')+'</div><button type="button" class="cp-lien" id="cheq-prev">Renvoyer à l\'équipe</button>';
+ else bas='<button type="button" class="btn go cf-go" id="cheq-prev" style="width:100%;margin-top:12px"><span class="lab"><span>'+(P?'Prévenir l\'équipe des changements':'Prévenir l\'équipe')+'</span></span></button>';
+ return '<div class="card cheq" id="ch-equipe"><div class="cp-af-h"><b>Votre équipe sur ce chantier</b>'+(nm?'<span class="ch-etat pb2">Il manque du monde</span>':'<span class="ch-etat ok">Complet ✓</span>')+'</div>'+
+  '<div class="cheq-l">'+rows+'</div>'+bas+'</div>'}
+function eqcJour(c,k){var Q=PCEQ;
+ function sous(){var n=Q.qui(c.id,k).length,b=Q.besoin(c.id,k);return n+' sur '+b+' prévu'+(b>1?'s':'')}
+ function corps(){var b=Q.besoin(c.id,k);
+  return '<div class="cheq-bes"><span>Il faut</span><button type="button" data-bes="-1" aria-label="Une personne de moins">−</button><b>'+b+'</b><button type="button" data-bes="1" aria-label="Une personne de plus">+</button><span>personne'+(b>1?'s':'')+'</span></div>'+
+   '<p class="hint" style="margin:0 0 10px">Touchez une personne pour la mettre sur ce chantier, ou l\'enlever. Puis touchez ce qu\'elle fait ce jour-là.</p><div class="eq-choix">'+Q.EQ.map(function(p){var v=Q.get(k,p.n),ici=v===c.id,ail=v&&!ici;
+   var T=Q.taches(k,p.n),O=(c.ouv||[]).map(function(o){return o[0]});T.forEach(function(t){if(O.indexOf(t)<0)O.push(t)});
+   var hT=ici&&O.length?'<div class="cheq-ta"><small>Ce qu\'il fait :</small>'+O.map(function(t){var on=T.indexOf(t)>-1;return '<button type="button" class="cheq-tc'+(on?' on':'')+'" data-ta="'+esc(t)+'" data-tp="'+esc(p.n)+'" aria-pressed="'+on+'">'+esc(t)+'</button>'}).join('')+'</div>':'';
+   return '<div class="cheq-pw'+(ici?' on':'')+'"><button type="button" class="eq-o'+(ici?' on':'')+'" data-pp="'+esc(p.n)+'"><span class="eq-av"><i>'+(window.PCEQ&&PCEQ.ini?PCEQ.ini(p.n):esc(p.n.charAt(0)))+'</i></span><span class="tx"><b>'+esc(p.n)+'</b><small>'+(ici?'Sur ce chantier':ail?(v==='bureau'||v==='repos'?esc(Q.nomCase(v)):'Déjà prévu : '+esc(Q.nomCase(v)))+' · il viendra ici à la place':esc(p.r)+' · libre')+'</small></span><span class="eq-ck">'+(ici?'✓':'+')+'</span></button>'+hT+'</div>'}).join('')+'</div>'}
+ X.xopen(Q.jourLong(k).replace(/^./,function(x){return x.toUpperCase()}),c.n+' · '+sous(),corps(),'<button class="btn go" id="eq-ok" style="width:100%">C\'est bon</button>',lie);
+ function lie(){$$('#x-in [data-pp]').forEach(function(b){b.onclick=function(){var n=b.dataset.pp;Q.set(k,n,Q.get(k,n)===c.id?'':c.id);maj()}});
+  $$('#x-in [data-ta]').forEach(function(b){b.onclick=function(){Q.togTache(k,b.dataset.tp,b.dataset.ta);maj()}});
+  $$('#x-in [data-bes]').forEach(function(b){b.onclick=function(){Q.setBesoin(c.id,k,Q.besoin(c.id,k)+(+b.dataset.bes));maj()}});
+  var ok=$('#eq-ok');if(ok)ok.onclick=function(){X.xclose();recharger('agenda','#ch-equipe')}}
+ function maj(){$('#x-in').innerHTML=corps();$('#x-s').textContent=c.n+' · '+sous();lie()}}
+function eqcPrev(c){var Q=PCEQ,J=Q.jours(c.id),par={};J.forEach(function(k){Q.qui(c.id,k).forEach(function(p){var t=Q.taches(k,p.n);(par[p.n]=par[p.n]||[]).push(Q.jourCourt(k)+(t.length?' : '+esc(t.join(', ').toLowerCase()):''))})});
+ var N=Object.keys(par);if(!N.length){X.toast('Personne à prévenir','Mettez d\'abord quelqu\'un sur un jour du chantier.');return}
+ var h='<p class="hint" style="margin:0 0 10px">Chacun reçoit ses jours, ce qu\'il a à faire et l\'adresse du chantier'+(c.v?' ('+esc(c.v)+')':'')+', par SMS et dans son Espace.</p><div class="cp-af-l">'+N.map(function(n){
+  return '<div class="cp-rel"><span class="cheq-av"><i>'+(window.PCEQ&&PCEQ.ini?PCEQ.ini(n):esc(n.charAt(0)))+'</i></span><span class="tx"><b>'+esc(n)+'</b><small>'+par[n].join('<br>')+'</small></span></div>'}).join('')+'</div>';
+ X.xopen('Prévenir l\'équipe',c.n,h,'<button class="btn" data-xclose>Annuler</button><button class="btn go" id="cheq-ok">Envoyer</button>',function(){
+  var ok=$('#cheq-ok');if(ok)ok.addEventListener('click',function(){Q.prevenir(c.id);X.xclose();X.toast('Équipe prévenue',N.length+(N.length>1?' personnes ont':' personne a')+' reçu ses jours (démo).');recharger('agenda','#ch-equipe')})})}
 function agenda(c){var T=X.iso?X.iso(X.TODAY||new Date()):'',L=evsCh(c),av=L.filter(function(e){return e.d>=T}),pa=L.filter(function(e){return e.d<T});
  function ligne(e){var d=new Date(e.d+'T12:00:00'),col=(window.PCCOUL&&PCCOUL.ev(e))||'var(--k-'+e.k+')',jour=e.x&&e.x.jour;
   return '<button type="button" class="cf-li ch-ag" data-agd="'+e.d+'" style="--c:'+col+'"><span class="ch-agd"><small>'+JC[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+MC[d.getMonth()]+'</small></span>'+
    '<span class="tx"><b>'+esc(e.t)+'</b><small>'+(jour?'Toute la journée':e.s.replace(':','h')+' – '+e.e.replace(':','h'))+(e.w?' · '+esc(e.w):'')+'</small></span><span class="pill">'+(TYC[e.k]||'')+'</span></button>'}
- var h='<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
+ var h=eqcCard(c)+(window.PCLISTE?PCLISTE.html(c.id):'')+'<div class="card" id="ch-agenda"><div class="row" style="margin-bottom:8px"><b>À venir</b><span style="font-size:12px;color:var(--muted)">'+(av.length?av.length+' dans le planning':'rien de prévu')+'</span></div>'+
   (av.length?'<div class="lst cf-l" style="padding:0!important">'+av.map(ligne).join('')+'</div>':'<p class="hint" style="margin:4px 0 0">Aucun jour ni rendez-vous prévu pour ce chantier.</p>')+
   (c.st!=='done'?'<button type="button" class="btn go cf-go" id="ch-agadd" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Ajouter au planning</span></span></button>':'')+
   '<button type="button" class="btn" id="ch-agvoir" style="width:100%;margin-top:10px">Voir dans le planning</button></div>';
@@ -458,12 +500,20 @@ function voirPlanning(d){X.go('planning');try{if(X.calWeek)X.calWeek(new Date((d
 
 function lier(c){var id=c.id;
  /* planning du chantier */
+ $$('#chx [data-eqj]').forEach(function(b){b.addEventListener('click',function(){eqcJour(c,b.dataset.eqj)})});
+ var eqp=$('#cheq-prev');if(eqp)eqp.addEventListener('click',function(){eqcPrev(c)});
+ if(window.PCLISTE)PCLISTE.lier($('#ch-liste'),c.id,function(){recharger('agenda','#ch-liste')});
  var aga=$('#ch-agadd');if(aga)aga.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'chantier',ch:id,d:X.iso(X.TODAY)})});
  var sta=$('#ch-stadd');if(sta)sta.addEventListener('click',function(){if(window.PCPLAN&&PCPLAN.fiche)PCPLAN.fiche({ty:'st',ch:id,d:X.iso(X.TODAY)})});
  $$('#chx [data-stsms]').forEach(function(b){b.addEventListener('click',function(){PCPLAN.st.sms(b.dataset.stsms,id)})});
  var agv=$('#ch-agvoir');if(agv)agv.addEventListener('click',function(){var L=evsCh(c),T=X.iso(X.TODAY),n=L.filter(function(e){return e.d>=T})[0];voirPlanning(n?n.d:null)});
  $$('#chx [data-agd]').forEach(function(b){b.addEventListener('click',function(){voirPlanning(b.dataset.agd)})});
  $$('#chx [data-aller]').forEach(function(b){b.addEventListener('click',function(){ouvrir(id,b.dataset.aller)})});
+ $$('#chx [data-eqt]').forEach(function(b){b.addEventListener('click',function(){EQT=b.dataset.eqt;var v=$('#chx .cp-vues');if(v)v.setAttribute('data-t',EQT);$$('#chx .cp-tabs [data-eqt]').forEach(function(x){x.setAttribute('aria-selected',String(x.dataset.eqt===EQT))});
+   if(!b.closest('.cp-tabs')){var tg=$('#chx .cp-v-'+EQT);if(tg)tg.scrollIntoView({behavior:'smooth',block:'start'})}})});
+ var mm=$('#chx .ch-mini [aria-selected="true"]');if(mm){var pm=mm.parentNode;pm.scrollLeft=mm.offsetLeft-pm.offsetLeft-pm.clientWidth/2+mm.offsetWidth/2}
+ $$('#chx [data-eqa]').forEach(function(b){b.addEventListener('click',function(){var a=b.dataset.eqa;if(a==='rel')relancer(c);else ficheRes(c,+a.split(':')[1])})});
+ $$('#chx [data-eqs]').forEach(function(b){b.addEventListener('click',function(){EQSW=b.dataset.eqs;var v=$('#chx .cp-sws');if(v)v.setAttribute('data-s',EQSW);$$('#chx [data-eqs]').forEach(function(x){x.setAttribute('aria-selected',String(x===b))})})});
  $$('#chx [data-cact]').forEach(function(b){b.addEventListener('click',function(){action(c,b.dataset.cact)})});
  $$('#chx [data-chdos]').forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.chdos;if(X.cf&&X.cf.ficheClient)X.cf.ficheClient(k);else X.openDossier(k)})});
  /* travaux */
@@ -538,7 +588,7 @@ function icEnt(e){return metSvg(e&&(e.ic||metDe(e.m)))}
 /* Accès des entreprises : un code par entreprise, valable jusqu'à la date choisie (fin du chantier par défaut) */
 function addJ(iso,n){var d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return X.iso(d)}
 function auj(){return X.iso(X.TODAY||new Date())}
-function finCh(c){return c.d2||(c.id==='alpes'?'2026-10-19':addJ(auj(),30))}
+function finCh(c){return c.d2||(c.id==='alpes'?PCDEMO.sh('2026-10-19'):addJ(auj(),30))}
 function accesFin(c){var P=part(c);if(!P.fin)P.fin=finCh(c);return P.fin}
 function codeNeuf(){var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<4;i++)r+=A[Math.floor(Math.random()*A.length)];return r}
 function joursAvant(iso){return Math.round((new Date(iso+'T12:00:00')-new Date(auj()+'T12:00:00'))/864e5)}
@@ -550,29 +600,56 @@ function msgHTML(c,x,i){var q=qui(c,x.de),moi=x.de==='moi',hh=String(x.h||'').sp
   '<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p>'+(x.epi||part(c).termine?'':'<button type="button" class="cp-pin" data-cpepi="'+i+'" aria-label="Épingler comme décision" title="Épingler comme décision">'+IC.epingle+'</button>')+'</div>'+
   '<span class="cp-h">'+esc(hh[1]||hh[0]||'')+' · <span class="'+(tous?'ok':'')+'">'+(tous?'✓✓ lu par tous':x.lu?'✓ lu par '+x.lu+' sur '+n:'✓ envoyé')+'</span>'+(x.epi?' · <span class="la">épinglé</span>':'')+'</span></div></div>'}
 function jourDe(h){return String(h||'').split(' · ')[0]}
-function equipe(c){var P=part(c),E=P.ent,M=P.msgs;P.nl=0;saveCH();
- var h='<div class="card" id="cp-ent"><div class="row" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b><span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span></div>';
+var EQT=null;
+/* 24/11 (Cyril : revoir le chantier partagé) : en tête ce qu'il faut faire ; puis 3 onglets (Conversation, Réserves, Entreprises) au lieu d'une longue page ;
+   sur iPad couché / PC, conversation à gauche, réserves et entreprises à droite ; « Chantier terminé » tout en bas, discret. */
+function eqAFaire(c,nl){var R=resL(c),P=part(c),L=[],cv=R.filter(function(r){return r.st==='corr'}),ov=R.filter(function(r){return r.st==='ouv'}),vieux=ov.filter(function(r){return resJours(r)>=7});
+ if(cv.length)L.push(['val:'+R.indexOf(cv[0]),cv.length+(cv.length>1?' réserves corrigées à valider':' réserve corrigée à valider'),'Valider']);
+ if(vieux.length){var mx=Math.max.apply(null,vieux.map(resJours));L.push(['rel',vieux.length+(vieux.length>1?' réserves à corriger':' réserve à corriger')+' depuis '+mx+' jours','Relancer'])}
+ if(nl)L.push(['conv',nl>1?nl+' nouveaux messages':'1 nouveau message','Lire']);
+ var fin=accesFin(c),jf=joursAvant(fin);if(P.ent.length&&!P.termine&&jf<=3)L.push(['ent',jf<0?'Accès des entreprises dépassé':'Accès des entreprises jusqu\'au '+dt(fin),'Prolonger']);
+ return '<div class="card cp-af"><div class="cp-af-h"><b>À faire sur ce chantier partagé</b>'+(L.length?'<span class="ch-etat pb2">'+L.length+' à régler</span>':'<span class="ch-etat ok">À jour ✓</span>')+'</div>'+
+  (L.length?'<div class="cp-af-l">'+L.map(function(x){return '<button type="button" '+(/^(val|rel)/.test(x[0])?'data-eqa':'data-eqt')+'="'+x[0]+'"><span class="tx">'+esc(x[1])+'</span><span class="ch-vb">'+x[2]+'</span></button>'}).join('')+'</div>':'<p class="hint" style="margin:6px 0 0">Rien à valider ni à relancer.</p>')+'</div>'}
+function relancer(c){var R=resL(c).filter(function(r){return r.st==='ouv'&&resJours(r)>=7&&r.ent&&r.ent!=='moi'}),par={};
+ R.forEach(function(r){(par[r.ent]=par[r.ent]||[]).push(r)});
+ var h='<p class="hint" style="margin:0 0 10px">Un SMS part à chacun, avec la liste de ses réserves et le lien du chantier.</p><div class="cp-af-l">'+Object.keys(par).map(function(k){var e=entDe(c,k);
+   return '<div class="cp-rel"><span class="cp-mini">'+icQ(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+par[k].map(function(r){return esc(r.t||r.q||'Réserve')+' · '+resJours(r)+' j'}).join('<br>')+'</small></span></div>'}).join('')+'</div>';
+ X.xopen('Relancer pour les réserves',c.n,h,'<button class="btn" data-xclose>Annuler</button><button class="btn go" id="rel-ok">Envoyer les SMS</button>',function(){
+  var ok=$('#rel-ok');if(ok)ok.addEventListener('click',function(){var n=Object.keys(par).length;R.forEach(function(r){r.rel=dt(auj())});saveCH();X.xclose();X.toast('Relance envoyée',n+(n>1?' entreprises relancées':' entreprise relancée')+' par SMS (démo).')})})}
+function equipe(c){var P=part(c),E=P.ent,M=P.msgs,nl0=nonLus(c),ncli=(cliDe(c)||{}).nl||0;P.nl=0;saveCH();
+ var h='<div class="card" id="cp-ent"><div class="row cp-ent-h" style="margin-bottom:8px"><b>Les entreprises sur ce chantier</b>'+(c.st!=='done'&&!P.termine?'<button type="button" class="cp-inv-p" id="cp-inv">'+IC.plus+'Inviter</button>':'<span style="font-size:12px;color:var(--muted)">'+(E.length?E.length+' invitée'+(E.length>1?'s':''):'aucune')+'</span>')+'</div>';
  if(!E.length)h+='<p class="hint" style="margin:4px 0 0">Invitez les entreprises qui travaillent ici. Elles reçoivent un lien par SMS, sans appli, et retrouvent tout au même endroit.</p>';
  var fin=accesFin(c),jf=joursAvant(fin);
  if(E.length&&!P.termine&&jf<=3)h+='<div class="cp-rap"><b>'+(jf<0?'L\'accès des entreprises est dépassé':'Le chantier se termine '+(jf===0?'aujourd\'hui':jf===1?'demain':dt(fin)))+'</b><small>Les entreprises gardent l\'accès jusqu\'au '+dt(fin)+'.</small><div class="cp-rb"><button type="button" class="btn" id="cp-pro">Prolonger d\'une semaine</button><button type="button" class="btn" id="cp-fin1">Chantier terminé</button></div></div>';
  E.forEach(function(e,i){var off=offE(c,e),garde=P.termine&&!e.coupe&&!off;h+='<button type="button" class="cp-e'+(off?' off':'')+'" data-cpe="'+i+'"><span class="cp-mi">'+icEnt(e)+'</span><span class="tx"><b>'+esc(e.n)+'</b><small>'+esc(e.m)+' · '+(garde?'accès gardé : '+resOuv(c,e.id)+' réserve à lever':off?'accès terminé'+(moyNote(e)?' · <span class="cp-moy">★ '+String(moyNote(e)).replace('.',',')+'</span>':P.termine?' · <span class="cp-moy">à noter</span>':''):esc(e.vu||'invitation envoyée')+' · jusqu\'au '+dt(fin))+'</small></span><span class="cp-go">›</span></button>'});
  h+=cliRow(c);
  if(P.termine)h+='<p class="hint" style="margin:10px 0 0">Chantier terminé : les accès sont coupés (sauf pour qui a encore une réserve à lever), et chaque entreprise a reçu le récapitulatif par e-mail (décisions, plans, conversation). Touchez une entreprise pour lui donner votre note, que vous seul verrez.</p>';
- if(c.st!=='done'&&!P.termine)h+='<button type="button" class="btn go cf-go" id="cp-inv" style="width:100%;margin-top:12px"><span class="lab"><span class="ic">'+IC.plus+'</span><span>Inviter une entreprise</span></span></button>';
- if(E.length&&!P.termine)h+='<button type="button" class="btn" id="cp-voir" style="width:100%;margin-top:10px">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
- if(E.length&&!P.termine&&jf>3)h+='<button type="button" class="btn cp-fin" id="cp-fin2" style="width:100%;margin-top:10px">Chantier terminé</button>';
- h+='</div>'+resCard(c);
+ 
+ /* Ce que les invités voient en plus (Cyril 24/11) : le plan (dessin seul, sans prix) et les photos du chantier. */
+ if((E.length||P.cli)&&!P.termine){var pl=planDe(c.dos);if(pl){var sv=planSVG(pl.plan);if(sv&&sv!==P.planSvg){P.planSvg=sv;saveCH()}}
+  if(E.length)h+='<p class="hint" style="margin:14px 0 0">Avec les entreprises invitées (le client a ses propres réglages, dans sa fiche) :</p><div class="cp-par" style="margin-top:8px;display:grid;gap:14px"><div class="ch-sw"><span>Partager le plan<small>'+(pl?'Le dessin seul, sans aucun prix. Lecture seule.':'Pas encore de plan pour ce chantier.')+'</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+(P.pPlan!==0)+'" id="cp-ppl" aria-label="Partager le plan avec les entreprises"></button></div>'+
+   '<div class="ch-sw"><span>Partager les photos<small>'+((c.ph||[]).length?(c.ph.length+' photo'+(c.ph.length>1?'s':'')+' du chantier'):'Les photos que vous ajouterez au chantier')+'</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+(P.pPh!==0)+'" id="cp-pph" aria-label="Partager les photos avec les entreprises"></button></div></div>'}
+ if(E.length&&!P.termine)h+='<button type="button" class="cp-lien" id="cp-voir">'+IC.oeil+'<span>Voir ce qu\'elles voient</span></button>';
+ var finB=E.length&&!P.termine&&jf>3?'<div class="cp-finbas"><button type="button" class="cp-fin cp-lien" id="cp-fin2">Chantier terminé : couper les accès</button></div>':'';
+ h+='</div>';var hEnt=h,hRes=resCard(c);h='';
  if(E.length){
   var ord=M.map(function(x,i){return [x,i]}),epi=ord.filter(function(y){return y[0].epi}),aut=ord.filter(function(y){return !y[0].epi});
   var dj='',fil=M.map(function(x,i){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j==='À l\'instant'||/\d+ h/.test(j)?'Aujourd\'hui':j)+'</span></div>':'';dj=j;return sep+msgHTML(c,x,i)}).join('');
   var dec=M.filter(function(x){return x.epi});
-  if(window.PCOPT&&PCOPT.actif('conversation')===false)return h+'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>'+cliCard(c);
+  if(window.PCOPT&&PCOPT.actif('conversation')===false)return eqVue(c,nl0,'<div class="card">'+(window.PCTAG?PCTAG('conversation'):'')+'<p class="hint" style="margin:0">Une conversation par chantier avec toutes les entreprises invitées. Déjà dans le forfait TEAM et ARCHI, en option pour PRO : dites-le à Cyril.</p></div>',hRes,hEnt,finB,cliCard(c),ncli);
   h+='<div class="card" id="cp-fil">'+(window.PCTAG?PCTAG('conversation'):'')+''+
    (dec.length?'<div class="cp-dec"><span class="cp-dk">Ce qui est décidé</span>'+dec.map(function(x){return '<p>'+esc(x.t)+'<small>'+esc(qui(c,x.de).n)+' · '+esc(jourDe(x.h))+'</small></p>'}).join('')+'</div>':'')+
    '<div class="cp-fil">'+fil+'</div>'+
    (P.termine?'<p class="hint" style="margin:0">Chantier terminé : la conversation est archivée, plus personne ne peut écrire.</p>':luPar(c)+'<div class="cp-w"><textarea id="cp-t" rows="1" placeholder="Écrire à tout le chantier…"></textarea><button type="button" class="cp-ro pk" id="cp-mic" aria-label="Dicter">'+IC.micro+'</button><button type="button" class="cp-ro go" id="cp-send" aria-label="Envoyer à tous">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+
    (P.termine?'':'<p class="hint" style="margin:10px 2px 0">Touchez '+IC.epingle.replace('<svg','<svg class="cp-ih"')+' sur un message pour le garder dans « Ce qui est décidé ».</p>')+'</div>';}
- return h+cliCard(c)}
+ return eqVue(c,nl0,h,hRes,hEnt,finB,cliCard(c),ncli)}
+var EQSW='ch';
+function eqVue(c,nl,hCh,hRes,hEnt,finB,hCli,ncli){var P=part(c),nr=resOuv(c),t=EQT||(P.ent.length?'conv':'ent'),k=cliDe(c);
+ var hConv=hCli&&k?'<div class="seg cp-sw" role="tablist" aria-label="Quelle conversation">'+[['ch','Tout le chantier',nl],['cli',k.n,ncli]].map(function(x){return '<button role="tab" data-eqs="'+x[0]+'" aria-selected="'+(EQSW===x[0])+'">'+esc(x[1])+(x[2]?'<i class="cp-pt" aria-label="nouveau"></i>':'')+'</button>'}).join('')+'</div>'+
+   '<div class="cp-sws" data-s="'+EQSW+'"><div class="cp-sw-ch">'+hCh+'</div><div class="cp-sw-cli">'+hCli+'</div></div>':hCh;
+ var tabs=[['conv','Conversation',nl],['res','Réserves',nr],['ent','Entreprises',P.ent.length]];
+ return eqAFaire(c,nl)+'<div class="seg cp-tabs" role="tablist" aria-label="Chantier partagé">'+tabs.map(function(x){return '<button role="tab" data-eqt="'+x[0]+'" aria-selected="'+(t===x[0])+'">'+x[1]+(x[2]?' <i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div>'+
+  '<div class="cp-vues" data-t="'+t+'"><div class="cp-v cp-v-conv">'+hConv+'</div><div class="cp-v2"><div class="cp-v cp-v-res">'+hRes+'</div><div class="cp-v cp-v-ent">'+hEnt+'</div></div></div>'+finB}
 function icPicker(sel){return '<div class="cp-ics" role="radiogroup" aria-label="Icône du métier">'+MET.map(function(x){return '<button type="button" class="cp-ic" data-cpic="'+x[0]+'" aria-pressed="'+(x[0]===sel)+'" title="'+esc(x[1])+'">'+I(x[3])+'<small>'+esc(x[1].split(',')[0])+'</small></button>'}).join('')+'</div>'}
 function lierPicker(cb){$$('[data-cpic]').forEach(function(b){b.addEventListener('click',function(){$$('[data-cpic]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});cb(b.dataset.cpic)})})}
 function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(window.PCPLAN&&PCPLAN.st?PCPLAN.st.tous():[]).filter(function(t){return deja.indexOf(t.id)<0}),sel=S[0]?S[0].id:'autre',ic='autre',par='sms',ic0=0,fin=accesFin(c);
@@ -594,7 +671,10 @@ function inviter(c){var P=part(c),deja=P.ent.map(function(e){return e.id}),S=(wi
    if(sel==='autre'){var n=($('#cp-n').value||'').trim();if(!n){X.toast('Le nom de l\'entreprise','Il manque pour envoyer l\'invitation.');return}e={id:'cp'+Date.now().toString(36),n:n,m:($('#cp-m').value||'').trim()||'Entreprise',ic:ic}}
    else{var t=PCPLAN.st.de(sel);e={id:t.id,n:t.n,m:t.m,ic:metDe(t.m)}}
    e.code=codeNeuf();e.par=par;if(!d.hidden&&d.value)P.fin=d.value;
+   var tel=sel==='autre'?($('#cp-tel').value||'').trim():((PCPLAN.st.de(sel)||{}).tel||'');if(tel)e.tel=tel;
    P.ent.push(e);saveCH();attente('sms');X.xclose();
+   /* Espace connecté : le vrai lien + code SMS (service) */
+   if(window.PCACCES&&PCACCES.reel()){recharger('equipe');setTimeout(function(){PCACCES.lienInvite({kind:'ent',ch:c.id,chn:c.n,eid:e.id,n:e.n,tel:e.tel})},300);return}
    recharger('equipe');X.toast('Invitation envoyée',e.n+' reçoit son lien par '+(par==='sms'?'SMS':'e-mail')+', valable jusqu\'au '+dt(accesFin(c))+' (démo).')})})}
 /* Note privée de l'architecte sur chaque entreprise, à la fin du chantier (Cyril 19/11) : visible par lui seul, jamais par l'entreprise */
 var CRIT=[['ponct','Ponctualité'],['propre','Propreté du chantier'],['trav','Qualité du travail']];
@@ -613,9 +693,10 @@ function ficheEnt(c,i){var P=part(c),e=P.ent[i];if(!e)return;var arm=0,off=offE(
   lierPicker(function(k){e.ic=k;saveCH();var t=$('.cp-tete .cp-mi');if(t)t.innerHTML=metSvg(k);recharger('equipe')});
   $$('[data-cpn]').forEach(function(b){b.addEventListener('click',function(){e.note=e.note||{};e.note[b.dataset.cpn]=+b.dataset.v;saveCH();
    $$('[data-cpn="'+b.dataset.cpn+'"]').forEach(function(x){x.setAttribute('aria-pressed',String(+x.dataset.v<=+b.dataset.v))});recharger('equipe')})});
-  var r=$('#cp-ren');if(r)r.addEventListener('click',function(){X.toast('Lien renvoyé',e.n+' le reçoit par '+(e.par==='mail'?'e-mail':'SMS')+' (démo).')});
+  var r=$('#cp-ren');if(r)r.addEventListener('click',function(){if(window.PCACCES&&PCACCES.reel()){X.xclose();setTimeout(function(){PCACCES.lienInvite({kind:'ent',ch:c.id,chn:c.n,eid:e.id,n:e.n,tel:e.tel})},250);return}X.toast('Lien renvoyé',e.n+' le reçoit par '+(e.par==='mail'?'e-mail':'SMS')+' (démo).')});
+  if(window.PCACCES)PCACCES.codeInvite({kind:'ent',ch:c.id,eid:e.id,n:e.n},$('#x-in'));
   var k=$('#cp-cut');if(k)k.addEventListener('click',function(){if(!arm){arm=1;k.textContent='Touchez encore pour couper';setTimeout(function(){if(k.isConnected){arm=0;k.textContent='Couper son accès'}},3500);return}
-   e.coupe=1;saveCH();X.xclose();recharger('equipe');X.toast('Accès coupé',e.n+' ne peut plus ouvrir ce chantier.')})})}
+   e.coupe=1;saveCH();if(window.PCACCES)PCACCES.couperInvite({kind:'ent',ch:c.id,eid:e.id});X.xclose();recharger('equipe');X.toast('Accès coupé',e.n+' ne peut plus ouvrir ce chantier.')})})}
 function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PCPLAN.st&&PCPLAN.st.jours?PCPLAN.st.jours(e.id,c.id):[];
  var j=J.length?J.map(function(x){var d=new Date(x.d+'T12:00:00');return JC[d.getDay()]+' '+d.getDate()+' '+MC[d.getMonth()]}).join(', '):'à caler avec vous';
  var der=P.msgs[P.msgs.length-1];
@@ -628,6 +709,7 @@ function apercu(c){var P=part(c),e=P.ent[0];if(!e)return;var J=window.PCPLAN&&PC
 function lierEquipe(c){lierRes(c);
  var b=$('#cp-inv');if(b)b.addEventListener('click',function(){inviter(c)});
  var v=$('#cp-voir');if(v)v.addEventListener('click',function(){apercu(c)});
+ [['#cp-ppl','pPlan','Le plan'],['#cp-pph','pPh','Les photos']].forEach(function(x){var t=$(x[0]);if(t)t.addEventListener('click',function(){var P=part(c);P[x[1]]=P[x[1]]===0?1:0;saveCH();t.setAttribute('aria-checked',String(P[x[1]]!==0));X.toast(x[2]+(P[x[1]]?' : partagé':' : plus partagé'),P[x[1]]?'Vos invités le voient à leur prochaine ouverture.':'Vos invités ne le voient plus.')})});
  $$('#chx [data-cpe]').forEach(function(b){b.addEventListener('click',function(){ficheEnt(c,+b.dataset.cpe)})});
  var pr=$('#cp-pro');if(pr)pr.addEventListener('click',function(){var P=part(c);P.fin=addJ(accesFin(c)<auj()?auj():accesFin(c),7);saveCH();recharger('equipe');X.toast('Accès prolongé','Jusqu\'au '+dt(P.fin)+'. Les entreprises sont prévenues (démo).')});
  $$('#chx #cp-fin1,#chx #cp-fin2').forEach(function(f){var arm=0;f.addEventListener('click',function(){if(!arm){arm=1;f.textContent='Touchez encore : couper tous les accès';setTimeout(function(){if(f.isConnected){arm=0;f.textContent='Chantier terminé'}},3500);return}
@@ -817,30 +899,43 @@ function pv(c){var P=part(c),R=P.recep;if(!R)return;
 /* le client : son lien, ce qu'il voit, et sa conversation avec vous */
 function cliRow(c){var k=cliDe(c),P=part(c);if(c.st==='done'&&!k)return '';
  if(!k)return P.termine?'':'<button type="button" class="cp-e" id="cp-clinv"><span class="cp-mi">'+IC_CLI+'</span><span class="tx"><b>Inviter le client</b><small>Il suit son chantier, signale un souci, parle avec vous</small></span><span class="cp-go">›</span></button>';
- return '<button type="button" class="cp-e" id="cp-cli"><span class="cp-mi">'+IC_CLI+'</span><span class="tx"><b>'+esc(k.n)+'</b><small>Client · '+esc(k.vu||'invitation envoyée')+' · '+(k.commun?'lit la conversation commune':'parle avec vous')+'</small></span><span class="cp-go">›</span></button>'}
+ return '<button type="button" class="cp-e" id="cp-cli"><span class="cp-mi">'+IC_CLI+'</span><span class="tx"><b>'+esc(k.n)+'</b><small>Client · '+esc(k.vu||'invitation envoyée')+' · '+'parle avec '+esc(avecDe(k))+'</small></span><span class="cp-go">›</span></button>'}
 function ficheCli(c){var k=cliDe(c);if(!k)return;
  var h='<div class="cp-tete"><span class="cp-mi gros">'+IC_CLI+'</span><div><b>'+esc(k.n)+'</b><small>Client du chantier</small></div></div>'+
   '<div class="cp-l" style="margin-top:14px"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Code personnel '+esc(k.code)+'</b><small>Lien envoyé par SMS · code SMS à la 1re ouverture</small></span></div>'+
-  '<p class="hint" style="margin:16px 0 6px">Dans la conversation, '+esc(k.n)+' parle…</p><div class="cp-seg" role="radiogroup"><button type="button" class="btn" data-cpcom="0" aria-pressed="'+!k.commun+'">Avec vous seulement</button><button type="button" class="btn" data-cpcom="1" aria-pressed="'+!!k.commun+'">Avec tout le chantier</button></div>'+
-  '<p class="hint" style="margin:8px 0 0">Avec vous seulement : les entreprises ne lisent pas ses messages, et il voit « Ce qui est décidé ».</p>'+
+  /* LE CLIENT NE PARLE QU'À LA PERSONNE CONCERNÉE (Cyril 24/11, ex. RT2O) : une seule personne de l'entreprise, jamais au reste du chantier */
+  '<p class="hint" style="margin:16px 0 6px">Dans la conversation avec '+esc(k.n)+' :</p><div class="cp-avec">'+gensAvec().map(function(p){var d=p.g==='dir',on=d||avecL(k).indexOf(p.n)>=0;return '<button type="button" class="btn" data-cpavec="'+esc(p.n)+'" aria-pressed="'+on+'"'+(d?' disabled':'')+'>'+esc(p.n)+'<small>'+(d?'Direction · toujours':esc(p.r||''))+'</small></button>'}).join('')+'</div>'+
+  '<p class="hint" style="margin:8px 0 0">Les patrons y sont toujours. Touchez un prénom pour l\'ajouter ou le retirer : seules ces personnes lisent ses messages et lui répondent. Les autres salariés et les entreprises ne les voient jamais.</p>'+
+  /* CE QUE LE CLIENT VOIT (Cyril 24/11 : « qu'il n'ait accès à rien à part sa conversation, ou ce qu'on lui autorise ») : tout fermé par défaut */
+  '<p class="hint" style="margin:18px 0 8px"><b>Ce que '+esc(k.n)+' voit</b></p><div class="cp-l"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Toujours</b><small>Sa conversation (les patrons et les personnes ajoutées) et les problèmes qu\'il signale. Rien d\'autre.</small></span></div>'+
+  '<div style="display:grid;gap:14px;margin-top:12px">'+[['vAvc','L\'avancement','Le pourcentage et l\'étape en cours, sans aucun montant'],['vPlan','Le plan','Le dessin seul, sans aucun prix, en lecture seule'],['vPh','Les photos','Les photos du chantier']].map(function(x){return '<div class="ch-sw"><span>'+x[1]+'<small>'+x[2]+'</small></span><button type="button" class="ch-tg" role="switch" aria-checked="'+(k[x[0]]===1)+'" data-cpv="'+x[0]+'" aria-label="'+esc(x[1])+' visible par le client"></button></div>'}).join('')+'</div>'+
+  '<div class="cp-l" style="margin-top:12px"><span class="r">'+IC.cadenas+'</span><span class="tx"><b>Jamais</b><small>Prix, devis, factures, vos notes, le planning, les autres chantiers, les autres clients, les entreprises et leurs conversations.</small></span></div>'+
   '<button type="button" class="btn" id="cp-cren" style="width:100%;margin-top:14px">Renvoyer son lien</button>';
  X.xopen(k.n,'Sur le chantier '+c.n,h,'<button class="btn" data-xclose>Fermer</button><a class="btn go" style="text-decoration:none;display:flex;align-items:center;justify-content:center" href="invite.html?c=1&ch='+encodeURIComponent(c.id)+'" target="_blank" rel="noopener">Voir sa page</a>',function(){
-  var arm=0;$$('[data-cpcom]').forEach(function(b){b.addEventListener('click',function(){
-   if(b.dataset.cpcom==='1'&&!k.commun&&!arm){arm=1;b.innerHTML='Touchez encore pour confirmer<small>Les entreprises liront ses messages, et lui les leurs</small>';setTimeout(function(){if(b.isConnected&&!k.commun){arm=0;b.textContent='Avec tout le chantier'}},4000);return}
-   k.commun=+b.dataset.cpcom;saveCH();$$('[data-cpcom]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});recharger('equipe');
-   X.toast(k.commun?'Conversation commune ouverte':'Conversation avec vous seulement',k.commun?k.n+' lit et écrit dans la conversation du chantier.':'Les entreprises ne lisent plus ses messages.')})});
-  $('#cp-cren').addEventListener('click',function(){X.toast('Lien renvoyé',k.n+' le reçoit par SMS (démo).')})})}
+  $$('[data-cpavec]').forEach(function(b){b.addEventListener('click',function(){var n=b.dataset.cpavec,L=avecL(k),i=L.indexOf(n);if(i>=0)L.splice(i,1);else L.push(n);k.avec=L;k.commun=0;saveCH();b.setAttribute('aria-pressed',String(i<0));recharger('equipe');
+   X.toast(i<0?n+' est ajouté à la conversation':n+' est retiré de la conversation',i<0?'Il lit les messages de '+k.n+' et peut lui répondre.':'Il ne voit plus ses messages.')})});
+  $$('[data-cpv]').forEach(function(t){t.addEventListener('click',function(){var f=t.dataset.cpv;k[f]=k[f]===1?0:1;saveCH();t.setAttribute('aria-checked',String(k[f]===1));X.toast(t.getAttribute('aria-label').replace(' visible par le client','')+(k[f]?' : '+k.n+' le voit':' : '+k.n+' ne le voit plus'),k[f]?'À sa prochaine ouverture.':'')})});
+  $('#cp-cren').addEventListener('click',function(){if(window.PCACCES&&PCACCES.reel()){X.xclose();setTimeout(function(){PCACCES.lienInvite({kind:'cli',ch:c.id,chn:c.n,n:k.n,tel:k.tel})},250);return}X.toast('Lien renvoyé',k.n+' le reçoit par SMS (démo).')});
+  if(window.PCACCES)PCACCES.codeInvite({kind:'cli',ch:c.id,n:k.n},$('#x-in'))})}
 /* TRÈS PRIVÉ (Cyril 19/11) : chaque conversation dit clairement qui la lit, juste au-dessus de la case où l'on écrit.
    Données séparées : la conversation du client (part.cli.msgs) n'est jamais envoyée aux entreprises ; à brancher côté service
    avec un filtre par lien (chaque code ne reçoit que SES conversations). */
 var IC_LOCK=I('<rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>');
-function luPar(c){var P=part(c),k=cliDe(c),L=P.ent.filter(function(e){return !offE(c,e)}).map(function(e){return e.n});if(k&&k.commun)L.push(k.n+' (client)');
+function luPar(c){var P=part(c),L=P.ent.filter(function(e){return !offE(c,e)}).map(function(e){return e.n});
  return '<p class="cp-lu">'+IC_LOCK+'<span>Lu par : vous, '+esc(L.join(', '))+'</span></p>'}
-function cliCard(c){var k=cliDe(c);if(!k)return '';k.nl=0;
+/* avec qui le client parle : la personne choisie, sinon le patron */
+function gensAvec(){var L=window.PCROLE&&PCROLE.pers?PCROLE.pers():[];return L.length?L:[{n:'Vous',r:'Patron'}]}
+function avecL(k){return Array.isArray(k&&k.avec)?k.avec:k&&k.avec?[k.avec]:[]}
+function avecDe(k){var P=(window.PCROLE&&PCROLE.patron)||'vous';return [P].concat(avecL(k).filter(function(n){return n!==P})).join(', ')}
+function moiMembre(){return window.PCROLE&&PCROLE.membre?PCROLE.membre():null}
+function voitCli(k){var m=moiMembre();if(m)return m.col==='dir'||avecL(k).indexOf(m.n)>=0;var r=window.PCROLE&&PCROLE.moi?PCROLE.moi():null;return !r||r.g==='dir'||avecL(k).indexOf(r.n)>=0}
+function cliCard(c){var k=cliDe(c);if(!k)return '';
+ if(!voitCli(k))return '<div class="card cp-priv" id="cp-cfil"><p class="cp-lu priv" style="margin:0">'+IC_LOCK+'<span>La conversation de '+esc(k.n)+' est privée : '+esc(avecDe(k))+' seulement.</span></p></div>';
+ k.nl=0;
  var dj='',fil=k.msgs.map(function(x){var j=jourDe(x.h),sep=j!==dj?'<div class="cp-j"><span>'+esc(j)+'</span></div>':'';dj=j;var moi=x.de==='moi',hh=String(x.h||'').split(' · ');
-  return sep+'<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av">'+IC_CLI+'</span>')+'<div class="cp-c">'+(moi?'':'<span class="cp-n">'+esc(k.n)+' <small>Client</small></span>')+'<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p></div><span class="cp-h">'+esc(hh[1]||'')+'</span></div></div>'}).join('');
+  return sep+'<div class="cp-m'+(moi?' moi':'')+'">'+(moi?'':'<span class="cp-av">'+IC_CLI+'</span>')+'<div class="cp-c">'+(moi?(x.par?'<span class="cp-n">'+esc(x.par)+'</span>':''):'<span class="cp-n">'+esc(k.n)+' <small>Client</small></span>')+'<div class="cp-r"><p class="cp-bu">'+esc(x.t)+'</p></div><span class="cp-h">'+esc(hh[1]||'')+'</span></div></div>'}).join('');
  return '<div class="card cp-priv" id="cp-cfil"><div class="row" style="margin-bottom:8px"><b>Avec '+esc(k.n)+'</b><span style="font-size:12px;color:var(--muted)">conversation privée</span></div>'+
-  '<p class="cp-lu priv">'+IC_LOCK+'<span>Privé : vous et '+esc(k.n)+' seulement. Aucune entreprise ne lit ces messages.</span></p><div class="cp-fil">'+fil+'</div>'+
+  '<p class="cp-lu priv">'+IC_LOCK+'<span>Privé : '+esc(k.n)+' et '+esc(avecDe(k))+' seulement. Ni le reste de l\'équipe ni les entreprises ne lisent ces messages.</span></p><div class="cp-fil">'+fil+'</div>'+
   (part(c).termine?'':'<div class="cp-w"><textarea id="cp-ct" rows="1" placeholder="Écrire à '+esc(k.n)+' seulement…"></textarea><button type="button" class="cp-ro go" id="cp-csend" aria-label="Envoyer">'+I('<path d="M5 12h13M13 6l6 6-6 6"/>')+'</button></div>')+'</div>'}
 function lierResCard(c){
  $$('#cp-res [data-cprs]').forEach(function(b){b.addEventListener('click',function(){ficheRes(c,+b.dataset.cprs)})});
@@ -852,9 +947,12 @@ function lierResCard(c){
  var p=$('#cp-pv');if(p)p.addEventListener('click',function(){pv(c)})}
 function lierRes(c){lierResCard(c);
  var k=$('#cp-cli');if(k)k.addEventListener('click',function(){ficheCli(c)});
- var ki=$('#cp-clinv');if(ki)ki.addEventListener('click',function(){var o=dos({dos:c.dos});part(c).cli={n:(o&&o.n)||c.n,code:codeNeuf(),vu:'',commun:0,nl:0,msgs:[]};saveCH();recharger('equipe');X.toast('Invitation envoyée',part(c).cli.n+' reçoit son lien par SMS (démo).')});
+ var ki=$('#cp-clinv');if(ki)ki.addEventListener('click',function(){var o=dos({dos:c.dos});part(c).cli={n:(o&&o.n)||c.n,code:codeNeuf(),vu:'',commun:0,nl:0,msgs:[],tel:(o&&o.tel)||''};saveCH();recharger('equipe');
+  if(window.PCACCES&&PCACCES.reel()){var k=part(c).cli;setTimeout(function(){PCACCES.lienInvite({kind:'cli',ch:c.id,chn:c.n,n:k.n,tel:k.tel})},300);return}X.toast('Invitation envoyée',part(c).cli.n+' reçoit son lien par SMS (démo).')});
  var t=$('#cp-ct'),se=$('#cp-csend');if(t)t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'});
- if(se)se.addEventListener('click',function(){var v=(t.value||'').trim();if(!v){t.focus();return}cliDe(c).msgs.push({de:'moi',t:v,h:maint()});saveCH();recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','Aucune entreprise ne le voit.')})}
+ if(se)se.addEventListener('click',function(){var v=(t.value||'').trim();if(!v){t.focus();return}var m=moiMembre(),h=maint();
+  if(m){se.disabled=true;PCROLE.api('/espace/client-msg',{ch:c.id,t:v,h:h}).then(function(x){se.disabled=false;if(!x||!x.ok){X.toast('Pas envoyé',(x&&x.erreur)||'');return}cliDe(c).msgs.push({de:'moi',par:m.n,t:v,h:h});recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','')},function(){se.disabled=false;X.toast('Pas de réseau','')});return}
+  var r=window.PCROLE&&PCROLE.moi?PCROLE.moi():null;cliDe(c).msgs.push({de:'moi',par:r&&r.g!=='dir'?r.n:undefined,t:v,h:h});saveCH();recharger('equipe','#cp-cfil');X.toast('Envoyé à '+cliDe(c).n+' seulement','Aucune entreprise ne le voit.')})}
 
 /* ---------- créer un chantier ---------- */
 var NC=null;
@@ -902,6 +1000,6 @@ function clientSecours(cb){var ty='part';
 /* « Ouvrir le plan » / « Créer le plan » : la carte se redessine quand le plan arrive, d'où l'écoute sur la page */
 document.addEventListener('click',function(e){var r=e.target.closest&&e.target.closest('[data-chrel]');if(r){e.preventDefault();var c=CH[r.getAttribute('data-chrel')],s=document.getElementById('ch-rel');if(c&&s&&s.value){c.dos=s.value;var o=dos(c);if(o){c.n=o.n;if(!c.v&&o.v)c.v=o.v}saveCH();X.toast('Chantier relié',(o?o.n:'')+' · son dossier s\'affiche.');ouvrir(c.id,ong)}return}
  var b=e.target.closest&&e.target.closest('[data-chplan]');if(!b)return;e.preventDefault();var k=b.getAttribute('data-chplan'),p=planDe(k);if(window.PCPLANS&&PCPLANS.ouvrirPour)PCPLANS.ouvrirPour(k,p&&p.plan)});
-window.PCCH={dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
+window.PCCH={metPath:function(e){var k=e&&(e.ic||metDe(e.m)),x=MET.filter(function(y){return y[0]===k})[0]||MET[MET.length-1];return {p:x[3],t:x[1]}},dos:function(k){return k?dos({dos:k}):null},liste:liste,ouvrir:function(id,o){ouvrir(id,o||null)},nouveau:nouveau,suggerer:suggerer};
 if(X.setCurCh)liste();
 })();

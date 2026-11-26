@@ -135,7 +135,7 @@ footer .pc b{color:#1B2440;font-weight:700}
 <nav aria-label="Menu"><a href="#prestations">Prestations</a><a href="#reserver">Réserver</a><a href="#avis">Avis</a><a href="#venir">Venir</a></nav>
 <a class="btn" href="#reserver">Réserver</a></div></header>
 <main id="haut">
-<section class="hero in"><div class="reveal"><p class="k">Salon de coiffure · Voiron</p>
+<section class="hero in"><div class="reveal"><p class="k">Maison Lila<small>Coiffure · Voiron</small></p><div class="logo-g reveal" aria-hidden="true"><svg viewBox="0 0 250 150"><defs><linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="0" y1="10" x2="0" y2="140"><stop offset="0" stop-color="#9AABBE"/><stop offset="1" stop-color="#C7B5A2"/></linearGradient></defs><g fill="none" stroke="url(#lg)" stroke-width="9" stroke-linecap="round"><path d="M22 12V136"/><path d="M64 62V136"/><path d="M106 12V136"/><circle cx="170" cy="99" r="37"/><path d="M207 62V136"/></g><circle cx="64" cy="30" r="6.5" fill="#9AABBE"/></svg></div>
 <h1>Vos cheveux méritent<br><span class="degr">un moment à eux.</span></h1>
 <p class="lead">Coupe, couleur et balayage, dans un salon calme et lumineux. Réservez en trois touches, l'acompte se règle en ligne.</p>
 <div class="actions"><a class="btn" href="#reserver">Réserver un créneau</a><a class="btn sec" href="tel:+33400000000">Appeler</a></div></div>
@@ -213,7 +213,7 @@ rend();
  var N=22;function d(ts){if(!vis)return;px+=(tx-px)*.03;x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H2);
   for(var i=0;i<N;i++){var k=i/(N-1),x0=W*(.05+k*.9),ph=ts*.0003+i*.23;x.beginPath();
    for(var s=0;s<=36;s++){var u=s/36,y=-H2*.05+u*H2*1.1,o=Math.sin(u*3+ph)*W*.04*(.4+u)+Math.sin(u*7.3+ph*1.6+i)*W*.007,v=(px-.5)*W*.05*u*u;s?x.lineTo(x0-u*u*W*.1+o+v,y):x.moveTo(x0+o,y)}
-   x.strokeStyle='rgba(74,50,67,'+(.10+.2*Math.sin(k*Math.PI))+')';x.lineWidth=.8+.6*Math.sin(k*Math.PI);x.stroke()}
+   x.strokeStyle='rgba(120,138,160,'+(.08+.16*Math.sin(k*Math.PI))+')';x.lineWidth=.8+.6*Math.sin(k*Math.PI);x.stroke()}
   if(!R)requestAnimationFrame(d)}
  requestAnimationFrame(d)})();
 </script><style id="sfx">h2.mots .mot{display:inline-block;opacity:0;transform:translateY(.38em);filter:blur(6px);transition:opacity .9s ease,transform 1.2s cubic-bezier(.2,.8,.2,1),filter 1s ease;transition-delay:calc(var(--i) * 55ms)}h2.t-vu .mot{opacity:1;transform:none;filter:none}@media(prefers-reduced-motion:reduce){h2.mots .mot{opacity:1;transform:none;filter:none;transition:none}}</style>
@@ -258,7 +258,7 @@ if(m==3||m==4||m==5||(m==6&&j<21))return"printemps";
 if(m<9||(m==9&&j<23))return"ete";return"automne"}
 var LITE=matchMedia("(hover:none),(max-width:899px)").matches,c=document.getElementById("fond"),x=c.getContext("2d"),R=matchMedia("(prefers-reduced-motion: reduce)").matches,W=0,H=0,dpr=1,vis=true,run=false,t0=performance.now(),last=t0,
 DEMO=/[?&]demo/.test(location.search),SA=saison(),p=0,pt=0,sv=0,lastY=scrollY,mx=.5,tx=.5,PS=[],L=1400,RH=2000,now=0,dtS=.016,wrap;
-var TINT={salon:"linear-gradient(180deg,#F8EBE6 0%,#F4E2DC 70%,#F8EBE6 100%)",agence:"linear-gradient(180deg,#D9E4F3 0%,#E6ECF5 50%,#F3EADF 100%)",martin:"linear-gradient(180deg,#F6F0E4,#F2EADA 100%)"}[T];
+var TINT={salon:"linear-gradient(180deg,#D7E0EA 0%,#E6E9EC 45%,#F1ECE6 100%)",agence:"linear-gradient(180deg,#D9E4F3 0%,#E6ECF5 50%,#F3EADF 100%)",martin:"linear-gradient(180deg,#F6F0E4,#F2EADA 100%)"}[T];
 function rnd(a,b){return a+Math.random()*(b-a)}
 function ease(u){u=u<0?0:u>1?1:u;return u*u*(3-2*u)}
 function cl(u,a,b){return u<a?a:u>b?b:u}
@@ -370,4 +370,57 @@ addEventListener("scroll",function(){if(R)kick1();else if(!run)kick()},{passive:
 if(R)kick1();else kick();
 })();
 </script>
-</body></html>
+<style id="lila-brume">
+/* Maison Lila : épuré, ciel pâle, grand nom en trait fin, panneau blanc */
+:root{--acc:#2F3B4C;--acc2:#B39A80;--bg:#EEF0F2;--surf:#FFFFFF;--encre:#2F3B4C;--gris:#7C8796;--trait:rgba(47,59,76,.16);--r:22px}
+body{background:var(--bg);color:var(--encre)}
+h1,h2,h3{font-family:var(--f);font-weight:300;letter-spacing:-.02em}
+h1 b,h2 b{font-weight:500}
+section:nth-of-type(even){background:none}
+.ex{background:transparent;color:var(--gris)}
+.bar{background:rgba(238,240,242,.7);box-shadow:none;border-bottom:1px solid var(--trait)}
+.bar .btn{padding:9px 18px}
+.marque{font-weight:400;letter-spacing:.18em;text-transform:uppercase;font-size:14px}
+.marque b{background:var(--acc2)}
+.btn{background:var(--encre);color:#fff;border-radius:999px!important;font-weight:500;letter-spacing:.02em}
+.btn.sec{background:transparent;color:var(--encre);box-shadow:inset 0 0 0 1px var(--trait)}
+.k,.tete .k{font:500 11px/1.4 var(--f)!important;letter-spacing:.28em!important;text-transform:uppercase;color:var(--gris)!important}
+.hero{padding-top:28px}
+.hero .k{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--encre)!important;font-size:13px!important;letter-spacing:.24em!important}
+.hero .k small{font-size:9.5px;letter-spacing:.32em;color:var(--gris)}
+.logo-g{margin:28px auto 6px;width:min(300px,78%)}
+.logo-g svg{display:block;width:100%;height:auto;opacity:.85}
+.hero h1{font-size:clamp(30px,7.6vw,56px);font-weight:300;line-height:1.12;margin-top:22px}
+.degr{background:none;color:var(--encre);-webkit-text-fill-color:currentColor;font-weight:500}
+.hero .lead{font-size:15.5px;max-width:420px}
+.hero .actions .btn{padding:15px 26px}
+/* le panneau blanc qui chevauche, comme sur l'image */
+.scene{margin-top:34px!important}
+.scene .carte{transform:none!important;width:100%!important;max-width:420px!important;background:#fff!important;border-radius:24px!important;box-shadow:0 30px 60px -30px rgba(47,59,76,.35)!important;padding:20px 20px 20px 22px!important;border-left:1px solid var(--trait)}
+.scene .carte b{font-weight:500}
+.scene .carte .btn{border-radius:999px!important}
+.ouvert{background:none!important;color:var(--gris)!important;padding:0!important;letter-spacing:.2em;text-transform:uppercase;font-size:10px!important}
+/* prestations : lignes fines */
+.grille{grid-template-columns:1fr!important;gap:0;border-top:1px solid var(--trait)}
+.pre{background:none!important;border-radius:0!important;min-height:0!important;padding:22px 2px!important;border-bottom:1px solid var(--trait);display:grid!important;grid-template-columns:1fr auto;grid-template-areas:"t p" "d p";column-gap:14px;row-gap:3px;align-items:center}
+.pre:hover{transform:none!important;box-shadow:none!important}
+.pre svg{display:none}
+.pre h3{grid-area:t;margin:0!important;font-size:21px!important;font-weight:400}
+.pre p{grid-area:d;font-size:13.5px!important}
+.pre .l{grid-area:p;margin:0!important;flex-direction:column;align-items:flex-end;gap:2px}
+.pre .l b{font-size:20px!important;font-weight:400!important;order:-1}
+.pre .l span{font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.tete h2{font-size:clamp(30px,7vw,48px)}
+/* réservation : blanc net, angles droits */
+.resa{background:#fff;border-radius:28px}
+.resa .puces button{border-radius:999px!important}
+.resa .puces button,.opts button,.jours button,.heures button{background:var(--bg)!important;border-radius:14px!important}
+.resa .puces button[aria-pressed="true"],.jours button[aria-pressed="true"],.heures button[aria-pressed="true"]{background:var(--encre)!important;color:#fff!important}
+.recap{background:var(--bg)!important;border-radius:22px!important}
+.avis figure{background:#fff!important;border-radius:22px!important}
+.etoiles{color:var(--acc2)}
+.venir>div:first-child,.carte2{border-radius:22px!important}
+footer{background:transparent}
+.bas .btn{width:100%}
+.resa .puces button{border-radius:999px!important}
+</style></body></html>

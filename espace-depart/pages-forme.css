@@ -1,0 +1,194 @@
+/* Lot 3 du nouvel Espace (maquettes figées du 21/11) : Réglages, Cadences, Véhicules, Équipe, Mes plans en VRAIE PAGE,
+   Mes options et Réseaux au même style. html.f2pg est posé par ecrans-forme.js quand une de ces pages est ouverte. Variables --z-* : ecrans-forme.css. */
+html.f2on.f2pg body #xsheet.sheet{top:0!important;bottom:0!important;max-height:none!important;height:100%!important;border-radius:0!important;background:var(--z-bg)!important;box-shadow:none!important;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 0 0!important;color:var(--z-fg);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+html.f2on.f2pg body #xscrim{background:transparent!important}
+html.f2on.f2pg body #xsheet .grab{display:none!important}
+html.f2on.f2pg body #xsheet .xhead{padding:8px 20px 6px!important;align-items:flex-start!important;border:0!important;background:none!important}
+html.f2on.f2pg body #xsheet .xhead>div{display:flex;flex-direction:column}
+html.f2on.f2pg body #xsheet #x-t{order:2;font-size:30px!important;font-weight:800!important;letter-spacing:-.03em!important;color:var(--z-fg)!important;margin:0!important;line-height:1.1}
+html.f2on.f2pg body #xsheet #x-s{order:1;font-size:13px!important;color:var(--z-mut)!important;font-weight:500!important;margin:0 0 2px!important}
+html.f2on.f2pg body #xsheet #x-back{order:0}
+html.f2on.f2pg body #xsheet #x-back:not([hidden]){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;min-height:0!important;margin:0 0 8px!important;color:var(--z-nuit)!important;font-size:15px!important;font-weight:600!important}
+html.f2on.f2pg body #xsheet .xclose{width:36px!important;height:36px!important;border-radius:50%!important;background:var(--z-tile)!important;border:0!important;box-shadow:var(--z-ombre-s)!important;color:var(--z-fg)!important;font-size:18px!important;margin-top:18px}
+html.f2on.f2pg body #xsheet .sheet-in{padding:8px 20px calc(120px + env(safe-area-inset-bottom,0px))!important;background:none!important}
+html.f2on.f2pg body #xsheet .sheet-foot{position:fixed;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom,0px));padding:0 20px!important;background:none!important;border:0!important;box-shadow:none!important;pointer-events:none}
+html.f2on.f2pg body #xsheet .sheet-foot>*{pointer-events:auto}
+html.f2on.f2pg body #xsheet .sheet-foot.f2fin{display:none!important}
+html.f2on.f2pg body #xsheet .sheet-in{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}
+html.f2on.f2pg body #xsheet .sheet-foot:not(.f2fin)~*{}
+/* la barre du bas reste au-dessus de la page */
+@media (max-width:899px){html.f2on.f2pg .f2.f2b{z-index:36}}
+/* contenu des pages : cartes en tuiles, titres de section simples, boutons pleins en pilule */
+html.f2on.f2pg body #xsheet :is(.card,.vh,.cad-c){background:var(--z-tile)!important;border:0!important;border-radius:22px!important;box-shadow:var(--z-ombre)!important}
+html.f2on[data-theme="dark"].f2pg body #xsheet :is(.card,.vh,.cad-c){box-shadow:none!important}
+html.f2on.f2pg body #xsheet .card .card{box-shadow:none!important;background:transparent!important}
+html.f2on.f2pg body #xsheet :is(h3,.xsec>h3){font-size:19px!important;font-weight:700!important;letter-spacing:-.02em;color:var(--z-fg)!important;text-transform:none!important;margin:22px 2px 10px!important}
+html.f2on.f2pg body #xsheet .card.menu>button,html.f2on.f2pg body #xsheet .card>button{border-bottom:1px solid var(--z-line)!important;background:transparent!important;box-shadow:none!important}
+html.f2on.f2pg body #xsheet .card>button:last-child{border-bottom:0!important}
+html.f2on.f2pg body #xsheet .btn.go{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-radius:26px!important;box-shadow:none!important;border:0!important}
+html.f2on.f2pg body #xsheet .btn.go::after,html.f2on.f2pg body #xsheet .btn.go .lab::after{display:none!important}
+html.f2on.f2pg body #xsheet :is(input,textarea,select){background:var(--z-tile2)!important;border:0!important;box-shadow:none!important;border-radius:16px!important;color:var(--z-fg)!important}
+html.f2on.f2pg body #xsheet .hint,html.f2on.f2pg body #xsheet p{color:var(--z-mut)}
+/* « Un problème ? Une idée ? » en carte pleine, comme la maquette */
+html.f2on.f2pg body #xsheet #rg-pb{background:var(--z-nuit)!important;color:var(--z-sur)!important;border:0!important;box-shadow:none!important;border-radius:22px!important}
+html.f2on.f2pg body #xsheet #rg-pb *{color:inherit!important}
+html.f2on.f2pg body #xsheet #rg-pb :is(small,span:not(:first-child)){opacity:.8}
+
+/* Mes options : panneau en verre, titre en grand */
+html.f2on body .mo-boite{background:color-mix(in srgb,var(--z-bg) 92%,transparent)!important;-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 30px 60px -24px rgba(0,0,0,.35)!important;border-radius:30px!important}
+html.f2on body .mo-tt b{font-size:24px!important;font-weight:800!important;letter-spacing:-.02em;color:var(--z-fg)!important}
+html.f2on body .mo-tt span{color:var(--z-mut)!important}
+
+/* Réseaux sociaux : même ossature que les autres écrans */
+html.f2on body:not(#z) #v-reseaux:not(#z){color:var(--z-fg)}
+html.f2on body:not(#z) #v-reseaux:not(#z) :is(h2.tecr-h,.rs-t h2,h2:first-of-type){font-size:30px!important;font-weight:800!important;letter-spacing:-.03em}
+html.f2on body:not(#z) #v-reseaux:not(#z) .card{background:var(--z-tile)!important;border:0!important;box-shadow:var(--z-ombre)!important;border-radius:22px!important}
+html.f2on body:not(#z) #v-reseaux:not(#z) .btn.go{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-radius:26px!important;box-shadow:none!important}
+html.f2on body:not(#z) #v-reseaux:not(#z) .btn.go::after{display:none!important}
+html.f2on.f2pg body #xsheet .jr-ok:has(>[data-cadfin]:only-child){display:none!important}
+
+/* Connexion : page comme la maquette (lien « ‹ Page d'avant », petit sous-titre, grand titre, carte, deux aides) */
+html.f2on body .vov:has(.vlog){background:var(--z-bg)!important;color:var(--z-fg)}
+html.f2on body .vov:has(.vlog) .pcov-h{flex-direction:column-reverse;align-items:flex-start!important;gap:14px;border:0!important;background:none!important;box-shadow:none!important;padding-left:24px!important;padding-right:24px!important;padding-top:calc(16px + env(safe-area-inset-top,0px))!important}
+html.f2on body .vov:has(.vlog) #vov-t{display:flex;flex-direction:column-reverse;font-size:32px!important;font-weight:800!important;letter-spacing:-.03em;line-height:1.1;white-space:normal;color:var(--z-fg)}
+html.f2on body .vov:has(.vlog) #vov-t small{font-size:13px!important;font-weight:500!important;letter-spacing:0;color:var(--z-mut)!important;margin-bottom:2px}
+html.f2on body .vov:has(.vlog) #vov-x{background:none!important;color:var(--z-nuit)!important;box-shadow:none!important;padding:0!important;font-size:0!important;min-height:0!important}
+html.f2on body .vov:has(.vlog) #vov-x::before{content:"‹ Page d’avant";font:600 16px "Manrope",system-ui,sans-serif}
+html.f2on body .vov:has(.vlog) #vov-x::after{display:none!important}
+html.f2on body .vov:has(.vlog) .pcbody{padding:8px 24px 24px!important;gap:18px!important}
+html.f2on body .vov .card.vlog{background:var(--z-tile)!important;border:0!important;border-radius:26px!important;box-shadow:var(--z-ombre)!important;padding:20px!important;display:grid;gap:14px;color:var(--z-fg)}
+html.f2on body .vov .card.vlog>p{font-size:15px;line-height:1.45}
+html.f2on body .vov .card.vlog :is(#vmail,#vcode){height:54px;border-radius:16px!important;border:0!important;background:var(--z-tile2) no-repeat 16px 50%/18px!important;box-shadow:none!important;padding:0 12px 0 44px!important;font-size:15px!important;color:var(--z-fg)!important}
+html.f2on body .vov .card.vlog #vmail{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23858893' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2.5'/%3E%3Cpath d='M4 7l8 6 8-6'/%3E%3C/svg%3E")!important}
+html.f2on body .vov .card.vlog #vcode{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23858893' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='10.5' width='14' height='10' rx='2.5'/%3E%3Cpath d='M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3'/%3E%3C/svg%3E")!important}
+html.f2on body .vov .card.vlog :is(#vmail,#vcode):focus{outline:0;box-shadow:0 0 0 2px var(--z-fg)!important}
+html.f2on body .vov .card.vlog #vgo{height:54px;border-radius:27px!important;background:var(--z-nuit)!important;color:var(--z-sur)!important;border:0!important;box-shadow:none!important;font-size:16px!important;font-weight:600!important}
+html.f2on body .vov .card.vlog #vgo::after,html.f2on body .vov .card.vlog #vgo::before{display:none!important}
+html.f2on body .vov .vlog-h{font-size:13.5px!important;line-height:1.5;padding:0 4px}
+html.f2on body .vov .vlog-h b{color:var(--z-fg);font-weight:700}
+html.f2on body .vov:has(.vlog) #vov-f:empty{display:none!important}
+
+/* Présentation (maquettes pres-1…7 du 21/11) : à plat, tirets d'avancement, grand bouton plein */
+html.f2on #welcome.pi{--bg:var(--z-bg);--rs:var(--z-tile);--up:var(--z-ombre);--up-s:var(--z-ombre-s);--cx:var(--z-tile2);--in:none;--accx:var(--z-fg);--acc:var(--z-nuit);--fg:var(--z-fg);--muted:var(--z-mut);background:var(--z-bg)!important;color:var(--z-fg)}
+html.f2on #welcome .pi-pts{gap:4px}
+html.f2on #welcome .pi-pts i{width:24px!important;height:3px!important;border-radius:2px;background:var(--z-tile2)!important;box-shadow:none!important}
+html.f2on #welcome .pi-pts i.on{background:var(--z-fg)!important}
+html.f2on #welcome .pi-txt h2{font-size:clamp(26px,7.4vw,30px);font-weight:800;letter-spacing:-.03em}
+html.f2on #welcome .pi-txt p{font-size:16px}
+html.f2on #welcome .pi-bas .btn.go{background:var(--z-nuit)!important;color:var(--z-sur)!important;border-radius:29px!important;box-shadow:none!important;border:0!important;font-weight:600}
+html.f2on #welcome .pi-bas .btn.go::before,html.f2on #welcome .pi-bas .btn.go::after{display:none!important}
+html.f2on #welcome .pi-ret{background:var(--z-tile);box-shadow:var(--z-ombre-s);color:var(--z-fg)}
+html.f2on #welcome .pi-choix[aria-pressed="true"]{box-shadow:0 0 0 2px var(--z-fg),var(--z-ombre)}
+html.f2on #welcome .pi-choix .rd{background:transparent;box-shadow:inset 0 0 0 1.5px var(--z-line),inset 0 0 0 1.5px var(--z-faint)}
+html.f2on #welcome .pi-choix[aria-pressed="true"] .rd{background:var(--z-nuit);box-shadow:none}
+html.f2on #welcome .pi-choix[aria-pressed="true"] .rd::after{width:9px;height:5px;border-radius:0;background:none;border:solid var(--z-sur);border-width:0 0 2px 2px;transform:translateY(-1px) rotate(-45deg)}
+html.f2on #welcome .pi-choix .ap i.c{background:var(--z-fg);opacity:.6}
+
+/* « Votre couleur » : aperçu Jour / Nuit, 6 ronds, le nom dessous (présentation et Réglages) */
+.ce{width:100%;display:grid;gap:16px}
+.ce-ap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}
+.ce-ap figure{margin:0;min-width:0;display:grid;gap:6px;justify-items:center;text-align:center}
+.ce-ap img{width:auto;max-width:100%;height:min(330px,38dvh);aspect-ratio:390/844;object-fit:contain;border-radius:14px;box-shadow:0 0 0 1px var(--z-line),var(--z-ombre);display:block;background:var(--z-tile2)}
+.ce-ap figcaption{font-size:13px;color:var(--z-mut)}
+.ce-r{display:flex;justify-content:space-between;gap:6px;padding:6px 6px 0}
+.ce-r button{width:44px;height:44px;flex:none;border-radius:50%;border:0;position:relative;cursor:pointer;box-shadow:0 1px 2px rgba(23,24,29,.1),0 8px 18px -10px rgba(23,24,29,.4)}
+.ce-r button::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;transition:border-color .25s}
+.ce-r button[aria-checked="true"]::after{border-color:var(--z-fg)}
+html[data-theme="dark"] .ce-r button{box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.ce-nom{text-align:center;margin:0}.ce-nom b{display:block;font-size:17px;font-weight:700;color:var(--z-fg)}.ce-nom span{display:block;font-size:13px;color:var(--z-mut);margin-top:2px}
+#welcome .pi-scene .ce{max-width:400px}
+html.f2on #welcome .pi-w:has(.ce) .pi-txt{min-height:0}
+html.f2on #welcome .pi-w:has(.ce) .pi-scene{min-height:0}
+#rg-ecoul .ce-pt{display:block;width:22px;height:22px;border-radius:50%;box-shadow:0 0 0 2px var(--z-tile,#fff),0 0 0 3px var(--z-line,rgba(0,0,0,.1))}
+
+/* Mes plans → « Pour quel client ? » et le plan dessiné (maquettes plans, plans-client, plan-espace du 21/11) :
+   « ‹ Mes plans » en haut, pas de barre du bas, le bouton d'action en grande pilule en bas */
+html.f2on.f2nb .f2.f2b,html.f2on.f2nb .f2.f2mic{display:none!important}
+html.f2on.f2pg body #xsheet #f2bk{order:0;align-self:flex-start;background:none;border:0;padding:0;margin:0 0 10px;color:var(--z-nuit);font:600 16px "Manrope",system-ui,sans-serif;cursor:pointer}
+html.f2on.f2nb body #xsheet .sheet-foot{bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:10px}
+html.f2on.f2nb body #xsheet .sheet-foot [data-pllist]{display:none!important}
+html.f2on.f2nb body #xsheet .sheet-foot .btn{flex:1;height:54px;border-radius:27px!important;font-size:16px!important;font-weight:600!important;border:0!important}
+html.f2on.f2nb body:not(#z) #xsheet .sheet-foot .btn:not(.go):not(#z){background:var(--z-tile)!important;color:var(--z-fg)!important;box-shadow:var(--z-ombre-s)!important}
+html.f2on.f2nb body #xsheet .sheet-foot .btn::before,html.f2on.f2nb body #xsheet .sheet-foot .btn::after{display:none!important}
+html.f2on.f2nb body #xsheet .sheet-in{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+html.f2on.f2nb body #xsheet #pl-frame{height:calc(100dvh - 236px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;min-height:360px!important;border-radius:22px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)}
+html.f2on.f2nb body #xsheet .sheet-foot:not(:has(.btn:not([data-pllist])))~*{}
+/* Mes plans : les deux grands boutons, la liste à plat */
+html.f2on.f2pg body #xsheet .pl-2{display:grid!important;grid-template-columns:1fr!important;gap:10px}
+html.f2on.f2pg body #xsheet .pl-new{width:100%;height:auto;min-height:58px;border-radius:29px!important;justify-content:center;gap:10px;flex-direction:row!important;text-align:left}
+html.f2on.f2pg body #xsheet .pl-new::before,html.f2on.f2pg body #xsheet .pl-new::after{display:none!important}
+html.f2on.f2pg body #xsheet .pl-new.pl-ph{background:var(--z-tile)!important;color:var(--z-fg)!important;box-shadow:var(--z-ombre-s)!important}
+html.f2on.f2pg body #xsheet .pl-new small{display:block;font-weight:500;font-size:12px;opacity:.7}
+html.f2on.f2pg body #xsheet .cf-li{background:transparent!important;box-shadow:none!important;border-radius:0!important;border-bottom:1px solid var(--z-line)!important}
+html.f2on.f2pg body #xsheet .cf-li:last-child{border-bottom:0!important}
+html.f2on.f2pg body #xsheet .pl-q span{display:none}
+html.f2on.f2pg body #xsheet #pl-q{height:50px;border-radius:25px!important;padding-left:44px!important;background:var(--z-tile) no-repeat 16px 50%/18px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23858893' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E")!important;box-shadow:var(--z-ombre-s)!important}
+html.f2on.f2pg body #xsheet .pl-nc{width:100%;height:60px;border-radius:22px!important;background:var(--z-tile)!important;box-shadow:var(--z-ombre)!important;border:0!important;justify-content:flex-start;gap:12px;padding:0 18px!important;color:var(--z-fg)!important;margin:12px 0 6px}
+html.f2on.f2nb body #xsheet .sheet-foot::before{content:"";position:absolute;left:0;right:0;bottom:-40px;height:120px;background:linear-gradient(to top,var(--z-bg) 55%,transparent);z-index:-1;pointer-events:none}
+html.f2on.f2pg body #xsheet .pl-ph :is(svg,span,small){color:var(--z-fg)!important;stroke:currentColor}
+html.f2on.f2pg body #xsheet .pl-ph svg{background:none!important;box-shadow:none!important}
+#welcome .pi-scene .ce{width:100%}
+#xsheet .ce-ap img{width:100%;height:auto;max-height:52dvh;max-width:calc(52dvh * 390 / 844)}
+html.f2on.f2fi body #xsheet .sheet-foot .f2x{display:none!important}
+html.f2on.f2fi body #xsheet #x-s .f2pre{color:var(--z-mut)}
+/* fiche client : identité sans carte, actions en ronds avec le mot dessous (maquette fiche-client) */
+html.f2on.f2fi body #xsheet .cl-fiche{background:none!important;box-shadow:none!important;padding:0!important}
+html.f2on.f2fi body #xsheet .cl-fiche .cl-id b{display:none}
+html.f2on.f2fi body #xsheet .cl-fiche .kv{background:var(--z-tile);border-radius:22px;padding:14px 16px;box-shadow:var(--z-ombre);margin-top:10px}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z){display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px;background:none!important;box-shadow:none!important}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z) .btn{display:flex!important;flex-direction:column;align-items:center;gap:6px;background:none!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important;height:auto!important;font-size:12px!important;font-weight:500!important;color:var(--z-fg)!important}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z) .btn svg{width:48px!important;height:48px!important;padding:14px;border-radius:50%;background:var(--z-tile);box-shadow:var(--z-ombre-s);box-sizing:border-box;stroke:currentColor;fill:none}
+html.f2on.f2fi body:not(#z) #xsheet .cl-act:not(#z) .btn:disabled{opacity:.4}
+html.f2on.f2nb body #xsheet .sheet-foot .btn{white-space:nowrap;font-size:15.5px!important}
+html.f2on.f2pg body #xsheet .btn.go::before{display:none!important}
+
+/* fiche chantier (maquette fiche-chantier) : retour en texte coloré, grand titre, menu d'icônes en ronds à plat, cartes en tuiles */
+html.f2on body:not(#z) #v-chantiers:not(#z) #ch-back{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important;color:var(--z-nuit)!important;font-size:16px!important;font-weight:600!important;margin:4px 0 12px!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .sec-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx h2.ti{font-size:28px!important;font-weight:800!important;letter-spacing:-.03em;line-height:1.12;color:var(--z-fg)!important;margin:0!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .sec-h .pill{flex:none;background:var(--z-tile)!important;color:var(--z-fg)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;font-size:12px!important;font-weight:600!important;padding:6px 12px!important;border-radius:16px!important;margin-top:4px}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .lead{color:var(--z-mut)!important;font-size:13.5px!important;margin:6px 0 16px!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:14px 4px!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;min-height:0!important;display:flex!important;flex-direction:column;align-items:center;gap:6px;font-size:11.5px!important;font-weight:500!important;color:var(--z-fg)!important;position:relative;grid-column:auto!important}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button svg{width:48px!important;height:48px!important;padding:14px;box-sizing:border-box;border-radius:50%;background:var(--z-tile);box-shadow:var(--z-ombre-s);color:var(--z-fg)}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button[aria-selected="true"] svg,html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu>button.on svg{background:var(--z-nuit);color:var(--z-sur)}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-pane .card{background:var(--z-tile)!important;border:0!important;border-radius:24px!important;box-shadow:var(--z-ombre)!important;padding:16px 18px!important;margin-top:14px}
+html.f2on body:not(#z) #v-chantiers:not(#z) .tip{background:var(--z-tile)!important;box-shadow:var(--z-ombre-s)!important;border:0!important;border-radius:18px!important}
+html.f2on.f2nb #xsheet #x-close{display:none!important}
+html.f2on #xsheet #pl-frame{background:transparent!important;border-radius:0!important}
+/* « Couleur de mon formulaire » à la forme de « Votre couleur » (22/11) : aperçus du vrai formulaire entier, ronds de couleur, choix entouré (plus de beige) */
+html.f2on .fc-apw{gap:12px;margin:0 0 6px}
+html.f2on .fc-apw figure{flex:0 1 auto;max-width:none;display:grid;gap:6px;justify-items:center}
+html.f2on .fc-apw img{width:auto;max-width:100%;height:min(330px,40dvh);aspect-ratio:390/844;object-fit:contain;border-radius:14px;box-shadow:0 0 0 1px var(--z-line),var(--z-ombre)!important;background:var(--z-tile2)}
+html.f2on .fc-apw figcaption{font-size:13px;color:var(--z-mut)}
+html.f2on .fc-nomw{text-align:center;color:var(--z-mut)}html.f2on .fc-nomw b{color:var(--z-fg)}
+html.f2on .fc-l [aria-checked]{border:0!important;background:none!important;box-shadow:none!important}
+html.f2on .fc-l .fc-esp{background:var(--z-tile)!important;border-radius:18px;box-shadow:var(--z-ombre-s)!important}
+html.f2on .fc-l .fc-esp[aria-checked="true"]{box-shadow:0 0 0 2px var(--z-fg)!important}
+html.f2on .fc-g{display:flex;justify-content:space-between;gap:6px;padding:6px 6px 0}
+html.f2on .fc-g button{padding:0!important;gap:8px;position:relative;min-width:0}
+html.f2on .fc-g button small{font-size:11.5px;color:var(--z-mut)}
+html.f2on .fc-g .fc-rd{width:42px;height:42px;position:relative;box-shadow:0 1px 2px rgba(23,24,29,.1),0 8px 18px -10px rgba(23,24,29,.4)}
+html.f2on .fc-g .fc-rd::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;transition:border-color .25s}
+html.f2on .fc-g button[aria-checked="true"] .fc-rd::after{border-color:var(--z-fg)}
+html.f2on .fc-g button[aria-checked="true"] small{color:var(--z-fg);font-weight:700}
+html.f2on #fc-autre{color:var(--z-nuit)}
+/* interrupteurs (Réglages, options) : à la couleur choisie pour l'Espace */
+html.f2on body .sw.on{background:var(--z-nuit)!important}
+html.f2on body .sw.on::after,html.f2on body .sw.on>i{background:var(--z-sur)!important}
+/* la couleur choisie (« Votre couleur ») remplace le bleu nuit partout : tout ce qui utilisait encore --n1-nuit la suit */
+html.f2on:root,html.f2on:root[data-theme="dark"],html.f2on:root[data-theme="light"]{--n1-nuit:var(--z-nuit);--n1-nuit-fg:var(--z-sur)}
+html.f2on body .mo-nv{background:var(--z-nuit)!important}
+
+/* 23/11 : Véhicules, « Détour » : les 5 choix sur une ligne (10 km et 15 km passaient sur 2 lignes, 20 km tout seul dessous) */
+.jr-row:has(>[data-vhd]){display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.jr-row>[data-vhd]{min-width:0!important;padding:0 4px!important;white-space:nowrap;font-size:13.5px}
+/* 24/11 : dans une partie du chantier, sur téléphone, les 10 icônes se replient en une ligne qui glisse */
+@media (max-width:899px){
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:2px!important;margin:0 -16px!important;padding:2px 16px 4px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini::-webkit-scrollbar{display:none}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button{flex:0 0 64px!important;gap:4px;font-size:10.5px!important;scroll-snap-align:start}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button svg{width:38px!important;height:38px!important;padding:10px}
+html.f2on body:not(#z) #v-chantiers:not(#z) #chx .ch-menu.ch-mini>button i{position:absolute!important;top:-2px;right:6px;margin:0}
+}

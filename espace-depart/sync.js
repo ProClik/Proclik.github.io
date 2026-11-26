@@ -14,7 +14,7 @@
 (function(){'use strict';
 if(/[?&]exemple=/.test(location.search))return;
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))return;
-var CLES=['pc-ch9','pc-ev1','pc-st1','pc-dep1','pc-compta1','pc-cmd1','pc-eq1','pc-cotes','pc-ent-v1','pc-ent-on','pc-plans','pc-cl1','pc-cl-sup','pc-fa1','pc-dvn1','pc-rc1','pc-sit-reg'];
+var CLES=['pc-ch9','pc-ev1','pc-st1','pc-dep1','pc-compta1','pc-cmd1','pc-eq1','pc-eq','pc-eq2','pc-hs','pc-cotes','pc-ent-v1','pc-ent-on','pc-plans','pc-cl1','pc-cl-sup','pc-fa1','pc-dvn1','pc-rc1','pc-sit-reg','pc-droits','pc-liste','pc-cad','pc-pd-vus'];
 var META='pc-sync',ls=window.localStorage,S=Storage.prototype,set0=S.setItem,rem0=S.removeItem,calme=0,minuteur=null,enCours=0,arret=0;
 function lit(k){try{var v=ls.getItem(k);return v==null?null:JSON.parse(v)}catch(e){return null}}
 function meta(){var m=lit(META);return m&&typeof m==='object'&&m.k?m:{a:null,k:{}}}
@@ -32,28 +32,16 @@ function appel(chemin,o,garder){o=o||{};var h={Authorization:'Bearer '+jeton()};
  return fetch(SERVICE+chemin,{method:o.method||'GET',headers:h,body:o.body,cache:'no-store',keepalive:!!garder}).then(function(r){
   return r.json().catch(function(){return {}}).then(function(j){if(r.status===401||r.status===402||r.status===403)arret=1;if(!r.ok||j.ok===false)throw new Error(j.erreur||('Erreur '+r.status));return j})})}
 
-/* Photos rangées à part (Cyril 20/11 : « Ok pour … les photos ») : chaque photo écrite dans un tiroir part UNE fois
-   au coffre du service (POST /espace/photo) ; le tiroir ne garde que son adresse, ici comme dans le service.
-   Ça libère la place de l'appareil et du compte. Si le service ne peut pas la prendre, la photo reste comme avant. */
-var PHOTO=/data:image\/[a-z]+;base64,[A-Za-z0-9+\/=]{20000,}/g,PHM='pc-sync-ph';
-function emprunte(x){var h=2166136261;for(var i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}return x.length+':'+(h>>>0).toString(36)}
-function photosDehors(v){var L=v&&v.indexOf('data:image/')>=0?(v.match(PHOTO)||[]):[];if(!L.length)return Promise.resolve(v);
- var M=lit(PHM)||{},u={};L=L.filter(function(x){if(u[x])return false;u[x]=1;return true});
- return L.reduce(function(p,x){return p.then(function(){var e=emprunte(x);if(M[e])return;
-   return appel('/espace/photo',{method:'POST',body:JSON.stringify({img:x})}).then(function(r){if(r&&r.url){M[e]=r.url;calme++;try{set0.call(ls,PHM,JSON.stringify(M))}catch(er){}calme--}},function(){})})},Promise.resolve())
-  .then(function(){return v.replace(PHOTO,function(x){return M[emprunte(x)]||x})})}
-
 /* Envoi de ce qui a changé, un tiroir après l'autre. */
-function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale});if(!L.length)return;
- enCours=1;var k=L[0],v0=ls.getItem(k);
- if(garder&&v0&&PHOTO.test(v0)){PHOTO.lastIndex=0;enCours=0;return}/* des photos à ranger : à la prochaine ouverture */PHOTO.lastIndex=0;
- if(garder)return poste(k,v0,true);
- photosDehors(v0).then(function(v){if(v!==v0&&ls.getItem(k)===v0){calme++;try{set0.call(ls,k,v)}catch(e){}calme--}poste(k,v,false)},function(){poste(k,v0,false)})}
-function poste(k,v,garder){var m=meta(),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
+/* Tiroir que le service ne connaît pas encore (nouveau dans l'Espace, service pas encore à jour) : il reste sur l'appareil
+   et ne bloque JAMAIS l'envoi des autres. Il repart à la prochaine ouverture. */
+var refuse={};
+function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale&&!refuse[k]});if(!L.length)return;
+ enCours=1;var k=L[0],v=ls.getItem(k),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
  if(garder&&corps.length>60000){enCours=0;return}/* trop gros pour partir pendant la fermeture : part à la prochaine ouverture */
  appel('/espace/donnees',{method:'POST',body:corps},garder).then(function(r){var m2=meta();m2.k[k]=m2.k[k]||{};m2.k[k].maj=r.maj;
-   if(ls.getItem(k)===v)delete m2.k[k].sale;ecrisMeta(m2);enCours=0;etat('ok');envoyer()},
-  function(e){enCours=0;etat('attente',e.message);if(!arret){clearTimeout(minuteur);minuteur=setTimeout(envoyer,30000)}})}
+   if(ls.getItem(k)===v){delete m2.k[k].sale;/* un salarié : le service a gardé le planning du patron et n'a pris que sa part, on reprend sa version */if(typeof r.val==='string'&&r.val!==v){calme++;try{pose(k,r.val)}finally{calme--}}}ecrisMeta(m2);enCours=0;etat('ok');envoyer()},
+  function(e){enCours=0;if(/Tiroir (inconnu|réservé)/.test(e.message)){refuse[k]=1;envoyer();return}etat('attente',e.message);if(!arret){clearTimeout(minuteur);minuteur=setTimeout(envoyer,30000)}})}
 
 /* Sécurité n° 1 : avant de remplacer ce qui est sur l'appareil par la version du service, une copie est gardée ici
    (« pc-sync-sauve », la dernière par tiroir). Si l'appareil est plein, on garde au moins le service (historique). */
@@ -87,8 +75,21 @@ function tirer(){if(!actif())return;arret=0;
   envoyer()},function(e){etat('attente',e.message)})}
 
 var ETAT={t:'',msg:''};function etat(t,msg){ETAT={t:t,msg:msg||'',le:Date.now()};try{document.dispatchEvent(new CustomEvent('pc-sync',{detail:ETAT}))}catch(e){}}
-window.PCSYNC={tirer:tirer,envoyer:envoyer,etat:function(){return ETAT},cles:CLES.slice()};
+window.PCSYNC={tirer:tirer,envoyer:envoyer,guetter:function(){guetter()},etat:function(){return ETAT},cles:CLES.slice()};
 
+/* Pendant que l'Espace est ouvert (Cyril 24/11, « que tout fonctionne de partout ») : toutes les minutes, un coup d'œil
+   léger (les dates seulement). Si un invité a écrit, ou si un autre appareil a changé quelque chose, une pastille
+   « Du nouveau » apparaît : on ne recharge jamais la page sous les doigts de l'artisan. */
+var vuNeuf=0;
+function guetter(){if(!actif()||document.visibilityState!=='visible'||enCours||vuNeuf)return;
+ appel('/espace/donnees').then(function(r){var m=meta(),T=r.dates||{};if(m.a&&m.a!==r.compte)return;
+  var n=CLES.filter(function(k){var e=m.k[k]||{};return T[k]&&!e.sale&&T[k]>(e.maj||0)});if(!n.length)return;
+  vuNeuf=1;var b=document.createElement('button');b.type='button';b.id='pc-neuf';b.setAttribute('role','status');
+  b.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:var(--n1-laiton,#B08A3E);flex:none"></span>'+(n.indexOf('pc-ch9')>=0?'Du nouveau sur vos chantiers':'Du nouveau dans votre Espace')+'<b style="margin-left:6px">Afficher</b>';
+  b.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:9999;display:flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:999px;background:var(--n1-nuit,#1B2440);color:#fff;font-family:inherit;font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;width:max-content;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;max-width:calc(100% - 32px)';
+  b.addEventListener('click',function(){b.remove();vuNeuf=0;try{sessionStorage.removeItem('pc-sync-rl')}catch(e){}tirer()});
+  document.body.appendChild(b)},function(){})}
+setInterval(guetter,60000);
 window.addEventListener('online',function(){tirer()});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')envoyer(true);else tirer()});
 window.addEventListener('pagehide',function(){envoyer(true)});

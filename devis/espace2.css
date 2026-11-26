@@ -1,0 +1,494 @@
+/* Formulaire au goût du nouvel Espace (Cyril 22/11, version 2 « regard de DA » pour des gens peu habitués aux applis).
+   Chargé APRÈS relief.css : ne change que l'apparence. Règles : textes plus grands et plus foncés, cases et boutons
+   de 60 px, cartes plates arrondies, laiton = seulement ce qui est choisi / l'étape en cours, bleu nuit = action. */
+:root{--e2-bg:#F3F3F1;--e2-tile:#FBFBFA;--e2-tile2:#EEEEEB;--e2-fg:#17181D;--e2-mut:#575A63;--e2-faint:#8A8D96;--e2-nuit:#1B2440;--e2-sur:#FFFFFF;--e2-laiton:#A8823F;--e2-ink:#17181D;--e2-onink:#F3F3F1;--e2-sh:0 10px 26px -20px rgba(0,0,0,.38);--e2-err:#8A5A12;--e2-errbg:#F6EBD6}
+:root[data-theme="dark"]{--e2-bg:#0F1117;--e2-tile:#191C24;--e2-tile2:#22252F;--e2-fg:#F0F1F4;--e2-mut:#B9BDC8;--e2-faint:#7A7E8A;--e2-nuit:#EFEBE2;--e2-sur:#1B2440;--e2-laiton:#D4B483;--e2-ink:#EFEBE2;--e2-onink:#17181D;--e2-sh:0 10px 26px -18px rgba(0,0,0,.7);--e2-err:#F0C98A;--e2-errbg:#2C2618}
+html body{--bg:var(--e2-bg);--surface:var(--e2-bg);--soft:var(--e2-tile);--fg:var(--e2-fg);--muted:var(--e2-mut);--go-bg:var(--e2-nuit);--go-fg:var(--e2-sur);--mint:var(--e2-nuit);--acc:var(--e2-nuit);
+  background:var(--e2-bg);color:var(--e2-fg)}
+
+/* En-tête : le nom de l'entreprise à la place du robot */
+html body header.top .logo{display:none}
+html body header.top .brand{gap:10px;font-size:15.5px;font-weight:700}
+html body .e2-av{width:40px;height:40px;border-radius:50%;background:var(--e2-nuit);color:var(--e2-sur);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;letter-spacing:.02em}
+html body header.top .brand small{font-size:13px;color:var(--e2-mut);font-weight:500}
+html body .e2-tb{height:36px;min-width:36px;padding:0 11px;border-radius:28px;border:0;background:var(--e2-tile);color:var(--e2-fg);font:700 13.5px Manrope,sans-serif;box-shadow:var(--e2-sh);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+html body .e2-tb[aria-pressed="true"]{background:var(--e2-nuit);color:var(--e2-sur)}
+html body .theme-b{background:var(--e2-tile)!important;box-shadow:var(--e2-sh)!important}
+
+/* Bouton « Aa » : textes plus grands pour ceux qui le souhaitent */
+html.e2-grand #app,html.e2-grand #prog{zoom:1.14}
+html.e2-grand .nav .btn{min-height:64px}
+
+/* Avancement en mots + barre fine */
+html body #prog .progress{height:5px;border-radius:5px;background:var(--e2-tile2);box-shadow:none}
+html body #prog .progress b{background:var(--e2-nuit);border-radius:5px}
+html body .step-meta{font-size:14px!important;color:var(--e2-fg)!important;font-weight:700}
+html body .step-meta .cheer{color:var(--e2-laiton)!important;font-weight:700;font-size:14px}
+
+/* Titres : sans icône devant, plus grands et lisibles */
+html body .gi9{display:none!important}
+html body #app h1{font-size:clamp(26px,7.4vw,32px);line-height:1.1;letter-spacing:-.02em;font-weight:800;text-wrap:balance}
+html body #app .sub{font-size:16px;line-height:1.45;color:var(--e2-mut)}
+html body .lab,html body .q>.lab{font-size:17px!important;font-weight:700;color:var(--e2-fg)}
+
+/* Cases à remplir : 60 px, fond doux, contour bleu nuit quand on écrit */
+html body input[type=text],html body input[type=tel],html body input[type=email],html body input[type=number],html body textarea,html body select{
+  min-height:58px;font-size:18px!important;border-radius:18px!important;background:var(--e2-tile2)!important;border:1.5px solid transparent!important;box-shadow:none!important;color:var(--e2-fg)}
+html body textarea{min-height:120px}
+html body input:focus,html body textarea:focus,html body select:focus{background:var(--e2-tile)!important;border-color:var(--e2-nuit)!important;outline:0}
+html body input::placeholder,html body textarea::placeholder{color:var(--e2-faint)}
+
+/* Cartes de choix : plates, un rond vide montre qu'on peut cocher, la carte choisie se teinte + coche laiton */
+html body .card{background:var(--e2-tile)!important;border-radius:22px!important;box-shadow:var(--e2-sh)!important;border:2px solid transparent!important;position:relative}
+html body .card b{font-size:16px!important}
+html body .card{padding-right:30px!important}
+html body .card:not([aria-pressed="true"])::after{content:"";position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;border:2px solid var(--e2-faint);box-sizing:border-box}
+html body .card[aria-pressed="true"]{border-color:var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 12%,var(--e2-tile))!important;box-shadow:var(--e2-sh)!important}
+html body .card[aria-pressed="true"]::after{background:var(--e2-laiton)!important;color:#fff!important;top:9px;right:9px;width:22px;height:22px}
+
+/* Pastilles de réponse : choisie = laiton */
+html body .chip[aria-pressed="true"],html body .chip.on,html body [data-v][aria-pressed="true"]{border-color:var(--e2-laiton)!important;box-shadow:0 0 0 2px var(--e2-laiton)!important}
+
+/* Blocs */
+html body .carte7,html body .carte9,html body .item,html body .note,html body .drop,html body .recap>div{background:var(--e2-tile)!important;box-shadow:var(--e2-sh)!important;border-radius:24px!important}
+
+/* Erreurs : en clair, douces, avec un repère */
+html body .err:not(:empty){display:flex;gap:8px;align-items:flex-start;color:var(--e2-err)!important;background:var(--e2-errbg);border-radius:14px;padding:10px 12px;font-size:15px!important;font-weight:600;line-height:1.35}
+html body .err:not(:empty)::before{content:"!";flex:none;width:20px;height:20px;border-radius:50%;background:var(--e2-err);color:var(--e2-errbg);display:grid;place-items:center;font-weight:800;font-size:13px;margin-top:1px}
+
+/* Bas de l'écran : Retour près du pouce + gros Continuer */
+html body .nav{background:linear-gradient(to top,var(--e2-bg) 72%,transparent)!important;border-top:0!important;box-shadow:none!important}
+html body .nav .btn{min-height:60px;font-size:17.5px!important;border-radius:28px!important}
+html body .nav .btn.back{background:var(--e2-tile)!important;color:var(--e2-fg)!important;box-shadow:var(--e2-sh)!important;border:0!important}
+html body .btn.go{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;min-height:60px;font-size:17.5px!important;border-radius:28px!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
+
+/* Dicter (champs où l'on écrit beaucoup) */
+html body .e2-dic{width:auto!important;justify-content:flex-start!important;margin-top:8px;height:44px;padding:0 16px 0 12px;border-radius:28px;border:0;background:var(--e2-tile);color:var(--e2-fg);box-shadow:var(--e2-sh);font:700 15px Manrope,sans-serif;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+html body .e2-dic svg{width:20px;height:20px;color:var(--e2-nuit)}
+html body .e2-dic.on{background:var(--e2-nuit);color:var(--e2-sur)}html body .e2-dic.on svg{color:var(--e2-sur)}
+html body .e2-dic-h{font-size:14px;color:var(--e2-mut);margin:6px 0 0}
+
+/* Accueil : confiance + reprise */
+html body .e2-conf{font-size:14px;color:var(--e2-mut);text-align:center;margin:12px 0 0;line-height:1.4}
+html body .e2-rep{font-size:14px;color:var(--e2-mut);text-align:center;margin:8px 0 0}
+
+/* Aide : petite fenêtre */
+html body #e2-aide{position:fixed;inset:0;z-index:60;background:rgba(10,12,18,.45);display:grid;place-items:end center;padding:16px}
+html body #e2-aide[hidden]{display:none}
+html body #e2-aide>div{width:min(460px,100%);background:var(--e2-tile);color:var(--e2-fg);border-radius:26px;padding:22px 20px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+html body #e2-aide h2{margin:0 0 6px;font-size:22px}html body #e2-aide p{margin:0 0 14px;color:var(--e2-mut);font-size:16px;line-height:1.45}
+html body #e2-aide .num{font-size:24px;font-weight:800;letter-spacing:.02em;margin:0 0 14px;color:var(--e2-fg);user-select:all}
+html body #e2-aide a.btn,html body #e2-aide button{display:grid;place-items:center;width:100%;min-height:58px;border-radius:28px;font:700 17px Manrope,sans-serif;text-decoration:none;border:0;margin-top:8px;cursor:pointer}
+html body #e2-aide a.btn{background:var(--e2-nuit)!important;color:var(--e2-sur)!important;box-shadow:0 12px 26px -16px rgba(27,36,64,.6)!important}
+html body #e2-aide button{background:var(--e2-tile2);color:var(--e2-fg)}
+
+/* Fin : quoi préparer */
+html body .e2-prep{text-align:left;margin:14px 0 0;padding:0 0 0 20px;font-size:15.5px;line-height:1.55;color:var(--e2-fg)}
+
+/* En-tête sur téléphone : nom sur une ligne, petits boutons serrés, badge démo discret */
+html body header.top .brand>div:not(.logo){min-width:0;display:flex;flex-direction:column}
+html body header.top .brand{min-width:0;flex:1 1 auto}
+html body #e2-nom,html body header.top .brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+html body header.top .brand small[hidden]{display:none!important}
+html body header.top .top-r{flex:none;gap:6px}
+@media (max-width:520px){
+  html body header.top{position:relative}
+  html body header.top .demo-badge{position:absolute;left:50%;top:-3px;transform:translateX(-50%);font-size:9.5px;padding:2px 8px;z-index:2}
+  html body header.top .brand{font-size:14.5px;gap:9px}
+  html body .e2-av{width:36px;height:36px;font-size:13px}
+  html body .e2-tb{padding:0 10px}
+  html body .step-meta{font-size:13px!important}
+}
+html body .step-meta>span:first-child,html body .step-meta>b:first-child{min-width:0}
+
+/* ===== Fidèle à l'aperçu v2 validé (22/11) ===== */
+/* Pas de ronds d'étapes : l'étape est écrite en mots */
+html body #fil9,html body #prog .progress{display:none!important}
+html body .step-meta{padding-block:6px 2px!important;gap:10px}
+html body .step-meta>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .step-meta .cheer{flex:none}
+html body #app .tete9{display:block}
+html body #app h1{text-align:left}
+
+/* Accueil : titre à gauche + carte sombre « 3 étapes simples » */
+html body .hero7{text-align:left!important}
+html body .hero7 h1,html body .hero7 .sub{text-align:left!important;margin-left:0!important}
+html body ol.fil7{display:block!important;counter-reset:e2;background:var(--e2-ink)!important;color:var(--e2-onink)!important;border-radius:26px;padding:16px 18px 8px!important;margin:18px 0 14px!important;list-style:none;box-shadow:none!important}
+html body ol.fil7::before{content:"3 étapes simples"!important;display:block!important;position:static!important;height:auto!important;background:none!important;animation:none!important;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:4px}
+html body ol.fil7::after,html body ol.fil7 .g7,html body ol.fil7 .n7,html body ol.fil7 li::after,html body ol.fil7 li::before{display:none!important}
+html body ol.fil7 li{counter-increment:e2;display:grid!important;grid-template-columns:30px 1fr;column-gap:12px;row-gap:2px;align-items:start;justify-items:start!important;margin:0!important;animation:none!important;text-align:left!important;padding:10px 0!important;position:relative;width:auto!important;flex:none!important;background:none!important;box-shadow:none!important;border:0!important;opacity:1!important}
+html body ol.fil7 li>b{grid-column:2;text-align:left!important;line-height:1.3!important;font-size:16px!important;color:var(--e2-onink)!important;font-weight:700}
+html body ol.fil7 li>b br{display:none}
+html body ol.fil7 li>.pt7{grid-column:2;background:none!important;padding:0!important;font-size:13.5px!important;color:var(--e2-onink)!important;opacity:.65;font-weight:500;justify-self:start;box-shadow:none!important}
+html body ol.fil7 li>b::before{content:counter(e2);position:absolute;left:0;top:8px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;border:1.5px solid color-mix(in srgb,var(--e2-onink) 35%,transparent);color:var(--e2-onink)}
+html body ol.fil7 li.on>b::before{background:var(--e2-laiton);border-color:var(--e2-laiton);color:#fff}
+html body ol.fil7 li>b{position:static}
+
+/* Cartes de travaux : icône en haut dans un petit carré, nom dessous */
+html body .cards .card{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:space-between!important;text-align:left!important;gap:12px;min-height:92px;padding:14px 34px 14px 14px!important}
+html body .cards .card>svg{width:38px!important;height:38px!important;padding:8px;box-sizing:border-box;border-radius:12px;background:var(--e2-tile2);color:var(--e2-fg);margin:0!important;flex:none}
+html body .cards .card>b{font-size:16px!important;line-height:1.2;text-align:left!important;margin:0!important}
+html body .cards .card[aria-pressed="true"]>svg{background:color-mix(in srgb,var(--e2-laiton) 18%,var(--e2-tile))}
+
+/* Questions regroupées dans une carte claire */
+html body .lq{background:var(--e2-tile);border-radius:24px;padding:16px;box-shadow:var(--e2-sh);display:flex;flex-direction:column;gap:14px}
+html body .lq .q{margin:0!important}
+html body .lq input,html body .lq textarea,html body .lq select{background:var(--e2-tile2)!important}
+
+/* Réponses à toucher : plates, contour laiton quand choisies */
+html body .chip{background:var(--e2-tile)!important;box-shadow:var(--e2-sh)!important;border:2px solid transparent!important;border-radius:18px!important;color:var(--e2-fg)!important}
+html body .chip[aria-pressed="true"],html body .chip.on{border-color:var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 12%,var(--e2-tile))!important;box-shadow:var(--e2-sh)!important}
+
+/* Continuer : pilule pleine, sans rond de flèche */
+html body .nav .btn.go::after{display:none!important}
+html body .nav .btn.go{padding-inline:20px!important}
+
+/* Badge démo discret */
+html body .demo-badge{background:var(--e2-tile2)!important;color:var(--e2-mut)!important;border:0!important;font-size:10.5px!important;letter-spacing:.08em;text-transform:uppercase}
+@media (min-width:700px){
+  html body .hero7{max-width:560px!important;margin-inline:auto!important;align-items:stretch!important;width:100%}
+  html body ol.fil7{max-width:none!important;width:auto!important;box-sizing:border-box}
+  html body .hero7 .carte7{max-width:none!important;width:auto!important;margin-inline:0!important}
+}
+
+/* ===== Plus aéré, plus « premium » (Cyril 22/11 10h15) ===== */
+:root{--e2-line:color-mix(in srgb,var(--e2-fg) 7%,transparent)}
+/* En-tête : seulement « Aide » et « Aa » (affichage) ; démo en bas de page */
+html body #theme,html body header.top .demo-badge{display:none!important}
+html body .e2-tb{box-shadow:none!important;border:1px solid var(--e2-line)!important}
+html body .e2-rd{width:36px;padding:0!important;justify-content:center}
+html body .e2-demo{text-align:center;font-size:12px;color:var(--e2-faint);letter-spacing:.04em;margin:20px 0 6px}
+/* Affichage : petite fenêtre */
+html body #e2-aff{position:fixed;inset:0;z-index:60;background:rgba(10,12,18,.45);display:grid;place-items:end center;padding:16px}
+html body #e2-aff[hidden]{display:none}
+html body #e2-aff>div{width:min(460px,100%);background:var(--e2-tile);color:var(--e2-fg);border-radius:26px;padding:22px 20px 18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+html body #e2-aff h2{margin:0 0 12px;font-size:22px}
+html body #e2-aff .e2-opt{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:58px;padding:0 16px;margin-top:8px;border-radius:18px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-fg);font:700 16.5px Manrope,sans-serif;cursor:pointer}
+html body #e2-aff .e2-opt i{width:46px;height:28px;border-radius:28px;background:var(--e2-tile2);position:relative;flex:none;transition:background .2s}
+html body #e2-aff .e2-opt i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+html body #e2-aff .e2-opt[aria-pressed="true"] i{background:var(--e2-nuit)}
+html body #e2-aff .e2-opt[aria-pressed="true"] i::after{transform:translateX(18px);background:var(--e2-sur)}
+html body #e2-aff [data-e2x]{display:grid;place-items:center;width:100%;min-height:58px;margin-top:14px;border-radius:28px;border:0;background:var(--e2-nuit);color:var(--e2-sur);font:700 17px Manrope,sans-serif;cursor:pointer}
+/* À plat : plus d'ombres, un liseré très fin */
+html body .card,html body .lq,html body .chip,html body .carte7,html body .carte9,html body .item,html body .note,html body .drop,html body .recap>div,html body .rblock,html body .nav .btn.back,html body .e2-dic{box-shadow:none!important}
+html body .card,html body .lq,html body .carte7,html body .carte9,html body .drop,html body .recap>div,html body .rblock,html body .nav .btn.back,html body .e2-dic{border:1px solid var(--e2-line)!important}
+html body .card[aria-pressed="true"]{border:1.5px solid var(--e2-laiton)!important}
+/* Plus d'air, titres un poil plus fins */
+html body #app h1{font-weight:750!important;letter-spacing:-.028em;margin-top:14px!important;margin-bottom:8px!important}
+html body #app .sub{font-size:15.5px;margin-bottom:22px!important}
+html body .step-meta{color:var(--e2-mut)!important;font-weight:600}
+html body .step-meta #stepn{color:var(--e2-fg)}
+html body .hint.iqn{display:none!important}
+html body .cards{gap:10px!important}
+html body .cards .card{min-height:104px}
+html body .cards .card>svg{background:transparent!important;padding:0!important;width:28px!important;height:28px!important}
+/* Réponses : lignes fines de 58 px, rond à cocher à droite, une seule coche */
+html body .lq .chips:not(.pics), html body[data-cur="finition"] #app .q .chips:not(.pics){display:flex!important;flex-direction:column!important;gap:8px!important}
+html body .lq .chip:not(.pic), html body[data-cur="finition"] #app .q .chip:not(.pic){min-height:58px!important;height:auto!important;max-height:72px;padding:0 52px 0 16px!important;justify-content:flex-start!important;text-align:left!important;border:1px solid var(--e2-line)!important;background:var(--e2-bg)!important;position:relative;font-size:16.5px!important;width:100%!important;display:flex!important;align-items:center;gap:12px;flex:none!important}
+html body .lq .chip:not(.pic):not(.dk)::after, html body[data-cur="finition"] #app .q .chip:not(.pic):not(.dk)::after{content:"";position:absolute;right:16px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;border:2px solid var(--e2-faint);box-sizing:border-box}
+html body .lq .chip[aria-pressed="true"], html body[data-cur="finition"] #app .q .chip[aria-pressed="true"]{border:1.5px solid var(--e2-laiton)!important;background:color-mix(in srgb,var(--e2-laiton) 10%,var(--e2-tile))!important}
+html body .lq .chip:not(.pic):not(.dk)[aria-pressed="true"]::after, html body[data-cur="finition"] #app .q .chip:not(.pic):not(.dk)[aria-pressed="true"]::after{border:0;background:var(--e2-laiton) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
+html body .lq .chip.hasci[aria-pressed="true"] .ci, html body[data-cur="finition"] #app .q .chip.hasci[aria-pressed="true"] .ci{background:none!important}
+html body .lq .chip.hasci[aria-pressed="true"] .ci>*, html body[data-cur="finition"] #app .q .chip.hasci[aria-pressed="true"] .ci>*{display:inline-block!important}
+html body .lq .chip.dk, html body[data-cur="finition"] #app .q .chip.dk{justify-content:center!important;padding:0 16px!important;background:transparent!important;border-style:dashed!important}
+/* Continuer : pilule pleine, juste le mot */
+html body .btn.go::before,html body .btn.go::after{display:none!important;content:none!important}
+/* Récapitulatif : « Voir tout » */
+html body .e2-voir{margin:8px 0 0;height:40px;padding:0 14px;border-radius:28px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-nuit);font:700 14.5px Manrope,sans-serif;cursor:pointer}
+/* Toucher doux */
+html body .card,html body .chip,html body .btn{transition:transform .12s ease,background .15s,border-color .15s!important}
+html body .card:active,html body .chip:active,html body .btn:active{transform:scale(.975)}
+
+/* Couleur de l'Espace choisie par l'artisan (6 paires jour / nuit figées le 21/11) */
+:root[data-coul="sapin"]{--e2-nuit:#2F4A3E}:root[data-coul="sapin"][data-theme="dark"]{--e2-nuit:#A9CDB8}
+:root[data-coul="canard"]{--e2-nuit:#1F5560}:root[data-coul="canard"][data-theme="dark"]{--e2-nuit:#94CBD3}
+:root[data-coul="ardoise"]{--e2-nuit:#3A5470}:root[data-coul="ardoise"][data-theme="dark"]{--e2-nuit:#B3C7DE}
+:root[data-coul="noyer"]{--e2-nuit:#4A3A2E}:root[data-coul="noyer"][data-theme="dark"]{--e2-nuit:#D8C3B0}
+:root[data-coul="encre"]{--e2-nuit:#17181D}:root[data-coul="encre"][data-theme="dark"]{--e2-nuit:#FFFFFF}
+:root[data-coul][data-theme="dark"]{--e2-sur:#141927}
+/* 22/11 avis A à Z : fine barre d'avancement qui bouge à chaque écran (sous l'étape), question en grand titre */
+html body #prog .progress{display:block!important;height:4px;margin:6px 0 2px;background:var(--e2-line,rgba(0,0,0,.08));border-radius:4px;overflow:hidden}
+html body #prog .progress b{display:block;height:100%;background:var(--e2-nuit);border-radius:4px;transition:width .45s cubic-bezier(.22,1,.36,1)}
+html body .lq.qt>.q:first-child>.lab{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html body .lq.qt>.q:first-child{padding-top:14px}
+html body .cards .card>span{display:block!important;font-size:13px!important;color:var(--e2-mut)!important;line-height:1.3;margin-top:-6px;text-align:left}
+html body .cards .card{min-height:0!important}
+html body .porte-m{display:block;width:180px;height:auto;margin:6px auto 10px;color:var(--e2-fg)}
+html body .step-meta,html body .step-meta .cheer{font-size:13.5px!important}
+/* iPad/PC : coordonnées sur 2 colonnes, tout tient sur un écran */
+@media (min-width:700px){html body[data-cur="contact"] #app>section{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
+ html body[data-cur="contact"] #app>section>*{grid-column:1/-1}
+ html body[data-cur="contact"] #app>section>.q:has(input[type=text],input[type=tel],input[type=email]){grid-column:auto}}
+/* Plan : plus de bouton « Plein écran » (décision 21/11 : on tourne le téléphone) */
+html body #pf-fs{display:none!important}
+/* 22/11 21h (Cyril : « le formulaire ne tient plus sur un écran, je ne veux pas défiler ») : téléphone, tout tient à l'écran.
+   Accueil resserré ; quand un écran déborde (classe tight posée par fitPage) : cartes de travaux en lignes compactes,
+   réponses en lignes de 46 px, longues listes (7 réponses et plus) sur deux colonnes. */
+@media (max-width:600px){
+ html body.intro .hero7 h1{font-size:28px!important;margin-top:4px!important;line-height:1.1}
+ html body.intro .hero7 .sub{font-size:14.5px!important;line-height:1.4!important}
+ html body.intro .hero7 .fil7{margin-top:12px!important}
+ html body.intro .hero7 .e2-conf{margin-top:6px!important}
+ html body.tight .cards{gap:8px!important}
+ html body.tight .cards .card{display:grid!important;grid-template-columns:22px minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center!important;align-content:start!important;padding:10px 28px 10px 12px!important}
+ html body.tight .cards .card>svg{width:22px!important;height:22px!important}
+ html body.tight .cards .card>b{font-size:15px!important}
+ html body.tight .cards .card>span{grid-column:1/-1;margin:0!important;font-size:12px!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:46px!important;font-size:16px!important}
+ html body.tight .lq .chips{gap:6px!important}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)){display:grid!important;grid-template-columns:1fr 1fr}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip:not(.pic){padding:0 34px 0 12px!important;font-size:14.5px!important}
+}
+@media (max-width:600px){
+ html body.intro .hero7 .fil7 li{padding:6px 0!important}
+ html body.intro .hero7 .carte7 input{min-height:50px!important}
+ html body.tight .cards{gap:6px!important}
+ html body.tight .cards .card{padding:8px 26px 8px 11px!important}
+ html body.tight .cards .card>b{font-size:14.5px!important}
+ /* deux colonnes : le rond de droite devient une petite coche dans le coin, le texte garde toute la place */
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip:not(.pic){padding:0 10px!important;gap:8px}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip:not(.pic):not(.dk)::after{width:16px!important;height:16px!important;right:6px!important;top:6px!important;margin-top:0!important}
+ html body.tight .lq .chips:has(>.chip:nth-child(7)) .chip.dk{grid-column:1/-1}
+}
+/* écrans bas (iPhone dans Safari, petits téléphones) : on garde l'essentiel à l'écran */
+@media (max-height:860px){
+ html body.intro .hero7 .e2-conf{font-size:11.5px!important;margin-top:4px!important}
+ html body.intro .hero7 .carte7 .mini7{margin-top:6px!important}
+}
+@media (max-height:760px){
+ html body.intro .hero7 .sub{display:none!important}
+ html body.tight .cards .card>span{display:none!important}
+ html body.tight .cards .card{min-height:46px!important}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:42px!important}
+}
+@media (max-height:860px){
+ html body.tight .lq .chips:not(:has(>.chip:nth-child(4))):has(>.chip:nth-child(2)){display:grid!important;grid-template-columns:1fr 1fr}
+ html body.tight .lq .chips:not(:has(>.chip:nth-child(4))) .chip.dk{grid-column:1/-1}
+ html body.tight .lq .chip.dk{min-height:38px!important}
+}
+@media (max-height:700px){
+ html body.intro .wrap>footer,html body.intro .e2-pied{display:none!important}
+}
+@media (max-height:700px){
+ html body.intro .foot{display:none!important}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:38px!important;font-size:15px!important}
+ html body.tight .lq .chip.dk{min-height:34px!important}
+ html body.tight .lq .chips{gap:5px!important}
+ html body.tight .lq.lq-in{padding:10px 12px!important;gap:8px!important}
+ html body.tight .lq .q{margin-top:0!important}
+ html body.tight .lq .q .lab{margin-bottom:2px!important}
+}
+@media (max-height:860px){
+ html body.intro .hero7 .carte7{padding:14px 16px!important}
+ html body.intro .hero7 .carte7 .btn.go{min-height:54px!important}
+ html body.intro .hero7 .carte7 .lab{margin-bottom:6px!important}
+}
+@media (max-height:760px){
+ html body.intro .hero7 h1{font-size:26px!important}
+ html body.intro .hero7 .fil7{margin-top:8px!important}
+ html body.intro .foot{display:none!important}
+}
+@media (max-height:760px){
+ html body.intro .hero7 .fil7 li{padding:4px 0!important}
+ html body.intro .hero7 .carte7{margin-top:10px!important;padding:12px 14px!important}
+ html body.intro .hero7 .carte7 .btn.go{min-height:50px!important}
+ html body.intro .hero7 .carte7 input{height:46px!important}
+}
+@media (max-height:860px){
+ html body.intro .hero7{padding-bottom:6px!important}
+ html body.intro .hero7 .e2-conf{margin-top:8px!important;margin-bottom:0!important}
+ html body.intro .hero7 h1{margin-bottom:8px!important}
+}
+@media (max-height:860px){html body.intro .hero7{row-gap:12px!important}}
+@media (max-height:760px){html body.intro .hero7{row-gap:6px!important}}
+/* 22/11 23h50 (Cyril : « sur iPad non plus ») : iPad et ordinateur aussi, quand un écran déborde (classe tight) : réponses en colonnes */
+@media (min-width:601px){
+ html body.tight .lq .chips:has(>.chip:nth-child(4)){display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important}
+ html body.tight .lq .chips .chip.dk{grid-column:1/-1}
+ html body.tight .lq .chip:not(.pic){min-height:46px!important;font-size:16px!important}
+ html body.tight .cards .card>span{display:none!important}
+}
+@media (min-width:900px){html body.tight .lq .chips:has(>.chip:nth-child(7)){grid-template-columns:1fr 1fr 1fr}}
+/* Plan : le cadre du plan prend la hauteur libre de l'écran (iPad couché compris) ; plan plein écran ouvert = la page derrière ne défile pas */
+html body #pframe{height:min(620px,max(340px,calc(100dvh - 160px)))!important}
+html:has(#planfull:not([hidden])),html:has(#planfull:not([hidden])) body{overflow:hidden!important;height:100%!important}
+/* très petits écrans (iPhone SE dans Safari, iPad couché avec le clavier) : l'essentiel seulement */
+@media (max-height:620px){
+ html body.intro .hero7 h1{font-size:23px!important;margin-bottom:4px!important}
+ html body.intro .hero7 .fil7 li small,html body.intro .hero7 .fil7 li span>small{display:none!important}
+ html body.intro .hero7 .fil7 li{padding:3px 0!important}
+ html body.intro .hero7 .e2-conf,html body.intro .foot,html body.intro .wrap>footer,html body.intro .e2-pied{display:none!important}
+ html body.intro .hero7 .carte7 .btn.go{min-height:46px!important}
+ html body.intro .hero7 .carte7 input{height:42px!important;min-height:42px!important}
+ html body.tight #app>section>.sub{display:none!important}
+ html body.tight #app>section>h2,html body.tight #app>section>h1{font-size:23px!important;line-height:1.12!important;margin-bottom:6px!important}
+ html body.tight .lq .chip:not(.pic),html body.tight[data-cur="finition"] #app .q .chip:not(.pic){min-height:36px!important;font-size:14.5px!important}
+ html body.tight .lq .chip.dk{min-height:32px!important}
+ html body.tight .cards .card{min-height:40px!important;padding-block:6px!important}
+}
+@media (max-height:620px){
+ html body.intro .hero7{row-gap:4px!important}
+ html body.intro .hero7 .carte7{margin-top:6px!important;padding:10px 12px!important}
+ html body.intro .hero7 .carte7 .mini7{display:none!important}
+ html body.tight .lq .chips:has(>.chip:nth-child(6)){display:grid!important;grid-template-columns:1fr 1fr;gap:5px!important}
+ html body.tight .lq .chips .chip.dk{grid-column:1/-1}
+ html body.tight .lq .chips:has(>.chip:nth-child(6)) .chip:not(.pic){padding:0 10px!important}
+}
+@media (max-height:620px){
+ html body.tight .lq .chips:has(>.chip:nth-child(6)) .chip:not(.pic):not(.dk){padding:0 24px 0 10px!important;font-size:14px!important;line-height:1.15}
+ html body.tight .lq .chips:has(>.chip:nth-child(6)) .chip:not(.pic):not(.dk)::after{width:15px!important;height:15px!important;right:6px!important;top:6px!important;margin-top:0!important}
+ html body.tight .q{margin-top:6px!important}
+}
+@media (max-height:620px){
+ html body.tight #app .q>.hint,html body.tight #app .q>p.hint,html body.tight #app .lq>.hint,html body.tight #app .q>small{display:none!important}
+}
+@media (max-height:620px){
+ html body:not(.intro) .lq .chip:not(.pic){min-height:36px!important;font-size:14.5px!important}
+ html body:not(.intro) .lq .chip.dk{min-height:30px!important}
+ html body:not(.intro) .lq .chips{gap:4px!important}
+ html body:not(.intro) .lq .q>.lab,html body:not(.intro) .lq .ql{margin-bottom:4px!important}
+}
+/* iPad en plein écran : le bouton × de Safari (en haut à gauche) ne cache plus le titre « Votre plan » */
+:root:fullscreen #planfull .pf-bar,:root:-webkit-full-screen #planfull .pf-bar{padding-left:84px!important}
+
+/* 23/11 : iPad couché (1180 x 820) : l accueil tenait à 27 px près, on retire la petite marque du bas sur les écrans peu hauts */
+@media (min-width:700px) and (max-height:900px){html body.intro .foot,html body.intro .wrap>footer,html body.intro .e2-pied{display:none!important}}
+
+/* 23/11 : petit iPhone (hauteur utile ~550 px) : « Pour venir chez vous » dépassait de 37 px, et « Difficile » sortait du cadre */
+html body .lq .chips{min-width:0}html body .lq .chips>.chip{min-width:0}
+@media (max-height:600px){
+ html body.tight #app h1{font-size:23px!important;margin-bottom:6px!important}
+ html body.tight .lq .chip:not(.pic){min-height:34px!important;padding-top:4px!important;padding-bottom:4px!important}
+ html body.tight .lq .chip.dk{min-height:30px!important}
+ html body.tight .lq .chips{gap:5px!important}
+ html body.tight .lq.lq-in{padding:10px 12px!important;gap:8px!important}
+ html body.tight .lq .q{margin-top:0!important}
+ html body.tight .lq .q .lab{margin-bottom:2px!important}
+}
+
+/* 23/11 : récap « On vérifie ensemble ? » replié, une ligne par partie : la page tient sans défiler */
+html body .recap:has(.rfold){gap:6px}
+html body .rblock.rfold{padding:9px 14px!important}
+html body .rblock.rfold h3{margin:0!important;align-items:center}
+html body .rblock.rfold .rf-t{flex:1;min-width:0;display:flex;flex-direction:column;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html body .rblock.rfold .rsum{font:500 13px/1.3 var(--f-body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+html body .rblock.rfold .rf-t::after{content:"";display:none}
+html body .rblock.rfold:not(.rf-on)>:not(h3){display:none!important}
+html body .rblock.rfold.rf-on .rsum{display:none}
+html body .rblock.rfold.rf-on h3{margin-bottom:6px!important}
+html body .recap .rblock:not(.rfold){padding:10px 14px!important}
+html body .recap .rblock:not(.rfold) h3{margin-bottom:2px}
+/* la carte « Bravo » en petit sur téléphone : le plan miniature et les chiffres restent dans « Votre plan » */
+@media (max-width:600px),(max-height:1100px){html body .recap .hero9 .hplan,html body .recap .hero9 .htiles{display:none!important}html body .recap .hero9{padding:12px 14px!important}html body .recap .hero9>p{margin:2px 0 0!important}}
+@media (max-height:700px){html body .recap+.note,html body .recap ~ .note{display:none}html body .recap .rblock:not(.rfold):not(.rf-keep){display:none}html body .recap .hero9{display:none}}
+/* 23/11 : écran « Merci » sans défilement sur téléphone */
+@media (max-width:600px),(max-height:1100px){
+ html body .done9 .ok9{width:56px!important;height:56px!important;margin:0 auto 6px!important}
+ html body .done9 h1{font-size:26px!important;margin:4px 0!important}
+ html body .done9 .sub{font-size:14.5px!important;margin:0 0 10px!important}
+ html body .done9 ol.fil7{padding:12px 14px!important;margin:0 0 10px!important}
+ html body .done9 ol.fil7::before{margin-bottom:2px!important}
+ html body .done9 ol.fil7 li{padding:4px 0!important}
+ html body .done9 ol.fil7 li .pt7{display:none!important}
+ html body .done9 .carte9{padding:12px 14px!important;font-size:14px!important;line-height:1.4!important}
+ html body .done9 .carte9 p[style]{margin-top:8px!important}
+ html body .done9 .carte9 .e2-prep{margin:2px 0 0!important}
+ html body .done9 .carte9 .mini7{display:none!important}
+ html body .done9 .lien7{margin-top:6px!important}
+}
+@media (max-height:700px){html body .done9 .carte9 p[style],html body .done9 .carte9 .e2-prep{display:none!important}}
+html body .recap{grid-template-columns:minmax(0,1fr)}html body .recap>*{min-width:0}
+@media (max-width:600px),(max-height:1100px){
+ html body .done9{gap:6px!important;row-gap:6px!important;padding-top:0!important;margin-top:0!important}
+ html body .done9>*{margin-top:0!important}
+ html body .done9 .carte9 .e2-prep li{margin:0!important}
+}
+@media (max-width:600px) and (max-height:880px){html body .done9 .carte9 p[style],html body .done9 .carte9 .e2-prep{display:none!important}}
+@media (max-width:600px),(max-height:1100px){
+ html body .recap .hero9{display:none!important}
+ html body .recap:has(.rfold){gap:0}
+ html body .recap>.rblock:not(.rfold){margin-bottom:8px}
+ html body .rblock.rfold{padding:6px 14px!important;border-radius:0!important;box-shadow:none!important;border:0!important;border-top:1px solid var(--line)!important}
+ html body .recap>.rfold:nth-child(1 of .rfold){border-radius:16px 16px 0 0!important;border-top:0!important}
+ html body .recap>.rfold:nth-last-child(1 of .rfold){border-radius:0 0 16px 16px!important}
+ html body .rblock.rfold .rf-t{font-size:14.5px}
+ html body .rblock.rfold .rf-t,html body .rblock.rfold .rsum{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html body .rblock.rfold .rf-t{display:block}html body .rblock.rfold .rsum{display:block;font-size:12.5px}
+ html body .recap>.add{margin-top:10px!important}
+ html body .done9 ol.fil7 li{min-height:34px;align-items:center}
+}
+@media (max-width:600px),(max-height:1100px){
+ html body .recap>.rblock:not(.rfold){display:none!important}
+ html body .recap+.note{font-size:11.5px!important;line-height:1.35!important;padding:8px 12px!important;margin-top:8px!important}
+}
+/* 23/11 : petit iPhone (SE…) : récap et « Merci » sans défilement, une ligne par partie */
+@media (max-height:700px){
+ html body .rblock.rfold .rsum{display:none!important}
+ html body .rblock.rfold{padding:4px 14px!important}
+ html body .rblock.rfold h3{min-height:36px;align-items:center}
+ html body .recap>.add{margin-top:6px!important;min-height:40px!important;padding-block:8px!important}
+ html body .done9 .ok9{width:42px!important;height:42px!important;margin-bottom:0!important}
+ html body .done9 h1{font-size:22px!important}
+ html body .done9 .sub{font-size:13.5px!important;margin-bottom:4px!important}
+ html body .done9 ol.fil7 li{min-height:28px!important}
+}
+
+/* ===== Accueil « Signature ProClik » (choix A de Cyril 24/11) : logo en tête, titre centré, frise des 3 étapes
+   (fil laiton jusqu'à l'étape en cours), carte prénom dessous. Remplace la carte sombre « 3 étapes simples ». ===== */
+html body .hero8{text-align:center!important;align-items:center!important}
+html body .hero8 h1,html body .hero8 .sub,html body #app .hero8 h1{text-align:center!important;margin-inline:auto!important}
+html body .hero8 h1{letter-spacing:-.02em;line-height:1.08}
+html body .hero8 .sub{margin-top:-4px!important}
+html body .logo8{line-height:0;color:var(--e2-nuit)}html body .logo8 svg{width:50px;height:58px}html body .logo8 .pt8{fill:var(--e2-laiton)}
+html body ol.fil8{list-style:none;margin:4px 0 6px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);width:100%;position:relative}
+html body ol.fil8::before{content:"";position:absolute;top:30px;left:16.6%;right:16.6%;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--e2-laiton) 0 50%,var(--e2-line) 50%)}
+html body ol.fil8 li{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;padding:0 4px}
+html body .p8{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:var(--e2-tile);color:var(--e2-mut);box-shadow:var(--e2-sh);border:1px solid var(--e2-line)}
+html body .p8 svg{width:30px;height:30px}
+html body ol.fil8 li.on .p8{background:var(--e2-nuit);color:var(--e2-sur);border-color:transparent;box-shadow:0 0 0 3px var(--e2-bg),0 0 0 5px var(--e2-laiton)}
+html body ol.fil8 b{font-size:15px;line-height:1.25;margin-top:5px;color:var(--e2-fg)}
+html body ol.fil8 small{font-size:12.5px;font-weight:600;color:var(--e2-mut);white-space:nowrap}
+html body ol.fil8 li.on small{color:var(--e2-laiton)}
+html body .hero8 .carte7{width:100%!important;box-sizing:border-box;text-align:left;border-radius:30px!important}
+html body .hero8 .carte7 .btn.go{border-radius:28px!important}
+@media (min-width:700px){html body .hero8{max-width:600px!important}}
+@media (max-width:600px){html body ol.fil8 b{font-size:14px}html body ol.fil8 small{font-size:11.5px}html body .p8{width:54px;height:54px}html body ol.fil8::before{top:27px}html body .logo8 svg{width:42px;height:48px}}
+@media (max-height:760px){html body .logo8 svg{width:36px;height:42px}html body .p8{width:48px;height:48px}html body .p8 svg{width:26px;height:26px}html body ol.fil8::before{top:24px}html body ol.fil8{margin:0}}
+@media (max-height:620px){html body .logo8 svg{width:30px;height:34px}html body ol.fil8 small{display:none}html body ol.fil8 b{font-size:13px;margin-top:2px}html body .p8{width:40px;height:40px}html body .p8 svg{width:22px;height:22px}html body ol.fil8::before{top:20px}}
+@media (prefers-reduced-motion:no-preference){html body ol.fil8 li{animation:fil7m .6s cubic-bezier(.2,.8,.2,1) both}html body ol.fil8 li:nth-child(2){animation-delay:.15s}html body ol.fil8 li:nth-child(3){animation-delay:.3s}}
+
+/* Dessins « où mesurer » (Cyril 24/11, même style que les dessins du toit) : sous l'aide de chaque question de mesure. */
+html body .mes{display:block;width:100%;max-width:380px;height:auto;max-height:min(28vh,210px);margin:2px auto 10px;overflow:visible}
+@media (max-width:600px){html body .mes{max-height:min(23vh,170px);margin:0 auto 8px}}
+@media (max-height:620px){html body .mes{max-height:19vh}}
+/* iPad et ordinateur : le dessin à droite de la question, pour que l'écran tienne sans défiler */
+@media (min-width:700px){
+ html body .q:has(>.mes):not(.pg-off):not([hidden]){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(220px,40%);column-gap:22px;align-items:start;grid-column:1/-1}
+ html body .q:has(>.mes)>*{grid-column:1}
+ html body .q:has(>.mes)>.mes{grid-column:2;grid-row:1/span 8;align-self:start;margin:0;max-height:min(36vh,240px)}
+}
+/* téléphone : dessin assez grand pour lire les mots, mais compact */
+@media (max-width:699px){html body .q>.mes{max-height:min(19vh,140px)}
+ /* Cyril 25/11 : le dessin en haut de la question, toujours à la même place d'un écran à l'autre */
+ html body .q:has(>.mes):not(.pg-off):not([hidden]){display:flex!important;flex-direction:column}html body .q:has(>.mes)>*{width:100%}html body .q:has(>.mes)>.mes{order:-1;margin:0 auto 10px;width:100%}}
+/* fiches en 2 colonnes (iPad couché) : la question avec dessin prend toute la largeur, dessin à droite et lisible */
+html body .item:not(.mini)>*:has(.q>.mes){grid-column:1/-1}
+@media (min-width:700px){html body .item .q:has(>.mes)>.mes{max-height:min(40vh,250px)}}
+
+/* Écran final au style « Signature » de l'accueil (Cyril 25/11 : « cette page ne suit pas le style du formulaire ») */
+html body .done9 ol.fil8{max-width:600px;margin:6px auto 10px}
+html body ol.fil8 li.fait .p8{background:var(--e2-laiton);color:var(--e2-sur);border-color:transparent}
+html body ol.fil8 li.fait small{color:var(--e2-laiton)}
+html body ol.fil8.fin8::before{background:linear-gradient(90deg,var(--e2-laiton) 0 50%,var(--e2-line) 50%)}
+/* Récap (Cyril 25/11 : « on ne sait pas qu'il faut cliquer sur la question pour voir les réponses ») : bouton « Voir ⌄ » visible sur chaque ligne */
+html body .rblock.rfold h3 .rf-v{display:inline-flex;align-items:center;gap:4px;flex:none;padding:6px 12px!important;border-radius:28px;background:var(--e2-tile)!important;border:1px solid var(--e2-line)!important;color:var(--e2-nuit)!important;font:700 13px var(--f-body)!important;box-shadow:var(--e2-sh)}
+html body .rblock.rfold h3 .rf-v svg{width:15px;height:15px;transition:transform .2s}
+html body .rblock.rfold .rf-v .rv-c,html body .rblock.rfold.rf-on .rf-v .rv-o{display:none}
+html body .rblock.rfold.rf-on .rf-v .rv-c{display:inline}
+html body .rblock.rfold.rf-on .rf-v svg{transform:rotate(180deg)}
+html body .rblock.rfold .rsum{display:block!important}
+html body .rblock.rfold.rf-on .rsum{display:none!important}
+/* téléphone (Cyril 25/11, tour complet) : le titre de la question passe à la ligne au lieu d'être coupé (« Quels travaux souhai… ») */
+html body .rblock.rfold .rf-t{white-space:normal!important;line-height:1.25}
+html body .rblock.rfold h3{gap:8px}
+@media (max-width:600px){html body .rblock.rfold h3 .rf-v{padding:6px 10px!important}html body .rblock.rfold h3 button[data-goto]{font-size:12.5px!important}}

@@ -1,4 +1,16 @@
-<!doctype html><html lang="fr"><head><script src="entreprise.js?v=3"></script><script src="exemple.js?v=1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
+<!doctype html><html lang="fr"><head><script>/* 23/11 (Cyril) : l'Espace vit à la vraie date. La démo (posée autour du vendredi 16/10/2026) est décalée de semaines entières jusqu'à la semaine en cours. */
+window.PCDEMO=(function(){var A=new Date(2026,9,16,12),T=new Date();T.setHours(12,0,0,0);function lu(d){var x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}var w=Math.round((lu(T)-lu(A))/(7*864e5));
+function z(n){return ('0'+n).slice(-2)}function iso(d){return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())}
+var JL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+function mv(d){var x=new Date(d);x.setDate(x.getDate()+7*w);return x}
+function sh(s){if(typeof s!=='string'||!w)return s;if(/^\d{4}-\d\d-\d\d$/.test(s))return iso(mv(new Date(s+'T12:00:00')));
+ /* textes de la démo : « mer. 14/10 » et « mardi 20 » suivent aussi (semaines entières : le jour de la semaine reste juste) */
+ s=s.replace(/\b(lun|mar|mer|jeu|ven|sam|dim)\. (\d{1,2})\/(\d{1,2})\b/g,function(m,j,dd,mm){var d=mv(new Date(2026,+mm-1,+dd,12));return j+'. '+d.getDate()+'/'+z(d.getMonth()+1)});
+ s=s.replace(/\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) (\d{1,2})\b(?!\/)/g,function(m,j,dd){var k=JL.indexOf(j),b=null;for(var mo=8;mo<12;mo++){var d=new Date(2026,mo,+dd,12);if(d.getDate()===+dd&&d.getDay()===k&&(!b||Math.abs(d-A)<Math.abs(b-A)))b=d}return b?j+' '+mv(b).getDate():m});
+ s=s.replace(/\b(lun|mar|mer|jeu|ven|sam|dim)\. (\d{1,2})\b(?![\/\d])/g,function(m,j,dd){var k=['dim','lun','mar','mer','jeu','ven','sam'].indexOf(j),b=null;for(var mo=8;mo<12;mo++){var d=new Date(2026,mo,+dd,12);if(d.getDate()===+dd&&d.getDay()===k&&(!b||Math.abs(d-A)<Math.abs(b-A)))b=d}return b?j+'. '+mv(b).getDate():m});
+ return s}
+function deep(o){if(Array.isArray(o)){for(var i=0;i<o.length;i++)o[i]=deep(o[i]);return o}if(o&&typeof o==='object'){for(var k in o)o[k]=deep(o[k]);return o}return sh(o)}
+return {w:w,sh:sh,deep:deep,push:function(a){var L=[].slice.call(arguments,1);deep(L);return a.push.apply(a,L)},iso:iso,today:function(){return new Date(T)},d:function(y,m,j){var d=new Date(y,m,j,12);d.setDate(d.getDate()+7*w);return d}}})();</script><script src="entreprise.js?v=3"></script><script src="exemple.js?v=1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
 <title>ProClik</title>
 <meta name="apple-mobile-web-app-title" content="ProClik"><meta name="application-name" content="ProClik">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -568,7 +580,7 @@ button.pill{cursor:pointer}
 :root{--pc-anneau:#1B2440}:root[data-theme="dark"]{--pc-anneau:#F2EEE4}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pc-anneau:#F2EEE4}}path.pcf{fill:var(--pc-anneau)!important}.nv .r{stroke:var(--pc-anneau)!important}.nv .f{fill:var(--pc-anneau)!important}
 </style>
 
-<script>window.PC_PROFIL_DEMO="PRO";</script><script src="ouverture.js?v=30"></script>
+<script>window.PC_PROFIL_DEMO="PRO";</script><script src="ouverture.js?v=36"></script>
 
 <div class="app">
 <header class="head">
@@ -597,7 +609,7 @@ button.pill{cursor:pointer}
 <p class="lead" id="phrase"></p>
 <div class="grid2" style="margin-top:16px">
 <div class="col">
-<div class="today"><small>AUJOURD'HUI · VENDREDI 16</small><b><span id="n-todo">4</span> choses à faire</b><span>Le reste tourne tout seul : 3 relances parties ce matin.</span></div>
+<div class="today"><small id="auj-txt">AUJOURD'HUI</small><script>(function(){var e=document.getElementById('auj-txt');if(e)e.textContent="AUJOURD'HUI · "+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric'}).toUpperCase()})();</script><b><span id="n-todo">4</span> choses à faire</b><span>Le reste tourne tout seul : 3 relances parties ce matin.</span></div>
 <div class="sec-h"><h2>À faire maintenant</h2><span>par ordre d'urgence</span></div>
 <div class="card todo" id="todo"></div>
 <div class="pcq-h"><b>Nouveau pré-devis sur le chantier</b><span>3 façons, au choix</span></div>
@@ -680,11 +692,11 @@ button.pill{cursor:pointer}
 <div class="col">
 <div class="sec-h"><h2>Mises à jour proposées</h2><span id="upd-n">3 lignes</span></div>
 <div class="card" id="upd">
-<div class="upd"><div><b>Fenêtre PVC 2 vantaux 120 × 135</b><br><small>Menuiseries des Alpes · devis du 15/10</small></div><div class="ch"><s>412 €</s> → <b>428 €</b><br><span class="up">+3,9 %</span></div><div class="ac"><button class="btn sm go" data-ok="1">Accepter</button><button class="btn sm" data-no="1">Garder 412 €</button></div></div>
+<div class="upd"><div><b>Fenêtre PVC 2 vantaux 120 × 135</b><br><small>Menuiseries des Alpes · devis du <span class="pcd">15/10</span></small></div><div class="ch"><s>412 €</s> → <b>428 €</b><br><span class="up">+3,9 %</span></div><div class="ac"><button class="btn sm go" data-ok="1">Accepter</button><button class="btn sm" data-no="1">Garder 412 €</button></div></div>
 <div class="upd"><div><b>Plaque BA13 standard</b><br><small>Placo Dauphiné · nouveau tarif · <b style="color:var(--warn)">⚠ hausse de plus de 5 %</b></small></div><div class="ch"><s>2,62 €</s> → <b>2,79 €</b><br><span class="up">+6,5 %</span></div><div class="ac"><button class="btn sm go" data-ok="1">Accepter</button><button class="btn sm" data-no="1">Garder 2,62 €</button></div></div>
 <div class="upd"><div><b>Nouvel article : rail R48</b><br><small>Placo Dauphiné · référence absente de votre base</small></div><div class="ch"><b>3,10 €</b><br><small>le mètre</small></div><div class="ac"><button class="btn sm go" data-ok="1">Ajouter</button><button class="btn sm" data-no="1">Ignorer</button></div></div>
 </div>
-<button class="btn go" id="okall">Tout accepter</button>
+<button class="btn go" id="okall">Tout accepter</button><script>document.querySelectorAll(".pcd").forEach(function(e){var m=e.textContent.match(/^(\d+)\/(\d+)$/);if(m&&window.PCDEMO&&PCDEMO.w){var d=new Date(2026,+m[2]-1,+m[1],12);d.setDate(d.getDate()+7*PCDEMO.w);e.textContent=d.getDate()+"/"+("0"+(d.getMonth()+1)).slice(-2)}})</script>
 <p class="hint">Les devis déjà envoyés ne changent pas. Seuls les prochains pré-devis utilisent les nouveaux prix.</p><div class="card is-soon" style="display:flex;flex-direction:column;gap:8px"><div class="row"><b>Catalogue qui apprend</b><span class="soon">Bientôt</span></div><small style="color:var(--muted)">Une correction que vous faites souvent devient une proposition : « On l'ajoute à votre catalogue ? »</small></div><div class="card is-soon" style="display:flex;flex-direction:column;gap:8px"><div class="row"><b>Prix indicatif fenêtres</b><span class="soon">Bientôt</span></div><small style="color:var(--muted)">Une fourchette tirée de vos devis fournisseur, seulement si vous l'activez.</small></div>
 </div>
 </div></div>
@@ -985,7 +997,9 @@ var P=["Votre agenda est plein, votre café est froid. On s'occupe du reste.","D
 $('#phrase').textContent=P[new Date().getDate()%P.length];
 var root=document.documentElement;
 $('#theme').addEventListener('click',function(){pcTheme()});
-var tmr;function toast(t,s){$('#tt').textContent=t;$('#ts').textContent=s||'';$('#toast').classList.add('on');clearTimeout(tmr);tmr=setTimeout(function(){$('#toast').classList.remove('on')},3400);}
+/* 23/11 (Cyril) : une bulle peut se toucher pour aller directement au sujet (3e argument = ce qu il faut ouvrir) */
+var tmr,tact=null;function toast(t,s,act){var e=$('#toast');$('#tt').textContent=t;$('#ts').textContent=s||'';tact=typeof act==='function'?act:null;e.classList.toggle('va',!!tact);if(tact){e.setAttribute('role','button');e.tabIndex=0}else{e.setAttribute('role','status');e.removeAttribute('tabindex')}e.classList.add('on');clearTimeout(tmr);tmr=setTimeout(function(){e.classList.remove('on')},tact?6000:3400);}
+(function(){var e=$('#toast');if(!e)return;function vas(ev){if(!tact||!e.classList.contains('on'))return;ev.preventDefault();var f=tact;tact=null;clearTimeout(tmr);e.classList.remove('on');try{f()}catch(x){}}e.addEventListener('click',vas);e.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' ')vas(ev)})})();
 /* ---------- données de démonstration (prix de la bibliothèque ProClik) ---------- */
 var D=[
  {id:'0044',client:'Mme Durand',ville:'Grenoble',titre:'Cloisons du séjour',recu:'ce matin, 7 h 58',tva:10,statut:'todo',marge:'v',
@@ -1073,7 +1087,7 @@ function go(v){$$('.view').forEach(function(s){s.hidden=s.id!=='v-'+v});$$('[rol
 $$('[role=tab][data-v]').forEach(function(b){b.addEventListener('click',function(){go(b.dataset.v)})});
 /* ---------- prix ---------- */
 function updCount(){var n=$$('#upd .upd:not(.done)').length;$('#upd-n').textContent=n?n+' ligne'+(n>1?'s':''):'à jour ✓';$('#okall').hidden=!n}
-$$('#upd [data-ok]').forEach(function(b){b.addEventListener('click',function(){var u=b.closest('.upd');u.classList.add('done');u.querySelector('.ch').insertAdjacentHTML('beforeend','<br><span class="pill ok">Accepté</span>');updCount();if(!online()){Q.push({t:'prix'});save();netUI()}toast('Catalogue mis à jour',online()?'Les prochains pré-devis utiliseront ce prix.':'Enregistré sur le téléphone, synchronisé au retour du réseau.')})});
+$$('#upd [data-ok]').forEach(function(b){b.addEventListener('click',function(){var u=b.closest('.upd');u.classList.add('done');u.querySelector('.ch').insertAdjacentHTML('beforeend','<br><span class="pill ok">Accepté</span>');updCount();if(!online()){Q.push({t:'prix'});save();netUI()}toast('Catalogue mis à jour',online()?'Les prochains pré-devis utiliseront ce prix.':'Enregistré sur le téléphone, synchronisé au retour du réseau.',function(){go('produits')})})});
 $$('#upd [data-no]').forEach(function(b){b.addEventListener('click',function(){var u=b.closest('.upd');u.classList.add('done');u.querySelector('.ch').insertAdjacentHTML('beforeend','<br><span class="pill grey">Gardé</span>');updCount()})});
 $('#okall').addEventListener('click',function(){$$('#upd .upd:not(.done) [data-ok]').forEach(function(b){b.click()})});
 $$('#a-prix [data-add]').forEach(function(b){b.addEventListener('click',function(){var m={photo:'Prenez en photo un devis, un ticket ou une étiquette.',mail:'Transférez le devis à tarifs.dupont@proclik.fr.',file:'Glissez un PDF ou un tableau Excel.'};toast('Démo · '+b.textContent.trim(),m[b.dataset.add])})});
@@ -1098,7 +1112,7 @@ function renderWeek(){$('#week').innerHTML=JOURS.map(function(j){return '<button
 function renderDay(){var j=JOURS.filter(function(x){return x[1]===curDay})[0];$('#day-t').textContent={Lun:'Lundi',Mar:'Mardi',Mer:'Mercredi',Jeu:'Jeudi',Ven:'Vendredi'}[j[0]]+' '+curDay;
  var L=AG[curDay]||[];$('#day-s').textContent=L.filter(function(a){return a[3]==='free'}).length+' créneau(x) libre(s)';
  $('#day').innerHTML=L.map(function(a,i){var cls=a[3]==='on'?' on':a[3]==='free'?' free tap':'';return '<div class="slot"><span class="h">'+a[0]+'</span><div class="b'+cls+'"'+(a[3]==='free'?' role="button" tabindex="0" data-free="'+i+'"':'')+'><b'+(a[3]==='free'?' style="color:var(--muted)"':'')+'>'+(a[3]==='free'?'Créneau libre':a[1])+'</b><small>'+(a[3]==='free'?(a[2]||'Touchez pour le proposer'):a[2])+'</small></div></div>'}).join('');
- $$('#day [data-free]').forEach(function(el){var f=function(){toast('Créneau proposé à Mme Durand',JOURS.filter(function(x){return x[1]===curDay})[0][0]+'. '+curDay+' · '+AG[curDay][+el.dataset.free][0]+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'));if(!online()){Q.push({t:'sms'});save();netUI()}};el.addEventListener('click',f);el.addEventListener('keydown',function(e){if(e.key==='Enter')f()})});}
+ $$('#day [data-free]').forEach(function(el){var f=function(){toast('Créneau proposé à Mme Durand',JOURS.filter(function(x){return x[1]===curDay})[0][0]+'. '+curDay+' · '+AG[curDay][+el.dataset.free][0]+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'),function(){go('devis');open('0044')});if(!online()){Q.push({t:'sms'});save();netUI()}};el.addEventListener('click',f);el.addEventListener('keydown',function(e){if(e.key==='Enter')f()})});}
 function renderAplan(){$('#aplan').innerHTML=
  '<button data-goto="devis"><span class="dot c">✓</span><span class="tx"><b>Mme Durand · cloisons</b><small>2 jours estimés · à planifier dès la signature</small></span><span class="go">›</span></button>'+
  '<button data-goto="devis"><span class="dot o">€</span><span class="tx"><b>M. Martin · 2 fenêtres</b><small>pose après livraison fournisseur (délai à confirmer)</small></span><span class="go">›</span></button>';
@@ -1123,7 +1137,7 @@ renderWeek();renderDay();renderAplan();renderPins();
 /* ---------- calendrier semaine / mois ---------- */
 var CK={run:['var(--k-run)','Chantier en cours'],plan:['var(--k-plan)','Chantier prévu'],done:['var(--k-done)','Chantier terminé'],visit:['var(--k-visit)','Visite'],pc:['var(--k-pc)','Point ProClik'],free:['var(--k-free)','Créneau libre']};
 var EV=[];
-(function(){function add(d,s,e,k,t,w,x){EV.push({d:d,s:s,e:e,k:k,t:t,w:w||'',x:x||{}});}
+(function(){function add(d,s,e,k,t,w,x){EV.push({d:PCDEMO.sh(d),s:s,e:e,k:k,t:t,w:w||'',x:x||{}});}
  function chan(days,k,t,w,s,e,x){days.forEach(function(d,i){add(d,s||'08:00',e||'17:00',k,t,w+(days.length>1?' · jour '+(i+1)+' sur '+days.length:''),x);});}
  chan(['2026-10-01','2026-10-02'],'done','Chantier M. Faure','Seyssinet · cloisons salle de bain');
  chan(['2026-10-05','2026-10-06','2026-10-07'],'done','Boulangerie Rey','Grenoble · faux plafond du fournil');
@@ -1149,7 +1163,7 @@ var EV=[];
  chan(['2026-10-29','2026-10-30'],'plan','M. Lopez · salle de bain','Échirolles · à confirmer','08:00','16:00',{tent:1});
 })();
 var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],JS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],JL=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
-var TODAY=new Date(2026,9,16),calWk=monday(TODAY),calMo=new Date(2026,9,1),calSel=new Date(2026,9,16),evSel=null;
+var TODAY=PCDEMO.today(),calWk=monday(TODAY),calMo=new Date(TODAY.getFullYear(),TODAY.getMonth(),1),calSel=PCDEMO.today(),evSel=null;
 function monday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
 function iso(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function addD(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
@@ -1189,7 +1203,7 @@ function evDetail(sel,e){if(!e){$(sel).innerHTML='';return;}var c=CK[e.k],d=new 
  var b=$(sel+' [data-goch]');if(b)b.addEventListener('click',function(){go('chantiers');showCh(e.x.ch===1?'alpes':e.x.ch)});
  b=$(sel+' [data-stsms]');if(b)b.addEventListener('click',function(){PCPLAN.st.sms(e.x.st,e.x.ch)});
  b=$(sel+' [data-godv]');if(b)b.addEventListener('click',function(){go('devis');open(this.dataset.godv)});
- b=$(sel+' [data-propose]');if(b)b.addEventListener('click',function(){toast('Créneau proposé à Mme Durand',e.d.slice(8)+'/'+e.d.slice(5,7)+' · '+e.s.replace(':','h')+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'));if(!online()){Q.push({t:'sms'});save();netUI()}});
+ b=$(sel+' [data-propose]');if(b)b.addEventListener('click',function(){toast('Créneau proposé à Mme Durand',e.d.slice(8)+'/'+e.d.slice(5,7)+' · '+e.s.replace(':','h')+(online()?' · SMS envoyé.':' · SMS envoyé au retour du réseau.'),function(){go('devis');open('0044')});if(!online()){Q.push({t:'sms'});save();netUI()}});
 }
 function renderCalMonth(){
  $('#mo-t').innerHTML=cap(MOIS[calMo.getMonth()])+' <span>'+calMo.getFullYear()+'</span>';
@@ -1215,7 +1229,7 @@ $('#wk-next').addEventListener('click',function(){calWk=addD(calWk,7);evSel=null
 $('#wk-today').addEventListener('click',function(){calWk=monday(TODAY);renderCalWeek();});
 $('#mo-prev').addEventListener('click',function(){calMo=new Date(calMo.getFullYear(),calMo.getMonth()-1,1);renderCalMonth();});
 $('#mo-next').addEventListener('click',function(){calMo=new Date(calMo.getFullYear(),calMo.getMonth()+1,1);renderCalMonth();});
-$('#mo-today').addEventListener('click',function(){calMo=new Date(2026,9,1);calSel=TODAY;renderCalMonth();});
+$('#mo-today').addEventListener('click',function(){calMo=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);calSel=TODAY;renderCalMonth();});
 $$('.cal-key').forEach(function(x){x.innerHTML=calKey();});
 /* La semaine tient sur l'écran (Cyril, 3/11) : la hauteur d'une heure suit la hauteur de l'écran */
 var calRz=0;addEventListener('resize',function(){clearTimeout(calRz);calRz=setTimeout(renderCalWeek,150)});
@@ -1242,7 +1256,7 @@ $('#x-back').addEventListener('click',function(){xstack.pop();xrender();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#xsheet').classList.contains('on'))xclose();});
 
 /* ---------- données de démonstration ---------- */
-if(!find('0042'))D.push(
+if(!find('0042'))PCDEMO.push(D,
  {id:'0042',client:'M. Lopez',ville:'Échirolles',titre:'Cloison de salle de bain',recu:'mer. 14/10',tva:10,statut:'signed',marge:'v',dos:'lopez',sentAt:'mer. 14/10 à 18 h 20',signedAt:'jeu. 15/10 à 20 h 41',
   ask:[['Travaux','Cloison hydrofuge + porte'],['Longueur','3,20 m'],['Hauteur','2,50 m (mesurée en visite)'],['Logement','maison, plus de 2 ans']],
   fil:[['lun. 12/10','Demande reçue par le chatbot'],['mer. 14/10 16 h 30','Visite faite, cotes prises'],['mer. 14/10 18 h 20','Devis envoyé pour signature'],['jeu. 15/10 20 h 41','Devis signé en ligne']],
@@ -1256,14 +1270,14 @@ var relOn=lsGet('pc-rel',true);
 var SUP={mda:{n:'Menuiseries des Alpes',m:'devis@menuiseries-alpes.example',t:'Fenêtres, portes-fenêtres',d:'répond en 1 jour ouvré en général'},
  pd:{n:'Placo Dauphiné',m:'commandes@placo-dauphine.example',t:'Plaques, rails, enduits',d:'répond en 1 à 2 jours'},
  nim:{n:'Négoce Isère Matériaux',m:'agence.grenoble@negoce-isere.example',t:'Isolants, quincaillerie',d:'répond le jour même'}};
-var DP=lsGet('pc-dp7',null)||[
+var DP=lsGet('pc-dp7',null)||PCDEMO.deep([
  {id:'DP-013',sup:'pd',dos:'durand',devis:'0044',st:'wait',sent:'hier 18 h 06',since:'24 h',items:[['Plaque BA13 standard 2,50 m','12 u'],['Rail R48','16 m'],['Montant M48','24 u'],['Bande à joint + enduit','1 lot']]},
  {id:'DP-012',sup:'mda',dos:'martin',devis:'0043',st:'recu',sent:'hier 18 h 06',got:'ce matin 9 h 12',items:[['Fenêtre PVC 2 vantaux 120 × 135, oscillo-battant, Uw ≤ 1,3','2 u']],
   ia:[['Référence','MDA-PVC-2V-120135'],['Dimensions','120 × 135 cm'],['Uw / Sw','1,2 / 0,32'],['Prix unitaire HT','428,00 € (avant : 412,00 €)'],['Délai','4 semaines']]},
- {id:'DP-010',sup:'nim',dos:'alpes',st:'done',sent:'ven. 9/10',got:'ven. 9/10',cmd:'lun. 12/10',liv:'mar. 13/10',items:[['Plaques BA13','12 u'],['Fourrures F530 (3 m)','26 u'],['Suspentes','53 u'],['Laine minérale 45 mm','32 m²']]}];
+ {id:'DP-010',sup:'nim',dos:'alpes',st:'done',sent:'ven. 9/10',got:'ven. 9/10',cmd:'lun. 12/10',liv:'mar. 13/10',items:[['Plaques BA13','12 u'],['Fourrures F530 (3 m)','26 u'],['Suspentes','53 u'],['Laine minérale 45 mm','32 m²']]}]);
 function saveDP(){lsSet('pc-dp7',DP);}
 
-var DOS={
+var DOS=PCDEMO.deep({
  durand:{n:'Mme Durand',v:'Grenoble',adr:'[adresse], Grenoble',tel:'06 •• •• •• 12',t:'Cloisons du séjour',k:'devis',dv:'0044',src:'Formulaire du site',
   chat:[['bot','Bonjour ! Quel type de travaux souhaitez-vous ?','7 h 52'],['cli','Une cloison dans mon séjour pour faire un bureau, avec une porte.','7 h 53'],['bot','Merci. Quelle longueur fait le mur ? Une photo de la pièce nous aide beaucoup.','7 h 53'],['cli','5,80 m environ. Je ne connais pas la hauteur. J\'envoie 3 photos.','7 h 56'],['bot','Parfait. Julien vous répond sous 48 h, souvent bien avant.','7 h 58']],
   ph:[['Séjour, vue d\'ensemble','Hauteur estimée 2,50 m d\'après la porte existante. À confirmer.'],['Mur du futur bureau','Sol carrelé, pas de radiateur sur le tracé.'],['Plan dessiné par la cliente','Longueur 5,80 m lue sur le plan.']],
@@ -1287,12 +1301,12 @@ var DOS={
   chat:[['bot','Bonjour ! Quels travaux ?','mar. 20 h 12'],['cli','Refaire toutes les cloisons de l\'étage, environ 60 m².','20 h 14'],['bot','Pour un chantier de cette taille, Julien vient voir sur place. Un créneau vous a été proposé.','20 h 15']],
   ph:[],docs:[],hist:[['mar. 13/10','Demande reçue, au-dessus de votre seuil de visite'],['mar. 13/10','Visite proposée par SMS, créneau choisi par le client'],['ven. 16/10 · 14 h','Visite prévue']]},
  tilleuls:{n:'SCI Les Tilleuls',v:'Voiron',adr:'[adresse], Voiron',tel:'04 •• •• •• 70',t:'Rénovation de 3 bureaux',k:'visite',src:'Formulaire du site',chat:[],ph:[],docs:[],
-  hist:[['jeu. 15/10','Demande reçue · hors de votre zone de 25 km'],['jeu. 15/10','Visite proposée mardi 20 à 9 h']]}};
+  hist:[['jeu. 15/10','Demande reçue · hors de votre zone de 25 km'],['jeu. 15/10','Visite proposée mardi 20 à 9 h']]}});
 var nm={'Cabinet Alpes Kiné':'alpes','Mme Durand':'durand','M. Martin':'martin','M. Bernard':'bernard','M. Lopez':'lopez','Mme Perrin':'perrin','SCI Les Tilleuls':'tilleuls'};
 if(window.PINS)PINS.forEach(function(p){p.dos=nm[p.name];if(p.name==='M. Lopez'){p.kind='start';p.k='chantier';p.pc=0;p.ch='lopez';p.sub='Échirolles · démarre le 29/10';p.s='Devis 0042 signé · cloison de salle de bain · matériel à préparer';}});
 if(window.EV)EV.forEach(function(e){if(e.t==='M. Lopez · salle de bain'){e.x={ch:'lopez'};e.w=e.w.replace('à confirmer','devis signé');}});
 
-var CH=lsGet('pc-ch9',null)||{
+var CH=lsGet('pc-ch9',null)||PCDEMO.deep({
  alpes:{id:'alpes',dos:'alpes',n:'Cabinet Alpes Kiné',v:'Meylan',t:'Faux plafond 32 m² · local professionnel',st:'run',dv:'0037',dates:'mer. 14 → lun. 19/10',
   ouv:[['Protection et ossature',30,100],['Pose des plaques',35,100],['Bandes et joints',25,40],['Nettoyage et réception',10,0]],
   fin:{ht:1943.36,tva:20,ac:699.61},L:[{c:'PLA-FP',d:'Faux plafond sur ossature métallique, plaques BA13',u:'m²',q:32,p:49.78},{c:'PLA-BJ',d:'Bandes et joints, prêt à peindre',u:'m²',q:32,p:10.95}],
@@ -1308,7 +1322,7 @@ var CH=lsGet('pc-ch9',null)||{
  lopez:{id:'lopez',dos:'lopez',n:'M. Lopez',v:'Échirolles',t:'Cloison de salle de bain · plaques hydro',st:'start',dv:'0042',dates:'jeu. 29 → ven. 30/10',
   ouv:[['Ossature',30,0],['Pose des plaques',35,0],['Bandes et joints',25,0],['Porte et finitions',10,0]],fin:{ht:504.28,tva:10,ac:0},
   cote:{L:3.2,H:2.5,src:'mesurées en visite le mer. 14/10'},fmt:{pl:2.5,mt:2.5,rl:3},fst:{},four:[],prev:180,reel:[],notes:[['mer. 14/10 · 16 h 45','Pièce humide : plaques hydrofuges. Porte de 73 cm côté couloir.']],ph:[['Salle de bain avant travaux','Hauteur sous plafond mesurée : 2,50 m. Sol carrelé.']]},
- rey:{id:'rey',dos:null,n:'Boulangerie Rey',v:'Grenoble',t:'Faux plafond du fournil',st:'done',dv:'0034',dates:'lun. 5 → mer. 7/10',ouv:[['Faux plafond',100,100]],fin:{ht:2870,tva:20,ac:1033.2,paid:true},four:[],prev:0,reel:[],notes:[],ph:[]}};
+ rey:{id:'rey',dos:null,n:'Boulangerie Rey',v:'Grenoble',t:'Faux plafond du fournil',st:'done',dv:'0034',dates:'lun. 5 → mer. 7/10',ouv:[['Faux plafond',100,100]],fin:{ht:2870,tva:20,ac:1033.2,paid:true},four:[],prev:0,reel:[],notes:[],ph:[]}});
 function saveCH(){lsSet('pc-ch9',CH);}
 function avc(c){var s=0;c.ouv.forEach(function(o){s+=o[1]*o[2]/100});return Math.round(s);}
 function cfin(c){var tv=r2(c.fin.ht*c.fin.tva/100),ttc=r2(c.fin.ht+tv);return{tv:tv,ttc:ttc,rest:c.fin.paid?0:r2(ttc-c.fin.ac)};}
@@ -1425,7 +1439,7 @@ var DPST={wait:['En attente','warn'],recu:['Réponse lue','todo'],done:['Command
 function renderFour(){
  $('#dplist').innerHTML=DP.map(function(x){var s=SUP[x.sup],o=DOS[x.dos],st=DPST[x.st];
   return '<button data-dp="'+x.id+'"><span class="av '+(x.st==='wait'?'w':x.st==='recu'?'c':'t')+'">'+(x.st==='done'?'✓':x.st==='recu'?'€':'⏱')+'</span><span class="tx"><b>'+s.n+'</b><small>'+x.id+' · '+o.n+' · '+o.t+'</small><small>'+(x.st==='wait'?'Envoyée '+x.sent+' · sans réponse depuis '+x.since:x.st==='recu'?'Réponse '+x.got+' · lue par l\'IA':x.st==='done'?'Commandé '+x.cmd+' · livré '+x.liv:'Envoyée '+x.sent)+'</small></span><span class="pill '+st[1]+'">'+st[0]+'</span></button>'}).join('');
- $('#suplist').innerHTML=Object.keys(SUP).map(function(k){var s=SUP[k];return '<div class="it"><span class="av">'+s.n.split(' ').map(function(w){return w[0]}).join('').slice(0,2)+'</span><span class="tx"><b>'+s.n+'</b><small>'+s.t+' · '+s.d+'</small><small class="mono" style="font-family:var(--mono);font-size:11px">'+s.m+'</small></span></div>'}).join('');
+ $('#suplist').innerHTML=Object.keys(SUP).map(function(k){var s=SUP[k];/* 23/11 : la ligne d un fournisseur se touche : elle ouvre un e-mail à son adresse */return '<a class="it" style="color:inherit;text-decoration:none" href="mailto:'+s.m+'" aria-label="Écrire à '+s.n+'"><span class="av">'+s.n.split(' ').map(function(w){return w[0]}).join('').slice(0,2)+'</span><span class="tx"><b>'+s.n+'</b><small>'+s.t+' · '+s.d+'</small><small class="mono" style="font-family:var(--mono);font-size:11px">'+s.m+'</small></span><span class="chev" aria-hidden="true" style="margin-left:auto;color:var(--muted);font-size:18px">›</span></a>'}).join('');
 }
 function openDP(id){var x=DP.filter(function(y){return y.id===id})[0];if(!x)return;var s=SUP[x.sup],o=DOS[x.dos];
  var mail='<div class="mail"><div class="mh"><span>À : <b>'+s.m+'</b></span><span>De : <b>julien@dupont-renovation.fr</b> (votre adresse)</span><span>Objet : <b>Demande de prix · '+o.t+' · réf. '+x.id+'</b></span></div>Bonjour,\n\nPourriez-vous me faire un prix pour :\n'+x.items.map(function(i){return '• '+i[0]+' · '+i[1]}).join('\n')+'\n\nLivraison : [dépôt ou chantier], '+o.v+'.\nMerci de m\'indiquer le délai.\n\nJulien · Dupont Rénovation</div><p class="hint" style="margin-top:6px">🔒 Vos prix de vente et votre marge ne figurent jamais dans la demande.</p>';
@@ -1466,7 +1480,7 @@ $('#newdp').addEventListener('click',function(){
  '<button class="btn" data-xclose>Annuler</button><button class="btn go" id="nd-go">Envoyer depuis ma messagerie</button>',function(){
   $('#nd-go').addEventListener('click',function(){var it=$('#nd-it').value.split('\n').filter(Boolean).map(function(l){var p=l.split('·');return[p[0].trim(),(p[1]||'').trim()]});
    DP.unshift({id:'DP-0'+(14+DP.length-3),sup:$('#nd-sup').value,dos:$('#nd-dos').value,st:'wait',sent:'à l\'instant',since:'0 h',items:it});saveDP();renderFour();renderTodo();xclose();
-   toast('Demande de prix envoyée',online()?'Depuis votre adresse. ProClik surveille la réponse et relance au bout de 24 h.':'Elle partira au retour du réseau.');if(!online()){Q.push({t:'dp'});save();netUI();}});});});
+   toast('Demande de prix envoyée',online()?'Depuis votre adresse. ProClik surveille la réponse et relance au bout de 24 h.':'Elle partira au retour du réseau.',function(){go('prix')});if(!online()){Q.push({t:'dp'});save();netUI();}});});});
 
 /* ---------- chantiers ---------- */
 var curCh=null;
@@ -1529,7 +1543,7 @@ var VX=[
  ['Note de chantier','Note pour Alpes Kiné : le client veut une trappe de visite près de la fenêtre.',function(){CH.alpes.notes.push(['à l\'instant','🎙 Le client veut une trappe de visite près de la fenêtre.']);saveCH();go('chantiers');showCh('alpes','notes');setTimeout(function(){$('#ch-notes').scrollIntoView({block:'center'})},50);return['Note ajoutée','Alpes Kiné · rangée dans le dossier.']}],
  ['Avancement','Bandes et joints terminés chez Alpes Kiné.',function(){CH.alpes.ouv[2][2]=100;saveCH();go('chantiers');showCh('alpes','trav');updPin(CH.alpes,avc(CH.alpes));return['Avancement : '+avc(CH.alpes)+' %','Bandes et joints terminés. Le point du jour est mis à jour.']}],
  ['Achat','J\'ai acheté 3 sacs d\'enduit pour 41 euros chez Négoce Isère.',function(){CH.alpes.reel.push(['Négoce Isère · 3 sacs d\'enduit (dicté)','41,00']);saveCH();go('chantiers');showCh('alpes','four');setTimeout(function(){$('#ch-four').scrollIntoView({block:'center'})},50);return['Achat enregistré : 41,00 €','Alpes Kiné · comparé au prévu. Gardez le ticket : photo possible.']}],
- ['Rendez-vous','Mets-moi une visite chez SCI Les Tilleuls jeudi 22 à 16 heures.',function(){if(window.EV&&!EV.some(function(e){return e.t==='Visite SCI Les Tilleuls'&&e.d==='2026-10-22'}))EV.push({d:'2026-10-22',s:'16:00',e:'17:00',k:'visit',t:'Visite SCI Les Tilleuls',w:'Voiron · ajoutée à la voix',x:{}});go('planning');$('#seg-semaine').click();calWk=monday(new Date(2026,9,22));renderCalWeek();return['Visite ajoutée à l\'agenda','Jeudi 22 à 16 h · synchronisée avec le calendrier GHL.']}]];
+ ['Rendez-vous','Mets-moi une visite chez SCI Les Tilleuls jeudi '+PCDEMO.d(2026,9,22).getDate()+' à 16 heures.',function(){if(window.EV&&!EV.some(function(e){return e.t==='Visite SCI Les Tilleuls'&&e.d===PCDEMO.sh('2026-10-22')}))EV.push({d:PCDEMO.sh('2026-10-22'),s:'16:00',e:'17:00',k:'visit',t:'Visite SCI Les Tilleuls',w:'Voiron · ajoutée à la voix',x:{}});go('planning');$('#seg-semaine').click();calWk=monday(PCDEMO.d(2026,9,22));renderCalWeek();return['Visite ajoutée à l\'agenda','Jeudi '+PCDEMO.d(2026,9,22).getDate()+' à 16 h · synchronisée avec le calendrier GHL.']}]];
 var vsel=1;
 function listen(){$('#vsheet').classList.add('on');$('#vscrim').classList.add('on');$('#vex').innerHTML=VX.map(function(v,i){return '<button data-vx="'+i+'" aria-pressed="'+(i===vsel)+'"><small>'+v[0]+'</small>« '+v[1]+' »</button>'}).join('');
  $$('#vex [data-vx]').forEach(function(b){b.addEventListener('click',function(){vsel=+b.dataset.vx;$$('#vex [data-vx]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});say();})});say();}
@@ -1631,7 +1645,7 @@ function showInstall(){
 
 /* ---------- démarrage ---------- */
 renderList();netUI();
-(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.')},(window.PC_OUV_MS||0)+2100)})();
+(function dt(){setTimeout(function(){var w=document.getElementById('welcome');if(w&&!w.hidden)return dt();/* 25/11 (Cyril : « plus de fausses notifications ») : connecté, plus de demande d'exemple ; les vraies arrivent par notifs.js */if(document.documentElement.classList.contains('pcvrai'))return;toast('Nouvelle demande de devis','Mme Durand, cloisons du séjour. Pré-devis prêt à valider.',function(){go('devis');open('0044')})},(window.PC_OUV_MS||0)+2100)})();
 })();
 </script>
 
@@ -1673,7 +1687,7 @@ window.pcPlanCard=function(c){return '<div class="card pcplan" id="ch-plan"><div
  '<div class="pcstats"><div><b>2</b><span>pièces</span></div><div><b>32 m²</b><span>au sol</span></div><div><b>6</b><span>photos</span></div></div>'+
  '<button class="btn go" style="width:100%" type="button" data-openplan="Chantier '+(c&&c.n?c.n:'')+'">Ouvrir le plan</button><p class="hint" style="margin-top:6px">Cotes, compositions, sols, combles et photos mur par mur. Modifiable sur place, puis « Envoyer à Cliky ».</p></div>'};
 var ov=document.getElementById('pcov'),fr=document.getElementById('pcov-f'),bd=document.getElementById('pcov-b'),msg=document.getElementById('pcmsg'),tm;
-function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=56':'plan.html?embed=1&v=56';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
+function open(t){document.getElementById('pcov-t').firstChild.nodeValue='📐 '+t;bd.hidden=true;fr.hidden=false;var want=/^Nouveau/.test(t)?'plan.html?embed=1&new=1&v=79':'plan.html?embed=1&v=79';if(fr.getAttribute('src')!==want)fr.setAttribute('src',want);ov.hidden=false;document.body.style.overflow='hidden'}
 function openClient(){document.getElementById('pcov-t').firstChild.nodeValue='📐 Plan dessiné par Mme Durand';fr.hidden=true;bd.hidden=false;
  bd.innerHTML='<p style="margin:0;color:var(--muted)">Envoyé avec sa demande Clik\'Devis. Les tailles en pointillés sont estimées par le client.</p>'+document.querySelector('.pcclient svg').outerHTML+
  '<div class="card" style="display:grid;gap:6px"><b>Pièces</b><span>Séjour · 5,00 × 4,00 m · isoler les murs</span><span>Cuisine · 3,20 × 3,00 m · isoler les murs</span><span>Chambre 1 · 3,80 × 2,90 m · isoler les murs, créer une cloison</span><span>Chambre 2 · ≈ 3,50 × 3,00 m (estimé) · isoler les murs</span><span>Salle de bain · 2,40 × 2,00 m · isoler les murs</span><span style="color:var(--muted)">Hauteur sous plafond 2,50 m · objectif : avoir droit aux aides</span></div>'+
@@ -1689,44 +1703,50 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 })();
 </script>
 
-<script src="config.js?v=2"></script><script src="sync.js?v=2"></script>
+<script src="config.js?v=2"></script><script src="sync.js?v=7"></script>
 <script src="options.js?v=3"></script>
-<script src="profil.js?v=1"></script><script src="vrai.js?v=91"></script>
+<script src="profil.js?v=1"></script><script src="notifs.js?v=3"></script><script src="vrai.js?v=143"></script>
 <link rel="stylesheet" href="relief.css?v=18">
-<link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=13"></script>
+<link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=14"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
-<script src="accueil.js?v=34"></script>
+<script src="accueil.js?v=37"></script>
 <link rel="stylesheet" href="clients.css?v=5">
 <script src="gps.js?v=1"></script>
-<script src="clients.js?v=12"></script>
+<script src="clients.js?v=13"></script>
 <link rel="stylesheet" href="devis.css?v=3">
-<script src="devis.js?v=7"></script>
-<script src="commandes.js?v=2"></script>
-<link rel="stylesheet" href="chantiers.css?v=18">
-<script src="photos-demo.js?v=3"></script><script src="chantiers.js?v=28"></script><script src="journee.js?v=11"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=14"></script>
-<script src="planning-ajout.js?v=3"></script><script src="entretiens.js?v=1"></script>
-<script src="equipe.js?v=1"></script>
+<script src="devis.js?v=8"></script>
+<script src="commandes.js?v=3"></script>
+<link rel="stylesheet" href="chantiers.css?v=23">
+<script src="photos-demo.js?v=3"></script><script src="chantiers.js?v=42"></script><script src="equipe.js?v=17"></script><script src="journee.js?v=15"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=31"></script>
+<script src="planning-ajout.js?v=4"></script><script src="entretiens.js?v=2"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
-<script src="depenses.js?v=3"></script>
-<link rel="stylesheet" href="produits.css?v=5">
-<script src="produits.js?v=10"></script><script src="suivi-cliky.js?v=1"></script>
+<script src="depenses.js?v=5"></script>
+<link rel="stylesheet" href="produits.css?v=6">
+<script src="produits.js?v=12"></script><script src="suivi-cliky.js?v=2"></script>
 <link rel="stylesheet" href="reseaux.css?v=1">
-<script src="reseaux.js?v=3"></script>
-<script src="cotes.js?v=1"></script>
+<script src="reseaux.js?v=4"></script>
+<script src="cotes.js?v=3"></script>
 <script src="plan-plein.js?v=1"></script>
 <script src="relief.js?v=4"></script>
 <link rel="stylesheet" href="barre.css?v=16">
 <script src="menus.js?v=2"></script>
 <script src="barre.js?v=23"></script>
 <script src="familles.js?v=7"></script>
-<link rel="stylesheet" href="reglages.css?v=1">
+<link rel="stylesheet" href="reglages.css?v=4">
 <script src="reglages.js?v=7"></script>
-<script src="mes-options.js?v=7"></script>
-<script src="habitudes.js?v=8"></script>
+<script src="couleur-formulaire.js?v=3"></script>
+<script src="mes-options.js?v=9"></script><script src="negoce.js?v=2"></script>
+<script src="habitudes.js?v=12"></script>
 <script src="fige.js?v=3"></script>
 <link rel="stylesheet" href="poussoir.css?v=1">
 <script src="poussoir.js?v=2"></script>
 <script src="titres.js?v=3"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=8"></script>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="style-n1.css?v=47"><script src="couleurs.js?v=3"></script>
+<link rel="stylesheet" href="accueil-forme.css?v=15"><script src="accueil-forme.js?v=19"></script><script src="couleur-espace.js?v=2"></script>
+<link rel="stylesheet" href="barre-forme.css?v=10"><script src="barre-forme.js?v=3"></script>
+<link rel="stylesheet" href="ecrans-forme.css?v=4"><script src="ecrans-forme.js?v=7"></script>
+<link rel="stylesheet" href="achats-forme.css?v=5"><script src="achats-forme.js?v=2"></script><link rel="stylesheet" href="produits-forme.css?v=2"><script src="produits-forme.js?v=2"></script><link rel="stylesheet" href="parler-forme.css?v=2"><script src="parler-forme.js?v=1"></script><script src="presentation-forme.js?v=2"></script>
+<link rel="stylesheet" href="pages-forme.css?v=13"><script src="roles.js?v=16"></script>
+

@@ -105,15 +105,15 @@ if(menu)menu.addEventListener('click',function(){setTimeout(poser,0)});
 
 /* ---------- la fiche d'une option : elle seule, avec son explication ---------- */
 function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===true;fermer();
- var titre=k==='lien'?'Bientôt : relier votre Espace à vos négoces':k==='conversation'?(on?'La conversation de chantier est branchée sur votre Espace':'En option pour PRO, déjà dans TEAM et ARCHI'):on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
+ var NG=k==='lien'&&window.PCNEG&&PCNEG.reel();if(NG)on=true;var titre=k==='lien'?(NG?'Relier votre Espace à vos négoces':'Bientôt : relier votre Espace à vos négoces'):k==='conversation'?(on?'La conversation de chantier est branchée sur votre Espace':'En option pour PRO, déjà dans TEAM et ARCHI'):on?o.n+' est branché sur votre Espace':o.n+' n\'est pas encore dans votre abonnement';
  var h='<div class="card mo-tete'+(on?' on':'')+'"><span class="mo-gal">'+o.i+'</span><div><b>'+esc(titre)+'</b><small>'+esc(t.court)+'</small></div></div>'+
   '<div class="xsec"><h3>'+(on?'Ce qu\'elle fait pour vous':'Avec '+esc(o.n))+'</h3><div class="card"><ul class="mo-ul">'+t.avec.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div></div>'+
-  (on&&k==='cliky'&&window.PCJR?PCJR.reglagesHTML():'')+
+  (on&&k==='cliky'&&window.PCJR?PCJR.reglagesHTML():'')+(NG?PCNEG.blocOption():'')+
   (on?'':'<div class="xsec"><h3>Sans cette option</h3><div class="card"><p class="mo-p">'+esc(t.sans)+'</p></div></div>'+
-   (k==='lien'?'<p class="mo-p mo-cy"><a class="btn" style="display:inline-flex;text-decoration:none" href="/demo-vx-9m2t/espace.html?r=relie" target="_blank" rel="noopener">Voir comment ça marche ›</a></p><p class="mo-p mo-cy">Exemple avec un négoce fictif. <b>Ça vous intéresse ? Dites-le à Cyril.</b></p>':'<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>'));
+   (k==='lien'&&!NG?'<p class="mo-p mo-cy"><a class="btn" style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;height:auto;padding-top:0;padding-bottom:0;text-decoration:none" href="/demo-vx-9m2t/espace.html?r=relie" target="_blank" rel="noopener">Voir comment ça marche ›</a></p><p class="mo-p mo-cy">Exemple avec un négoce fictif. <b>Ça vous intéresse ? Dites-le à Cyril.</b></p>':'<p class="mo-p mo-cy"><b>Pour l\'ajouter, dites-le simplement à Cyril.</b> Il s\'occupe de tout.</p>'));
  X.xopen(o.n,on?'Option branchée':'Option à découvrir',h,
   '<button class="btn" id="mo-ret">‹ Mes options</button>'+(on?'':'<button class="btn go" id="mo-dem">Demander à Cyril</button>'),function(){
-   $('#mo-ret').addEventListener('click',function(){X.xclose();ouvrir()});
+   $('#mo-ret').addEventListener('click',function(){X.xclose();ouvrir()});if(NG)PCNEG.lierOption();
    var b=$('#mo-dem');if(b)b.addEventListener('click',function(){
     var msg='Bonjour Cyril, je voudrais en savoir plus sur l\'option « '+o.n+' » pour mon Espace.';
     if(window.PCREG&&window.PCREG.ecrire)window.PCREG.ecrire(msg);else X.toast&&X.toast('Écrivez à Cyril','Menu ☰, « Écrire à Cyril ».')});

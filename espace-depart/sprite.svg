@@ -1,0 +1,32 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-d" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+ <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+ <symbol id="i-maison" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5H9v5.5H5.5A1.5 1.5 0 0 1 4 19z"/></symbol>
+ <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><path d="M15.5 5.6a3 3 0 0 1 0 5.8M17.5 14.7c1.8.6 3 2.2 3.5 4.8"/></symbol>
+ <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+ <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6.5 3.5h7l4 4v12a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M13.5 3.5v4h4M9 12h6M9 15.5h4"/></symbol>
+ <symbol id="i-menu" viewBox="0 0 24 24"><path d="M5 8h14M5 12h14M5 16h14"/></symbol>
+ <symbol id="i-options" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><path d="M16.75 13.5v6.5M13.5 16.75H20"/></symbol>
+ <symbol id="i-lune" viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/></symbol>
+ <symbol id="i-soleil" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+ <symbol id="i-cafe" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M9 3.5c0 1.2 1 1.3 1 2.5M12.5 3.5c0 1.2 1 1.3 1 2.5"/></symbol>
+ <symbol id="i-chantier" viewBox="0 0 24 24"><path d="M4 11 12 4.5l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M9.5 20v-5.5h5V20"/></symbol>
+ <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></symbol>
+ <symbol id="i-bulle" viewBox="0 0 24 24"><path d="M4.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4 3.5v-3.5h-.5a2 2 0 0 1-2-2z"/></symbol>
+ <symbol id="i-drapeau" viewBox="0 0 24 24"><path d="M6 21V4M6 4.5h11l-2.5 4 2.5 4H6"/></symbol>
+ <symbol id="i-camion" viewBox="0 0 24 24"><path d="M3 6.5h11v10H3zM14 9.5h4l3 3.5v3.5h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></symbol>
+ <symbol id="i-nav" viewBox="0 0 24 24"><path d="M4 11.5 20 4l-7.5 16-2-6.5z"/></symbol>
+ <symbol id="i-facture" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2.5-1.6-2 1.6-1.5-1.2-1.5 1.2-2-1.6L6 20.5z"/><path d="M9 8.5h6M9 12h6M9 15.5h3.5"/></symbol>
+ <symbol id="i-plan" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h7v8M11 4v4M15 12h5"/></symbol>
+ <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+ <symbol id="i-photo" viewBox="0 0 24 24"><path d="M4 8.5a2 2 0 0 1 2-2h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+ <symbol id="i-grille" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/></symbol>
+ <symbol id="i-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+ <symbol id="i-alerte" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.5M12 16.3v.2"/></symbol>
+ <symbol id="i-tel" viewBox="0 0 24 24"><path d="M6.5 4h3l1.5 4-2 1.3a10 10 0 0 0 5.7 5.7L16 13l4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4z"/></symbol>
+ <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17.5 6.5a7 7 0 1 0 0 11M4.5 10.5h9M4.5 13.5h9"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.2l2.6 2.6 4.8-5.2"/></symbol>
+ <symbol id="i-envoi" viewBox="0 0 24 24"><path d="M4 12 20 4.5 14.5 20l-3-6.5z"/><path d="M11.5 13.5 20 4.5"/></symbol>
+ <symbol id="i-tendance" viewBox="0 0 24 24"><path d="M4 17l5-5 3.5 3.5L20 8"/><path d="M15 8h5v5"/></symbol>
+ <symbol id="i-cle" viewBox="0 0 24 24"><path d="M14.5 4.5a5 5 0 0 0-4.6 6.9L4 17.3V20h2.7l.8-.8v-1.7h1.7l1-1v-1.7h1.7l.9-.9a5 5 0 1 0 1.7-9.4z"/><circle cx="15.5" cy="8.5" r="1"/></symbol>
+</svg>

@@ -49,7 +49,7 @@ var DEP0=[
  {id:'d4',d:'ven. 16/10',cat:'repas',ou:'Restaurant, Meylan',ttc:16.50,tva:10,ch:null,src:'voix'},
  {id:'d5',d:'mer. 14/10',cat:'carb',ou:'Station de Crolles',ttc:65.10,tva:20,ch:null,src:'photo',ph:1},
  {id:'d6',d:'jeu. 8/10',cat:'repas',ou:'Boulangerie, Crolles',ttc:11.20,tva:10,ch:null,src:'main'}];
-var DEP=X.lsGet('pc-dep1',null)||DEP0;
+var DEP=X.lsGet('pc-dep1',null)||(window.PCDEMO?PCDEMO.deep(DEP0):DEP0);
 /* Chaque dépense a sa vraie date (j, AAAA-MM-JJ) : les anciennes « jeu. 29/10 » sont relues une fois */
 DEP.forEach(function(x){if(x.j)return;var m=/(\d{1,2})\/(\d{1,2})/.exec(x.d||''),n=new Date(),y=n.getFullYear();if(!m){x.j=isoJ(n);return}if(+m[2]>n.getMonth()+1)y--;x.j=y+'-'+p2(+m[2])+'-'+p2(+m[1])});
 function save(){X.lsSet('pc-dep1',DEP)}
@@ -91,6 +91,8 @@ function vue(){var vrai=document.documentElement.classList.contains('pcvrai'),T=
  h+='<div class="cf-main dp-bas"><button type="button" class="btn sm" data-deptout>'+IC.liste+'Tout voir</button><button type="button" class="btn sm" data-depcompta>'+IC.compta+'Comptable</button></div>'+
   '<span class="exemple">Exemples de démonstration · montants fictifs</span></div></div>';
  var v=$('#v-depenses');if(!v)return;var c2=v.querySelector(':scope>.cf');if(!c2){c2=document.createElement('div');c2.className='cf';v.appendChild(c2)}c2.innerHTML=h;
+ /* 25/11 (Cyril : « plus de fausses notifications ») : connecté, les tickets d'exemple (d1…d6) ne font plus de pastille */
+ if(vrai)R=R.filter(function(x){return !/^d[1-6]$/.test(x.id)});
  var b=$('#badge-d');if(b){b.textContent=R.length;b.hidden=!R.length}}
 
 /* ---------- le dossier du comptable (option) ---------- */

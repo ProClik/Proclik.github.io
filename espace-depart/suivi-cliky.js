@@ -40,9 +40,9 @@ document.head.appendChild(css);
 /* ---------- le bloc sous le contrôle du pré-devis ---------- */
 document.addEventListener('pcv-afficher',function(e){var x=e.detail||{},z=$('#vsuivi'),P=V();if(!z||!P||!x.p||!x.d||!x.d.contact)return;
  CUR={id:x.d.contact.id,d:x.d,p:x.p,t:x.t,etape:x.etape||''};var id=CUR.id,ouvert=!SIGNE.test(CUR.etape);
- z.className='vsu';z.innerHTML='<div id="vsu-h"></div><div class="card vsec" id="vsu-a"><h3>Achats du chantier</h3><p class="vst" style="padding:0">Chargement…</p></div>'+
+ z.className='vsu';z.innerHTML='<div id="vsu-h"></div><details class="card vd vsu-plus"><summary>Plus d\'outils : achats du chantier'+(ouvert?', trois gammes':'')+'</summary><div class="card vsec" id="vsu-a"><h3>Achats du chantier</h3><p class="vst" style="padding:0">Chargement…</p></div>'+
   (ouvert?'<div class="card vsec" id="vsu-g">'+tag()+'<h3>Proposer trois gammes</h3><p class="vst" style="padding:0 0 8px">Économique, la demande du client, Confort : chiffrées par le programme, sans frais.</p><button type="button" class="vbtn" data-vsgg style="width:100%">Préparer les 3 gammes</button></div>':'')+
-  '<div id="vsu-q"></div>';
+  '</details><div id="vsu-q"></div>';
  chargerAchats(id);if(ouvert)hausse(id);questions(id);baseA()});
 
 /* 1. Achats du chantier */

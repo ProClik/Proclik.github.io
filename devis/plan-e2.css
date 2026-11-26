@@ -1,0 +1,176 @@
+/* Plan au style du formulaire et du nouvel Espace (Cyril 22/11 : « même pratique, même style » client et artisan).
+   Chargé APRÈS plan-relief.css, dans devis/plan.html ET espace/plan.html. Ne change que l'apparence :
+   - plus de relief : tout ce qui se touche est à plat avec un liseré fin ;
+   - bleu nuit = action, laiton = seulement la sélection / l'étape en cours ;
+   - murs foncés et nets, fond clair comme le formulaire ;
+   - plus de bouton « Plein écran » (on tourne le téléphone). */
+html:root:root:root{
+  --bg:#F3F3F1;--surface:#F3F3F1;--fg:#17181D;--muted:#575A63;--line:rgba(23,24,29,.10);
+  --paper:#FAFAF8;--dot:#DCDDD8;--wall:#17181D;
+  --pe-tile:#FFFFFF;--pe-line:rgba(23,24,29,.10);--pe-nuit:#1B2440;--pe-onnuit:#FFFFFF;--laiton:#A8823F;
+  --up:0 0 0 1px var(--pe-line);--up-s:0 0 0 1px var(--pe-line);--up-xs:0 0 0 1px var(--pe-line);--shadow:0 0 0 1px var(--pe-line);
+  --in:inset 0 0 0 1px var(--pe-line);--in-s:inset 0 0 0 1px var(--pe-line);
+  --hi:transparent;--lo:transparent;--ihi:transparent;--ilo:transparent}
+@media (prefers-color-scheme:dark){html:root:root:root:not([data-theme="light"]){
+  --bg:#0F1117;--surface:#0F1117;--fg:#F0F1F4;--muted:#B9BDC8;--line:rgba(255,255,255,.10);
+  --paper:#14161D;--dot:#2A2D36;--wall:#E6E7EA;
+  --pe-tile:#191C24;--pe-line:rgba(255,255,255,.10);--pe-nuit:#EFEBE2;--pe-onnuit:#17181D;--laiton:#D4B483}}
+html:root:root:root[data-theme="dark"]{
+  --bg:#0F1117;--surface:#0F1117;--fg:#F0F1F4;--muted:#B9BDC8;--line:rgba(255,255,255,.10);
+  --paper:#14161D;--dot:#2A2D36;--wall:#E6E7EA;
+  --pe-tile:#191C24;--pe-line:rgba(255,255,255,.10);--pe-nuit:#EFEBE2;--pe-onnuit:#17181D;--laiton:#D4B483}
+html body{background:var(--bg)}
+/* Ce qui se touche : fond carte, liseré fin, pas d'ombre portée */
+html body button:not(.okgo):not(.go):not([class*="nuit"]),html body .qk button,html body .chip{text-shadow:none}
+html body #clbanner,html body #sheet,html body .wz-q,html body #intro>div,html body #repk>div{box-shadow:0 0 0 1px var(--pe-line)!important;border:0!important}
+/* Plein écran retiré (21/11) : on tourne le téléphone */
+html body #p-full{display:none!important}
+/* Gestes doux */
+html body button{transition:transform .12s ease,background .15s,box-shadow .15s}
+html body button:active{transform:scale(.97)}
+/* Choix fait (réponse, nom de pièce) : laiton, comme dans le formulaire */
+html body .qk button[aria-pressed="true"],html body .chip[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--laiton)!important;background:color-mix(in srgb,var(--laiton) 10%,var(--pe-tile))!important;color:var(--fg)!important}
+/* Niveau affiché : plein bleu nuit (maquette 21/11) */
+html body #floors .chip[aria-pressed="true"]{background:var(--pe-nuit)!important;color:var(--pe-onnuit)!important;box-shadow:none!important}
+/* Lot 3 (maquette 21/11) : élément touché = rangée d'actions EN BAS, jamais par-dessus l'élément */
+html body .opp.acts{position:fixed!important;left:max(12px,env(safe-area-inset-left,0px))!important;right:max(12px,env(safe-area-inset-right,0px))!important;top:auto!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;width:auto!important;max-width:none!important;background:var(--pe-tile)!important;color:var(--fg)!important;border:0!important;border-radius:22px!important;padding:8px 10px 8px 16px!important;box-shadow:0 0 0 1px var(--pe-line),0 14px 30px -14px rgba(0,0,0,.35)!important;z-index:40}
+html body .opp.acts .r{display:flex!important;flex-wrap:nowrap!important;align-items:center;gap:4px}
+html body .opp.acts b{font-size:16px;color:var(--fg)}
+html body .opp.acts small{opacity:1;color:var(--muted);font-size:13px}
+html body .opp.acts .rs-t{display:flex;flex-direction:column;flex:1 1 auto;min-width:0;line-height:1.2}
+html body .opp.acts .rs-t b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .opp.acts .rs-b{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:64px;padding:6px 6px;background:none!important;border:0!important;box-shadow:none!important;color:var(--fg);font:600 12.5px Manrope,system-ui,sans-serif}
+html body .opp.acts .rs-b svg{width:22px;height:22px}
+html body .opp.acts .rs-b+.rs-b{border-left:1px solid var(--pe-line)!important;border-radius:0}
+html body .opp.acts .rs-del{color:var(--muted)}
+html body .opp.acts .rs-ok{margin-left:6px;min-width:52px;height:44px;border-radius:22px;background:var(--pe-nuit)!important;color:var(--pe-onnuit)!important;border:0!important;box-shadow:none!important;font:700 15px Manrope,system-ui,sans-serif}
+html body .opp.acts .r>button:not(.rs-b):not(.rs-ok){background:none!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;border-radius:14px;min-height:40px;padding:0 12px}
+html body .opp.acts .r>button.x[data-oppo="ok"]{background:var(--pe-nuit)!important;color:var(--pe-onnuit)!important;box-shadow:none!important}
+@media (max-width:520px){html body .opp.acts .rs-b{min-width:54px}html body .opp.acts .r:not(.rsel){flex-wrap:wrap!important;row-gap:8px}html body .opp.acts .r:not(.rsel)>small{flex:1 1 calc(100% - 50px)}html body .opp.acts .r:not(.rsel)>button{flex:1 1 auto}}
+/* Lot 4 (22/11) : téléphone, fiche de la pièce à mi-hauteur sous le plan zoomé */
+html body #sheet.mi{max-height:44vh!important;top:auto!important}
+html body:has(#sheet.mi:not([hidden])) #clbanner{display:none!important}
+/* Lot 3b (22/11) : longueur du mur en bouton + pavé numérique en bas */
+html body .opp.acts .rs-len b{font:800 16px Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;line-height:22px}
+html body .opp.acts .pad{display:flex;flex-direction:column;gap:10px;padding:6px 0 4px}
+html body .opp.acts .pd-h{display:flex;align-items:center;gap:12px;padding-right:6px}
+html body .opp.acts .pd-out{font:800 26px Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--fg);white-space:nowrap}
+html body .opp.acts .pd-out output.fresh{background:color-mix(in srgb,var(--laiton) 18%,transparent);border-radius:6px;padding:0 4px}
+html body .opp.acts .pd-k{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+html body .opp.acts .pd-k button{height:48px;border-radius:14px;background:var(--bg)!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;font:700 20px Manrope,system-ui,sans-serif}
+html body .opp.acts .pd-f{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+html body .opp.acts .pd-f button:not(.rs-ok){display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 12px;border-radius:14px;background:none!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;font:600 14px Manrope,system-ui,sans-serif}
+html body .opp.acts .pd-f .rs-ok{margin-left:auto;padding:0 18px}
+@media (min-width:700px){html body .opp.acts:has(.pad){left:50%!important;right:auto!important;width:420px!important;transform:translateX(-50%)}}
+html body .opp.acts .pd-x{width:40px;height:40px;border-radius:20px;background:none!important;border:0!important;box-shadow:inset 0 0 0 1px var(--pe-line)!important;color:var(--fg)!important;font-size:15px;flex:none}
+@media (max-width:520px){html body .opp.acts .pd-k button{height:42px}html body .opp.acts .pd-out{font-size:22px}}
+/* Téléphone couché : le pavé passe en colonne à gauche (à la place de la consigne), le plan reste visible à droite */
+@media (orientation:landscape) and (max-height:520px){html body .opp.acts:has(.pad){right:auto!important;left:max(8px,env(safe-area-inset-left,0px))!important;top:8px!important;bottom:8px!important;width:290px!important;transform:none!important;overflow:auto;padding:8px 10px!important;border-radius:18px!important}html body .opp.acts .pad{gap:6px;padding:0}html body .opp.acts .pd-h small{display:none}html body .opp.acts .pd-out{font-size:20px}html body .opp.acts .pd-k{gap:5px}html body .opp.acts .pd-k button{height:38px;font-size:18px}html body .opp.acts .pd-f button:not(.rs-ok),html body .opp.acts .pd-f .rs-ok{height:38px}}
+
+/* Lot 5 (22/11, maquette 21/11) : Espace, téléphone couché = même disposition que le formulaire client : outils en colonne à gauche, menu + étages + consigne en petite carte, plan en grand, Plan/3D/Figer, Annuler et zoom à droite. Règles reprises de plan-relief.css (html.client). */
+@media (orientation:landscape) and (max-height:520px){
+ html.pro:not(.client) body .wrap{display:grid!important;grid-template-columns:62px minmax(0,1fr);column-gap:6px;row-gap:0;align-items:start;align-content:start;padding:6px max(8px,env(safe-area-inset-right,0px)) 6px max(6px,env(safe-area-inset-left,0px))!important;max-width:none}
+ html.pro:not(.client) body .wrap>*{grid-column:1;min-width:0}
+ html.pro:not(.client) body .wrap>#board{grid-column:2;grid-row:1 / span 20}
+ html.pro:not(.client) body .board>svg{height:calc(100dvh - 12px)!important}
+ 
+ html.pro:not(.client) body #cltools{position:fixed;left:max(6px,env(safe-area-inset-left,0px));right:auto;top:6px;bottom:6px;width:58px;grid-template-columns:1fr;grid-auto-rows:1fr;gap:2px;padding:3px}
+ html.pro:not(.client) body .cltool{display:grid;justify-items:center;align-content:center;font-size:9.5px;padding:0;gap:0}
+ html.pro:not(.client) body .cltool svg{width:32px!important;height:32px!important;padding:6px!important}
+ html.pro:not(.client) body .cltool .lk{display:none!important}
+ html.pro:not(.client) body .cltool.add::before{left:auto;right:4px;top:2px}
+ 
+ 
+ html.pro:not(.client) body #floors{position:fixed;z-index:6;top:8px;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;box-sizing:border-box;flex-wrap:wrap;gap:4px;margin:0;padding:4px;border-radius:14px;background:var(--bg);box-shadow:var(--up-s)}
+ html.pro:not(.client) body #floors .chip{padding:5px 9px;font-size:11.5px;white-space:nowrap;box-shadow:none!important;background:transparent!important;border:0}
+ html.pro:not(.client) body #floors .chip[aria-pressed="true"]{background:var(--mint)!important;color:var(--paper)!important}
+ html.pro:not(.client) body #floors .chip.add{color:var(--muted);font-size:11px}
+ html.pro:not(.client) body #clbanner{position:fixed;z-index:6;top:var(--ls-bt,48px);left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;flex-wrap:wrap;row-gap:4px;gap:4px;padding:6px 9px;max-height:calc(100dvh - var(--ls-bt,48px) - 96px);overflow-y:auto;overscroll-behavior:contain}
+ html.pro:not(.client) body #clbanner #clb-t{flex:1 1 100%;font-size:12px;line-height:1.3}
+ html.pro:not(.client) body #clbanner .pcl{display:none}
+ html.pro:not(.client) body #clbanner #clb-v,html.pro:not(.client) body #clbanner #clb-h,html.pro:not(.client) body #clbanner #clb-p,html.pro:not(.client) body #clbanner #clb-b{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.pro:not(.client) body #clbanner #clb-b{margin-left:auto}
+ 
+ html.pro:not(.client) body #cltl{position:fixed;z-index:6;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);bottom:8px;width:200px;margin:0}
+ html.pro:not(.client) body #cltl ol{flex-direction:row;max-width:none;padding:0}
+ html.pro:not(.client) body #cltl li{flex:1;justify-content:center}
+ html.pro:not(.client) body #cltl .sh,html.pro:not(.client) body #cltl .lg{display:none!important}
+ html.pro:not(.client) body #cltl i{width:20px;height:20px;font-size:10px}
+ html.pro:not(.client) body #cltl li+li::before{display:block;top:10px;margin:0 10px}
+ html.pro:not(.client) body #cltl button{padding:2px}
+ html.pro:not(.client) body #cltrace{top:auto;bottom:40px;left:8px}
+ 
+ html.pro:not(.client) body #board .fl.tl{left:auto!important;right:8px!important;top:8px!important}
+ html.pro:not(.client) body #board .fl.tl .pill,html.pro:not(.client) body #board .fl.tr .pill{flex-direction:column}
+ html.pro:not(.client) body #board .fl.tr{top:78px!important;right:8px!important;left:auto!important}
+ html.pro:not(.client) body #board .fl.tl button,html.pro:not(.client) body #board .fl.tr button{font-size:11px!important;padding:5px 8px!important;min-width:50px;white-space:nowrap}
+ html.pro:not(.client) body #board .fl.mr{top:auto!important;bottom:8px!important;right:8px!important;transform:none!important}
+ html.pro:not(.client) body #board .fl.mr button{padding:4px 8px!important;min-height:0}
+ 
+ html.pro:not(.client) body #tut b{display:none!important}
+
+ html.pro:not(.client) body{margin:0}
+ html.pro:not(.client) body .wrap>nav.pro-menu{position:fixed;z-index:7;top:6px;left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px);width:186px;box-sizing:border-box;margin:0;padding:3px;gap:2px;border-radius:14px}
+ html.pro:not(.client) body .wrap>nav.pro-menu button{min-height:30px!important;height:30px;padding:0 2px!important;font-size:11px!important;gap:0;white-space:nowrap;min-width:0;flex:1 1 0}
+ html.pro:not(.client) body .wrap>nav.pro-menu button svg{display:none}
+ html.pro:not(.client) body #floors{top:46px}
+ html.pro:not(.client) body #clbanner #chk-btn{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.pro:not(.client) body #clbanner #clb-x{order:1;min-height:30px;padding:3px 10px;font-size:11.5px}
+ html.pro:not(.client) body #board .fl.tl{flex-direction:column;align-items:flex-end}
+ html.pro:not(.client) body #board .fl.tr{top:auto!important;bottom:112px!important}
+}
+@media (orientation:landscape) and (max-height:520px){html body .opp.acts:not(:has(.pad)){left:calc(max(6px,env(safe-area-inset-left,0px)) + 72px)!important;right:auto!important;width:min(560px,calc(100vw - 150px))!important;bottom:6px!important}}
+/* 22/11 14h (Cyril : « les consignes prennent encore trop de place ») : formulaire client, téléphone debout / iPad / PC.
+   La consigne tient sur une ligne (deux au plus) ; « ▶ » (exemple) et « ? » en petits ronds au bout ;
+   le gros « C'est bon, suivant » descend en bas de l'écran, près du pouce. */
+@media not all and (orientation:landscape) and (max-height:520px){
+ html.client body #clbanner{display:flex;flex-wrap:nowrap!important;align-items:center!important;gap:6px!important;padding:8px 8px 8px 14px!important;min-height:0!important}
+ html.client body #clbanner .pcl{display:none!important}
+ html.client body #clbanner #clb-t{flex:1 1 auto!important;min-width:0;margin:0!important;font-size:14.5px!important;line-height:1.3!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+ html.client body #clbanner.cl-ouvert #clb-t{-webkit-line-clamp:unset;display:block!important}
+ html.client body #clbanner #clb-t>b,html.client body #clbanner #clb-t>.gdots{display:none!important}
+ html.client body #clbanner #clb-v,html.client body #clbanner #clb-h{flex:none;order:2;width:36px;height:36px;min-height:0!important;padding:0!important;border-radius:18px!important;display:inline-grid;place-items:center;font-size:15px}
+ html.client body #clbanner #clb-v span{display:none}
+ html.client body #clbanner #clb-v svg{width:13px;height:13px}
+ html.client body #clbanner #clb-b.okgo:not([hidden]){position:fixed!important;z-index:30;left:max(16px,env(safe-area-inset-left,0px))!important;right:max(16px,env(safe-area-inset-right,0px))!important;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;width:auto!important;margin:0!important;min-height:54px;box-shadow:0 12px 28px -12px rgba(0,0,0,.45)!important}
+ html.client.wzopen body #clbanner #clb-b.okgo,html.client body:has(#sheet:not([hidden])) #clbanner #clb-b.okgo,html.client body:has(#opp.acts:not([hidden])) #clbanner #clb-b.okgo{display:none!important}
+}
+@media (orientation:landscape) and (max-height:520px){
+ html.client body #clbanner #clb-t>b,html.client body #clbanner #clb-t>.gdots{display:none!important}
+ html.client body #clbanner #clb-t{font-size:12.5px!important;display:-webkit-box!important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+ html.client body #clbanner.cl-ouvert #clb-t{-webkit-line-clamp:unset;display:block!important}
+ html.client body #clbanner #clb-v,html.client body #clbanner #clb-h{width:32px;height:32px;min-height:0!important;padding:0!important;border-radius:16px!important;display:inline-grid;place-items:center}
+ html.client body #clbanner #clb-v span{display:none}
+}
+@media (min-width:700px) and (min-height:521px){html.client body #clbanner #clb-b.okgo:not([hidden]){left:50%!important;right:auto!important;width:min(420px,calc(100vw - 32px))!important;transform:translateX(-50%)}}
+html.client.gd body #clbanner #clb-b.okgo{display:none!important}
+html.client body:has(#gdw:not([hidden])) #clbanner #clb-b.okgo{display:none!important}
+/* ===== Exemples animés, style « Épure » (choix de Cyril, 22/11) ===== */
+html body .gdw{background:rgba(10,12,18,.34);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+html body .gdw .gd-in{background:var(--bg)!important;color:var(--fg)!important;border-radius:28px!important;box-shadow:0 0 0 1px var(--pe-line),0 30px 60px -30px rgba(0,0,0,.5)!important;animation:gdin .55s cubic-bezier(.2,1.1,.3,1) both}
+@keyframes gdin{from{opacity:0;transform:translateY(40px) scale(.98)}}
+@media (max-width:560px) and (orientation:portrait){html body .gdw{place-items:end center!important;padding:0!important}html body .gdw .gd-in{width:100%!important;border-radius:28px 28px 0 0!important;padding-bottom:env(safe-area-inset-bottom,0px)}html body .gdw .gd-in::before{content:"";display:block;width:38px;height:5px;border-radius:3px;background:var(--pe-line);margin:8px auto 0}}
+html body .gdw .gd-h{padding:12px 16px 4px 18px!important}
+html body .gdw .gd-h b{font:800 17px/1.25 Manrope,system-ui,sans-serif!important}
+html body .gdw .gd-h small{color:var(--muted)!important;font:700 11.5px Manrope,system-ui,sans-serif!important;letter-spacing:.06em}
+html body .gdw .gd-h button{width:34px!important;height:34px!important;font-size:14px!important;background:var(--pe-tile)!important;box-shadow:0 0 0 1px var(--pe-line)!important}
+html body .gdw .gd-c{padding:10px 20px 12px!important;font:800 20px/1.25 Manrope,system-ui,sans-serif!important;letter-spacing:-.01em;min-height:2.6em!important;text-wrap:balance}
+html body .gdw .gd-c w{display:inline-block;opacity:0;filter:blur(6px);transform:translateY(8px);transition:opacity .45s ease,filter .45s ease,transform .55s cubic-bezier(.2,.9,.25,1)}
+html body .gdw .gd-c w.in{opacity:1;filter:none;transform:none}
+html body .gdw .gd-c.out{opacity:0;transition:opacity .25s}
+html body .gdw iframe{margin:0 12px;width:calc(100% - 24px)!important;border-radius:20px;background:var(--paper)!important}
+html body .gdw .gd-f{padding:12px 16px 18px!important;justify-content:stretch!important;flex-wrap:nowrap!important}
+html body .gdw .gd-f button{height:50px;padding:0 18px!important;border-radius:25px!important;font:700 15px Manrope,system-ui,sans-serif!important;box-shadow:0 0 0 1px var(--pe-line)!important;background:var(--pe-tile)!important;color:var(--fg)!important}
+html body .gdw .gd-f .ok{flex:1;background:var(--pe-nuit)!important;color:var(--pe-onnuit)!important;box-shadow:none!important}
+/* le doigt : disque gris doux qui s'enfonce, onde très légère (plus de rond orange) */
+html body #gd-fg{width:52px!important;height:52px!important;margin:-26px 0 0 -26px!important;border:0!important;background:color-mix(in srgb,var(--fg) 12%,transparent)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 9%,transparent)!important;transition:opacity .4s ease!important}
+html body #gd-fg::after{display:none!important}
+html body #gd-fg::before{content:"";position:absolute;inset:0;border-radius:50%;background:color-mix(in srgb,var(--fg) 10%,transparent);opacity:0}
+html body #gd-fg.tap{animation:gdp .45s cubic-bezier(.2,.9,.25,1)!important}
+html body #gd-fg.tap::before{animation:gdr .6s cubic-bezier(.2,.7,.3,1)}
+@keyframes gdp{30%{scale:.84}100%{scale:1}}
+@keyframes gdr{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}
+@media (orientation:landscape) and (max-height:520px){html body .gdw .gd-c{font-size:17px!important}html body .gdw .gd-f{flex-direction:column!important;gap:8px}html body .gdw .gd-f button{height:44px;flex:none!important;width:100%}html body .gdw iframe{margin:6px 0 6px 6px;width:calc(100% - 6px)!important}}
+/* exemple joué dans la petite fenêtre, écran couché : pavé compact à droite, le plan reste visible à gauche */
+@media (max-height:520px){html.gd body .opp.acts:has(.pad){right:auto!important;left:6px!important;top:auto!important;bottom:6px!important;width:min(220px,62vw)!important;padding:6px 8px!important;transform:none!important}html.gd body .opp.acts .pd-h .rs-t{display:none}html.gd body .opp.acts .pd-k button{height:30px!important;font-size:15px!important}html.gd body .opp.acts .pd-f button:not(.rs-ok){display:none!important}html.gd body .opp.acts .pd-f .rs-ok{height:34px!important;width:100%}}
+html.gd body #cltools{pointer-events:none!important}

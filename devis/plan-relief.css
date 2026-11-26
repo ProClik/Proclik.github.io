@@ -161,9 +161,9 @@ html body #ctr-b svg{box-sizing:border-box;width:42px;height:42px;padding:9px;bo
 html body #ctr-b[aria-pressed="true"]{color:var(--fg);font-weight:700}
 html body #ctr-b[aria-pressed="true"] svg,html body #ctr-b:active svg{box-shadow:var(--in);color:var(--mint-ink)}
 html body #ctr-b.next svg{box-shadow:var(--up-s),0 0 0 2px var(--acc);animation:pr-pulse3 1.6s ease-in-out infinite}
-html body #ctr-bar{display:flex;gap:4px;padding:4px;margin-top:3px;border-radius:999px;background:var(--bg);box-shadow:var(--up-s)}
+html body #ctr-bar{display:flex;gap:4px;padding:4px;margin-top:3px;border-radius:28px;background:var(--bg);box-shadow:var(--up-s)}
 html body #ctr-bar[hidden]{display:none}
-html body #ctr-bar button{appearance:none;border:0;background:transparent;display:inline-flex;align-items:center;gap:6px;padding:7px 13px 7px 9px;border-radius:999px;font:700 14px var(--f);color:var(--fg);cursor:pointer}
+html body #ctr-bar button{appearance:none;border:0;background:transparent;display:inline-flex;align-items:center;gap:6px;padding:7px 13px 7px 9px;border-radius:28px;font:700 14px var(--f);color:var(--fg);cursor:pointer}
 html body #ctr-bar svg{width:22px;height:22px;color:var(--muted)}
 html body #ctr-bar button[aria-pressed="true"]{box-shadow:var(--in-s);color:var(--mint-ink)}
 html body #ctr-bar button[aria-pressed="true"] svg{color:var(--mint-ink)}
@@ -249,9 +249,9 @@ html body .gdw .gd-in{color:var(--fg)}
  html.client.gd body #cltools{width:auto;right:8px;left:8px;background:transparent;border:0;box-shadow:none;grid-template-columns:repeat(7,minmax(0,1fr))}
 }
 /* Masquer / ramener la consigne (Cyril 12/11) */
-html body #clb-x{order:3;flex:none;display:inline-flex;align-items:center;gap:4px;margin-left:auto;min-height:32px;padding:4px 12px 4px 9px;border:0;border-radius:999px;cursor:pointer;background:var(--bg);color:var(--mint-ink);font:800 12.5px var(--f);box-shadow:var(--up-xs)}
+html body #clb-x{order:3;flex:none;display:inline-flex;align-items:center;gap:4px;margin-left:auto;min-height:32px;padding:4px 12px 4px 9px;border:0;border-radius:28px;cursor:pointer;background:var(--bg);color:var(--mint-ink);font:800 12.5px var(--f);box-shadow:var(--up-xs)}
 html body #clbanner{flex-wrap:wrap}
-html body #clb-open{display:none;appearance:none;border:0;cursor:pointer;align-items:center;gap:6px;justify-self:start;align-self:start;width:max-content;padding:7px 14px 7px 11px;border-radius:999px;background:var(--bg);color:var(--mint-ink);font:800 13px var(--f);box-shadow:var(--up-s)}
+html body #clb-open{display:none;appearance:none;border:0;cursor:pointer;align-items:center;gap:6px;justify-self:start;align-self:start;width:max-content;padding:7px 14px 7px 11px;border-radius:28px;background:var(--bg);color:var(--mint-ink);font:800 13px var(--f);box-shadow:var(--up-s)}
 html.client.clhide body #clbanner{display:none!important}
 html.client.clhide body #clb-open{display:inline-flex}
 html body #clb-open.nouv{animation:pr-pulse3 1.6s ease-in-out infinite}
@@ -269,7 +269,7 @@ html:root:root{--bg:var(--n1-bg);--surface:var(--n1-bg);--fg:var(--n1-fg);--mute
   --mint:var(--n1-nuit);--mint-ink:var(--n1-nuit);--acc:var(--n1-nuit);--laiton:var(--n1-laiton);
   --up:var(--n1-pk);--up-s:var(--n1-pk);--up-xs:var(--n1-pk);--shadow:var(--n1-pk);--in:var(--n1-in);--in-s:var(--n1-in)}
 /* 17/11 : un gros bouton par étape dans la consigne (Cyril : plan ultra facile) */
-html body #clbanner #clb-go{order:1;flex:1 1 auto;min-height:36px;padding:6px 14px;border:0;border-radius:999px;background:#1B2440;color:#fff;font:800 14px var(--f);box-shadow:var(--up-xs);animation:gpulse 1.8s ease-out infinite;white-space:nowrap}
+html body #clbanner #clb-go{order:1;flex:1 1 auto;min-height:36px;padding:6px 14px;border:0;border-radius:28px;background:#1B2440;color:#fff;font:800 14px var(--f);box-shadow:var(--up-xs);animation:gpulse 1.8s ease-out infinite;white-space:nowrap}
 :root[data-theme="dark"] body #clbanner #clb-go{background:#F2EEE4;color:#1B2440}
 html body #clbanner #clb-go[hidden]{display:none}
 html body #clbanner:has(#clb-go:not([hidden])) #clb-v span{display:none}
@@ -289,10 +289,24 @@ html.client body button:active,html body #esck .g button:active{transform:none!i
 
 /* Cyril 19/11 : « C'est bon » pas assez visible. Le bouton qui valide l'étape devient le gros bouton principal :
    pleine largeur de la consigne, bleu nuit plein (crème la nuit), onde qui invite à toucher. « Passer » reste discret. */
-html body #clbanner #clb-b.okgo:not([hidden]){order:9;flex:1 1 100%;width:100%;margin:6px 0 0;min-height:52px;padding:10px 18px;border:0;border-radius:999px;background:#1B2440;color:#fff;font:800 17px/1.15 var(--f);letter-spacing:.01em;box-shadow:0 6px 16px rgba(27,36,64,.28),inset 0 1px 0 rgba(255,255,255,.12);animation:gpulse 1.8s ease-out infinite;display:flex;align-items:center;justify-content:center;gap:8px;white-space:normal;text-align:center}
+html body #clbanner #clb-b.okgo:not([hidden]){order:9;flex:1 1 100%;width:100%;margin:6px 0 0;min-height:52px;padding:10px 18px;border:0;border-radius:28px;background:#1B2440;color:#fff;font:800 17px/1.15 var(--f);letter-spacing:.01em;box-shadow:0 6px 16px rgba(27,36,64,.28),inset 0 1px 0 rgba(255,255,255,.12);animation:gpulse 1.8s ease-out infinite;display:flex;align-items:center;justify-content:center;gap:8px;white-space:normal;text-align:center}
 :root[data-theme="dark"] body #clbanner #clb-b.okgo:not([hidden]){background:#F2EEE4;color:#1B2440;box-shadow:0 6px 16px rgba(0,0,0,.4)}
 html body #clbanner #clb-b.okgo:not([hidden]):active{box-shadow:inset 0 3px 8px rgba(0,0,0,.35)}
 /* Téléphone couché : la consigne est étroite, le bouton reste grand mais un peu moins haut. */
 @media (orientation:landscape) and (max-height:560px){html.client body #clbanner #clb-b.okgo:not([hidden]){min-height:42px;font-size:14.5px;padding:8px 12px}}
 /* Un seul bouton qui pulse : quand « C'est bon » est là, l'outil de l'étape reste visible mais calme. */
 html body #clbanner:has(#clb-b.okgo:not([hidden])) #clb-go{animation:none}
+/* 23/11 (Cyril) : bulle de la cote (et de la dictée) propre : police normale, un seul contour, tout sur une ligne.
+   Seulement le plan du client (ce fichier sert aussi à l'Espace de BRS, qu'on ne touche pas). */
+html.client body .ed{box-shadow:var(--up),0 0 0 1.5px var(--line);flex-wrap:nowrap;gap:5px}
+html.client body .ed.listen{box-shadow:var(--up),0 0 0 2px var(--acc)}
+html.client body .ed input{font:700 17px var(--f)!important;width:118px;outline:none!important;-webkit-appearance:none}
+html.client body .ed input:focus{border-color:var(--acc,#1B2440)}
+html.client body .ed input::placeholder{font:500 15px var(--f);font-style:normal;color:var(--muted)}
+html.client body .ed button{width:36px;height:36px;flex:none}
+@media (max-width:420px){html.client body .ed input{width:100px}}
+/* plus de carré autour d'un bouton rond touché (contour de focus) */
+html.client body button:focus:not(:focus-visible){outline:none}
+/* plus de police « machine à écrire » dans le plan du client (cotes, hauteurs, totaux) : même police que le reste, chiffres alignés */
+html.client:root{--mono:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+html.client body input,html.client body .tot b,html.client body .cap{font-variant-numeric:tabular-nums}

@@ -10,7 +10,7 @@ var d=document,$=function(s){return d.querySelector(s)},$$=function(s){return []
 var esc=X.esc||function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var K='pc-plans';
 function lire(){try{var v=JSON.parse(localStorage.getItem(K)||'[]');return Array.isArray(v)?v:[]}catch(e){return []}}
-function ecrire(L){try{localStorage.setItem(K,JSON.stringify(L))}catch(e){X.toast&&X.toast('Plan pas gardé','La mémoire de l\'appareil est pleine.')}majBadge()}
+function ecrire(L){try{localStorage.setItem(K,JSON.stringify(L))}catch(e){/* appareil plein (22/11) : on garde les plans sans leurs photos et on le dit */try{localStorage.setItem(K,JSON.stringify(L,function(k,v){if(typeof v==='string'&&/^data:image/.test(v))return undefined;if(Array.isArray(v)&&v.length&&v.every(function(x){return x&&typeof x.u==='string'&&/^data:image/.test(x.u)}))return undefined;return v}));X.toast&&X.toast('Photos du plan pas gardées','Plus de place sur cet appareil. Le plan est gardé, mais pas ses photos : gardez-les aussi dans votre galerie.')}catch(e2){X.toast&&X.toast('Plan pas gardé','Plus de place sur cet appareil. Ne fermez pas la page et libérez de la place.')}}majBadge()}
 function un(id){return lire().filter(function(p){return p.id===id})[0]}
 function garder(p){var L=lire().filter(function(x){return x.id!==p.id});L.unshift(p);ecrire(L.slice(0,200))}
 var ICO='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 12h7v8M11 4v5M15 12h5"/></svg>';
@@ -53,7 +53,7 @@ function pour(id,cli){var p=id&&un(id);if(!p){p={id:'pl'+Date.now().toString(36)
 var COUR=null;
 function ouvrirPlan(id){var p=un(id);if(!p)return;COUR=id;var c=client(p.cli),M=manque(p).filter(function(x){return x!=='le dessin'});
  X.xopen('📐 '+(c?c.n:'Plan sans client'),M.length?'Manque '+M.join(', ')+' : vous pourrez compléter plus tard':(c&&c.adr)||'',
-  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=57&chantier='+encodeURIComponent(p.id)+'"></iframe>',
+  '<iframe id="pl-frame" title="Plan" allow="microphone" style="display:block;width:100%;height:calc(100vh - 210px);min-height:420px;border:0;border-radius:14px;background:var(--card)" src="plan.html?embed=1&attendre=1&v=63&chantier='+encodeURIComponent(p.id)+(c?'&cn='+encodeURIComponent(c.n):'')+'"></iframe>',
   '<button class="btn" type="button" data-pllist>← Mes plans</button>'+(p.cli?'':'<button class="btn go" type="button" data-plcomp="'+esc(p.id)+'">Choisir le client</button>'),null);}
 addEventListener('message',function(e){var f=d.getElementById('pl-frame');if(!f||e.source!==f.contentWindow||!COUR)return;var m=e.data||{},p=un(COUR);if(!p)return;
  if(m.type==='proclik-plan-ready'){var c=client(p.cli);f.contentWindow.postMessage({type:'proclik-plan-load',plan:p.plan||null,nouveau:true,prenom:''},'*')}

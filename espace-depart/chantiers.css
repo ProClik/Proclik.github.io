@@ -390,3 +390,89 @@ html body #chx .ch-menu button[data-ong="equipe"]{grid-column:1/-1;flex-directio
 .cp-pll{display:flex;justify-content:center;gap:14px;margin:6px 0 2px;font-size:11.5px;font-weight:700;color:var(--n1-muted)}
 .cp-pll span{display:inline-flex;align-items:center;gap:5px}.cp-pll span::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--n1-alert)}
 .cp-pll .wa::before{background:var(--n1-warn)}.cp-pll .ok::before{background:var(--n1-ok)}
+/* 24/11 : chantier partagé = À faire en tête, 3 onglets, deux colonnes sur grand écran */
+#chx .ch-etat{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;letter-spacing:0;white-space:nowrap}
+#chx .ch-etat.ok{background:color-mix(in srgb,#3E8E6A 14%,transparent);color:#3E8E6A}
+#chx .ch-etat.pb2{background:color-mix(in srgb,#E08A3C 15%,transparent);color:#B8621B}
+#chx .ch-vb{flex-shrink:0;display:inline-flex;align-items:center;height:34px;padding:0 15px;border-radius:99px;font-size:13.5px;font-weight:700;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 22%,transparent)}
+#chx .cp-af{padding:18px 20px;border:1.5px solid color-mix(in srgb,var(--n1-nuit,#1B2440) 16%,transparent);box-shadow:0 2px 4px rgba(23,24,29,.05),0 24px 44px -22px rgba(27,36,64,.42)}
+#chx .cp-af-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#chx .cp-af-h b{font-size:18px}
+#chx .cp-af-l{display:grid;margin-top:8px}
+#chx .cp-af-l button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 2px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:600 15px var(--f,inherit);cursor:pointer}
+#chx .cp-af-l button:last-child{border-bottom:0}
+#chx .cp-af-l .tx{flex:1;min-width:0}
+#chx .cp-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:16px 0 12px}
+#chx .cp-tabs button i{font-style:normal;font-size:11.5px;font-weight:800;margin-left:4px;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--fg) 10%,transparent)}
+#chx .cp-vues .cp-v{display:none}
+#chx .cp-vues[data-t="conv"] .cp-v-conv,#chx .cp-vues[data-t="res"] .cp-v-res,#chx .cp-vues[data-t="ent"] .cp-v-ent{display:block}
+#chx .cp-v>.card:first-child{margin-top:0}
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+ #chx .cp-tabs{display:none}
+ #chx .cp-vues{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0 24px;align-items:start;margin-top:16px}
+ #chx .cp-vues .cp-v{display:block}
+ #chx .cp-v2 .cp-v+.cp-v{margin-top:16px}
+}
+#chx .cp-ent-h{align-items:center}
+#chx .cp-inv-p{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:99px;border:0;background:var(--n1-nuit,#1B2440);color:#fff;font:700 13.5px var(--f,inherit);cursor:pointer}
+#chx .cp-inv-p svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+:root[data-theme="dark"] #chx .cp-inv-p{background:#EFEBE2;color:#1B2440}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #chx .cp-inv-p{background:#EFEBE2;color:#1B2440}}
+#chx .cp-lien{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 2px;border:0;background:none;color:var(--fg);font:600 14.5px var(--f,inherit);cursor:pointer;box-shadow:none}
+#chx .cp-lien svg{width:18px;height:18px}
+#chx .cp-finbas{margin:26px 0 6px;text-align:center}
+#chx .cp-finbas .cp-lien{color:var(--muted);font-size:13.5px;text-decoration:underline;text-underline-offset:3px}
+html body #chx .cp-tabs button{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2px;white-space:nowrap;min-height:44px;padding:0 6px;font-size:14px}
+@media (max-width:420px){html body #chx .cp-tabs button{font-size:13px}#chx .cp-tabs button i{margin-left:2px;padding:1px 6px}}
+/* 24/11 : choix de conversation (Tout le chantier / client), relance, menu compact dans une partie (téléphone) */
+html body #chx .cp-sw{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:99px;margin:0 0 12px}
+html body #chx .cp-sw button{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 10px;border-radius:99px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#chx .cp-pt{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--n1-laiton,#B8925A);flex:none}
+#chx .cp-sws[data-s="ch"] .cp-sw-cli,#chx .cp-sws[data-s="cli"] .cp-sw-ch{display:none}
+#chx .cp-rel{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--tile2,rgba(0,0,0,.04))}
+#chx .cp-rel .tx{display:flex;flex-direction:column;gap:3px}#chx .cp-rel small{color:var(--muted);font-size:13px;line-height:1.35}
+#xsheet .cp-af-l{display:grid;gap:8px}#xsheet .cp-rel{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--tile2,rgba(0,0,0,.04))}
+#xsheet .cp-rel .tx{display:flex;flex-direction:column;gap:3px}#xsheet .cp-rel small{color:var(--muted);font-size:13px;line-height:1.35}
+@media (max-width:899px){
+ html body #chx .ch-menu.ch-mini{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:4px;border-radius:18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ html body #chx .ch-menu.ch-mini::-webkit-scrollbar{display:none}
+ html body #chx .ch-menu.ch-mini button,html body #chx .ch-menu.ch-mini button[data-ong="equipe"]{flex:none;flex-direction:row;gap:6px;padding:8px 12px;border-radius:14px;font-size:13px;grid-column:auto}
+ #chx .ch-menu.ch-mini svg{width:17px;height:17px}
+ #chx .ch-menu.ch-mini button i{position:static;margin-left:2px}
+}
+/* 24/11 : votre équipe sur ce chantier */
+#chx .cheq-l{display:grid;margin-top:6px}
+#chx .cheq-j{display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;border:0;border-top:1px solid var(--line);background:none;box-shadow:none;text-align:left;color:var(--fg);cursor:pointer;border-radius:0;min-height:0}
+#chx .cheq-j:first-child{border-top:0}
+#chx .cheq-j .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#chx .cheq-j .tx b{font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#chx .cheq-j .tx small{font-size:12.5px;color:var(--muted)}
+#chx .cheq-j.manque .tx small{color:var(--cor,#B4472F);font-weight:700}
+#chx .cheq-j.manque .ch-agd{box-shadow:inset 0 0 0 1.5px var(--cor,#B4472F)}
+.cheq-av{display:flex;flex:none}
+.cheq-av i{width:26px;height:26px;margin-left:-6px;border-radius:50%;display:grid;place-items:center;font:800 11.5px/1 var(--f,inherit);font-style:normal;background:var(--n1-nuit,#1B2440);color:#fff;box-shadow:0 0 0 2px var(--card,#fff)}
+.cheq-av i:first-child{margin-left:0}
+#xsheet .cp-rel .cheq-av i{width:30px;height:30px;font-size:13px}
+@media (max-width:520px){#chx .cheq-j .cheq-av{display:none}}
+#chx .cheq-vu{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+#chx .cheq-vu span{font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:99px;background:var(--tile2,rgba(0,0,0,.05));color:var(--muted)}
+#chx .cheq-vu span.cheq-v{color:var(--ok,#2F7D4F)}
+.cheq-bes{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:10px 12px;border-radius:16px;background:var(--tile2,rgba(0,0,0,.04));font-weight:600}
+.cheq-bes button{width:40px;height:40px;border-radius:50%;border:0;font-size:20px;line-height:1;background:var(--bg);box-shadow:var(--n1-pk,0 1px 3px rgba(0,0,0,.15));color:var(--fg);cursor:pointer}
+.cheq-bes b{min-width:22px;text-align:center;font-size:19px}
+#chx .cheq-tt{display:block;font-size:12.5px;color:var(--fg);line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#chx .cheq-tt em{font-style:normal;font-weight:700}#chx .cheq-tt i{color:var(--cor,#B4472F);font-style:normal}
+#chx .cheq-j .tx small+.cheq-tt{margin-top:4px}
+.cheq-pw{display:grid;gap:0}
+.cheq-pw.on{border-radius:16px;box-shadow:0 0 0 2px var(--n1-laiton,#B8925A)}
+.cheq-pw.on .eq-o.on{box-shadow:none;border-radius:16px 16px 0 0}
+.cheq-ta{display:flex;flex-wrap:wrap;gap:6px;padding:4px 12px 12px;background:var(--bg);border-radius:0 0 16px 16px}
+.cheq-ta small{width:100%;font-size:12px;color:var(--muted);font-weight:600}
+.cheq-tc{min-height:36px;padding:0 12px;border-radius:99px;border:1.5px solid var(--line,#d8d4cc);background:none;color:var(--fg);font:600 13px var(--f,inherit);cursor:pointer;box-shadow:none}
+.cheq-tc.on{background:var(--n1-nuit,#1B2440);border-color:var(--n1-nuit,#1B2440);color:#fff}
+:root[data-theme="dark"] .cheq-tc.on{background:#EFEBE2;border-color:#EFEBE2;color:#1B2440}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cheq-tc.on{background:#EFEBE2;border-color:#EFEBE2;color:#1B2440}}
+#chx .cheq-l{grid-template-columns:minmax(0,1fr)}#chx .cheq-j{box-sizing:border-box;max-width:100%}#chx .cheq-j .tx{overflow:hidden}#chx .cheq-j .ch-vb{flex:none}
+
+/* le client parle seulement avec : une personne (24/11) */
+.cp-avec{display:flex;flex-wrap:wrap;gap:8px}.cp-avec .btn{display:flex;flex-direction:column;align-items:flex-start;min-height:46px;padding:6px 14px}.cp-avec .btn small{font-size:11px;opacity:.7;font-weight:500}.cp-avec .btn[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--n1-nuit)}

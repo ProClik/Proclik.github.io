@@ -1,0 +1,139 @@
+/* Barre du bas + menu « Tout l'Espace » (maquette figée du 21/11, FIGE-21-11/menu.html). Couleurs : variables de .f2 (accueil-forme.css). */
+
+/* ---------- téléphone : la nouvelle barre remplace la barre à encoche ---------- */
+.f2b{display:none}
+@media (max-width:899px){
+  html.f2bar #pb,html.f2bar #pb-menu,html.f2bar #pb-scrim{display:none!important}
+  html.f2bar body .app{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))!important}
+  .f2.f2b{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:25;width:min(404px,calc(100% - 24px));
+    display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:8px 6px;border-radius:30px;background:var(--verre);
+    -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 12px 30px -14px rgba(0,0,0,.3);
+    transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s}
+  html.f2m-on .f2.f2b{z-index:46}
+  body.pjo .f2.f2b{opacity:0;transform:translateX(-50%) translateY(30px);pointer-events:none}
+}
+.f2b .og{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--mut);position:relative;text-align:center;min-height:60px;justify-content:center;-webkit-tap-highlight-color:transparent}
+.f2b .og .r{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--tile);border:1px solid var(--line);transition:transform .15s}
+.f2b .og:active .r{transform:scale(.92)}
+.f2b .og.on{color:var(--fg)}
+.f2b .og.on .r{border:1.8px solid var(--fg)}
+.f2b .og .r svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.f2b .og .r .pc-optm{display:none}
+.f2b .og .b{position:absolute;top:2px;right:calc(50% - 26px);min-width:17px;height:17px;border-radius:9px;background:var(--rose);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+.f2b .og.mid .r{width:52px;height:52px;background:var(--nuit);color:var(--sur-nuit);border:0}
+.f2b .og.mid .r svg{width:22px;height:22px;stroke-width:2}
+.f2b .og.mid .b{top:0;right:calc(50% - 30px)}
+
+/* ---------- le panneau « Tout l'Espace » (téléphone, iPad, PC) ---------- */
+.f2.f2ms{position:fixed;inset:0;z-index:43;background:color-mix(in srgb,var(--bg) 35%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .2s}
+.f2.f2ms.in{opacity:1}
+.f2.f2m{position:fixed;z-index:44;left:10px;right:10px;top:calc(54px + env(safe-area-inset-top,0px));max-height:calc(100% - 54px - 178px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;padding:18px 14px 14px;border-radius:34px;
+  background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(26px) saturate(1.2);backdrop-filter:blur(26px) saturate(1.2);
+  box-shadow:0 30px 60px -24px rgba(0,0,0,.35),inset 0 0 0 1px color-mix(in srgb,#fff 45%,transparent);
+  opacity:0;transform:translateY(14px) scale(.98);transform-origin:50% 100%;transition:opacity .2s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.f2.f2m.in{opacity:1;transform:none}
+@media (min-width:900px){.f2.f2m{left:auto;right:auto;left:50%;width:460px;margin-left:-230px;top:80px;max-height:calc(100% - 120px)}}
+.f2m .tete{display:flex;align-items:center;justify-content:space-between;margin:0 4px 4px}
+.f2m .tete b{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.f2m .xr{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--tile);box-shadow:0 1px 2px rgba(23,24,29,.05),0 6px 14px -10px rgba(23,24,29,.3)}
+.f2m svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.f2m .xr svg{width:15px;height:15px;stroke-width:2}
+.f2m .cherche{display:flex;align-items:center;gap:10px;height:50px;padding:0 5px 0 18px;margin:10px 0 2px;border-radius:25px;background:var(--tile);box-shadow:0 1px 2px rgba(23,24,29,.04),0 8px 18px -14px rgba(23,24,29,.3)}
+.f2m .cherche>svg{width:17px;height:17px;flex-shrink:0;color:var(--fg)}
+.f2m .cherche input,.f2m .cherche input:focus{flex:1;min-width:0;border:0!important;background:none!important;box-shadow:none!important;outline:none;padding:0;font-size:16px;color:var(--fg);-webkit-appearance:none;appearance:none}
+.f2m .cherche input::placeholder{color:var(--mut)}
+.f2m .cherche input::-webkit-search-cancel-button{display:none}
+.f2m .mic2{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--nuit);color:var(--sur-nuit);flex-shrink:0}
+.f2m .mic2 svg{width:17px;height:17px}
+.f2m .mic2.on{background:var(--laiton);color:#fff;animation:f2mic 1.2s ease-in-out infinite}
+@keyframes f2mic{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--laiton) 20%,transparent)}}
+.f2m .defile{overflow:auto;flex:1;min-height:0;margin:0 -4px;padding:0 4px 4px;scrollbar-width:none;overscroll-behavior:contain}
+.f2m .defile::-webkit-scrollbar{display:none}
+/* Scanner : la carte bien visible, en tête (Cyril 22/11 : accès direct et évident) */
+.f2m .f2m-sc{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:10px 14px 10px 10px;border-radius:24px;background:var(--tile);text-align:left;box-shadow:0 1px 2px rgba(23,24,29,.04),0 8px 18px -14px rgba(23,24,29,.3);animation:casc .42s cubic-bezier(.2,.8,.2,1) both}
+.f2m .f2m-sc .rond{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--nuit);color:var(--sur-nuit);flex-shrink:0}
+.f2m .f2m-sc .rond svg{width:21px;height:21px}
+.f2m .f2m-sc .x{flex:1;min-width:0}
+.f2m .f2m-sc b{display:block;font-size:15.5px;font-weight:700}
+.f2m .f2m-sc .x span{display:block;font-size:12.5px;color:var(--mut);line-height:1.3}
+.f2m .f2m-sc>svg{width:16px;height:16px;color:var(--mut)}
+.f2m h3{font-size:12.5px;font-weight:600;color:var(--mut);margin:14px 4px 7px}
+.f2m .duo2{display:grid;grid-template-columns:2fr 3fr;gap:6px}
+.f2m .gr4{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.f2m .gr4.g2{grid-template-columns:repeat(2,1fr)}
+.f2m .gr4.g3{grid-template-columns:repeat(3,1fr)}
+.f2m .gr4 button{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 0;color:var(--fg);text-align:center;line-height:1.2;animation:casc .42s cubic-bezier(.2,.8,.2,1) both}
+.f2m .gr4 button[hidden]{display:none}
+.f2m .gr4 button:nth-child(2){animation-delay:.03s}.f2m .gr4 button:nth-child(3){animation-delay:.06s}.f2m .gr4 button:nth-child(4){animation-delay:.09s}.f2m .gr4 button:nth-child(5){animation-delay:.12s}
+.f2m .gr4 span.r{position:relative;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--tile);box-shadow:0 1px 2px rgba(23,24,29,.05),0 8px 18px -12px rgba(23,24,29,.35);transition:transform .15s}
+.f2m .gr4 button:active span.r{transform:scale(.92)}
+.f2m .gr4 span.r>svg{width:21px;height:21px}
+.f2m .gr4 em{position:absolute;top:-2px;right:calc(50% - 28px);min-width:16px;height:16px;padding:0 5px;border-radius:9px;background:var(--rose);color:#fff;font-size:10px;font-style:normal;font-weight:700;display:grid;place-items:center}
+.f2m .pc-optm{position:absolute;top:-4px;left:-6px;width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:var(--tile);color:var(--laiton);box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 1px var(--line)}
+.f2m .pc-optm svg{width:13px!important;height:13px!important;stroke-width:2!important}
+.f2m .f2m-g[hidden],.f2m .f2m-sc[hidden]{display:none}
+.f2m .f2m-vide{font-size:14px;color:var(--mut);margin:14px 6px 4px;line-height:1.4}
+@keyframes casc{from{opacity:0;transform:translateY(10px) scale(.92)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.f2m,.f2m *,.f2ms,.f2b,.f2b *{transition:none!important;animation:none!important}}
+/* nuit */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2.f2m{background:color-mix(in srgb,#15181F 70%,transparent);box-shadow:0 30px 60px -24px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.06)}
+  :root:not([data-theme="light"]) .f2m :is(.xr,.cherche,.f2m-sc,.gr4 span.r,.pc-optm){background:#2A2E3A;box-shadow:none}}
+:root[data-theme="dark"] .f2.f2m{background:color-mix(in srgb,#15181F 70%,transparent);box-shadow:0 30px 60px -24px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.06)}
+:root[data-theme="dark"] .f2m :is(.xr,.cherche,.f2m-sc,.gr4 span.r,.pc-optm){background:#2A2E3A;box-shadow:none}
+/* le micro « Parler à ProClik » : bulle centrée au-dessus du menu (téléphone), comme avant (règle Cyril 28/10) */
+.f2.f2mic{display:none}
+@media (max-width:899px){
+  .f2.f2mic{display:grid;place-items:center;position:fixed;z-index:46;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));width:58px;height:58px;margin-left:-29px;border-radius:50%;
+    background:var(--tile);color:var(--fg);border:1px solid var(--line);box-shadow:0 1px 2px rgba(23,24,29,.06),0 12px 26px -12px rgba(23,24,29,.4);
+    opacity:0;transform:translateY(16px) scale(.85);transition:opacity .2s,transform .35s cubic-bezier(.2,.8,.2,1)}
+  .f2.f2mic.in{opacity:1;transform:none}
+  .f2.f2mic[hidden]{display:none}
+  .f2.f2mic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+}
+:root[data-theme="dark"] .f2.f2mic{background:#2A2E3A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .f2.f2mic{background:#2A2E3A}}
+/* 23/11 (Cyril) : la barre du bas descend près du bas du téléphone (moins d'espace sous elle), et plus de saccade quand on tire plus bas que le bas */
+@media (max-width:899px){
+  .f2.f2b{bottom:max(10px,calc(env(safe-area-inset-bottom,0px) - 10px))!important}
+  .f2.f2mic{bottom:calc(88px + max(10px,calc(env(safe-area-inset-bottom,0px) - 10px)))!important}
+  html.f2bar body .app{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+}
+html.f2on,html.f2on body{overscroll-behavior-y:none}
+
+/* 23/11 : le menu « Tout l Espace » fermé restait posé, invisible, en haut de l écran : il avalait les touchers (bouton + de Factures, Devis, Produits…) */
+.f2.f2m[hidden],.f2.f2ms[hidden]{display:none!important}
+.f2.f2m:not(.in),.f2.f2ms:not(.in){pointer-events:none}
+/* 23/11 : sur téléphone, les petites bulles (« Nouvelle demande de devis »…) arrivent en bas, au-dessus de la barre : elles ne cachent plus le titre ni le bouton + */
+@media (max-width:899px){
+ html.f2bar .toast{top:auto!important;bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;transform:translate(-50%,calc(100% + 140px))!important}
+ html.f2bar .toast.on{transform:translate(-50%,0)!important}
+}
+/* 23/11 (Cyril, choix D) : la barre du bas est collée au bord, sur toute la largeur ; le bas arrondi de l iPhone passe dans la barre */
+@media (max-width:899px){
+ .f2.f2b{bottom:0!important;width:100%!important;border-radius:26px 26px 0 0!important;border-bottom:0!important;padding:8px 6px calc(8px + max(10px,env(safe-area-inset-bottom,0px)))!important;box-shadow:0 -8px 24px -16px rgba(0,0,0,.28)!important}
+ .f2.f2mic{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+ html.f2bar body .app{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+ html.f2bar .toast{bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
+}
+/* 23/11 : sur iPad / ordinateur aussi, la bulle arrive en bas à gauche (à côté du menu) : elle ne cache plus le titre ni les boutons d une fenêtre ouverte à droite */
+@media (min-width:900px){
+ .toast{top:auto!important;left:124px!important;width:min(420px,calc(50vw - 150px))!important;bottom:calc(20px + env(safe-area-inset-bottom,0px))!important;transform:translateY(calc(100% + 60px))!important}
+ .toast.on{transform:none!important}
+}
+/* 23/11 : la bulle passe SOUS les fenêtres ouvertes (choix du chantier, fiches…) : elle ne cache plus leurs cases ni leurs boutons */
+html.f2bar .toast,.toast{z-index:28!important}
+/* 23/11 (Cyril) : bulle touchable (va au sujet) + sortie douce (elle s efface sur place au lieu de glisser à travers la barre) */
+.toast.va{pointer-events:auto!important;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.toast.va::after{content:"›";margin-left:auto;padding-left:8px;font-size:24px;line-height:1;font-weight:500;color:var(--mut,#6b7280)}
+.toast.va:active{filter:brightness(.97)}
+.toast{opacity:0;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s .3s!important}
+.toast.on{opacity:1;transition:opacity .2s ease,transform .35s cubic-bezier(.2,.8,.2,1)!important}
+@media (max-width:899px){
+ html.f2bar .toast{transform:translate(-50%,14px)!important}
+ html.f2bar .toast.on{transform:translate(-50%,0)!important}
+}
+@media (min-width:900px){
+ .toast{transform:translateY(14px)!important}
+ .toast.on{transform:none!important}
+}

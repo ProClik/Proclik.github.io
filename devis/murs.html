@@ -10,14 +10,14 @@
 /* Un seul écran : le mur prend toute la place libre ; en largeur (tablette, PC, téléphone couché) le mur à gauche, les commandes à droite. Style N1 ProClik : bleu nuit pour agir, laiton en touche. */
 :root{
  --bg:#EEF0F4;--surface:#F8F9FB;--soft:#E4E7EE;--fg:#1B2440;--muted:#5D6478;--line:#C9CEDA;
- --act:#1B2440;--on-act:#FFFFFF;--laiton:#A8823F;--laiton-soft:#E9DFC9;--wall:#FFFFFF;--wall2:#EEF0F5;
+ --act:#1B2440;--on-act:#FFFFFF;--laiton:#A8823F;--laiton-soft:#E9DFC9;--wall:#FFFFFF;--pwall:#3D4355;--pfloor:#E8E8E7;--wall2:#EEF0F5;
  --wood:#E6EAF0;--wood2:#D9DEE7;--top:#9AA1B2;--glass:#CFE4F2;--inox:#D9DDE4;--ceram:#FFFFFF;
  --ef:#2F7DE1;--ec:#E8590C;--ev:#6B7280;--el:#A8823F;
  --hi:#FFFFFF;--lo:#C7CCD8;--bad:#C8553D;
  --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--pwall:#C9CBD3;--pfloor:#2A3350;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1424;--surface:#1B2238;--soft:#232B45;--fg:#F2EEE4;--muted:#A9AEC0;--line:#3A4363;--act:#F2EEE4;--on-act:#1B2440;--laiton:#D4B483;--laiton-soft:#3B3424;--wall:#232B45;--pwall:#C9CBD3;--pfloor:#2A3350;--wall2:#2B3452;--wood:#3A4566;--wood2:#46527A;--top:#7D8499;--glass:#2C4A63;--inox:#3E465E;--ceram:#3A4361;--ef:#6AA8E8;--ec:#E58A73;--ev:#A3A9B8;--el:#D4B483;--hi:#2A3352;--lo:#0A0E1A;--bad:#E58A73;color-scheme:dark}
 [hidden]{display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
@@ -27,7 +27,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px
 @media (min-aspect-ratio:5/4){.app{grid-template-columns:minmax(0,1fr) clamp(260px,32vw,350px);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"top top" "stage head" "stage side"}.head{align-content:start}}
 .demo{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;white-space:nowrap;align-items:center;font-size:12px;color:var(--muted)}
 .demo b{font-weight:700}
-.pill{appearance:none;font:inherit;font-weight:700;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
+.pill{appearance:none;font:inherit;font-weight:700;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:28px;padding:4px 10px;cursor:pointer}
 .pill[aria-pressed="true"]{background:var(--act);color:var(--on-act);border-color:var(--act)}
 h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01em}
 .name{display:flex;gap:6px;align-items:center}
@@ -35,10 +35,10 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .name input{flex:1 1 0;width:0}.name select{flex:0 1 auto;max-width:48%}
 .name label{font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap}
 .hrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.faces{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px;background:var(--surface)}
-.faces button{appearance:none;border:0;background:transparent;font:inherit;font-weight:700;font-size:13px;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+.faces{display:inline-flex;border:1px solid var(--line);border-radius:28px;padding:2px;gap:2px;background:var(--surface)}
+.faces button{appearance:none;border:0;background:transparent;font:inherit;font-weight:700;font-size:13px;color:var(--muted);padding:6px 12px;border-radius:28px;cursor:pointer}
 .faces button[aria-pressed="true"]{background:var(--act);color:var(--on-act)}
-.tog{appearance:none;font:inherit;font-weight:700;font-size:12px;color:var(--muted);background:transparent;border:1px dashed var(--line);border-radius:999px;padding:6px 10px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.tog{appearance:none;font:inherit;font-weight:700;font-size:12px;color:var(--muted);background:transparent;border:1px dashed var(--line);border-radius:28px;padding:6px 10px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
 .tog[aria-pressed="true"]{color:var(--fg);border-style:solid;border-color:var(--laiton);background:var(--laiton-soft)}
 .tog i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .stage{min-height:0;display:flex;flex-direction:column;background:var(--surface);border-radius:20px;padding:6px 4px 2px;box-shadow:5px 5px 12px var(--lo),-5px -5px 12px var(--hi);touch-action:none;user-select:none;-webkit-user-select:none;position:relative}
@@ -49,9 +49,9 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .dock{display:grid;align-content:end;gap:6px;min-height:0}
 .cats{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
-.cats button{appearance:none;flex:1 0 auto;font:inherit;font-weight:700;font-size:12.5px;color:var(--muted);background:var(--soft);border:0;border-radius:999px;padding:7px 10px;cursor:pointer;white-space:nowrap}
+.cats button{appearance:none;flex:1 0 auto;font:inherit;font-weight:700;font-size:12.5px;color:var(--muted);background:var(--soft);border:0;border-radius:28px;padding:7px 10px;cursor:pointer;white-space:nowrap}
 .cats button[aria-pressed="true"]{background:var(--act);color:var(--on-act)}
-.add{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.add{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.add .oth{grid-column:1/-1;margin:6px 2px 0;font-size:12px;font-weight:700;color:var(--muted)}
 .btn{appearance:none;font:inherit;font-weight:700;font-size:11.5px;line-height:1.15;color:var(--fg);background:var(--surface);border:0;border-radius:14px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi);text-align:center;min-height:54px;justify-content:center}
 .btn:active{box-shadow:inset 2px 2px 5px var(--lo),inset -2px -2px 5px var(--hi)}
 .btn svg{width:22px;height:22px;flex:none}
@@ -63,13 +63,14 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .card{background:var(--surface);border-radius:16px;padding:10px 12px;display:grid;gap:7px;border:1.5px solid var(--laiton)}
 .card .t{font-weight:800;font-size:15px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .card .t small{font-weight:600;color:var(--muted);font-size:12px}
+#ok.pend{background:transparent!important;color:var(--muted)!important;box-shadow:none!important;border:1.5px dashed var(--line)!important;font-weight:700!important;font-size:14px!important;animation:none!important}.qg{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}.qs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.qs .go{font-size:14px;padding:10px 6px;display:flex;align-items:center;justify-content:center;gap:6px;line-height:1.15}.qs .go svg{width:16px;height:16px;display:none}.qs .chip{grid-column:1/-1;justify-self:start}.qp{display:flex;gap:4px}.qp i{flex:1;height:4px;border-radius:2px;background:var(--line)}.qp i.ok{background:var(--act)}.qp i.cur{background:var(--laiton)}.inf2{font-size:12.5px;color:var(--muted)}.inf2 b{color:var(--fg)}
 .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
 .row .k{font-weight:700;font-size:13px;color:var(--muted)}
-.chip{appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--soft);border:1.5px solid transparent;border-radius:999px;padding:5px 10px;cursor:pointer}
+.chip{appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--soft);border:1.5px solid transparent;border-radius:28px;padding:5px 10px;cursor:pointer}
 .chip[aria-pressed="true"]{border-color:var(--act);background:var(--surface)}
 .chip.okb{margin-left:auto;background:var(--act);color:var(--on-act)}
 .tools{display:flex;gap:6px;align-items:center;flex:none}
-.ic{appearance:none;border:0;font:inherit;font-weight:800;font-size:13px;color:var(--fg);background:var(--surface);border-radius:999px;min-width:40px;height:40px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi)}
+.ic{appearance:none;border:0;font:inherit;font-weight:800;font-size:13px;color:var(--fg);background:var(--surface);border-radius:28px;min-width:40px;height:40px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;box-shadow:3px 3px 7px var(--lo),-3px -3px 7px var(--hi)}
 .ic svg{width:20px;height:20px}
 .ic.lk{background:var(--act);color:var(--on-act);box-shadow:0 0 0 3px var(--laiton-soft)}
 .press{transform-box:fill-box;transform-origin:center;animation:press .3s ease-out both}
@@ -78,7 +79,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 @keyframes liftIn{from{transform:scale(1.03);filter:drop-shadow(0 0 0 rgba(20,28,52,0))}}
 .settle{transform-box:fill-box;transform-origin:center;animation:settle .3s cubic-bezier(.2,.9,.3,1.3) both}
 @keyframes settle{from{transform:scale(1.045)}to{transform:scale(1)}}
-#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translate(-50%,-8px);opacity:0;pointer-events:none;max-width:calc(100% - 24px);width:max-content;padding:8px 14px;border-radius:999px;background:rgba(27,36,64,.92);color:#fff;font-size:13px;font-weight:600;line-height:1.3;text-align:center;box-shadow:0 6px 18px rgba(20,28,52,.22);transition:opacity .25s ease,transform .35s cubic-bezier(.2,.9,.3,1.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);z-index:50}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translate(-50%,-8px);opacity:0;pointer-events:none;max-width:calc(100% - 24px);width:max-content;padding:8px 14px;border-radius:28px;background:rgba(27,36,64,.92);color:#fff;font-size:13px;font-weight:600;line-height:1.3;text-align:center;box-shadow:0 6px 18px rgba(20,28,52,.22);transition:opacity .25s ease,transform .35s cubic-bezier(.2,.9,.3,1.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);z-index:50}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #toast{background:rgba(242,238,228,.96);color:#1B2440}:root:not([data-theme="light"]) #toast b{color:#8A6A2F}}
 :root[data-theme="dark"] #toast{background:rgba(242,238,228,.96);color:#1B2440}:root[data-theme="dark"] #toast b{color:#8A6A2F}
 #toast.on{opacity:1;transform:translate(-50%,0)}
@@ -102,12 +103,15 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 #wall .pf .bx.cl{stroke:var(--ef)}#wall .pf .clp{fill:var(--ef)}
 #wall .pf .gl{stroke:var(--fg);stroke-width:1.2px;fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke}
 #wall .pf .gl.sep{stroke-width:1px;opacity:.45}#wall .pf .pt{fill:var(--fg)}#wall .pf .ef{fill:var(--ef)}#wall .pf .ec{fill:var(--ec)}
-.undo{position:absolute;left:8px;top:8px;z-index:4;display:inline-flex;align-items:center;gap:6px;appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 10px;cursor:pointer;box-shadow:0 2px 8px rgba(20,28,52,.08);transition:opacity .2s,transform .15s}
+.undo{position:absolute;left:8px;top:8px;z-index:4;display:inline-flex;align-items:center;gap:6px;appearance:none;font:inherit;font-weight:700;font-size:13px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:6px 12px 6px 10px;cursor:pointer;box-shadow:0 2px 8px rgba(20,28,52,.08);transition:opacity .2s,transform .15s}
 .undo svg{width:17px;height:17px}.undo:disabled{opacity:.35;cursor:default}.undo:not(:disabled):active{transform:none}
+#where{display:none}@media (min-aspect-ratio:5/4) and (min-height:600px){.side.hasw{grid-template-rows:minmax(0,1fr) auto auto;align-content:stretch}.side.hasw #where{display:grid}.hasw-mini #mini svg,.hasw-mini #mprev{display:none!important}}
+#where{grid-template-rows:auto minmax(0,1fr) auto;gap:4px;min-height:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px}#where .wh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}#where small{font-size:12px;color:var(--muted);text-align:center}#wplan{width:100%;height:100%;min-height:110px;display:block}#wplan [data-wj]{cursor:pointer}
+.wpv,#mprev{border:0;background:var(--wall2);color:var(--fg);font:inherit;font-weight:700;font-size:13px;border-radius:28px;padding:6px 12px;cursor:pointer;min-height:34px}#mprev{width:34px;padding:0;font-size:20px;line-height:1}#mprev[hidden],.wpv[hidden]{display:none}
 #mini{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--fg);white-space:nowrap;flex:none}#mini[hidden]{display:none}#mini svg{height:46px;width:auto;max-width:110px;flex:none}#mtx small{display:block;font-weight:700;font-size:11.5px;color:var(--muted)}@media (max-width:600px){.tog .tl{display:none}}
 #coach{position:fixed;z-index:40;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;transform:translate(-50%,-50%)}
 #coach i{width:38px;height:38px;border-radius:50%;background:rgba(168,130,63,.22);border:2px solid var(--laiton);box-shadow:0 4px 14px rgba(20,28,52,.18);animation:coach 2.4s ease-in-out 2 both}
-#coach span{font-size:12.5px;font-weight:700;color:#fff;background:rgba(27,36,64,.92);padding:5px 10px;border-radius:999px;white-space:nowrap;animation:coachT 4.8s ease both}
+#coach span{font-size:12.5px;font-weight:700;color:#fff;background:rgba(27,36,64,.92);padding:5px 10px;border-radius:28px;white-space:nowrap;animation:coachT 4.8s ease both}
 @keyframes coach{0%{opacity:0;transform:scale(1.2)}12%{opacity:1;transform:scale(1)}28%{transform:scale(.8)}42%{transform:scale(.8) translateX(0)}72%{transform:scale(.8) translateX(60px);opacity:1}88%{opacity:0;transform:scale(.8) translateX(60px)}100%{opacity:0}}
 @keyframes coachT{0%,4%{opacity:0}10%,90%{opacity:1}100%{opacity:0}}
 @media (max-aspect-ratio:5/4){h1{display:none}}
@@ -133,7 +137,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .auto .dot{width:8px;height:8px;border-radius:50%;background:var(--laiton);flex:none}
 .hintline b{font-weight:800}
 .del{appearance:none;border:0;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--muted);text-decoration:underline;cursor:pointer;padding:5px 4px}
-.go{appearance:none;font:inherit;font-weight:800;font-size:16px;color:var(--on-act);background:var(--act);border:0;border-radius:999px;padding:13px 18px;cursor:pointer;width:100%}
+.go{appearance:none;font:inherit;font-weight:800;font-size:16px;color:var(--on-act);background:var(--act);border:0;border-radius:28px;padding:13px 18px;cursor:pointer;width:100%}
 @media (max-height:700px){.card .inf{display:none}}
 @media (max-aspect-ratio:5/4),(max-height:520px){.card{position:absolute;left:0;right:0;bottom:0;z-index:6;box-shadow:0 -8px 28px rgba(15,20,36,.16),0 2px 6px rgba(15,20,36,.08);max-width:620px;margin:0 auto}}
 .card:not([hidden]){animation:sheetIn .32s cubic-bezier(.2,.9,.3,1.1) both}
@@ -187,9 +191,9 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 #ss .sq-card{flex:none;justify-content:flex-start}#ss .qo{min-height:50px}
 .fillin{animation:fIn .45s ease both}@keyframes fIn{from{opacity:0}}
 .same{display:grid;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}.same>span{font-size:13px;font-weight:800;color:var(--muted)}.same>div{display:flex;flex-wrap:wrap;gap:6px}
-.same .chip{appearance:none;border:1.5px solid var(--act);background:var(--surface);color:var(--act);font:800 13.5px var(--font);border-radius:999px;padding:8px 13px;cursor:pointer}
+.same .chip{appearance:none;border:1.5px solid var(--act);background:var(--surface);color:var(--act);font:800 13.5px var(--font);border-radius:28px;padding:8px 13px;cursor:pointer}
 .sls{display:grid;gap:6px}.sl{appearance:none;display:flex;justify-content:space-between;gap:10px;align-items:center;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;font:600 13.5px var(--font);color:var(--muted);cursor:pointer;text-align:left}.sl b{color:var(--fg);font-weight:800;text-align:right}
-.fph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 8px}.phb{display:inline-flex;align-items:center;gap:8px;background:var(--act);color:var(--on-act);border-radius:999px;padding:11px 16px;font:800 14.5px var(--font);cursor:pointer}.fph img{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1.5px solid var(--line)}
+.fph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 8px}.phb{display:inline-flex;align-items:center;gap:8px;background:var(--act);color:var(--on-act);border-radius:28px;padding:11px 16px;font:800 14.5px var(--font);cursor:pointer}.fph img{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1.5px solid var(--line)}
 .fnt{display:flex;gap:8px;align-items:stretch}.fnt textarea{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);font:600 14.5px/1.35 var(--font);padding:9px 12px;resize:none}.fnt .mic{appearance:none;flex:none;width:48px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--laiton);display:grid;place-items:center;cursor:pointer}.fnt .mic.on{background:var(--laiton);color:#fff;animation:blk 1.2s infinite}
 .ssdone{display:grid;justify-items:center;text-align:center;gap:6px;padding:14px 0;animation:pIn .5s cubic-bezier(.2,.9,.3,1.25) both}.ssdone b{font-size:20px;font-weight:800}.ssdone span{color:var(--muted)}
 .ssdone .ck{stroke-dasharray:40;stroke-dashoffset:40;animation:ckD .5s .15s ease forwards}@keyframes ckD{to{stroke-dashoffset:0}}
@@ -211,6 +215,9 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
  #sp .qo.sm{min-height:36px;font-size:12px;padding:4px 8px}#sp .qo.sm svg{width:18px;height:18px}
  .go{padding:10px 14px;font-size:14.5px}
 }
+/* Cyril 25/11 : Oui et Non sur la même ligne, même taille */.qyn{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qyn .go.all{margin-top:2px}.go.qno{background:var(--surface);color:var(--fg);box-shadow:inset 0 0 0 2px var(--fg)}
+.btn .pfi{height:30px;width:auto;max-width:76px;display:block;margin:0 auto 4px;overflow:visible}
+.btn .pfi .bx{fill:var(--surface)!important;stroke:var(--fg)!important;stroke-width:1.3px}.btn .pfi .bx.cl{stroke:var(--ef)!important}.btn .pfi .gl{fill:none!important;stroke:var(--fg)!important;stroke-width:1.2px}.btn .pfi .pt{fill:var(--fg)!important;stroke:none!important}.btn .pfi .ef{fill:var(--ef)!important;stroke:none!important}.btn .pfi .ec{fill:var(--ec)!important;stroke:none!important}.btn .pfi .clp{fill:var(--ef)!important}.btn .pfi{height:34px}
 </style>
 </head>
 <body>
@@ -226,10 +233,11 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
   <h1 id="ttl">Votre mur, vu de face</h1>
   <div class="name"><label for="room" id="roomlab">Pièce</label><input id="room" autocomplete="off"><select id="rtype" aria-label="Type de pièce"></select></div>
   <div class="hrow"><div class="faces" id="faces" role="group" aria-label="Face de la cloison"><button id="f1" aria-pressed="true"></button><button id="f2" aria-pressed="false"></button></div>
-   <div id="mini" hidden><svg viewBox="0 0 30 30" aria-hidden="true"></svg><span id="mtx"></span></div><button class="tog" id="tech" aria-pressed="false"><i style="background:var(--ef)"></i><i style="background:var(--el)"></i>Vue artisan<span class="tl"> : eau et électricité</span></button><div id="gauge" aria-label="Précision du devis"><span id="gl">Précision du devis</span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span></div></div>
+   <div id="mini" hidden><button type="button" id="mprev" aria-label="Revenir au mur précédent" hidden>‹</button><svg viewBox="0 0 30 30" aria-hidden="true"></svg><span id="mtx"></span></div><button class="tog" id="tech" aria-pressed="false"><i style="background:var(--ef)"></i><i style="background:var(--el)"></i>Vue artisan<span class="tl"> : eau et électricité</span></button><div id="gauge" aria-label="Précision du devis"><span id="gl">Précision du devis</span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span></div></div>
  </div>
  <div class="stage" id="stage"><div id="toast" role="status" aria-live="polite"></div><button id="undo" class="undo" type="button" disabled aria-label="Annuler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4.5 9.5 9 5"/><path d="M4.5 9.5H14a5.5 5.5 0 0 1 0 11h-3"/></svg><span>Annuler</span></button><div id="coach" hidden><i></i><span>Maintenez, puis glissez</span></div><div id="party" hidden></div><svg id="wall" role="img" aria-label="Mur vu de face"></svg><div class="legend" id="legend" hidden><span><i style="background:var(--ef)"></i>Eau froide</span><span><i style="background:var(--ec)"></i>Eau chaude</span><span><i style="background:var(--ev)"></i>Évacuation</span><span><i style="background:var(--el)"></i>Électricité</span></div><p class="hintline" id="hint"></p></div>
  <div class="side">
+  <div id="where" hidden><div class="wh"><b>Où est ce mur ?</b><button type="button" id="wprev" class="wpv" hidden>‹ Mur précédent</button></div><svg id="wplan" role="img" aria-label="Plan de l'étage, le mur en cours clignote"></svg><small id="wtip">Touchez un mur déjà fait pour y revenir</small></div>
   <div class="dock" id="dock">
    <div class="card" id="card" hidden></div>
    <button class="btn" id="addbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter sur ce mur</button>
@@ -278,22 +286,38 @@ const CAT={
  baignoire:{n:"Baignoire",c:"eau",r:["sdb"],h:55,bas:0,w:[150,160,170,180],d:70,ic:"baignoire",need:[["ef",.12,70],["ec",.22,70],["ev",.1,5]]},
  ll:{n:"Lave-linge",c:"eau",r:["sdb","buanderie","cuisine"],h:85,bas:0,w:[60],d:60,ic:"ll",need:[["ef",.25,95],["ev",.75,80],["el",.5,30,"16 A"]]},
  ce:{n:"Chauffe-eau",c:"eau",r:["sdb","buanderie","cuisine","wc"],h:120,bas:70,w:[55],d:55,ic:"ce",need:[["ef",.35,60],["ec",.65,60],["ev",.5,40],["el",.5,200,"20 A"]],info:"Fixé au mur, 150 à 200 L"},
+ pteau:{n:"Arrivée d'eau et évacuation",s:"Point d'eau",c:"eau",r:[],h:20,bas:40,w:[30],ic:"lavemains",need:[["ef",.3,50],["ec",.5,50],["ev",.7,40]],info:"Eau froide, eau chaude et évacuation, pour un appareil à brancher"},
  // électricité
- prise:{n:"Prise",c:"elec",r:ALL,h:8,bas:26,w:[8],petit:1,ic:"prise",info:"Axe à 30 cm du sol"},
- prise2:{n:"Prise double",c:"elec",r:ALL,h:8,bas:26,w:[15],petit:1,ic:"prise",info:"Axe à 30 cm du sol"},
- prisept:{n:"Prise plan de travail",c:"elec",r:["cuisine"],h:8,bas:106,w:[15],petit:1,ic:"prise",info:"Axe à 110 cm, au-dessus du plan"},
- inter:{n:"Interrupteur",c:"elec",r:ALL,h:8,bas:106,w:[8],petit:1,ic:"inter",info:"Axe à 110 cm du sol"},
- rj:{n:"Prise TV / internet",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",info:"Axe à 30 cm du sol"},
- applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",info:"À 180 cm du sol"},
+ prise:{n:"Prise",c:"elec",r:ALL,h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"pc",np:1,info:"Axe à 30 cm du sol"},
+ prise2:{n:"Prise double",c:"elec",r:ALL,h:8,bas:26,w:[15],petit:1,ic:"prise",pfk:"pc",np:2,info:"Axe à 30 cm du sol"},
+ /* Cyril 25/11 : même liste et mêmes symboles qu'à l'Espace */
+ prise3:{n:"Prise triple",c:"elec",r:ALL,h:8,bas:26,w:[22],petit:1,ic:"prise",pfk:"pc",np:3,info:"Axe à 30 cm du sol"},
+ prise4:{n:"Prise quadruple",c:"elec",r:ALL,h:8,bas:26,w:[29],petit:1,ic:"prise",pfk:"pc",np:4,info:"Axe à 30 cm du sol"},
+ prisept:{n:"Prise plan de travail",c:"elec",r:["cuisine"],h:8,bas:106,w:[15],petit:1,ic:"prise",pfk:"pc",np:2,info:"Axe à 110 cm, au-dessus du plan"},
+ vv:{n:"Va-et-vient",c:"elec",r:ALL,h:8,bas:106,w:[8],petit:1,ic:"inter",pfk:"vv",info:"Interrupteur qui allume depuis 2 endroits, axe à 110 cm"},
+ inter:{n:"Interrupteur",c:"elec",r:ALL,h:8,bas:106,w:[8],petit:1,ic:"inter",pfk:"int",info:"Axe à 110 cm du sol"},
+ tv:{n:"Prise TV",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",pfk:"tv",info:"Axe à 30 cm du sol"},
+ rj:{n:"Prise internet (RJ45)",s:"Prise internet",c:"elec",r:SEC.concat(["cuisine"]),h:8,bas:26,w:[8],petit:1,ic:"rj",pfk:"rj",info:"Axe à 30 cm du sol"},
+ applique:{n:"Applique",c:"elec",r:ALL.filter(k=>k!=="wc"),h:12,bas:180,w:[25],petit:1,ic:"applique",pfk:"app",info:"À 180 cm du sol"},
+ iph:{n:"Interphone",c:"elec",r:ALL,h:20,bas:140,w:[12],petit:1,ic:"inter",pfk:"iph",info:"À 150 cm du sol"},
+ tab:{n:"Tableau électrique",c:"elec",r:ALL,h:50,bas:120,w:[35],ic:"inter",pfk:"tab",libre:1,info:"Le tableau avec les disjoncteurs"},
+ sortie:{n:"Sortie de câble",c:"elec",r:[],h:8,bas:26,w:[8],petit:1,ic:"prise",pfk:"sortie",info:"Pour un appareil branché en direct (volet, chauffe-eau, hotte…)"},
  // chauffage et clim
  radiateur:{n:"Radiateur",c:"chaud",r:ALL.filter(k=>k!=="wc"),h:60,bas:15,w:[40,60,80,100,120,160],d:10,ic:"radiateur",need:[["el",.1,20,"sortie de câble"]]},
  seche:{n:"Sèche-serviettes",c:"chaud",r:["sdb"],h:120,bas:20,w:[50,60],d:12,ic:"seche",need:[["el",.85,20,"sortie de câble"]]},
- clim:{n:"Clim murale",c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[80,90,100],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"}
+ clim:{n:"Clim murale",libre:1,c:"chaud",r:["chambre","sejour","bureau","cuisine","entree"],h:30,bas:0,top:20,w:[90],d:22,ic:"clim",need:[["el",.92,0,"liaison"],["ev",.06,0,"condensats"]],info:"Unité intérieure, 20 cm sous le plafond"},
 };
+/* Cyril 25/11 : une prise peut se mettre à la hauteur des interrupteurs (axe 110 cm). Variante interne « …H » : même nom pour le devis, autre hauteur. */
+const PHI=["prise","prise2","prise3","prise4","tv","rj"];PHI.forEach(k=>{CAT[k+"H"]={...CAT[k],bas:CAT.inter.bas,info:"Axe à 110 cm, à la hauteur des interrupteurs",hautV:k}});
+/* hauteur du mur sous le toit entre x et x+w (Cyril 25/11 : la clim ne doit pas rentrer dans la pente) */function wallHAt(a,b){if(!M.prof)return M.H;const P=M.prof,f=x=>{for(let i=1;i<P.length;i++){const p=P[i-1],q=P[i];if(x<=q[0]){const t=q[0]>p[0]?(x-p[0])/(q[0]-p[0]):0;return p[1]+(q[1]-p[1])*t}}return P[P.length-1][1]};let m=Math.min(f(a),f(b));P.forEach(q=>{if(q[0]>a&&q[0]<b)m=Math.min(m,q[1])});return m}
+function underRoof(it){const c=CAT[it.k];if(!M.prof||c.top==null)return;const x=vx(it),lim=wallHAt(x,x+it.w)-c.top-c.h,cur=bas(cI(it));if(cur>lim)it.yb=Math.max(0,Math.floor(lim/5)*5)}
+const hyRow=it=>CAT[it.k].libre?`<div class="row hy"><span class="k">Hauteur</span><button class="chip" data-hy="-10" aria-label="Descendre de 10 cm">▼</button><b>${R(bas(cI(it)))} cm du sol</b><button class="chip" data-hy="10" aria-label="Monter de 10 cm">▲</button></div>`:"";
+const hBase=k=>CAT[k].hautV||k,hHaut=k=>PHI.includes(hBase(k));
 // Distance mini à l'angle du mur (cm) : prises et interrupteurs 20 cm, porte et fenêtre 10 cm (huisserie), clim 15 cm.
 const MARGE=c=>c.petit?20:c.c==="ouv"?10:c.n==="Clim murale"?15:c.n==="Radiateur"?10:0;
 const bas=(c)=>c.top!=null?M.H-c.top-c.h:c.bas;
-const needH=(c,n)=>c.top!=null?bas(c)+c.h/2:n[2];
+/* hauteur propre à un élément (tableau électrique placé où on veut, Cyril 25/11) */const cI=it=>it&&it.yb!=null?{...CAT[it.k],bas:it.yb,top:null,own:CAT[it.k].top!=null}:CAT[it.k];
+const needH=(c,n)=>c.top!=null||c.own?bas(c)+c.h/2:n[2];
 // ---------- Icônes du menu ----------
 const I={
  porte:'<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1" fill="currentColor"/>',
@@ -347,7 +371,9 @@ const visible=it=>CAT[it.k].deux||(it.face||0)===face;
 const R=v=>Math.round(v);
 function load(k){exk=k;M=JSON.parse(JSON.stringify(EX[k]));M.items.forEach(it=>{if(it.face==null)it.face=0;it.lock=true;const c=CAT[it.k];it.st=it.k==="fenetre"&&k==="mur"?"exist":(k==="cuis"||k==="sdb")&&!c.petit&&c.c!=="ouv"?undefined:"faire"});face=0;sel=null;askAll=true;
  document.querySelectorAll("[data-ex]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ex===k));cat=firstCat();lvl0=-1;HIST.length=0;$("undo").disabled=true;$("party").hidden=true;WALLS=null;wi=0;if(k!=="clo"){WALLS=[M];[300,M.L,300].forEach((L,j)=>WALLS.push({type:"mur",rt:M.rt,L,H:M.H,room:M.room,items:[]}))}ui();draw();if(!askAll||G().length<2)setTimeout(coach,4300);setTimeout(()=>toast("Placez tout, <b>même ce que vous gardez</b> : votre devis sera plus juste",3800),400)}
-function avail(){const rt=RT();return Object.keys(CAT).filter(k=>{const c=CAT[k];return c.r.includes(rt)&&!(c.murSeul&&isClo())})}
+function avail(){const rt=RT();return Object.keys(CAT).filter(k=>{const c=CAT[k];return !c.hautV&&c.r.includes(rt)&&!(c.murSeul&&isClo())})}
+/* Cyril 25/11 : « on ne peut pas rajouter ce qu'on veut » : tout est proposé, ce qui va avec la pièce d'abord */
+function availAll(){return Object.keys(CAT).filter(k=>!CAT[k].hautV&&!(CAT[k].murSeul&&isClo()))}
 function firstCat(){const a=avail();return Object.keys(CATS).find(c=>a.some(k=>CAT[k].c===c))}
 function ui(){
  $("ttl").textContent=isClo()?"Votre cloison, vue de face":"Votre mur, vu de face";
@@ -357,9 +383,9 @@ function ui(){
  $("room").value=face===1&&isClo()?(M.room2||""):M.room;$("roomlab").textContent=face===1&&isClo()?"Pièce de ce côté":"Pièce";
  $("rtype").innerHTML=Object.entries(ROOMS).map(([k,v])=>`<option value="${k}"${k===RT()?" selected":""}>${v}</option>`).join("");
  $("ok").textContent=isClo()&&face===0?"C'est bon, voir l'autre face":"C'est bon pour ce mur";
- const a=avail();if(!a.some(k=>CAT[k].c===cat))cat=firstCat();
- $("cats").innerHTML=Object.entries(CATS).filter(([c])=>a.some(k=>CAT[k].c===c)).map(([c,n])=>`<button data-cat="${c}" aria-pressed="${c===cat}">${n}</button>`).join("");
- $("add").innerHTML=a.filter(k=>CAT[k].c===cat).map(k=>`<button class="btn" data-add="${k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[CAT[k].ic]}</svg>${CAT[k].s||CAT[k].n}</button>`).join("");
+ const a=avail();if(!availAll().some(k=>CAT[k].c===cat))cat=firstCat();
+ const aa=availAll();$("cats").innerHTML=Object.entries(CATS).filter(([c])=>aa.some(k=>CAT[k].c===c)).map(([c,n])=>`<button data-cat="${c}" aria-pressed="${c===cat}">${n}</button>`).join("");
+ const btn=k=>`<button class="btn" data-add="${k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[CAT[k].ic]}</svg>${CAT[k].s||CAT[k].n}</button>`,mine=a.filter(k=>CAT[k].c===cat),oth=aa.filter(k=>CAT[k].c===cat&&!mine.includes(k));$("add").innerHTML=mine.map(btn).join("")+(oth.length?`<p class="oth">${mine.length?"Autres éléments":"Pour une autre pièce, mais possible ici"}</p>`+oth.map(btn).join(""):"");
  $("tech").setAttribute("aria-pressed",tech);$("legend").hidden=!tech;
  const ac=$("cats").querySelector('[aria-pressed="true"]');if(ac)$("cats").scrollLeft=Math.max(0,ac.offsetLeft-12);
 }
@@ -422,7 +448,9 @@ function drawItem(e,it,x,y,c){const w=it.w,h=c.h,k=it.k;
  if(k==="applique"){pf(e,"app",x+w/2,y+h/2,h/18);return}
  // petits appareillages
  const cx=x+w/2,cy=y+h/2,kk=h/18;
- if(c.ic==="prise")pf(e,"pc",cx,cy,kk,w>10?2:1);
+ if(c.pfk==="tab"){el("rect",{x,y,width:w,height:h,rx:5,fill:"var(--surface)",stroke:S,"stroke-width":2},e);for(let i=0;i<3;i++)el("path",{d:`M${x+8} ${y+16+i*(h-24)/3}h${w-16}`,stroke:S,"stroke-width":1.4},e);return}
+ if(c.pfk&&c.pfk!=="pc")pf(e,c.pfk,cx,cy,h/({ge:60,gs:14,grp:24,iph:24,vmcm:20,p32:22,mit:16,ef:16,ec:16}[c.pfk]||18));
+ else if(c.ic==="prise")pf(e,"pc",cx,cy,kk,c.np||(w>10?2:1));
  else if(c.ic==="inter")pf(e,"int",cx,cy,kk);
  else pf(e,"rj",cx,cy,kk);
 }
@@ -432,7 +460,8 @@ const PFpl=n=>`<rect class="bx" x="${-9*n}" y="-9" width="${18*n}" height="18" r
 const PFm={pc:x=>`<circle class="gl" cx="${x}" cy="0" r="5.2"/><circle class="pt" cx="${x-2.3}" cy=".8" r="1.15"/><circle class="pt" cx="${x+2.3}" cy=".8" r="1.15"/><circle class="pt" cx="${x}" cy="-2.6" r=".8"/>`,
  int:x=>`<rect class="gl" x="${x-4.5}" y="-5.5" width="9" height="11" rx="1.6"/><line class="gl" x1="${x-4.5}" y1="0" x2="${x+4.5}" y2="0"/>`,
  rj:x=>`<path class="gl" d="M${x-4} -3h8v4h-2v2h-4v-2h-2z"/>`,
- tv:x=>`<circle class="gl" cx="${x}" cy="0" r="4.2"/><circle class="pt" cx="${x}" cy="0" r="1.4"/>`};
+ tv:x=>`<circle class="gl" cx="${x}" cy="0" r="4.2"/><circle class="pt" cx="${x}" cy="0" r="1.4"/>`,
+ vv:x=>`<rect class="gl" x="${x-4.5}" y="-5.5" width="9" height="11" rx="1.6"/><path class="gl" d="M${x-2} -2.2l2-1.6l2 1.6M${x-2} 2.2l2 1.6l2-1.6"/>`};
 function PFs(t,n){n=n||1;
  if(PFm[t])return PFpl(n)+Array.from({length:n},(_,k)=>PFm[t](-9*n+9+18*k)).join("");
  switch(t){
@@ -442,35 +471,48 @@ function PFs(t,n){n=n||1;
   case"ev":return`<rect class="bx" x="-9" y="-9" width="18" height="18" rx="4"/><circle class="gl" cx="0" cy="0" r="5.5"/><circle class="pt" cx="0" cy="0" r="1.8"/>`;
   case"liai":return`<rect class="bx cl" x="-9" y="-9" width="18" height="18" rx="4"/><circle class="clp" cx="-2.5" cy="0" r="2.4"/><circle class="clp" cx="3" cy="0" r="1.6"/>`;
   case"cond":return`<rect class="bx cl" x="-8" y="-8" width="16" height="16" rx="3.5"/><path class="gl" d="M0 -4.5 q4 5 0 8.5 q-4 -3.5 0 -8.5"/>`;
+  case"mit":return`<rect class="bx" x="-12" y="-8" width="24" height="16" rx="3.5"/><circle class="ec" cx="-5.5" cy="0" r="3.2"/><circle class="ef" cx="5.5" cy="0" r="3.2"/><line class="gl" x1="-2" y1="0" x2="2" y2="0"/>`;
+  case"nour":return`<rect class="bx" x="-14" y="-9" width="28" height="18" rx="4"/>${[-8,0,8].map(k=>`<circle class="ef" cx="${k}" cy="-3.4" r="2.3"/><circle class="ec" cx="${k}" cy="3.6" r="2.3"/>`).join("")}`;
+  case"ge":return`<rect class="bx cl" x="-40" y="-30" width="80" height="60" rx="6"/><rect class="gl" x="-32" y="-22" width="44" height="44" rx="5"/><circle class="gl" cx="-10" cy="0" r="16"/><path class="gl" d="M-10 -14v28M-24 0h28"/>${[-16,-8,0,8,16].map(k=>`<line class="gl sep" x1="18" y1="${k}" x2="33" y2="${k}"/>`).join("")}`;
+  case"gs":return`<rect class="bx cl" x="-20" y="-7" width="40" height="14" rx="3"/>${[-3,0,3].map(k=>`<line class="gl sep" x1="-16" y1="${k}" x2="16" y2="${k}"/>`).join("")}`;
+  case"grp":return`<rect class="bx cl" x="-25" y="-12" width="50" height="24" rx="3"/>${[-8,-4,0,4,8].map(k=>`<line class="gl sep" x1="-21" y1="${k}" x2="21" y2="${k}"/>`).join("")}`;
+  case"cmd":return`<rect class="bx cl" x="-9" y="-9" width="18" height="18" rx="3.5"/><text x="0" y="3" text-anchor="middle" style="font:800 7px Manrope,system-ui,sans-serif;fill:var(--fg)">°C</text>`;
+  case"iph":return`<rect class="bx" x="-8" y="-12" width="16" height="24" rx="3.5"/>${[-6,-3.5,-1].map(k=>`<line class="gl" x1="-3.5" y1="${k}" x2="3.5" y2="${k}"/>`).join("")}<rect class="gl" x="-3" y="4" width="6" height="4" rx="1"/>`;
+  case"vmcm":return`<rect class="bx" x="-10" y="-10" width="20" height="20" rx="4"/><circle class="gl" cx="0" cy="0" r="6"/><circle class="gl" cx="0" cy="0" r="2.5"/>`;
   case"sortie":return`<rect class="bx" x="-8" y="-8" width="16" height="16" rx="3.5"/><circle class="gl" cx="0" cy="0" r="3.2"/><line class="gl" x1="0" y1="3.2" x2="0" y2="8"/>`;
  }return PFpl(1)}
+/* Cyril 25/11 : les boutons montrent le même symbole que le mur et que l'Espace */
+function pfIc(x){const c=CAT[x];if(c&&!c.pfk)try{const NS="http://www.w3.org/2000/svg",sv=document.createElementNS(NS,"svg"),g=document.createElementNS(NS,"g");sv.appendChild(g);const w=c.w[Math.min(1,c.w.length-1)];drawItem(g,{k:x,w},0,0,c);const top=Math.min(0,-(c.top||0))-24,m=Math.max(w,c.h-top)+10;return`<svg class="pfi" viewBox="${w/2-m/2} ${(c.h+top)/2-m/2} ${m} ${m}" aria-hidden="true">${g.innerHTML}</svg>`}catch(e){}if(!c||!c.pfk)return qIc(c&&c.ic);if(c.pfk==="tab")return'<svg class="pfi" viewBox="-13 -13 26 26" aria-hidden="true"><g class="pf"><rect class="bx" x="-10" y="-11" width="20" height="22" rx="3"/><path class="gl" d="M-6 -5h12M-6 0h12M-6 5h12"/></g></svg>';const n=c.np||1,Z={ge:[86,66],gs:[44,18],grp:[54,28],nour:[32,22],mit:[28,20],iph:[22,28]}[c.pfk],W=Z?Z[0]/2:Math.max(13,9*n+4),Hh=Z?Z[1]/2:13;return`<svg class="pfi" viewBox="${-W} ${-Hh} ${2*W} ${2*Hh}" aria-hidden="true"><g class="pf">${PFs(c.pfk,n)}</g></svg>`}
 function pf(g,t,cx,cy,k,n){const s=el("g",{class:"pf",transform:`translate(${cx} ${cy}) scale(${k})`},g);s.innerHTML=PFs(t,n);return s}
 const dotC={ef:"var(--ef)",ec:"var(--ec)",ev:"var(--ev)",el:"var(--el)"};
-function overlaps(a,b){const ca=CAT[a.k],cb=CAT[b.k];const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
-function draw(){
+function overlaps(a,b){const ca=cI(a),cb=cI(b);const xa=vx(a),xb=vx(b);if(xa+a.w<=xb+.5||xb+b.w<=xa+.5)return false;const ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function draw(){if(M&&M.prof)M.items.forEach(o=>{if(visible(o))underRoof(o)});
  const s=$("wall");s.innerHTML="";const L=M.L,H=M.H,pr=14;let pl,pt,pb;
  for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
  const g=el("g",{},s);
  
  cote(g,0,L,-15*U,R(L)+" cm");
- el("rect",{x:0,y:0,width:L,height:H,fill:"var(--wall)",stroke:S,"stroke-width":2.5,rx:2},g);
+ if(M.prof)el("path",{d:"M0 "+H+M.prof.map(q=>"L"+q[0]+" "+(H-q[1])).join("")+"L"+L+" "+H+"Z",fill:"var(--wall)",stroke:S,"stroke-width":2.5,"stroke-linejoin":"round"},g);else el("rect",{x:0,y:0,width:L,height:H,fill:"var(--wall)",stroke:S,"stroke-width":2.5,rx:2},g);
  // carrelage mural discret derrière l'évier / la douche
  M.items.forEach(it=>{if(!visible(it))return;const c=CAT[it.k];if(it.k==="douche"){el("rect",{x:vx(it),y:0,width:it.w,height:H,fill:"var(--wall2)"},g)}});
  // crédence : une seule bande continue au-dessus du plan de travail (meubles bas, évier, plaque, lave-vaisselle qui se touchent)
  {const iv=M.items.filter(o=>visible(o)&&["mevier","mplaque","mbas","lv"].includes(o.k)).map(o=>[vx(o),vx(o)+o.w]).sort((a,b)=>a[0]-b[0]),run=[];iv.forEach(([a,b])=>{const l=run[run.length-1];if(l&&a<=l[1]+1)l[1]=Math.max(l[1],b);else run.push([a,b])});run.forEach(([a,b])=>el("rect",{x:a,y:H-145,width:b-a,height:55,fill:"var(--wall2)"},g))}
  el("path",{d:`M-10 ${H}H${L+10}`,stroke:S,"stroke-width":3},g);
  for(let i=-10;i<L+10;i+=14)el("path",{d:`M${i} ${H+2}l-8 8`,stroke:"var(--line)","stroke-width":1.2},g);
- el("path",{d:`M${-24*U} 0v${H}M${-24*U-5} 0h10M${-24*U-5} ${H}h10`,stroke:"var(--muted)","stroke-width":1.2,fill:"none"},g);
- const ht=txt(g,-24*U,H/2,R(H)+" cm",{fs:12.5});ht.setAttribute("transform",`rotate(-90 ${-24*U} ${H/2})`);
+ {/* sous le toit : cote du bord gauche + hauteur au point le plus haut (Cyril 25/11) */const hl=M.prof?M.prof[0][1]:H,y0=H-hl;
+ el("path",{d:`M${-24*U} ${y0}v${hl}M${-24*U-5} ${y0}h10M${-24*U-5} ${H}h10`,stroke:"var(--muted)","stroke-width":1.2,fill:"none"},g);
+ const hdl=M.prof?!!M.prof[0][2]:!!M.hdk,ht=txt(g,-24*U,y0+hl/2,hdl?"à vérifier":R(hl)+" cm",{fs:12.5});ht.setAttribute("transform",`rotate(-90 ${-24*U} ${y0+hl/2})`);
+ if(M.prof){const pk=M.prof.reduce((m,q)=>q[1]>m[1]?q:m,M.prof[0]);if(pk[1]-hl>5){/* point le plus haut au bord droit : cote écrite à l'intérieur du mur, sinon elle sort du dessin */const edge=pk[0]>L-30,x=edge?L:pk[0];if(!edge)el("path",{d:`M${x} ${H}V${H-pk[1]}`,stroke:"var(--muted)","stroke-width":1.2,"stroke-dasharray":"4 4",fill:"none"},g);const y=Math.min(H-40,H-pk[1]*.65);txt(g,edge?L-10*U:x+8,y,R(pk[1])+" cm",{a:edge?"end":"start",fs:12.5})}
+  const qr=M.prof[M.prof.length-1],hr=qr[1];if((Math.abs(hr-hl)>5||qr[2]!==M.prof[0][2])&&Math.abs(hr-pk[1])>5){const t2=txt(g,L-14*U,H-hr/2,qr[2]?"à vérifier":R(hr)+" cm",{fs:12.5});t2.setAttribute("transform",`rotate(-90 ${L-14*U} ${H-hr/2})`)}}}
  if(drag&&drag.snap!=null)el("path",{d:`M${drag.snap} 4V${H-4}`,stroke:"var(--laiton)","stroke-width":1.5,"stroke-dasharray":"5 5"},g);
  // ordre : grands éléments derrière, petits devant
  const order=M.items.map((it,i)=>i).filter(i=>visible(M.items[i])).sort((a,b)=>(CAT[M.items[a].k].petit?1:0)-(CAT[M.items[b].k].petit?1:0));
  if(drag){const k=order.indexOf(sel);if(k>=0){order.splice(k,1);order.push(sel)}}
  const now0=performance.now();
- if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
+ if(drag&&drag.free!=null&&sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=cI(it),gx=vx(it),gy=H-bas(c)-c.h;el("path",{d:c.petit?rr(gx-3,gy-3,it.w+6,c.h+6,4):shape(it,gx,gy,c),fill:"var(--laiton-soft)","fill-opacity":.45,stroke:"var(--laiton)","stroke-width":1.6,"stroke-dasharray":"6 5","pointer-events":"none"},g)}
  if(drag&&sel!=null&&M.items[sel]){const zz=wetZones(M.items[sel]);zz.forEach(z=>{const a=Math.max(0,z.a),b=Math.min(L,z.b);if(b<=a)return;el("rect",{x:a,y:H-z.y1,width:b-a,height:z.y1-z.y0,rx:6,fill:"var(--bad)","fill-opacity":.07,stroke:"var(--bad)","stroke-opacity":.35,"stroke-width":1,"stroke-dasharray":"4 4","pointer-events":"none"},g)});
   if(zz.length){const z=zz[0],a=Math.max(0,z.a),b=Math.min(L,z.b);txt(g,(a+b)/2,H-z.y1+16*U,"Interdit près de l'eau",{fs:10.5,c:"var(--bad)",w:700})}}
- order.forEach(i=>{const it=M.items[i],c=CAT[it.k],x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
+ order.forEach(i=>{const it=M.items[i],c=cI(it),x=dX(it),y=H-bas(c)-c.h+dY(it),on=sel===i;
   const e=el("g",{"data-i":i,style:"cursor:grab"},g);
   if(drag&&on){e.setAttribute("class","lift");e.style.animationDelay=-(now0-drag.t0)+"ms"}
   else if(hold&&hold.i===i){e.setAttribute("class","press");e.style.animationDelay=-(now0-hold.t0)+"ms"}
@@ -488,64 +530,93 @@ function draw(){
  });
  // ce que chaque meuble ou appareil apporte avec lui (prises, arrivées et évacuations d'eau) : toujours visible, très discret
  const now=Date.now();
- M.items.forEach((it,ii)=>{if(!visible(it))return;const c=CAT[it.k],fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
+ M.items.forEach((it,ii)=>{if(!visible(it))return;const c=cI(it),fresh=it.pulse&&now-it.pulse<2600;(c.need||[]).forEach(n=>{const x=dX(it)+it.w*(face===1&&c.deux?1-n[1]:n[1]),y=H-needH(c,n)+dY(it),col=dotC[n[0]];
   const m=el("g",{"pointer-events":"none",opacity:sel===ii||fresh||tech?1:.75},g);
   if(fresh){const r=el("circle",{cx:x,cy:y,r:5*U,fill:"none",stroke:col,"stroke-width":1.5},m);el("animate",{attributeName:"r",values:`${4*U};${13*U}`,dur:"1.1s",repeatCount:"2"},r);el("animate",{attributeName:"opacity",values:"0.9;0",dur:"1.1s",repeatCount:"2"},r)}
   const lab=n[3]||"",pt=n[0]==="el"?(lab==="32 A"?"p32":/sortie/.test(lab)?"sortie":lab==="liaison"?"liai":"pc"):lab==="condensats"?"cond":n[0];
   pf(m,pt,x,y,8.5*U/18);
   if(tech&&n[3])txt(m,x,y-7*U,n[3],{fs:9,c:col})})});
  // cotes de l'élément touché
- if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=CAT[it.k],x=vx(it),y=H-bas(c)-c.h;
+ if(sel!=null&&visible(M.items[sel])){const it=M.items[sel],c=cI(it),x=vx(it),y=H-bas(c)-c.h;
   cote(g,0,x,H+26*U,R(x),"var(--laiton)");if(it.w>=30)cote(g,x,x+it.w,H+26*U,R(it.w),"var(--laiton)");cote(g,x+it.w,L,H+26*U,R(L-x-it.w),"var(--laiton)");
   const b=bas(c);if(b>0){const ax=x+it.w+12>L-20?x-10:x+it.w+10,axe=c.petit?R(b+c.h/2):R(b);el("path",{d:`M${ax} ${H}V${c.petit?y+c.h/2:y+c.h}`,stroke:"var(--laiton)","stroke-width":1.2,"stroke-dasharray":"3 3"},g);txt(g,ax+(ax>x?4:-4),H-8,axe+" cm",{a:ax>x?"start":"end",c:"var(--laiton)",fs:12})}
  }
- if(flash&&Date.now()<flash.until){$("hint").innerHTML=flash.html;card();gauge();return}
+ if(flash&&Date.now()<flash.until){$("hint").innerHTML=flash.html;card();gauge();okLabel();return}
  $("hint").textContent=drag?(drag.tgt!=null?"Lâchez pour échanger les deux":drag.snap!=null?"Calé":"Glissez à gauche ou à droite"):(sel!=null?(TOUCH?"Pour le bouger : maintenez le doigt dessus":"Pour le bouger : cliquez et glissez"):(tech?"Points d'eau et d'électricité posés d'office pour l'artisan":M.items.some(visible)?(TOUCH?"Maintenez un élément pour le déplacer. ":"Cliquez-glissez un élément pour le déplacer. ")+"Placez aussi ce que vous gardez.":"Rien sur ce mur ? Touchez « Ajouter », même pour ce que vous gardez."));
  card();gauge();mini();okLabel();
 }
 const LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 7.6-1.7"/><circle cx="12" cy="16" r="1.3" fill="currentColor"/></svg>';
 const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>';
-function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=null));if(PC.step==="f"&&PC.rv&&sel==null){const j=M.items.indexOf(PC.rv.list[PC.rv.i]);if(j>=0)sel=j}const ep=epAsk(),grp=!ep&&sel==null&&askAll&&G().length>=2;const open=sel!=null||grp||ep;document.querySelector(".app").classList.toggle("sel",open);$("pal").hidden=open;$("addbtn").style.visibility=open?"hidden":"";if(!open){k.hidden=true;return}if(ep){k.hidden=false;const L=EPL(),n=L.length,yes=F.trav.some(t=>["elec","plomb","chauf"].includes(t));const B1=`<button class="${yes?"go all":"chip"}" data-ep="oui">Oui, certaines choses changent</button>`,B2=`<button class="${yes?"chip":"go all"}" data-ep="non">Non, tout reste comme ça</button>`;
+/* Cyril 25/11 : plus de menu à fouiller. Chaque mur pose ses questions, une catégorie à la fois :
+   « Y a-t-il des prises… sur ce mur, en place ou à mettre ? » → Oui : on touche ce qu'il y a → pour chacun « En place / À changer / À créer ».
+   L'état n'est pas demandé quand le formulaire dit déjà que tout est à faire (électricité, plomberie, cuisine ou salle de bain à créer). */
+const QN={ouv:"une porte ou une fenêtre",meuble:"des meubles fixes (cuisine, salle de bain…)",eau:"un point d'eau (évier, lavabo, WC, douche…)",elec:"des prises, interrupteurs ou lumières",chaud:"un radiateur, un sèche-serviettes ou une clim"},
+ QF={ouv:"les portes et fenêtres",meuble:"les meubles",eau:"la plomberie",elec:"l'électricité",chaud:"le chauffage"},
+ QI={ouv:"porte",meuble:"mbas",eau:"lavemains",elec:"prise",chaud:"radiateur"},QR={oui:"Oui",non:"Non",dk:"Je ne sais pas"};
+function Q(){const k="qz"+(isClo()?face:0);return M[k]||(M[k]={i:0,mode:"ask",it:null,a:{}})}
+function qzList(){const rt=RT(),L=["ouv"];if(["cuisine","sdb","buanderie"].includes(rt))L.push("meuble");if(HUM.includes(rt))L.push("eau");L.push("elec","chaud");return L.filter(c=>availAll().some(k=>CAT[k].c===c))}
+const qzOn=()=>PC.step==="f"&&!!WALLS&&sel==null&&!PC.rv&&!drag&&!confirmDel;
+const qzSt=()=>PC.step==="f"&&!!WALLS&&Q().it!=null&&sel===Q().it&&!!M.items[sel];
+function qzLeft(){if(PC.step!=="f"||!WALLS)return 0;const q=Q(),n=qzList().length;return Math.max(0,n-q.i)}
+function qzAuto(c){const rt=RT();if(c==="elec")return/Tout est à faire/i.test(A.elec||"");if(c==="eau")return/Tout est à faire/i.test(A.plomb||"")||rt==="cuisine"&&/à créer/i.test(A.cuis||"")||rt==="sdb"&&/à créer/i.test(A.sdb||"");if(c==="meuble")return rt==="cuisine"&&/à créer/i.test(A.cuis||"")||rt==="sdb"&&/à créer/i.test(A.sdb||"");return false}
+function qzHas(c){const m={};M.items.filter(o=>visible(o)&&CAT[o.k].c===c).forEach(o=>{const n=CAT[o.k].s||CAT[o.k].n;m[n]=(m[n]||0)+1});return Object.entries(m).map(([n,k])=>(k>1?k+" × ":"")+n.toLowerCase()).join(", ")}
+function qzExp(w){const o={};["qz0","qz1"].forEach(k=>{const a=w[k]&&w[k].a;if(a)Object.keys(a).forEach(c=>{o[CATS[c]+(k==="qz1"?" (autre côté)":"")]=QR[a[c]]||a[c]})});return Object.keys(o).length?o:undefined}
+const qIc=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
+function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
+ if(qzSt()){const it=M.items[q.it],c=CAT[it.k],ce=FEM.test(c.n)?"Cette":"Ce",nm=(c.s||c.n).toLowerCase();
+  const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
+  k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hyRow(it)}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
+ if(q.i>=L.length){k.innerHTML=`<div class="t"><span>Tout est noté pour ce mur <small>Un oubli ? Touchez ce qu'il faut ajouter</small></span></div><div class="qg">${L.map(c=>`<button class="btn" data-qplus="${c}">${qIc(I[QI[c]]?QI[c]:"prise")}+ ${CATS[c]}</button>`).join("")}</div>`;return}
+ const c=L[q.i],has=qzHas(c),bar=`<div class="qp" aria-label="Question ${q.i+1} sur ${L.length}">${L.map((x,j)=>`<i class="${j<q.i?"ok":j===q.i?"cur":""}"></i>`).join("")}</div>`;
+ if(q.mode==="pick"){const a=avail(),all=availAll().filter(x=>CAT[x].c===c),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
+  k.innerHTML=`${bar}<div class="t"><span>${CATS[c]} <small>Touchez ce qu'il y a ou ce que vous voulez${qzAuto(c)?" · tout sera à créer":""}</small></span></div><div class="qg">${mine.map(x=>`<button class="btn" data-qk="${x}">${pfIc(x)}${CAT[x].s||CAT[x].n}</button>`).join("")}${more?`<button class="btn oth" data-qmore="1"><b style="font-size:18px">…</b>Autre chose</button>`:""}</div>${has?`<div class="row inf2">Sur ce mur : <b>${has}</b></div>`:""}<button class="go all" data-qdone="1">C'est tout pour ${QF[c]} ›</button>`;return}
+ k.innerHTML=`${bar}<div class="t"><span>${has?`Déjà sur ce mur : ${has}. Y en a-t-il d'autres, en place ou à mettre ?`:`Y a-t-il ${QN[c]} sur ce mur, en place ou à mettre ?`}</span></div><div class="qyn"><button class="go all" data-qa="oui">Oui</button><button class="go all qno" data-qa="non">Non</button></div><div class="row"><button class="chip" data-qa="dk">Je ne sais pas</button>${q.i>0?`<button class="chip" data-qb="1">‹ Question d'avant</button>`:""}</div>`}
+function qzAdd(k){const c=CAT[k],q=Q(),n=M.items.filter(o=>visible(o)&&o.k===k).length;const w=c.w.includes(83)?83:c.w.includes(60)?60:c.w[Math.min(1,c.w.length-1)];const it={k,w,x:0,face:isClo()?face:0,lock:true};
+ const want=M.L*[.5,.25,.75,.12,.88,.38,.62][n%7];let px=null;for(const ww of [w,...c.w.slice().sort((a,b)=>a-b)]){it.w=ww;px=place(it,want-ww/2);if(px!=null)break}
+ if(px==null){toast("Plus de place à cette hauteur sur ce mur. <b>Touchez un élément</b> pour le retirer",3200);return}
+ snap();it.x=R(px);if(face===1&&c.deux)it.x=M.L-it.x-it.w;underRoof(it);it.pulse=Date.now();it.settle=performance.now();M.items.push(it);announce(it);vib(10);
+ if(qzAuto(c.c)){it.st="faire";toast(`<b>${c.s||c.n}</b> : à créer, c'est noté`,1800)}else{q.it=M.items.length-1;sel=q.it}draw();anim()}
+function card(){const k=$("card");k.classList.toggle("away",!!(drag&&drag.free!=null));if(PC.step==="f"&&PC.rv&&sel==null){const j=M.items.indexOf(PC.rv.list[PC.rv.i]);if(j>=0)sel=j}const ep=epAsk(),grp=!ep&&sel==null&&askAll&&G().length>=2,qz=!ep&&!grp&&qzOn();const open=sel!=null||grp||ep||qz;document.querySelector(".app").classList.toggle("sel",open);$("pal").hidden=open;$("addbtn").style.visibility=open?"hidden":"";if(!open){k.hidden=true;return}if(ep){k.hidden=false;const L=EPL(),n=L.length,yes=F.trav.some(t=>["elec","plomb","chauf"].includes(t));const B1=`<button class="${yes?"go all":"chip"}" data-ep="oui">Oui, certaines choses changent</button>`,B2=`<button class="${yes?"chip":"go all"}" data-ep="non">Non, tout reste comme ça</button>`;
  k.innerHTML=`<div class="t"><span>${M.epAdd?"Et le reste, on y touche ?":"L'électricité et la plomberie de ce mur, on y touche ?"} <small>${n} élément${n>1?"s":""} posé${n>1?"s":""} pour vous</small></span></div>${yes?B1:B2}<div class="row">${yes?B2:B1}<button class="chip" data-ep="add">Il en manque</button><button class="chip" data-ep="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Placés là où on les met d'habitude. Pas au bon endroit ? Maintenez et glissez.</div>`;return}
- if(grp){k.hidden=false;const n=G().length;k.innerHTML=`<div class="t"><span>${["cuisine","sdb","buanderie"].includes(RT())?"Votre "+ROOMS[RT()].toLowerCase()+" est déjà là ?":"Ces éléments sont déjà là ?"} <small>${n} éléments sur ce mur</small></span></div><button class="go all" data-all="rep">Oui, on change tout</button><div class="row"><button class="chip" data-all="garde">Oui, on garde tout</button><button class="chip" data-all="faire">Non, tout est à créer</button><button class="chip" data-all="dk">Je ne sais pas</button><button class="chip" data-all="un">Un peu des deux</button></div><div class="row inf" style="color:var(--muted)">Vous pourrez changer un élément à part en le touchant.</div>`;return}const it=M.items[sel],c=CAT[it.k];k.hidden=false;
- if(PC.rv&&PC.rv.list[PC.rv.i]===it){const n=PC.rv.list.length;k.innerHTML=`<div class="t"><span>${c.n} <small>${PC.rv.i+1} sur ${n}</small></span></div><div class="row"><span class="k">${FEM.test(c.n)?"Celle-ci":"Celui-ci"}, on ${leLa(c)} change ?</span></div><button class="go all" data-rv="oui">Oui, à changer</button><div class="row"><button class="chip" data-rv="non">Non, ${ilElle(c).toLowerCase()} reste</button><button class="chip" data-rv="del">${ilElle(c)} n'existe pas</button><button class="chip" data-rv="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Pas au bon endroit ? Maintenez et glissez.</div>`;return}
+ if(grp){k.hidden=false;const n=G().length;k.innerHTML=`<div class="t"><span>${["cuisine","sdb","buanderie"].includes(RT())?"Votre "+ROOMS[RT()].toLowerCase()+" est déjà là ?":"Ces éléments sont déjà là ?"} <small>${n} éléments sur ce mur</small></span></div><button class="go all" data-all="rep">Oui, on change tout</button><div class="row"><button class="chip" data-all="garde">Oui, on garde tout</button><button class="chip" data-all="faire">Non, tout est à créer</button><button class="chip" data-all="dk">Je ne sais pas</button><button class="chip" data-all="un">Un peu des deux</button></div><div class="row inf" style="color:var(--muted)">Vous pourrez changer un élément à part en le touchant.</div>`;return}if(qz||qzSt()){qzCard(k);return}const it=M.items[sel],c=CAT[it.k];k.hidden=false;
+ if(PC.rv&&PC.rv.list[PC.rv.i]===it){const n=PC.rv.list.length;k.innerHTML=`<div class="t"><span>${c.n} <small>${PC.rv.i+1} sur ${n}</small></span></div><div class="row"><span class="k">${FEM.test(c.n)?"Celle-ci":"Celui-ci"}, on ${leLa(c)} change ?</span></div><button class="go all" data-rv="oui">Oui, à changer</button><div class="row"><button class="chip" data-rv="non">Non, ${ilElle(c).toLowerCase()} reste</button><button class="chip" data-rv="new">${FEM.test(c.n)?"C'est une nouvelle":"C'est un nouveau"} ${c.n.toLowerCase()}</button><button class="chip" data-rv="del">Pas de ${c.n.toLowerCase()} ici</button><button class="chip" data-rv="dk">Je ne sais pas</button></div><div class="row inf" style="color:var(--muted)">Pas au bon endroit ? Maintenez et glissez.</div>`;return}
  const sub=`<small>${c.d?"· prof. "+c.d+" cm":""}${c.deux&&isClo()?" · des deux côtés":""}</small>`;
  const wb=wetBad(it),wet=wb?`<div class="row" style="color:var(--bad);font-weight:700;font-size:13px">${wb.t==="eau"?"Trop près de la "+(wb.o.k==="douche"?"douche":"baignoire")+" : interdit par la norme (60 cm minimum). À déplacer.":"Pas au-dessus de "+(wb.t==="evier"?"l'évier":"la plaque")+" : interdit par la norme. À déplacer."}</div>`:"";const nt=needTxt(c);const auto=wet+(nt.length?`<div class="row inf auto" style="flex-wrap:nowrap;align-items:baseline"><span class="dot"></span><span>Ajouté automatiquement : ${nt.join(", ")}</span></div>`:"");
  if(confirmDel){k.innerHTML=`<div class="t"><span>Retirer ${c.n.toLowerCase()} ?</span></div><div class="row inf" style="color:var(--muted)">${nt.length?"Ce qui va avec ("+nt.join(", ")+") sera retiré aussi.":"Vous pourrez le remettre depuis le menu."}</div><div class="row"><button class="chip" data-nodel="1">Annuler</button><button class="chip okb" data-del="1" style="background:var(--bad);color:#fff">Oui, retirer</button></div>`;return}
  const tools=`<span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button>${it.lock?`<button class="ic lk" data-unlock="1" aria-label="Déverrouiller pour déplacer">${LOCK}<span>Déplacer</span></button>`:""}</span>`;
- const ST=[["exist","Déjà en place"],["faire","À créer"],["dk","Je ne sais pas"]];
+ /* Cyril 25/11 : pouvoir dire ce qui est nouveau (nouvelle prise, nouvelle porte…) */const NV=c=>(FEM.test(c.n)?"Nouvelle ":"Nouveau ")+c.n.toLowerCase(),ST=[["exist","Déjà là"],["faire",NV(c)],["dk","Je ne sais pas"]];
  if(!it.lock){
   k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+
   (c.w.length>1?`<div class="row"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"")+
-  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+auto+
+  (c.info?`<div class="row inf" style="color:var(--muted)">${c.info}</div>`:"")+hyRow(it)+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+auto+
   `<button class="go" data-place="1" style="padding:11px 16px;font-size:15px">C'est bien placé</button>`;return}
  if(it.askN){k.innerHTML=`<div class="t"><span>Combien de ${it.k==="mhaut"?"meubles hauts":"meubles bas"} de ${it.w} cm, côte à côte ?</span><span class="tools"><button class="ic" data-trash="1" aria-label="Retirer">${TRASH}</button></span></div><button class="go all" data-n="full">Sur toute la longueur possible</button><div class="row">${[1,2,3,4,5].map(n=>`<button class="chip" data-n="${n}">${n}</button>`).join("")}</div>`;return}
  const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
  k.innerHTML=`<div class="t"><span>${c.n} ${sub}</span>${tools}</div>`+wrow+
- (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
- `<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
+ (it.st==="exist"&&!c.petit?`<div class="row"><span class="k">Déjà en place. On ${leLa(c)} remplace ?</span></div><div class="row"><button class="chip" data-rep="oui" aria-pressed="${it.rep==="oui"}">Oui, à remplacer</button><button class="chip" data-rep="non" aria-pressed="${it.rep==="non"}">Non, on le garde</button><button class="chip" data-rep="dk" aria-pressed="${it.rep==="dk"}">Je ne sais pas</button><button class="chip" data-st="faire">Non, c'est ${FEM.test(c.n)?"une nouvelle":"un nouveau"} ${c.n.toLowerCase()}</button><button class="chip" data-st0="1" aria-label="Revenir">‹ Retour</button></div>`+auto:
+ hyRow(it)+(hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:"")+`<div class="row"><span class="k">${it.st?ilElle(c)+" est":ilElle(c)+" est déjà là ?"}</span></div><div class="row">${ST.map(([v,l])=>`<button class="chip" data-st="${v}" aria-pressed="${it.st===v}">${l}</button>`).join("")}${it.st?`<button class="chip okb" data-fin="1">OK</button>`:""}</div>`+auto)}
 // ---------- Placement : jamais l'un sur l'autre, au plus collés ----------
-function band(a,b){const ca=CAT[a.k],cb=CAT[b.k],ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
+function band(a,b){const ca=cI(a),cb=cI(b),ya=bas(ca),yb=bas(cb);return ya<yb+cb.h-.5&&yb<ya+ca.h-.5}
 // ---------- Électricité près de l'eau (NF C 15-100) ----------
 // salle d'eau : rien sur la douche ou la baignoire (volumes 0 et 1), et prises/interrupteurs interdits à moins de 60 cm (volume 2) ;
 // cuisine : pas de prise ni d'appareil branché au-dessus de l'évier ou de la plaque.
 const CL2=["Miroir lumineux","Sèche-serviettes","Radiateur","Applique","Clim murale","Chauffe-eau","Hotte cheminée","Hotte intégrée au meuble"];// appareils fixes autorisés en volume 2 (classe II) : l'artisan vérifie
 const FEM=/^(Prise|Plaque|Colonne|Hotte|Fenêtre|Porte|Douche|Baignoire|Applique|Clim)/,ilElle=c=>FEM.test(c.n)?"Elle":"Il",leLa=c=>FEM.test(c.n)?"la":"le";
 const plugEl=c=>!CL2.includes(c.n)&&(c.need||[]).some(n=>n[0]==="el"&&!/sortie|liaison/.test(n[3]||""));
-function wetZones(it){const c=CAT[it.k],z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
+function wetZones(it){const c=cI(it),z=[];const sm=c.c==="elec"&&it.k!=="applique",smv=c.c==="elec"||plugEl(c);if(!smv)return z;
  M.items.forEach(o=>{if(o===it||!visible(o))return;const x=vx(o);
   if(o.k==="douche"||o.k==="baignoire"){const m=sm||(plugEl(c)&&c.c!=="elec")?60:0;z.push({a:x-m,b:x+o.w+m,y0:0,y1:Math.min(M.H,225),t:"eau",o})}
   if((o.k==="mevier"||o.k==="mplaque")&&(c.c==="elec"||it.k==="mo")&&bas(c)>=88)z.push({a:x,b:x+o.w,y0:90,y1:M.H,t:o.k==="mevier"?"evier":"plaque",o})});return z}
 function wetBad(it){const x=vx(it);return wetZones(it).find(z=>x<z.b-.5&&x+it.w>z.a+.5)}
-function place(it,want){const c=CAT[it.k],m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
+function place(it,want){const c=cI(it),m=MARGE(c),lo=m,hi=M.L-m-it.w;if(hi<lo)return null;
  const bl=M.items.filter(o=>o!==it&&visible(o)&&band(it,o)).map(o=>[vx(o),vx(o)+o.w]).concat(wetZones(it).map(z=>[z.a,z.b])).sort((a,b)=>a[0]-b[0]);
  const gaps=[];let cur=lo;bl.forEach(([a,b])=>{if(a-it.w>=cur-1e-6)gaps.push([cur,a-it.w]);cur=Math.max(cur,b)});if(hi>=cur-1e-6)gaps.push([cur,hi]);
  let best=null;gaps.forEach(([a,b])=>{if(b<a)return;const x=Math.min(b,Math.max(a,want)),d=Math.abs(x-want);if(!best||d<best[0])best=[d,x]});return best?best[1]:null}
 // ---------- Glisser ----------
 function svgX(ev){const s=$("wall"),p=s.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(s.getScreenCTM().inverse()).x}
 function clamp(it,x){return Math.max(0,Math.min(M.L-it.w,x))}
-function snapX(it,x){const c=CAT[it.k],L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
- M.items.forEach(o=>{if(o===it||!visible(o))return;const co=CAT[o.k],ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
+function snapX(it,x){const c=cI(it),L=M.L,T=6;const cand=[[0,0],[L-it.w,L],[(L-it.w)/2,L/2]];
+ M.items.forEach(o=>{if(o===it||!visible(o))return;const co=cI(o),ox=vx(o);const sameBand=bas(co)<bas(c)+c.h&&bas(c)<bas(co)+co.h;
   if(sameBand||(!c.petit&&!co.petit)){cand.push([ox+o.w,ox+o.w],[ox-it.w,ox])}
   if(!c.petit&&!co.petit&&!sameBand)cand.push([ox,ox],[ox+o.w-it.w,ox+o.w]);
   if(c.petit&&!co.petit)cand.push([ox+o.w/2-it.w/2,ox+o.w/2])});
@@ -563,7 +634,7 @@ let lvl0=-1,WALLS=null,wi=0;
 function allItems(){return WALLS?WALLS.flatMap(w=>w.items):M.items}
 function miss(){return M.items.filter(o=>visible(o)&&(!o.lock||!o.st||(o.st==="exist"&&!CAT[o.k].petit&&!o.rep)))}
 function mini(){const m=$("mini");m.hidden=!WALLS;if(!WALLS)return;if(WALLS[0].lv!=null)return miniPlan();const S=[[5,5,25,5],[25,5,25,25],[25,25,5,25],[5,25,5,5]];m.querySelector("svg").innerHTML=`<rect x="5" y="5" width="20" height="20" rx="3" fill="var(--wall2)"/>`+S.map((q,i)=>`<line x1="${q[0]}" y1="${q[1]}" x2="${q[2]}" y2="${q[3]}" stroke="${i===wi?"var(--act)":WALLS[i].done?"var(--laiton)":"var(--line)"}" stroke-width="${i===wi?4:2.6}" stroke-linecap="round"/>`).join("");$("mtx").textContent=`Mur ${wi+1} sur ${WALLS.length}`}
-function okLabel(){if(PC.step==="f"&&(epAsk()||PC.rv)){$("ok").textContent=PC.rv?`Encore ${PC.rv.list.length-PC.rv.i} à vérifier`:"Encore 1 réponse";return}const n=miss().length;$("ok").textContent=n?`Encore ${n} réponse${n>1?"s":""}`:isClo()&&face===0?"C'est bon, voir l'autre face":PC.edit?"C'est bon, retour au récap":WALLS&&wi<WALLS.length-1?"C'est bon, mur suivant ›":"C'est bon, pièce terminée"}const LV=["","Bon début","Ça prend forme","Très bien","Excellent"];
+function okLabel(){/* Cyril 25/11 : tant qu'il reste des questions, le gros bouton se fait discret (texte gris, sans fond) */$("ok").classList.toggle("pend",PC.step==="f"&&(!!qzLeft()||epAsk()||!!PC.rv));if(qzLeft()&&!epAsk()&&!PC.rv){const n=qzLeft();$("ok").textContent=`Encore ${n} question${n>1?"s":""}`;return}if(PC.step==="f"&&(epAsk()||PC.rv)){$("ok").textContent=PC.rv?`Encore ${PC.rv.list.length-PC.rv.i} à vérifier`:"Encore 1 réponse";return}const n=miss().length;$("ok").textContent=n?`Encore ${n} réponse${n>1?"s":""}`:isClo()&&face===0?"C'est bon, voir l'autre face":PC.edit?"C'est bon, retour au récap":WALLS&&wi<WALLS.length-1?"C'est bon, mur suivant ›":"C'est bon, pièce terminée"}const LV=["","Bon début","Ça prend forme","Très bien","Excellent"];
 function gauge(){const n=allItems().filter(o=>o.lock&&o.st&&!(o.st==="exist"&&!CAT[o.k].petit&&!o.rep)).length;const lv=n===0?0:n<3?1:n<6?2:n<10?3:n<16?4:5;
  const bars=document.querySelectorAll("#gauge i");bars.forEach((b,i)=>{b.classList.toggle("on",i<lv);b.classList.toggle("new",i===lv-1&&lv>lvl0&&lvl0>=0)});
  if(lvl0>=0&&lv>lvl0){const g=$("gauge");g.classList.add("up");setTimeout(()=>g.classList.remove("up"),700);vib(8);if(LV[lv-1]&&lv>1)toast(`<b>${LV[lv-1]} !</b> Votre devis gagne en précision`,2200)}lvl0=lv}
@@ -584,12 +655,12 @@ let looping=false;
 function anim(){setTimeout(draw,420);if(looping)return;looping=true;const step=()=>{draw();if(M.items.some(o=>o._a||(o.settle&&performance.now()-o.settle<320))||hold)requestAnimationFrame(step);else looping=false};requestAnimationFrame(step)}
 function nom(it){return CAT[it.k].n}
 function lift(ev){const i=hold.i,it=M.items[i];snap();liftSnap=HIST[HIST.length-1];clearTimeout(hold.tm);hold=null;sel=i;confirmDel=false;it.relock=it.lock;it.lock=false;
- drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
+ drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
 $("wall").addEventListener("pointerdown",ev=>{$("dock").classList.remove("open");const g=ev.target.closest("[data-i]");if(!g){deselect();draw();return}
  const i=+g.dataset.i,it=M.items[i];if(sel!==i)confirmDel=false;
  if(sel!=null&&sel!==i)deselect();
  $("wall").setPointerCapture(ev.pointerId);
- if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
+ if(sel===i&&!it.lock){drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()-400};draw();return} // déjà libre (cadenas ouvert ou nouvel élément)
  hold={id:ev.pointerId,i,x0:ev.clientX,y0:ev.clientY,t0:performance.now(),mouse:ev.pointerType==="mouse",last:ev};
  hold.tm=setTimeout(()=>{if(hold&&hold.i===i)lift(hold.last)},HOLD);anim()});
 $("wall").addEventListener("pointermove",ev=>{
@@ -634,6 +705,8 @@ const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);con
 $("card").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
  if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
  if(b.dataset.w){const ow=it.w,ox=it.x,nw=+b.dataset.w;it.w=nw;const cx=vx({...it,w:ow,x:ox});const px=place(it,cx);if(px==null){it.w=ow;$("hint").textContent="Pas assez de place pour cette largeur";return}it.x=face===1&&CAT[it.k].deux?M.L-px-nw:px;it.x=R(it.x)}
+ if(b.dataset.hy!=null){const c0=CAT[it.k],ob=it.yb,cur=bas(cI(it)),nb=Math.max(0,Math.min(Math.floor((wallHAt(vx(it),vx(it)+it.w)-c0.h)/5)*5,cur+(+b.dataset.hy)));if(nb===cur)return;snap();it.yb=nb;if(place(it,vx(it))==null||Math.abs(place(it,vx(it))-vx(it))>.5){if(ob==null)delete it.yb;else it.yb=ob;HIST.pop();toast("Un autre élément gêne à cette hauteur",2000);return}draw();return}
+ if(b.dataset.hh!=null){const nk=b.dataset.hh==="1"?hBase(it.k)+"H":hBase(it.k);if(nk!==it.k){snap();const ok=it.k,ox=it.x;it.k=nk;const px=place(it,vx(it)+it.w/2-it.w/2);if(px==null){it.k=ok;it.x=ox;toast("Plus de place à cette hauteur sur ce mur",2400);return}it.x=R(face===1&&CAT[it.k].deux?M.L-px-it.w:px);draw()}return}
  if(b.dataset.trash){confirmDel=true;card();gauge();return}if(b.dataset.nodel){confirmDel=false;card();return}
  if(b.dataset.unlock){it.lock=false;if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}}
  if(b.dataset.del){M.items.splice(sel,1);sel=null;confirmDel=false}if(b.dataset.fin)sel=null;
@@ -659,10 +732,10 @@ addEventListener("pointerdown",()=>{const c=$("coach");if(c)c.hidden=true},true)
 $("addbtn").onclick=()=>{$("dock").classList.add("open");const ac=$("cats").querySelector('[aria-pressed="true"]');if(ac)$("cats").scrollLeft=Math.max(0,ac.offsetLeft-12)};
 $("f1").onclick=()=>{face=0;deselect();ui();draw()};$("f2").onclick=()=>{face=1;deselect();ui();draw()};
 $("tech").onclick=()=>{tech=!tech;ui();draw()};
-$("ok").onclick=()=>{if(epAsk()){vib(8);toast("Une petite question d'abord, juste au-dessus",2200);return}if(PC.rv){toast("On termine la vérification, élément par élément",2200);return}const L=miss();if(L.length){const m=M.items.indexOf(L[0]);if(sel!=null&&sel!==m)deselect();askAll=false;M.items[m].lock=true;sel=m;toast(L.length>1?`Encore ${L.length} réponses : on les passe une par une`:"Dernière réponse pour ce mur",2200);draw();return}
+$("ok").onclick=()=>{if(qzLeft()){vib(8);if(sel!=null&&!qzSt()){deselect();draw()}toast("Une petite question d'abord, juste au-dessus",2200);return}if(epAsk()){vib(8);toast("Une petite question d'abord, juste au-dessus",2200);return}if(PC.rv){toast("On termine la vérification, élément par élément",2200);return}const L=miss();if(L.length){const m=M.items.indexOf(L[0]);if(sel!=null&&sel!==m)deselect();askAll=false;M.items[m].lock=true;sel=m;toast(L.length>1?`Encore ${L.length} réponses : on les passe une par une`:"Dernière réponse pour ce mur",2200);draw();return}
  if(WALLS&&!(isClo()&&face===0)){saveSnap();WALLS[wi].done=true;
  if(PC.edit){showRecap("<b>C'est corrigé !</b> Seul ce mur a changé");return}
- if(wi<WALLS.length-1){party(`Mur ${wi+1} terminé !`,`On passe au mur ${wi+2}`);setTimeout(()=>{goWall(wi+1);toast(`<b>Mur ${wi+1}</b> : la flèche du petit plan montre où regarder`,3000)},1700)}
+ const nxa=(()=>{const a=WALLS.findIndex((w,j)=>j>wi&&!w.done);return a>=0?a:WALLS.findIndex(w=>!w.done)})();if(nxa>=0){/* 23/11 : double toucher = un seul mur suivant (sinon on sortait de la liste des murs) */if(window.__mwGo)return;window.__mwGo=1;const nx=nxa;party(`Mur ${wi+1} terminé !`,`On passe au mur ${nx+1}`);setTimeout(()=>{window.__mwGo=0;if(nx>=WALLS.length)return;goWall(nx);toast(`<b>Mur ${wi+1}</b> : ${$("where").offsetParent?"celui qui clignote sur le plan":"la flèche du petit plan montre où regarder"}`,3000)},1700)}
  else roomEnd()
  return}if(isClo()&&face===0){face=1;sel=null;party("Première face terminée !","On passe à l'autre côté");ui();draw()}else{party("Mur terminé !","Votre devis vient de gagner en précision");$("ok").textContent="Mur suivant ›"}};
 $("room").addEventListener("input",e=>{M.named=true;if(face===1&&isClo())M.room2=e.target.value;else{M.room=e.target.value;if(WALLS)WALLS.forEach(w=>{w.room=M.room;w.named=true})}$("f1").textContent="Côté "+(M.room||"pièce 1");$("f2").textContent="Côté "+(M.room2||"pièce 2");draw()});
@@ -681,11 +754,13 @@ function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
 // ---------- Géométrie (cm) ----------
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
-function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
- rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null}})})).filter(f=>f.rooms.length)}
+function prep(G){return G.map((f,fi)=>({nom:f.nom,H:Math.round((f.H||2.5)*100),roof:f.roof||null,esc:(f.esc||[]).map(e=>({t:e.t,pts:e.pts.map(q=>[q[0]*100,q[1]*100])})),segs:(f.segs||[]).map(s=>({a:s.a.map(v=>v*100),b:s.b.map(v=>v*100),k:s.k,ops:(s.ops||[]).map(o=>({...o,p:o.p*100,w:o.w*100,h:(o.h||1)*100,al:(o.al||0)*100}))})),
+ rooms:(f.rooms||[]).map(r=>{let p=r.pts.map(q=>[q[0]*100,q[1]*100]);if(area(p)<0)p=p.slice().reverse();return{nom:r.nom,pts:p,rt:RTOF(r.nom),fi,ri:r.ri!=null?r.ri:f.rooms.indexOf(r),zi:r.zi!=null?r.zi:null,so:r.so||null,pfp:r.pfp||null}})})).filter(f=>f.rooms.length)}
 const edges=r=>r.pts.map((a,i)=>{const b=r.pts[(i+1)%r.pts.length];return[a[0],a[1],b[0],b[1]]});
 function bbox(lv){const P=GEO[lv].rooms.flatMap(r=>r.pts);const x0=Math.min(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1]));return{x:x0,y:y0,w:Math.max(...P.map(p=>p[0]))-x0,h:Math.max(...P.map(p=>p[1]))-y0}}
 function cen(r){const p=r.pts;let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1]});return[x/p.length,y/p.length]}
+/* Cyril 25/11 : l'œil se place au vrai milieu de la pièce (centre de la surface, pas la moyenne des coins, faussée par les coins ajoutés) */
+function cenA(r){const p=r.pts;let A=0,x=0,y=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length],c=a[0]*b[1]-b[0]*a[1];A+=c;x+=(a[0]+b[0])*c;y+=(a[1]+b[1])*c}if(Math.abs(A)<1e-9)return cen(r);const g=[x/(3*A),y/(3*A)];let ins=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const[xi,yi]=p[i],[xj,yj]=p[j];if((yi>g[1])!==(yj>g[1])&&g[0]<(xj-xi)*(g[1]-yi)/(yj-yi)+xi)ins=!ins}if(ins)return g;const X=p.map(q=>q[0]),Y=p.map(q=>q[1]);return[(Math.min(...X)+Math.max(...X))/2,(Math.min(...Y)+Math.max(...Y))/2]}
 // ouvertures du plan posées sur ce mur (segments du plan alignés avec le mur)
 function opsOn(lv,a,b){const d=sub(b,a),L=len(d),u=[d[0]/L,d[1]/L],out=[];
  GEO[lv].segs.forEach(s=>{const da=Math.abs((s.a[0]-a[0])*u[1]-(s.a[1]-a[1])*u[0]),db=Math.abs((s.b[0]-a[0])*u[1]-(s.b[1]-a[1])*u[0]);if(da>8||db>8)return;const sd=sub(s.b,s.a),sl=len(sd)||1,su=[sd[0]/sl,sd[1]/sl];
@@ -698,15 +773,19 @@ function drawPlan(s,o={}){const box=s.getBoundingClientRect(),wide=box.width/Mat
  const sc=Math.max((W+2*pad)/Math.max(1,box.width),(H+top+pad)/Math.max(1,box.height)),fs=15*sc;s.innerHTML="";
  lvs.forEach((lv,li)=>{const [ox,oy]=off[li],g=el("g",{transform:`translate(${ox} ${oy})`},s),b=bx[li];
   if(lvs.length>1){const t=el("text",{x:b.x,y:b.y-26,"font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":fs,fill:"var(--muted)"},g);t.textContent=GEO[lv].nom}
-  GEO[lv].rooms.forEach((r,ri)=>{const st=o.room?o.room(r,lv):{};const rg=el("g",{"data-r":lv+"-"+ri,style:o.tap?"cursor:pointer":""},g);
-   el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:st.fill||"var(--wall)"},rg)});
-  GEO[lv].segs.forEach(q=>{el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--fg)","stroke-width":Math.max(q.k==="clo"?8:12,(q.k==="clo"?2:3)*sc),"stroke-linecap":"square",fill:"none","pointer-events":"none"},g);
+  /* Cyril 25/11 : « le plan n'a rien à voir avec le vrai plan » : même dessin que le plan (murs épais bleu nuit à coins arrondis, sol gris clair, cloisons fines, fenêtres dans l'épaisseur) */
+  const WE=14,WC=7;GEO[lv].segs.forEach(q=>{if(q.k==="clo")return;el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--pwall)","stroke-width":WE*2,"stroke-linecap":"round",fill:"none","pointer-events":"none"},g)});
+  const ops=(ext,arc)=>GEO[lv].segs.forEach(q=>{if((q.k!=="clo")!==ext)return;const T=(q.k==="clo"?WC:WE)*2;
    const d=sub(q.b,q.a),L=len(d)||1,u=[d[0]/L,d[1]/L];q.ops.forEach(o=>{const P=[q.a[0]+u[0]*o.p,q.a[1]+u[1]*o.p],Q=[q.a[0]+u[0]*(o.p+o.w),q.a[1]+u[1]*(o.p+o.w)];
-    el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:o.k==="fenetre"?"var(--glass)":"var(--wall)","stroke-width":Math.max(10,3*sc),"pointer-events":"none"},g);
-    if(o.k==="fenetre")el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"pointer-events":"none"},g);
-    else{const n=[-u[1],u[0]],r=o.w*.9;el("path",{d:`M${P[0]} ${P[1]}L${P[0]+n[0]*r} ${P[1]+n[1]*r}A${r} ${r} 0 0 ${1} ${Q[0]} ${Q[1]}`,fill:"none",stroke:"var(--muted)","stroke-width":Math.max(1.5,.7*sc),"stroke-dasharray":`${5*sc/2} ${4*sc/2}`,"pointer-events":"none"},g)}})});
+    if(arc&&o.k==="fenetre")return;if(o.k==="fenetre"){el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--glass)","stroke-width":T,"pointer-events":"none"},g);el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--pwall)","stroke-width":Math.max(2,.7*sc),"pointer-events":"none"},g);[P,Q].forEach(R=>el("path",{d:`M${R[0]-u[1]*T/2} ${R[1]+u[0]*T/2}L${R[0]+u[1]*T/2} ${R[1]-u[0]*T/2}`,stroke:"var(--pwall)","stroke-width":Math.max(2,.7*sc),"pointer-events":"none"},g))}
+    else{if(!arc){el("path",{d:`M${P[0]} ${P[1]}L${Q[0]} ${Q[1]}`,stroke:"var(--pfloor)","stroke-width":T+1,"pointer-events":"none"},g);return}const n=[-u[1],u[0]],r=o.w*.9;el("path",{d:`M${P[0]} ${P[1]}L${P[0]+n[0]*r} ${P[1]+n[1]*r}A${r} ${r} 0 0 ${1} ${Q[0]} ${Q[1]}`,fill:"none",stroke:"var(--muted)","stroke-width":Math.max(1.5,.7*sc),"stroke-dasharray":`${5*sc/2} ${4*sc/2}`,"pointer-events":"none"},g)}})});ops(true,0);
+  GEO[lv].rooms.forEach((r,ri)=>{const st=o.room?o.room(r,lv):{};const rg=el("g",{"data-r":lv+"-"+ri,style:o.tap?"cursor:pointer":""},g);
+   el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:st.fill&&st.fill!=="var(--wall)"?st.fill:"var(--pfloor)",stroke:"var(--pfloor)","stroke-width":.5},rg)});
+  GEO[lv].segs.forEach(q=>{if(q.k!=="clo")return;el("path",{d:`M${q.a[0]} ${q.a[1]}L${q.b[0]} ${q.b[1]}`,stroke:"var(--pwall)","stroke-width":WC*2,"stroke-linecap":"round",fill:"none","pointer-events":"none"},g)});
+  /* Cyril 25/11 : l'escalier, la trémie ou la trappe du plan se voit aussi ici */(GEO[lv].esc||[]).forEach(e=>{const d="M"+e.pts.map(p=>p.join(" ")).join("L")+"Z";el("path",{d,fill:"var(--laiton-soft)",stroke:"var(--fg)","stroke-width":Math.max(2,.8*sc),"stroke-dasharray":`${6*sc/2} ${4*sc/2}`,"pointer-events":"none"},g);const c=e.pts.reduce((m,p)=>[m[0]+p[0]/e.pts.length,m[1]+p[1]/e.pts.length],[0,0]);const t=el("text",{x:c[0],y:c[1]+fs*.3,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":fs*.75,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=e.t});
+ops(true,1);ops(false,0);ops(false,1);
   GEO[lv].rooms.forEach(r=>{const st=o.room?o.room(r,lv):{};if(st.ring)el("path",{d:"M"+r.pts.map(p=>p.join(" ")).join("L")+"Z",fill:"none",stroke:"var(--laiton)","stroke-width":4*sc,"stroke-linejoin":"round","stroke-opacity":.9,transform:"",class:st.ringc||"","pointer-events":"none"},g);
-   const lab=r.nom||"",[cx,cy]=cen(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
+   const lab=r.nom||"",[cx,cy]=cenA(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
    const t=el("text",{x:cx,y:cy+f1*.35,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":f1,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=lab;
    if(st.sub){const u2=el("text",{x:cx,y:cy+f1*.35+fs*1.1,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":Math.min(fs*.8,(rw-20)/(st.sub.length*.6)),fill:"var(--muted)","pointer-events":"none"},g);u2.textContent=st.sub}})});return sc}
 function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`,cur={p:0,f:1,s:1,r:2}[PC.step];
@@ -714,9 +793,9 @@ function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"
 function showScr(id){["sq","sp","sr","ss"].forEach(s=>$(s).hidden=s!==id);document.documentElement.classList.toggle("fv",!id);document.querySelector(".app").hidden=!!id;steps()}
 function startPick(){PC.step="p";showScr("sp");planUI()}
 function planUI(){const n=ALLR().filter(q=>q.r.works).length;$("sp-tip").textContent="Touchez les pièces où il y a des travaux";
- $("sp-sub").innerHTML=n?`${n} pièce${n>1?"s":""} choisie${n>1?"s":""} d'après vos réponses. On ne passera que dans celles-là.`:"Touchez au moins une pièce.";$("sp-cards").innerHTML=`<button class="back" id="sp-skip" type="button">Passer cette étape</button>`;
+ $("sp-sub").innerHTML=n?(boot.hit===false?`Retirez les pièces sans travaux : on ne passera que dans celles qui restent.`:`${n} pièce${n>1?"s":""} choisie${n>1?"s":""} d'après vos réponses. On ne passera que dans celles-là.`):"Touchez au moins une pièce.";$("sp-cards").innerHTML=`<button class="back" id="sp-skip" type="button">Passer cette étape</button>`;
  $("sp-go").hidden=false;$("sp-go").disabled=!n;$("sp-go").textContent=n?`C'est parti : ${n} pièce${n>1?"s":""} ›`:"Choisissez une pièce";
- requestAnimationFrame(()=>drawPlan($("sp-svg"),{tap:1,room:r=>({fill:r.works?"var(--laiton-soft)":"var(--wall)",ring:r.works,sub:r.works?"✓ Travaux":""})}))}
+ requestAnimationFrame(()=>drawPlan($("sp-svg"),{tap:1,room:r=>({fill:r.works?"var(--laiton-soft)":"var(--wall)",ring:false,sub:r.works?"✓ Travaux":""})}))}
 $("sp-go").onclick=()=>{vib(8);PC.queue=ALLR().filter(q=>q.r.works);PC.qn=0;startRoom()};
 $("sp-cards").addEventListener("click",e=>{if(e.target.closest("#sp-skip"))finish()});
 $("sp-svg").addEventListener("click",e=>{const g=e.target.closest("[data-r]");if(!g)return;const q=ALLR().find(x=>x.id===g.dataset.r);q.r.works=!q.r.works;vib(6);planUI()});
@@ -725,33 +804,38 @@ function putAt(w,k,x,ww,o={}){const c=CAT[k];M=w;face=0;const it={k,w:ww||c.w[0]
  if(o.faire)it.st="faire";else if(o.none){}else{it.st="exist";if(o.rep)it.rep=o.rep;else if(!c.petit)it.rep="non";if(!o.keep&&!o.rep)it.prop=1}w.items.push(it);return it}
 const putAny=(w,k,x,ww,o={})=>putAt(w,k,x,ww,Object.assign({exact:false},o));
 const stOf=v=>/refaire|créer/i.test(v||"")?{faire:1}:/n'y touche|garde/i.test(v||"")?{keep:1}:/change/i.test(v||"")&&!/Quelques/.test(v)?{rep:"oui"}:{};
-function buildRoom(r,lv){const H=GEO[lv].H,E=edges(r);const W=E.map((e,i)=>{const a=[e[0],e[1]],b=[e[2],e[3]],L=Math.round(len(sub(b,a)));return{type:"mur",rt:r.rt,L,H,room:r.nom,named:true,items:opsOn(lv,a,b).map(o=>({k:o.k,w:o.w,x:o.x,face:0,lock:true,st:"exist",rep:"non"})),side:i,rid:lv+"-"+GEO[lv].rooms.indexOf(r),lv}}).filter(w=>w.L>=40);
+/* Cyril 25/11 : sous le toit, la hauteur du mur suit les pentes (profil reçu du plan) */
+/* petit mur sous la pente pas mesuré (0) : on dessine 1 m et on écrit « à vérifier » (pas un vrai chiffre) */
+const HMDK=1;function hmE(h){return h>0?h:HMDK}
+/* Cyril 25/11 « ça ne ressemble pas à un toit 2 pentes » : la pente part du haut du petit mur (bord de la pièce) et monte droit jusqu'au faîtage */
+function roofH(rf,p){const P=rf.ax?p:[p[1],p[0]],v=P[1]/100,e0=rf.v0+.2,e1=rf.v1-.2;let h,dk;
+ if(!rf.one){const side=v<rf.vm?rf.hm1:rf.hm2,hs=hmE(side),top=Math.max(rf.hw*rf.tn,hs),t=Math.min(1,Math.abs(v-rf.vm)/Math.max(.01,rf.vm-e0));h=hs+(top-hs)*(1-t);dk=!(side>0)&&t>.98}
+ else{const lo=rf.hi?e0:e1,hl=rf.hi?rf.hm1:rf.hm2,hs=hmE(hl),top=Math.max(2*rf.hw*rf.tn,hs),t=Math.min(1,Math.abs(v-lo)/Math.max(.01,e1-e0));h=hs+(top-hs)*t;dk=!(hl>0)&&t<.02}
+ return[Math.max(5,Math.round(h*100)),dk]}
+function wallProf(lv,a,b,L){const rf=GEO[lv].roof;if(!rf)return null;const va=(rf.ax?a[1]:a[0])/100,vb=(rf.ax?b[1]:b[0])/100,T=[0,1];if(Math.abs(vb-va)>1e-6){/* points où la pente change : faîtage et pied des pentes (haut des petits murs) */const tn=rf.tn||1,V=rf.one?[]:[rf.vm];V.forEach(v=>{const t=(v-va)/(vb-va);if(t>0&&t<1)T.push(t)})}T.sort((x,y)=>x-y);const P=T.map(t=>{const[h,dk]=roofH(rf,[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);return dk?[R(L*t),h,1]:[R(L*t),h]});if(P.every(q=>Math.abs(q[1]-P[0][1])<2))return{flat:P[0][1],dk:!!P[0][2]};return{prof:P}}
+function buildRoom(r,lv){const H=GEO[lv].H,E=edges(r);const W=E.map((e,i)=>{const a=[e[0],e[1]],b=[e[2],e[3]],L=Math.round(len(sub(b,a))),pf=wallProf(lv,a,b,L),Hw=pf?(pf.flat||Math.max(...pf.prof.map(q=>q[1]))):H;return{type:"mur",rt:r.rt,L,H:Hw,prof:pf&&pf.prof||null,hdk:!!(pf&&pf.dk),room:r.nom,named:true,items:opsOn(lv,a,b).map(o=>({k:o.k,w:o.w,x:o.x,face:0,lock:true,st:"exist",rep:"non"})),side:i,rid:lv+"-"+GEO[lv].rooms.indexOf(r),lv}}).filter(w=>w.L>=40);
  if(!W.length)return[];const sv=M,dw=W.findIndex(w=>w.items.some(i=>i.k==="porte")),free=W.filter(w=>!w.items.some(i=>i.k==="porte")).sort((a,b)=>b.L-a.L),nowin=free.filter(w=>!w.items.some(i=>i.k==="fenetre")),eSt=stOf(A.elec),pSt=stOf(A.plomb);
  if(r.rt==="cuisine"&&free[0]){const f=A.cuis?stOf(A.cuis):{none:1},w=free[0];let x=0;
   [["frigo",60],["mbas",80],["mevier",80],["lv",60],["mplaque",60]].forEach(([k,ww])=>{if(x+ww<=w.L){putAt(w,k,x,ww,f);x+=ww}});[80,60,40,30,20].forEach(ww=>{while(x+ww<=w.L){putAt(w,"mbas",x,ww,f);x+=ww}});
   w.items.filter(i=>CAT[i.k].bas===0&&i.k!=="frigo"&&CAT[i.k].c==="meuble").forEach(b=>{const k=b.k==="mplaque"?"hotteint":"mhaut";if(!putAt(w,k,b.x,b.w,f)){for(const vv of CAT.mhaut.w.filter(v=>v<=b.w).sort((a,c)=>c-a)){if(putAt(w,"mhaut",b.x,vv,f)||putAt(w,"mhaut",b.x+b.w-vv,vv,f))break}}});
-  w.items.filter(i=>i.k==="mbas"||i.k==="lv").forEach(b=>{if(w.items.filter(i=>i.k==="prisept").length<2&&b.w>=40)putAt(w,"prisept",b.x+b.w/2-7.5,15,eSt)})}
+  }
  if(r.rt==="sdb"){const f=A.sdb?stOf(A.sdb):pSt,eq=(A.sdbeq||[]).length&&!(A.sdbeq||[]).every(x=>/sais/.test(x))?A.sdbeq:["Douche","Meuble vasque","WC"],has=t=>eq.includes(t);const a=nowin[0]||free[0]||W[0],b=nowin[1]||free[1]||a,c=W.find(w=>w!==a&&w!==b&&w.items.some(i=>i.k==="fenetre"))||b;
   if(has("Baignoire"))putAny(a,"baignoire",a.L-170,170,f);if(has("Douche"))putAny(has("Baignoire")?b:a,"douche",0,90,f);if(has("WC"))putAny(a,"wc",15,50,f);
   if(has("Meuble vasque")){const v=putAny(b,"mvasque",(b.L-80)/2,80,f);if(v)putAt(b,"miroir",v.x,80,f)}if(has("Sèche-serviettes"))putAny(c,"seche",15,50,f);if(has("Lave-linge"))putAny(c,"ll",c.L-75,60,f);
-  const v=b.items.find(i=>i.k==="mvasque");if(v)putAny(b,"prise",v.x+v.w+18,8,eSt)}
+  }
  if(r.rt==="wc"&&dw>=0){const w=W[(dw+Math.floor(W.length/2))%W.length];putAny(w,"wc",(w.L-50)/2,50,pSt)}
- if(dw>=0){const w=W[dw],d=w.items.find(i=>i.k==="porte");putAny(w,"inter",d.x+d.w+15<=w.L-28?d.x+d.w+15:d.x-23,8,eSt)}
- const NB={sejour:5,chambre:3,bureau:3,entree:1,buanderie:1}[r.rt]||0;let n=0;const order=W.slice().sort((a,b)=>b.L-a.L);
- for(const fr of [.5,.18,.82,.35,.65]){for(const w of order){if(n>=NB)break;if(putAt(w,"prise",w.L*fr-4,8,eSt))n++}}
- if(["sejour","chambre","bureau"].includes(r.rt))putAny(order[0],"rj",order[0].L*.5+24,8,eSt);
- if(/Radiateurs/.test(A.chauf||"")&&!["sdb","wc","cuisine"].includes(r.rt))W.forEach(w=>w.items.filter(i=>i.k==="fenetre").forEach(fe=>{const ww=CAT.radiateur.w.filter(v=>v<=fe.w).pop()||60;putAny(w,"radiateur",fe.x+fe.w/2-ww/2,ww)}));
+ /* Cyril 25/11 : plus de prises, interrupteurs ni radiateurs posés d'office ; chaque mur pose ses questions (qzList) */
  M=sv;const st=dw<0?0:(dw+Math.round(W.length/2))%W.length;return W.map((w,j)=>W[(st+j)%W.length])}
 const EPK=["elec","eau","chaud","meuble"];
 const EPL=()=>M.items.filter(it=>visible(it)&&it.prop&&it.st==="exist"&&!it.rv&&EPK.includes(CAT[it.k].c));
 const epAsk=()=>PC.step==="f"&&sel==null&&!PC.rv&&!M.epDone&&EPL().length>0;
 const F={trav:[]};
 function startRoom(){const q=PC.queue[PC.qn];if(!q){showRecap();return}if(!PC.R[q.id])PC.R[q.id]=buildRoom(q.r,q.lv);WALLS=PC.R[q.id];if(!WALLS.length){PC.qn++;return startRoom()}
- F.trav=/Quelques|change|sais/i.test((A.elec||"")+(A.plomb||""))||!A.elec?["elec"]:[];PC.step="f";PC.edit=false;showScr(null);goWall(0);setTimeout(()=>toast(`<b>${q.r.nom}</b> : tout est déjà posé. Vérifiez, déplacez, c'est tout !`,3400),500)}
+ F.trav=/Quelques|change|sais/i.test((A.elec||"")+(A.plomb||""))||!A.elec?["elec"]:[];PC.step="f";PC.edit=false;showScr(null);goWall(0);setTimeout(()=>toast(`<b>${q.r.nom}</b> : quelques questions par mur, une à la fois`,3000),500)}
 function goWall(i){wi=i;M=WALLS[wi];face=0;sel=null;askAll=!!G().length;PC.rv=null;confirmDel=false;drag=null;HIST.length=0;$("undo").disabled=true;$("dock").classList.remove("open");lvl0=-1;
  cat=firstCat();ui();const t0=performance.now()+180;M.items.forEach((it,j)=>{it._a={t:t0+j*70,d:0,dy:-140};it.settle=0});draw();anim();steps();if(!PC.coached){PC.coached=1;setTimeout(coach,5200)}}
 function saveSnap(){const s0=sel;sel=null;M.items.forEach(i=>delete i._a);draw();const s=$("wall").cloneNode(true);s.removeAttribute("id");s.removeAttribute("style");M.snap=s.outerHTML;sel=s0}
-function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:CAT[it.k].bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
+function exportMurs(){return ALLR().filter(q=>PC.R[q.id]).map(q=>({piece:q.r.nom,niveau:GEO[q.lv].nom,hauteur_cm:GEO[q.lv].H,note:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&PC.SO[q.id].fin.note)||undefined,photos:(PC.SO&&PC.SO[q.id]&&PC.SO[q.id].fin&&(PC.SO[q.id].fin.ph||[]).length)||0,murs:PC.R[q.id].map((w,j)=>({mur:j+1,longueur_cm:w.L,reponses:qzExp(w),elements:w.items.map(it=>({type:CAT[it.k].n,largeur_cm:it.w,x_cm:it.x,hauteur_du_sol_cm:cI(it).bas,hauteur_cm:CAT[it.k].h,etat:it.st==="faire"?"À créer":it.st==="dk"?"Je ne sais pas":it.rep==="oui"?"À changer":it.st==="exist"?"Déjà en place":"Non précisé",propose_non_verifie:!!it.prop}))}))}))}
 // ---------- Récap ----------
 function showRecap(msg){PC.step="r";PC.edit=false;showScr("sr");if(!PC.sel)PC.sel=(PC.queue[0]||{}).id;recapUI();post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});if(msg)setTimeout(()=>toast(msg,2400),200)}
 function recapUI(){const done=ALLR().filter(q=>PC.R[q.id]);$("sr-sent").hidden=true;$("sr-main").hidden=false;
@@ -767,7 +851,9 @@ function finish(){post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()}
 $("sr-go").onclick=()=>{vib([10,40,14]);finish()};$("sr-again").onclick=()=>location.reload();
 addEventListener("resize",()=>{if(PC.step==="p")planUI();if(PC.step==="r")recapUI()});
 M={type:"mur",rt:"cuisine",L:300,H:250,room:"",items:[]};
-function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);ALLR().forEach(({r})=>{r.works=want.length?want.includes(r.rt):true});startPick()}
+function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);/* tour 25/11 : pièces sans nom reconnu (« Pièce 1 ») : si aucune ne correspond au formulaire, on les propose toutes */const gen=r=>!r.nom||/^pi[eè]ce\b/i.test(String(r.nom).trim()),hit=want.length&&ALLR().some(({r})=>!gen(r)&&want.includes(r.rt));let anyGen=false;ALLR().forEach(({r})=>{if(gen(r))anyGen=true;r.works=!want.length||gen(r)||!hit||want.includes(r.rt)});boot.hit=!(want.length&&(anyGen||!hit));fromPlan();startPick()}
+/* Cyril 24/11 : le sol et le plafond répondus dans le plan ne sont pas redemandés ici (repris tels quels) */
+function fromPlan(){if(!PC.SO)return;const E={"Déjà en place":"On le garde","À changer":"On le change","À créer":"Il n'y a pas encore de sol"};ALLR().forEach(q=>{const r=q.r;if(r.so&&E[r.so.etat]){const a=soA(q.id,"sol");if(!a._done){a.etat=E[r.so.etat];if(r.so.depose&&r.so.depose!=="Aucune"&&r.so.depose!=="À préciser")a.depose=r.so.depose;const rv=r.so.revet;if(rv&&rv!=="Aucun"&&rv!=="À préciser")a.revet=/souple/i.test(rv)?"Sol souple (lino, vinyle)":rv;if(a.revet==="Carrelage"&&r.so.carFmt&&r.so.carFmt!=="À préciser")a.carFmt=r.so.carFmt;if(r.so.plb)a.plb=r.so.plb;a._done=1;a._plan=1}}if(r.pfp&&r.pfp.pf){const a=soA(q.id,"pf");if(!a._done){Object.keys(r.pfp).forEach(k=>{if(r.pfp[k])a[k]=r.pfp[k]});a._done=1;a._plan=1}}})}
 addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-load"){PC.R={};boot(d.plan&&d.plan.geo,d.rep||{})}});
 if(EMB)post({type:"proclik-murs-ready"});
 else{// démo hors formulaire : un logement fictif
@@ -788,7 +874,8 @@ const SQ={sol:[
  {k:"etat",q:"Le sol de cette pièce…",o:["On le garde","On le change","Il n'y a pas encore de sol",DKs]},
  {k:"depose",q:"Quel sol y a-t-il aujourd'hui ?",s:"Il sera enlevé avant de poser le nouveau.",o:["Carrelage","Parquet","Moquette","Lino / PVC",DKs],if:a=>a.etat==="On le change"},
  {k:"revet",q:"Quel sol voulez-vous ?",o:["Carrelage","Parquet","Sol souple (lino, vinyle)",DKs],if:a=>/change|pas encore/.test(a.etat||"")},
- {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"}],
+ {k:"carFmt",q:"Plutôt quelle taille de carreaux ?",s:"En centimètres. Vous pourrez en reparler avec l'artisan.",o:["30 × 30","45 × 45","60 × 60","80 × 80","60 × 120","20 × 120",DKs],if:a=>a.revet==="Carrelage"},
+ {k:"plb",q:"Le plancher (ce qui est sous le sol) est à refaire ?",s:"Par exemple un plancher qui bouge, ou des combles sans plancher.",o:["Non","Oui",DKs],if:a=>/change|pas encore/.test(a.etat||"")}],
  fin:[],
  fai:[
  {k:"fai",q:"De la faïence aux murs ?",s:"Les carreaux collés au mur : autour de la douche, derrière l'évier…",o:["Oui, à poser","Non, pas de faïence",DKs]},
@@ -800,7 +887,7 @@ const SQ={sol:[
  {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfSup",q:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfIso",q:"Isolant au-dessus ?",o:["Oui","Non",DKs],if:a=>a.pf==="À refaire"}]};
-const SHORT={fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
+const SHORT={fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",plb:"Plancher",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
 PC.SO={};
 const needPart=p=>(A.trav||[]).includes(p==="sol"?"sol":"plafond");
 const soA=(id,p)=>{const o=PC.SO[id]||(PC.SO[id]={});return o[p]||(o[p]={})};
@@ -810,10 +897,12 @@ const m2=r=>fr1(Math.abs(area(r.pts))/1e4);
 function solConv(a){if(!a.etat)return null;const E={"On le garde":"Déjà en place","On le change":"À changer","Il n'y a pas encore de sol":"À créer"}[a.etat]||null,o={etat:E};
  if(!E){o.dk=1;return o}if(E==="Déjà en place"){o.depose="Aucune";o.revet="Aucun";return o}
  o.depose=E==="À créer"?"Aucune":a.depose&&a.depose!==DKs?a.depose:"À préciser";
- o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";return o}
+ o.revet=/souple/.test(a.revet||"")?"Sol souple":a.revet&&a.revet!==DKs?a.revet:"À préciser";if(o.revet==="Carrelage")o.carFmt=a.carFmt&&a.carFmt!==DKs?a.carFmt:"À préciser";if(a.plb)o.plb=a.plb;return o}
 // Faïence (Cyril 18/11) : murs choisis × hauteur, moins les portes ; renvoyée au plan (pc.faience) pour le calcul.
 const WET=["sdb","wc","cuisine","buanderie"];
 const faiWalls=q=>PC.R[q.id]||[];
+/* Cyril 25/11 : la faïence n'est demandée que si c'est lié aux travaux : sol coché, ou cuisine / salle de bain qui change (ou « Je ne sais pas »). */
+const faiLie=rt=>{const T=A.trav||[],x=v=>/change|créer|sais pas/i.test(v||"");if(!A.trav)return true;if(T.includes("sol"))return true;if(rt==="cuisine")return x(A.cuis);if(rt==="sdb"||rt==="wc")return x(A.sdb);return false};
 const faiLab=(a,q)=>{const W=faiWalls(q),m=a.faiM||[];return !m.length?"—":m.length===W.length?"Tous les murs":"Mur"+(m.length>1?"s ":" ")+m.map(j=>j+1).join(", ")};
 function faiConv(a,q){if(!a.fai)return null;if(a.fai===DKs)return{a_voir:true};if(!/^Oui/.test(a.fai))return{non:true};
  const W=faiWalls(q),H=GEO[q.lv].H,h=a.faiH==="À mi-hauteur (1,20 m)"?120:a.faiH==="Une crédence (60 cm)"?60:H,m=(a.faiM||[]).filter(j=>W[j]);
@@ -832,7 +921,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  if(p==="sol"){const ch=/change|pas encore/.test(a.etat||"");
   if(ch&&a.revet==="Carrelage"){const f=(a.carFmt&&a.carFmt!==DKs?a.carFmt:"45 × 45").split("×").map(v=>parseFloat(v)),cw=Math.max(f[0],f[1]),chh=Math.min(f[0],f[1]);
    h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${cw}" height="${chh}"><rect width="${cw}" height="${chh}" fill="var(--tile,#E6E9EE)"/><path d="M0 0H${cw}M0 0V${chh}" stroke="var(--joint,#B9BFCB)" stroke-width="${Math.max(1.2,1.6*k)}"/></pattern>`;fill=`url(#${uid}p)`}
-  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--wood,#D9B98A)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--wood2,#B48B57)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
+  else if(ch&&a.revet==="Parquet"){const L=120,W=18;h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="${L}" height="${W*2}"><rect width="${L}" height="${W*2}" fill="var(--parq,#E2C9A0)"/><path d="M0 0H${L}M0 ${W}H${L}M0 0V${W}M${L/2} ${W}V${W*2}" stroke="var(--parq2,#BE9866)" stroke-width="${Math.max(1,1.3*k)}"/><path d="M8 ${W*.45}H${L*.4}M${L*.55} ${W*1.5}H${L*.9}" stroke="var(--parq2,#BE9866)" stroke-width="${Math.max(.6,.7*k)}" opacity=".45"/></pattern>`;fill=`url(#${uid}p)`}
   else if(ch&&/souple/.test(a.revet||""))fill="var(--soft-floor,#CFD8E6)";
   else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
   lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
@@ -840,23 +929,29 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
  else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
   lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
  h2+=`</defs>`;
- GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--wall2)" opacity=".7"/>`});
- h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--wall)"}"/>`;
+ /* Cyril 25/11 « le plan ici ne ressemble pas au vrai » : même dessin que le plan (murs bleu nuit arrondis, sol gris clair, portes, fenêtres, trappe) */
+ const WE=14,WC=7,SC=Math.max(.5,(w+2*pad)/Math.max(1,s.getBoundingClientRect().width||600)),PL=(a,b,st,sw,x="")=>`<path d="M${a[0]} ${a[1]}L${b[0]} ${b[1]}" stroke="${st}" stroke-width="${sw}" fill="none" ${x}/>`;
+ const OPS=(ext,arc)=>{let z="";GEO[lv].segs.forEach(g=>{if((g.k!=="clo")!==ext)return;const Tt=(g.k==="clo"?WC:WE)*2,dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
+  if(op.k==="fenetre"){if(arc)return;z+=PL(A1,B1,"var(--glass)",Tt)+PL(A1,B1,"var(--pwall)",Math.max(2,.7*SC));[A1,B1].forEach(R=>{z+=PL([R[0]-u[1]*Tt/2,R[1]+u[0]*Tt/2],[R[0]+u[1]*Tt/2,R[1]-u[0]*Tt/2],"var(--pwall)",Math.max(2,.7*SC))});return}
+  if(!arc){z+=PL(A1,B1,"var(--pfloor)",Tt+1);return}const n=[-u[1],u[0]],rr=op.w*.9;z+=`<path d="M${A1[0]} ${A1[1]}L${A1[0]+n[0]*rr} ${A1[1]+n[1]*rr}A${rr} ${rr} 0 0 1 ${B1[0]} ${B1[1]}" fill="none" stroke="var(--muted)" stroke-width="${Math.max(1.5,.7*SC)}" stroke-dasharray="${2.5*SC} ${2*SC}"/>`})});return z};
+ GEO[lv].segs.forEach(g=>{if(g.k!=="clo")h2+=PL(g.a,g.b,"var(--pwall)",WE*2,'stroke-linecap="round"')});h2+=OPS(true,0);
+ GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--pfloor)"/>`});
+ h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--pfloor)"}"/>`;
  if(fill)h2+=`<g clip-path="url(#${uid}c)" class="${o.still?"":"fillin"}"><rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="${fill}"/></g>`;
  if(p==="pf"){const cx=cen(r)[0],cy=y0+h*.2;h2+=`<circle cx="${cx}" cy="${cy}" r="${9*k}" fill="var(--laiton)" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${20*k}" fill="none" stroke="var(--laiton)" stroke-width="${1.4*k}" opacity=".35"/>`}
- GEO[lv].segs.forEach(g=>{h2+=`<path d="M${g.a[0]} ${g.a[1]}L${g.b[0]} ${g.b[1]}" stroke="var(--fg)" stroke-width="${g.k==="clo"?Math.max(6,7*k):Math.max(10,12*k)}" stroke-linecap="square"/>`;
-  const dd=sub2(g.b,g.a),L=len(dd)||1,u=[dd[0]/L,dd[1]/L];g.ops.forEach(op=>{const A1=[g.a[0]+u[0]*op.p,g.a[1]+u[1]*op.p],B1=[g.a[0]+u[0]*(op.p+op.w),g.a[1]+u[1]*(op.p+op.w)];
-   h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="${op.k==="fenetre"?"var(--glass)":"var(--surface)"}" stroke-width="${Math.max(10,12*k)+1}"/>`;if(op.k==="fenetre")h2+=`<path d="M${A1[0]} ${A1[1]}L${B1[0]} ${B1[1]}" stroke="var(--fg)" stroke-width="${Math.max(2,2*k)}"/>`})});
+ GEO[lv].segs.forEach(g=>{if(g.k==="clo")h2+=PL(g.a,g.b,"var(--pwall)",WC*2,'stroke-linecap="round"')});
+ (GEO[lv].esc||[]).forEach(e=>{h2+=`<path d="M${e.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--laiton-soft)" stroke="var(--fg)" stroke-width="${Math.max(2,.8*SC)}" stroke-dasharray="${3*SC} ${2*SC}"/>`;const c=e.pts.reduce((m,v)=>[m[0]+v[0]/e.pts.length,m[1]+v[1]/e.pts.length],[0,0]);h2+=`<text x="${c[0]}" y="${c[1]+4*SC}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="700" font-size="${11*SC}" fill="var(--fg)">${e.t}</text>`});
+ h2+=OPS(true,1)+OPS(false,0)+OPS(false,1);
  if(p==="fai"&&PC.R[q.id]){const W=PC.R[q.id],E=edges(r),on=/^Oui/.test(a.fai||"")?a.faiM||[]:[],[cx0,cy0]=cen(r);
   W.forEach((w,j)=>{const e=E[w.side];if(!e)return;const sel=on.includes(j),mx=(e[0]+e[2])/2,my=(e[1]+e[3])/2,dx=cx0-mx,dy=cy0-my,dl=Math.hypot(dx,dy)||1,ox=mx+dx/dl*26*k,oy=my+dy/dl*26*k;
    if(sel)h2+=`<line x1="${e[0]}" y1="${e[1]}" x2="${e[2]}" y2="${e[3]}" stroke="var(--laiton)" stroke-width="${Math.max(8,10*k)}" stroke-linecap="round" opacity=".9"/>`;
    if(!o.nolab)h2+=`<circle cx="${ox}" cy="${oy}" r="${12*k}" fill="${sel?"var(--laiton)":"var(--surface)"}" stroke="var(--fg)" stroke-width="${1.2*k}"/><text x="${ox}" y="${oy+4.5*k}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="800" font-size="${13*k}" fill="var(--fg)">${j+1}</text>`})}
- if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(30*k+8,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
+ if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(20*SC,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
   h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
 // ---------- Parcours ----------
-function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(needPart)).concat(["fin"]);
+function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)&&faiLie(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(p=>needPart(p)&&!soA(q.id,p)._plan)).concat(["fin"]);
  PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="fai"?"Maintenant, la faïence":parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
 function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
  if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
@@ -910,7 +1005,7 @@ $("ss-card").addEventListener("change",async e=>{if(e.target.id!=="fin-ph")retur
  post({type:"proclik-murs-photo",piece:q.r.nom,img});vib(10);toast("<b>Photo ajoutée</b> ✓",1800);finUI(false)});
 $("ss-card").addEventListener("input",e=>{if(e.target.id!=="fin-nt")return;soA(PC.ss.q.id,"fin").note=e.target.value;const nx=PC.queue[PC.qn+1],a=soA(PC.ss.q.id,"fin");$("ss-go").textContent=nx?(a.ph.length||a.note?"Pièce suivante ›":"Passer, pièce suivante ›"):(a.ph.length||a.note?"Voir le récap ›":"Passer, voir le récap ›")});
 $("ss-card").addEventListener("click",e=>{const b=e.target.closest("#fin-mic");if(!b)return;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;if(PC.rec){try{PC.rec.stop()}catch(_){}return}
- const r=new SR();r.lang="fr-FR";r.interimResults=false;PC.rec=r;b.classList.add("on");const ta=$("fin-nt");r.onresult=ev=>{const t=[...ev.results].map(x=>x[0].transcript).join(" ");ta.value=(ta.value?ta.value+" ":"")+t;ta.dispatchEvent(new Event("input",{bubbles:true}))};r.onend=()=>{PC.rec=null;const m=$("fin-mic");if(m)m.classList.remove("on")};r.onerror=()=>{toast("Le micro ne répond pas : utilisez celui du clavier 🎤",2600)};try{r.start()}catch(_){PC.rec=null}});
+ const r=new SR();r.lang="fr-FR";r.interimResults=false;PC.rec=r;b.classList.add("on");const ta=$("fin-nt");r.onresult=ev=>{const t=[...ev.results].map(x=>x[0].transcript).join(" ");ta.value=(ta.value?ta.value+" ":"")+t;ta.dispatchEvent(new Event("input",{bubbles:true}))};r.onend=()=>{PC.rec=null;const m=$("fin-mic");if(m)m.classList.remove("on")};r.onerror=()=>{toast("Le micro ne répond pas : utilisez celui du clavier",2600)};try{r.start()}catch(_){PC.rec=null}});
 
 function miniPlan(){const m=$("mini"),w0=WALLS[0],lv=w0.lv,r=GEO[lv].rooms[+w0.rid.split("-")[1]],b=bbox(lv),p=40,s=m.querySelector("svg");
  s.setAttribute("viewBox",`${b.x-p} ${b.y-p} ${b.w+2*p} ${b.h+2*p}`);s.style.aspectRatio=`${b.w+2*p}/${b.h+2*p}`;const k=Math.max(b.w,b.h)/100;
@@ -918,7 +1013,40 @@ function miniPlan(){const m=$("mini"),w0=WALLS[0],lv=w0.lv,r=GEO[lv].rooms[+w0.r
  const E=edges(r);WALLS.forEach((w,j)=>{const q=E[w.side],cur=j===wi;h+=`<line x1="${q[0]}" y1="${q[1]}" x2="${q[2]}" y2="${q[3]}" stroke="${cur?"var(--act)":w.done?"var(--laiton)":"var(--fg)"}" stroke-width="${(cur?4:w.done?2.6:1.3)*k}" stroke-linecap="round"${cur?' class="blink"':""}/>`});
  const q=E[WALLS[wi].side],[cx,cy]=cen(r),tx=(q[0]+q[2])/2,ty=(q[1]+q[3])/2,a=Math.atan2(ty-cy,tx-cx),L=Math.hypot(tx-cx,ty-cy)*.86,sp=.55;
  h+=`<path d="M${cx} ${cy}L${cx+Math.cos(a-sp)*L} ${cy+Math.sin(a-sp)*L}L${cx+Math.cos(a+sp)*L} ${cy+Math.sin(a+sp)*L}Z" fill="var(--laiton)" opacity=".35"/><circle cx="${cx}" cy="${cy}" r="${5*k}" fill="var(--act)" stroke="var(--surface)" stroke-width="${1.2*k}"/><circle cx="${cx+Math.cos(a)*1.8*k}" cy="${cy+Math.sin(a)*1.8*k}" r="${1.3*k}" fill="var(--on-act)"/>`;
- s.innerHTML=h;$("mtx").innerHTML=`${M.room}<small>Mur ${wi+1} sur ${WALLS.length}</small>`}
+ s.innerHTML=h;$("mtx").innerHTML=`${M.room}<small>Mur ${wi+1} sur ${WALLS.length}</small>`;$("mprev").hidden=!(wi>0&&PC.step==="f");wplan()}
+/* Cyril 25/11 : « le plan qui montre les murs est trop petit et ne représente pas le vrai plan » + « on ne peut pas revenir sur les murs précédents » :
+   grand plan de l'étage (fenêtres, portes, escalier), le mur en cours clignote, on touche un mur déjà fait pour y revenir. */
+function wNext(){const i=WALLS.findIndex(w=>!w.done);return i<0?WALLS.length-1:i}
+function wOk(j){return j!==wi&&(WALLS[j].done||j===wNext())}
+function wplan(){const W=$("where"),sd=W.parentNode,on=!!(WALLS&&WALLS[0]&&WALLS[0].lv!=null&&PC.step==="f");W.hidden=!on;sd.classList.toggle("hasw",on);document.body.classList.toggle("hasw-mini",on);if(!on)return;
+ $("wprev").hidden=!(wi>0);const s=$("wplan");if(!s.getBoundingClientRect().width){s.innerHTML="";return}const lv=WALLS[0].lv,r=GEO[lv].rooms[+WALLS[0].rid.split("-")[1]];
+ drawPlan(s,{lvs:[lv],room:q=>q===r?{fill:"var(--laiton-soft)"}:{}});const vb=s.viewBox.baseVal,bb=s.getBoundingClientRect(),sc=Math.max(vb.width/Math.max(1,bb.width),vb.height/Math.max(1,bb.height));
+ /* Cyril 25/11 : « le plan invente quelque chose » : le dessin est décalé pour commencer à 0, la cible et les numéros des murs doivent suivre le même décalage (sinon tout part de travers dès que la pièce ne commence pas au coin du plan) */const B0=bbox(lv),E=edges(r),g=el("g",{transform:`translate(${-B0.x} ${-B0.y})`},s);
+ /* Cyril 25/11 : garder la cible (l'œil au milieu de la pièce et son cône vers le mur regardé) */
+ {const q=E[WALLS[wi].side],[c0x,c0y]=cenA(r),m0x=(q[0]+q[2])/2,m0y=(q[1]+q[3])/2,cx=c0x,cy=c0y,a=[q[0]-cx,q[1]-cy],b=[q[2]-cx,q[3]-cy],k=.97,tg=el("g",{"pointer-events":"none"},g);
+  el("path",{d:`M${cx} ${cy}L${cx+a[0]*k} ${cy+a[1]*k}L${cx+b[0]*k} ${cy+b[1]*k}Z`,fill:"var(--laiton)",opacity:".28"},tg);
+  const d=Math.hypot(m0x-cx,m0y-cy)||1,ux=(m0x-cx)/d,uy=(m0y-cy)/d;
+  el("circle",{cx,cy,r:9*sc,fill:"var(--act)",stroke:"var(--surface)","stroke-width":2*sc},tg);el("circle",{cx:cx+ux*3.5*sc,cy:cy+uy*3.5*sc,r:3*sc,fill:"var(--on-act)"},tg)}
+ WALLS.forEach((w,j)=>{const q=E[w.side],cur=j===wi,ok=wOk(j),c=cur?"var(--act)":w.done?"var(--laiton)":"var(--muted)";
+  const n=el("g",ok?{"data-wj":j}:{},g),mx=(q[0]+q[2])/2,my=(q[1]+q[3])/2,[cx,cy]=cen(r),d=Math.hypot(cx-mx,cy-my)||1,ix=(cx-mx)/d,iy=(cy-my)/d,o=7*sc,ll=Math.hypot(q[2]-q[0],q[3]-q[1])||1,tx=(q[2]-q[0])/ll*6*sc,ty=(q[3]-q[1])/ll*6*sc;
+  el("line",{x1:q[0],y1:q[1],x2:q[2],y2:q[3],stroke:"transparent","stroke-width":30*sc},n);
+  /* trait côté intérieur de la pièce : les fenêtres et portes du mur restent visibles */el("line",{x1:q[0]+ix*o+tx,y1:q[1]+iy*o+ty,x2:q[2]+ix*o-tx,y2:q[3]+iy*o-ty,stroke:c,"stroke-width":(cur?5:w.done?4:2)*sc,"stroke-linecap":"round",class:cur?"blink":""},n);
+  const px=mx+ix*20*sc,py=my+iy*20*sc;
+  el("circle",{cx:px,cy:py,r:10*sc,fill:cur?"var(--act)":w.done?"var(--laiton)":"var(--surface)",stroke:c,"stroke-width":1.5*sc},n);
+  const t=el("text",{x:px,y:py+4*sc,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":11*sc,fill:cur||w.done?"var(--on-act)":"var(--fg)","pointer-events":"none"},n);t.textContent=j+1})}
+function wGo(j){if(!WALLS||!WALLS[j]||!wOk(j))return;vib(8);if(sel!=null)deselect();goWall(j);toast(WALLS[j].done?`<b>Mur ${j+1}</b> : vous pouvez le corriger`:`<b>Mur ${j+1}</b>`,2000)}
+$("wplan").addEventListener("click",e=>{const g=e.target.closest("[data-wj]");if(g)wGo(+g.dataset.wj)});
+$("wprev").onclick=$("mprev").onclick=()=>{if(wi>0){if(sel!=null)deselect();vib(8);goWall(wi-1);toast(`<b>Mur ${wi+1}</b> : vous pouvez le corriger`,2000)}};
+addEventListener("resize",()=>{clearTimeout(window.__wpT);window.__wpT=setTimeout(()=>{if(WALLS&&PC.step==="f")wplan()},150)});
+$("card").addEventListener("click",ev=>{const b=ev.target.closest("[data-qa],[data-qb],[data-qk],[data-qs],[data-qdone],[data-qdel],[data-qplus],[data-qmore]");if(!b||PC.step!=="f")return;const q=Q(),L=qzList(),c=L[q.i],d=b.dataset;vib(8);
+ if(d.qa){if(d.qa==="oui")q.mode="pick";else{q.a[c]=d.qa;q.i++;q.mode="ask";toast(d.qa==="dk"?"Pas de souci, <b>l'artisan regardera</b>":"<b>Noté</b>",1400)}}
+ if(d.qb){q.i=Math.max(0,q.i-1);q.mode="ask"}
+ if(d.qmore)q.more=1;if(d.qdone||d.qa||d.qb||d.qplus)q.more=0;
+ if(d.qdone){q.a[c]="oui";q.i++;q.mode="ask"}
+ if(d.qplus){const j=L.indexOf(d.qplus);if(j>=0){q.i=j;q.mode="pick"}}
+ if(d.qk){qzAdd(d.qk);return}
+ if(d.qs||d.qdel){const it=M.items[q.it];if(it){snap();if(d.qdel)M.items.splice(q.it,1);else{it.rv=1;delete it.rep;if(d.qs==="exist"){it.st="exist";it.rep="non"}else if(d.qs==="rep"){it.st="exist";it.rep="oui"}else it.st=d.qs;it.lock=true}}q.it=null;sel=null;if(!d.qdel)toast("<b>Noté !</b> Autre chose ? Sinon « C'est tout »",1800)}
+ draw()});
 $("card").addEventListener("click",ev=>{const b=ev.target.closest("[data-ep],[data-rv]");if(!b)return;vib(8);
  if(b.dataset.ep){const v=b.dataset.ep,L=EPL();
   if(v==="non"){snap();L.forEach(it=>{it.prop=0;it.rv=1});M.epDone=true;toast("<b>Noté !</b> L'artisan sait où passent l'eau et l'électricité",2600)}
@@ -927,9 +1055,9 @@ $("card").addEventListener("click",ev=>{const b=ev.target.closest("[data-ep],[da
   if(v==="add"){M.epAdd=true;cat=avail().some(k=>CAT[k].c==="elec")?"elec":cat;ui();$("dock").classList.add("open")}
   draw();return}
  const it=M.items[sel],v=b.dataset.rv;if(!PC.rv||!it)return;snap();PC.rv=PC.rv;
- if(v==="oui")it.rep="oui";if(v==="non")it.prop=0;if(v==="dk")it.st="dk";it.rv=1;if(v==="del")M.items.splice(sel,1);
+ if(v==="oui")it.rep="oui";if(v==="non")it.prop=0;if(v==="dk")it.st="dk";if(v==="new"){it.st="faire";delete it.rep;it.prop=0}it.rv=1;if(v==="del")M.items.splice(sel,1);
  PC.rv.i++;const nx=PC.rv.list[PC.rv.i];
- if(nx)sel=M.items.indexOf(nx);else{const ch=PC.rv.list.filter(o=>o.rep==="oui").length;PC.rv=null;sel=null;M.epDone=true;toast(ch?`<b>C'est noté :</b> ${ch} élément${ch>1?"s":""} à changer, en laiton sur le mur`:"<b>C'est noté !</b> Rien ne change sur ce mur",2800)}
+ if(nx)sel=M.items.indexOf(nx);else{const ch=PC.rv.list.filter(o=>o.rep==="oui"||o.st==="faire").length;PC.rv=null;sel=null;M.epDone=true;toast(ch?`<b>C'est noté :</b> ${ch} élément${ch>1?"s":""} à changer ou à créer, en laiton sur le mur`:"<b>C'est noté !</b> Rien ne change sur ce mur",2800)}
  draw()});
 
 })();

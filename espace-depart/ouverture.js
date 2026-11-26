@@ -16,7 +16,7 @@ var css=
 '#pc-ouv{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--mlc:#E2C68C;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .6s ease;-webkit-tap-highlight-color:transparent}'+
 ':root[data-theme="dark"] #pc-ouv{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620;--mlc:#FBEFD6}'+
 '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #pc-ouv{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620;--mlc:#FBEFD6}}'+
-'#pc-ouv.fin{opacity:0;pointer-events:none}'+
+'#pc-ouv.pcfin{opacity:0;pointer-events:none}'+
 '#pc-ouv *,#pc-ouv *::before,#pc-ouv *::after{animation-play-state:paused}#pc-ouv.go *,#pc-ouv.go *::before,#pc-ouv.go *::after{animation-play-state:running}'+
 '#pc-ouv .lock{position:relative;z-index:1;display:flex;align-items:center;gap:14px;color:var(--mt)}'+
 '#pc-ouv .pbox{position:relative;display:grid;place-items:center;transform-origin:0 0}'+
@@ -108,10 +108,11 @@ if(reduit&&!site)return;
 /* Espace : à chaque ouverture (et au retour dans l'appli après une pause), une courte ouverture plein écran (~2,3 s)
    qui cache la page pendant qu'elle se met en place (plus d'écran qui saute). Cyril, 3/11. */
 if(!site&&!vitrine){
- var K='#pc-ouk{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .7s cubic-bezier(.4,0,.2,1)}'+
+ var K='#pc-ouk{--m:#ECEEF2;--mt:#262B38;--md:#6B7280;--ml:#A8823F;--mh:#FFFFFF;--mo:#C5CAD4;--d:cubic-bezier(.45,0,.25,1);position:fixed;inset:0;z-index:200;background:var(--m);display:grid;place-items:center;font-family:Manrope,system-ui,-apple-system,sans-serif;transition:opacity .85s cubic-bezier(.33,0,.2,1);will-change:opacity;transform:translateZ(0);contain:strict}'+
  ':root[data-theme="dark"] #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}'+
  '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #pc-ouk{--m:#1E2433;--mt:#E6E8EE;--md:#9AA1B0;--ml:#D4B483;--mh:#313B53;--mo:#121620}}'+
- '#pc-ouk.fin{opacity:0;pointer-events:none}'+
+ '#pc-ouk.pcfin{opacity:0;pointer-events:none}'+
+ '#pc-ouk.pcv0{transition:opacity .35s ease-out}'+
  '#pc-ouk .lk{display:flex;align-items:center;gap:14px;color:var(--mt)}'+
  '#pc-ouk .gk{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--m);box-shadow:-6px -6px 14px var(--mh),7px 7px 16px var(--mo),inset 1px 1px 1px var(--mh),inset -1px -1px 2px var(--mo);opacity:0;transform:translateX(var(--dx,0px)) scale(.9);animation:pkLeve 1.05s cubic-bezier(.4,0,.2,1) .05s forwards,pkGlisse .55s cubic-bezier(.65,0,.35,1) 1.15s forwards}'+
  '#pc-ouk svg{width:40px;height:40px;overflow:visible}'+
@@ -141,14 +142,35 @@ if(!site&&!vitrine){
   goutte(o.querySelector('.gk svg'),.05);
   /* le galet part du centre de l'écran (comme sur le site), puis se range à gauche quand le nom arrive */
   var lk=o.querySelector('.lk'),gk=o.querySelector('.gk');gk.style.setProperty('--dx',((lk.offsetWidth-gk.offsetWidth)/2)+'px');
-  var fait=false;function fin(){if(fait)return;fait=true;o.classList.add('fin');setTimeout(function(){o.remove()},750)}
+  /* 23/11 (Cyril : petite saccade quand le logo part et que l'Espace arrive) : le fondu se fait sur sa propre couche, les animations du logo sont arrêtées
+     pendant le fondu. VRAIE CAUSE : la classe « fin » prenait aussi la règle .fin de la page (grille) et décalait le logo de 5 px → classe « pcfin » */
+  root.classList.add('pc-ouk-on');
+  var fait=false;function fin(){if(fait)return;fait=true;try{o.getAnimations({subtree:true}).forEach(function(an){an.pause()})}catch(e){}
+   requestAnimationFrame(function(){o.classList.add('pcfin');setTimeout(function(){o.remove();root.classList.remove('pc-ouk-on')},900)})}
   o.addEventListener('click',fin);pret(function(){o.classList.add('go');try{if(o.getAnimations)o.getAnimations({subtree:true}).forEach(function(an){an.playbackRate=VITE})}catch(e){}setTimeout(fin,DUK)});
  }
- if(court){window.PC_OUV_MS=DUK;couvre()}
- /* retour dans l'appli après au moins 30 s ailleurs : on rejoue la courte ouverture */
- var cache=0;
- d.addEventListener('visibilitychange',function(){if(d.hidden){cache=Date.now()}else if(cache&&Date.now()-cache>30000){cache=0;couvre()}});
- window.addEventListener('pageshow',function(e){if(e.persisted)couvre()});
+ /* retour dans l'appli après au moins 15 min ailleurs : on rejoue la courte ouverture (30 s était bien trop court pour qui sort et revient souvent, Cyril 23/11).
+    L'heure de sortie est aussi gardée sur l'appareil : quand l'iPhone recharge l'appli au retour, le logo ne revient pas avant 15 min non plus. */
+ var PAUSE=15*60*1000,parti=0,QK='pc-ouv-quitte',recent=false;
+ try{var q=+localStorage.getItem(QK)||0;recent=q>0&&Date.now()-q<PAUSE}catch(e){}
+ function note(){parti=parti||Date.now();try{localStorage.setItem(QK,String(parti))}catch(e){}}
+ /* avant 15 min : pas de grand écran, mais la petite animation du logo en haut de l'Espace (Cyril 23/11) */
+ var stp=d.createElement('style');stp.textContent='html.pc-court:not(.pc-go) .brand>svg,html.pc-court:not(.pc-go) .brand>svg *,html.pc-court:not(.pc-go) .logo .g>svg,html.pc-court:not(.pc-go) .logo .g>svg *{animation-play-state:paused!important}';d.head.appendChild(stp);
+ var ptm=0;function petite(){if(reduit)return;clearTimeout(ptm);root.classList.remove('pc-court','pc-go');void root.offsetWidth;root.classList.add('pc-court');
+  var gl=function(){d.querySelectorAll('.brand>svg,.logo .g>svg').forEach(function(v){goutte(v,0)})};
+  var gc=function(){root.classList.add('pc-go');ptm=setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};
+  if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){gl();pret(gc)});else{gl();pret(gc)}}
+ /* Cyril 23/11 : on garde la petite animation actuelle (couvre), simplement pas avant 15 min ; petite() reste disponible mais n'est pas utilisée */
+ /* 23/11 (Cyril : petit blanc et saccade à l'ouverture quand le logo ne s'affiche pas) : avant 15 min, un simple voile de la couleur du fond
+    (sans logo) cache la page pendant qu'elle se construit, puis s'efface en douceur (~0,35 s) */
+ function voile(){var o=d.createElement('div');o.id='pc-ouk';o.className='pcv0';o.setAttribute('aria-hidden','true');(d.body||root).appendChild(o);root.classList.add('pc-ouk-on');
+  var fait=false;function fin(){if(fait)return;fait=true;requestAnimationFrame(function(){o.classList.add('pcfin');setTimeout(function(){o.remove();root.classList.remove('pc-ouk-on')},450)})}
+  o.addEventListener('click',fin);pret(fin)}
+ if(court&&!recent){window.PC_OUV_MS=DUK;couvre()}else if(court){window.PC_OUV_MS=0;voile()}
+ function retour(){if(parti&&Date.now()-parti>PAUSE)couvre();parti=0}
+ d.addEventListener('visibilitychange',function(){if(d.hidden)note();else retour()});
+ window.addEventListener('pagehide',note);
+ window.addEventListener('pageshow',function(e){if(e.persisted)retour()});
  if(court)return}
 if(court){root.classList.add('pc-court');window.PC_OUV_MS=1200;var gl=function(){d.querySelectorAll('.brand>svg,.logo .g>svg').forEach(function(v){goutte(v,0)})};if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',gl);else gl();var stc=d.createElement('style');stc.textContent='html.pc-court:not(.pc-go) .brand>svg,html.pc-court:not(.pc-go) .brand>svg *,html.pc-court:not(.pc-go) .logo .g>svg,html.pc-court:not(.pc-go) .logo .g>svg *{animation-play-state:paused!important}';d.head.appendChild(stc);var gc=function(){root.classList.add('pc-go');setTimeout(function(){root.classList.remove('pc-court','pc-go')},4700)};if(d.readyState==='complete')gc();else{var gd=false,g1=function(){if(gd)return;gd=true;requestAnimationFrame(function(){requestAnimationFrame(gc)})};window.addEventListener('load',g1);setTimeout(g1,1500)}return}
 
@@ -159,7 +181,7 @@ o.innerHTML='<div class="ond"><i style="--i:0"><b></b></i><i style="--i:1"><b></
 goutte(o.querySelector('.ouvp'),2.4);
 if(!site)window.PC_OUV_MS=10450;
 var fini=false;
-function fin(){if(fini)return;fini=true;o.classList.add('fin');setTimeout(function(){o.remove()},650)}
+function fin(){if(fini)return;fini=true;o.classList.add('pcfin');setTimeout(function(){o.remove()},650)}
 if(!site)o.addEventListener('click',fin);
 if(reduit){o.querySelectorAll('*').forEach(function(e){e.style.animation='none'});o.querySelector('.big').style.transform='none';o.querySelector('.pen').style.display='none';o.querySelector('.g').style.display='none';o.querySelector('.ond').style.display='none';o.querySelector('.filet').style.transform='none';o.querySelectorAll('.lt,small').forEach(function(e){e.style.opacity=1});return}
 

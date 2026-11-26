@@ -157,6 +157,9 @@
       (L.length>max?'<button class="af-plus" type="button" data-accv="devis">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":"")+"</div>"};
   /* Encaissé par mois (exemple) : de simples barres, faciles à lire d'un coup d'œil */
   var MOIS=[["Mai","mai",6100,9200],["Juin","juin",8400,12500],["Juil.","juillet",7200,7800],["Août","août",9600,13100],["Sept.","septembre",7900,11000],["Oct.","octobre",8640,14210]];
+  /* 23/11 : les 6 mois d exemple finissent au mois en cours (vraie date) */
+  (function(){var C=["Janv.","Févr.","Mars","Avril","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."],N=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],m=PCDEMO.today().getMonth();MOIS.forEach(function(x,k){var i=(m-5+k+12)%12;x[0]=C[i];x[1]=N[i]})})();
+  var MOISC=MOIS[5][0].replace(".","")+" · HT",MOISN=MOIS[5][1];
   R.argent=function(t){var sel=acc._mois==null?5:acc._mois,m=MOIS[sel],max=10000,moy=MOIS.reduce(function(s,x){return s+x[2]},0)/MOIS.length;
     var ev=sel>0?Math.round((m[2]-MOIS[sel-1][2])/MOIS[sel-1][2]*100):null;
     return tete("argent","Chiffre d'affaires")+
@@ -171,7 +174,7 @@
   var JS=["Lun","Mar","Mer","Jeu","Ven","Sam"],KN={ent:"Entretien",run:"Chantier",plan:"Chantier prévu",done:"Chantier",visit:"Visite",pc:"Point ProClik",free:"Libre"};
   function evs(iso){var E=(window.PCX&&PCX.EV)||[];return E.filter(function(e){return e.d===iso&&e.k!=="free"}).sort(function(a,b){return a.s<b.s?-1:1})}
   var iso=function(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)};
-  R.agenda=function(t){var auj=new Date(2026,9,16),lun=new Date(auj);lun.setDate(auj.getDate()-((auj.getDay()+6)%7));
+  R.agenda=function(t){var auj=PCDEMO.today(),lun=new Date(auj);lun.setDate(auj.getDate()-((auj.getDay()+6)%7));
     var sel=acc._jour||iso(auj),j=[],k;for(k=0;k<6;k++){var d=new Date(lun);d.setDate(lun.getDate()+k);j.push(d)}
     var ds=new Date(sel+"T12:00:00"),L=evs(sel),max=t==="m"?1:3;
     return tete("agenda",ds.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,function(c){return c.toUpperCase()}))+
@@ -179,7 +182,7 @@
       '<div class="ag-l">'+(L.length?L.slice(0,max).map(function(e){return '<div class="ag-e k-'+e.k+'"><span class="ag-h">'+e.s.replace(":"," h ")+'</span><span class="ag-t"><b>'+esc(e.t)+"</b><small>"+esc(e.w)+"</small></span></div>"}).join("")+
         (L.length>max&&t!=="m"?'<button type="button" class="af-plus" data-accv="planning">Et '+(L.length-max)+" autre"+(L.length-max>1?"s":"")+" ›</button>":""):'<p class="vide">Rien de prévu ce jour-là.</p>')+"</div>"};
   /* « Ma journée » : la journée en ligne de temps, un bouton « Y aller » par adresse ; le soir, la prochaine journée prévue */
-  var AUJ=function(){return new Date(2026,9,16)};
+  var AUJ=function(){return PCDEMO.today()};
   function hm(s){var p=String(s||"").split(":");return (+p[0]||0)*60+(+p[1]||0)}
   function hTxt(s){var p=String(s||"").split(":");return (+p[0])+"\u00a0h"+(p[1]&&p[1]!=="00"?"\u00a0"+p[1]:"")}
   function lieu(e){return String(e.w||"").split(" · ")[0].trim()}
@@ -260,7 +263,7 @@
   /* « Mes chiffres du mois » : les quatre chiffres sur une seule bande, touchez-en un pour le détail */
   /* Devis signés et taux de réussite en tête (Cyril, 19/11 : « pour motiver »), puis trois montants avec leur icône */
   R.chiffres=function(){var ns=3,ne=5,pc=Math.round(ns/ne*100),C=[["argent","Encaissé","8 640 €","factures",0],["signe","Signé","14 210 €","devis",0],["facture","À encaisser","2 760 €","factures",1]];
-    return '<div class="pt">'+hd(IC.argent,"Mes chiffres",pil("","Octobre · HT",""))+
+    return '<div class="pt">'+hd(IC.argent,"Mes chiffres",pil("",MOISC.charAt(0).toUpperCase()+MOISC.slice(1),""))+
       '<button type="button" class="fo cm-fo" data-accv="devis"><small>Devis signés ce mois</small><div>'+anneau(pc,"cm-an")+'<span><b>'+ns+" signés sur "+ne+"</b><em>"+pc+" % de réussite · "+(pc>=50?"plus d'un sur deux, bravo":"chaque devis compte")+"</em></span></div></button>"+
       '<div class="bl">'+C.map(function(x){return rang(IC[x[0]],"",esc(x[1]),'data-accv="'+x[3]+'"','<b class="bl-v'+(x[4]?" cor":"")+'">'+x[2]+"</b>")}).join("")+"</div></div>"};
   /* L'anneau ProClik (comme le logo) : trait fin bleu nuit, et le point laiton qui avance sur le cercle */
@@ -285,7 +288,7 @@
     return '<span class="tu-sp" aria-hidden="true">'+MOIS.map(function(x,i){return '<i'+(i===5?' class="on"':"")+' style="height:'+Math.max(12,x[k]/max*100).toFixed(0)+'%"></i>'}).join("")+"</span>"}
   function part(p,txt){return '<span class="tu-pa" aria-hidden="true"><span><i style="width:'+p+'%"></i></span><small>'+txt+"</small></span>"}
   function tuile(ic,titre,val,sous,v,cor,bas){return function(){return '<button type="button" class="tu" data-accv="'+v+'"><span class="tu-h"><span class="w-ic">'+IC[ic]+"</span><small>"+titre+'</small></span><b'+(cor?' class="cor"':"")+">"+val+"</b><em>"+sous+"</em>"+bas()+"</button>"}}
-  R.encaisse=tuile("argent","Encaissé","8 640 €","HT · en octobre","factures",0,function(){return spark(2)});
+  R.encaisse=tuile("argent","Encaissé","8 640 €","HT · en "+MOISN,"factures",0,function(){return spark(2)});
   R.signes=tuile("signe","Devis signés","14 210 €","3 sur 5 · 60 %","devis",0,function(){return spark(3)});
   R.aencaisser=tuile("facture","À encaisser","2 760 €","1 facture","factures",1,function(){return part(24,"24 % du facturé")});
   R.envoyes=tuile("attente","Devis envoyés","9 850 €","2 sans réponse","devis",0,function(){return part(40,"2 sur 5 en attente")});
@@ -307,7 +310,7 @@
       '<div class="tdb-pied">'+(D.total?'<button class="acc-tout" type="button" data-acctout>Toutes les demandes <span>'+(D.demo?"":D.total+" ")+"›</span></button>":"")+
       '<button type="button" class="tdb-perso" data-tdbperso>'+IC.grille+"<span>Personnaliser l'accueil</span></button></div>";
     if(acc._h===h)return;acc._h=h;var ib=$("#instb"),co=$("#vco");acc.innerHTML=h;acc.classList.toggle("edite",edition);
-    if(co)acc.insertBefore(co,acc.firstChild);if(ib)acc.appendChild(ib)}
+    if(co)acc.insertBefore(co,acc.firstChild);if(ib)acc.appendChild(ib);if(window.PCACC&&PCACC.apres)PCACC.apres(D)}
   function plusTard(){clearTimeout(rendre._t);rendre._t=setTimeout(rendre,60)}
 
   /* ---------- mode « personnaliser » ---------- */
@@ -425,6 +428,9 @@
   hello=$("#hello");
   function salut(){if(!hello)return;var hh=new Date().getHours(),t=hello.textContent,n=t.replace(/^Bon(jour|soir)\b/,(forceM?forceM==="soir":hh>=18||hh<5)?"Bonsoir":"Bonjour").replace(/\.\s*$/,"");if(n!==t)hello.textContent=n}
   if(hello){salut();new MutationObserver(salut).observe(hello,{childList:true,characterData:true,subtree:true})}
+  /* Nouvelle forme de l'Accueil (accueil-forme.js, Cyril 22/11) : elle lit les mêmes données */
+  window.PCACC={donnees:donnees,evs:evs,iso:iso,AUJ:AUJ,hTxt:hTxt,hm:hm,lieu:lieu,moment:moment,nowMin:nowMin,prochain:prochain,vrai:vrai,
+    refaire:function(){acc._h=null;rendre()},apres:null};
   rendre();
   // vrai.js réécrit sa liste à chaque chargement, et les pastilles des onglets bougent : on suit le mouvement.
   document.addEventListener("pc-ent",function(){acc._h=null;plusTard()});
