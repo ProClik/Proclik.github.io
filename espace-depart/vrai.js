@@ -18,6 +18,14 @@ var AP=(function(){var m=/[#&]apercu=([A-Za-z0-9_.-]{20,})/.exec(location.hash);
 if(AP){var AK={'pc-vrai-jeton':1,'pc-vrai-artisan':1,'pc-vrai-liste':1},g0=lsG,s0=lsS;
  lsG=function(k){if(AK[k]){try{return JSON.parse(sessionStorage.getItem('ap:'+k)||'null')}catch(e){return null}}return g0(k)};
  lsS=function(k,v){if(AK[k]){try{v==null?sessionStorage.removeItem('ap:'+k):sessionStorage.setItem('ap:'+k,JSON.stringify(v))}catch(e){}return}s0(k,v)}}
+/* Retouches du pré-devis gardées dans le compte (Cyril 26/11) : chaque retouche (pc-lg-…, pc-rt-…) part aussi au service,
+   1,5 s après la dernière ; en ouvrant la demande sur un autre appareil, la plus récente est reprise. Rien en aperçu Admin. */
+var RTS={};
+(function(){var s1=lsS;lsS=function(k,v){s1(k,v);var m=/^pc-(lg|rt)-([A-Za-z0-9_-]{6,64})$/.exec(k);if(!m||AP||RTS.calme)return;var id=m[2];s1('pc-rtt-'+id,Date.now());clearTimeout(RTS[id]);RTS[id]=setTimeout(function(){rtEnvoyer(id)},1500)}})();
+function rtEnvoyer(id){var lg=lsG('pc-lg-'+id),rt=lsG('pc-rt-'+id),t=lsG('pc-rtt-'+id)||Date.now();api('/espace/retouches',{method:'POST',body:{contact:id,retouches:lg||rt?{lg:lg,rt:rt,t:t}:null}}).catch(function(){/* hors ligne : repart à la prochaine retouche */})}
+function rtRecevoir(d){var id=d&&d.contact&&d.contact.id;if(!id||AP||!('retouches' in d))return;var r=d.retouches,t=+lsG('pc-rtt-'+id)||0;
+ if(!r){if(!t&&(lsG('pc-lg-'+id)||lsG('pc-rt-'+id)))rtEnvoyer(id);return}
+ if(!(+r.t>t))return;RTS.calme=1;lsS('pc-lg-'+id,r.lg||null);lsS('pc-rt-'+id,r.rt||null);RTS.calme=0;lsS('pc-rtt-'+id,+r.t)}
 function quitterApercu(){try{['pc-apercu','ap:pc-vrai-jeton','ap:pc-vrai-artisan','ap:pc-vrai-liste'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}location.reload()}
 var eur=function(n,d){return n==null?'—':Number(n).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:d||2})+' €'};
 var qte=function(n){return n==null?'':String(n).replace('.',',')};
@@ -576,7 +584,7 @@ function recalcHTML(d){if(lsG(clePm()))return '<div class="card vsec vrc"><b>�
 function boutonPlan(a){if(!a)return '<button type="button" class="vtab-plan vnew" data-vplannew aria-label="Créer un plan pour ce client">'+ICPLAN+'<span>Plan</span><i class="vplus" aria-hidden="true">+</i></button>';return '<button type="button" class="vtab-plan'+(a?'':' vsans')+'" '+(a?'data-vplan':'data-vnoplan')+' aria-label="'+(a?'Voir le plan':'Pas de plan dessiné')+'">'+ICPLAN+'<span>Plan</span>'+(a?'':'<i class="vx" aria-hidden="true">×</i>')+'</button>'}
 var ICPLAN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 12h7v8M11 4v5M15 12h5"/></svg>';
 (function(){var s=document.createElement('style');s.textContent='html body .cf .dv-seg button.vtab-plan.vsans{opacity:.5;box-shadow:none}html body .cf .dv-seg button.vtab-plan .vx{position:absolute;top:3px;right:calc(50% - 24px);width:17px;height:17px;min-width:0;padding:0;border-radius:50%;background:var(--muted,#8A90A0);color:#fff;font:700 13px/17px var(--f,inherit);text-align:center}';document.head.appendChild(s)})();
-function afficher(d){MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});if(!aPlan){var pm0=lsG(clePm());aPlan=!!(pm0&&pm0.plan&&(pm0.plan.floors||[]).some(function(f){return (f.pieces||[]).length}))}
+function afficher(d){rtRecevoir(d);MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;var k=d.contact,p=d.pre_devis[0],o=d.opportunites[0],P=d.demande&&d.demande.details&&d.demande.details.plan,aPlan=P&&(P.floors||[]).some(function(f){return (f.pieces||[]).length});if(!aPlan){var pm0=lsG(clePm());aPlan=!!(pm0&&pm0.plan&&(pm0.plan.floors||[]).some(function(f){return (f.pieces||[]).length}))}
  var plan=aPlan?'<button class="vbtn" type="button" data-vplan style="width:100%">📐 '+(d.demande.plan_corrige_le?'Voir le plan (retouché par vous)':'Voir le plan dessiné par le client')+'</button>':'';
  /* Le client : ses coordonnées, ses réponses, ses photos, son plan */
  var cl=ficheCliHTML(k,o,d,aPlan);
