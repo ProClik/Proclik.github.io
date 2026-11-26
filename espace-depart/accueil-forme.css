@@ -663,3 +663,5 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
 .f2 .pj.nv .tu.nl .nh{width:auto;min-width:46px;white-space:nowrap;font-size:16px}
 .f2 .pj.nv .tu.nfl .nh{width:58px;white-space:nowrap;font-size:15px}
 .f2 .pj.nv .nf::before{left:71px}
+/* forme 3 : « À faire » en carte, nettement à part du fil des rendez-vous */
+.f2 .pj.k3 .nf+.grt{margin-top:18px}

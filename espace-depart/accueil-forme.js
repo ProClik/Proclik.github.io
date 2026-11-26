@@ -355,8 +355,8 @@ v2.setAttribute("inert","");pj.hidden=true;
 function lg(i,t){return '<div class="lg"><span class="tic">'+ic(i)+"</span><span>"+t+"</span></div>"}
 function bt(t,i,c,attr){return '<button class="pill l'+(c?" c":"")+'" type="button" '+(attr||"")+">"+(i?ic(i):"")+t+"</button>"}
 /* 26/11 Cyril : « propose-moi une fenêtre note du jour plus jolie ». 3 formes (rien ne déborde) :
-   1 = Liste (lignes pleine largeur), 2 = Chiffres (gros chiffre par case), 3 = Fil (la journée sur un trait). ?pj=0 = l'ancienne. */
-var FV=(function(){var m=location.search.match(/[?&]pj=(\d)/);if(m)return +m[1];var v=+lsG("pc-pj-forme",1);return v>=0&&v<=3?v:1})();
+   1 = Liste, 2 = Chiffres, 3 = Fil (CHOISIE par Cyril 26/11 : les rendez-vous sur un trait, les choses à faire en liste SANS trait, pour ne pas ressembler au Planning). ?pj=0 = l'ancienne. */
+var FV=(function(){var m=location.search.match(/[?&]pj=(\d)/);if(m)return +m[1];var v=+lsG("pc-pj-forme",3);return v>=0&&v<=3?v:3})();
 function chev(){return '<span class="nch">'+ic("d")+"</span>"}
 function pjForme(RV,tf){var h="";
   if(FV===3){h+='<div class="nf">'+RV.map(function(r){return '<button class="tu nfl'+(r.now?" now":"")+'" type="button" data-d="'+r.k+'"><span class="nh">'+r.h+'</span><span class="np"></span><span class="ntx"><b>'+esc(r.t)+"</b><small>"+esc(r.s)+(r.he?" · jusqu’à "+r.he:"")+"</small></span>"+chev()+"</button>"}).join("")+"</div>";return h}
@@ -366,7 +366,7 @@ function nbDe(x){var m=String(x[3]).match(/^(\d+)\s+(.*)$/);return m?[m[1],m[2]]
 function pjFaire(tf){
   if(FV===2)return '<div class="grt">À faire aujourd\'hui</div><div class="nc" style="grid-template-columns:repeat('+tf.length+',minmax(0,1fr))">'+tf.map(function(x){var n=nbDe(x);
     return '<button class="tu ncc'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nv1">'+esc(x[2])+'</span><span class="nn">'+n[0]+'</span><b>'+esc(n[1])+"</b><small>"+esc(x[4])+"</small></button>"}).join("")+"</div>";
-  if(FV===3)return '<div class="grt">Dans la journée</div><div class="nf nf2">'+tf.map(function(x){return '<button class="tu nfl nft'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nh">'+ic(x[5])+'</span><span class="np"></span><span class="ntx"><b>'+esc(x[2])+" "+esc(x[3])+"</b><small>"+esc(x[4])+"</small></span>"+chev()+"</button>"}).join("")+"</div>";
+  if(FV===-3)return '<div class="grt">Dans la journée</div><div class="nf nf2">'+tf.map(function(x){return '<button class="tu nfl nft'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nh">'+ic(x[5])+'</span><span class="np"></span><span class="ntx"><b>'+esc(x[2])+" "+esc(x[3])+"</b><small>"+esc(x[4])+"</small></span>"+chev()+"</button>"}).join("")+"</div>";
   return '<div class="grt">À faire aujourd\'hui</div><div class="nl-box">'+tf.map(function(x){return '<button class="tu nl nlf'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nr">'+ic(x[5])+'</span><span class="ntx"><b>'+esc(x[2])+" "+esc(x[3])+"</b><small>"+esc(x[4])+"</small></span>"+(x[1]?'<i class="npt"></i>':"")+chev()+"</button>"}).join("")+"</div>"}
 /* le contenu de la fenêtre, tiré de la vraie journée */
 function pjContenu(){var D=A.donnees(),J=jour(),L=J.L,AF=aFaire(D),u=D.urgent,tu=[],tf=[],k=0,RV=[];DET={};
