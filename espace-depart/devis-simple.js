@@ -225,10 +225,11 @@ function listeClients(){var C=clients(),q=sans(S.qc||'').trim(),L=q?C.filter(fun
 function groupes(){var G={},ordre=[];
  var met=function(id,nom,sous,a){if(!G[id]){G[id]={id:id,nom:nom,sous:sous,fam:{},nf:[],n:0};ordre.push(id)}var g=G[id],f=a.f||'Divers';if(!g.fam[f]){g.fam[f]=[];g.nf.push(f)}g.fam[f].push(a);g.n++};
  var hab=(FO.filter(function(x){return x.habituel})[0]||{id:'base'}).id;
- B.articles.forEach(function(a){if(!(a.pc>0))return;if(a.k==='prestation'&&!a.four)met('mo','Main-d’œuvre','vos prix de pose',a);else{var id=a.four||'base';met('f:'+id,nomFour(id),'',a)}});
- (B.complements||[]).forEach(function(a){if(a.pc>0)met('f:'+a.four,nomFour(a.four),'en plus de votre base',a)});
+ B.articles.forEach(function(a){if(!(a.pc>0))return;if(a.k==='prestation'&&!a.four)met('mo','Poses (main-d’œuvre)','vos prix de pose',a);else{var id=a.four||'base';met('f:'+id,nomFour(id),'',a)}});
+ (B.complements||[]).forEach(function(a){if(!(a.pc>0))return;if(a.k==='prestation')met('mo','Poses (main-d’œuvre)','vos prix de pose',a);else met('f:'+a.four,nomFour(a.four),'en plus de votre base',a)});
  vosProduits().forEach(function(a){met('vos','Vos produits','ajoutés par vous',a)});
- var rang=function(x){return x==='f:'+hab?0:x==='mo'?1:x==='f:castorama'||x==='f:clim'?3:/^f:/.test(x)?2:4};
+ /* Cyril 26/11 : « pourquoi je ne trouve pas au début les poses » → les poses d’abord, puis le fournisseur habituel */
+ var rang=function(x){return x==='mo'?0:x==='f:'+hab?1:x==='f:castorama'||x==='f:clim'?3:/^f:/.test(x)?2:4};
  ordre.sort(function(a,b){return rang(a)-rang(b)});
  return ordre.map(function(id){var g=G[id];if(id==='f:'+hab)g.hab=1;return g})}
 function court(n){return n.replace(' · prix publics','')}
@@ -265,7 +266,7 @@ function listeBase(){var G=groupes(),q=sans(S.q).trim(),W=q.split(/\s+/).filter(
  h+='<button type="button" class="ds-lien" data-ds="main">Je ne trouve pas : écrire ma ligne</button>'+(marge()?'<p class="ds-note">Prix de vente HT. Matériaux : prix d’achat chez le fournisseur + votre marge de '+qf(marge())+' %. Main-d’œuvre : votre prix.</p>':'');
  return h}
 function article(a){var u=unite(a),dt=detail(a),mc=moinsCher(a);
- var src=a.k==='prestation'?(a.vos?'votre prix':'votre prix de pose'):a.vos?'votre prix':'achat '+eur(a.pc)+(marge()?' + '+qf(marge())+' %':'');
+ var src=a.k==='prestation'?(a.vos?'votre prix':a.complement?'prix moyen France, à confirmer':'votre prix de pose'):a.vos?'votre prix':'achat '+eur(a.pc)+(marge()?' + '+qf(marge())+' %':'');
  return '<div class="ds-row ds-art"><span class="ds-tx"><b>'+esc(lisible(a.d))+'</b><small>'+(dt?esc(dt)+' · ':'')+esc(src)+(a.provisoire&&!a.complement?' <em class="ds-tag">à confirmer</em>':'')+(mc?' <em class="ds-tag v">moins cher chez '+esc(court(nomDe(mc)))+'</em>':'')+'</small></span><span class="ds-pr">'+eur(prixVente(a))+'<small>'+esc(parU(u))+'</small>'+(prixMesure(a)?'<small class="m">'+esc(prixMesure(a))+'</small>':'')+'</span><button type="button" class="ds-plus" data-ds="art" data-id="'+esc(a.c)+'" aria-label="Ajouter '+esc(lisible(a.d))+'">＋</button></div>'}
 function blocOuvrages(){if(!S.ouvrages.length)return '';var c=S.calc,ch=S.calcEtat==='charge',er=/^err/.test(S.calcEtat||''),L=lignesCalc();
  var h='<div class="ds-sec">TRAVAUX COMPLETS <span>· calculés par Cliky</span></div><div class="ds-card">'+S.ouvrages.map(function(o,i){return '<button type="button" class="ds-row" data-ds="ouvl" data-id="'+i+'"><span class="ds-ic">'+ICT[o.travail]+'</span><span class="ds-tx"><b>'+esc(titreOuv(o))+'</b><small>'+esc(resumeOuv(o))+'</small></span><span class="ds-rond p">'+IC.ch+'</span></button>'}).join('');
