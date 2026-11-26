@@ -356,8 +356,22 @@ var EZ="cubic-bezier(.2,.85,.15,1)",reduit=matchMedia("(prefers-reduced-motion: 
 v2.setAttribute("inert","");pj.hidden=true;
 function lg(i,t){return '<div class="lg"><span class="tic">'+ic(i)+"</span><span>"+t+"</span></div>"}
 function bt(t,i,c,attr){return '<button class="pill l'+(c?" c":"")+'" type="button" '+(attr||"")+">"+(i?ic(i):"")+t+"</button>"}
+/* 26/11 Cyril : « propose-moi une fenêtre note du jour plus jolie ». 3 formes (rien ne déborde) :
+   1 = Liste, 2 = Chiffres, 3 = Fil (CHOISIE par Cyril 26/11 : les rendez-vous sur un trait, les choses à faire en liste SANS trait, pour ne pas ressembler au Planning). ?pj=0 = l'ancienne. */
+var FV=(function(){var m=location.search.match(/[?&]pj=(\d)/);if(m)return +m[1];var v=+lsG("pc-pj-forme",3);return v>=0&&v<=3?v:3})();
+function chev(){return '<span class="nch">'+ic("d")+"</span>"}
+function pjForme(RV,tf){var h="";
+  if(FV===3){h+='<div class="nf">'+RV.map(function(r){return '<button class="tu nfl'+(r.now?" now":"")+'" type="button" data-d="'+r.k+'"><span class="nh">'+r.h+'</span><span class="np"></span><span class="ntx"><b>'+esc(r.t)+"</b><small>"+esc(r.s)+(r.he?" · jusqu’à "+r.he:"")+"</small></span>"+chev()+"</button>"}).join("")+"</div>";return h}
+  if(FV===2&&RV.length===1){var r=RV[0];return '<div class="grt">Votre rendez-vous</div><button class="tu nrv'+(r.now?" now":"")+'" type="button" data-d="'+r.k+'"><span class="nh">'+r.h+'</span><span class="ntx"><b>'+esc(r.t)+"</b><small>"+esc(r.s)+"</small></span>"+chev()+"</button>"}
+  h+='<div class="grt">'+(RV.length>1?"Vos rendez-vous, dans l’ordre":"Votre rendez-vous")+'</div><div class="nl-box">'+RV.map(function(r){return '<button class="tu nl'+(r.now?" now":"")+'" type="button" data-d="'+r.k+'"><span class="nh">'+r.h+'</span><span class="ntx"><b>'+esc(r.t)+"</b><small>"+esc(r.s)+"</small></span>"+chev()+"</button>"}).join("")+"</div>";return h}
+function nbDe(x){var m=String(x[3]).match(/^(\d+)\s+(.*)$/);return m?[m[1],m[2]]:["",x[3]]}
+function pjFaire(tf){
+  if(FV===2)return '<div class="grt">À faire aujourd\'hui</div><div class="nc" style="grid-template-columns:repeat('+tf.length+',minmax(0,1fr))">'+tf.map(function(x){var n=nbDe(x);
+    return '<button class="tu ncc'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nv1">'+esc(x[2])+'</span><span class="nn">'+n[0]+'</span><b>'+esc(n[1])+"</b><small>"+esc(x[4])+"</small></button>"}).join("")+"</div>";
+  if(FV===-3)return '<div class="grt">Dans la journée</div><div class="nf nf2">'+tf.map(function(x){return '<button class="tu nfl nft'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nh">'+ic(x[5])+'</span><span class="np"></span><span class="ntx"><b>'+esc(x[2])+" "+esc(x[3])+"</b><small>"+esc(x[4])+"</small></span>"+chev()+"</button>"}).join("")+"</div>";
+  return '<div class="grt">À faire aujourd\'hui</div><div class="nl-box">'+tf.map(function(x){return '<button class="tu nl nlf'+(x[1]?" "+x[1]:"")+'" type="button" data-d="'+x[0]+'"><span class="nr">'+ic(x[5])+'</span><span class="ntx"><b>'+esc(x[2])+" "+esc(x[3])+"</b><small>"+esc(x[4])+"</small></span>"+(x[1]?'<i class="npt"></i>':"")+chev()+"</button>"}).join("")+"</div>"}
 /* le contenu de la fenêtre, tiré de la vraie journée */
-function pjContenu(){var D=A.donnees(),J=jour(),L=J.L,AF=aFaire(D),u=D.urgent,tu=[],tf=[],k=0;DET={};
+function pjContenu(){var D=A.donnees(),J=jour(),L=J.L,AF=aFaire(D),u=D.urgent,tu=[],tf=[],k=0,RV=[];DET={};
   var p=prenom(),n=A.nowMin();
   L.slice(0,3).forEach(function(e,i){var key="rv"+i,l=A.lieu(e),c=chDe(e),nom=nomEv(e),sm=[e.k==="pc"?"ProClik":String(nom).replace(/^Cabinet\s+/,""),e.k==="pc"?"20 min":l].filter(Boolean).join(" · ");
     var now=i===J.on&&!J.soir,dl=[],ac="";
@@ -372,6 +386,7 @@ function pjContenu(){var D=A.donnees(),J=jour(),L=J.L,AF=aFaire(D),u=D.urgent,tu
     DET[key]={i:KI[e.k]||"cal",lai:now,lab:now?'<span style="color:var(--laiton)">'+A.hTxt(e.s)+(e.e?" → "+A.hTxt(e.e):"")+" · "+(KT[e.k]||"rendez-vous").toLowerCase()+"</span>":A.hTxt(e.s)+" · "+(KT[e.k]||"rendez-vous").toLowerCase(),
       t:nom,s:String(e.w||"").split(" · ")[0]+(c&&/jour \d/.test(e.w||"")?" · "+(String(e.w).match(/jour \d+ sur \d+/)||[""])[0]:""),
       c:pc?'<div class="chif"><span class="big">'+pc+'<small>% du chantier</small></span></div><div class="bar"><i style="width:'+pc+'%"></i></div>':"",l:dl,a:ac};
+    RV.push({k:key,now:now,i:KI[e.k]||"cal",h:A.hTxt(e.s),he:e.e?A.hTxt(e.e):"",t:KT[e.k]||"Rendez-vous",s:sm});
     tu.push('<button class="tu'+(now?" now":"")+'" type="button" data-d="'+key+'" style="transition-delay:'+(k++*.05)+'s"><span class="tic">'+ic(KI[e.k]||"cal")+'</span><span><span class="hh">'+A.hTxt(e.s)+"</span><b>"+esc(KT[e.k]||"Rendez-vous")+"</b><small>"+esc(sm)+"</small></span></button>")});
   /* à faire aujourd'hui : 3 cases au plus */
   var pd=AF.filter(function(x){return x[1]==="predevis"})[0];
@@ -405,7 +420,12 @@ function pjContenu(){var D=A.donnees(),J=jour(),L=J.L,AF=aFaire(D),u=D.urgent,tu
     var en=(X.D||[]).filter(function(x){return x.statut==="sent"})[0];
     if(D.demo&&en&&!tf.length){DET.relance={i:"envoi",lab:"Si vous avez un moment",t:"1 devis en attente",s:en.client+" · "+en.ville,l:[["envoi","Un petit message suffit, ProClik le prépare"]],a:bt("Voir le devis","",1,'data-accv="devis"')};
       g+='<div class="grt">Si vous avez un moment</div><div class="gr" style="grid-template-columns:1fr"><button class="tu" type="button" data-d="relance"><span class="tic">'+ic("envoi")+'</span><span><span class="hh">Relancer</span><b>1 devis en attente</b><small>'+esc(en.client)+" · sans réponse</small></span></button></div>"}}
-  if(tf.length)g+='<div class="grt">À faire aujourd\'hui</div><div class="gr" style="grid-template-columns:repeat('+tf.length+',minmax(0,1fr))">'+tfH+"</div>";
+  if(FV&&L.length)g=pjForme(RV,tf);else if(FV)g=g.replace(/<div class="gr"[^>]*>/g,'<div class="nl-box">').replace(/class="tu"/g,'class="tu nl"');
+  if(FV&&tf.length)g+=pjFaire(tf);else if(tf.length)g+='<div class="grt">À faire aujourd\'hui</div><div class="gr" style="grid-template-columns:repeat('+tf.length+',minmax(0,1fr))">'+tfH+"</div>";
+  pj.classList.toggle("nv",!!FV);pj.classList.remove("k1","k2","k3");if(FV)pj.classList.add("k"+FV);
+  if(FV){v1.innerHTML='<div class="top"><div><span class="nj">'+ic("cal")+esc(cap(jourTxt(J.j)))+'</span><h2 id="f2pj-t">'+esc(salut())+' !<span>Voici votre journée.</span></h2></div><button class="x" type="button" data-ferme aria-label="Fermer">'+ic("x")+"</button></div>"+
+    '<p class="resume">'+res+"</p>"+g+'<div class="bas"><button class="pill l go" type="button" data-ferme>C\'est parti</button><div class="ask"><button type="button" data-f2pjmic aria-label="Parler à ProClik">'+ic("mic")+"</button></div></div>";
+    ORDRE=$$(".tu",v1).map(function(b){return b.getAttribute("data-d")});return}
   v1.innerHTML='<div class="top"><h2 id="f2pj-t">'+esc(salut())+(p?"":"")+' !<span>voici votre journée.</span></h2><button class="x" type="button" data-ferme aria-label="Fermer">'+ic("x")+"</button></div>"+
     '<span class="heure">'+ic("cal")+esc(jourTxt(J.j))+"</span>"+'<p class="resume">'+res+'</p><div class="vide"></div>'+g+
     '<div class="bas"><button class="pill l go" type="button" data-ferme>C\'est parti</button><div class="ask"><button type="button" data-f2pjmic aria-label="Parler à ProClik">'+ic("mic")+"</button></div></div>";
