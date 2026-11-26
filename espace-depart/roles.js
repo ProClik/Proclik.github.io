@@ -229,7 +229,9 @@ function placer(){var f=$('#f2acc')||$('#v-accueil');if(!f)return;
   if(t&&t.parentNode){if(ouA.nextElementSibling!==t)t.parentNode.insertBefore(ouA,t)}else if(ouA.parentNode!==f)f.appendChild(ouA)}
 placer();(function(){var f=$('#f2acc');if(f&&window.MutationObserver)new MutationObserver(function(){if(!ouA.isConnected||!ouA.nextElementSibling||!/Le point/.test(ouA.nextElementSibling.textContent))placer()}).observe(f,{childList:true,subtree:true})})();
 ouA.addEventListener('click',function(e){var b=e.target.closest('[data-ou]');if(b)Q.setOu(R.qui,b.dataset.ou)});
-function rendOuA(){if(moi().g==='ter'){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c&&c.parentNode.scrollWidth>c.parentNode.clientWidth)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0)}
+/* l'Admin peut retirer le bloc de l'Accueil (fiche du client : menus.ouetes=false), par ex. pour quelqu'un qui travaille seul */
+function ouOff(){try{var k=sessionStorage.getItem('pc-apercu')==='1'?sessionStorage.getItem('ap:pc-vrai-artisan'):localStorage.getItem('pc-vrai-artisan');var a=JSON.parse(k)||{};return !!(a.menus&&a.menus.ouetes===false)}catch(e){return false}}
+function rendOuA(){if(moi().g==='ter'||ouOff()){ouA.innerHTML='';return}ouA.innerHTML='<div class="card rl-ouc">'+ouHTML(R.qui,true)+'</div>';var c=ouA.querySelector('[aria-pressed="true"]');if(c&&c.parentNode.scrollWidth>c.parentNode.clientWidth)setTimeout(function(){c.parentNode.scrollLeft=Math.max(0,c.offsetLeft-20)},0)}
 
 /* ---------- icônes ---------- */
 var IC={
@@ -312,7 +314,7 @@ tr.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||
   if(b.dataset.trhs!=null){if(window.PCJR&&PCJR.heuresSup)PCJR.heuresSup(Q.iso(Q.auj()));return}
   if(b.dataset.trfull!=null){R.full=true;garde();applique();return}
   if(b.dataset.tra!=null)return demande()});
-Q.ecoute(function(){if(!tr.hidden)rendTer();rendOuA()});
+Q.ecoute(function(){if(!tr.hidden)rendTer();rendOuA()});d.addEventListener('pc-menus',function(){rendOuA()});
 
 /* ---------- appliquer : qui je suis, ce que je vois ---------- */
 var VUE_DROIT={devis:'prix',produits:'prix',factures:'fact',depenses:'achats',prix:'achats',clients:'clients',reseaux:'reglages'};
