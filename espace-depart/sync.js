@@ -14,7 +14,7 @@
 (function(){'use strict';
 if(/[?&]exemple=/.test(location.search))return;
 var SERVICE=String(window.PC_SERVICE||'').replace(/\/+$/,'');if(!/^https:\/\/[a-z0-9.-]+$/i.test(SERVICE))return;
-var CLES=['pc-ch9','pc-ev1','pc-st1','pc-dep1','pc-compta1','pc-cmd1','pc-eq1','pc-eq','pc-eq2','pc-hs','pc-cotes','pc-ent-v1','pc-ent-on','pc-plans','pc-cl1','pc-cl-sup','pc-fa1','pc-dvn1','pc-rc1','pc-sit-reg','pc-droits','pc-liste','pc-cad','pc-pd-vus','pc-f2-acc'];
+var CLES=['pc-ch9','pc-ev1','pc-st1','pc-dep1','pc-compta1','pc-cmd1','pc-eq1','pc-eq','pc-eq2','pc-hs','pc-cotes','pc-ent-v1','pc-ent-on','pc-plans','pc-cl1','pc-cl-sup','pc-fa1','pc-dvn1','pc-rc1','pc-sit-reg','pc-droits','pc-liste','pc-cad','pc-pd-vus','pc-f2-acc','pc-jr','pc-jr-reg','pc-cadence','pc-frais-ch'];
 var META='pc-sync',ls=window.localStorage,S=Storage.prototype,set0=S.setItem,rem0=S.removeItem,calme=0,minuteur=null,enCours=0,arret=0;
 function lit(k){try{var v=ls.getItem(k);return v==null?null:JSON.parse(v)}catch(e){return null}}
 function meta(){var m=lit(META);return m&&typeof m==='object'&&m.k?m:{a:null,k:{}}}
