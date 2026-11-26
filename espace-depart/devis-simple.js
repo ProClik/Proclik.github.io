@@ -32,7 +32,10 @@ var IC={loupe:I('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),pers:I
  x:I('<path d="M6 6l12 12M18 6L6 18"/>'),dos:I('<path d="M15 5l-7 7 7 7"/>'),ch:I('<path d="M9 5l7 7-7 7"/>'),bas:I('<path d="M5 9l7 7 7-7"/>'),
  mic:I('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),ok:I('<path d="M5 12l5 5 9-10"/>'),
  hist:I('<path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4M12 8v4l3 2"/>'),etoile:I('<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>'),
- prix:I('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>')};
+ prix:I('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>'),
+ pose:I('<path d="M4 15a8 8 0 0 1 16 0"/><path d="M3 15h18v3H3zM12 7V4M9 8l-1-2M15 8l1-2"/>'),
+ prod:I('<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
+ tr:I('<path d="M4 20V9l8-5 8 5v11z"/><path d="M9 20v-6h6v6"/>'),plus:I('<path d="M12 5v14M5 12h14"/>')};
 var ICT={cloison:I('<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 3v18M15 3v18"/>'),
  doublage:I('<rect x="3" y="3" width="6" height="18" rx="1"/><path d="M12 6c3 0 3 2 6 2M12 11c3 0 3 2 6 2M12 16c3 0 3 2 6 2"/>'),
  plafond:I('<path d="M3 5h18M7 5v4M12 5v4M17 5v4M4 9h16"/><path d="M8 20v-6h8v6"/>'),
@@ -236,7 +239,7 @@ function court(n){return n.replace(' · prix publics','')}
 function ecranBase(cote){var G=groupes(),nT=G.reduce(function(s,g){return s+g.n},0);
  var h=(cote?'<div class="ds-top"><h1>Ajouter au devis<small>Travaux complets ou toute la base, rangée par fournisseur</small></h1></div>':tete('Ajouter au devis',esc(S.nom)+' · Étape 2 sur 3',true)+fil(2))+(cote?'':bandeauReprise())+
   '<label class="ds-srch">'+IC.loupe+'<input type="search" data-dsi="q" value="'+esc(S.q)+'" placeholder="Chercher, ou dites « cloison 4 m sur 2,50 »" autocomplete="off" enterkeyhint="search">'+(SR?'<button type="button" class="ds-mic'+(S.ecoute?' on':'')+'" data-ds="mic" aria-label="Dicter">'+IC.mic+'</button>':'')+'</label>'+
-  '<div class="ds-chips">'+[['tous','Tout',0]].concat(G.map(function(g){return [g.id,court(g.nom),g.n]})).map(function(c){return '<button type="button" class="ds-chip'+(S.g===c[0]?' on':'')+'" data-ds="grp" data-id="'+esc(c[0])+'">'+esc(c[1])+(c[2]?' · '+c[2]:'')+'</button>'}).join('')+
+  '<div class="ds-chips">'+[['tous','Accueil',0],['trav','Travaux complets',0],['mo','Poses',nPoses()],['prod','Produits',nProd()]].concat(S.g==='prod'||/^f:|^vos$/.test(S.g)?G.filter(function(g){return g.id!=='mo'}).map(function(g){return [g.id,court(g.nom),g.n]}):[]).map(function(c){return '<button type="button" class="ds-chip'+(S.g===c[0]?' on':'')+'" data-ds="grp" data-id="'+esc(c[0])+'">'+esc(c[1])+(c[2]?' · '+c[2]:'')+'</button>'}).join('')+
   '<button type="button" class="ds-chip t" data-ds="tri">'+(S.tri==='prix'?'Rangé par prix ↑':'Rangé par famille')+'</button></div>';
  return h+'<div class="ds-liste ds-lb">'+listeBase()+'</div>'}
 function aConfirmer(){return B.articles.filter(function(a){return a.provisoire&&a.pc>0}).sort(function(a,b){return (a.k==='prestation'?0:1)-(b.k==='prestation'?0:1)})}
@@ -246,11 +249,28 @@ function haut(){var h='',P=aConfirmer().length;
  var H=habituels();if(H.length)h+='<div class="ds-sec">'+IC.etoile+' VOS HABITUELS</div><div class="ds-card">'+H.map(article).join('')+'</div>';
  var A=anciens();if(A.length)h+='<button type="button" class="ds-btn cl ds-anc" data-ds="anciens">'+IC.hist+' Repartir d’un devis déjà fait</button>';
  return h}
+/* Écran de départ (Cyril 26/11 : « au départ, créer soit avec des poses soit avec des produits… simplicité et visuel beau à voir ») :
+   trois grandes cartes, une seule idée par carte ; le reste (habituels, anciens devis, prix à confirmer) en dessous. */
+function nPoses(){return groupes().filter(function(g){return g.id==='mo'}).reduce(function(s,g){return s+g.n},0)}
+function nProd(){return groupes().filter(function(g){return g.id!=='mo'}).reduce(function(s,g){return s+g.n},0)}
+function nFour(){return groupes().filter(function(g){return /^f:/.test(g.id)}).length}
+function depart(){var np=nPoses(),nr=nProd(),nf=nFour(),h='<div class="ds-dep">';
+ h+='<button type="button" class="ds-big sombre" data-ds="grp" data-id="trav"><span class="ds-bi">'+IC.tr+'</span><span class="ds-bt"><b>Un travail complet</b><small>Cloison, sol, peinture… Cliky compte tout : fournitures, vis et pose.</small></span><span class="ds-bmini">'+['cloison','plafond','sol','peinture','elec'].map(function(t){return '<i>'+ICT[t]+'</i>'}).join('')+'</span><span class="ds-bgo">'+IC.ch+'</span></button>';
+ h+='<div class="ds-duo">'+
+  '<button type="button" class="ds-big" data-ds="grp" data-id="mo"><span class="ds-bi">'+IC.pose+'</span><b>Une pose</b><small>'+np+' prix de main-d’œuvre</small><span class="ds-bgo">'+IC.ch+'</span></button>'+
+  '<button type="button" class="ds-big" data-ds="grp" data-id="prod"><span class="ds-bi">'+IC.prod+'</span><b>Un produit</b><small>'+nr+' produits'+(nf>1?' · '+nf+' fournisseurs':'')+'</small><span class="ds-bgo">'+IC.ch+'</span></button></div>';
+ h+='<div class="ds-cree"><button type="button" class="ds-pil" data-ds="main" data-id="pose">'+IC.plus+' Créer une pose</button><button type="button" class="ds-pil" data-ds="main" data-id="prod">'+IC.plus+' Créer un produit</button></div></div>';
+ var H=habituels();if(H.length)h+='<div class="ds-sec">'+IC.etoile+' VOS HABITUELS</div><div class="ds-card">'+H.map(article).join('')+'</div>';
+ var A=anciens();if(A.length)h+='<button type="button" class="ds-btn cl ds-anc" data-ds="anciens">'+IC.hist+' Repartir d’un devis déjà fait</button>';
+ var P=aConfirmer().length;if(P)h+='<button type="button" class="ds-alerte" data-ds="prix"><span class="ds-ic">'+IC.prix+'</span><span class="ds-tx"><b>'+P+' prix à confirmer</b><small>Vérifiez-les une fois : vos devis seront justes.</small></span><span class="ds-rond p">'+IC.ch+'</span></button>';
+ return h}
+function tuilesTravaux(){return '<div class="ds-sec">UN TRAVAIL COMPLET <span>· Cliky compte tout : fournitures, vis, bandes, pose</span></div><div class="ds-tuiles">'+ORDRE.map(function(t){return '<button type="button" class="ds-tuile" data-ds="ouv" data-id="'+t+'"><span>'+ICT[t]+'</span>'+esc(OUV[t].nom.replace(' d’un mur','').replace(' (pose)',''))+'</button>'}).join('')+'</div>'}
 function listeBase(){var G=groupes(),q=sans(S.q).trim(),W=q.split(/\s+/).filter(Boolean),nT=G.reduce(function(s,g){return s+g.n},0),h='';
- if(!W.length&&S.g==='tous')h+=haut();
+ if(!W.length&&S.g==='tous')return depart();
+ if(!W.length&&S.g==='trav')return tuilesTravaux();
  if(!nT)h+='<p class="ds-note">'+(etatB==='charge'||!etatB?'Chargement de votre base…':/^err/.test(etatB)?'La base n’a pas pu être chargée : '+esc(etatB.slice(4))+'. Vous pouvez quand même écrire votre ligne.':'Votre base est vide pour l’instant.')+'</p>';
  var trouve=0;
- G.filter(function(g){return S.g==='tous'||S.g===g.id}).forEach(function(g){
+ G.filter(function(g){return S.g==='tous'||S.g==='trav'||S.g===g.id||(S.g==='prod'&&g.id!=='mo')}).forEach(function(g){
   var fams=g.nf.map(function(f){var A=g.fam[f];if(W.length)A=A.filter(function(a){var t=sans(lisible(a.d)+' '+a.d+' '+f+' '+(a.cond||''));return W.every(function(w){return t.indexOf(w)>=0})});
    if(S.tri==='prix')A=A.slice().sort(function(x,y){return prixVente(x)-prixVente(y)});return [f,A]}).filter(function(x){return x[1].length});
   if(!fams.length)return;trouve+=fams.length;
@@ -263,7 +283,7 @@ function listeBase(){var G=groupes(),q=sans(S.q).trim(),W=q.split(/\s+/).filter(
    h+='<div class="ds-sub">'+V.map(article).join('')+(tout?'':'<button type="button" class="ds-voir" data-ds="tout" data-id="'+esc(cle2)+'">Voir les '+(A.length-lim)+' autres ▾</button>')+'</div>'});
   h+='</div>'});
  if(nT&&W.length&&!trouve)h+='<p class="ds-note">Rien trouvé pour « '+esc(S.q)+' ». Essayez un autre mot, ou écrivez votre ligne.</p>';
- h+='<button type="button" class="ds-lien" data-ds="main">Je ne trouve pas : écrire ma ligne</button>'+(marge()?'<p class="ds-note">Prix de vente HT. Matériaux : prix d’achat chez le fournisseur + votre marge de '+qf(marge())+' %. Main-d’œuvre : votre prix.</p>':'');
+ h+='<button type="button" class="ds-lien" data-ds="main" data-id="'+(S.g==='mo'?'pose':S.g==='prod'?'prod':'')+'">'+(S.g==='mo'?'Je ne trouve pas : créer une pose':S.g==='prod'?'Je ne trouve pas : créer un produit':'Je ne trouve pas : écrire ma ligne')+'</button>'+(marge()?'<p class="ds-note">Prix de vente HT. Matériaux : prix d’achat chez le fournisseur + votre marge de '+qf(marge())+' %. Main-d’œuvre : votre prix.</p>':'');
  return h}
 function article(a){var u=unite(a),dt=detail(a),mc=moinsCher(a);
  var src=a.k==='prestation'?(a.vos?'votre prix':a.complement?'prix moyen France, à confirmer':'votre prix de pose'):a.vos?'votre prix':'achat '+eur(a.pc)+(marge()?' + '+qf(marge())+' %':'');
@@ -323,7 +343,7 @@ function feuilleArt(a,i){var l=i!=null?S.lignes[i]:null;if(l&&l.c&&!a)a=trouveAr
  dessinerF()}
 function dessinerF(){if(!F.pu0)F.pu0=F.pu;var a=F.a,man=F.main,tot=r2(F.q*F.pu);
  var h='<div class="ds-grab"></div>';
- if(man)h+='<div class="ds-fq">'+(F.i!=null?'La ligne':'Écrire ma ligne')+'</div><label class="ds-champ">Ce que vous faites ou fournissez<textarea data-dsf="lib" rows="2" placeholder="Ex. : Dépose de l’ancien placard">'+esc(F.lib)+'</textarea></label>';
+ if(man)h+='<div class="ds-fq">'+(F.i!=null?'La ligne':F.kind==='pose'?'Créer une pose':F.kind==='prod'?'Créer un produit':'Écrire ma ligne')+'</div><label class="ds-champ">Ce que vous faites ou fournissez<textarea data-dsf="lib" rows="2" placeholder="Ex. : Dépose de l’ancien placard">'+esc(F.lib)+'</textarea></label>';
  else h+='<div class="ds-row ds-fhd"><span class="ds-ic">'+(F.ic||'')+'</span><span class="ds-tx"><b>'+esc(F.lib)+'</b><small>'+esc(a?nomDe(a):'')+(F.prov?' <em class="ds-tag">prix à confirmer</em>':'')+'</small></span></div>';
  h+='<div class="ds-fq">Combien ?</div><div class="ds-st"><button type="button" class="ds-mb" data-ds="moins" aria-label="Un de moins">−</button><label class="ds-qv"><input data-dsf="q" inputmode="decimal" value="'+qf(F.q)+'" aria-label="Quantité"><small>'+(man?'':esc(pluriel(F.u,F.q)))+(F.m2?' · soit '+qf(r2(F.q*F.m2))+' '+F.mu:'')+'</small></label><button type="button" class="ds-mb" data-ds="plus" aria-label="Un de plus">＋</button></div>';
  if(man)h+='<div class="ds-2"><label class="ds-champ">Unité<input data-dsf="u" value="'+esc(F.u)+'" placeholder="m², u, h…"></label><label class="ds-champ">Prix de vente HT<input data-dsf="pu" inputmode="decimal" value="'+(F.pu?qf(F.pu):'')+'" placeholder="0,00"></label></div>';
@@ -436,7 +456,7 @@ function clic(e){var b=e.target.closest('[data-ds]');if(!b||!S)return;var a=b.ge
  else if(a==='tout'){S.tout[id]=1;rendre()}
  else if(a==='art'){var x=trouveArt(id);if(x)feuilleArt(x,null)}
  else if(a==='swap'){var y=trouveArt(id);if(y&&F){var q=F.q,i0=F.i;feuilleArt(y,null);F.q=q;F.i=i0;dessinerF()}}
- else if(a==='main')feuilleArt(null,null);
+ else if(a==='main'){feuilleArt(null,null);if(id){F.kind=id;if(id==='pose')F.u='m²';dessinerF()}}
  else if(a==='ligne'){if(S.lignes[+id])feuilleArt(null,+id)}
  else if(a==='ajout'){S.etape=2;rendre()}
  else if(a==='ferf'){S.feuille=null;F=null;rendre()}
@@ -545,7 +565,7 @@ var css=document.createElement('style');css.textContent=[
 '#dsv .ds-chip.t{background:none;box-shadow:none;color:var(--n1-nuit,#1B2440);text-decoration:underline;text-underline-offset:3px}',
 '#dsv .ds-alerte{display:flex;width:calc(100% - 32px);margin:0 16px 14px;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--n1-laiton,#A8823F) 12%,var(--n1-calme,#F6F7F9));box-shadow:var(--n1-pk)}#dsv .ds-alerte .ds-ic{background:var(--n1-laiton,#A8823F);color:#fff}',
 '#dsv .ds-sec span{font-weight:600;letter-spacing:0;text-transform:none}#dsv .ds-sec svg{width:14px;height:14px;vertical-align:-2px;color:var(--n1-laiton,#A8823F)}',
-'#dsv .ds-tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 16px}#dsv .ds-tuile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border-radius:16px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-pk);font-weight:700;font-size:13px;text-align:center!important;line-height:1.15}#dsv .ds-tuile span{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);color:var(--n1-nuit,#1B2440)}#dsv .ds-tuile svg{width:26px;height:26px}',
+'#dsv .ds-dep{padding:4px 16px 6px;display:grid;gap:12px}#dsv .ds-big{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left!important;padding:18px 18px 16px;border-radius:26px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-calme-sh);min-height:132px}#dsv .ds-big b{font-size:19px;font-weight:800;letter-spacing:-.01em}#dsv .ds-big small{font-size:13px;opacity:.7;line-height:1.3}#dsv .ds-bi{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);margin-bottom:8px}#dsv .ds-bi svg{width:24px;height:24px}#dsv .ds-bgo{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff)}#dsv .ds-bgo svg{width:16px;height:16px}#dsv .ds-big.sombre{background:var(--n1-nuit,#1B2440);color:var(--n1-nuit-fg,#fff);min-height:0;padding:20px 18px 18px;flex-direction:column}#dsv .ds-big.sombre .ds-bi{background:color-mix(in srgb,var(--n1-nuit-fg,#fff) 14%,transparent)}#dsv .ds-big.sombre .ds-bgo{background:var(--n1-laiton,#A8823F);color:#fff}#dsv .ds-bt{display:grid;gap:4px;padding-right:40px}#dsv .ds-bmini{display:flex;gap:8px;margin-top:12px}#dsv .ds-bmini i{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit-fg,#fff) 10%,transparent)}#dsv .ds-bmini svg{width:18px;height:18px}#dsv .ds-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}#dsv .ds-cree{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding:2px 0 6px}#dsv .ds-pil{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;font-weight:700;font-size:14px;background:transparent;border:1.5px dashed color-mix(in srgb,currentColor 28%,transparent)}#dsv .ds-pil svg{width:16px;height:16px}#dsv .ds-tuiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 16px}#dsv .ds-tuile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border-radius:16px;background:var(--n1-calme,#F6F7F9);box-shadow:var(--n1-pk);font-weight:700;font-size:13px;text-align:center!important;line-height:1.15}#dsv .ds-tuile span{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--n1-nuit,#1B2440) 8%,transparent);color:var(--n1-nuit,#1B2440)}#dsv .ds-tuile svg{width:26px;height:26px}',
 '#dsv .ds-anc{gap:8px;margin-bottom:16px}',
 '#dsv .ds-tag.r{color:var(--n1-alert,#B9577A);background:color-mix(in srgb,var(--n1-alert,#B9577A) 12%,transparent)}#dsv .ds-tag.v{color:var(--n1-ok,#3E8E6A);background:color-mix(in srgb,var(--n1-ok,#3E8E6A) 12%,transparent)}#dsv .ds-four .ds-tag{margin-top:2px}',
 '#dsv small.v{color:var(--n1-ok,#3E8E6A)!important;font-weight:700!important}#dsv small.r{color:var(--n1-alert,#B9577A)!important;font-weight:700!important}',
