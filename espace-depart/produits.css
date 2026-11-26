@@ -110,3 +110,4 @@
 .pr-ed-f input,.pr-ed-f input:focus{width:5.5em;min-width:0;border:0!important;background:none!important;box-shadow:none!important;font:inherit;font-size:20px;font-weight:700;color:var(--fg);outline:none;padding:0}
 .pr-ed-f span{font-size:13px;color:var(--muted);white-space:nowrap}
 .pr-ed .btn.sm{min-height:44px;flex:1 1 0;justify-content:center}
+.cf-m small.bc-mes{display:block;font-weight:700;color:inherit;opacity:.85}
