@@ -659,3 +659,7 @@ body.pjo .pb{opacity:0;transform:translateY(30px);pointer-events:none}
  .f2 .pj.nv .v1 .tu.nfl{min-height:50px;padding-top:5px;padding-bottom:5px}
  .f2 .pj.nv .bas{margin-top:12px}.f2 .pj.nv .go{height:50px}}
 .f2 .pj.nv .ncc small,.f2 .pj.nv .ncc b{overflow-wrap:normal;word-break:normal}
+/* heures longues (17 h 30) : la colonne s'élargit, rien ne touche le texte */
+.f2 .pj.nv .tu.nl .nh{width:auto;min-width:46px;white-space:nowrap;font-size:16px}
+.f2 .pj.nv .tu.nfl .nh{width:58px;white-space:nowrap;font-size:15px}
+.f2 .pj.nv .nf::before{left:71px}
