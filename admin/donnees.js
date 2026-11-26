@@ -47,6 +47,7 @@ function etatSauv(j){var v=j.voyant||{},e=j.etat||{},h='<div style="margin:0 0 1
  if(e.nuit)h+='<div class="mu" style="margin-top:6px">Dernière sauvegarde : '+quand(Date.parse(e.nuit.le))+(e.nuit.ok?' · '+poids(e.nuit.taille||0):' · <b style="color:var(--n1-alert)">ratée</b>')+'</div>';
  if(j.second)h+='<div class="mu">2e copie chez Scaleway (chaque semaine) : '+(e.second?quand(Date.parse(e.second.le))+(e.second.ok?' · OK':' · <b style="color:var(--n1-alert)">ratée</b>'):'la première part cette nuit')+'</div>';
  else h+='<div class="mu">2e copie chez Scaleway : pas encore branchée (voir Réglages).</div>';
+ if(j.second&&e.photos)h+='<div class="mu">Photos chez Scaleway : '+e.photos.copiees+' sur '+e.photos.total+(e.photos.attente?' · '+e.photos.attente+' partent les nuits suivantes':' · toutes copiées')+(e.photos.ok?'':' · <b style="color:var(--n1-alert)">ratée</b>')+'</div>';
  (v.ok||v.attente?[]:v.problemes||[]).forEach(function(p){h+='<div class="err" style="margin-top:4px">'+esc(p)+'</div>'});
  return h+'</div>'}
 function rendreSauv(Z,id,j){var L=j.sauvegardes||[];

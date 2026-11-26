@@ -265,7 +265,7 @@ function bandeau2fa(){$('#deuxfa-bandeau').innerHTML=DATA.deuxfa?'':'<div class=
 function sauvRegl(){var L=(DATA.clients||[]).filter(function(c){return !c.archive&&c.sauvegarde}),ok=L.filter(function(c){return c.sauvegarde.ok}).length,ko=L.filter(function(c){return !c.sauvegarde.ok&&!c.sauvegarde.attente});
  return '<div class="card"><h2>Sauvegardes des Espaces</h2>'+
   '<p style="margin:0 0 6px">'+(DATA.coffre?'<span class="pill ok">● Coffre Cloudflare : branché</span>':'<span class="pill al">● Coffre Cloudflare : absent</span>')+(DATA.second?'<span class="pill ok">● 2e copie Scaleway : branchée</span>':'<span class="pill w">● 2e copie Scaleway : pas encore branchée</span>')+'</p>'+
-  '<p class="mu" style="margin:0 0 6px">Chaque nuit à 3 h : tout l\'Espace de chaque client dans le coffre (30 nuits, le 1er de chaque mois sur un an, la 1re nuit de chaque année pour toujours).'+(DATA.second?' Chaque semaine : une copie chiffrée chez Scaleway, à Paris, impossible à effacer.':'')+'</p>'+
+  '<p class="mu" style="margin:0 0 6px">Chaque nuit à 3 h : tout l\'Espace de chaque client dans le coffre (30 nuits, le 1er de chaque mois sur un an, la 1re nuit de chaque année pour toujours).'+(DATA.second?' Chaque semaine : une copie chiffrée chez Scaleway, à Paris, impossible à effacer, photos comprises.':'')+'</p>'+
   '<p style="margin:0">'+(L.length?'<span class="pill ok">'+ok+' client'+(ok>1?'s':'')+' au vert</span>'+(ko.length?'<span class="pill al">'+ko.length+' à régler : '+ko.map(function(c){return esc(c.entreprise||c.id)}).join(', ')+'</span>':''):'<span class="mu">Première sauvegarde cette nuit.</span>')+'</p>'+
   (DATA.second?'':'<p class="mu" style="margin:10px 0 0">Pour brancher la 2e copie : créez le coffre Scaleway (voir les étapes envoyées par Claude), puis posez dans Cloudflare, sur proclik-calcul : SCW_ACCESS_KEY, SCW_SECRET_KEY, SCW_BUCKET et SCW_PHRASE (votre phrase secrète, à garder aussi dans vos Mots de passe et sur papier).</p>')+'</div>'}
 function reglages(){var R=$('#reglages');
@@ -361,6 +361,6 @@ if(!S){vue('login');$('#aerr').textContent='Adresse du service ProClik absente.'
 else if(lj())charger().then(function(){if(!lj())vue('login')});else vue('login');
 })();
 </script>
-<script src="cliky.js?v=3"></script><script src="banc.js?v=1"></script><script src="donnees.js?v=6"></script>
+<script src="cliky.js?v=3"></script><script src="banc.js?v=1"></script><script src="donnees.js?v=7"></script>
 </body>
 </html>
