@@ -7,7 +7,7 @@
    - les fichiers avec ?v= : la copie directement (une nouvelle version change le ?v=, donc une nouvelle adresse) ;
    - les autres fichiers du site : la copie tout de suite, mise à jour en arrière-plan.
    Les données (service proclik-calcul, GHL, cartes…) ne passent JAMAIS par la copie : seulement les fichiers de ce site. */
-var COPIE = 'pc-espace-1';
+var COPIE = 'pc-espace-1'; /* 26/11 : + pastille de l'icône (push) */
 self.addEventListener('install', function () { self.skipWaiting(); });
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (L) {
@@ -63,10 +63,18 @@ self.addEventListener('push', function (e) {
   var m = {};
   try { m = e.data ? e.data.json() : {}; } catch (x) { m = { titre: 'ProClik', texte: e.data ? e.data.text() : '' }; }
   var url = m.url || self.registration.scope;
-  e.waitUntil(self.registration.showNotification(m.titre || 'ProClik', {
+  /* 26/11 (Cyril) : le nombre de nouvelles sur l'icône de l'écran d'accueil, même Espace fermé (calculé par le service) */
+  var pastille = Promise.resolve();
+  try {
+    var nav = self.navigator;
+    if (typeof m.badge === 'number' && nav && nav.setAppBadge) pastille = (m.badge > 0 ? nav.setAppBadge(m.badge) : nav.clearAppBadge()).catch(function () {});
+  } catch (x) {}
+  /* Espace ouvert devant : il relit ses nouvelles (bandeau) et remet la pastille au bon chiffre */
+  var prevenir = self.clients.matchAll({ type: 'window' }).then(function (L) { L.forEach(function (c) { try { c.postMessage({ pcNouvelle: 1 }); } catch (x) {} }); }).catch(function () {});
+  e.waitUntil(Promise.all([pastille, prevenir, self.registration.showNotification(m.titre || 'ProClik', {
     body: m.texte || '', tag: m.tag || undefined, renotify: !!m.tag,
     icon: 'icone-192.png?v=4', badge: 'icone-192.png?v=4', data: { url: url }
-  }));
+  })]));
 });
 
 /* toucher la notification : l'Espace s'ouvre (ou revient devant) à la bonne demande / au bon écran */
