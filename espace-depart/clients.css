@@ -178,3 +178,9 @@ html body .cf .cl-seg button{overflow:visible}
 .vbtn.cl-sup-go[disabled]{opacity:.6}
 .cl-sup.vcorb{color:var(--muted);font-weight:600;font-size:13.5px;margin-top:14px}
 :root[data-theme="dark"] .cl-sup.vcorb{color:var(--muted)}
+
+/* Corbeille des pré-devis : vrai bouton bordé, bien visible, avec le nombre (Cyril 27/11, signalement n°86) */
+.vcorb2{display:flex;align-items:center;justify-content:center;gap:9px;margin:18px auto 6px;padding:0 20px;min-height:48px;border-radius:999px;border:1.5px solid var(--line,#d8dce4);background:var(--card,#fff);color:var(--fg,#1B2440);font:700 15px/1 var(--f,inherit);box-shadow:0 2px 8px -4px rgba(11,18,38,.25);cursor:pointer}
+.vcorb2 svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.vcorb2 i{font-style:normal;min-width:24px;height:24px;padding:0 7px;border-radius:999px;display:inline-grid;place-items:center;background:#C2413B;color:#fff;font:800 13px/1 var(--f,inherit)}
+.vcorb2.plein{border-color:#C2413B}

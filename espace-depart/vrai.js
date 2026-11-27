@@ -232,8 +232,11 @@ function rendre(){var L=(LISTE&&LISTE.demandes)||[],a=L.filter(function(d){retur
  var h='<div class="cf"><div class="vh"><h2>Devis</h2><span>'+etat+'</span></div><button class="btn go cf-go vnew" type="button" data-vnd><span class="lab"><span class="ic">'+ICS.plus+'</span><span>Créer un devis</span></span></button>'+
   '<div class="seg cf-seg dv-seg" role="tablist" aria-label="Devis">'+[['pre','Pré-devis',a.length],['four','Fournisseur',f.length],['val','Validés',0]].map(function(x){return '<button role="tab" type="button" data-vseg="'+x[0]+'" aria-selected="'+((VSEG||'pre')===x[0])+'">'+ICS[x[0]]+'<span>'+x[1]+'</span>'+(x[2]?'<i>'+x[2]+'</i>':'')+'</button>'}).join('')+'</div></div>'+
   '<div class="vh" style="margin-top:14px"><h2>'+G[1]+'</h2><span>'+G[0].length+'</span></div>'+(G[0].length?'<div class="vl">'+G[0].map(carte).join('')+'</div>':'<p class="vst">'+(LISTE?G[2]:'…')+'</p>')+
-  (LISTE&&!AP?'<button type="button" class="cl-sup vcorb" data-vcorb>'+ICPB+'<span>Corbeille des pré-devis</span></button>':'');
+  (LISTE&&!AP?'<button type="button" class="vcorb2'+(CORB&&CORB.length?' plein':'')+'" data-vcorb>'+ICPB+'<span>Corbeille des pré-devis</span>'+(CORB&&CORB.length?'<i>'+CORB.length+'</i>':'')+'</button>':'');
  var vd=$('#vd');if(vd)vd.innerHTML=h;
+ /* Cyril 27/11 (signalement n°86) : bouton de la corbeille trop discret → vrai bouton bordé, avec le nombre de pré-devis dedans
+    (lu une fois à chaque nouvelle liste) */
+ if(LISTE&&!AP&&!LISTE._cache&&corbCompte.le!==LISTE._le){corbCompte.le=LISTE._le;corbCompte()}
  var va=$('#va');if(va)va.innerHTML=a.length?'<div class="vl">'+a.slice(0,4).map(carte).join('')+'</div>'+(a.length>4?'<button class="vbtn sm" type="button" data-vtab style="margin-top:8px">Voir les '+a.length+' demandes ›</button>':''):'<p class="vst">'+(LISTE?'Rien à valider. Profitez-en, ça ne durera pas.':'Chargement…')+'</p>';
  ['#badge'].forEach(function(s){var b=$(s);if(b){b.textContent=a.length;b.hidden=!a.length}});
  if(art.prenom){var hl=$('#hello');if(hl)hl.textContent='Bonjour '+art.prenom+'.';var ph=$('#phrase');if(ph)ph.textContent=a.length?(a.length===1?'Une demande attend votre validation. Le calcul est fait, il ne manque que votre œil.':a.length+' demandes attendent votre validation. Les calculs sont faits.'):'Aucune demande en attente : tout est à jour.'}
@@ -652,6 +655,7 @@ function pdSupOk(b){if(!SUP)return;var c=SUP.c,nom=SUP.nom;b.disabled=true;b.las
   toast2('Pré-devis supprimé',(nom?nom+' : ':'')+'il attend dans la corbeille, en bas de l\'onglet Devis.')},
   function(e){b.disabled=false;b.lastChild.textContent='Réessayer';var z=$('#vov-b .cl-sup-p'),v=z&&z.querySelector('.cl-sup-err');if(v)v.remove();if(z)z.insertAdjacentHTML('afterbegin','<div class="card cl-sup-c cl-sup-err"><b>Pas supprimé</b><p>'+esc(e.message)+'</p></div>')})}
 var CORB=null;
+function corbCompte(){api('/espace/pre-devis/corbeille').then(function(x){var n=(x.demandes||[]).length,av=CORB?CORB.length:-1;CORB=x.demandes||[];if(n!==av)rendre()},function(){})}
 function corbeille(){ouvrir('Corbeille des pré-devis<small>Chargement…</small>','<p class="vst">Lecture de la corbeille…</p>','<button class="vbtn" type="button" data-vfermer>Fermer</button>');
  api('/espace/pre-devis/corbeille').then(function(x){CORB=x.demandes||[];rendreCorb()},function(e){ouvrir('Corbeille des pré-devis<small>Impossible de l\'ouvrir</small>','<div class="verr">'+esc(e.message)+'</div>','<button class="vbtn" type="button" data-vfermer>Fermer</button><button class="vbtn go" type="button" data-vcorb>Réessayer</button>')})}
 function rendreCorb(msg){var L=CORB||[];
@@ -664,7 +668,7 @@ function rendreCorb(msg){var L=CORB||[];
 function corbAction(b,re){var i=+b.getAttribute(re?'data-vcorbre':'data-vcorbef'),d=CORB&&CORB[i];if(!d)return;
  if(!re&&!d._ef){d._ef=1;CORB.forEach(function(x,j){if(j!==i)delete x._ef});rendreCorb();return}
  b.disabled=true;b.textContent=re?'Remise…':'Effacement…';
- api('/espace/pre-devis/'+(re?'remettre':'effacer'),{method:'POST',body:{opportunite:d.opportunite}}).then(function(){CORB.splice(i,1);
+ api('/espace/pre-devis/'+(re?'remettre':'effacer'),{method:'POST',body:{opportunite:d.opportunite}}).then(function(){CORB.splice(i,1);try{rendre()}catch(x){}
   rendreCorb('<div class="card" style="margin-bottom:10px"><b>'+esc(d.client)+(re?' est revenu dans vos devis.':' est effacé pour de bon.')+'</b></div>');if(re)charger()},
   function(e){delete d._ef;rendreCorb('<div class="verr" style="margin-bottom:10px">'+esc(e.message)+'</div>')})}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vpdsup],[data-vpdsupl],[data-vpdsupok],[data-vcorb],[data-vcorbre],[data-vcorbef]');if(!b)return;e.preventDefault();e.stopPropagation();
