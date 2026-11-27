@@ -651,7 +651,7 @@ function aspect(){const r=svg.getBoundingClientRect();return r.width>10&&r.heigh
 /* 27/11 (Cyril #114) : pavé de chiffres ouvert = le plan se range au-dessus de la bulle de mesure */function epRect(){if(!document.documentElement.classList.contains("epadon"))return null;const e=$("ed");return e&&!e.hidden?e.getBoundingClientRect():null}
 /* Le plan se range au-dessus (ou à droite) de la petite fenêtre en étapes : on voit ce qui clignote. */function wzRect(){const sh=$("sheet");if(GD||!sh||sh.hidden||!sh.classList.contains("wzon"))return null;const w=sh.getBoundingClientRect(),r=svg.getBoundingClientRect();/* fenêtre à côté du plan (colonne de gauche) : le plan garde toute sa place */if(r.width&&w.right<=r.left+4)return{beside:1,top:w.top,bottom:w.bottom,left:w.left,right:w.right};return w}
 /* Cyril 24/11 : « on ne voit pas assez ce qu'on met en place » : fiche en étapes ouverte = le plan se rapproche de l'élément (fenêtre, porte, trappe, escalier, mur), pas de tout le logement. Cadre gardé tant que la fiche reste sur le même élément (pas de saut en le glissant). */
-function wzFocus(){if(!wzRect()||!SH)return null;const id=SH.type+"|"+(SH.x??"")+"|"+(SH.i??"")+"|"+(SH.ri??"")+"|"+ST.fi;if(wzFocus.id===id&&wzFocus.b)return wzFocus.b;let P=null;const S=segs();
+function wzFocus(){if(!wzRect()||!SH)return null;/* 28/11 (#119) : la fiche « Vos murs un par un » change de mur par SH.gx : il compte pour suivre le mur en cours */const id=SH.type+"|"+(SH.x??"")+"|"+(SH.gx??"")+"|"+(SH.i??"")+"|"+(SH.ri??"")+"|"+ST.fi;if(wzFocus.id===id&&wzFocus.b)return wzFocus.b;let P=null;const S=segs();
  if(SH.type==="op"){const sg=S[SH.x],o=sg&&(OP.get(sg.a)||[])[SH.i];if(o){const d=dist(sg.a,sg.b)||1,ux=(sg.b[0]-sg.a[0])/d,uy=(sg.b[1]-sg.a[1])/d;P=[[sg.a[0]+ux*o.p,sg.a[1]+uy*o.p],[sg.a[0]+ux*(o.p+o.w),sg.a[1]+uy*(o.p+o.w)]]}}
  else if((SH.type==="seg"||SH.type==="mt")&&S[SH.gx??SH.x]){const q=S[SH.gx??SH.x];P=[q.a,q.b]}
  else if(SH.type==="esc"){const e=(F().esc||[])[SH.i];if(e)P=escRect(e)}
@@ -1150,7 +1150,10 @@ function epadEl(){let p=$("epad");if(p)return p;p=document.createElement("div");
 /* 27/11 (Cyril « le clavier numérique de partout ? ») : le pavé sert aussi aux autres cases à chiffres du plan (escalier, fenêtres, toit…) */
 let EPI=null,EPV0="";function epTarget(){const v=$("edv");if(v&&!$("ed").hidden&&document.documentElement.classList.contains("epadon"))return v;return EPI&&document.contains(EPI)?EPI:null}
 function epGenHide(commit){const p=$("epad"),el=EPI;EPI=null;if(el){if(commit!==false&&el.value!==EPV0)el.dispatchEvent(new Event("change",{bubbles:true}));if(commit)try{el.blur()}catch(_){}}if(p&&!document.documentElement.classList.contains("epadon"))p.hidden=true}
-document.addEventListener("focusin",e=>{const t=e.target;if(!EPADON||demo||!t||t.id==="edv"||!t.matches||!t.matches('input[inputmode="decimal"],input[inputmode="none"][data-epad]'))return;t.setAttribute("inputmode","none");t.dataset.epad="1";if(EPI&&EPI!==t)epGenHide(false);EPI=t;EPV0=t.value;EPF=!!t.value;const p=epadEl();p.hidden=false;
+/* 28/11 (Cyril #120 : « le pavé gêne alors que je n'ai touché aucune pastille ») : le pavé ne s'ouvre que si le doigt vient de toucher la case, jamais quand une fiche donne la main toute seule à une case */
+let EPTAP={t:null,at:0};document.addEventListener("pointerdown",e=>{EPTAP={t:e.target,at:Date.now()}},true);
+function epTapped(t){const x=EPTAP.t;if(!x||Date.now()-EPTAP.at>1500)return false;if(x===t||t.contains&&t.contains(x))return true;const l=x.closest&&x.closest("label");return!!(l&&(l.control===t||l.contains(t)))}
+document.addEventListener("focusin",e=>{const t=e.target;if(t&&t.matches&&t.matches('input[inputmode="decimal"],input[inputmode="none"][data-epad]')&&EPADON&&!demo&&t.id!=="edv"&&!epTapped(t)){try{t.blur()}catch(_){}return}if(!EPADON||demo||!t||t.id==="edv"||!t.matches||!t.matches('input[inputmode="decimal"],input[inputmode="none"][data-epad]'))return;t.setAttribute("inputmode","none");t.dataset.epad="1";if(EPI&&EPI!==t)epGenHide(false);EPI=t;EPV0=t.value;EPF=!!t.value;const p=epadEl();p.hidden=false;
  requestAnimationFrame(()=>{const r=t.getBoundingClientRect();if(r.bottom>innerHeight-p.offsetHeight-8)try{t.scrollIntoView({block:"center",behavior:"smooth"})}catch(_){}})});
 document.addEventListener("focusout",e=>{if(e.target===EPI)setTimeout(()=>{if(EPI&&document.activeElement!==EPI)epGenHide(false)},80)});
 function epadKey(k){const v=epTarget();if(!v)return;if(k==="ok"){if(v.id==="edv")applyEd();else epGenHide(true);return}let t=v.value;const last=(t.split("+").pop()||"").trim();
@@ -2069,6 +2072,8 @@ if(GD){document.documentElement.classList.add("gd");
  setTimeout(()=>{ST.cam=null;fit();all();if(n>1){fit();ST.cam={x:VB.x,y:VB.y,w:VB.w}}setTimeout(()=>gdRun(n),450)},500)}
 
 /* Accès étroit pour la vue « murs de face / plafond » de l'artisan (espace/plan-faces.js). */
+/* 28/11 (Cyril #119 : « le plan ne suit toujours pas l'endroit concerné ») : quand la petite fenêtre s'ouvre, change de taille ou finit d'arriver, le plan se recadre au-dessus d'elle */
+try{if(CL){const sh=$("sheet");let rt=0;const rf=()=>{cancelAnimationFrame(rt);rt=requestAnimationFrame(()=>{try{if(!ST.cam&&!PD&&READY)draw()}catch(_){}})};new ResizeObserver(rf).observe(sh);sh.addEventListener("animationend",rf);sh.addEventListener("transitionend",rf);new MutationObserver(rf).observe(sh,{attributes:true,attributeFilter:["hidden"]})}}catch(e){}
 try{window.PKPLAN={get G(){return G},gMiss,gHas,solsOk,exportPlan,ST,F,segs,inward,dist,OP,EQ,TD,opName,opNums,hist,draw,all,notify,renderSheet,closeSheet,segName,fr,esc,get SH(){return SH},get VB(){return VB},openOp,openEsc,setMode,wzFocus,zinfo,get PD(){return PD},CL}}catch(e){}
 })();
 </script>
