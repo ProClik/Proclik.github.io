@@ -707,7 +707,7 @@ const D={
   {k:"niveau",t:"step",l:"À quel étage ?",h:"0 = rez-de-chaussée.",min:0,max:40,sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK},
   {k:"ascenseur",t:"chips",l:"Y a-t-il un ascenseur ?",o:["Oui","Non",DK],sh:i=>!!i.type&&i.type!=="Maison"&&i.type!==DK&&(i.niveau||0)>=1},
   // 22/11 (Cyril) : la hauteur sous plafond est demandée ici, plus dans le plan (pas pour combles / sous la toiture : le plan ne la demande pas).
-  {k:"hsp",t:"chips",l:"Du sol au plafond, vos pièces font environ…",h:"Le plus courant : 2,50 m. Une estimation suffit.",o:["2,40 m","2,50 m","2,60 m","2,70 m","3,00 m",DK],sh:()=>TRV("cloison","doublage","plafond")&&!(S.travaux||[]).some(k=>k==="combles"||k==="rampants")},
+  {k:"hsp",t:"chips",l:"Du sol au plafond, vos pièces font environ…",h:"Le plus courant : 2,50 m. Une estimation suffit.",o:["2,40 m","2,50 m","2,60 m","2,70 m","3,00 m",DK],sh:i=>TRV("cloison","doublage","plafond")&&!(S.travaux||[]).some(k=>k==="combles"||k==="rampants")/* 27/11 (signalement n°104) : travaux seulement aux combles = sous le toit, la hauteur vient des pentes du plan */&&!(((i||{}).ou||[]).length&&(i.ou||[]).every(x=>x==="Combles"))},
   // 18/11 (Cyril) : le client répond le plus possible AVANT le plan, pour que le plan et les murs de face arrivent presque remplis.
   {k:"pcs",t:"multi",l:"Dans quelles pièces sont les travaux ?",h:"Plusieurs choix possibles. Vous ne passerez que dans celles-là.",o:["Cuisine","Salle de bain","WC","Chambre(s)","Séjour","Entrée / couloir","Bureau","Buanderie",DK],sh:()=>TRV(...TPCS,"portes")},
   {k:"nch",t:"step",l:"Combien de chambres ?",h:"Pour les nommer à votre place sur le plan.",min:1,max:8,sh:i=>TRV(...TPCS,"portes")&&(i.pcs||[]).includes("Chambre(s)")},
