@@ -19,7 +19,7 @@ var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){retu
 var esc=X.esc,CH=X.CH;
 var lget=function(k,d){return X.lsGet(k,d)},lset=function(k,v){X.lsSet(k,v)};
 var JR=lget('pc-jr',{}),REG=Object.assign({marge:10,pause:60,jour:true,hs:true,cp:'',detour:0},lget('pc-jr-reg',{})),EQ=lget('pc-eq',null),HS=lget('pc-hs',[]);
-if(!EQ)EQ=[{id:'s1',p:'Kevin',h:35},{id:'s2',p:'Mathis',h:35}];
+if(!EQ)EQ=window.PCSANSDEMO?[]:[{id:'s1',p:'Kevin',h:35},{id:'s2',p:'Mathis',h:35}];/* 27/11 compte sans démo : équipe vide au départ */
 /* En option dans Cliky (Cyril 17/11) : l'entreprise active ou non chaque partie. Cliky non pris = rien ne s'affiche. */
 var cliky=function(){return window.PCOPT&&PCOPT.cliky!=null?!!PCOPT.cliky:X.lsGet('pc-cliky',true)};
 var onJ=function(){return cliky()&&REG.jour!==false},onH=function(){return cliky()&&REG.hs!==false};

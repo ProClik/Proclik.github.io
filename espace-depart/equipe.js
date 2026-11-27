@@ -15,6 +15,9 @@ var esc=X.esc||function(s){return String(s)};
 var JOURS=['Lun.','Mar.','Mer.','Jeu.','Ven.'],JL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],JC=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],
  MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 var EQ=[{n:'Thomas',r:'Chef'},{n:'Kevin',r:'Plaquiste'},{n:'Mathieu',r:'Plaquiste'},{n:'Lucas',r:'Apprenti'}];
+/* 27/11 compte sans démo : pas d'équipe d'exemple, seulement les personnes ajoutées pour de vrai (Réglages › Équipe, pc-eq) */
+function eqVrai(){if(!window.PCSANSDEMO)return;EQ.length=0;try{(JSON.parse(localStorage.getItem('pc-eq')||'null')||[]).forEach(function(x){if(x&&x.p&&!EQ.some(function(y){return y.n===x.p}))EQ.push({n:x.p,r:x.r||'Équipe'})})}catch(e){}}
+if(window.PCSANSDEMO){EQ=[];eqVrai()}
 var COUL=['var(--k-run)','var(--k-visit)','var(--k-liv)','var(--k-autre)','var(--k-devis)','var(--k-plan)'];
 function p2(n){return (n<10?'0':'')+n}
 function iso(x){return x.getFullYear()+'-'+p2(x.getMonth()+1)+'-'+p2(x.getDate())}
@@ -33,17 +36,17 @@ var K='pc-eq2';
 function lit(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}}
 function ecrit(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
 var S=lit();
-if(!S||!S.jr){S={jr:{},bes:{},env:{},prev:{}};
+if(!S||!S.jr){S={jr:{},bes:{},env:{},prev:{}};if(window.PCSANSDEMO){}else{
   var L=chantiers().map(function(c){return c.id}),a=L[0],b=L[1]||L[0],Ja=evJours(a);
   var M={Thomas:[a,a,b,b,'bureau'],Kevin:[a,a,a,b,b],Mathieu:[b,b,a,a,a],Lucas:[a,a,'',b,b]};
   [0,7].forEach(function(w){for(var i=0;i<5;i++){var k=iso(plus(LUN0,w+i)),o=S.jr[k]={};
     EQ.forEach(function(p,j){var v=M[p.n][i];if(v===a&&Ja.length&&Ja.indexOf(k)<0)v=(j%2&&L[2])?L[2]:b;o[p.n]=v});
     L.forEach(function(id){if(!evJours(id).length)(S.bes[id]=S.bes[id]||{})[k]=2})}});
-  ecrit()}
+  ecrit()}}
 ['jr','bes','env','prev'].forEach(function(k){if(!S[k])S[k]={}});
 /* tâches par personne et par jour (Cyril 24/11) : lignes de travaux du chantier ; exemple : travaux pas finis répartis sur les jours */
-if(!S.ta){S.ta={};chantiers().forEach(function(c){var R=(c.ouv||[]).filter(function(o){return o[2]<100}).map(function(o){return o[0]}),i=0;if(!R.length)return;
-  Object.keys(S.jr).sort().forEach(function(k){EQ.forEach(function(p){if(get(k,p.n)===c.id){(S.ta[k]=S.ta[k]||{})[p.n]=[R[i%R.length]];i++}})})});ecrit()}
+if(!S.ta){S.ta={};if(!window.PCSANSDEMO)chantiers().forEach(function(c){var R=(c.ouv||[]).filter(function(o){return o[2]<100}).map(function(o){return o[0]}),i=0;if(!R.length)return;
+  Object.keys(S.jr).sort().forEach(function(k){EQ.forEach(function(p){if(get(k,p.n)===c.id){(S.ta[k]=S.ta[k]||{})[p.n]=[R[i%R.length]];i++}})})});if(!window.PCSANSDEMO)ecrit()}
 function taches(k,n){return ((S.ta[k]||{})[n]||[]).slice()}
 function togTache(k,n,t){var o=S.ta[k]=S.ta[k]||{},L=o[n]=o[n]||[],i=L.indexOf(t);if(i>-1)L.splice(i,1);else L.push(t);ecrit();bouge()}
 function get(k,n){return (S.jr[k]||{})[n]||''}
@@ -61,7 +64,7 @@ function prevenir(id){var Q={};jours(id).forEach(function(k){qui(id,k).forEach(f
   S.prev[id]={d:iso(auj()),sig:sig(id),qui:N,vu:N.slice(0,Math.max(0,N.length-1))};ecrit();bouge();return N}
 function prevenu(id){var P=S.prev[id];if(!P)return null;return {d:P.d,qui:P.qui||[],vu:P.vu||[],change:P.sig!==sig(id)}}
 /* même équipe que la journée de chantier (pc-eq, heures en plus) : on y ajoute les personnes du planning */
-(function(){try{var E=JSON.parse(localStorage.getItem('pc-eq')||'null')||[],ch=false;EQ.forEach(function(p,i){if(!E.some(function(x){return x.p===p.n})){E.push({id:'e'+(i+1),p:p.n,h:35});ch=true}});
+(function(){if(window.PCSANSDEMO)return;try{var E=JSON.parse(localStorage.getItem('pc-eq')||'null')||[],ch=false;EQ.forEach(function(p,i){if(!E.some(function(x){return x.p===p.n})){E.push({id:'e'+(i+1),p:p.n,h:35});ch=true}});
   if(ch)localStorage.setItem('pc-eq',JSON.stringify(E))}catch(e){}})();
 var ecoute=[];function bouge(){ecoute.forEach(function(f){try{f()}catch(e){}})}
 function jourLong(k){var x=dte(k);return JL[x.getDay()]+' '+x.getDate()+' '+MOIS[x.getMonth()]}
@@ -81,6 +84,7 @@ function publier(K){var C=changes(K),N={};C.forEach(function(x){(S.pub[x[0]]=S.p
 /* ---------- absences et congés (Cyril 24/11 : un Espace pour chaque personne) ----------
    le salarié demande depuis son Espace (Terrain), la Direction accepte ou refuse dans Planning › Équipe ;
    acceptée = ses jours deviennent « Congé » ou « Malade », publiés tout de suite, et les chantiers où il manquait du monde le montrent */
+if(!S.abs&&window.PCSANSDEMO)S.abs=[];/* 27/11 compte sans démo */
 if(!S.abs){S.abs=[{id:'a1',qui:'Mathieu',ty:'conge',du:iso(plus(LUN0,14)),au:iso(plus(LUN0,16)),mo:'Mariage de ma sœur',st:'att',le:iso(auj())}];ecrit()}
 if(!S.ou)S.ou={};
 var ABS={conge:'Congé',malade:'Malade',rdv:'Rendez-vous',autre:'Absent'};
@@ -145,7 +149,7 @@ ecoute.push(function(){if(!pv.hidden)rend()});
    1) bascule « Par personne / Par chantier » ; 2) BROUILLON : ce qui a changé depuis la dernière publication est hachuré,
    le salarié ne voit que la version publiée, « Publier et prévenir » n'envoie que les changements ;
    3) « Copier la semaine d'avant » ; 4) heures de chacun au bout de sa ligne (8 h par jour, contrat 39 h, courant dans le bâtiment : exemple à régler). */
-var SEL=null,VUE='sem',MO=0,QUI=EQ[0].n,BY='p',ANNUL=null;
+var SEL=null,VUE='sem',MO=0,QUI=EQ[0]?EQ[0].n:'',BY='p',ANNUL=null;
 function court(v){if(!v)return '';if(v==='bureau')return 'Bureau';if(v==='repos')return 'Repos';if(ABS[v])return ABS[v];var c=(X.CH||{})[v];if(!c)return v;
   var w=(c.n||'').replace(/^(M\.|Mme|Cabinet|SCI|Maison)\s+/,'').split(/[\s·,]+/)[0];return w.length>8?w.slice(0,7)+'.':w}
 function evDe(id,k){var c=(X.CH||{})[id];return (X.EV||[]).filter(function(e){var x=e.x||{};return e.k==='run'&&e.d===k&&(x.ch===id||(id==='alpes'&&x.ch===1)||(c&&String(e.t||'').indexOf(c.n)>-1))})[0]}
@@ -243,7 +247,10 @@ function rendSal(){var T=iso(auj()),J=[],x=auj(),h='';while(J.length<5){if(x.get
   var br=changes(J).filter(function(x){return x[1]===QUI}).length;
   h+='</div><p class="hint" style="text-align:center">C\'est l\'écran que reçoit '+QUI+' sur son téléphone : pas le planning de toute l\'équipe, seulement ses jours'+(br?', et seulement ce qui est publié ('+br+' changement'+(br>1?'s':'')+' en brouillon pour '+QUI+')':'')+'.</p>';
   return h}
-function rend(){var h=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
+function rend(){eqVrai();if(!QUI&&EQ[0])QUI=EQ[0].n;
+  /* 27/11 compte sans démo : personne dans l'équipe pour l'instant */
+  if(!EQ.length){pv.innerHTML=(window.PCTAG?window.PCTAG('equipe'):'')+'<div class="card" style="padding:18px"><b>Votre équipe est vide</b><p class="hint" style="margin:6px 0 12px">Ajoutez vos salariés (leur prénom suffit) : ils apparaîtront ici, jour par jour, sur vos chantiers.</p><button type="button" class="btn go" data-jreq>Ajouter mon équipe</button></div>';return}
+  var h=(window.PCTAG?window.PCTAG('equipe'):'')+choix();
   h+=VUE==='mois'?rendMois():VUE==='sal'?rendSal():rendSem();
   if(UNDO)h+='<button type="button" class="eq-undo" id="eq-undo">↶ Annuler</button>';
   pv.innerHTML=h;

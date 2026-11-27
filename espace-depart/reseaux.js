@@ -47,11 +47,11 @@ function comptes(){return lsG(KC,{fb:true,ig:true,go:true,li:false})}
 function jeudi18(){var d=new Date(),j=(4-d.getDay()+7)%7;if(j===0&&d.getHours()>=18)j=7;d.setDate(d.getDate()+j);d.setHours(18,0,0,0);return d}
 var JOURS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],MOIS=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 function quandTxt(t){var d=new Date(t);return JOURS[d.getDay()].replace(/^./,function(c){return c.toUpperCase()})+' '+d.getDate()+' '+MOIS[d.getMonth()]+' · '+d.getHours()+' h'+(d.getMinutes()?String(d.getMinutes()).padStart(2,'0'):'')}
-function posts(){var p=lsG(KP,null);if(p)return p;var j=jeudi18().getTime();
+function posts(){var p=lsG(KP,null);if(p)return p;if(window.PCSANSDEMO)return [];/* 27/11 compte sans démo */var j=jeudi18().getTime();
  return [{id:'e1',ex:1,t:'Salle de bain refaite à Crolles',v:'APRÈS',q:j,r:['fb','ig','go'],e:'prevu'},
   {id:'e2',ex:1,t:'Isolation des combles : avant l\'hiver',v:'ÉQUIPE',q:j+2*864e5-8*36e5,r:['fb','go'],e:'prevu'},
   {id:'e3',ex:1,t:'Cliky propose : « 3 conseils pour une pièce plus chaude »',v:'IDÉE',q:0,r:[],e:'brouillon'}]}
-function messages(){return lsG(KM,null)||[
+function messages(){return lsG(KM,null)||(window.PCSANSDEMO?[]:null)||[
  {id:'m1',ex:1,qui:'Mme Roux',rs:'fb',ou:'commentaire sur « Salle de bain refaite »',t:'Bonjour, vous faites aussi les combles ? On est à Bernin.',neuf:1,client:0},
  {id:'m2',ex:1,qui:'M. Fabre',rs:'ig',ou:'message privé',t:'Super résultat ! Vous passez quand pour la cuisine ?',neuf:1,client:1}]}
 

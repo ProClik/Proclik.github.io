@@ -159,6 +159,7 @@
   var MOIS=[["Mai","mai",6100,9200],["Juin","juin",8400,12500],["Juil.","juillet",7200,7800],["Août","août",9600,13100],["Sept.","septembre",7900,11000],["Oct.","octobre",8640,14210]];
   /* 23/11 : les 6 mois d exemple finissent au mois en cours (vraie date) */
   (function(){var C=["Janv.","Févr.","Mars","Avril","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."],N=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],m=PCDEMO.today().getMonth();MOIS.forEach(function(x,k){var i=(m-5+k+12)%12;x[0]=C[i];x[1]=N[i]})})();
+  if(window.PCSANSDEMO)MOIS.forEach(function(x){x[2]=0;x[3]=0});/* 27/11 compte sans démo : pas de chiffres inventés */
   var MOISC=MOIS[5][0].replace(".","")+" · HT",MOISN=MOIS[5][1];
   R.argent=function(t){var sel=acc._mois==null?5:acc._mois,m=MOIS[sel],max=10000,moy=MOIS.reduce(function(s,x){return s+x[2]},0)/MOIS.length;
     var ev=sel>0?Math.round((m[2]-MOIS[sel-1][2])/MOIS[sel-1][2]*100):null;

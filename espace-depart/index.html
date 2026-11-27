@@ -10,7 +10,7 @@ function sh(s){if(typeof s!=='string'||!w)return s;if(/^\d{4}-\d\d-\d\d$/.test(s
  s=s.replace(/\b(lun|mar|mer|jeu|ven|sam|dim)\. (\d{1,2})\b(?![\/\d])/g,function(m,j,dd){var k=['dim','lun','mar','mer','jeu','ven','sam'].indexOf(j),b=null;for(var mo=8;mo<12;mo++){var d=new Date(2026,mo,+dd,12);if(d.getDate()===+dd&&d.getDay()===k&&(!b||Math.abs(d-A)<Math.abs(b-A)))b=d}return b?j+'. '+mv(b).getDate():m});
  return s}
 function deep(o){if(Array.isArray(o)){for(var i=0;i<o.length;i++)o[i]=deep(o[i]);return o}if(o&&typeof o==='object'){for(var k in o)o[k]=deep(o[k]);return o}return sh(o)}
-return {w:w,sh:sh,deep:deep,push:function(a){var L=[].slice.call(arguments,1);deep(L);return a.push.apply(a,L)},iso:iso,today:function(){return new Date(T)},d:function(y,m,j){var d=new Date(y,m,j,12);d.setDate(d.getDate()+7*w);return d}}})();</script><script src="entreprise.js?v=3"></script><script src="exemple.js?v=1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>/* iPhone/iPad/Android : plus de zoom du tout (26/11 Cyril : « je ne veux pas zoomer »). L'écran ne se décale plus et la barre du bas reste en bas. La carte et le plan gardent leur propre zoom. */(function(){var m=document.querySelector('meta[name="viewport"]');if(m&&!/maximum-scale/.test(m.content))m.content+=",maximum-scale=1,user-scalable=no";["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()},{passive:false})})})()</script><style>html{touch-action:manipulation}</style><meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
+return {w:w,sh:sh,deep:deep,push:function(a){var L=[].slice.call(arguments,1);deep(L);return a.push.apply(a,L)},iso:iso,today:function(){return new Date(T)},d:function(y,m,j){var d=new Date(y,m,j,12);d.setDate(d.getDate()+7*w);return d}}})();</script><script src="entreprise.js?v=3"></script><script src="sans-demo.js?v=1"></script><script src="exemple.js?v=1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>/* iPhone/iPad/Android : plus de zoom du tout (26/11 Cyril : « je ne veux pas zoomer »). L'écran ne se décale plus et la barre du bas reste en bas. La carte et le plan gardent leur propre zoom. */(function(){var m=document.querySelector('meta[name="viewport"]');if(m&&!/maximum-scale/.test(m.content))m.content+=",maximum-scale=1,user-scalable=no";["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()},{passive:false})})})()</script><style>html{touch-action:manipulation}</style><meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='24'%20fill='%23FFFFFF'/%3E%3Cpath%20d='M10.00%2050.00A40.00%2040.00%200%201%201%2090.00%2050.00A40.00%2040.00%200%201%201%2010.00%2050.00ZM62.13%2077.80A30.33%2030.33%200%201%200%2037.87%2077.80A6.15%206.15%200%200%200%2046.48%2072.16L46.48%2067.58A3.52%203.52%200%200%201%2053.52%2067.58L53.52%2072.16A6.15%206.15%200%200%200%2062.13%2077.80Z'%20fill='%231B2440'/%3E%3Ccircle%20cx='50.0'%20cy='47.36'%20r='7.38'%20fill='%23A8823F'/%3E%3C/svg%3E">
 <title>ProClik</title>
 <meta name="apple-mobile-web-app-title" content="ProClik"><meta name="application-name" content="ProClik">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1015,6 +1015,8 @@ var D=[
 var KEY='proclik-demo-v5';
 function save(){try{localStorage.setItem(KEY,JSON.stringify({D:D,Q:Q,shots:shots}))}catch(e){}}
 var Q=[],shots=0;
+/* 27/11 compte sans démo : pas de devis d'exemple, et une mémoire à part (celle de la démo n'est pas touchée) */
+if(window.PCSANSDEMO){KEY='proclik-sd-v1';D=[]}
 try{var s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.D){D=s.D;Q=s.Q||[];shots=s.shots||0}}catch(e){}
 /* ---------- réseau : réel + simulation ---------- */
 var simOff=false;
@@ -1125,6 +1127,7 @@ var PINS=[{k:'chantier',kind:'run',pc:75,name:'Cabinet Alpes Kiné',sub:'Meylan 
  {k:'visite',kind:'visit',name:'M. Lopez',sub:'Échirolles · devis à suivre',lat:45.146,lon:5.716,t:'M. Lopez · Échirolles',s:'Visite faite mercredi · salle de bain, devis à suivre',q:'Échirolles'},
  {k:'chantier',kind:'done',name:'Mme Perrin',sub:'Crolles · terminé',lat:45.286,lon:5.885,t:'Mme Perrin · Crolles',s:'Chantier terminé mardi · isolation des combles · facture payée',q:'Crolles'},
  {k:'devis',kind:'devis',name:'SCI Les Tilleuls',sub:'Voiron · demande reçue',lat:45.364,lon:5.589,t:'SCI Les Tilleuls · Voiron',s:'Demande reçue hier · rénovation de 3 bureaux · hors de votre zone de 25 km',q:'Voiron'}];
+if(window.PCSANSDEMO)PINS.length=0;/* 27/11 compte sans démo : carte vide */
 var flt='all',MAP=null,mapShown=false;
 var KC={run:'var(--k-run)',start:'var(--k-run)',devis:'var(--k-devis)',visit:'var(--k-visit)',done:'var(--k-done)'};
 function pinCard(p){$('#pin-card').innerHTML='<div class="row"><b>'+p.t+'</b><span class="pill" style="background:color-mix(in srgb,'+KC[p.kind]+' 22%,transparent);color:var(--fg)">'+{chantier:'Chantier',devis:'Devis',visite:'Visite'}[p.k]+'</span></div><p class="hint" style="margin:6px 0 12px">'+p.s+'</p><div class="acts" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn sm go" data-gps="'+esc2(p.q+', Isère')+'">Itinéraire</button>'+(p.open?'<button class="btn sm" id="pin-open">Ouvrir le devis</button>':(p.kind==='run'||p.kind==='start')?'<button class="btn sm" id="pin-ch">Voir le chantier</button>':'')+(p.dos?'<button class="btn sm" data-dos="'+p.dos+'">Dossier</button>':'')+'</div>';
@@ -1162,6 +1165,7 @@ var EV=[];
  add('2026-10-28','10:00','11:00','visit','Visite M. Lopez','Échirolles · prises de cotes');
  chan(['2026-10-29','2026-10-30'],'plan','M. Lopez · salle de bain','Échirolles · à confirmer','08:00','16:00',{tent:1});
 })();
+if(window.PCSANSDEMO)EV.length=0;/* 27/11 compte sans démo : aucun rendez-vous d'exemple */
 var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],JS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],JL=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 var TODAY=PCDEMO.today(),calWk=monday(TODAY),calMo=new Date(TODAY.getFullYear(),TODAY.getMonth(),1),calSel=PCDEMO.today(),evSel=null;
 function monday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
@@ -1270,6 +1274,7 @@ var relOn=lsGet('pc-rel',true);
 var SUP={mda:{n:'Menuiseries des Alpes',m:'devis@menuiseries-alpes.example',t:'Fenêtres, portes-fenêtres',d:'répond en 1 jour ouvré en général'},
  pd:{n:'Placo Dauphiné',m:'commandes@placo-dauphine.example',t:'Plaques, rails, enduits',d:'répond en 1 à 2 jours'},
  nim:{n:'Négoce Isère Matériaux',m:'agence.grenoble@negoce-isere.example',t:'Isolants, quincaillerie',d:'répond le jour même'}};
+if(window.PCSANSDEMO)Object.keys(SUP).forEach(function(k){delete SUP[k]});/* 27/11 compte sans démo : pas de fournisseurs d'exemple */
 var DP=lsGet('pc-dp7',null)||PCDEMO.deep([
  {id:'DP-013',sup:'pd',dos:'durand',devis:'0044',st:'wait',sent:'hier 18 h 06',since:'24 h',items:[['Plaque BA13 standard 2,50 m','12 u'],['Rail R48','16 m'],['Montant M48','24 u'],['Bande à joint + enduit','1 lot']]},
  {id:'DP-012',sup:'mda',dos:'martin',devis:'0043',st:'recu',sent:'hier 18 h 06',got:'ce matin 9 h 12',items:[['Fenêtre PVC 2 vantaux 120 × 135, oscillo-battant, Uw ≤ 1,3','2 u']],
@@ -1423,9 +1428,9 @@ open=function(id){open0(id);var d=find(id);if(!d)return;
 /* ---------- accueil : à faire ---------- */
 function renderTodo(){
  var h='',n=0;D.forEach(function(d){if(d.statut!=='todo'&&d.statut!=='warn')return;n++;h+='<button data-open="'+d.id+'"><span class="dot '+(d.statut==='warn'?'o':'c')+'">'+(d.statut==='warn'?'€':'✓')+'</span><span class="tx"><b>'+(d.statut==='warn'?'Revoir le prix fournisseur · ':'Valider le pré-devis · ')+d.client+'</b><small>'+d.titre+' · '+eur(tot(d).ht)+' HT</small></span><span class="go">›</span></button>'});
- var w=DP.filter(function(x){return x.st==='wait'&&String(x.since).charAt(0)!=='0'})[0];if(w){n++;h+='<button data-dp="'+w.id+'"><span class="dot o">⏱</span><span class="tx"><b>Relancer '+SUP[w.sup].n+'</b><small>demande de prix sans réponse depuis '+w.since+'</small></span><span class="go">›</span></button>';}
+ var w=DP.filter(function(x){return x.st==='wait'&&String(x.since).charAt(0)!=='0'})[0];if(w&&SUP[w.sup]){n++;h+='<button data-dp="'+w.id+'"><span class="dot o">⏱</span><span class="tx"><b>Relancer '+SUP[w.sup].n+'</b><small>demande de prix sans réponse depuis '+w.since+'</small></span><span class="go">›</span></button>';}
  if($$('#upd .upd:not(.done)').length){n++;h+='<button data-ach="prix"><span class="dot o">↑</span><span class="tx"><b>Prix fournisseurs à relire</b><small>dont une hausse de plus de 5 %</small></span><span class="go">›</span></button>';}
- if(!CH.alpes.pointSent){n++;h+='<button data-ch="alpes"><span class="dot t">💬</span><span class="tx"><b>Point du jour pour Mme Garnier</b><small>Alpes Kiné · message prêt, à valider</small></span><span class="go">›</span></button>';}
+ if(CH.alpes&&!CH.alpes.pointSent){n++;h+='<button data-ch="alpes"><span class="dot t">💬</span><span class="tx"><b>Point du jour pour Mme Garnier</b><small>Alpes Kiné · message prêt, à valider</small></span><span class="go">›</span></button>';}
  if(CH.lopez&&CH.lopez.st==='start'){calcCloison(CH.lopez);var nl=CH.lopez.four.filter(function(x){return x[2]==='à prévoir'}).length;if(nl){n++;h+='<button data-ch="lopez"><span class="dot t">📦</span><span class="tx"><b>Préparer le matériel · M. Lopez</b><small>'+nl+' lignes à prévoir · chantier jeudi 29</small></span><span class="go">›</span></button>';}}
  var g=find('0039');if(g&&g.statut==='sent'){n++;h+='<button data-opendv="0039"><span class="dot c">!</span><span class="tx"><b>Devis 0039 expire mercredi</b><small>M. Garcia · sans réponse après 2 relances</small></span><span class="go">›</span></button>';}
  $('#todo').innerHTML=h;$('#n-todo').textContent=n;
@@ -1703,29 +1708,29 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 })();
 </script>
 
-<script src="config.js?v=2"></script><script src="sync.js?v=9"></script>
+<script src="config.js?v=2"></script><script src="sync.js?v=10"></script>
 <script src="options.js?v=3"></script>
-<script src="profil.js?v=1"></script><script src="notifs.js?v=4"></script><script src="vrai.js?v=156"></script><script src="devis-simple.js?v=7"></script>
+<script src="profil.js?v=1"></script><script src="notifs.js?v=4"></script><script src="vrai.js?v=157"></script><script src="devis-simple.js?v=7"></script>
 <link rel="stylesheet" href="relief.css?v=18">
 <link rel="stylesheet" href="intro.css?v=18"><script src="intro.js?v=14"></script>
 <link rel="stylesheet" href="planning.css?v=3">
 <link rel="stylesheet" href="accueil.css?v=5">
-<script src="accueil.js?v=37"></script>
+<script src="accueil.js?v=38"></script>
 <link rel="stylesheet" href="clients.css?v=5">
 <script src="gps.js?v=1"></script>
-<script src="clients.js?v=13"></script>
+<script src="clients.js?v=14"></script>
 <link rel="stylesheet" href="devis.css?v=3">
-<script src="devis.js?v=8"></script>
+<script src="devis.js?v=9"></script>
 <script src="commandes.js?v=3"></script>
 <link rel="stylesheet" href="chantiers.css?v=23">
-<script src="photos-demo.js?v=3"></script><script src="chantiers.js?v=42"></script><script src="equipe.js?v=17"></script><script src="journee.js?v=16"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=34"></script>
+<script src="photos-demo.js?v=3"></script><script src="chantiers.js?v=43"></script><script src="equipe.js?v=18"></script><script src="journee.js?v=17"></script><script src="adresse.js?v=1"></script><script src="plans.js?v=34"></script>
 <script src="planning-ajout.js?v=4"></script><script src="entretiens.js?v=2"></script>
 <link rel="stylesheet" href="depenses.css?v=3">
 <script src="depenses.js?v=6"></script>
 <link rel="stylesheet" href="produits.css?v=7">
-<script src="produits.js?v=13"></script><script src="suivi-cliky.js?v=2"></script>
+<script src="produits.js?v=14"></script><script src="suivi-cliky.js?v=2"></script>
 <link rel="stylesheet" href="reseaux.css?v=1">
-<script src="reseaux.js?v=4"></script>
+<script src="reseaux.js?v=5"></script>
 <script src="cotes.js?v=4"></script>
 <script src="plan-plein.js?v=1"></script>
 <script src="relief.js?v=4"></script>
@@ -1744,10 +1749,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
 <script src="titres.js?v=3"></script>
 <link rel="stylesheet" href="blocs.css?v=5"><script src="blocs.js?v=8"></script>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="style-n1.css?v=47"><script src="couleurs.js?v=3"></script>
-<link rel="stylesheet" href="accueil-forme.css?v=21"><script src="accueil-forme.js?v=25"></script><script src="couleur-espace.js?v=2"></script>
+<link rel="stylesheet" href="accueil-forme.css?v=21"><script src="accueil-forme.js?v=26"></script><script src="couleur-espace.js?v=2"></script>
 <link rel="stylesheet" href="barre-forme.css?v=11"><script src="barre-forme.js?v=4"></script>
 <link rel="stylesheet" href="ecrans-forme.css?v=4"><script src="ecrans-forme.js?v=7"></script>
 <link rel="stylesheet" href="achats-forme.css?v=5"><script src="achats-forme.js?v=2"></script><link rel="stylesheet" href="produits-forme.css?v=2"><script src="produits-forme.js?v=2"></script><link rel="stylesheet" href="parler-forme.css?v=2"><script src="parler-forme.js?v=1"></script><script src="presentation-forme.js?v=2"></script>
-<link rel="stylesheet" href="pages-forme.css?v=13"><script src="roles.js?v=21"></script>
+<link rel="stylesheet" href="pages-forme.css?v=13"><script src="roles.js?v=22"></script>
 
 <script>/* 26/11 (Cyril) : copie de l'Espace sur l'appareil (sw.js), pour qu'il se rouvre tout de suite */if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))addEventListener('load',function(){setTimeout(function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}},1500)});</script>

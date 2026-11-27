@@ -18,7 +18,9 @@ function lss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
 /* ---------- les personnes ---------- */
 var PATRON=(window.PCID&&PCID.prenom)||'Julien',BUREAU='Claire';/* Claire = prénom d'exemple pour le bureau */
-var PERS=[{n:PATRON,g:'dir',r:'Patron'},{n:BUREAU,g:'bur',r:'Bureau (exemple)'}].concat(Q.EQ.map(function(p){return {n:p.n,g:'ter',r:p.r}}));
+/* 27/11 compte sans démo : le patron = le prénom du compte, pas de « Claire » d'exemple */
+if(window.PCSANSDEMO){var AR=lsg('pc-vrai-artisan',{})||{};if(AR.prenom)PATRON=String(AR.prenom)}
+var PERS=[{n:PATRON,g:'dir',r:'Patron'}].concat(window.PCSANSDEMO?[]:[{n:BUREAU,g:'bur',r:'Bureau (exemple)'}]).concat(Q.EQ.map(function(p){return {n:p.n,g:'ter',r:p.r}}));
 var GN={dir:'Direction',bur:'Bureau',ter:'Terrain'};
 function pers(n){return PERS.filter(function(p){return p.n===n})[0]||PERS[0]}
 /* VRAI ACCÈS PERSONNEL (24/11) : le patron envoie un lien à chacun (fiche de la personne › « Envoyer son accès »).
@@ -83,6 +85,7 @@ function choisir(){if(MB)return;
 
 /* ---------- liste du chantier partagée ---------- */
 var LI=lsg('pc-liste',null);
+if(!LI&&window.PCSANSDEMO)LI={}/* 27/11 compte sans démo : liste vide */
 if(!LI){LI={};var c0=Object.keys(X.CH||{}).filter(function(k){return X.CH[k].st!=='done'});
   if(c0[0])LI[c0[0]]=[{id:'l1',t:'Vis plaque 25 mm (1 boîte)',ty:'mat',qui:Q.EQ[1]?Q.EQ[1].n:'',st:'acom',ok:0},{id:'l2',t:'Rallonge 25 m',ty:'outil',qui:Q.EQ[0].n,ok:0},{id:'l3',t:'Badge du parking à rendre le soir',ty:'savoir',qui:PATRON,ok:0}];
   lss('pc-liste',LI)}
@@ -277,7 +280,7 @@ function rendTer(){var P=moi(),n=P.n,T=Q.iso(Q.auj()),v=Q.pGet(T,n),c=(X.CH||{})
   h+='<div class="tr-in"><div class="tr-top rl-tph">'+(Q.ini?'<button type="button" class="rl-maph" data-maph aria-label="Ma photo"><span class="eqa" style="background:'+(Q.photo(n)?'none':'var(--n1-nuit,#1B2440)')+'">'+Q.ini(n)+'</span><em>'+(Q.photo(n)?'Changer':'Ma photo')+'</em></button>':'')+'<span><small>'+cap(Q.jourLong(T))+'</small><h1>Bonjour '+n+'</h1></span></div>';
   h+='<section class="tr-c">'+ouHTML(n)+'</section>';
   h+='<h3 class="tr-t">Aujourd\'hui</h3>';
-  if(c){var t=Q.pTaches(T,n),avec=Q.pQui(v,T).filter(function(p){return p.n!==n}).map(function(p){return p.n}),I=infosCh(c),chef=n===Q.EQ[0].n?null:Q.EQ[0].n,notes=(c.notes||[]).slice(-2),ph=(c.ph||[]),cad=cadOuvert(v);
+  if(c){var t=Q.pTaches(T,n),avec=Q.pQui(v,T).filter(function(p){return p.n!==n}).map(function(p){return p.n}),I=infosCh(c),chef=Q.EQ[0]&&n===Q.EQ[0].n?null:Q.EQ[0].n,notes=(c.notes||[]).slice(-2),ph=(c.ph||[]),cad=cadOuvert(v);
     h+='<section class="tr-c tr-auj" style="--cc:'+Q.couleur(v)+'"><div class="tr-ch"><i></i><span><b>'+esc(c.n)+'</b><small>'+esc(I.adr)+' · '+heures(v,T)+'</small></span></div>'+
       '<div class="tr-l"><span>À faire</span><b>'+(t.length?esc(t.join(', ')):'Voir avec le chef')+'</b></div>'+
       '<div class="tr-l"><span>Avec</span><b>'+(avec.length?avec.map(nomT).join(', '):'Seul')+'</b></div>'+
