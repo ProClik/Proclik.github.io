@@ -99,9 +99,10 @@ h1{margin:2px 0 0;font-size:clamp(24px,5.5vw,32px);font-weight:800;letter-spacin
 .ed .ok{background:var(--hot);color:#fff}.ed .x{background:var(--bg);color:var(--muted)}.ed .mic{background:var(--soft);color:var(--mint-ink)}.ed .plus{background:var(--bg);color:#A8823F;font-size:22px;line-height:1}.ed .edsum{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:8px;white-space:nowrap;background:var(--bg);box-shadow:var(--up-xs,0 2px 6px rgba(0,0,0,.12));border-radius:28px;padding:5px 12px;font:700 13px var(--f);color:var(--mint-ink)}
 .ed.listen{border-color:var(--mint-ink);box-shadow:0 0 0 4px rgba(168,130,63,.35)}
 /* 27/11 (Cyril #112) : petit pavé de chiffres pour les cotes, comme dans le formulaire (le clavier du téléphone ne s'ouvre plus) */
-#epad{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 26px rgba(14,19,34,.14)}
+#epad{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 26px rgba(14,19,34,.14)}
 #epad[hidden]{display:none}
 #epad button{appearance:none;border:0;min-height:44px;margin:0;padding:0;border-radius:12px;background:var(--bg);color:var(--fg);font:800 20px var(--f);display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 5px -2px rgba(14,19,34,.25)}
+#epad .ok{grid-column:span 2;background:var(--mint,#1B2440);color:#fff;font-size:16px}
 #epad button:active{transform:scale(.96)}#epad button svg{width:24px;height:24px}
 html.epadon #ed{position:fixed!important;left:max(8px,env(safe-area-inset-left,0px))!important;right:max(8px,env(safe-area-inset-right,0px))!important;top:auto!important;bottom:calc(var(--epad-h,110px) + 8px)!important;max-width:none!important;flex-wrap:nowrap;justify-content:space-between;z-index:41}
 html.epadon #ed input{flex:1 1 auto;width:auto}
@@ -1133,11 +1134,17 @@ $("edv").addEventListener("keydown",e=>{if(e.key==="Enter")applyEd();if(e.key===
 const EPADON=(()=>{try{return matchMedia("(pointer:coarse)").matches}catch(_){return false}})();let EPF=false;
 function epadEl(){let p=$("epad");if(p)return p;p=document.createElement("div");p.id="epad";p.hidden=true;p.setAttribute("role","group");p.setAttribute("aria-label","Pavé de chiffres");
  const BK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>';
- p.innerHTML=["1","2","3","4","5","6","7","8","9","0",",","del"].map(k=>`<button type="button" data-epk="${k}" aria-label="${k==="del"?"Effacer":k}">${k==="del"?BK:k}</button>`).join("");
+ p.innerHTML=["1","2","3","4","5","6","del","7","8","9","0",",","ok"].map(k=>`<button type="button" data-epk="${k}"${k==="ok"?' class="ok"':""} aria-label="${k==="del"?"Effacer":k==="ok"?"Valider":k}">${k==="del"?BK:k==="ok"?"OK":k}</button>`).join("");
  document.body.appendChild(p);["pointerdown","mousedown","touchstart"].forEach(t=>p.addEventListener(t,e=>{if(e.cancelable)e.preventDefault()},{passive:false}));
  p.addEventListener("pointerup",e=>{const b=e.target.closest("[data-epk]");if(b)epadKey(b.dataset.epk)});
  p.addEventListener("click",e=>{if(e.detail===0){const b=e.target.closest("[data-epk]");if(b)epadKey(b.dataset.epk)}});return p}
-function epadKey(k){const v=$("edv");if(!v||$("ed").hidden)return;let t=v.value;const last=(t.split("+").pop()||"").trim();
+/* 27/11 (Cyril « le clavier numérique de partout ? ») : le pavé sert aussi aux autres cases à chiffres du plan (escalier, fenêtres, toit…) */
+let EPI=null,EPV0="";function epTarget(){const v=$("edv");if(v&&!$("ed").hidden&&document.documentElement.classList.contains("epadon"))return v;return EPI&&document.contains(EPI)?EPI:null}
+function epGenHide(commit){const p=$("epad"),el=EPI;EPI=null;if(el){if(commit!==false&&el.value!==EPV0)el.dispatchEvent(new Event("change",{bubbles:true}));if(commit)try{el.blur()}catch(_){}}if(p&&!document.documentElement.classList.contains("epadon"))p.hidden=true}
+document.addEventListener("focusin",e=>{const t=e.target;if(!EPADON||demo||!t||t.id==="edv"||!t.matches||!t.matches('input[inputmode="decimal"],input[inputmode="none"][data-epad]'))return;t.setAttribute("inputmode","none");t.dataset.epad="1";if(EPI&&EPI!==t)epGenHide(false);EPI=t;EPV0=t.value;EPF=!!t.value;const p=epadEl();p.hidden=false;
+ requestAnimationFrame(()=>{const r=t.getBoundingClientRect();if(r.bottom>innerHeight-p.offsetHeight-8)try{t.scrollIntoView({block:"center",behavior:"smooth"})}catch(_){}})});
+document.addEventListener("focusout",e=>{if(e.target===EPI)setTimeout(()=>{if(EPI&&document.activeElement!==EPI)epGenHide(false)},80)});
+function epadKey(k){const v=epTarget();if(!v)return;if(k==="ok"){if(v.id==="edv")applyEd();else epGenHide(true);return}let t=v.value;const last=(t.split("+").pop()||"").trim();
  if(k==="del")t=EPF?"":/\s\+\s*$/.test(t)?t.replace(/\s*\+\s*$/,""):t.slice(0,-1);
  else if(k===","){if(EPF)t="0,";else if(!last.includes(",")&&!last.includes("."))t=(last?t:t+"0")+","}
  else{if(EPF)t=k;else if(last.replace(/[,.]/,"").length>=5)return;else t=t+k}
