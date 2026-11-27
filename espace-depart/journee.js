@@ -443,8 +443,11 @@ document.addEventListener('click',function(e){var t=e.target.closest&&e.target.c
 var TYPES=[['cloison','Cloisons',/cloison/i],['doublage','Doublages',/doublage/i],['plafond','Plafonds',/plafond/i],['rampants','Rampants',/rampant/i],
  ['combles','Combles',/comble|soufflage|souffl[ée]/i],['sol','Sols',/carrelage|parquet|\bsols?\b/i],['porte','Portes',/\bportes?\b|bloc-porte/i],['fenetre','Fenêtres',/fen[êe]tre|baie/i]];
 var CAD_MIN=3,CAD_ECART=0.08,CAD_PROCHE=0.05;
-var CAD=Object.assign({ret:{},non:{}},lget('pc-cad',{}));
-var saveCad=function(){lset('pc-cad',CAD)};
+/* gardées dans « pc-cadence » (dans le compte, Cyril 27/11). Avant, elles partageaient « pc-cad » avec le cadenas du plan,
+   qui pouvait les écraser : on reprend une seule fois ce qui y était. */
+var CAD=(function(){var c=lget('pc-cadence',null);if(c&&typeof c==='object')return Object.assign({ret:{},non:{}},c);
+ var o=lget('pc-cad',{})||{},n={ret:o.ret||{},non:o.non||{}};if(o.jp)n.jp=o.jp;if(o.ret||o.non||o.jp)lset('pc-cadence',n);return n})();
+var saveCad=function(){lset('pc-cadence',CAD)};
 var onC=function(){return cliky()&&REG.cad!==false};
 var nomType=function(t){var x=TYPES.filter(function(y){return y[0]===t})[0];return x?x[1]:t};
 function typesDe(s){return TYPES.filter(function(t){return t[2].test(String(s||''))}).map(function(t){return t[0]})}
