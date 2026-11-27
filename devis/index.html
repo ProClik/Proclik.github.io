@@ -1466,12 +1466,14 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
 
 // 18/11 (Cyril) : après le plan, « Vos murs, vus de face » (devis/murs.html), pré-remplis par le tracé et les réponses du logement.
 function mursOK(){const g=S.plan&&S.plan.trace&&S.plan.trace.geo;return!!(g&&g.some(f=>f.rooms&&f.rooms.length))}
-function openMurs(){const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=37");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
+/* 28/11 (Cyril #123 : « réouvert le formulaire, j'ai atterri sur le plan alors que j'en étais aux murs de face ») : on retient que « Vos murs » est en cours */
+function mursEnCours(){return!!(S.mursOn||S.murs&&!S.mursFin)&&mursOK()}
+function openMurs(){S.mursOn=1;save();const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=38");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
 function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:Object.assign({},S.logement,{trav:S.travaux||[]})},"*")}catch(e){}}
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-murs-ready")mursLoad();  if(d.type==="proclik-murs-photo"&&d.img){/* photo prise à la fin d'une pièce (Cyril 18/11) : rangée avec les photos du chantier */if(files.photos.length<10)files.photos.push({name:(d.piece||"Pièce")+".jpg",img:d.img,file:null,tag:d.piece||null});return}
  if(d.type==="proclik-murs"){S.murs=d.murs;if(d.sols){S.sols=d.sols;/* sols et plafonds pièce par pièce : renvoyés au plan, qui garde le même calcul (Cyril 18/11) */const pf=document.getElementById("pframe");try{if(pf&&pf.contentWindow)pf.contentWindow.postMessage({type:"proclik-plan-sols",sols:d.sols},"*")}catch(x){}}save()}
- if(d.type==="proclik-murs-finish"){document.getElementById("mursfull").hidden=true;document.body.style.overflow="";render()}});
+ if(d.type==="proclik-murs-finish"){S.mursOn=0;S.mursFin=1;save();document.getElementById("mursfull").hidden=true;document.body.style.overflow="";render()}});
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("pframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-plan-ready"){const R=S.rampants||{},cmN=k=>R[k+"_dk"]?null:(pn(R[k])??null);f.contentWindow.postMessage({type:"proclik-plan-load",plan:S.plan.trace||null,travaux:S.travaux||[],esc:S.travaux.includes("escalier")?((S.escalier||{}).items||[]).map(it=>({travail:it.travail||"",forme:it.forme||"",vers:it.vers||""})):[],prenom:PRE(),ou:(S.logement||{}).ou||[],ltype:(S.logement||{}).type||"",hsp:(S.logement||{}).hsp||"",pcs:(S.logement||{}).pcs||[],nch:(S.logement||{}).nch||0,rep:{elec:(S.logement||{}).elec||"",plomb:(S.logement||{}).plomb||"",sdb:(S.logement||{}).sdb||"",cuis:(S.logement||{}).cuis||""},toit:S.travaux.includes("rampants")?{forme:R.forme==="Pentes + plafond plat"?"2 pentes":(R.forme||null),hf:cmN("hfait"),m1:cmN("hmur1"),m2:R.forme==="1 pente"?null:cmN("hmur2"),ft:R.ft||null,ftc:R.ftc||null,ftsz:R.ftsz||null,ftetat:R.ftetat||null}:null},"*");return}
  if(d.type==="proclik-plan-h"){f.style.height=Math.max(520,Math.min(1400,Math.round(d.h)))+"px";return}
@@ -1502,10 +1504,10 @@ document.addEventListener("pointerup",e=>{if(!PDR)return;const D=PDR;PDR=null;PV
 document.addEventListener("click",ev=>{const t=ev.target.closest("[data-rtog]");if(!t)return;ev.stopPropagation();const r=t.parentNode,o=r.classList.toggle("open");t.setAttribute("aria-expanded",o);ROPEN[o?"add":"delete"](t.dataset.rtog);if(SM())render()},true);
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const ds=b.dataset;
  if(MISS&&ds.s&&`${ds.s}-${ds.i||"x"}-${ds.k}`===MISS)MISS=null;
- if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur=S._cur&&S._cur!=="intro"&&S._cur!=="done"&&steps().includes(S._cur)?S._cur:"travaux";render();/* Cyril 28/11 : on reprend aussi le plan là où on l'avait laissé (il s'ouvre tout seul, à la bonne étape) */if(cur==="plan"&&S.plan&&S.plan.trace&&!S.plan.fin)openPlan();return}
+ if(ds.start){if(!PRE()){const i=document.getElementById("in-pre");document.getElementById("in-err").textContent="Indiquez votre prénom pour commencer.";if(i)i.focus();return}cur=S._cur&&S._cur!=="intro"&&S._cur!=="done"&&steps().includes(S._cur)?S._cur:"travaux";render();/* Cyril 28/11 : on reprend aussi le plan là où on l'avait laissé (il s'ouvre tout seul, à la bonne étape) */if(cur==="plan"&&mursEnCours())openMurs();else if(cur==="plan"&&S.plan&&S.plan.trace&&!S.plan.fin)openPlan();return}
  if(ds.example){example();return}
  if(ds.mode){S.mode=ds.mode;save();render();return}
- if(ds.openplan){if(S.plan){S.plan.fin=0;save()}openPlan();return}
+ if(ds.openplan){if(S.plan){S.plan.fin=0}S.mursOn=0;save();openPlan();return}
  if(ds.toform){toForm();return}
  if(ds.later){later();return}
  if(b.id==="pf-done"){const f=document.getElementById("pframe");clearTimeout(PFT);PFT=setTimeout(()=>closePlan(),1500);try{f.contentWindow.postMessage({type:"proclik-plan-check"},"*")}catch(x){closePlan()}return}
