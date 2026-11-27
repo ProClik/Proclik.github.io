@@ -717,7 +717,9 @@ function nom(it){return CAT[it.k].n}
 function lift(ev){const i=hold.i,it=M.items[i];snap();liftSnap=HIST[HIST.length-1];clearTimeout(hold.tm);hold=null;sel=i;confirmDel=false;it.relock=it.lock;it.lock=false;
  drag={id:ev.pointerId,dx:svgX(ev)-vx(it),y0:svgY(ev),b0:bas(cI(it)),snap:null,ox:vx(it),tgt:null,t0:performance.now()};vib(12);toast(`<b>${nom(it)}</b> · glissez, puis lâchez`,1800);draw()}
 /* 28/11 (Cyril #122) : après avoir déplacé un élément, sa petite fenêtre ne s'ouvre pas ; on la retrouve en le touchant */let POPQ=null;
-$("wall").addEventListener("pointerdown",ev=>{POPQ=null;$("dock").classList.remove("open");const g=ev.target.closest("[data-i]");if(!g){deselect();draw();return}
+/* 28/11 (Cyril : « déplacer la vue en glissant de gauche à droite ») : un doigt qui glisse sur le mur (hors élément) le fait défiler */
+let MZP=null;
+$("wall").addEventListener("pointerdown",ev=>{POPQ=null;$("dock").classList.remove("open");const g=ev.target.closest("[data-i]");if(!g){deselect();draw();if(MZ.on){MZP={id:ev.pointerId,x0:ev.clientX,mx:MZ.x,k:(MZ.Lw+60)/Math.max(1,$("wall").getBoundingClientRect().width)};try{$("wall").setPointerCapture(ev.pointerId)}catch(e){}}return}
  const i=+g.dataset.i,it=M.items[i];if(sel!==i)confirmDel=false;
  if(sel!=null&&sel!==i)deselect();
  $("wall").setPointerCapture(ev.pointerId);
@@ -725,6 +727,7 @@ $("wall").addEventListener("pointerdown",ev=>{POPQ=null;$("dock").classList.remo
  hold={id:ev.pointerId,i,x0:ev.clientX,y0:ev.clientY,t0:performance.now(),mouse:ev.pointerType==="mouse",last:ev};
  hold.tm=setTimeout(()=>{if(hold&&hold.i===i)lift(hold.last)},HOLD);anim()});
 $("wall").addEventListener("pointermove",ev=>{
+ if(MZP&&ev.pointerId===MZP.id){const nx=Math.max(0,Math.min(MZ.max,MZP.mx-(ev.clientX-MZP.x0)*MZP.k));if(Math.abs(nx-MZ.x)>.2){MZ.x=nx;if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})}return}
  if(hold&&ev.pointerId===hold.id){hold.last=ev;const d=Math.hypot(ev.clientX-hold.x0,ev.clientY-hold.y0);
   if(d>6){if(hold.mouse){lift(ev)}else{clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`Maintenez le doigt sur <b>${nom(it)}</b> un instant, puis glissez`);draw();return}}else return}
  if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;MZ.ev=ev;mzEdge();const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;
@@ -761,7 +764,7 @@ function swap(it,o,ox){const a=ox,b=vx(o);let nIt,nO;if(a<b){nO=a;nIt=b+o.w-it.w
  if(bad){[it.x,o.x]=save;toast("Pas la place d'échanger ces deux-là");return false}it.x=R(it.x);o.x=R(o.x);o.pulse=Date.now();return true}
 const end=ev=>{if(hold&&(!ev||ev.pointerId===hold.id)){clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`<b>${nom(it)}</b> sélectionné${TOUCH?" · maintenez le doigt dessus pour le déplacer":""}`);draw();return}
  if(drag){const it=M.items[sel];if(it){const vis=drag.free!=null?drag.free:vx(it),vdy=drag.dy||0;drag.free=null;if(drag.tgt!=null){const o=M.items[drag.tgt],o0=vx(o);it.x=drag.ox;if(swap(it,o,drag.ox)){o._a={d:o0-vx(o),t:performance.now()};toast(`<b>${nom(it)}</b> et <b>${nom(o)}</b> échangés`,1800);vib(10)}}it._a={d:vis-vx(it),dy:vdy,t:performance.now()};
-  it.settle=performance.now();if(it.relock){it.lock=true}delete it.relock;if(performance.now()-drag.t0>450||Math.abs(vis-drag.ox)>1)POPQ=it}drag=null;if(liftSnap&&HIST[HIST.length-1]===liftSnap&&liftSnap===JSON.stringify(M.items,(k,v)=>k==="_a"||k==="settle"||k==="pulse"||k==="relock"?undefined:v)){HIST.pop();$("undo").disabled=!HIST.length}liftSnap=null;draw();anim()}};$("wall").addEventListener("pointerup",end);$("wall").addEventListener("pointercancel",end);
+  it.settle=performance.now();if(it.relock){it.lock=true}delete it.relock;if(performance.now()-drag.t0>450||Math.abs(vis-drag.ox)>1)POPQ=it}drag=null;if(liftSnap&&HIST[HIST.length-1]===liftSnap&&liftSnap===JSON.stringify(M.items,(k,v)=>k==="_a"||k==="settle"||k==="pulse"||k==="relock"?undefined:v)){HIST.pop();$("undo").disabled=!HIST.length}liftSnap=null;draw();anim()}};$("wall").addEventListener("pointerup",end);["pointerup","pointercancel"].forEach(t=>$("wall").addEventListener(t,ev=>{if(MZP&&ev.pointerId===MZP.id)MZP=null}));$("wall").addEventListener("wheel",ev=>{if(!MZ.on)return;const d=Math.abs(ev.deltaX)>Math.abs(ev.deltaY)?ev.deltaX:ev.shiftKey?ev.deltaY:0;if(!d)return;ev.preventDefault();MZ.x=Math.max(0,Math.min(MZ.max,MZ.x+d*.6));if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})},{passive:false});$("wall").addEventListener("pointercancel",end);
 // ---------- Commandes ----------
 CARDL("click",ev=>{const b=ev.target.closest("button");if(!b||sel==null||b.dataset.all)return;const it=M.items[sel];if(b.dataset.w||b.dataset.n||b.dataset.st||b.dataset.rep||b.dataset.del||b.dataset.st0||b.dataset.place)snap();
  if(b.dataset.w&&it.lock&&!CAT[it.k].petit){resize(it,+b.dataset.w);draw();return}
