@@ -20,12 +20,12 @@ var enDirect=function(){return !!(SERVICE&&jeton())};
 /* Copie des questions pour la démo (le service envoie les siennes, toujours à jour). */
 var Q0=[{"id":"non_faits","c":"Travaux que je ne fais pas","p":"detail","t":"m","g":"partout","ch":[["sols","Sols (carrelage, parquet)"],["fenetres","Pose de fenêtres"],["portes","Portes intérieures"],["combles","Isolation des combles perdus"],["rampants","Combles aménagés (rampants)"],["escaliers","Trémies d'escalier"]],"d":[]},{"id":"doublage","c":"Je fais","p":"habitude","g":"murs","ch":[["appuis","Sur appuis (fourrure murale horizontale, appuis, rail contre-cloison, fourrures)"],["ossature","Sur ossature (rails et montants 48)"],["colle","Doublage collé (complexe isolant)"]],"d":"appuis"},{"id":"doublage_epaisseur","c":"Épaisseur de laine","p":"habitude","g":"murs","ch":[["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"]],"d":"120"},{"id":"doublage_planb","c":"Je fais alors","p":"planb","g":"murs","ch":[["oss48","Ossature 48 (45 kraft entre montants + laine nue derrière)"],["oss70","Ossature 70 (laine 70 entre montants + laine nue derrière)"]],"d":"oss48"},{"id":"doublage_pv","c":"Pare-vapeur","p":"detail","g":"murs","ch":[["kraft","Le kraft de la laine"],["membrane","Une membrane à part"]],"d":"kraft"},{"id":"rampants_ep1","c":"1re couche (nue, entre chevrons)","p":"habitude","g":"rampants","ch":[["chevrons","Selon les chevrons"],["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"],["200","200 mm"]],"d":"chevrons"},{"id":"rampants_ep2","c":"2e couche (kraft, croisée)","p":"habitude","g":"rampants","ch":[["auto","Pour atteindre R = 6"],["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"],["200","200 mm"]],"d":"auto"},{"id":"rampants_suspente","c":"Suspentes","p":"habitude","g":"rampants","ch":[["verifier","Je choisis à chaque fois"],["240","240 mm"],["300","300 mm"],["400","400 mm"]],"d":"verifier"},{"id":"rampants_planb","c":"Je fais alors","p":"planb","g":"rampants","ch":[["suivre","La 1re couche suit les chevrons, la 2e grossit"],["garder","Je garde mes épaisseurs (suspentes plus longues)"]],"d":"suivre"},{"id":"rampants_pv","c":"Pare-vapeur","p":"detail","g":"rampants","ch":[["kraft","Le kraft de la laine"],["membrane","Une membrane à part"]],"d":"kraft"},{"id":"cloison_ossature","c":"Ossature","p":"habitude","g":"cloisons","ch":[["48","48"],["70","70"]],"d":"48"},{"id":"cloison_laine","c":"Laine","p":"habitude","g":"cloisons","ch":[["avec","Oui (45 en ossature 48, 70 en ossature 70)"],["sans","Non"]],"d":"avec"},{"id":"plafond_type","c":"Je fais","p":"habitude","g":"plafonds","ch":[["suspendu","Suspendus (fourrures F47 + suspentes)"],["autoportant","Autoportants (ossature d'un mur à l'autre)"]],"d":"suspendu"},{"id":"plafond_laine","c":"Laine au-dessus","p":"habitude","g":"plafonds","ch":[["0","Non"],["100","100 mm"],["120","120 mm"],["140","140 mm"],["160","160 mm"],["200","200 mm"]],"d":"0"},{"id":"plafond_suspente_longue","c":"Je fais alors","p":"planb","g":"plafonds","ch":[["verifier","Je choisis à chaque fois"],["170","Suspentes 170 mm"],["240","Suspentes 240 mm"],["300","Suspentes 300 mm"],["400","Suspentes 400 mm"]],"d":"verifier"},{"id":"plafond_plaque","c":"Plaques","p":"habitude","g":"plafonds","ch":[["standard","BA13 standard"],["horizon","BA13 4 bords amincis (Horizon)"]],"d":"standard"},{"id":"plafond_plaque_long","c":"Longueur des plaques","p":"habitude","g":"plafonds","ch":[["240","240 cm"],["250","250 cm"],["260","260 cm"],["270","270 cm"],["280","280 cm"],["300","300 cm"]],"d":"250"},{"id":"plafond_entraxe","c":"Écart des fourrures","p":"habitude","g":"plafonds","ch":[["50","50 cm"],["60","60 cm"]],"d":"50"},{"id":"combles_type","c":"Je fais","p":"habitude","g":"combles","ch":[["souffle","Laine soufflée (350 mm)"],["rouleaux","Laine en rouleaux"]],"d":"souffle"},{"id":"combles_ep","c":"Épaisseur en rouleaux","p":"habitude","g":"combles","ch":[["200","200 mm"],["240","240 mm"],["300","300 mm"]],"si":{"combles_type":"rouleaux"},"d":"300"},{"id":"combles_trappe","c":"Je fais alors","p":"planb","g":"combles","ch":[["oui","Je crée une trappe isolée"],["question","Je décide sur place"]],"d":"question"},{"id":"sol_ajouts","c":"J'ajoute d'habitude","p":"habitude","t":"m","g":"sols","ch":[["depose","Dépose de l'ancien sol"],["ragreage","Ragréage"],["souscouche","Sous-couche (parquet)"],["plinthes","Plinthes"],["seuils","Barres de seuil"]],"d":["plinthes","souscouche"]},{"id":"sol_fourniture","c":"Fourniture","p":"habitude","g":"sols","ch":[["base","Prix moyen de ma base (chiffré tout de suite)"],["fournisseur","Prix demandé au fournisseur"]],"d":"fournisseur"},{"id":"sol_parquet","c":"Parquet","p":"habitude","g":"sols","ch":[["contrecolle","Contrecollé"],["stratifie","Stratifié"],["massif","Massif"]],"d":"contrecolle"},{"id":"carrelage_format","c":"Carrelage sol","p":"habitude","g":"sols","ch":[["60x60","60 × 60"],["45x45","45 × 45"],["30x60","30 × 60"],["20x120","20 × 120 aspect bois"],["75x75","75 × 75"],["90x90","90 × 90"],["multi","Multi-format (opus)"]],"d":"60x60"},{"id":"faience_format","c":"Faïence","p":"habitude","g":"sols","ch":[["30x90","30 × 90"],["30x60","30 × 60"],["25x40","25 × 40"]],"d":"30x90"},{"id":"encollage","c":"Encollage","p":"habitude","g":"sols","ch":[["double","Double encollage (colle sur le sol et sous le carreau)"],["simple","Simple encollage, quand la norme le permet"]],"d":"double"},{"id":"sol_plancher","c":"Plancher sur lambourdes","p":"habitude","g":"sols","ch":[["osb12","OSB 12 mm"],["osb15","OSB 15 mm"],["osb18","OSB 18 mm"],["osb22","OSB 22 mm"],["ctbh","CTBH"]],"d":"osb18"},{"id":"cloison_phonique","c":"Plaques","p":"habitude","g":"cloisons","ch":[["standard","1 plaque par face"],["renforcee","2 plaques par face"]],"d":"standard"},{"id":"hauteur_defaut","c":"Hauteur sous plafond, si le client ne la donne pas","p":"detail","g":"partout","ch":[["2.5","2,50 m"],["2.6","2,60 m"],["2.7","2,70 m"]],"d":"2.5"},{"id":"largeur_porte_defaut","c":"Largeur de porte, si le client ne la donne pas","p":"detail","g":"partout","ch":[["73","73 cm"],["83","83 cm"],["93","93 cm"]],"d":"83"},{"id":"finition","c":"Finition des plaques","p":"habitude","g":"partout","ch":[["pret","Prêt à peindre (bandes + enduit)"],["bandes","Bandes seules"]],"d":"pret"},{"id":"poignee","c":"Poignée standard avec chaque porte","p":"habitude","g":"partout","ch":[["oui","Oui"],["non","Non, le client la choisit"]],"d":"oui"},{"id":"protection","c":"Protection et nettoyage de fin de chantier","p":"habitude","g":"partout","ch":[["oui","Oui"],["non","Non"]],"d":"oui"},{"id":"pose_h_ouvrage","c":"Pose d'un caisson, d'une retombée, d'un bâti WC","p":"habitude","g":"partout","ch":[["1","1 h"],["1.5","1 h 30"],["2","2 h"],["2.5","2 h 30"],["3","3 h"],["4","4 h"]],"d":"2.5"},{"id":"pose_h_verriere","c":"Pose d'une verrière","p":"habitude","g":"partout","ch":[["1","1 h"],["1.5","1 h 30"],["2","2 h"],["2.5","2 h 30"],["3","3 h"],["4","4 h"]],"d":"2.5"}];
 var O0={"sol_fourniture":"base","doublage_epaisseur":"160","rampants_ep1":"140","rampants_ep2":"160","rampants_suspente":"300"};
-var TITRES={murs:'Isolation des murs',rampants:'Rampants (sous la toiture)',cloisons:'Cloisons',plafonds:'Plafonds',combles:'Combles perdus',sols:'Pose des sols',partout:'Partout'};
+var TITRES={murs:'Isolation des murs',rampants:'Rampants (sous la toiture)',cloisons:'Cloisons',plafonds:'Plafonds',combles:'Combles perdus',sols:'Pose des sols',fenetres:'Fenêtres',portes:'Portes',escaliers:'Escaliers et trémies',peinture:'Peinture',elec:'Électricité',plomberie:'Plomberie',demolition:'Démolition et gravats',partout:'Partout'};
 /* quand le pré-devis passe au plan B tout seul */
 var QUAND={murs:'mur abîmé, humide, qui ne tient pas les fixations, gros faux aplomb',rampants:'chevrons plus petits que votre 1re couche',plafonds:'plafond à descendre nettement',combles:'pas de trappe pour monter aux combles'};
 /* ce qui se fait toujours, sans réglage */
 var TOUJOURS={plafonds:'Suspentes tous les 1,20 m le long des fourrures.',cloisons:'Porte à galandage : ossature 70. Client qui veut moins de bruit : 2 plaques par face. Pièce d\'eau : plaque hydro de ce côté.',sols:'Colle, joint et croisillons comptés pour le carrelage et la faïence. Double encollage imposé quand la norme l\'exige (au sol au-delà de 33 × 33, au mur au-delà de 500 cm²). Parquet collé : colle 1,3 kg/m². Sous-couche verte si « Sous-couche » est coché. Plancher : lambourdes 38 × 63 à l\'entraxe du plan.'};
-var NF={rampants:'rampants',combles:'combles',sols:'sols'}; /* « Je ne fais pas ce travail » → non_faits */
+var NF={rampants:'rampants',combles:'combles',sols:'sols',fenetres:'fenetres',portes:'portes',escaliers:'escaliers',peinture:'peinture',elec:'electricite',plomberie:'plomberie'}; /* « Je ne fais pas ce travail » → non_faits */
 var I=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'};
 var IC={
  murs:I('<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 10h18M3 15h18M9 4v6M15 10v5M9 15v5"/>'),
@@ -35,6 +35,13 @@ var IC={
  combles:I('<path d="M2 14 12 5l10 9"/><path d="M5 14h14"/><path d="M7 14c1-2 2-2 3 0s2 2 3 0 2-2 3 0"/>'),
  sols:I('<path d="M3 9h18v10H3z"/><path d="M9 9v10M15 9v10M3 14h18"/>'),
  partout:I('<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'),
+ fenetres:I('<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M12 3v18M5 12h14"/>'),
+ portes:I('<path d="M6 21V3h12v18"/><path d="M3 21h18M15 12h.5"/>'),
+ escaliers:I('<path d="M4 20h4v-4h4v-4h4V8h4"/>'),
+ peinture:I('<rect x="4" y="3" width="13" height="6" rx="1"/><path d="M17 6h3v5h-8v3"/><rect x="10" y="14" width="4" height="7" rx="1"/>'),
+ elec:I('<path d="M13 3 6 13h5l-1 8 7-10h-5z"/>'),
+ plomberie:I('<path d="M12 3c3 4 5 6.6 5 9.5a5 5 0 0 1-10 0C7 9.6 9 7 12 3z"/>'),
+ demolition:I('<path d="M4 7h16l-1.5 13h-13z"/><path d="M9 7V4h6v3M10 11v5M14 11v5"/>'),
  tete:I('<path d="M4 20h16"/><path d="M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/>')
 };
 
@@ -87,7 +94,14 @@ function bloc(q){return '<div class="hb-q"><h4>'+esc(q.court)+'</h4>'+puces(q)+'
 /* maquette n°4 validée (Cyril, 18/11 20h43) : un onglet par métier, une carte par travail qui se lit d'un coup d'œil
    (libellé → valeur en gras, ligne Plan B orange) ; « Changer » ouvre les choix dans la carte, « C'est bon » la referme.
    Le sol est un métier à part (décision Cyril 18/11 20h40). */
-var METIERS=[['plaq','Plaquiste',['murs','rampants','cloisons','plafonds','combles'],'murs'],['sol','Sols',['sols'],'sols'],['tout','Partout',['partout'],'partout']];
+/* 27/11 (Cyril : « tous les travaux, par famille avec un petit icône, et par métier ») : 6 métiers + Partout.
+   Le 5e élément = ce que « Je ne fais pas ce métier » met dans non_faits (le pré-devis ne chiffre plus ces travaux). */
+var METIERS=[['plaq','Plaquiste',['murs','rampants','cloisons','plafonds','combles'],'murs',['plaque','combles','rampants']],['sol','Sols',['sols'],'sols',['sols']],
+ ['men','Menuisier',['fenetres','portes','escaliers'],'fenetres',['fenetres','portes','escaliers']],['pei','Peintre',['peinture'],'peinture',['peinture']],
+ ['ele','Électricien',['elec'],'elec',['electricite']],['plo','Plombier',['plomberie'],'plomberie',['plomberie']],['tout','Partout',['demolition','partout'],'partout',null]];
+function metierFait(m){var nf=nonFaits();return !m[4]||!m[4].every(function(k){return nf.indexOf(k)>=0})}
+function mesMetiers(mets){return '<div class="hb-mm"><h4>Mes métiers</h4><p>Touchez ceux que vous faites. Les autres disparaissent et le pré-devis ne les chiffre pas.</p><div class="hb-ch">'+
+  mets.filter(function(m){return m[4]}).map(function(m){return '<button type="button" class="hb-c hb-met" data-met="'+m[0]+'" aria-pressed="'+metierFait(m)+'">'+(IC[m[3]]||'')+esc(m[1])+'</button>'}).join('')+'</div></div>'}
 var onglet='plaq',edit='';
 var court=function(t){return String(t).split(' (')[0]};
 function valeur(q){var v=val(q);if(SUM[q.id])return SUM[q.id](v);
@@ -102,16 +116,16 @@ function fiche(g){
   if(!e){
     if(off)return '<section class="hb-f off" data-g="'+g.id+'">'+tete+'<p class="hb-off">Je ne fais pas ce travail</p></section>';
     var rows=hab.map(function(q){return '<dt>'+esc(court(q.court))+'</dt><dd>'+esc(valeur(q))+'</dd>'}).join('');
+    var pe=hab.length&&hab.every(function(q){return q.calcul==='pas_encore'})?'<p class="hb-pe">Noté. Le pré-devis ne s\'en sert pas encore.</p>':'';
     var planb=pb.length?'<p class="hb-pbl"><b>Plan B</b><span>'+esc(pb.map(valeur).join(', '))+(QUAND[g.id]?'<i> · si '+esc(QUAND[g.id])+'</i>':'')+'</span></p>':'';
     var tj=TOUJOURS[g.id]?'<p class="hb-tjl"><b>Toujours</b><span>'+esc(TOUJOURS[g.id])+'</span></p>':'';
-    return '<section class="hb-f" data-g="'+g.id+'">'+tete+(rows?'<dl class="hb-rows">'+rows+'</dl>':'')+planb+tj+(g.id==='partout'?nfResume():'')+'</section>';
+    return '<section class="hb-f" data-g="'+g.id+'">'+tete+(rows?'<dl class="hb-rows">'+rows+'</dl>':'')+planb+tj+pe+'</section>';
   }
   return '<section class="hb-f on" data-g="'+g.id+'">'+tete+'<div class="hb-b">'+(off?'':hab.map(bloc).join('')+
       (TOUJOURS[g.id]?'<p class="hb-tj"><b>Toujours :</b> '+esc(TOUJOURS[g.id])+'</p>':'')+
       (pb.length?'<div class="hb-pb"><h4>Plan B · quand le chantier ne le permet pas</h4>'+(QUAND[g.id]?'<p>Par exemple : <b>'+esc(QUAND[g.id])+'</b>. Le pré-devis passe tout seul à ce choix.</p>':'')+pb.map(function(q){return puces(q)}).join('')+'</div>':'')+
       (det.length?'<details class="hb-d"><summary>Plus de détails</summary>'+det.map(bloc).join('')+'</details>':''))+
       (NF[g.id]?'<button type="button" class="hb-nf" data-nf="'+NF[g.id]+'">'+(off?'Je fais ce travail':'Je ne fais pas ce travail')+'</button>':'')+
-      (g.id==='partout'?nfPartout():'')+
       '<button type="button" class="btn hb-ok" data-e="">C\'est bon</button></div></section>';
 }
 function nfResume(){var q=tout().filter(function(y){return y.id==='non_faits'})[0];if(!q)return '';
@@ -119,11 +133,13 @@ function nfResume(){var q=tout().filter(function(y){return y.id==='non_faits'})[
   return v.length?'<dl class="hb-rows"><dt>Je ne fais pas</dt><dd>'+esc(v.map(function(c){return court(lib(q,c))}).join(', '))+'</dd></dl>':''}
 function rendu(){
   var ids=(G||[]).map(function(g){return g.id});
-  var mets=METIERS.filter(function(m){return m[2].some(function(k){return ids.indexOf(k)>=0})});
+  var tous=METIERS.filter(function(m){return m[2].some(function(k){return ids.indexOf(k)>=0})});
+  var mets=tous.filter(metierFait);
   if(!mets.some(function(m){return m[0]===onglet}))onglet=(mets[0]||[''])[0];
   var m=mets.filter(function(x){return x[0]===onglet})[0]||['','',[]];
   return '<p class="hb-intro">Le client en dit peu ? Votre pré-devis est calculé <b>comme vous faites d\'habitude</b>. Touchez « Changer » pour modifier.</p>'+
    (enDirect()?'':'<p class="hb-demo">Exemple : en démo, vos choix restent sur cet appareil.</p>')+
+   mesMetiers(tous)+
    '<div class="hb-tabs" role="tablist" aria-label="Mes métiers">'+mets.map(function(x){return '<button type="button" class="hb-tab" role="tab" data-t="'+x[0]+'" aria-selected="'+(x[0]===onglet)+'">'+(IC[x[3]]||'')+esc(x[1])+'</button>'}).join('')+'</div>'+
    '<div class="hb-l">'+(G||[]).filter(function(g){return m[2].indexOf(g.id)>=0}).map(fiche).join('')+'</div>'+
    '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>'+fraisHTML();
@@ -157,6 +173,10 @@ function enregistre(ch){
   file=file.then(function(){return appel({valeurs:ch})}).then(function(){peindre();toast('Habitude enregistrée','Les prochains pré-devis la prennent.')}).catch(function(e){toast('Pas enregistré',String(e.message||e));return appel().then(peindre).catch(function(){})});
 }
 function lier(c){
+  $$('.hb-met',c).forEach(function(b){b.addEventListener('click',function(){
+    var m=METIERS.filter(function(x){return x[0]===b.dataset.met})[0];if(!m)return;var v=nonFaits().slice(),fait=metierFait(m);
+    m[4].forEach(function(k){var i=v.indexOf(k);if(fait&&i<0)v.push(k);if(!fait&&i>=0)v.splice(i,1)});
+    if(!fait)onglet=m[0];enregistre({non_faits:v})})});
   $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';peindre()})});
   $$('[data-e]',c).forEach(function(b){b.addEventListener('click',function(){var g=b.dataset.e||b.closest('.hb-f').dataset.g;edit=b.dataset.e;peindre();
     var f=$('.hb-f[data-g="'+g+'"]',c);if(f&&f.scrollIntoView)f.scrollIntoView({block:'nearest',behavior:'smooth'})})});
@@ -225,7 +245,9 @@ st.textContent=
  '.hb-pb{background:var(--warn-bg);border-radius:13px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}.hb-pb h4{color:var(--warn)}.hb-pb p{margin:0;font-size:13px;line-height:1.4}'+
  '.hb-tj{margin:0;font-size:13px;color:var(--muted);line-height:1.4}'+
  '.hb-d summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);padding:2px 0}.hb-d[open] summary{margin-bottom:10px}.hb-d .hb-q+.hb-q{margin-top:12px}'+
- '.hb-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin:4px -2px 2px;scrollbar-width:none}.hb-tabs::-webkit-scrollbar{display:none}'+
+ '.hb-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px 10px;margin:4px -2px 2px}'+
+ '.hb-mm{background:var(--card);border-radius:16px;padding:12px 14px;margin:4px 0 6px;display:flex;flex-direction:column;gap:6px}.hb-mm h4{margin:0;font-size:15px}.hb-mm p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}'+
+ '.hb-met{display:inline-flex;align-items:center;gap:6px}.hb-met svg{width:16px;height:16px;flex:none}.hb-pe{margin:8px 0 0;font-size:12.5px;color:var(--muted)}.hb-tabs::-webkit-scrollbar{display:none}'+
  '.hb-tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 15px;border-radius:999px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line),0 2px 4px rgba(14,19,34,.08)}'+
  '.hb-tab svg{width:18px;height:18px}.hb-tab[aria-selected=true]{background:var(--nuit,#1B2440);color:#fff;box-shadow:none}'+
  ':root[data-theme=dark] .hb-tab[aria-selected=true]{background:#E8EAF2;color:#0E1322}'+
