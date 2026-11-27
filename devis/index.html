@@ -1551,4 +1551,4 @@ if(window.top!==window&&"IntersectionObserver" in window){const vp=document.crea
  new IntersectionObserver(es=>{const e=es[es.length-1],vb=e.isIntersecting?Math.max(0,Math.round(innerHeight-e.intersectionRect.bottom)):0;if(window.geoVis){geoVis.t=e.isIntersecting?Math.max(0,Math.round(e.intersectionRect.top)):0;geoVis.b=vb;geoReplace()}document.documentElement.style.setProperty("--vb",vb+"px")},{threshold:Array.from({length:201},(_,i)=>i/200)}).observe(vp)}
 </script>
 
-<script src="signaler.js?v=1"></script>
+<script src="signaler.js?v=2"></script>

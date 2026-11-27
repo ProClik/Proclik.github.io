@@ -46,15 +46,23 @@ function erreur(msg,ou){msg=String(msg||'').slice(0,300);if(!msg||/^Script error
 window.addEventListener('error',function(e){erreur(e.message,(e.filename||'').split('/').pop()+':'+(e.lineno||'?'))});
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;erreur(r&&(r.message||String(r))||'Promesse refusée','')});
 
+/* la copie que photographie html2canvas rejoue les animations d'apparition depuis le début (tout pâle, icônes absentes,
+   signalement n°82 du 27/11) : chaque élément animé de la copie reçoit l'état exact affiché à l'écran, animation arrêtée */
+var PROPS=['opacity','transform','visibility','filter','clip-path','translate','scale','rotate'];
+function note(src){var win=src.defaultView,M=[];[].slice.call(src.querySelectorAll('body *')).forEach(function(e){var cs=win.getComputedStyle(e);
+ if(cs.animationName==='none'&&!(e.getAnimations&&e.getAnimations().length))return;e.setAttribute('data-sgf',M.length);M.push(PROPS.map(function(k){return cs.getPropertyValue(k)}))});return M}
+function fige(M){return function(doc){try{[].slice.call(doc.querySelectorAll('[data-sgf]')).forEach(function(e){var v=M[+e.getAttribute('data-sgf')];if(!v)return;var st=e.style;
+ st.setProperty('animation','none','important');st.setProperty('transition','none','important');PROPS.forEach(function(k,i){if(v[i])st.setProperty(k,v[i],'important')})})}catch(e){}}}
+function defige(src){[].slice.call(src.querySelectorAll('[data-sgf]')).forEach(function(e){e.removeAttribute('data-sgf')})}
 /* ---------- la capture (html2canvas-pro, chargé seulement au premier « Signaler ») ----------
    html2canvas « pro » : comme html2canvas, mais il lit aussi les couleurs modernes de l'Espace (color-mix), que l'original refuse. */
 var H2C='https://cdn.jsdelivr.net/npm/html2canvas-pro@1.6.4/dist/html2canvas-pro.min.js',charge=null;
 function h2c(){var f=window.html2canvas;return typeof f==='function'?f:f&&(f.default||f.html2canvas)}
 function lib(){if(h2c())return Promise.resolve();if(charge)return charge;
  charge=new Promise(function(ok,ko){var s=d.createElement('script');s.src=H2C;s.onload=ok;s.onerror=function(){charge=null;ko(new Error('capture indisponible'))};d.head.appendChild(s)});return charge}
-function capture(){return lib().then(function(){var w=innerWidth,h=innerHeight,ech=Math.min(1,1000/Math.max(w,1));
+function capture(){var M;return lib().then(function(){var w=innerWidth,h=innerHeight,ech=Math.min(1,1000/Math.max(w,1));M=note(d);
  return h2c()(d.body,{x:scrollX,y:scrollY,width:w,height:h,windowWidth:w,windowHeight:h,scale:ech,logging:false,useCORS:false,backgroundColor:getComputedStyle(d.body).backgroundColor||'#fff',
-  ignoreElements:function(el){return el.id==='sg-b'||el.id==='sg'}})}).then(function(c){return c.toDataURL('image/jpeg',.72)})}
+  ignoreElements:function(el){return el.id==='sg-b'||el.id==='sg'},onclone:fige(M)})}).then(function(c){defige(d);return c.toDataURL('image/jpeg',.72)},function(e){defige(d);throw e})}
 
 /* ---------- l'écran « Signaler » ---------- */
 var st=d.createElement('style');st.textContent=
