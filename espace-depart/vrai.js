@@ -132,7 +132,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)
    Code provisoire donné par Cyril (PC-XXXX-XXXX) ou lien d'invitation (#invit=…) → « Choisissez votre mot de passe ». */
 var apres=null,KM='pc-vrai-email';
 /* 24/11 : un lien salarié/client ouvert sur cet appareil ne doit jamais empêcher le patron de se reconnecter */
-function connecte(x){var mb=lsG('pc-membre');lsS(KJ,x.jeton);lsS(KA,x.artisan);if(mb){['pc-membre','pc-role','pc-vrai-liste'].forEach(function(k){lsS(k,null)});setTimeout(function(){location.reload()},200);return}if(window.PCMenus)window.PCMenus.applique();fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
+function connecte(x){var mb=lsG('pc-membre');
+ /* 27/11 compte sans démo (ProClik Test) : les exemples posés sur l'appareil avant la connexion sont retirés AVANT de partir au compte, puis l'Espace se rouvre vide */
+ if(!mb&&!window.PCSANSDEMO&&window.PCSD&&PCSD.pour(x.artisan&&x.artisan.code)){lsS(KA,x.artisan);try{PCSD.nettoyer()}catch(e){}lsS(KJ,x.jeton);fermer();setTimeout(function(){location.reload()},120);return}
+ lsS(KJ,x.jeton);lsS(KA,x.artisan);if(mb){['pc-membre','pc-role','pc-vrai-liste'].forEach(function(k){lsS(k,null)});setTimeout(function(){location.reload()},200);return}if(window.PCMenus)window.PCMenus.applique();fermer();demarrer();if(apres){var a=apres;apres=null;a()}}
 function oeil(id,inp){$(id).addEventListener('change',function(){[].concat(inp).forEach(function(i){i.type=this.checked?'text':'password'},this)})}
 function connexion(msg){
  ouvrir('Votre Espace<small>Connexion à l\'Espace ProClik</small>',
@@ -865,9 +868,9 @@ function demarrer(){var art=lsG(KA)||{};document.documentElement.classList.add('
  var col=$('#v-devis .grid2 .col');if(col&&!$('#vd')){var v=document.createElement('div');v.id='vd';col.insertBefore(v,col.firstChild)}
  var td=$('#todo');if(td&&!$('#va')){var a=document.createElement('div');a.id='va';td.parentNode.insertBefore(a,td)}
  var ex='<b>Exemple de démonstration.</b> Ici rien n\'est encore branché : seules vos demandes (Accueil, Clients et Devis) sont réelles.';
- ['#v-planning','#v-chantiers','#v-prix'].forEach(function(s){bandeauExemple(s,ex)});
- bandeauExemple('#v-factures','<b>En dessous : exemple de démonstration.</b> Vos vrais devis et factures sont dans le premier cadre.');if(!lsG('pc-membre'))chargerFa();
- var ag=$('#v-accueil .agenda');if(ag&&!ag.previousElementSibling.classList.contains('vexemple')){var d=document.createElement('div');d.className='vexemple';d.innerHTML='<b>Agenda : exemple.</b> Le vrai planning arrive plus tard.';ag.parentNode.insertBefore(d,ag)}
+ if(!window.PCSANSDEMO){['#v-planning','#v-chantiers','#v-prix'].forEach(function(s){bandeauExemple(s,ex)});
+ bandeauExemple('#v-factures','<b>En dessous : exemple de démonstration.</b> Vos vrais devis et factures sont dans le premier cadre.')}/* 27/11 compte sans démo : rien d'exemple, donc pas de bandeau */if(!lsG('pc-membre'))chargerFa();
+ var ag=$('#v-accueil .agenda');if(ag&&!window.PCSANSDEMO&&!ag.previousElementSibling.classList.contains('vexemple')){var d=document.createElement('div');d.className='vexemple';d.innerHTML='<b>Agenda : exemple.</b> Le vrai planning arrive plus tard.';ag.parentNode.insertBefore(d,ag)}
  // Le message de démonstration « Nouvelle demande : Mme Durand » ne doit pas apparaître ici.
  setTimeout(function(){var t=$('#toast'),tt=$('#tt');if(t&&tt&&/Nouvelle demande de devis/.test(tt.textContent))t.classList.remove('on')},2200);
  var c=lsG(KL);if(c){c._cache=true;LISTE=c;ETAPES=c.etapes||[]}rendre();if(!lsG('pc-membre'))charger();}/* salarié (lien personnel) : ni demandes ni factures du service */

@@ -18,6 +18,7 @@ if(!DOS.fabre)DOS.fabre={n:'M. Fabre',v:'Seyssinet-Pariset',adr:'[adresse], Seys
 if(!DOS.rey)DOS.rey={n:'Boulangerie Rey',v:'Grenoble',adr:'[adresse], Grenoble',tel:'04 •• •• •• 19',t:'Faux plafond du fournil',k:'chantier',ch:'rey',src:'Téléphone',chat:[],ph:[],docs:[],
  hist:[['lun. 28/09','Devis 0034 signé'],['mar. 29/09','Acompte reçu'],['lun. 5 → mer. 7/10','Chantier'],['mer. 7/10','Facture finale envoyée'],['ven. 9/10','Tout est payé']]};
 if(window.PCDEMO){if(sh0)PCDEMO.deep(DOS.fabre);if(sh1)PCDEMO.deep(DOS.rey)}
+if(window.PCSANSDEMO){if(sh0)delete DOS.fabre;if(sh1)delete DOS.rey}/* 27/11 compte sans démo */
 
 /* ---------- les devis (numéros de la démo) et les factures ---------- */
 var DVX=[{id:'0037',cli:'alpes',ht:CH.alpes?CH.alpes.fin.ht:0,tva:20,st:'signe',d:'ven. 2/10'},{id:'0036',cli:'perrin',ht:2180,tva:5.5,st:'signe',d:'mer. 7/10'},
@@ -243,6 +244,7 @@ function tousDevis(){var L=[];D.forEach(function(d){L.push({id:d.id,cli:Object.k
  return DVN.slice().reverse().concat(L,DVX)}
 var RC=[{id:'r1',ch:'alpes',four:'Négoce Isère Matériaux',d:'mar. 13/10',ht:463.2,st:'apayer',note:'Rangée dans le chantier Alpes Kiné · 3 suspentes manquent par rapport à la livraison'},
  {id:'r2',ch:'perrin',four:'Négoce Isère Matériaux',d:'jeu. 8/10',ht:618,st:'payee',note:'Rangée dans le chantier de Mme Perrin'}];
+if(window.PCSANSDEMO)RC.length=0;/* 27/11 compte sans démo */
 var RCs=X.lsGet('pc-rc1',{});RC.forEach(function(r){if(RCs[r.id])r.st=RCs[r.id]});
 function ligneRc(r){return '<button class="cf-li" type="button" data-crc="'+r.id+'"><span class="cf-av cf-doc">'+I('<path d="M3 13h5l2 3h4l2-3h5"/><path d="M3 13l3-8h12l3 8v6H3z"/>')+'</span><span class="tx"><b>'+esc(r.four)+'</b><small>reçue '+esc(r.d)+' · '+esc(CH[r.ch]?CH[r.ch].n:'')+'</small></span><span class="cf-m"><b>'+eur(r.ht)+'</b><span class="pill '+(r.st==='payee'?'ok':'warn')+'">'+(r.st==='payee'?'Payée':'À payer')+'</span></span></button>'}
 var seg='fa',segChoisi=false;
@@ -263,6 +265,8 @@ function vueFactures(){
    (A.length?'<div class="sec-h"><h2>En attente de paiement</h2><span>relances automatiques</span></div><div class="card lst cf-l">'+A.map(function(f){return ligneFa(f)}).join('')+'</div>':'')+
    (Y.length?'<div class="sec-h"><h2>Payées</h2><span>les plus récentes</span></div><div class="card lst cf-l">'+Y.map(function(f){return ligneFa(f)}).join('')+'</div>':'');}
  else h+='<div class="sec-h"><h2>Reçues des fournisseurs</h2><span>arrivées toutes seules</span></div><div class="card lst cf-l">'+RC.map(ligneRc).join('')+'</div><p class="hint">Depuis le 1<sup>er</sup> septembre 2026, vos fournisseurs peuvent vous envoyer des factures électroniques. Elles arrivent ici et se rangent dans le bon chantier.</p>';
+ /* 27/11 compte sans démo : seulement les vraies factures (cadre du haut) et « Nouvelle facture », pas de liste d'exemple */
+ if(window.PCSANSDEMO){var cut=h.indexOf('<div class="seg cf-seg');if(cut>0)h=h.slice(0,cut)+'</div></div>'}else
  h+='<span class="exemple">Exemples de démonstration · rien n\'est envoyé</span></div></div>';
  poser('#v-factures',h);
  if(!document.documentElement.classList.contains('pcvrai')){var b=$('#badge-f'),n=nEnv('fa')+nEnv('ac');if(b){b.textContent=n;b.hidden=!n}}}

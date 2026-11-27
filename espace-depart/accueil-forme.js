@@ -145,7 +145,7 @@ function rendre(){var D=A.donnees(),J=jour(),C0=conf(),B=C0.on,h="",H={};
   h+='<div class="titre"><div><div class="date">'+esc(jourTxt(J.j))+"</div><h1>"+esc(salut())+"</h1></div></div>";
   var vco=$("#vco");
   if(vco&&!vco.hidden){var sp=vco.querySelector("span");h+='<div class="demo-b"><span>'+(sp?sp.innerHTML:"<b>Mode démo.</b>")+'</span><button class="pill" type="button" data-f2="connexion" style="height:34px;padding:0 14px;font-size:12.5px">Se connecter</button></div>'}
-  h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
+  if(!window.PCSANSDEMO)h+='<div class="exn">'+(D.demo?"Chiffres d'exemple":"Chiffres, agenda et chantiers d'exemple")+"</div>";
   /* 24/11 (Cyril : « ça fait vide sur iPad ou PC ») : deux colonnes sur grand écran. À gauche ce qu'on fait (demander, scanner, la journée, à faire), à droite ce qu'on regarde (chiffres, chantiers, créer). Sur téléphone : rien ne change, tout reste l'un sous l'autre. */
   var ask='<button class="ask2" type="button" data-f2="parler"><span>Que voulez-vous faire ?</span><span class="mic2">'+ic("mic")+"</span></button>";
   /* Mode Cliky (Cyril 22/11) : une seule entrée, bien visible, seulement avec l'option Cliky. Une photo, une image ou un PDF,
@@ -201,7 +201,10 @@ function rendre(){var D=A.donnees(),J=jour(),C0=conf(),B=C0.on,h="",H={};
       '<div class="leg"><span><i></i>Encaissé</span><span><i class="r"></i>À encaisser 2 760 €</span><span><i class="v"></i>Pas encore facturé</span></div>'+
       
       '<div class="dv"><span>Devis signés</span><span class="pts"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><b>3 sur 5</b></div>'+
-      "</section>"}
+      "</section>";
+    /* 27/11 compte sans démo : pas de montants inventés tant que les vrais chiffres ne sont pas branchés ici */
+    if(window.PCSANSDEMO)H.chiffres='<div class="sec"><h2>Mes chiffres</h2><span class="lien">'+MN.charAt(0).toUpperCase()+MN.slice(1)+' · HT</span></div>'+
+      '<section class="chif2 cv1"><button class="chq" type="button" data-accv="factures"><span class="x"><b>Pas encore de chiffres ici</b><span>Vos vraies factures sont dans Factures</span></span><span class="vb">Ouvrir</span></button></section>'}
 
   /* 4. chantiers : liste légère, sans répéter la journée */
   var C=X.CH||{},av=X.avc||function(){return 0},CL=Object.keys(C).map(function(k){return C[k]}).filter(function(c){return c.st==="run"||c.st==="start"});

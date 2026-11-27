@@ -733,6 +733,8 @@ function dictee2(btn,ta){var SR=window.SpeechRecognition||window.webkitSpeechRec
    Marche pareil pour une entreprise sans architecte (RT2O, ERAL) : « Vous » = l'entreprise qui pilote le chantier. */
 var PIECES={alpes:[['Salle d\'attente',8,8,68,46],['Accueil',76,8,76,46],['Cabinet 1',8,54,44,38],['Couloir',52,54,60,38],['Cabinet 2',112,54,40,38]]};
 var EQS=[['Thomas','Chef'],['Kevin','Plaquiste'],['Mathieu','Plaquiste'],['Lucas','Apprenti']];
+/* 27/11 compte sans démo : les vrais salariés (Mon équipe), pas l'équipe d'exemple */
+function eqsL(){return window.PCSANSDEMO?((window.PCEQ&&PCEQ.EQ)||[]).map(function(p){return [p.n,p.r||'Salarié']}):EQS}
 var IC_CLI=I('<circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.8 3.6-5.6 7-5.6s6.2 1.8 7 5.6"/>');
 function pieces(c){return PIECES[c.id]||[['Tout le chantier',8,8,144,84]]}
 function resL(c){var P=part(c);if(!P.res)P.res=c.id==='alpes'?[
@@ -748,7 +750,7 @@ function offE(c,e){var P=part(c);return e.coupe||(P.termine&&!resOuv(c,e.id))}
 var RST={ouv:['À corriger','al'],corr:['Corrigée, à valider','wa'],val:['Validée','ok']};
 function equipeOn(){return !(window.PCOPT&&PCOPT.actif('equipe')===false)&&!(window.PC_ENT&&PC_ENT.modules&&PC_ENT.modules.equipe===false)}
 function entDe(c,id){if(id==='moi')return {n:'Vous',m:'',ic:'archi'};if(id==='cli'){var k=cliDe(c);return {n:k?k.n:'Le client',m:'Client',ic:'cli'}}
- if(String(id).indexOf('sal:')===0){var s=EQS.filter(function(x){return 'sal:'+x[0]===id})[0]||[id.slice(4),'Salarié'];return {n:s[0],m:s[1]+' · votre équipe',ic:metDe(s[1]),sal:1}}
+ if(String(id).indexOf('sal:')===0){var s=eqsL().filter(function(x){return 'sal:'+x[0]===id})[0]||[id.slice(4),'Salarié'];return {n:s[0],m:s[1]+' · votre équipe',ic:metDe(s[1]),sal:1}}
  return part(c).ent.filter(function(x){return x.id===id})[0]||{n:'À attribuer',m:'',ic:'autre'}}
 function icQ(e){return e&&e.ic==='cli'?IC_CLI:icEnt(e)}
 /* plan des réserves au style du plan ProClik (Cyril 19/11 : « peaufiner le plan ») :
@@ -828,7 +830,7 @@ function resCard(c){var R=resL(c),P=part(c),n=resOuv(c),cli=cliDe(c),tri=X.lsGet
  else if(!P.termine&&c.st!=='done')h+='<button type="button" class="btn" id="cp-rec" style="width:100%;margin-top:10px">'+I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')+'<span>Réception avec '+esc(cli?cli.n:'le client')+'</span></button>';
  return h+'</div>'}
 /* qui peut corriger : entreprises invitées, salariés (module Équipe), vous */
-function quiChoix(c){var L=part(c).ent.map(function(e){return [e.id,e]});if(equipeOn())EQS.forEach(function(s){L.push(['sal:'+s[0],entDe(c,'sal:'+s[0])])});L.push(['moi',{n:'Vous',ic:'archi'}]);return L}
+function quiChoix(c){var L=part(c).ent.map(function(e){return [e.id,e]});if(equipeOn())eqsL().forEach(function(s){L.push(['sal:'+s[0],entDe(c,'sal:'+s[0])])});L.push(['moi',{n:'Vous',ic:'archi'}]);return L}
 function signaler(c,pc0,retour){var F={pc:pc0||'',ent:'',ph:0},Pz=pieces(c);if(Pz.length===1)F.pc=Pz[0][0];
  var h='<div class="ch-f"><button type="button" class="cp-phb" id="rs-ph">'+photoT('Prendre une photo',0)+'</button>'+
   '<div class="cp-w" style="margin-top:4px"><textarea id="rs-t" rows="2" placeholder="Ce qui ne va pas, en une phrase…"></textarea><button type="button" class="cp-ro pk" id="rs-mic" aria-label="Dicter">'+IC.micro+'</button></div>'+

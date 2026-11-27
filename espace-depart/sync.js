@@ -36,7 +36,11 @@ function appel(chemin,o,garder){o=o||{};var h={Authorization:'Bearer '+jeton()};
 /* Tiroir que le service ne connaît pas encore (nouveau dans l'Espace, service pas encore à jour) : il reste sur l'appareil
    et ne bloque JAMAIS l'envoi des autres. Il repart à la prochaine ouverture. */
 var refuse={};
-function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale&&!refuse[k]});if(!L.length)return;
+/* 27/11 : un tiroir jamais encore synchronisé sur cet appareil ne part qu'après avoir relu le compte une première fois.
+   Sinon, sur un nouvel appareil, ce que l'Espace écrit tout seul à l'ouverture (planning de l'équipe, liste du chantier…)
+   partait avant la lecture et remplaçait les vraies données du compte. */
+var relu=0;
+function envoyer(garder){if(!actif()||enCours)return;var m=meta(),L=CLES.filter(function(k){return m.k[k]&&m.k[k].sale&&!refuse[k]&&(relu||m.k[k].maj)});if(!L.length)return;
  enCours=1;var k=L[0],v=ls.getItem(k),corps=JSON.stringify({cle:k,val:v,base:(m.k[k]&&m.k[k].maj)||0});
  if(garder&&corps.length>60000){enCours=0;return}/* trop gros pour partir pendant la fermeture : part à la prochaine ouverture */
  appel('/espace/donnees',{method:'POST',body:corps},garder).then(function(r){var m2=meta();m2.k[k]=m2.k[k]||{};m2.k[k].maj=r.maj;
@@ -64,12 +68,14 @@ function tirer(){if(!actif())return;arret=0;
     m={a:r.compte,k:{}};CLES.forEach(function(k){if(D[k])m.k[k]={maj:D[k].maj}});
    }else{m.a=r.compte;
     CLES.forEach(function(k){var d=D[k],e=m.k[k]=m.k[k]||{},v=ls.getItem(k);
-     if(d&&d.maj>(e.maj||0)){if(e.sale)return;/* changé ici aussi sans avoir pu partir : le plus récent gagne, il repart */
+     if(d&&d.maj>(e.maj||0)){if(e.sale&&e.maj)return;/* changé ici aussi sans avoir pu partir : le plus récent gagne, il repart */
+      /* 27/11 : jamais synchronisé sur cet appareil (écrit tout seul à l'ouverture) : le compte gagne, l'ancien est gardé (pose → sauve) */
+      delete e.sale;
       if(v!==d.val){pose(k,d.val);change=1}e.maj=d.maj;}
      else if(!d&&v!=null&&!e.maj)e.sale=1;/* jamais envoyé (Espace utilisé avant ce branchement) : il part */});
    }
   }finally{calme--}
-  ecrisMeta(m);etat('ok');
+  ecrisMeta(m);relu=1;etat('ok');
   if(change){var t=0;try{t=+sessionStorage.getItem('pc-sync-rl')||0}catch(e){}
    if(Date.now()-t>20000){try{sessionStorage.setItem('pc-sync-rl',String(Date.now()))}catch(e){}location.reload();return}}
   envoyer()},function(e){etat('attente',e.message)})}

@@ -33,6 +33,7 @@ var BASE0=[{c:'PLA-CLO',d:'Cloison sur ossature, une plaque par face',u:'m²',p:
  {c:'PLA-BJ',d:'Bandes et joints, prêt à peindre',u:'m²',p:10.95,t:'Plâtrerie'},{c:'FEN-POSE-RENO',d:'Pose de fenêtre en rénovation sur l\'ancien cadre',u:'u',p:202.5,t:'Menuiserie'},
  {c:'MO-H',d:'Main-d\'œuvre (heure)',u:'h',p:42,t:'Main-d\'œuvre'},{c:'SOL-POSE',d:'Pose de parquet flottant (main-d\'œuvre)',u:'m²',p:18,t:'Sols',ex:1},
  {c:'PRO-NET',d:'Protection et nettoyage du chantier',u:'forfait',p:120,t:'Divers',ex:1}];
+if(window.PCSANSDEMO)BASE0=[];/* 27/11 compte sans démo : la base part vide (la base Cliky du service reste) */
 var BASE=X.lsGet('pc-base1',null)||BASE0;
 /* La base est partagée avec l'onglet Produits : relue à chaque appel (un produit créé ailleurs apparaît tout de suite) */
 function relire(){var b=X.lsGet('pc-base1',null);if(b&&b.length)BASE=b;return BASE}
@@ -48,6 +49,7 @@ function prep(){
  var a=X.find('0044');if(a&&!a.plan)a.plan=1;
  var shR=!DOS.roche;if(!DOS.roche)DOS.roche={n:'Mme Roche',v:'Saint-Égrève',adr:'[adresse], Saint-Égrève',tel:'06 •• •• •• 71',t:'Parquet du salon et de la chambre',k:'devis',src:'Formulaire du site',dv:'0046',chat:[],ph:[],docs:[],hist:[['lun. 26/10','Demande reçue sur votre site, plan dessiné'],['mar. 27/10','Demande de prix envoyée par vous à Négoce Isère Matériaux']]};
  if(shR&&window.PCDEMO)PCDEMO.deep(DOS.roche);
+ if(shR&&window.PCSANSDEMO)delete DOS.roche;/* 27/11 compte sans démo */
  if(!X.find('0046'))(window.PCDEMO?PCDEMO.push.bind(null,D):D.push.bind(D))({id:'0046',client:'Mme Roche',ville:'Saint-Égrève',titre:'Parquet du salon et de la chambre',recu:'lun. 26/10',tva:10,statut:'four',marge:'v',dos:'roche',
   four:{n:'Négoce Isère Matériaux',env:'mar. 27/10',att:'réponse attendue sous 48 h'},
   ask:[['Travaux','Parquet flottant'],['Pièces','salon et chambre'],['Surface','environ 34 m² (plan du client)']],fil:[['lun. 26/10','Demande reçue sur votre site'],['mar. 27/10','Demande de prix envoyée au fournisseur']],

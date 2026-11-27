@@ -65,7 +65,7 @@ var EX=[{c:'EX-BA13',d:'Plaque BA13 standard 120 × 250',u:'u',p:7.9,i:'ba13',k:
  {c:'EX-EJ',d:'Enduit à joint · sac de 25 kg',u:'sac',p:19.8,i:'enduit',k:'produit',f:'Enduits et bandes',ex:1},
  {c:'EX-CLO',d:'Pose cloison simple peau',x:'Laine 45 mm, montant 48 accolé, hauteur 2,50 m',u:'m²',p:50,i:'casque',k:'prestation',f:'Plaques et cloisons',ex:1}];
 function lire(){var b=lsG('pc-base1',null);if(Array.isArray(b))return b;try{if(X&&typeof X.base==='function'){var z=X.base();if(Array.isArray(z))return z}}catch(e){}return []}
-function liste(){var b=lire(),vu={};b.forEach(function(p){vu[sansAcc(p.d)]=1});return b.concat(EX.filter(function(p){return !vu[sansAcc(p.d)]&&!lsG('pc-prod-ex-'+p.c,0)}))}
+function liste(){var b=lire(),vu={};if(window.PCSANSDEMO)return b;b.forEach(function(p){vu[sansAcc(p.d)]=1});return b.concat(EX.filter(function(p){return !vu[sansAcc(p.d)]&&!lsG('pc-prod-ex-'+p.c,0)}))}
 function usages(){var u=lsG('pc-base-usage',{})||{};return typeof u==='object'?u:{}}
 function chercher(t){var q=sansAcc(t).trim(),U=usages(),L=liste();
  if(q)L=L.filter(function(p){return sansAcc(p.d+' '+(p.x||'')+' '+famille(p)+' '+(ICO[icoDe(p)]||[''])[0]+' '+(ICO[icoDe(p)]||['','','',''])[3]).indexOf(q)>=0});
