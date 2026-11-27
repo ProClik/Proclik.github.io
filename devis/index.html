@@ -1122,7 +1122,7 @@ function badge(sec,it){
 function cloPortes(){return S.travaux.includes("cloison")&&S.mode!=="plan"?((S.cloison||{}).items||[]).reduce((a,it)=>a+(+it.portes||0),0):0}
 function CNTL(){const c=cloPortes()||(cur==="portes"&&!S.travaux.includes("portes")),apt=/appart/i.test((S.logement||{}).type||"");return cur==="portes"&&c?`Ailleurs ${apt?"dans l'appartement":"dans la maison"}, d'autres portes à changer ou à ajouter ?`:D[cur].g.cnt}
 function CNT0(){const c=cloPortes();if(cur==="portes"&&!c&&!S.travaux.includes("portes"))return"0 s'il n'y en a pas.";return cur==="portes"&&c?`${c>1?"Les "+c+" portes":"La porte"} de vos cloisons ${c>1?"sont déjà réglées":"est déjà réglée"}. 0 s'il n'y en a pas d'autres.`:""}
-function render(){
+function render(){/* Cyril 27/11 : la page se recharge (iPad, page GHL) = on revient à l'écran où on était, pas au début */if(cur!=="intro"&&cur!=="done"&&S._cur!==cur){S._cur=cur;save()}
  const app=document.getElementById("app"),nav=document.getElementById("nav"),prog=document.getElementById("prog");
  document.body.classList.toggle("instep",cur!=="intro"&&cur!=="done");document.body.dataset.cur=cur;document.body.classList.toggle("nonav",cur==="intro"||cur==="done");document.body.classList.toggle("intro",cur==="intro");
  if(cur==="intro"){prog.hidden=true;nav.hidden=true;render.k="intro";app.innerHTML=introH();fitPage.H=innerHeight;setTimeout(fitRoom);{const i=document.getElementById("in-pre");i.addEventListener("input",()=>{S.contact.prenom=i.value.replace(/^\s+/,"");document.getElementById("in-err").textContent="";save()});i.addEventListener("keydown",e=>{if(e.key==="Enter")document.querySelector("[data-start]").click()})}return}
@@ -1541,6 +1541,7 @@ document.addEventListener("input",ev=>{const el=ev.target,ds=el.dataset;if(ds.pn
 document.addEventListener("change",ev=>{const el=ev.target;if(!el.dataset.file)return;const k=el.dataset.file;
  [...el.files].forEach(f=>{if(!/^image\/|application\/pdf/.test(f.type))return;if(f.size>15*1024*1024)return;
   if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>{files[k].push({name:f.name,img:r.result,file:f,tag:el.dataset.tag||null});render()};r.readAsDataURL(f)}else{files[k].push({name:f.name,img:null,file:f});render()}});});
+{const c=S._cur;try{if(c&&c!=="intro"&&c!=="done"&&steps().includes(c))cur=c}catch(e){}}
 render();
 {const hp=new URLSearchParams(location.hash.slice(1)),rp=hp.get("reprise");if(rp)unpackS(rp).then(o=>{if(!o||!o.S||!o.S.travaux)return;S=o.S;cur=o.cur||"travaux";save();hp.delete("reprise");try{history.replaceState(null,"",location.pathname+location.search+(hp.toString()?"#"+hp.toString():""))}catch(e){}render()}).catch(()=>{})};
 })();
