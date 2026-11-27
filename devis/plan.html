@@ -493,6 +493,8 @@ html.leger.client #t-undo{font-size:0!important;width:44px!important;height:44px
 html.leger.client #t-undo span{display:none!important}
 html.leger.client #t-undo svg{width:22px!important;height:22px!important;margin:0!important}
 html.leger.client #board>#floors{position:absolute!important;top:8px;left:8px;width:auto!important;max-width:calc(100% - 70px);overflow-x:auto;flex-wrap:nowrap;z-index:6;margin:0!important}
+/* 27/11 (Cyril #115) : l'anneau laiton de l'étage choisi était coupé en carré par le cadre qui défile : on lui laisse 4 px tout autour */
+html.leger.client #board>#floors{top:4px;left:4px;padding:4px!important}
 html.leger.client.hastoit #board .fl.tl{top:58px!important}
 /* 27/11 (Cyril : « Plan Toit sont sur le plan ») : le choix Plan / Toit se range sur la ligne de l'étage, à côté, quand il y a la place (tlPos) */
 html.leger.client.hastoit.tlrow #board .fl.tl{top:8px!important;left:var(--tl-left,8px)!important}
