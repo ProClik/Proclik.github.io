@@ -55,7 +55,7 @@ var SUM={
  poignee:function(v){return v==='non'?'sans poignée':'poignée fournie'},
  protection:function(v){return v==='non'?'sans protection':'protection et nettoyage'}
 };
-var G=null,V={},ORI={};
+var G=null,V={},ORI={},MO=null;
 function depuisDemo(){
   var g={};Q0.forEach(function(q){(g[q.g]=g[q.g]||[]).push({id:q.id,court:q.c,partie:q.p,type:q.t==='m'?'multi':'choix',choix:q.ch,si:q.si,defaut:q.d})});
   G=Object.keys(TITRES).filter(function(k){return g[k]}).map(function(k){return {id:k,titre:TITRES[k],questions:g[k]}});
@@ -63,7 +63,7 @@ function depuisDemo(){
 }
 function appel(corps){
   return fetch(SERVICE+'/espace/habitudes',{method:corps?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+jeton()},body:corps?JSON.stringify(corps):undefined,cache:'no-store'})
-   .then(function(r){return r.json().catch(function(){return {}}).then(function(x){if(!r.ok||!x.ok)throw new Error(x.erreur||('Service '+r.status));G=x.groupes;V=x.valeurs||{};ORI=x.origine||{};if(!corps||corps.frais)fraisCompte(x);return x})});
+   .then(function(r){return r.json().catch(function(){return {}}).then(function(x){if(!r.ok||!x.ok)throw new Error(x.erreur||('Service '+r.status));G=x.groupes;V=x.valeurs||{};ORI=x.origine||{};MO=x.mo||null;if(!corps||corps.frais)fraisCompte(x);return x})});
 }
 /* valeur affichée : celle de l'artisan, sinon le réglage de départ du calcul (defaut) */
 function val(q){var v=V[q.id];if(v==null||v==='')v=q.defaut;if(q.type==='multi')return Array.isArray(v)?v:String(v||'').split(/[,;]\s*/).filter(Boolean);return v==null||v===''?(q.choix[0]||[])[0]:String(v)}
@@ -102,7 +102,7 @@ var METIERS=[['plaq','Plaquiste',['murs','rampants','cloisons','plafonds','combl
 function metierFait(m){var nf=nonFaits();return !m[4]||!m[4].every(function(k){return nf.indexOf(k)>=0})}
 function mesMetiers(mets){return '<div class="hb-mm"><h4>Mes métiers</h4><p>Touchez ceux que vous faites. Les autres disparaissent et le pré-devis ne les chiffre pas.</p><div class="hb-ch">'+
   mets.filter(function(m){return m[4]}).map(function(m){return '<button type="button" class="hb-c hb-met" data-met="'+m[0]+'" aria-pressed="'+metierFait(m)+'">'+(IC[m[3]]||'')+esc(m[1])+'</button>'}).join('')+'</div></div>'}
-var onglet='plaq',edit='';
+var onglet='plaq',edit='',detO='';
 var court=function(t){return String(t).split(' (')[0]};
 function valeur(q){var v=val(q);if(SUM[q.id])return SUM[q.id](v);
   return q.type==='multi'?(v.length?v.map(function(c){return court(lib(q,c))}).join(', '):'Aucun'):court(lib(q,v))}
@@ -124,7 +124,7 @@ function fiche(g){
   return '<section class="hb-f on" data-g="'+g.id+'">'+tete+'<div class="hb-b">'+(off?'':hab.map(bloc).join('')+
       (TOUJOURS[g.id]?'<p class="hb-tj"><b>Toujours :</b> '+esc(TOUJOURS[g.id])+'</p>':'')+
       (pb.length?'<div class="hb-pb"><h4>Plan B · quand le chantier ne le permet pas</h4>'+(QUAND[g.id]?'<p>Par exemple : <b>'+esc(QUAND[g.id])+'</b>. Le pré-devis passe tout seul à ce choix.</p>':'')+pb.map(function(q){return puces(q)}).join('')+'</div>':'')+
-      (det.length?'<details class="hb-d"><summary>Plus de détails</summary>'+det.map(bloc).join('')+'</details>':''))+
+      (det.length?'<div class="hb-d"><button type="button" class="hb-dt" data-det="'+g.id+'" aria-expanded="'+(detO===g.id)+'">'+(detO===g.id?'Moins de détails':'Plus de détails')+'</button>'+(detO===g.id?'<div class="hb-dc">'+det.map(bloc).join('')+'</div>':'')+'</div>':''))+
       (NF[g.id]?'<button type="button" class="hb-nf" data-nf="'+NF[g.id]+'">'+(off?'Je fais ce travail':'Je ne fais pas ce travail')+'</button>':'')+
       '<button type="button" class="btn hb-ok" data-e="">C\'est bon</button></div></section>';
 }
@@ -142,7 +142,7 @@ function rendu(){
    mesMetiers(tous)+
    '<div class="hb-tabs" role="tablist" aria-label="Mes métiers">'+mets.map(function(x){return '<button type="button" class="hb-tab" role="tab" data-t="'+x[0]+'" aria-selected="'+(x[0]===onglet)+'">'+(IC[x[3]]||'')+esc(x[1])+'</button>'}).join('')+'</div>'+
    '<div class="hb-l">'+(G||[]).filter(function(g){return m[2].indexOf(g.id)>=0}).map(fiche).join('')+'</div>'+
-   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>'+fraisHTML();
+   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>'+moHTML()+fraisHTML();
 }
 /* Frais par jour de chantier (Cyril 25/11) : repas, carburant… × jours de pose estimés = « marge réelle estimée » du pré-devis.
    Simple estimation, vide par défaut (aucun chiffre inventé), gardée sur cet appareil. */
@@ -157,6 +157,29 @@ function fraisHTML(){var f=fraisJour();
    champ('equipe','Votre équipe','personnes sur le chantier, vous compris',f.equipe>1?f.equipe:'',0)+
    (f.equipe>1?champ('salarie','Coût d\'un salarié','par jour, charges comprises',f.salarie,1):'')+
    '<p class="hb-demo">'+(enDirect()?'Enregistré sur votre compte.':'En démo : gardé sur cet appareil.')+'</p></div>'}
+/* Main-d'œuvre (Cyril 27/11, signalement n°95 « je ne trouve pas le prix à la journée ») : à l'heure ou à la journée.
+   À la journée : taux horaire du pré-devis = prix de la journée ÷ heures par jour. Le même choix compte les jours de pose (Mes cadences). */
+function moEtat(){var J=window.PCJR&&PCJR.joursPose?PCJR.joursPose():(lsG('pc-mo',null)||{m:'h',h:0,hj:8,j:0}),
+  t=enDirect()?(MO&&MO.taux_horaire)||0:(+J.h||0),hj=+J.hj||8;
+  return {m:J.m==='j'?'j':'h',t:t,hj:hj,j:+J.j||(t?Math.round(t*hj*100)/100:0)}}
+function moHTML(){var e=moEtat(),seg=function(m,t){return '<button type="button" role="tab" data-mom="'+m+'" aria-selected="'+(e.m===m)+'">'+t+'</button>'},
+  ch=function(k,t,sm,v,u){return '<label class="hb-fl"><span><b>'+t+'</b><small>'+sm+'</small></span><span class="hb-fi"><input type="text" inputmode="decimal" data-mo="'+k+'" value="'+(v?String(v).replace('.',','):'')+'" placeholder="0"> <i>'+u+'</i></span></label>'};
+  var soit=e.m==='j'?(e.j&&e.hj?'Soit '+eu(e.j/e.hj)+' de l\'heure dans le pré-devis.':''):(e.t?'Soit '+eu(e.t*e.hj)+' la journée de '+String(e.hj).replace('.',',')+' h.':'');
+  return '<div class="hb-f hb-fj" id="hb-mo"><div class="hb-ft"><h3>Votre main-d\'œuvre</h3></div>'+
+   '<p class="hb-tj">Le prix de votre travail dans le pré-devis. Les temps (2 h 30 pour un caisson…) sont comptés à ce prix.</p>'+
+   '<div class="seg hb-seg" role="tablist" aria-label="Main-d\'œuvre">'+seg('h','À l\'heure')+seg('j','À la journée')+'</div>'+
+   (e.m==='j'?ch('j','Prix de la journée','hors taxes, pour une personne',e.j,'€')+ch('hj','Heures par jour','de travail sur le chantier',e.hj,'h'):
+     ch('t','Taux horaire','hors taxes, pour une personne',e.t,'€/h')+ch('hj','Heures par jour','pour compter les jours de pose',e.hj,'h'))+
+   (soit?'<p class="hb-demo hb-soit">'+soit+'</p>':'')+'</div>'}
+function moEnregistre(e){
+  var jp={m:e.m,hj:e.hj};if(e.m==='j'&&e.j>0)jp.j=e.j;if(!enDirect()&&e.t>0)jp.h=e.t;
+  if(window.PCJR&&PCJR.setJoursPose)PCJR.setJoursPose(jp);else lsS('pc-mo',jp);
+  var t=e.m==='j'?(e.j>0?Math.round(e.j/e.hj*100)/100:0):e.t;
+  if(!enDirect()){peindre();toast('Main-d\'œuvre enregistrée','En démo : gardée sur cet appareil.');return}
+  if(!(t>0)){peindre();return}
+  if(t<1||t>500){peindre();toast('Montant à revoir','Entre 1 et 500 € de l\'heure.');return}
+  MO=Object.assign({},MO||{},{taux_horaire:t});peindre();
+  file=file.then(function(){return appel({mo:{taux_horaire:t}})}).then(function(){peindre();toast('Main-d\'œuvre enregistrée','Les prochains pré-devis la prennent.')}).catch(function(er){toast('Pas enregistré',String(er.message||er));return appel().then(peindre).catch(function(){})})}
 /* au démarrage (en direct) : on reprend les frais du compte, pour que le pré-devis les ait sans ouvrir cet écran */
 function fraisCompte(x){if(x&&x.frais&&typeof x.frais==='object'){lsS('pc-frais-jour',x.frais);try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}}}
 /* les autres travaux qu'on peut ne pas faire (fenêtres, portes, escaliers) : dans « Partout » */
@@ -177,8 +200,10 @@ function lier(c){
     var m=METIERS.filter(function(x){return x[0]===b.dataset.met})[0];if(!m)return;var v=nonFaits().slice(),fait=metierFait(m);
     m[4].forEach(function(k){var i=v.indexOf(k);if(fait&&i<0)v.push(k);if(!fait&&i>=0)v.splice(i,1)});
     if(!fait)onglet=m[0];enregistre({non_faits:v})})});
-  $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';peindre()})});
-  $$('[data-e]',c).forEach(function(b){b.addEventListener('click',function(){var g=b.dataset.e||b.closest('.hb-f').dataset.g;edit=b.dataset.e;peindre();
+  $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';detO='';peindre()})});
+  /* 27/11 signalement n°94 : « Plus de détails » n'est plus un <details> (sur iPad, son contenu ouvert passait PAR-DESSUS « C'est bon », qui ne répondait plus). */
+  $$('[data-det]',c).forEach(function(b){b.addEventListener('click',function(){detO=detO===b.dataset.det?'':b.dataset.det;peindre()})});
+  $$('[data-e]',c).forEach(function(b){b.addEventListener('click',function(){var g=b.dataset.e||b.closest('.hb-f').dataset.g;edit=b.dataset.e;detO='';peindre();
     var f=$('.hb-f[data-g="'+g+'"]',c);if(f&&f.scrollIntoView)f.scrollIntoView({block:'nearest',behavior:'smooth'})})});
   $$('.hb-c',c).forEach(function(b){b.addEventListener('click',function(){
     var q=tout().filter(function(y){return y.id===b.dataset.q})[0];if(!q)return;var o={};
@@ -192,6 +217,9 @@ function lier(c){
     try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}
     if(!enDirect()){toast('Frais enregistrés','En démo : gardés sur cet appareil.');return}
     file=file.then(function(){return appel({frais:f})}).then(function(){toast('Frais enregistrés','Le pré-devis en tient compte.')}).catch(function(e){toast('Pas enregistré',String(e.message||e))})})});
+  $$('[data-mom]',c).forEach(function(b){b.addEventListener('click',function(){var e=moEtat();if(e.m===b.dataset.mom)return;e.m=b.dataset.mom;moEnregistre(e)})});
+  $$('[data-mo]',c).forEach(function(i){i.addEventListener('change',function(){var e=moEtat(),k=i.dataset.mo,v=parseFloat(String(i.value||'').replace(/\s/g,'').replace(',','.'));if(!isFinite(v)||v<0)v=0;
+    if(k==='hj'){if(v>14){toast('Heures par jour','Au plus 14 h.');v=0}e.hj=v||8}else e[k]=Math.round(v*100)/100;moEnregistre(e)})});
   $$('.hb-nf',c).forEach(function(b){b.addEventListener('click',function(){var v=nonFaits().slice(),k=b.dataset.nf,i=v.indexOf(k);if(i>=0)v.splice(i,1);else v.push(k);enregistre({non_faits:v})})});
 }
 function ouvrir(cible){
@@ -244,7 +272,7 @@ st.textContent=
  '.hb-c:focus-visible,.hb-h:focus-visible,.hb-nf:focus-visible{outline:2px solid var(--accx,#A8823F);outline-offset:2px}'+
  '.hb-pb{background:var(--warn-bg);border-radius:13px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}.hb-pb h4{color:var(--warn)}.hb-pb p{margin:0;font-size:13px;line-height:1.4}'+
  '.hb-tj{margin:0;font-size:13px;color:var(--muted);line-height:1.4}'+
- '.hb-d summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);padding:2px 0}.hb-d[open] summary{margin-bottom:10px}.hb-d .hb-q+.hb-q{margin-top:12px}'+
+ '.hb-d{display:flex;flex-direction:column;flex:none}.hb-dt{align-self:flex-start;min-height:40px;background:none;border:0;padding:6px 0;font:inherit;cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);text-decoration:underline}.hb-dc{display:flex;flex-direction:column;gap:12px;margin-top:6px}'+
  '.hb-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px 10px;margin:4px -2px 2px}'+
  '.hb-mm{background:var(--card);border-radius:16px;padding:12px 14px;margin:4px 0 6px;display:flex;flex-direction:column;gap:6px}.hb-mm h4{margin:0;font-size:15px}.hb-mm p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}'+
  '.hb-met{display:inline-flex;align-items:center;gap:6px}.hb-met svg{width:16px;height:16px;flex:none}.hb-pe{margin:8px 0 0;font-size:12.5px;color:var(--muted)}.hb-tabs::-webkit-scrollbar{display:none}'+
@@ -263,7 +291,8 @@ st.textContent=
  '.hb-fi{flex:none;white-space:nowrap;font-weight:800}.hb-fi i{font-style:normal;font-size:13px;color:var(--muted)}.hb-fi input{width:84px;min-height:44px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-weight:800;font-size:16px;text-align:right}'+
  '.hb-fs{display:flex;justify-content:space-between;margin:0;padding-top:8px;border-top:1px solid var(--line);font-size:15px}.hb-fs b{font-size:17px}'+
  '.hb-off{margin:0;color:var(--muted);font-weight:700}.hb-f.off .hb-i{opacity:.5}'+
- '.hb-f .hb-b{display:flex;padding:0}.hb-ok{align-self:stretch;margin-top:4px}'+
+ '.hb-seg{align-self:flex-start;margin:2px 0 6px}.hb-seg button{border:0;font:inherit;font-weight:700;cursor:pointer;min-height:40px}.hb-seg button[aria-selected=true]{background:var(--nuit,#1B2440);color:#fff;box-shadow:none}:root[data-theme=dark] .hb-seg button[aria-selected=true]{background:#E8EAF2;color:#0E1322}.hb-soit{margin:2px 0 0}'+
+ '.hb-f .hb-b{display:flex;padding:0}.hb-f .hb-b>*{flex:none}.hb-ok{align-self:stretch;margin-top:4px;position:relative;z-index:1}'+
  '.hb-mod:focus-visible,.hb-tab:focus-visible{outline:2px solid var(--accx,#A8823F);outline-offset:2px}'+
  '@media(min-width:700px){.hb-rows{grid-template-columns:200px 1fr}}'+
  '.hb-nf{align-self:flex-start;background:none;border:0;padding:4px 0;font:inherit;font-size:13px;font-weight:700;color:var(--muted);text-decoration:underline;cursor:pointer}';

@@ -547,5 +547,5 @@ function carbChantier(adr){adr=String(adr||'').trim();if(!adr)return null;
  var P=null,sync=true;prixCarb(v,function(p){P=p;if(!sync&&p){try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}}});sync=false;if(!P)return null;
  var km=Math.round(R.km),q=Math.round(km*2*v.conso/100*100)/100;
  return {km:km,veh:v.nom||carbNom(v.type),conso:v.conso,u:uniteV(v),q:q,prix:P.prix,src:P.src,eur:Math.round(q*P.prix*100)/100}}
-window.PCJR={carbChantier:carbChantier,aide:function(){return REG.apprend!==false},joursPose:joursPose,cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+window.PCJR={carbChantier:carbChantier,aide:function(){return REG.apprend!==false},joursPose:joursPose,setJoursPose:function(o){CAD.jp=Object.assign({},CAD.jp||{},o||{});if(!(CAD.jp.j>0))delete CAD.jp.j;saveCad()},cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
