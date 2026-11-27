@@ -970,7 +970,7 @@ document.addEventListener("click",e=>{const c=e.target.closest&&e.target.closest
 function fsFirst(e){const pf=document.getElementById("planfull");if(!fsOk()||fsOn()||!pf||pf.hidden)return;const tg=e.target;if(tg&&tg.closest&&tg.closest("input,textarea,select,[contenteditable]"))return;fsGo.auto=1;fsGo()}
 document.addEventListener("touchend",fsFirst,{passive:true});document.addEventListener("click",fsFirst);
 fsUpd();
-function pfSc(){try{if(!/iPhone|iPod/.test(navigator.userAgent)||navigator.standalone||matchMedia("(display-mode: standalone)").matches)return false;return window.top===window||/[?&]ps=1/.test(location.search)||pfScUpd.ps===true}catch(_){return false}}
+function pfSc(){try{if(!/iPhone|iPod|Android/.test(navigator.userAgent)||navigator.standalone||matchMedia("(display-mode: standalone)").matches)return false;return window.top===window||/[?&]ps=1/.test(location.search)||pfScUpd.ps===true}catch(_){return false}}
 addEventListener("message",e=>{const d=e.data||{};if(d.type!=="proclik-ps"||e.source!==window.parent)return;document.documentElement.classList.add("ghlps");pfScUpd.ps=true;pfScUpd.y=+d.y||0;psHint(pfScUpd.y);if(document.documentElement.classList.contains("pfsc"))pfScUpd()});
 /* 27/11 : pavé de chiffres (iPhone, iPad, téléphones) ; le clavier de l'appareil ne s'ouvre plus pour les mesures. */
 function imn(){try{return matchMedia("(pointer:coarse)").matches?"none":"decimal"}catch(_){return"decimal"}}
@@ -991,8 +991,8 @@ function padShow(el){if(PADT&&PADT!==el)PADT.classList.remove("padcur");PADT=el;
 function padHide(blur){const p=document.getElementById("npad");if(p)p.hidden=true;const el=PADT;PADT=null;if(el){el.classList.remove("padcur");if(blur)try{el.blur()}catch(_){}}}
 document.addEventListener("focusin",e=>{const t=e.target;if(imn()==="none"&&t&&t.matches&&t.matches("input[data-num],input[data-pnum]")){if(t.getAttribute("inputmode")!=="none")t.setAttribute("inputmode","none");padShow(t)}});
 document.addEventListener("focusout",e=>{if(e.target===PADT)setTimeout(()=>{if(PADT&&document.activeElement!==PADT)padHide()},80)});
-/* Message « glissez vers le haut » : seulement dans la page GHL sur iPhone, quand la barre de Safari est grande ; 3 fois au plus. */
-let PSH={n:0,t:0};function psHint(y){const ok=document.documentElement.classList.contains("ghlps")&&/iPhone|iPod/.test(navigator.userAgent);let h=document.getElementById("ps-hint");
+/* Message « glissez vers le haut » : seulement dans la page GHL sur téléphone (iPhone et Android, 27/11 Cyril : « partout pareil »), quand la barre de Safari est grande ; 3 fois au plus. */
+let PSH={n:0,t:0};function psHint(y){const ok=document.documentElement.classList.contains("ghlps")&&/iPhone|iPod|Android/.test(navigator.userAgent);let h=document.getElementById("ps-hint");
  if(!ok||y>24||PSH.n>=3){if(h)h.hidden=true;return}if(h&&!h.hidden)return;
  if(!h){h=document.createElement("div");h.id="ps-hint";h.setAttribute("role","status");h.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg><span>Pour agrandir l\'écran : faites glisser vers le haut, sur un endroit vide</span>';document.body.appendChild(h)}
  PSH.n++;h.hidden=false;clearTimeout(PSH.t);PSH.t=setTimeout(()=>{h.hidden=true},9000)}
