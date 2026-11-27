@@ -750,7 +750,17 @@ let A={},GEO=null;
 const ALLR=()=>GEO?GEO.flatMap((f,lv)=>f.rooms.map((r,ri)=>({r,lv,id:lv+"-"+ri}))):[];
 const RTOF=n=>/cuisine/i.test(n)?"cuisine":/bain|douche|sdb/i.test(n)?"sdb":/\bwc\b|toilette/i.test(n)?"wc":/chambre/i.test(n)?"chambre":/bureau/i.test(n)?"bureau":/buanderie|cellier/i.test(n)?"buanderie":/entr|couloir|dégag|hall/i.test(n)?"entree":"sejour";
 const PCS={"Cuisine":"cuisine","Salle de bain":"sdb","WC":"wc","Chambre(s)":"chambre","Séjour":"sejour","Entrée / couloir":"entree","Bureau":"bureau","Buanderie":"buanderie"};
-function post(m){if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
+function post(m){if(m&&m.type==="proclik-murs")memo();if(EMB)try{parent.postMessage(m,"*")}catch(e){}}
+/* Signalement n°83 (Cyril 27/11) : en revenant sur « Vos murs » (formulaire repris plus tard, ou plan modifié), tout ce qui avait été
+   ajouté sur les vues de face (électricité, chauffage, portes…) repartait de zéro. On garde maintenant les murs et les sols/plafonds
+   de chaque pièce sur l'appareil, rangés par la forme exacte de la pièce : une pièce inchangée retrouve tout ; une pièce redessinée repart à neuf. */
+const KM="clikdevis-murs";
+function sigR(q){try{return [q.lv,q.r.nom||"",GEO[q.lv].H,JSON.stringify(edges(q.r).map(e=>e.map(v=>Math.round(v))))].join("|")}catch(e){return ""}}
+function memo(){try{const o={R:{},SO:{}};ALLR().forEach(q=>{const k=sigR(q);if(!k)return;if(PC.R[q.id])o.R[k]=PC.R[q.id];if(PC.SO&&PC.SO[q.id])o.SO[k]=PC.SO[q.id]});localStorage.setItem(KM,JSON.stringify(o))}catch(e){}}
+function reprise(){try{const o=JSON.parse(localStorage.getItem(KM)||"null");if(!o)return;ALLR().forEach(q=>{const k=sigR(q);if(!k)return;
+ if(o.R&&Array.isArray(o.R[k])){PC.R[q.id]=o.R[k];PC.R[q.id].forEach(w=>{if(w&&typeof w==="object")w.rid=q.id})}
+ if(o.SO&&o.SO[k]&&PC.SO)PC.SO[q.id]=o.SO[k]})}catch(e){}}
+addEventListener("pagehide",()=>{if(GEO)memo()});document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&GEO)memo()});
 // ---------- Géométrie (cm) ----------
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],len=a=>Math.hypot(a[0],a[1]);
 function area(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
@@ -852,10 +862,10 @@ function finish(){post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()}
 $("sr-go").onclick=()=>{vib([10,40,14]);finish()};$("sr-again").onclick=()=>location.reload();
 addEventListener("resize",()=>{if(PC.step==="p")planUI();if(PC.step==="r")recapUI()});
 M={type:"mur",rt:"cuisine",L:300,H:250,room:"",items:[]};
-function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);/* tour 25/11 : pièces sans nom reconnu (« Pièce 1 ») : si aucune ne correspond au formulaire, on les propose toutes */const gen=r=>!r.nom||/^pi[eè]ce\b/i.test(String(r.nom).trim()),hit=want.length&&ALLR().some(({r})=>!gen(r)&&want.includes(r.rt));let anyGen=false;ALLR().forEach(({r})=>{if(gen(r))anyGen=true;r.works=!want.length||gen(r)||!hit||want.includes(r.rt)});boot.hit=!(want.length&&(anyGen||!hit));fromPlan();startPick()}
+function boot(G,rep,prev){A=rep||{};GEO=prep(G||[]);if(!GEO.length){finish();return}reprise();const want=(A.pcs||[]).map(p=>PCS[p]).filter(Boolean);/* tour 25/11 : pièces sans nom reconnu (« Pièce 1 ») : si aucune ne correspond au formulaire, on les propose toutes */const gen=r=>!r.nom||/^pi[eè]ce\b/i.test(String(r.nom).trim()),hit=want.length&&ALLR().some(({r})=>!gen(r)&&want.includes(r.rt));let anyGen=false;ALLR().forEach(({r})=>{if(gen(r))anyGen=true;r.works=!want.length||gen(r)||!hit||want.includes(r.rt)});boot.hit=!(want.length&&(anyGen||!hit));fromPlan();startPick()}
 /* Cyril 24/11 : le sol et le plafond répondus dans le plan ne sont pas redemandés ici (repris tels quels) */
 function fromPlan(){if(!PC.SO)return;const E={"Déjà en place":"On le garde","À changer":"On le change","À créer":"Il n'y a pas encore de sol"};ALLR().forEach(q=>{const r=q.r;if(r.so&&E[r.so.etat]){const a=soA(q.id,"sol");if(!a._done){a.etat=E[r.so.etat];if(r.so.depose&&r.so.depose!=="Aucune"&&r.so.depose!=="À préciser")a.depose=r.so.depose;const rv=r.so.revet;if(rv&&rv!=="Aucun"&&rv!=="À préciser")a.revet=/souple/i.test(rv)?"Sol souple (lino, vinyle)":rv;if(a.revet==="Carrelage"&&r.so.carFmt&&r.so.carFmt!=="À préciser")a.carFmt=r.so.carFmt;if(r.so.plb)a.plb=r.so.plb;a._done=1;a._plan=1}}if(r.pfp&&r.pfp.pf){const a=soA(q.id,"pf");if(!a._done){Object.keys(r.pfp).forEach(k=>{if(r.pfp[k])a[k]=r.pfp[k]});a._done=1;a._plan=1}}})}
-addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-load"){PC.R={};boot(d.plan&&d.plan.geo,d.rep||{})}});
+addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-load"){PC.R={};PC.SO={};boot(d.plan&&d.plan.geo,d.rep||{})}});
 if(EMB)post({type:"proclik-murs-ready"});
 else{// démo hors formulaire : un logement fictif
  const R0=(x,y,w,h,n)=>({nom:n,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]}),S0=(a,b,ops)=>({a,b,k:"mur",ops:ops||[]});
