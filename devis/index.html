@@ -332,10 +332,16 @@ html.pfsc-top body{min-height:calc(100lvh + 200px)!important;overflow:visible!im
 input.padcur{outline:2px solid #A8823F;outline-offset:1px;caret-color:transparent}
 @media (prefers-reduced-motion:reduce){#npad{animation:none}}
 /* 27/11 (Cyril) : petit message pour que le client fasse glisser la page et que Safari range sa barre (page GHL, iPhone) */
-#ps-hint{position:fixed;left:50%;top:calc(66px + env(safe-area-inset-top,0px));max-width:calc(100% - 32px);text-align:left;transform:translateX(-50%);z-index:2147482000;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:24px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:700 13px/1.2 var(--f-body);box-shadow:0 8px 20px -8px rgba(14,19,34,.45);pointer-events:none;transition:opacity .3s}
+#ps-hint{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147482000;display:flex;align-items:center;gap:10px;padding:7px 16px 7px 8px;border-radius:18px;background:color-mix(in srgb,var(--surface) 80%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid color-mix(in srgb,var(--fg) 9%,transparent);color:var(--fg);box-shadow:0 12px 30px -14px rgba(14,19,34,.4);pointer-events:none;white-space:nowrap;opacity:1;transition:opacity .22s ease,transform .22s ease;animation:psIn .3s ease-out}
 #ps-hint[hidden]{display:none}
-#ps-hint svg{width:18px;height:18px;flex:none;animation:psUp 1.4s ease-in-out infinite}
-@keyframes psUp{0%,100%{transform:translateY(3px)}50%{transform:translateY(-3px)}}
+#ps-hint.out{opacity:0;transform:translate(-50%,-8px)}
+#ps-hint b{display:block;font:700 13.5px/1.2 var(--f-body)}
+#ps-hint small{display:block;font:500 12px/1.25 var(--f-body);color:var(--muted)}
+#ps-hint .psg{position:relative;flex:none;width:22px;height:32px;border-radius:11px;box-shadow:inset 0 0 0 1.6px color-mix(in srgb,var(--fg) 30%,transparent)}
+#ps-hint .psg i{position:absolute;left:50%;bottom:4px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#A8823F;animation:psG 1.5s ease-in-out infinite}
+@keyframes psG{0%{transform:translateY(0);opacity:0}20%{opacity:1}75%{opacity:1}100%{transform:translateY(-16px);opacity:0}}
+@keyframes psIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){#ps-hint,#ps-hint .psg i{animation:none}}
 /* Cyril 19/11 : iPad / tablette, bouton pour cacher les barres du navigateur si le plein écran n'a pas pu se lancer tout seul */
 #pf-fs{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:25;display:flex;align-items:center;gap:8px;padding:11px 16px;border:0;border-radius:28px;background:var(--mint,#1B2440);color:var(--go-fg,#fff);font:700 14px/1.2 var(--f-body);box-shadow:0 6px 18px rgba(27,36,64,.28);cursor:pointer}
 #pf-fs[hidden]{display:none}
@@ -992,10 +998,14 @@ function padHide(blur){const p=document.getElementById("npad");if(p)p.hidden=tru
 document.addEventListener("focusin",e=>{const t=e.target;if(imn()==="none"&&t&&t.matches&&t.matches("input[data-num],input[data-pnum]")){if(t.getAttribute("inputmode")!=="none")t.setAttribute("inputmode","none");padShow(t)}});
 document.addEventListener("focusout",e=>{if(e.target===PADT)setTimeout(()=>{if(PADT&&document.activeElement!==PADT)padHide()},80)});
 /* Message « glissez vers le haut » : seulement dans la page GHL sur téléphone (iPhone et Android, 27/11 Cyril : « partout pareil »), quand la barre de Safari est grande ; 3 fois au plus. */
-let PSH={n:0,t:0};function psHint(y){const ok=document.documentElement.classList.contains("ghlps")&&/iPhone|iPod|Android/.test(navigator.userAgent);let h=document.getElementById("ps-hint");
- if(!ok||y>24||PSH.n>=3){if(h)h.hidden=true;return}if(h&&!h.hidden)return;
- if(!h){h=document.createElement("div");h.id="ps-hint";h.setAttribute("role","status");h.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg><span>Pour agrandir l\'écran : faites glisser vers le haut, sur un endroit vide</span>';document.body.appendChild(h)}
- PSH.n++;h.hidden=false;clearTimeout(PSH.t);PSH.t=setTimeout(()=>{h.hidden=true},9000)}
+let PSH={n:0,t:0,h0:0};
+function psOut(){const h=document.getElementById("ps-hint");if(!h||h.hidden||h.classList.contains("out"))return;clearTimeout(PSH.t);h.classList.add("out");setTimeout(()=>{h.hidden=true;h.classList.remove("out")},230)}
+/* 27/11 (Cyril : « fait vieux, ne disparaît pas tout de suite ») : style verre dépoli, petit geste animé ; disparaît dès que la page GHL bouge ou que l'écran s'agrandit */
+function psHint(y){const ok=document.documentElement.classList.contains("ghlps")&&/iPhone|iPod|Android/.test(navigator.userAgent);let h=document.getElementById("ps-hint");
+ if(!ok||y>0||PSH.n>=3){psOut();return}if(h&&!h.hidden)return;
+ if(!h){h=document.createElement("div");h.id="ps-hint";h.setAttribute("role","status");h.innerHTML='<span class="psg" aria-hidden="true"><i></i></span><span><b>Glissez vers le haut</b><small>pour agrandir l\'écran</small></span>';document.body.appendChild(h)}
+ PSH.n++;PSH.h0=innerHeight;h.classList.remove("out");h.hidden=false;clearTimeout(PSH.t);PSH.t=setTimeout(psOut,8000)}
+addEventListener("resize",()=>{if(PSH.h0&&innerHeight>PSH.h0+8)psOut()});
 function pfScUpd(){const h=document.getElementById("pf-swipe");if(h)h.hidden=!document.documentElement.classList.contains("pfsc")||scrollY>24||(pfScUpd.y||0)>24||innerHeight>(pfScUpd.h0||1e9)+40}
 addEventListener("resize",()=>{if(document.documentElement.classList.contains("pfsc"))pfScUpd()});
 addEventListener("scroll",()=>{if(document.documentElement.classList.contains("pfsc"))pfScUpd()},{passive:true});
