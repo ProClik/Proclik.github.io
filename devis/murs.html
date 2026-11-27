@@ -43,6 +43,9 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .tog i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .stage{min-height:0;display:flex;flex-direction:column;background:var(--surface);border-radius:20px;padding:6px 4px 2px;box-shadow:5px 5px 12px var(--lo),-5px -5px 12px var(--hi);touch-action:none;user-select:none;-webkit-user-select:none;position:relative}
 .stage svg{display:block;flex:1;min-height:0;width:100%;height:100%;overflow:visible}
+.mzb{position:absolute;top:50%;z-index:5;width:40px;height:56px;margin-top:-28px;border:0;border-radius:14px;background:var(--surface);color:var(--fg);box-shadow:0 4px 14px rgba(14,19,34,.18);display:grid;place-items:center;cursor:pointer;padding:0}.mzb svg{width:22px;height:22px}#mz-l{left:4px}#mz-r{right:4px}.mzb[hidden],#mz-t[hidden]{display:none}
+#mz-t{position:absolute;left:42%;right:18px;top:16px;height:6px;border-radius:3px;background:var(--line,#d6d9e0);z-index:5;pointer-events:none}#mz-t i{position:absolute;top:0;bottom:0;border-radius:3px;background:var(--laiton,#A8823F)}
+.stage{overflow:hidden}
 .hintline{font-size:12px;line-height:16px;color:var(--muted);text-align:center;margin:0 0 4px;height:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0 6px}
 .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px;font-size:11px;font-weight:700;color:var(--muted);margin:0 0 2px}
 .legend span{display:inline-flex;gap:4px;align-items:center}.legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
@@ -116,7 +119,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 @keyframes coachT{0%,4%{opacity:0}10%,90%{opacity:1}100%{opacity:0}}
 @media (max-aspect-ratio:5/4){h1{display:none}}
 #pf-rot{display:none;position:fixed;inset:0;z-index:60;background:var(--bg);align-items:center;justify-content:center;padding:24px}
-@media (orientation:portrait) and (max-width:600px) and (pointer:coarse){html.fv:not(.rotok) #pf-rot{display:flex}}
+/* 28/11 (Cyril) : formulaire et plan se font téléphone DEBOUT (le formulaire bloque le paysage) : plus d'invitation à coucher le téléphone ; le mur est agrandi et se parcourt avec ‹ › (#118) */
 #pf-rot .rot-in{display:grid;justify-items:center;gap:12px;text-align:center;max-width:320px;animation:sheetIn .4s ease both}
 #pf-rot svg{width:150px;height:150px}
 #pf-rot .rot-c{fill:var(--surface);stroke:var(--fg);stroke-width:3}
@@ -371,6 +374,9 @@ const EX={
  clo:{type:"cloison",rt:"chambre",rt2:"entree",L:320,H:250,room:"Chambre",room2:"Couloir",items:[{k:"porte",w:83,x:118.5,face:0},{k:"inter",w:8,x:213,face:0}]},
  mur:{type:"mur",rt:"sejour",L:410,H:250,room:"Séjour",items:[{k:"fenetre",w:120,x:145},{k:"radiateur",w:100,x:155}]}
 };
+const MZ={key:"",x:0,on:false,Lw:0,max:0};
+function mzUi(){const st=$("stage");if(!st)return;let a=$("mz-l"),b=$("mz-r"),t=$("mz-t");if(!a){const mk=(id,d,lab)=>{const x=document.createElement("button");x.type="button";x.id=id;x.className="mzb";x.setAttribute("aria-label",lab);x.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;["pointerdown","touchstart","mousedown"].forEach(ev=>x.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));x.addEventListener("click",()=>{MZ.x=Math.max(0,Math.min(MZ.max,MZ.x+(id==="mz-l"?-1:1)*MZ.Lw*.8));draw()});st.appendChild(x);return x};a=mk("mz-l","M15 5l-7 7 7 7","Voir la partie gauche du mur");b=mk("mz-r","M9 5l7 7-7 7","Voir la partie droite du mur");t=document.createElement("div");t.id="mz-t";t.innerHTML="<i></i>";st.appendChild(t)}
+ a.hidden=!MZ.on||MZ.x<=1;b.hidden=!MZ.on||MZ.x>=MZ.max-1;t.hidden=!MZ.on;if(MZ.on){const L=M.L||1,i=t.firstChild;i.style.left=(MZ.x/L*100)+"%";i.style.width=(Math.min(1,MZ.Lw/L)*100)+"%"}}
 let M,face=0,sel=null,drag=null,U=1,cat="meuble",tech=false,exk="cuis";
 const $=id=>document.getElementById(id);
 const isClo=()=>M.type==="cloison";
@@ -498,6 +504,10 @@ function overlaps(a,b){const ca=cI(a),cb=cI(b);const xa=vx(a),xb=vx(b);if(xa+a.w
 function draw(){if(M&&M.prof)M.items.forEach(o=>{if(visible(o))underRoof(o)});
  const s=$("wall");s.innerHTML="";const L=M.L,H=M.H,pr=14;let pl,pt,pb;
  for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
+ /* 28/11 (Cyril #118 : « le mur paraît beaucoup trop petit sur le téléphone ») : un mur long et bas est montré en grand, une partie à la fois ; les flèches ‹ › font glisser le long du mur */
+ {const bb=s.getBoundingClientRect(),scF=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb)),scH=bb.height/(H+pt+pb),key=M.L+"|"+M.H+"|"+(M.id||M.nom||"")+"|"+face;if(MZ.key!==key){MZ.key=key;MZ.x=0}
+  const on=bb.width>0&&bb.width<600&&H*scF<bb.height*.45&&scH>scF*1.35;MZ.on=on;if(on){const sc=Math.min(scH,scF*3),Lw=bb.width/sc-pl-pr;MZ.Lw=Lw;MZ.max=Math.max(0,L-Lw);MZ.x=Math.max(0,Math.min(MZ.x,MZ.max));const Hv=bb.height/sc;U=Math.max(.8,Math.min(2.2,1/sc));pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${MZ.x-pl} ${-pt-(Hv-(H+pt+pb))/2} ${Lw+pl+pr} ${Hv}`)}
+  mzUi()}
  const g=el("g",{},s);
  
  cote(g,0,L,-15*U,R(L)+" cm");
