@@ -100,8 +100,13 @@ var METIERS=[['plaq','Plaquiste',['murs','rampants','cloisons','plafonds','combl
  ['men','Menuisier',['fenetres','portes','escaliers'],'fenetres',['fenetres','portes','escaliers']],['pei','Peintre',['peinture'],'peinture',['peinture']],
  ['ele','Électricien',['elec'],'elec',['electricite']],['plo','Plombier',['plomberie'],'plomberie',['plomberie']],['tout','Partout',['demolition','partout'],'partout',null]];
 function metierFait(m){var nf=nonFaits();return !m[4]||!m[4].every(function(k){return nf.indexOf(k)>=0})}
-function mesMetiers(mets){return '<div class="hb-mm"><h4>Mes métiers</h4><p>Touchez ceux que vous faites. Les autres disparaissent et le pré-devis ne les chiffre pas.</p><div class="hb-ch">'+
-  mets.filter(function(m){return m[4]}).map(function(m){return '<button type="button" class="hb-c hb-met" data-met="'+m[0]+'" aria-pressed="'+metierFait(m)+'">'+(IC[m[3]]||'')+esc(m[1])+'</button>'}).join('')+'</div></div>'}
+/* 27/11 (signalement n°103) : deux rangées de métiers l'une sur l'autre, c'était de trop. Les onglets restent ; le choix des métiers
+   se replie en une ligne « Mes métiers : … · Modifier » et ne s'ouvre que sur demande. */
+var metO=false,CRAY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.6L15.6 5a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14 6.6l3.4 3.4"/><path d="M4 20l4.6-1.2"/></svg>';
+function mesMetiers(mets){var F=mets.filter(function(m){return m[4]&&metierFait(m)}).map(function(m){return esc(m[1])});
+ if(!metO)return '<div class="hb-mm hb-mmr"><span><b>Mes métiers</b><small>'+(F.length?F.join(', '):'Aucun choisi')+'</small></span><button type="button" class="hb-mmo" data-mmo>'+CRAY+'Modifier</button></div>';
+ return '<div class="hb-mm"><h4>Mes métiers</h4><p>Touchez ceux que vous faites. Les autres disparaissent et le pré-devis ne les chiffre pas.</p><div class="hb-ch">'+
+  mets.filter(function(m){return m[4]}).map(function(m){return '<button type="button" class="hb-c hb-met" data-met="'+m[0]+'" aria-pressed="'+metierFait(m)+'">'+(IC[m[3]]||'')+esc(m[1])+'</button>'}).join('')+'</div><button type="button" class="hb-mmo hb-mmok" data-mmo>C\'est bon</button></div>'}
 var onglet='plaq',edit='',detO='';
 var court=function(t){return String(t).split(' (')[0]};
 function valeur(q){var v=val(q);if(SUM[q.id])return SUM[q.id](v);
@@ -200,6 +205,7 @@ function lier(c){
     var m=METIERS.filter(function(x){return x[0]===b.dataset.met})[0];if(!m)return;var v=nonFaits().slice(),fait=metierFait(m);
     m[4].forEach(function(k){var i=v.indexOf(k);if(fait&&i<0)v.push(k);if(!fait&&i>=0)v.splice(i,1)});
     if(!fait)onglet=m[0];enregistre({non_faits:v})})});
+  $$('[data-mmo]',c).forEach(function(b){b.addEventListener('click',function(){metO=!metO;peindre()})});
   $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';detO='';peindre()})});
   /* 27/11 signalement n°94 : « Plus de détails » n'est plus un <details> (sur iPad, son contenu ouvert passait PAR-DESSUS « C'est bon », qui ne répondait plus). */
   $$('[data-det]',c).forEach(function(b){b.addEventListener('click',function(){detO=detO===b.dataset.det?'':b.dataset.det;peindre()})});
@@ -273,7 +279,7 @@ st.textContent=
  '.hb-pb{background:var(--warn-bg);border-radius:13px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}.hb-pb h4{color:var(--warn)}.hb-pb p{margin:0;font-size:13px;line-height:1.4}'+
  '.hb-tj{margin:0;font-size:13px;color:var(--muted);line-height:1.4}'+
  '.hb-d{display:flex;flex-direction:column;flex:none}.hb-dt{align-self:flex-start;min-height:40px;background:none;border:0;padding:6px 0;font:inherit;cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);text-decoration:underline}.hb-dc{display:flex;flex-direction:column;gap:12px;margin-top:6px}'+
- '.hb-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px 10px;margin:4px -2px 2px}'+
+ '.hb-mm.hb-mmr{display:flex;flex-direction:row;align-items:center;gap:12px;padding:10px 14px;text-align:left}.hb-mmr>span{flex:1;min-width:0}.hb-mmr b{display:block;font-size:14px}.hb-mmr small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}.hb-mmo{appearance:none;border:0;background:none;color:var(--fg,#1B2440);font-weight:700;font-size:14px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;padding:8px 6px;cursor:pointer;min-height:44px}.hb-mmo svg{width:16px;height:16px;color:var(--laiton,#A8803C)}.hb-mmok{margin-top:8px}'+'.hb-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px 10px;margin:4px -2px 2px}'+
  '.hb-mm{background:var(--card);border-radius:16px;padding:12px 14px;margin:4px 0 6px;display:flex;flex-direction:column;gap:6px}.hb-mm h4{margin:0;font-size:15px}.hb-mm p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}'+
  '.hb-met{display:inline-flex;align-items:center;gap:6px}.hb-met svg{width:16px;height:16px;flex:none}.hb-pe{margin:8px 0 0;font-size:12.5px;color:var(--muted)}.hb-tabs::-webkit-scrollbar{display:none}'+
  '.hb-tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 15px;border-radius:999px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line),0 2px 4px rgba(14,19,34,.08)}'+
