@@ -102,7 +102,7 @@ var METIERS=[['plaq','Plaquiste',['murs','rampants','cloisons','plafonds','combl
 function metierFait(m){var nf=nonFaits();return !m[4]||!m[4].every(function(k){return nf.indexOf(k)>=0})}
 function mesMetiers(mets){return '<div class="hb-mm"><h4>Mes métiers</h4><p>Touchez ceux que vous faites. Les autres disparaissent et le pré-devis ne les chiffre pas.</p><div class="hb-ch">'+
   mets.filter(function(m){return m[4]}).map(function(m){return '<button type="button" class="hb-c hb-met" data-met="'+m[0]+'" aria-pressed="'+metierFait(m)+'">'+(IC[m[3]]||'')+esc(m[1])+'</button>'}).join('')+'</div></div>'}
-var onglet='plaq',edit='';
+var onglet='plaq',edit='',detO='';
 var court=function(t){return String(t).split(' (')[0]};
 function valeur(q){var v=val(q);if(SUM[q.id])return SUM[q.id](v);
   return q.type==='multi'?(v.length?v.map(function(c){return court(lib(q,c))}).join(', '):'Aucun'):court(lib(q,v))}
@@ -124,7 +124,7 @@ function fiche(g){
   return '<section class="hb-f on" data-g="'+g.id+'">'+tete+'<div class="hb-b">'+(off?'':hab.map(bloc).join('')+
       (TOUJOURS[g.id]?'<p class="hb-tj"><b>Toujours :</b> '+esc(TOUJOURS[g.id])+'</p>':'')+
       (pb.length?'<div class="hb-pb"><h4>Plan B · quand le chantier ne le permet pas</h4>'+(QUAND[g.id]?'<p>Par exemple : <b>'+esc(QUAND[g.id])+'</b>. Le pré-devis passe tout seul à ce choix.</p>':'')+pb.map(function(q){return puces(q)}).join('')+'</div>':'')+
-      (det.length?'<details class="hb-d"><summary>Plus de détails</summary>'+det.map(bloc).join('')+'</details>':''))+
+      (det.length?'<div class="hb-d"><button type="button" class="hb-dt" data-det="'+g.id+'" aria-expanded="'+(detO===g.id)+'">'+(detO===g.id?'Moins de détails':'Plus de détails')+'</button>'+(detO===g.id?'<div class="hb-dc">'+det.map(bloc).join('')+'</div>':'')+'</div>':''))+
       (NF[g.id]?'<button type="button" class="hb-nf" data-nf="'+NF[g.id]+'">'+(off?'Je fais ce travail':'Je ne fais pas ce travail')+'</button>':'')+
       '<button type="button" class="btn hb-ok" data-e="">C\'est bon</button></div></section>';
 }
@@ -177,8 +177,10 @@ function lier(c){
     var m=METIERS.filter(function(x){return x[0]===b.dataset.met})[0];if(!m)return;var v=nonFaits().slice(),fait=metierFait(m);
     m[4].forEach(function(k){var i=v.indexOf(k);if(fait&&i<0)v.push(k);if(!fait&&i>=0)v.splice(i,1)});
     if(!fait)onglet=m[0];enregistre({non_faits:v})})});
-  $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';peindre()})});
-  $$('[data-e]',c).forEach(function(b){b.addEventListener('click',function(){var g=b.dataset.e||b.closest('.hb-f').dataset.g;edit=b.dataset.e;peindre();
+  $$('.hb-tab',c).forEach(function(b){b.addEventListener('click',function(){onglet=b.dataset.t;edit='';detO='';peindre()})});
+  /* 27/11 signalement n°94 : « Plus de détails » n'est plus un <details> (sur iPad, son contenu ouvert passait PAR-DESSUS « C'est bon », qui ne répondait plus). */
+  $$('[data-det]',c).forEach(function(b){b.addEventListener('click',function(){detO=detO===b.dataset.det?'':b.dataset.det;peindre()})});
+  $$('[data-e]',c).forEach(function(b){b.addEventListener('click',function(){var g=b.dataset.e||b.closest('.hb-f').dataset.g;edit=b.dataset.e;detO='';peindre();
     var f=$('.hb-f[data-g="'+g+'"]',c);if(f&&f.scrollIntoView)f.scrollIntoView({block:'nearest',behavior:'smooth'})})});
   $$('.hb-c',c).forEach(function(b){b.addEventListener('click',function(){
     var q=tout().filter(function(y){return y.id===b.dataset.q})[0];if(!q)return;var o={};
@@ -244,7 +246,7 @@ st.textContent=
  '.hb-c:focus-visible,.hb-h:focus-visible,.hb-nf:focus-visible{outline:2px solid var(--accx,#A8823F);outline-offset:2px}'+
  '.hb-pb{background:var(--warn-bg);border-radius:13px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}.hb-pb h4{color:var(--warn)}.hb-pb p{margin:0;font-size:13px;line-height:1.4}'+
  '.hb-tj{margin:0;font-size:13px;color:var(--muted);line-height:1.4}'+
- '.hb-d summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);padding:2px 0}.hb-d[open] summary{margin-bottom:10px}.hb-d .hb-q+.hb-q{margin-top:12px}'+
+ '.hb-d{display:flex;flex-direction:column;flex:none}.hb-dt{align-self:flex-start;min-height:40px;background:none;border:0;padding:6px 0;font:inherit;cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);text-decoration:underline}.hb-dc{display:flex;flex-direction:column;gap:12px;margin-top:6px}'+
  '.hb-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px 10px;margin:4px -2px 2px}'+
  '.hb-mm{background:var(--card);border-radius:16px;padding:12px 14px;margin:4px 0 6px;display:flex;flex-direction:column;gap:6px}.hb-mm h4{margin:0;font-size:15px}.hb-mm p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}'+
  '.hb-met{display:inline-flex;align-items:center;gap:6px}.hb-met svg{width:16px;height:16px;flex:none}.hb-pe{margin:8px 0 0;font-size:12.5px;color:var(--muted)}.hb-tabs::-webkit-scrollbar{display:none}'+
@@ -263,7 +265,7 @@ st.textContent=
  '.hb-fi{flex:none;white-space:nowrap;font-weight:800}.hb-fi i{font-style:normal;font-size:13px;color:var(--muted)}.hb-fi input{width:84px;min-height:44px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-weight:800;font-size:16px;text-align:right}'+
  '.hb-fs{display:flex;justify-content:space-between;margin:0;padding-top:8px;border-top:1px solid var(--line);font-size:15px}.hb-fs b{font-size:17px}'+
  '.hb-off{margin:0;color:var(--muted);font-weight:700}.hb-f.off .hb-i{opacity:.5}'+
- '.hb-f .hb-b{display:flex;padding:0}.hb-ok{align-self:stretch;margin-top:4px}'+
+ '.hb-f .hb-b{display:flex;padding:0}.hb-f .hb-b>*{flex:none}.hb-ok{align-self:stretch;margin-top:4px;position:relative;z-index:1}'+
  '.hb-mod:focus-visible,.hb-tab:focus-visible{outline:2px solid var(--accx,#A8823F);outline-offset:2px}'+
  '@media(min-width:700px){.hb-rows{grid-template-columns:200px 1fr}}'+
  '.hb-nf{align-self:flex-start;background:none;border:0;padding:4px 0;font:inherit;font-size:13px;font-weight:700;color:var(--muted);text-decoration:underline;cursor:pointer}';
