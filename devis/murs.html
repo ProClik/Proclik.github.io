@@ -215,7 +215,8 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
  #sp .qo.sm{min-height:36px;font-size:12px;padding:4px 8px}#sp .qo.sm svg{width:18px;height:18px}
  .go{padding:10px 14px;font-size:14.5px}
 }
-/* Cyril 25/11 : Oui et Non sur la même ligne, même taille */.qyn{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qyn .go.all{margin-top:2px}.go.qno{background:var(--surface);color:var(--fg);box-shadow:inset 0 0 0 2px var(--fg)}
+/* Cyril 25/11 : Oui et Non sur la même ligne, même taille */.qyn{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qyn .go.all{margin-top:2px}.go.qno,#card .go.all.qno{background:var(--surface)!important;color:var(--fg)!important;box-shadow:inset 0 0 0 2px var(--fg)!important}
+/* 27/11 (n°98) : de quoi parle la question, au premier coup d'œil */.qh{display:flex;align-items:center;gap:12px;margin:2px 0 8px}.qh>svg{flex:none;width:40px;height:40px;padding:8px;border-radius:12px;background:var(--soft);color:var(--fg)}.qh b{display:block;font-size:17px;line-height:1.2}.qh small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 .btn .pfi{height:30px;width:auto;max-width:76px;display:block;margin:0 auto 4px;overflow:visible}
 .btn .pfi .bx{fill:var(--surface)!important;stroke:var(--fg)!important;stroke-width:1.3px}.btn .pfi .bx.cl{stroke:var(--ef)!important}.btn .pfi .gl{fill:none!important;stroke:var(--fg)!important;stroke-width:1.2px}.btn .pfi .pt{fill:var(--fg)!important;stroke:none!important}.btn .pfi .ef{fill:var(--ef)!important;stroke:none!important}.btn .pfi .ec{fill:var(--ec)!important;stroke:none!important}.btn .pfi .clp{fill:var(--ef)!important}.btn .pfi{height:34px}
 </style>
@@ -552,25 +553,35 @@ const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
    L'état n'est pas demandé quand le formulaire dit déjà que tout est à faire (électricité, plomberie, cuisine ou salle de bain à créer). */
 const QN={ouv:"une porte ou une fenêtre",meuble:"des meubles fixes (cuisine, salle de bain…)",eau:"un point d'eau (évier, lavabo, WC, douche…)",elec:"des prises, interrupteurs ou lumières",chaud:"un radiateur, un sèche-serviettes ou une clim"},
  QF={ouv:"les portes et fenêtres",meuble:"les meubles",eau:"la plomberie",elec:"l'électricité",chaud:"le chauffage"},
- QI={ouv:"porte",meuble:"mbas",eau:"lavemains",elec:"prise",chaud:"radiateur"},QR={oui:"Oui",non:"Non",dk:"Je ne sais pas"};
+ QI={ouv:"porte",meuble:"mbas",eau:"lavemains",elec:"prise",chaud:"radiateur",reste:"radiateur"},QR={oui:"Oui",non:"Non",dk:"Je ne sais pas"};
 function Q(){const k="qz"+(isClo()?face:0);return M[k]||(M[k]={i:0,mode:"ask",it:null,a:{}})}
-function qzList(){const rt=RT(),L=["ouv"];if(["cuisine","sdb","buanderie"].includes(rt))L.push("meuble");if(HUM.includes(rt))L.push("eau");L.push("elec","chaud");return L.filter(c=>availAll().some(k=>CAT[k].c===c))}
+/* Cyril 27/11 (signalement n°98) : on ne demande que ce qui a été dit avant.
+   Portes et fenêtres : déjà dans le plan, plus demandées ici. Électricité puis plomberie d'abord (si le formulaire dit qu'on y touche),
+   puis « le reste » (meubles fixes, chauffage) en UNE seule question avec des icônes. */
+const NOTOUCH=v=>/^On n'y touche pas/i.test(v||"");
+function qzReste(){const rt=RT(),L=[];if(["cuisine","sdb","buanderie"].includes(rt))L.push("meuble");if(!/^(Plancher chauffant|Pas de chauffage)/i.test(A.chauf||""))L.push("chaud");return L.filter(c=>availAll().some(k=>CAT[k].c===c))}
+function qzCats(c){return c==="reste"?qzReste():[c]}
+function qzList(){const rt=RT(),L=[];if(!NOTOUCH(A.elec))L.push("elec");if(HUM.includes(rt)&&!NOTOUCH(A.plomb))L.push("eau");const r=L.filter(c=>availAll().some(k=>CAT[k].c===c));if(qzReste().length)r.push("reste");return r}
+const catLab=c=>c==="reste"?"Autre chose":CATS[c];
 const qzOn=()=>PC.step==="f"&&!!WALLS&&sel==null&&!PC.rv&&!drag&&!confirmDel;
 const qzSt=()=>PC.step==="f"&&!!WALLS&&Q().it!=null&&sel===Q().it&&!!M.items[sel];
 function qzLeft(){if(PC.step!=="f"||!WALLS)return 0;const q=Q(),n=qzList().length;return Math.max(0,n-q.i)}
 function qzAuto(c){const rt=RT();if(c==="elec")return/Tout est à faire/i.test(A.elec||"");if(c==="eau")return/Tout est à faire/i.test(A.plomb||"")||rt==="cuisine"&&/à créer/i.test(A.cuis||"")||rt==="sdb"&&/à créer/i.test(A.sdb||"");if(c==="meuble")return rt==="cuisine"&&/à créer/i.test(A.cuis||"")||rt==="sdb"&&/à créer/i.test(A.sdb||"");return false}
-function qzHas(c){const m={};M.items.filter(o=>visible(o)&&CAT[o.k].c===c).forEach(o=>{const n=CAT[o.k].s||CAT[o.k].n;m[n]=(m[n]||0)+1});return Object.entries(m).map(([n,k])=>(k>1?k+" × ":"")+n.toLowerCase()).join(", ")}
-function qzExp(w){const o={};["qz0","qz1"].forEach(k=>{const a=w[k]&&w[k].a;if(a)Object.keys(a).forEach(c=>{o[CATS[c]+(k==="qz1"?" (autre côté)":"")]=QR[a[c]]||a[c]})});return Object.keys(o).length?o:undefined}
+function qzHas(c){const m={},C=qzCats(c);M.items.filter(o=>visible(o)&&C.includes(CAT[o.k].c)).forEach(o=>{const n=CAT[o.k].s||CAT[o.k].n;m[n]=(m[n]||0)+1});return Object.entries(m).map(([n,k])=>(k>1?k+" × ":"")+n.toLowerCase()).join(", ")}
+function qzExp(w){const o={};["qz0","qz1"].forEach(k=>{const a=w[k]&&w[k].a;if(a)Object.keys(a).forEach(c=>{o[(c==="reste"?"Autres éléments":CATS[c]||c)+(k==="qz1"?" (autre côté)":"")]=QR[a[c]]||a[c]})});return Object.keys(o).length?o:undefined}
 const qIc=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
 function qzCard(k){const q=Q(),L=qzList();k.hidden=false;
  if(qzSt()){const it=M.items[q.it],c=CAT[it.k],ce=FEM.test(c.n)?"Cette":"Ce",nm=(c.s||c.n).toLowerCase();
   const wrow=c.w.length>1&&!c.petit?`<div class="row wsc"><span class="k">Largeur</span>${c.w.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${it.w===w}">${w}</button>`).join("")}</div>`:"";
   k.innerHTML=`<div class="t"><span>${ce} ${nm} est…</span><span class="tools"><button class="ic" data-qdel="1" aria-label="Retirer">${TRASH}</button></span></div><div class="qs"><button class="go" data-qs="exist">En place, on ${leLa(c)} garde</button><button class="go" data-qs="rep">À changer</button><button class="go" data-qs="faire">À créer</button><button class="chip" data-qs="dk">Je ne sais pas</button></div>${wrow}${hyRow(it)}${hHaut(it.k)?`<div class="row"><span class="k">Hauteur</span><button class="chip" data-hh="0" aria-pressed="${!CAT[it.k].hautV}">En bas (30 cm)</button><button class="chip" data-hh="1" aria-pressed="${!!CAT[it.k].hautV}">Comme les interrupteurs (110 cm)</button></div>`:""}<div class="row inf" style="color:var(--muted)">Pas au bon endroit ? ${TOUCH?"Maintenez le doigt dessus et glissez.":"Cliquez-glissez sur le mur."}</div>`;return}
- if(q.i>=L.length){k.innerHTML=`<div class="t"><span>Tout est noté pour ce mur <small>Un oubli ? Touchez ce qu'il faut ajouter</small></span></div><div class="qg">${L.map(c=>`<button class="btn" data-qplus="${c}">${qIc(I[QI[c]]?QI[c]:"prise")}+ ${CATS[c]}</button>`).join("")}</div>`;return}
+ if(q.i>=L.length){k.innerHTML=`<div class="t"><span>Tout est noté pour ce mur <small>Un oubli ? Touchez ce qu'il faut ajouter</small></span></div><div class="qg">${L.map(c=>`<button class="btn" data-qplus="${c}">${qIc(I[QI[c]]?QI[c]:"prise")}+ ${catLab(c)}</button>`).join("")}</div>`;return}
  const c=L[q.i],has=qzHas(c),bar=`<div class="qp" aria-label="Question ${q.i+1} sur ${L.length}">${L.map((x,j)=>`<i class="${j<q.i?"ok":j===q.i?"cur":""}"></i>`).join("")}</div>`;
- if(q.mode==="pick"){const a=avail(),all=availAll().filter(x=>CAT[x].c===c),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
+ if(c==="reste"&&q.mode!=="pick")q.mode="pick";
+ if(q.mode==="pick"){const a=avail(),C=qzCats(c),all=availAll().filter(x=>C.includes(CAT[x].c)),own=all.filter(x=>a.includes(x)),mine=q.more||!own.length?own.concat(all.filter(x=>!own.includes(x))):own,more=!q.more&&own.length&&own.length<all.length;
+  if(c==="reste"){k.innerHTML=`${bar}<div class="qh">${qIc(I.radiateur?"radiateur":"prise")}<span><b>Autre chose sur ce mur ?</b><small>Touchez ce qu'il y a ou ce qui est à mettre. Rien ? « Rien d'autre ».</small></span></div><div class="qg">${mine.map(x=>`<button class="btn" data-qk="${x}">${pfIc(x)}${CAT[x].s||CAT[x].n}</button>`).join("")}${more?`<button class="btn oth" data-qmore="1"><b style="font-size:18px">…</b>Autre chose</button>`:""}</div>${has?`<div class="row inf2">Sur ce mur : <b>${has}</b></div>`:""}<button class="go all" data-qdone="1">${has?"C'est tout ›":"Rien d'autre ›"}</button><div class="row"><button class="chip" data-qa="dk">Je ne sais pas</button>${q.i>0?`<button class="chip" data-qb="1">‹ Question d'avant</button>`:""}</div>`;return}
   k.innerHTML=`${bar}<div class="t"><span>${CATS[c]} <small>Touchez ce qu'il y a ou ce que vous voulez${qzAuto(c)?" · tout sera à créer":""}</small></span></div><div class="qg">${mine.map(x=>`<button class="btn" data-qk="${x}">${pfIc(x)}${CAT[x].s||CAT[x].n}</button>`).join("")}${more?`<button class="btn oth" data-qmore="1"><b style="font-size:18px">…</b>Autre chose</button>`:""}</div>${has?`<div class="row inf2">Sur ce mur : <b>${has}</b></div>`:""}<button class="go all" data-qdone="1">C'est tout pour ${QF[c]} ›</button>`;return}
- k.innerHTML=`${bar}<div class="t"><span>${has?`Déjà sur ce mur : ${has}. Y en a-t-il d'autres, en place ou à mettre ?`:`Y a-t-il ${QN[c]} sur ce mur, en place ou à mettre ?`}</span></div><div class="qyn"><button class="go all" data-qa="oui">Oui</button><button class="go all qno" data-qa="non">Non</button></div><div class="row"><button class="chip" data-qa="dk">Je ne sais pas</button>${q.i>0?`<button class="chip" data-qb="1">‹ Question d'avant</button>`:""}</div>`}
+ const QT={elec:["L'électricité de ce mur","Prises, interrupteurs, lumières"],eau:["La plomberie de ce mur","Évier, lavabo, WC, douche…"]}[c]||[CATS[c],""];
+ k.innerHTML=`${bar}<div class="qh">${qIc(I[QI[c]]?QI[c]:"prise")}<span><b>${QT[0]}</b><small>${QT[1]}</small></span></div><div class="t"><span>${has?`Déjà sur ce mur : ${has}. Y en a-t-il d'autres, en place ou à mettre ?`:`Y en a-t-il sur ce mur, en place ou à mettre ?`}</span></div><div class="qyn"><button class="go all" data-qa="oui">Oui</button><button class="go all qno" data-qa="non">Non</button></div><div class="row"><button class="chip" data-qa="dk">Je ne sais pas</button>${q.i>0?`<button class="chip" data-qb="1">‹ Question d'avant</button>`:""}</div>`}
 function qzAdd(k){const c=CAT[k],q=Q(),n=M.items.filter(o=>visible(o)&&o.k===k).length;const w=c.w.includes(83)?83:c.w.includes(60)?60:c.w[Math.min(1,c.w.length-1)];const it={k,w,x:0,face:isClo()?face:0,lock:true};
  const want=M.L*[.5,.25,.75,.12,.88,.38,.62][n%7];let px=null;for(const ww of [w,...c.w.slice().sort((a,b)=>a-b)]){it.w=ww;px=place(it,want-ww/2);if(px!=null)break}
  if(px==null){toast("Plus de place à cette hauteur sur ce mur. <b>Touchez un élément</b> pour le retirer",3200);return}
@@ -1053,7 +1064,7 @@ $("card").addEventListener("click",ev=>{const b=ev.target.closest("[data-qa],[da
  if(d.qa){if(d.qa==="oui")q.mode="pick";else{q.a[c]=d.qa;q.i++;q.mode="ask";toast(d.qa==="dk"?"Pas de souci, <b>l'artisan regardera</b>":"<b>Noté</b>",1400)}}
  if(d.qb){q.i=Math.max(0,q.i-1);q.mode="ask"}
  if(d.qmore)q.more=1;if(d.qdone||d.qa||d.qb||d.qplus)q.more=0;
- if(d.qdone){q.a[c]="oui";q.i++;q.mode="ask"}
+ if(d.qdone){q.a[c]=c==="reste"&&!qzHas(c)?"non":"oui";q.i++;q.mode="ask"}
  if(d.qplus){const j=L.indexOf(d.qplus);if(j>=0){q.i=j;q.mode="pick"}}
  if(d.qk){qzAdd(d.qk);return}
  if(d.qs||d.qdel){const it=M.items[q.it];if(it){snap();if(d.qdel)M.items.splice(q.it,1);else{it.rv=1;delete it.rep;if(d.qs==="exist"){it.st="exist";it.rep="non"}else if(d.qs==="rep"){it.st="exist";it.rep="oui"}else it.st=d.qs;it.lock=true}}q.it=null;sel=null;if(!d.qdel)toast("<b>Noté !</b> Autre chose ? Sinon « C'est tout »",1800)}
