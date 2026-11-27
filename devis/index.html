@@ -1546,3 +1546,5 @@ if(window.top===window&&window.visualViewport){const vv=visualViewport;let raf=0
 if(window.top!==window&&"IntersectionObserver" in window){const vp=document.createElement("div");vp.style.cssText="position:fixed;left:0;top:0;width:1px;height:100%;pointer-events:none;visibility:hidden";document.body.appendChild(vp);
  new IntersectionObserver(es=>{const e=es[es.length-1],vb=e.isIntersecting?Math.max(0,Math.round(innerHeight-e.intersectionRect.bottom)):0;if(window.geoVis){geoVis.t=e.isIntersecting?Math.max(0,Math.round(e.intersectionRect.top)):0;geoVis.b=vb;geoReplace()}document.documentElement.style.setProperty("--vb",vb+"px")},{threshold:Array.from({length:201},(_,i)=>i/200)}).observe(vp)}
 </script>
+
+<script src="signaler.js?v=1"></script>
