@@ -427,7 +427,7 @@ function reglagesHTML(){return '<div class="xsec" id="jr-reg"><h3>À activer ou 
  sw('cad','Mes cadences','Cliky apprend votre vrai rythme sur vos chantiers terminés et vous le propose dans les pré-devis. Vous choisissez à chaque fois.')+
  sw('apprend','Aider Cliky à progresser','Quand vous corrigez un plan ou un mur lu sur photo, Cliky garde seulement la forme corrigée (pièces, cotes, fenêtres, prises), sans nom, adresse ni photo, pour moins se tromper ensuite.')+
  (REG.jour!==false?'<button type="button" class="btn" data-jrvh>Mes véhicules ('+(VEHS().length?VEHS().length+' · '+VEHS().map(function(v){return v.nom}).join(', '):'à ajouter')+')</button>':'')+
- (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+(REG.cad!==false?'<button type="button" class="btn" data-jrcad>Mes cadences ('+(Object.keys(CAD.ret).length?Object.keys(CAD.ret).map(nomType).join(', '):'en apprentissage')+')</button>':'')+'</div></div>'}
+ (REG.hs!==false?'<button type="button" class="btn" data-jreq>Mon équipe ('+EQ.length+')</button>':'')+(REG.cad!==false?'<button type="button" class="btn" data-jrcad>Mon rythme (dans Mes habitudes) · ('+(Object.keys(CAD.ret).length?Object.keys(CAD.ret).map(nomType).join(', '):'en apprentissage')+')</button>':'')+'</div></div>'}
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-jrsw],[data-jreq],[data-jrvh]');if(!t)return;
  if(t.dataset.jreq!=null){HQ=null;return equipe()}
  if(t.dataset.jrvh!=null){if($('#jr-rc'))return mesVehicules(function(){RC.carb=null;RC.vehs=RC.vehs.filter(vehDe);if(!RC.vehs.length)RC.vehs=vehDefaut(CH[RC.id]);rcRendre()});return mesVehicules(null)}
@@ -475,6 +475,14 @@ function ficheCadence(type){var c=cadenceDe(type),ret=CAD.ret[type],ex=c.H.some(
   (ret?'<p class="cad-n" style="margin:0">Cadence retenue aujourd\'hui : '+pctC(ret.r)+'.</p>':'')+'</div>'+
   '<div class="jr-ok"><button type="button" class="btn" data-cadnon="'+type+'">Non merci</button><button type="button" class="btn go" data-cadok="'+type+'">Je retiens ma cadence</button></div></div>';
  X.xopen(nomType(type)+' : votre cadence','Calculée avec vos récaps du soir','<div>'+h+'</div>','')}
+/* Cyril 27/11 : « Mes cadences » rejoint « Mes habitudes de chantier », en bloc « Mon rythme » (plus d'entrée à part dans le menu).
+   Le bloc liste les cadences retenues et celles en apprentissage. Le choix à l'heure / à la journée est dans « Votre main-d'œuvre ». */
+function rythmeHTML(){if(!onC())return '';var R=Object.keys(CAD.ret),E=TYPES.map(function(t){return cadenceDe(t[0])}).filter(function(c){return c.H.length&&!CAD.ret[c.type]});
+ return '<div class="hb-f hb-fj" id="hb-ry"><div class="hb-ft"><h3>Mon rythme</h3></div>'+
+  '<p class="hb-tj">Cliky compare le temps prévu et le temps passé sur vos chantiers terminés. Une cadence retenue ne change rien toute seule : chaque pré-devis vous montre le calcul normal et le calcul avec votre cadence.</p>'+
+  (R.length?'<div class="hb-ryg"><b class="hb-ryl">Retenues</b>'+R.map(function(t){var x=CAD.ret[t];return '<div class="cad-r"><span><b>'+nomType(t)+'</b><small>'+phraseC(x.r)+' · '+x.n+' chantiers · le '+esc(x.le.split('-').reverse().join('/'))+'</small></span><button type="button" class="btn" data-cadoubli="'+t+'">Oublier</button></div>'}).join('')+'</div>':'')+
+  '<div class="hb-ryg"><b class="hb-ryl">En cours d\'apprentissage</b>'+(E.length?E.map(function(c){return '<div class="cad-r"><span><b>'+nomType(c.type)+'</b><small>'+(c.H.length>=CAD_MIN?(Math.abs(c.r-1)<CAD_ECART?'Vous êtes dans les temps prévus ('+pctC(c.r)+')':phraseC(c.r)):c.H.length+' chantier'+(c.H.length>1?'s':'')+' sur '+CAD_MIN+' pour commencer')+'</small></span>'+(c.H.length>=CAD_MIN&&Math.abs(c.r-1)>=CAD_ECART?'<button type="button" class="btn go" data-cadvoir="'+c.type+'">Voir</button>':'')+'</div>'}).join(''):'<p class="hb-tj" style="margin:0">Rien encore : il faut des chantiers terminés avec leurs heures (récap du soir).</p>')+'</div></div>'}
+function ouvreRythme(){if(window.PCHabitudes&&PCHabitudes.ouvrir)return PCHabitudes.ouvrir('rythme');mesCadences()}
 function mesCadences(){var R=Object.keys(CAD.ret),E=TYPES.map(function(t){return cadenceDe(t[0])}).filter(function(c){return c.H.length&&!CAD.ret[c.type]});
  var h='<div id="cad-m" class="vh"><p class="cad-n" style="margin:0 2px">Une cadence retenue ne change rien toute seule : chaque pré-devis vous montre le calcul normal et le calcul avec votre cadence.</p>'+
   (R.length?'<div class="vh-f"><span class="vh-lab">Retenues</span>'+R.map(function(t){var x=CAD.ret[t];return '<div class="cad-r"><span><b>'+nomType(t)+'</b><small>'+phraseC(x.r)+' · '+x.n+' chantiers · le '+esc(x.le.split('-').reverse().join('/'))+'</small></span><button type="button" class="btn" data-cadoubli="'+t+'">Oublier</button></div>'}).join('')+'</div>':'')+
@@ -495,9 +503,9 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
  if(s.cadvoir)return ficheCadence(s.cadvoir);
  if(s.cadnon){CAD.non[s.cadnon]=cadenceDe(s.cadnon).H.length;saveCad();if($('#cad-f'))X.xclose();X.toast('Pas de souci','Cliky reproposera après 2 nouveaux chantiers.');return fil()}
  if(s.cadok){var c=cadenceDe(s.cadok);CAD.ret[s.cadok]={r:c.r,n:c.H.length,le:jourIso(0)};delete CAD.non[s.cadok];saveCad();X.xclose();X.toast('Cadence retenue',nomType(s.cadok)+' '+pctC(c.r)+' · vous la verrez dans vos prochains pré-devis.');return fil()}
- if(s.cadoubli){delete CAD.ret[s.cadoubli];saveCad();X.toast('Cadence oubliée',nomType(s.cadoubli)+' : retour au calcul normal.');return mesCadences()}
+ if(s.cadoubli){delete CAD.ret[s.cadoubli];saveCad();X.toast('Cadence oubliée',nomType(s.cadoubli)+' : retour au calcul normal.');if($('#hb-x')&&window.PCHabitudes&&PCHabitudes.repeindre)return PCHabitudes.repeindre();return mesCadences()}
  if(s.cadfin!=null)return X.xclose();
- if(s.jrcad!=null)return mesCadences()});
+ if(s.jrcad!=null)return ouvreRythme()});
 
 /* ---------- branchements ---------- */
 function partir(id){var c=CH[id];if(!c)return;var d=jourIso(0),j=journee(d,id,true);j.dep=maintenant();j.ok=false;save();
@@ -526,7 +534,7 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)majP
    les reprennent, on peut les placer ou les déplacer dans Réglages comme les autres. La petite icône de l'option (Cliky)
    est posée au-dessus de leur icône. Option ou interrupteur coupé : l'entrée disparaît. */
 function marqueOpt(k){var L=window.PCOPT&&PCOPT.liste,o=L&&L[k];return o&&o.i?'<span class="pc-optm" title="Option '+esc(o.n)+'">'+o.i+'</span>':''}
-var ENTREES=[['vehicules','Mes véhicules',IV.van,onJ,function(){mesVehicules(null)}],['monequipe','Mon équipe',IC.equipe,onH,function(){HQ=null;equipe()}],['cadences','Mes cadences',IC.rythme,onC,function(){mesCadences()}]];
+var ENTREES=[['vehicules','Mes véhicules',IV.van,onJ,function(){mesVehicules(null)}],['monequipe','Mon équipe',IC.equipe,onH,function(){HQ=null;equipe()}]];/* Mes cadences : dans Mes habitudes (bloc « Mon rythme »), Cyril 27/11 */
 function entreesMenu(){var nav=$('nav.nav');if(!nav)return false;var ch=false;
  ENTREES.forEach(function(e){var b=$('#nb-'+e[0]);
   if(!b){b=document.createElement('button');b.type='button';b.id='nb-'+e[0];b.setAttribute('data-pbx','');b.setAttribute('data-opt','cliky');
@@ -547,5 +555,5 @@ function carbChantier(adr){adr=String(adr||'').trim();if(!adr)return null;
  var P=null,sync=true;prixCarb(v,function(p){P=p;if(!sync&&p){try{window.dispatchEvent(new Event('pc-frais-jour'))}catch(e){}}});sync=false;if(!P)return null;
  var km=Math.round(R.km),q=Math.round(km*2*v.conso/100*100)/100;
  return {km:km,veh:v.nom||carbNom(v.type),conso:v.conso,u:uniteV(v),q:q,prix:P.prix,src:P.src,eur:Math.round(q*P.prix*100)/100}}
-window.PCJR={carbChantier:carbChantier,aide:function(){return REG.apprend!==false},joursPose:joursPose,setJoursPose:function(o){CAD.jp=Object.assign({},CAD.jp||{},o||{});if(!(CAD.jp.j>0))delete CAD.jp.j;saveCad()},cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
+window.PCJR={rythmeHTML:rythmeHTML,carbChantier:carbChantier,aide:function(){return REG.apprend!==false},joursPose:joursPose,setJoursPose:function(o){CAD.jp=Object.assign({},CAD.jp||{},o||{});if(!(CAD.jp.j>0))delete CAD.jp.j;saveCad()},cadences:function(){return onC()?CAD.ret:{}},typeLigne:typeLigne,nomType:nomType,mesCadences:mesCadences,vehicules:mesVehicules,suiviVehicule:suiviVeh,reglagesHTML:reglagesHTML,recap:recap,partir:partir,heuresSup:feuilleHS,mois:feuilleMois,equipe:equipe,_jr:function(){return JR},_hs:function(){return HS}};
 })();
