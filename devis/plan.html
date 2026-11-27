@@ -457,6 +457,18 @@ html.leger #cl-more{display:none!important}
 html.leger body #cl-now .cn-alt:has([data-nocl]){flex:1 1 100%}
 html.leger body #cl-now .cn-alt button[data-nocl]{flex:1 1 100%;justify-content:center;min-height:46px!important;padding:8px 16px!important;border-radius:16px;background:var(--paper,#fff)!important;box-shadow:inset 0 0 0 2px var(--mint,#1B2440),0 6px 14px -8px rgba(27,36,64,.45)!important;color:var(--mint,#1B2440);font:800 15.5px var(--f)!important}
 html.leger body #cl-now .cn-alt button[data-nocl] svg{width:22px!important;height:22px!important}
+/* 27/11 (signalement n°107) : sur téléphone, le bouton bleu « En ce moment » prenait trop de hauteur : on le resserre pour laisser
+   le plus de place possible au plan ; « Créer une cloison » et « Pas de cloison » se mettent côte à côte. */
+@media (max-width:600px){
+html.leger body #cl-now .cn-act{display:grid!important;grid-template-columns:auto minmax(0,1fr);column-gap:9px;row-gap:1px;align-content:center;padding:6px 12px 6px 6px!important;border-radius:14px;min-height:48px}html.leger body #cl-now .cn-act>svg{grid-row:span 2;align-self:center}html.leger body #cl-now .cn-act b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.leger body #cl-now .cn-act>svg{width:30px!important;height:30px!important;border-radius:9px;padding:4px}
+html.leger body #cl-now .cn-act b{font-size:15px!important;line-height:1.15}
+html.leger body #cl-now .cn-act small{font-size:11.5px!important;line-height:1.2}
+html.leger body #cl-now:has([data-nocl]){flex-wrap:nowrap;align-items:stretch}
+html.leger body #cl-now:has([data-nocl]) .cn-act{flex:1 1 0;min-width:0}
+html.leger body #cl-now .cn-alt:has([data-nocl]){flex:0 0 auto}
+html.leger body #cl-now .cn-alt button[data-nocl]{flex:0 0 auto;height:100%;min-height:48px!important;padding:6px 10px!important;border-radius:14px;font-size:13.5px!important;line-height:1.15;white-space:normal;max-width:118px;text-align:left}
+}
 html.leger body #cl-now .cn-alt button{appearance:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:4px 14px 4px 6px;border-radius:28px;border:0;background:transparent!important;box-shadow:inset 0 0 0 1.5px var(--line,#C5C9D3)!important;color:var(--fg,#1B2440);font:700 13.5px var(--f);cursor:pointer}
 html.leger body #cl-now .cn-alt button{white-space:normal;text-align:left;max-width:100%}html.leger body #cl-now .cn-alt button svg{flex:none;width:22px;height:22px}
 html.client #svg .cl-glow{animation:clGlow 1.6s ease-in-out infinite}@keyframes clGlow{50%{stroke-opacity:.18}}
