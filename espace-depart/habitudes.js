@@ -142,7 +142,7 @@ function rendu(){
    mesMetiers(tous)+
    '<div class="hb-tabs" role="tablist" aria-label="Mes métiers">'+mets.map(function(x){return '<button type="button" class="hb-tab" role="tab" data-t="'+x[0]+'" aria-selected="'+(x[0]===onglet)+'">'+(IC[x[3]]||'')+esc(x[1])+'</button>'}).join('')+'</div>'+
    '<div class="hb-l">'+(G||[]).filter(function(g){return m[2].indexOf(g.id)>=0}).map(fiche).join('')+'</div>'+
-   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>'+moHTML()+fraisHTML();
+   '<p class="hb-tjl hb-cf"><b>Le client d\'abord.</b><span>Ce qu\'il a dit passe avant l\'habitude. Le plan B se met tout seul si le chantier ne permet pas l\'habitude.</span></p>'+moHTML()+fraisHTML()+(window.PCJR&&PCJR.rythmeHTML?PCJR.rythmeHTML():'');
 }
 /* Frais par jour de chantier (Cyril 25/11) : repas, carburant… × jours de pose estimés = « marge réelle estimée » du pré-devis.
    Simple estimation, vide par défaut (aucun chiffre inventé), gardée sur cet appareil. */
@@ -225,9 +225,9 @@ function lier(c){
 function ouvrir(cible){
   X.xopen('Mes habitudes de chantier','Votre façon de faire, pour des pré-devis déjà presque finis','<div id="hb-x"><p class="hint">Chargement…</p></div>','<button class="btn" data-xclose>Fermer</button>');
   var go=enDirect()?appel().catch(function(e){toast('Habitudes en démo',String(e.message||e));depuisDemo()}):Promise.resolve(depuisDemo());
-  go.then(peindre).then(function(){if(cible!=='frais')return;var e=$('#hb-fj');if(e&&e.scrollIntoView)e.scrollIntoView({block:'start',behavior:'smooth'})});
+  go.then(peindre).then(function(){if(cible!=='frais'&&cible!=='rythme')return;var e=$(cible==='rythme'?'#hb-ry':'#hb-fj');if(e&&e.scrollIntoView)e.scrollIntoView({block:'start',behavior:'smooth'})});
 }
-window.PCHabitudes={ouvrir:ouvrir,fraisJour:fraisJour,poser:function(){poser()}};
+window.PCHabitudes={ouvrir:ouvrir,repeindre:function(){peindre()},fraisJour:fraisJour,poser:function(){poser()}};
 if(enDirect())setTimeout(function(){appel().then(function(){}).catch(function(){})},1500);
 
 /* ---------- la ligne dans les Réglages, juste après « Mes options » ---------- */
@@ -286,7 +286,7 @@ st.textContent=
  '.hb-rows dt{color:var(--muted);font-size:13.5px;line-height:1.35}.hb-rows dd{margin:0;font-weight:800;font-size:15px;line-height:1.3}'+
  '.hb-pbl,.hb-tjl{display:flex;gap:10px;margin:0;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.4}'+
  '.hb-pbl{background:var(--warn-bg)}.hb-pbl b{color:var(--warn);flex:none}.hb-pbl i{font-style:normal;color:var(--muted)}'+
- '.hb-tjl{background:var(--soft)}.hb-tjl b{flex:none}.hb-tjl span{color:var(--muted)}.hb-cf{margin-top:12px}'+
+ '.hb-ryg{margin-top:10px}.hb-ryl{display:block;font-size:13px;color:var(--muted);margin-bottom:2px}.hb-ryg .cad-r small{color:var(--muted);font-size:12.5px}'+'.hb-tjl{background:var(--soft)}.hb-tjl b{flex:none}.hb-tjl span{color:var(--muted)}.hb-cf{margin-top:12px}'+
  '.hb-fj{margin-top:12px;gap:4px}.hb-fj .hb-tj{margin-bottom:6px}.hb-fl{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}.hb-fl>span:first-child{flex:1;min-width:0}.hb-fl b{display:block;font-size:15px}.hb-fl small{display:block;color:var(--muted);font-size:12.5px}'+
  '.hb-fi{flex:none;white-space:nowrap;font-weight:800}.hb-fi i{font-style:normal;font-size:13px;color:var(--muted)}.hb-fi input{width:84px;min-height:44px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-weight:800;font-size:16px;text-align:right}'+
  '.hb-fs{display:flex;justify-content:space-between;margin:0;padding-top:8px;border-top:1px solid var(--line);font-size:15px}.hb-fs b{font-size:17px}'+
