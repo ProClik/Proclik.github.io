@@ -193,6 +193,8 @@ html body .lq .chip.hasci[aria-pressed="true"] .ci>*, html body[data-cur="finiti
 html body .lq .chip.dk, html body[data-cur="finition"] #app .q .chip.dk{justify-content:center!important;padding:0 16px!important;background:transparent!important;border-style:dashed!important}
 /* Continuer : pilule pleine, juste le mot */
 html body .btn.go::before,html body .btn.go::after{display:none!important;content:none!important}
+/* 27/11 (Cyril, #110) : sans la flèche à droite, le texte des gros boutons est bien au centre */
+html body .btn.go{padding-left:22px;padding-right:22px}
 /* Récapitulatif : « Voir tout » */
 html body .e2-voir{margin:8px 0 0;height:40px;padding:0 14px;border-radius:28px;border:1px solid var(--e2-line);background:var(--e2-bg);color:var(--e2-nuit);font:700 14.5px Manrope,sans-serif;cursor:pointer}
 /* Toucher doux */
