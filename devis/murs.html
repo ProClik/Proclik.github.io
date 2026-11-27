@@ -43,8 +43,8 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .tog i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .stage{min-height:0;display:flex;flex-direction:column;background:var(--surface);border-radius:20px;padding:6px 4px 2px;box-shadow:5px 5px 12px var(--lo),-5px -5px 12px var(--hi);touch-action:none;user-select:none;-webkit-user-select:none;position:relative}
 .stage svg{display:block;flex:1;min-height:0;width:100%;height:100%;overflow:visible}
-.mzb{position:absolute;top:50%;z-index:5;width:40px;height:56px;margin-top:-28px;border:0;border-radius:14px;background:var(--surface);color:var(--fg);box-shadow:0 4px 14px rgba(14,19,34,.18);display:grid;place-items:center;cursor:pointer;padding:0}.mzb svg{width:22px;height:22px}#mz-l{left:4px}#mz-r{right:4px}.mzb[hidden],#mz-t[hidden]{display:none}
-#mz-t{position:absolute;left:42%;right:18px;top:16px;height:6px;border-radius:3px;background:var(--line,#d6d9e0);z-index:5;pointer-events:none}#mz-t i{position:absolute;top:0;bottom:0;border-radius:3px;background:var(--laiton,#A8823F)}
+.mzb{position:absolute;top:10px;z-index:5;width:36px;height:36px;border:0;border-radius:12px;background:var(--surface);color:var(--fg);box-shadow:0 4px 14px rgba(14,19,34,.18);display:grid;place-items:center;cursor:pointer;padding:0}.mzb svg{width:22px;height:22px}#mz-l{right:116px}#mz-r{right:10px}.mzb:disabled{opacity:.35;cursor:default}.mzb[hidden],#mz-t[hidden]{display:none}
+#mz-t{position:absolute;right:54px;width:56px;top:25px;height:6px;border-radius:3px;background:var(--line,#d6d9e0);z-index:5;pointer-events:none}#mz-t i{position:absolute;top:0;bottom:0;border-radius:3px;background:var(--laiton,#A8823F)}
 .stage{overflow:hidden}
 .hintline{font-size:12px;line-height:16px;color:var(--muted);text-align:center;margin:0 0 4px;height:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0 6px}
 .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px;font-size:11px;font-weight:700;color:var(--muted);margin:0 0 2px}
@@ -375,8 +375,10 @@ const EX={
  mur:{type:"mur",rt:"sejour",L:410,H:250,room:"Séjour",items:[{k:"fenetre",w:120,x:145},{k:"radiateur",w:100,x:155}]}
 };
 const MZ={key:"",x:0,on:false,Lw:0,max:0};
+/* 28/11 (Cyril #121) : en glissant un élément au bord, le mur défile tout seul */
+function mzEdge(){if(MZ.edgeT||MZ.inStep)return;const step=()=>{MZ.edgeT=0;if(!drag||!MZ.on||!MZ.ev)return;const r=$("stage").getBoundingClientRect(),x=MZ.ev.clientX,d=x<r.left+48?-1:x>r.right-48?1:0;if(!d)return;const nx=Math.max(0,Math.min(MZ.max,MZ.x+d*Math.max(3,MZ.Lw*.012)));if(Math.abs(nx-MZ.x)<.01)return;MZ.x=nx;draw();MZ.inStep=1;try{$("wall").dispatchEvent(new PointerEvent("pointermove",{pointerId:drag.id,clientX:MZ.ev.clientX,clientY:MZ.ev.clientY,bubbles:true}))}catch(e){}MZ.inStep=0;MZ.edgeT=requestAnimationFrame(step)};MZ.edgeT=requestAnimationFrame(step)}
 function mzUi(){const st=$("stage");if(!st)return;let a=$("mz-l"),b=$("mz-r"),t=$("mz-t");if(!a){const mk=(id,d,lab)=>{const x=document.createElement("button");x.type="button";x.id=id;x.className="mzb";x.setAttribute("aria-label",lab);x.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;["pointerdown","touchstart","mousedown"].forEach(ev=>x.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));x.addEventListener("click",()=>{MZ.x=Math.max(0,Math.min(MZ.max,MZ.x+(id==="mz-l"?-1:1)*MZ.Lw*.8));draw()});st.appendChild(x);return x};a=mk("mz-l","M15 5l-7 7 7 7","Voir la partie gauche du mur");b=mk("mz-r","M9 5l7 7-7 7","Voir la partie droite du mur");t=document.createElement("div");t.id="mz-t";t.innerHTML="<i></i>";st.appendChild(t)}
- a.hidden=!MZ.on||MZ.x<=1;b.hidden=!MZ.on||MZ.x>=MZ.max-1;t.hidden=!MZ.on;if(MZ.on){const L=M.L||1,i=t.firstChild;i.style.left=(MZ.x/L*100)+"%";i.style.width=(Math.min(1,MZ.Lw/L)*100)+"%"}}
+ a.hidden=b.hidden=t.hidden=!MZ.on;a.disabled=MZ.x<=1;b.disabled=MZ.x>=MZ.max-1;if(MZ.on){const L=M.L||1,i=t.firstChild;i.style.left=(MZ.x/L*100)+"%";i.style.width=(Math.min(1,MZ.Lw/L)*100)+"%"}}
 let M,face=0,sel=null,drag=null,U=1,cat="meuble",tech=false,exk="cuis";
 const $=id=>document.getElementById(id);
 const isClo=()=>M.type==="cloison";
@@ -506,7 +508,7 @@ function draw(){if(M&&M.prof)M.items.forEach(o=>{if(visible(o))underRoof(o)});
  for(let k=0;k<3;k++){pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${-pl} ${-pt} ${L+pl+pr} ${H+pt+pb}`);const bb=s.getBoundingClientRect(),sc=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb));U=sc>0?Math.max(.8,Math.min(2.2,1/sc)):1}
  /* 28/11 (Cyril #118 : « le mur paraît beaucoup trop petit sur le téléphone ») : un mur long et bas est montré en grand, une partie à la fois ; les flèches ‹ › font glisser le long du mur */
  {const bb=s.getBoundingClientRect(),scF=Math.min(bb.width/(L+pl+pr),bb.height/(H+pt+pb)),scH=bb.height/(H+pt+pb),key=M.L+"|"+M.H+"|"+(M.id||M.nom||"")+"|"+face;if(MZ.key!==key){MZ.key=key;MZ.x=0}
-  const on=bb.width>0&&bb.width<600&&H*scF<bb.height*.45&&scH>scF*1.35;MZ.on=on;if(on){const sc=Math.min(scH,scF*3),Lw=bb.width/sc-pl-pr;MZ.Lw=Lw;MZ.max=Math.max(0,L-Lw);MZ.x=Math.max(0,Math.min(MZ.x,MZ.max));const Hv=bb.height/sc;U=Math.max(.8,Math.min(2.2,1/sc));pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${MZ.x-pl} ${-pt-(Hv-(H+pt+pb))/2} ${Lw+pl+pr} ${Hv}`)}
+  const on=bb.width>0&&bb.width<600&&H*scF<bb.height*.45&&scH>scF*1.35;MZ.on=on;if(on){const sc=Math.min(scH,scF*3),Lw=bb.width/sc-pl-pr;MZ.Lw=Lw;MZ.max=Math.max(0,L-Lw);/* 28/11 (Cyril #121) : la vue suit l'élément choisi ou posé */if(!drag&&sel!=null&&M.items[sel]&&MZ.sel!==sel+"|"+M.items.length){const it=M.items[sel],ix=vx(it);if(ix<MZ.x||ix+it.w>MZ.x+Lw)MZ.x=ix+it.w/2-Lw/2}MZ.sel=sel==null?null:sel+"|"+M.items.length;MZ.x=Math.max(0,Math.min(MZ.x,MZ.max));const Hv=bb.height/sc;U=Math.max(.8,Math.min(2.2,1/sc));pl=16+30*U;pt=30*U;pb=40*U;s.setAttribute("viewBox",`${MZ.x-pl} ${-pt-(Hv-(H+pt+pb))/2} ${Lw+pl+pr} ${Hv}`)}
   mzUi()}
  const g=el("g",{},s);
  
@@ -723,7 +725,7 @@ $("wall").addEventListener("pointerdown",ev=>{$("dock").classList.remove("open")
 $("wall").addEventListener("pointermove",ev=>{
  if(hold&&ev.pointerId===hold.id){hold.last=ev;const d=Math.hypot(ev.clientX-hold.x0,ev.clientY-hold.y0);
   if(d>6){if(hold.mouse){lift(ev)}else{clearTimeout(hold.tm);const it=M.items[hold.i];sel=hold.i;hold=null;toast(`Maintenez le doigt sur <b>${nom(it)}</b> un instant, puis glissez`);draw();return}}else return}
- if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;
+ if(!drag||ev.pointerId!==drag.id)return;const it=M.items[sel];if(!it||it.lock)return;MZ.ev=ev;mzEdge();const fx=svgX(ev);let x=fx-drag.dx;drag.free=Math.max(-it.w*.4,Math.min(M.L-it.w*.6,x));drag.dy=0;
  // meuble lâché sur un autre meuble de la même hauteur : ils échangeront leur place
  const t0=drag.tgt;drag.tgt=null;if(!CAT[it.k].petit){const t=M.items.findIndex(o=>o!==it&&visible(o)&&!CAT[o.k].petit&&!CAT[o.k].deux&&band(it,o)&&fx>=vx(o)&&fx<=vx(o)+o.w);if(t>=0)drag.tgt=t}
  if(drag.tgt!=null&&drag.tgt!==t0)vib(6);
