@@ -44,6 +44,9 @@ css.textContent=[
 '.vco{margin:0 0 14px;padding:12px 14px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;flex-wrap:wrap}',
 '.vco span{flex:1 1 200px;font-size:13.5px;color:var(--muted)}.vco b{color:var(--fg)}',
 '.vl{display:grid;gap:10px}',
+'.vcw{display:flex;gap:8px;align-items:stretch}.vcw>.vcard{flex:1;min-width:0}',
+'.vcsup{appearance:none;flex:none;width:44px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);color:#C2413B;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}',
+':root[data-theme="dark"] .vcsup{color:#FF8A80}',
 '.vcard{appearance:none;text-align:left;width:100%;border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:16px;padding:12px 14px;display:grid;gap:6px;font:inherit;cursor:pointer}',
 '.vcard.vav{border-color:var(--turq);box-shadow:0 0 0 3px rgba(46,230,200,.16)}',
 '.vcard .r{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}',
@@ -204,7 +207,9 @@ function deconnecter(expire){lsS(KJ,null);lsS(KL,null);lsS('pc-membre',null);lsS
 
 /* ---------- liste des demandes ---------- */
 var LISTE=null,ETAPES=[],charge=0;
-function carte(d){var av=valider(d.etape);
+/* 27/11 (Cyril « sur chaque pré-devis ») : une petite poubelle à côté de chaque carte, sans ouvrir la demande */
+function carte(d){var c=carte0(d);return AP||!d.contact?c:'<div class="vcw">'+c+'<button type="button" class="vcsup" data-vpdsupl="'+esc(d.contact)+'" aria-label="Supprimer le pré-devis de '+esc(d.client)+'" title="Supprimer">'+ICPB+'</button></div>'}
+function carte0(d){var av=valider(d.etape);
  return '<button class="vcard'+(av?' vav':'')+'" type="button" data-vc="'+esc(d.contact||'')+'"><div class="r"><span><b>'+esc(d.client)+'</b>'+(av&&window.PCNotif&&PCNotif.estNouveau(d.contact)?PCNotif.pastille():'')+'<small>'+esc(d.resume||d.titre||'')+'</small></span><span class="vp '+(av?'t':'')+'">'+esc(d.etape||'—')+'</span></div>'+
   '<div class="r"><span class="vamt">'+(d.total_ht!=null?eur(d.total_ht)+'<small>HT</small>':'<small style="margin:0">pré-devis pas encore prêt</small>')+'</span><small style="text-align:right">'+esc(quand(d.pre_devis_le||d.cree_le))+(d.a_verifier?'<br><span class="vp w">'+d.a_verifier+' à vérifier</span>':'')+'</small></div></button>'}
 /* Onglet Devis : le même petit menu à icônes que la démo (Pré-devis · Fournisseur · Validés) */
@@ -630,16 +635,20 @@ function afficher(d){rtRecevoir(d);MODE='pre';if(COUR!==d)VTAB='devis';COUR=d;va
    elle sort de la liste sur tous les appareils et se remet d'un appui. Le client, ses photos, son plan et ses devis/factures restent.
    « Effacer pour de bon » n'existe que dans la corbeille, avec une deuxième confirmation. */
 var ICPB='<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex:none"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>';
-function pdSupDemander(){var d=COUR;if(!d||!d.contact)return;var k=d.contact,p=d.pre_devis&&d.pre_devis[0],t=p&&p.lue?totauxEd(p).total_ht:null;
- ouvrir('Supprimer ce pré-devis ?<small>'+esc(k.nom)+'</small>','<div class="cl-sup-p">'+
-  '<div class="card cl-sup-c"><b>Ce qui part</b><p>La demande de '+esc(k.nom)+(t!=null?' ('+eur(t)+' HT)':'')+' sort de votre liste de devis, sur tous vos appareils.</p></div>'+
+var SUP=null;
+function pdSupDemander(c){var nom,t=null,liste=!!c;
+ if(liste){var d=((LISTE&&LISTE.demandes)||[]).filter(function(x){return x.contact===c})[0];if(!d)return;nom=d.client;t=d.total_ht}
+ else{var D=COUR;if(!D||!D.contact)return;c=D.contact.id;nom=D.contact.nom;var p=D.pre_devis&&D.pre_devis[0];t=p&&p.lue?totauxEd(p).total_ht:null}
+ SUP={c:c,nom:nom,liste:liste};
+ ouvrir('Supprimer ce pré-devis ?<small>'+esc(nom)+'</small>','<div class="cl-sup-p">'+
+  '<div class="card cl-sup-c"><b>Ce qui part</b><p>La demande de '+esc(nom)+(t!=null?' ('+eur(t)+' HT)':'')+' sort de votre liste de devis, sur tous vos appareils.</p></div>'+
   '<div class="card cl-sup-c"><b>Ce qui reste</b><p>Le client et sa fiche, ses réponses, ses photos et son plan. Les devis et factures déjà faits ne bougent pas.</p></div>'+
   '<div class="card cl-sup-c"><b>Vous changez d\'avis ?</b><p>Il attend dans la corbeille, en bas de l\'onglet Devis. Un appui sur « Remettre » et il revient.</p></div></div>',
-  '<button class="vbtn" type="button" data-vretour>Annuler</button><button class="vbtn cl-sup-go" type="button" data-vpdsupok>'+ICPB+'<span>Supprimer</span></button>')}
-function pdSupOk(b){var d=COUR;if(!d||!d.contact)return;var c=d.contact.id,nom=d.contact.nom;b.disabled=true;b.lastChild.textContent='Suppression…';
- api('/espace/pre-devis/supprimer',{method:'POST',body:{contact:c}}).then(function(){
+  '<button class="vbtn" type="button" '+(liste?'data-vfermer':'data-vretour')+'>Annuler</button><button class="vbtn cl-sup-go" type="button" data-vpdsupok>'+ICPB+'<span>Supprimer</span></button>')}
+function pdSupOk(b){if(!SUP)return;var c=SUP.c,nom=SUP.nom;b.disabled=true;b.lastChild.textContent='Suppression…';
+ api('/espace/pre-devis/supprimer',{method:'POST',body:{contact:c}}).then(function(){SUP=null;
   if(LISTE&&LISTE.demandes){LISTE.demandes=LISTE.demandes.filter(function(x){return x.contact!==c});lsS(KL,LISTE)}
-  COUR=null;ov.hidden=true;document.body.style.overflow='';rendre();try{document.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}/* Accueil (accueil-forme.js) */
+  if(COUR&&COUR.contact&&COUR.contact.id===c)COUR=null;ov.hidden=true;document.body.style.overflow='';rendre();try{document.dispatchEvent(new CustomEvent('pc-notifs'))}catch(e){}/* Accueil (accueil-forme.js) */
   toast2('Pré-devis supprimé',(nom?nom+' : ':'')+'il attend dans la corbeille, en bas de l\'onglet Devis.')},
   function(e){b.disabled=false;b.lastChild.textContent='Réessayer';var z=$('#vov-b .cl-sup-p'),v=z&&z.querySelector('.cl-sup-err');if(v)v.remove();if(z)z.insertAdjacentHTML('afterbegin','<div class="card cl-sup-c cl-sup-err"><b>Pas supprimé</b><p>'+esc(e.message)+'</p></div>')})}
 var CORB=null;
@@ -658,8 +667,9 @@ function corbAction(b,re){var i=+b.getAttribute(re?'data-vcorbre':'data-vcorbef'
  api('/espace/pre-devis/'+(re?'remettre':'effacer'),{method:'POST',body:{opportunite:d.opportunite}}).then(function(){CORB.splice(i,1);
   rendreCorb('<div class="card" style="margin-bottom:10px"><b>'+esc(d.client)+(re?' est revenu dans vos devis.':' est effacé pour de bon.')+'</b></div>');if(re)charger()},
   function(e){delete d._ef;rendreCorb('<div class="verr" style="margin-bottom:10px">'+esc(e.message)+'</div>')})}
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vpdsup],[data-vpdsupok],[data-vcorb],[data-vcorbre],[data-vcorbef]');if(!b)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-vpdsup],[data-vpdsupl],[data-vpdsupok],[data-vcorb],[data-vcorbre],[data-vcorbef]');if(!b)return;e.preventDefault();e.stopPropagation();
  if(b.hasAttribute('data-vpdsup'))pdSupDemander();
+ else if(b.hasAttribute('data-vpdsupl'))pdSupDemander(b.getAttribute('data-vpdsupl'));
  else if(b.hasAttribute('data-vpdsupok'))pdSupOk(b);
  else if(b.hasAttribute('data-vcorb'))corbeille();
  else if(b.hasAttribute('data-vcorbre'))corbAction(b,1);
