@@ -464,6 +464,21 @@ html.leger.client body{margin:0!important}
 html.leger.client .wrap{padding-left:0!important;padding-right:0!important}
 html.leger.client #clbanner{margin-left:8px!important;margin-right:8px!important}
 html.leger.client #board{border-radius:0!important;background:transparent!important;box-shadow:none!important;border:0!important;position:relative}
+/* 27/11 (Cyril : « à chaque fois ») : à toutes les étapes, un seul autre choix se met à côté du bouton bleu ; plusieurs = petite rangée ; « Passer » discret.
+   « La fenêtre doit être la plus petite possible » : fiche de questions resserrée. */
+html.leger.client body #cl-now .cn-alt>button:not(:only-child){min-height:36px!important;font-size:13px!important;padding:3px 12px 3px 5px!important}
+html.leger.client body #clb-b[data-skip]{min-height:30px!important;padding:2px 10px!important;margin-top:0!important;font-size:13.5px!important}
+html.leger.client #sheet.wzon{bottom:6px!important;width:calc(100% - 12px)!important;padding:9px 12px 10px!important;border-radius:18px!important}
+html.leger.client #sheet.wzon .sh-in{gap:7px!important}
+html.leger.client #sheet.wzon .wz-h b{font-size:14px}html.leger.client #sheet.wzon .wz-h small{font-size:11.5px}
+html.leger.client #sheet.wzon .wz-x{width:32px;height:32px}
+html.leger.client #sheet.wzon .wz-n{display:none}
+html.leger.client #sheet.wzon .wz-q{gap:7px}
+html.leger.client #sheet.wzon .wz-q h3{font-size:17px;margin:0}
+html.leger.client #sheet.wzon .wz-q .qk{gap:6px}
+html.leger.client #sheet.wzon .wz-q .qk button{min-height:42px!important;font-size:14px!important;padding-top:4px!important;padding-bottom:4px!important}
+html.leger.client #sheet.wzon .wz-f{padding-top:0}
+html.leger.client #sheet.wzon .wz-f .btn.solid{min-height:42px}
 html.leger.client #board::after{box-shadow:none!important}html.leger.client #board>#svg{background:var(--paper,#F4F5F8)}
 html.leger.client #board .fl.tr .pill{padding:0!important;background:none!important;box-shadow:none!important;border:0!important}
 html.leger.client #t-undo{font-size:0!important;width:44px!important;height:44px!important;min-height:0!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center;justify-content:center;gap:0!important}
@@ -479,10 +494,10 @@ html.leger body #cl-now .cn-act{display:grid!important;grid-template-columns:aut
 html.leger body #cl-now .cn-act>svg{width:30px!important;height:30px!important;border-radius:9px;padding:4px}
 html.leger body #cl-now .cn-act b{font-size:15px!important;line-height:1.15}
 html.leger body #cl-now .cn-act small{font-size:11.5px!important;line-height:1.2}
-html.leger body #cl-now:has([data-nocl]){flex-wrap:nowrap;align-items:stretch}
-html.leger body #cl-now:has([data-nocl]) .cn-act{flex:1 1 0;min-width:0}
-html.leger body #cl-now .cn-alt:has([data-nocl]){flex:0 0 auto}
-html.leger body #cl-now .cn-alt button[data-nocl]{flex:0 0 auto;height:100%;min-height:48px!important;padding:6px 10px!important;border-radius:14px;font-size:13.5px!important;line-height:1.15;white-space:normal;max-width:118px;text-align:left}
+html.leger body #cl-now:has(.cn-alt>button:only-child){flex-wrap:nowrap;align-items:stretch}
+html.leger body #cl-now:has(.cn-alt>button:only-child) .cn-act{flex:1 1 0;min-width:0}
+html.leger body #cl-now .cn-alt:has(>button:only-child){flex:0 0 auto}
+html.leger body #cl-now .cn-alt>button:only-child{flex:0 0 auto;height:100%;min-height:48px!important;padding:6px 10px!important;border-radius:14px;font-size:13.5px!important;line-height:1.15;white-space:normal;max-width:118px;text-align:left}
 }
 html.leger body #cl-now .cn-alt button{appearance:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:4px 14px 4px 6px;border-radius:28px;border:0;background:transparent!important;box-shadow:inset 0 0 0 1.5px var(--line,#C5C9D3)!important;color:var(--fg,#1B2440);font:700 13.5px var(--f);cursor:pointer}
 html.leger body #cl-now .cn-alt button{white-space:normal;text-align:left;max-width:100%}html.leger body #cl-now .cn-alt button svg{flex:none;width:22px;height:22px}
@@ -1610,7 +1625,7 @@ function tutSeen(m){try{if(localStorage.getItem("pk-tut-"+m))return true;localSt
 function tutStop(){if(TUTA){TUTA.cancel();TUTA=null}const t=$("tut");if(t)t.hidden=true}
 function tutor(m){if(!CL||GD||ST.view!=="2d"||!F()||!F().rooms.length||tutSeen(m))return;const S=segs(),ext=S.find(x=>x.kind==="mur"&&!x.sh&&dist(x.a,x.b)>1)||S.find(x=>x.kind==="mur");if(!ext)return;
  const ctm=svg.getScreenCTM(),br=$("board").getBoundingClientRect();if(!ctm)return;const P=q=>{const pt=svg.createSVGPoint();pt.x=q[0];pt.y=q[1];const r=pt.matrixTransform(ctm);return[r.x-br.left,r.y-br.top]},mid=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
- const rm=ext.rm,b=bbox(rm.pts),A=P(mid(ext.a,ext.b,.5));let K,txt;
+ const rm=ext.rm,b=bbox(rm.pts),A=P(mid(ext.a,ext.b,.3));let K,txt;
  if(m==="clo"){/* 27/11 : à un tiers du mur, pour ne pas cacher la cote écrite au milieu */const p1=P([b.x0+(b.x1-b.x0)*.33,b.y0]),p2=P([b.x0+(b.x1-b.x0)*.33,b.y1]);K=[[p1,1,0],[p1,1,.12],[p1,.7,.2],[p1,1,.28],[p2,1,.62],[p2,.7,.72],[p2,1,.8],[p2,0,1]];txt="Touchez le mur de départ, puis l'endroit où la cloison s'arrête"}
  else{K=[[[A[0]+60,A[1]+70],0,0],[A,1,.35],[A,.7,.48],[A,1,.6],[A,.7,.72],[A,1,.84],[A,0,1]];txt=m==="win"?"Touchez le mur de la fenêtre":m==="door"?"Touchez le mur de la porte":"Touchez les murs ou cloisons à refaire"}
  const t=$("tut"),f=t.querySelector("i");t.querySelector("b").textContent=txt;t.hidden=false;tutStop();t.hidden=false;
