@@ -98,6 +98,12 @@ h1{margin:2px 0 0;font-size:clamp(24px,5.5vw,32px);font-weight:800;letter-spacin
 .ed button{appearance:none;border:0;border-radius:9px;width:38px;height:38px;font:800 16px var(--f);cursor:pointer}
 .ed .ok{background:var(--hot);color:#fff}.ed .x{background:var(--bg);color:var(--muted)}.ed .mic{background:var(--soft);color:var(--mint-ink)}.ed .plus{background:var(--bg);color:#A8823F;font-size:22px;line-height:1}.ed .edsum{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:8px;white-space:nowrap;background:var(--bg);box-shadow:var(--up-xs,0 2px 6px rgba(0,0,0,.12));border-radius:28px;padding:5px 12px;font:700 13px var(--f);color:var(--mint-ink)}
 .ed.listen{border-color:var(--mint-ink);box-shadow:0 0 0 4px rgba(168,130,63,.35)}
+/* 27/11 (Cyril #112) : petit pavé de chiffres pour les cotes, comme dans le formulaire (le clavier du téléphone ne s'ouvre plus) */
+#epad{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 26px rgba(14,19,34,.14)}
+#epad[hidden]{display:none}
+#epad button{appearance:none;border:0;min-height:44px;margin:0;padding:0;border-radius:12px;background:var(--bg);color:var(--fg);font:800 20px var(--f);display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 5px -2px rgba(14,19,34,.25)}
+#epad button:active{transform:scale(.96)}#epad button svg{width:24px;height:24px}
+.ed.lift{transition:top .18s ease}
 .ed.listen .mic{background:var(--mint-ink);color:#fff;animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.12)}}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--surface);border-top:1px solid var(--line);border-radius:22px 22px 0 0;box-shadow:0 -16px 40px rgba(11,18,38,.22);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));max-height:78vh;overflow:auto}
@@ -486,6 +492,8 @@ html.leger.client #t-undo span{display:none!important}
 html.leger.client #t-undo svg{width:22px!important;height:22px!important;margin:0!important}
 html.leger.client #board>#floors{position:absolute!important;top:8px;left:8px;width:auto!important;max-width:calc(100% - 70px);overflow-x:auto;flex-wrap:nowrap;z-index:6;margin:0!important}
 html.leger.client.hastoit #board .fl.tl{top:58px!important}
+/* 27/11 (Cyril : « Plan Toit sont sur le plan ») : le choix Plan / Toit se range sur la ligne de l'étage, à côté, quand il y a la place (tlPos) */
+html.leger.client.hastoit.tlrow #board .fl.tl{top:8px!important;left:var(--tl-left,8px)!important}
 }
 /* 27/11 (signalement n°107) : sur téléphone, le bouton bleu « En ce moment » prenait trop de hauteur : on le resserre pour laisser
    le plus de place possible au plan ; « Créer une cloison » et « Pas de cloison » se mettent côte à côte. */
@@ -526,6 +534,14 @@ html[data-theme="dark"].leger body #cl-more,html[data-theme="dark"].client.leger
 #repk .r{display:grid;gap:8px;width:100%;margin-top:8px}#repk .r button{appearance:none;border:1.5px dashed var(--line,#d6d9e0);background:transparent;color:var(--muted,#5B6478);border-radius:28px;padding:11px;font:700 14.5px var(--f,Manrope,sans-serif);cursor:pointer}
 #repk .r .go{border:0;background:#1B2440;color:#fff;font-weight:800}
 #clb-t b .bravo{display:inline-block;vertical-align:-5px;margin-right:6px}
+/* 27/11 (Cyril #113 : « la fenêtre du haut est beaucoup trop grande ») : téléphone debout, consigne en version courte : pas d'icône ni de titre, texte plus petit, boutons sur une seule ligne */
+@media (orientation:portrait) and (max-width:600px){
+html.leger.client body #clbanner{padding:8px 10px!important;row-gap:6px!important;column-gap:6px!important}
+html.leger.client body #clbanner>.pcl.ic,html.leger.client body #clb-t b{display:none!important}
+html.leger.client body #clbanner #clb-t{font-size:13.5px!important;line-height:1.3!important;flex:1 1 100%!important}
+html.leger.client body #clbanner #clb-v,html.leger.client body #clbanner #clb-shp,html.leger.client body #clbanner #clb-b{min-height:30px!important;height:30px!important;padding:0 9px!important;font-size:12.5px!important;margin:0!important;white-space:nowrap}
+html.leger.client body #clbanner #clb-v svg,html.leger.client body #clbanner #clb-shp svg{width:14px;height:14px}
+html.leger.client body #clbanner #clb-b.okgo{flex:1 1 auto!important;width:auto!important;order:2!important}}
 </style>
 <link rel="stylesheet" href="../n1.css?v=2"><link rel="stylesheet" href="plan-relief.css?v=24">
 <script>try{if(/[?&]embed/.test(location.search))document.documentElement.classList.add("embed");if(/[?&]client/.test(location.search))document.documentElement.classList.add("client");if(/[?&]client/.test(location.search)&&/[?&]leger/.test(location.search))document.documentElement.classList.add("leger");document.addEventListener("click",e=>{const m=e.target.closest&&e.target.closest("#cl-more");if(!m)return;const on=document.documentElement.classList.toggle("tous");m.setAttribute("aria-pressed",on);m.textContent=on?"✕ Moins d'outils":"⋯ Autres outils"})}catch(e){}</script>
@@ -1108,6 +1124,24 @@ function edSum(){const v=$("edv"),o=$("edsum");if(!o)return;const many=/\+|\splu
 $("edplus").addEventListener("click",()=>{const v=$("edv");let t=v.value.replace(/\s*\+\s*$/,"").trim();if(!t){v.focus();return}v.value=t+" + ";edSum();v.focus();try{const L=v.value.length;v.setSelectionRange(L,L)}catch(e){}});
 $("edv").addEventListener("input",edSum);new MutationObserver(()=>{if(!$("ed").hidden)edSum();else{$("edsum").hidden=true;$("edv").setAttribute("inputmode","decimal")}}).observe($("ed"),{attributes:true,attributeFilter:["hidden"]});
 $("edv").addEventListener("keydown",e=>{if(e.key==="Enter")applyEd();if(e.key==="Escape")closeEd()});
+/* 27/11 (Cyril #112) : pavé de chiffres ProClik pour les cotes (téléphone, iPad). Le clavier du téléphone revient seulement pour la dictée de secours (kbText). */
+const EPADON=(()=>{try{return matchMedia("(pointer:coarse)").matches}catch(_){return false}})();let EPF=false;
+function epadEl(){let p=$("epad");if(p)return p;p=document.createElement("div");p.id="epad";p.hidden=true;p.setAttribute("role","group");p.setAttribute("aria-label","Pavé de chiffres");
+ const BK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>';
+ p.innerHTML=["1","2","3","4","5","6","7","8","9","0",",","del"].map(k=>`<button type="button" data-epk="${k}" aria-label="${k==="del"?"Effacer":k}">${k==="del"?BK:k}</button>`).join("");
+ document.body.appendChild(p);["pointerdown","mousedown","touchstart"].forEach(t=>p.addEventListener(t,e=>{if(e.cancelable)e.preventDefault()},{passive:false}));
+ p.addEventListener("pointerup",e=>{const b=e.target.closest("[data-epk]");if(b)epadKey(b.dataset.epk)});
+ p.addEventListener("click",e=>{if(e.detail===0){const b=e.target.closest("[data-epk]");if(b)epadKey(b.dataset.epk)}});return p}
+function epadKey(k){const v=$("edv");if(!v||$("ed").hidden)return;let t=v.value;const last=(t.split("+").pop()||"").trim();
+ if(k==="del")t=EPF?"":/\s\+\s*$/.test(t)?t.replace(/\s*\+\s*$/,""):t.slice(0,-1);
+ else if(k===","){if(EPF)t="0,";else if(!last.includes(",")&&!last.includes("."))t=(last?t:t+"0")+","}
+ else{if(EPF)t=k;else if(last.replace(/[,.]/,"").length>=5)return;else t=t+k}
+ EPF=false;v.value=t;v.dispatchEvent(new Event("input",{bubbles:true}));try{const L=t.length;v.setSelectionRange(L,L)}catch(_){}try{navigator.vibrate&&navigator.vibrate(5)}catch(_){}}
+function epadSync(){const ed=$("ed"),v=$("edv");if(!EPADON||demo)return;const on=!ed.hidden&&v.getAttribute("inputmode")!=="text";const p=epadEl();
+ if(!on){p.hidden=true;ed.classList.remove("lift");return}if(v.getAttribute("inputmode")!=="none")v.setAttribute("inputmode","none");
+ if(p.hidden){p.hidden=false;EPF=true}
+ requestAnimationFrame(()=>{const r=ed.getBoundingClientRect(),lim=innerHeight-p.offsetHeight-10;if(r.bottom>lim){ed.classList.add("lift");ed.style.top=Math.max(4,(parseFloat(ed.style.top)||0)-(r.bottom-lim))+"px"}})}
+if(EPADON){new MutationObserver(()=>setTimeout(epadSync,0)).observe($("ed"),{attributes:true,attributeFilter:["hidden"]});new MutationObserver(epadSync).observe($("edv"),{attributes:true,attributeFilter:["inputmode"]});$("edplus").addEventListener("click",()=>{EPF=false})}
 // ---------- Fiches ----------
 const GROUPS={clo:[["oss","Ossature",["M48","M70","M90"]],["mont","Montants",["Simples","Doublés"]],["laine","Laine",["Sans","45 mm","70 mm","85 mm"]],["peau","BA13 par face",["1 peau","2 peaux"]],["plaque","Plaque",["Standard","Hydro","Phonique","Feu"]],["porte","Porte",["Aucune","63","73","83","93","Galandage 83"]],["poseporte","Pose de la porte",["À la création de la cloison","En fin de chantier","Je ne sais pas"]]],
  mur:[["trav","Travaux sur ce mur",["Aucun","Doublage"]],["sys","Type de doublage",["Sur appuis","Sur ossature M48","BA13 + PSE collé"]],["pse","Polystyrène (PSE)",["20 mm","40 mm","60 mm","80 mm","100 mm","120 mm"]],["laine","Laine",["Sans","100 mm","120 mm","140 mm","160 mm"]],["peau","BA13",["1 peau","2 peaux"]],["plaque","Plaque",["Standard","Hydro","Phonique"]]]};
@@ -1620,6 +1654,11 @@ if(CL){$("vf-l").addEventListener("click",e=>{const b=e.target.closest("[data-vf
 // Mini-démo au premier usage d'un outil : un doigt montre le geste sur le vrai plan (une seule fois par outil).
 var TUTA=null;/* 27/11 : téléphone debout (formulaire), la barre des étages se range dans le coin du plan ; elle revient à sa place sinon. */
 let FLH=null;function flPos(){const f=$("floors"),bd=$("board");if(!f||!bd)return;const n=document.documentElement.classList.contains("leger")&&CL&&matchMedia("(max-width:600px) and (orientation:portrait)").matches;let mv=0;if(n&&f.parentElement!==bd){FLH=FLH||{p:f.parentElement,n:f.nextSibling};bd.appendChild(f);mv=1}else if(!n&&FLH&&f.parentElement===bd){FLH.p.insertBefore(f,FLH.n);mv=1}if(mv)requestAnimationFrame(()=>{try{ST.view==="3d"?draw3():draw()}catch(e){}})}
+function tlPos(){const H=document.documentElement,t=document.querySelector("#board .fl.tl"),f=$("floors"),u=$("t-undo"),bd=$("board");if(!t||!f||!bd)return;
+ const on=H.classList.contains("leger")&&CL&&H.classList.contains("hastoit")&&f.parentElement===bd;if(!on){H.classList.remove("tlrow");return}
+ const b=bd.getBoundingClientRect(),fr=f.getBoundingClientRect(),ur=u&&u.offsetParent?u.getBoundingClientRect():{left:b.right-8},w=t.offsetWidth,l=fr.right-b.left+8;
+ const ok=fr.width>0&&w>0&&b.left+l+w<=ur.left-6;H.classList.toggle("tlrow",ok);if(ok)H.style.setProperty("--tl-left",l+"px")}
+addEventListener("resize",()=>setTimeout(tlPos,60));setInterval(()=>{if(!document.hidden)tlPos()},700);
 addEventListener("resize",flPos);addEventListener("DOMContentLoaded",flPos);setTimeout(flPos,0);
 function tutSeen(m){try{if(localStorage.getItem("pk-tut-"+m))return true;localStorage.setItem("pk-tut-"+m,"1")}catch(e){if((tutSeen.m=tutSeen.m||{})[m])return true;tutSeen.m[m]=1}return false}
 function tutStop(){if(TUTA){TUTA.cancel();TUTA=null}const t=$("tut");if(t)t.hidden=true}
