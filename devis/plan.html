@@ -98,6 +98,12 @@ h1{margin:2px 0 0;font-size:clamp(24px,5.5vw,32px);font-weight:800;letter-spacin
 .ed button{appearance:none;border:0;border-radius:9px;width:38px;height:38px;font:800 16px var(--f);cursor:pointer}
 .ed .ok{background:var(--hot);color:#fff}.ed .x{background:var(--bg);color:var(--muted)}.ed .mic{background:var(--soft);color:var(--mint-ink)}.ed .plus{background:var(--bg);color:#A8823F;font-size:22px;line-height:1}.ed .edsum{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:8px;white-space:nowrap;background:var(--bg);box-shadow:var(--up-xs,0 2px 6px rgba(0,0,0,.12));border-radius:28px;padding:5px 12px;font:700 13px var(--f);color:var(--mint-ink)}
 .ed.listen{border-color:var(--mint-ink);box-shadow:0 0 0 4px rgba(168,130,63,.35)}
+/* 27/11 (Cyril #112) : petit pavé de chiffres pour les cotes, comme dans le formulaire (le clavier du téléphone ne s'ouvre plus) */
+#epad{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 26px rgba(14,19,34,.14)}
+#epad[hidden]{display:none}
+#epad button{appearance:none;border:0;min-height:44px;margin:0;padding:0;border-radius:12px;background:var(--bg);color:var(--fg);font:800 20px var(--f);display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 5px -2px rgba(14,19,34,.25)}
+#epad button:active{transform:scale(.96)}#epad button svg{width:24px;height:24px}
+.ed.lift{transition:top .18s ease}
 .ed.listen .mic{background:var(--mint-ink);color:#fff;animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.12)}}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--surface);border-top:1px solid var(--line);border-radius:22px 22px 0 0;box-shadow:0 -16px 40px rgba(11,18,38,.22);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));max-height:78vh;overflow:auto}
@@ -1108,6 +1114,24 @@ function edSum(){const v=$("edv"),o=$("edsum");if(!o)return;const many=/\+|\splu
 $("edplus").addEventListener("click",()=>{const v=$("edv");let t=v.value.replace(/\s*\+\s*$/,"").trim();if(!t){v.focus();return}v.value=t+" + ";edSum();v.focus();try{const L=v.value.length;v.setSelectionRange(L,L)}catch(e){}});
 $("edv").addEventListener("input",edSum);new MutationObserver(()=>{if(!$("ed").hidden)edSum();else{$("edsum").hidden=true;$("edv").setAttribute("inputmode","decimal")}}).observe($("ed"),{attributes:true,attributeFilter:["hidden"]});
 $("edv").addEventListener("keydown",e=>{if(e.key==="Enter")applyEd();if(e.key==="Escape")closeEd()});
+/* 27/11 (Cyril #112) : pavé de chiffres ProClik pour les cotes (téléphone, iPad). Le clavier du téléphone revient seulement pour la dictée de secours (kbText). */
+const EPADON=(()=>{try{return matchMedia("(pointer:coarse)").matches}catch(_){return false}})();let EPF=false;
+function epadEl(){let p=$("epad");if(p)return p;p=document.createElement("div");p.id="epad";p.hidden=true;p.setAttribute("role","group");p.setAttribute("aria-label","Pavé de chiffres");
+ const BK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>';
+ p.innerHTML=["1","2","3","4","5","6","7","8","9","0",",","del"].map(k=>`<button type="button" data-epk="${k}" aria-label="${k==="del"?"Effacer":k}">${k==="del"?BK:k}</button>`).join("");
+ document.body.appendChild(p);["pointerdown","mousedown","touchstart"].forEach(t=>p.addEventListener(t,e=>{if(e.cancelable)e.preventDefault()},{passive:false}));
+ p.addEventListener("pointerup",e=>{const b=e.target.closest("[data-epk]");if(b)epadKey(b.dataset.epk)});
+ p.addEventListener("click",e=>{if(e.detail===0){const b=e.target.closest("[data-epk]");if(b)epadKey(b.dataset.epk)}});return p}
+function epadKey(k){const v=$("edv");if(!v||$("ed").hidden)return;let t=v.value;const last=(t.split("+").pop()||"").trim();
+ if(k==="del")t=EPF?"":/\s\+\s*$/.test(t)?t.replace(/\s*\+\s*$/,""):t.slice(0,-1);
+ else if(k===","){if(EPF)t="0,";else if(!last.includes(",")&&!last.includes("."))t=(last?t:t+"0")+","}
+ else{if(EPF)t=k;else if(last.replace(/[,.]/,"").length>=5)return;else t=t+k}
+ EPF=false;v.value=t;v.dispatchEvent(new Event("input",{bubbles:true}));try{const L=t.length;v.setSelectionRange(L,L)}catch(_){}try{navigator.vibrate&&navigator.vibrate(5)}catch(_){}}
+function epadSync(){const ed=$("ed"),v=$("edv");if(!EPADON||demo)return;const on=!ed.hidden&&v.getAttribute("inputmode")!=="text";const p=epadEl();
+ if(!on){p.hidden=true;ed.classList.remove("lift");return}if(v.getAttribute("inputmode")!=="none")v.setAttribute("inputmode","none");
+ if(p.hidden){p.hidden=false;EPF=true}
+ requestAnimationFrame(()=>{const r=ed.getBoundingClientRect(),lim=innerHeight-p.offsetHeight-10;if(r.bottom>lim){ed.classList.add("lift");ed.style.top=Math.max(4,(parseFloat(ed.style.top)||0)-(r.bottom-lim))+"px"}})}
+if(EPADON){new MutationObserver(()=>setTimeout(epadSync,0)).observe($("ed"),{attributes:true,attributeFilter:["hidden"]});new MutationObserver(epadSync).observe($("edv"),{attributes:true,attributeFilter:["inputmode"]});$("edplus").addEventListener("click",()=>{EPF=false})}
 // ---------- Fiches ----------
 const GROUPS={clo:[["oss","Ossature",["M48","M70","M90"]],["mont","Montants",["Simples","Doublés"]],["laine","Laine",["Sans","45 mm","70 mm","85 mm"]],["peau","BA13 par face",["1 peau","2 peaux"]],["plaque","Plaque",["Standard","Hydro","Phonique","Feu"]],["porte","Porte",["Aucune","63","73","83","93","Galandage 83"]],["poseporte","Pose de la porte",["À la création de la cloison","En fin de chantier","Je ne sais pas"]]],
  mur:[["trav","Travaux sur ce mur",["Aucun","Doublage"]],["sys","Type de doublage",["Sur appuis","Sur ossature M48","BA13 + PSE collé"]],["pse","Polystyrène (PSE)",["20 mm","40 mm","60 mm","80 mm","100 mm","120 mm"]],["laine","Laine",["Sans","100 mm","120 mm","140 mm","160 mm"]],["peau","BA13",["1 peau","2 peaux"]],["plaque","Plaque",["Standard","Hydro","Phonique"]]]};
