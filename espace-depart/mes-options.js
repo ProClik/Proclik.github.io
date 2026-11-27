@@ -94,7 +94,7 @@ window.PCMesOptions={ouvrir:ouvrir,fermer:fermer};
 /* ---------- dans les Réglages : une ligne qui ouvre le même panneau ---------- */
 var menu=$('#menu');
 function poser(){
- if($('#x-t').textContent!=='Votre espace'||$('#mo-opt'))return;
+ var tt=$('#x-t');if(!tt||(tt.dataset.f2t||tt.textContent)!=='Votre espace'||$('#mo-opt'))return;
  var c=$('#x-in .card.menu');if(!c)return;var n=nbOn();
  var b=d.createElement('button');b.type='button';b.id='mo-opt';
  b.innerHTML='<span class="av mo-i">'+IC_OPT+'</span><span class="tx"><b>Mes options</b><small>'+(n?n+' branchée'+(n>1?'s':'')+' · voir toutes les options':'Voir toutes les options')+'</small></span><span class="go">›</span>';
@@ -102,6 +102,7 @@ function poser(){
  c.insertBefore(b,c.firstChild);
 }
 if(menu)menu.addEventListener('click',function(){setTimeout(poser,0)});
+window.PCMesOptions.poser=poser;
 
 /* ---------- la fiche d'une option : elle seule, avec son explication ---------- */
 function detail(k){var o=info(k),t=TXT[k];if(!o||!t)return;var e=etat(k),on=e===true;fermer();

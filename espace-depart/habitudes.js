@@ -179,13 +179,13 @@ function ouvrir(cible){
   var go=enDirect()?appel().catch(function(e){toast('Habitudes en démo',String(e.message||e));depuisDemo()}):Promise.resolve(depuisDemo());
   go.then(peindre).then(function(){if(cible!=='frais')return;var e=$('#hb-fj');if(e&&e.scrollIntoView)e.scrollIntoView({block:'start',behavior:'smooth'})});
 }
-window.PCHabitudes={ouvrir:ouvrir,fraisJour:fraisJour};
+window.PCHabitudes={ouvrir:ouvrir,fraisJour:fraisJour,poser:function(){poser()}};
 if(enDirect())setTimeout(function(){appel().then(function(){}).catch(function(){})},1500);
 
 /* ---------- la ligne dans les Réglages, juste après « Mes options » ---------- */
 var menu=$('#menu');
 function poser(){
-  if(($('#x-t')||{}).textContent!=='Votre espace'||$('#hb-ligne'))return;
+  var tt=$('#x-t')||{dataset:{}};if((tt.dataset.f2t||tt.textContent)!=='Votre espace'||$('#hb-ligne'))return;
   var c=$('#x-in .card.menu');if(!c)return;
   var b=d.createElement('button');b.type='button';b.id='hb-ligne';
   b.innerHTML='<span class="av hb-av">'+IC.tete+'</span><span class="tx"><b>Mes habitudes de chantier</b><small>160 mm aux murs, rampants croisés… le pré-devis fait comme vous</small></span><span class="go">›</span>';

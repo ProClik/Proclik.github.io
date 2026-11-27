@@ -193,7 +193,7 @@ function compte(){var art=lsG(KA)||{};
  $('#vsort').addEventListener('click',function(){var b=this;if(!b.dataset.ok){b.dataset.ok=1;b.textContent='Touchez encore pour vous déconnecter';return}fermer();lsS(KA,null);if(window.PCProfil)PCProfil.pose(null);deconnecter(false)});
 }
 (function(){var m=document.getElementById('menu');if(!m)return;
- m.addEventListener('click',function(){setTimeout(function(){var t=document.getElementById('x-t');if(!t||t.textContent!=='Votre espace'||!lsG(KJ)||document.getElementById('v-compte'))return;
+ m.addEventListener('click',function(){setTimeout(function(){var t=document.getElementById('x-t');if(!t||(t.dataset.f2t||t.textContent)!=='Votre espace'||!lsG(KJ)||document.getElementById('v-compte'))return;
   var c=document.querySelector('#x-in .card.menu');if(!c)return;var b=document.createElement('button');b.type='button';b.id='v-compte';
   b.innerHTML='<span class="av"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg></span><span class="tx"><b>Mon compte</b><small>Mot de passe, appareils connectés</small></span><span class="go">›</span>';
   b.addEventListener('click',function(){if(window.PCX&&window.PCX.xclose)window.PCX.xclose();compte()});
