@@ -1037,7 +1037,7 @@ function psHint(y){const ok=document.documentElement.classList.contains("ghlps")
  if(!h){h=document.createElement("div");h.id="ps-hint";h.setAttribute("role","status");h.innerHTML='<span class="psg" aria-hidden="true"><i></i></span><span><b>Glissez vers le haut</b><small>pour agrandir l\'écran</small></span>';document.body.appendChild(h)}
  PSH.n++;PSH.h0=innerHeight;h.classList.remove("out");h.hidden=false;clearTimeout(PSH.t);PSH.t=setTimeout(psOut,8000)}
 addEventListener("resize",()=>{if(PSH.h0&&innerHeight>PSH.h0+8)psOut()});
-function pfScUpd(){const h=document.getElementById("pf-swipe");if(h)h.hidden=!document.documentElement.classList.contains("pfsc")||scrollY>24||(pfScUpd.y||0)>24||innerHeight>(pfScUpd.h0||1e9)+40}
+function pfScUpd(){const h=document.getElementById("pf-swipe");/* Cyril 28/11 : plus de message « Glissez ici vers le haut » */if(h)h.hidden=true}
 addEventListener("resize",()=>{if(document.documentElement.classList.contains("pfsc"))pfScUpd()});
 addEventListener("scroll",()=>{if(document.documentElement.classList.contains("pfsc"))pfScUpd()},{passive:true});
 let PFT=null;function closePlan(silent){const pf=document.getElementById("planfull");if(pf.hidden)return;pf.hidden=true;try{if(fsOn()){const x=document.exitFullscreen||document.webkitExitFullscreen;const r=x&&x.call(document);if(r&&r.catch)r.catch(()=>{})}}catch(_){}document.body.style.overflow="";if(document.documentElement.classList.contains("pfsc")){document.documentElement.classList.remove("pfsc","pfsc-top");pfScUpd();scrollTo(0,0)}fsUpd();if(!silent)render()}
