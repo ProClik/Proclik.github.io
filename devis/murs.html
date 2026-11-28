@@ -248,6 +248,8 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 /* Cyril 28/11 : « les consignes attirent beaucoup trop l'œil » : messages et aide en fond clair, texte gris, sans ombre */
 #toast,:root #toast{background:var(--soft)!important;color:var(--muted)!important;box-shadow:none!important;font-weight:600;font-size:12.5px;padding:6px 12px;-webkit-backdrop-filter:none;backdrop-filter:none}#toast b{color:var(--fg)!important;font-weight:700}
 #coach span{background:var(--soft);color:var(--muted);font-weight:600;box-shadow:none}#coach i{box-shadow:none;background:rgba(168,130,63,.12);border-width:1.5px}
+/* Cyril 28/11 (« optimiser ») : sur téléphone, marges réduites (mur plus large), cadres rapprochés, contour fin, fiche sans ✕ (toucher le mur à côté la ferme) */
+@media (max-width:600px) and (max-aspect-ratio:5/4){body{margin:0!important;padding:6px 6px!important}.app{gap:6px}.stage{padding-left:2px!important;padding-right:2px!important}.dock .card,.pop.pbot{border-width:1px!important}.pop.pbot{left:6px!important;right:6px!important}.pop [data-qok],.pop [data-fin]{display:none!important}}
 </style>
 </head>
 <body>
