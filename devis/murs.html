@@ -245,6 +245,9 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 /* Cyril 28/11 : « le bouton Annuler se trouve sur le plan » : sur téléphone, Annuler monte à côté de « Mur 1 sur 4 », hors du cadre du mur (le mur garde toute sa taille) */.hrow .undo{position:static;margin-left:auto;padding:5px 10px 5px 8px;font-size:12.5px}.hrow .undo svg{width:15px;height:15px}.hrow{flex-wrap:nowrap!important;gap:6px}.hrow .undo{flex:none;padding:5px 8px 5px 7px}#mini svg{max-width:60px;height:36px}#mini{gap:4px;flex:0 1 auto;min-width:0}#mtx{min-width:0;overflow:hidden;text-overflow:ellipsis}#gauge{flex:none;margin-left:0}
 .stage.tOn .hintline{visibility:hidden}.hintline{height:18px;white-space:nowrap;text-overflow:ellipsis;margin-bottom:2px}.hbt{padding-right:8px!important;white-space:nowrap}.hbt .nb{top:-7px;right:-5px;transform:none}
 .stage.fdL::before,.stage.fdR::after{content:"";position:absolute;top:44px;bottom:24px;width:26px;z-index:3;pointer-events:none}.stage.fdL::before{left:0;background:linear-gradient(90deg,var(--surface),transparent)}.stage.fdR::after{right:0;background:linear-gradient(270deg,var(--surface),transparent)}}
+/* Cyril 28/11 : « les consignes attirent beaucoup trop l'œil » : messages et aide en fond clair, texte gris, sans ombre */
+#toast,:root #toast{background:var(--soft)!important;color:var(--muted)!important;box-shadow:none!important;font-weight:600;font-size:12.5px;padding:6px 12px;-webkit-backdrop-filter:none;backdrop-filter:none}#toast b{color:var(--fg)!important;font-weight:700}
+#coach span{background:var(--soft);color:var(--muted);font-weight:600;box-shadow:none}#coach i{box-shadow:none;background:rgba(168,130,63,.12);border-width:1.5px}
 </style>
 </head>
 <body>
