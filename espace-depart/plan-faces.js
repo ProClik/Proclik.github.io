@@ -184,7 +184,10 @@ function drawOpen(o,Hh,fs){const w=o.x2-o.x1,y=Hh-o.al-o.h,x=o.x1,k=o.o.k,f=Math
  return s+`</g>`}
 function svgMur(){const w=wall();if(!w)return"";const sg=w.s,P=K(),L=Math.round(P.dist(sg.a,sg.b)*100),Hh=H(),E=eqs(sg),O=opens(sg),sel=V.sel,S=sty();
  /* taille des écritures calculée pour l'écran : environ 13 px lisibles même sur téléphone */
- const aw=(()=>{const W=innerWidth,Hs=innerHeight;if(W>Hs&&Hs<=560)return W-340;if(W>=900)return Math.min(980,W-32)*.6-20;return W-50})(),fs=FSV=Math.max(15,Math.min(60,13.5*L/Math.max(120,aw-6.6*13.5))),shown=E.map((e,i)=>({e,i})).filter(o=>vis(o.e.t)),fL=fs*.78;
+ /* Cyril 28/11 : sur téléphone debout, le mur prend toute la largeur ; un mur trop long est montré en grand (au-delà de 5,5 m : environ 4 m à l écran)
+    et on le fait glisser avec le doigt, comme le plan du formulaire qui zoome sur un grand logement ; « Tout le mur » pour le voir en entier. */
+ const tel=innerWidth<600&&innerHeight>innerWidth,ZL=400;V.zlong=tel&&L>550;V.zm=V.zlong&&!V.zall?L/ZL:0;
+ const aw=(()=>{const W=innerWidth,Hs=innerHeight;if(W>Hs&&Hs<=560)return W-340;if(W>=900)return Math.min(980,W-32)*.6-20;return (W-20)*(V.zm||1)})(),fs=FSV=Math.max(15,Math.min(60,13.5*L/Math.max(120,aw-6.6*13.5))),shown=E.map((e,i)=>({e,i})).filter(o=>vis(o.e.t)),fL=fs*.78;
  /* repères annotés : étiquette au-dessus du mur, reliée par un trait fin ; rangées en escalier si elles se touchent */
  const labs=[];O.forEach(o=>{const w2=o.x2-o.x1;labs.push({x:o.x1+w2/2,py:Hh-o.al-o.h*.62,t1:oName(o),t2:`${Math.round(w2)} × ${o.h}${o.al?` · allège ${o.al}`:""}`,pri:2})});
  shown.forEach(o=>{const e=o.e,D=isO(e.t)?oD(e):null;labs.push({x:e.x,py:Hh-e.h-(D?D.hh/2:(HH[e.t]||9)*Math.max(1,fs/11)),t1:eName(e),t2:D?`${Math.round(D.w)} × ${Math.round(D.hh)}${D.p?` × ${Math.round(D.p)}`:""} · ${stTx(e)}`:`h ${Math.round(e.h)} · ${stTx(e)}`,pri:e.st==="faire"||e.st==="dk"||o.i===sel?1:0,i:o.i})});
@@ -192,7 +195,7 @@ function svgMur(){const w=wall();if(!w)return"";const sg=w.s,P=K(),L=Math.round(
  const rows=[];const place=pri=>labs.forEach(l=>{if(l.r!=null||l.pri<pri)return;for(let r=0;r<3;r++){const R=rows[r]||(rows[r]=[]);if(R.every(q=>l.lx-l.w/2>q.lx+q.w/2+fL*.6||l.lx+l.w/2<q.lx-q.w/2-fL*.6)){R.push(l);l.r=r;return}}});
  place(2);place(1);place(0);const nr=Math.max(1,rows.filter(r=>r&&r.length).length);
  const ml=fs*3.6,mr=fs*3,mt=fs*(1.2+nr*2.3),hasE=shown.length>0,hasO=O.length>0,mb=fs*(1.6+(hasE?1.9:0)+(hasO?1.9:0)+1.9+1.4);
- let s=`<svg id="fx-esvg" class="s-${S}" viewBox="${-ml} ${-mt} ${L+ml+mr} ${Hh+mt+mb}" font-size="${fs}" role="img" aria-label="Mur vu de face">${DEFS}`;
+ let s=`<svg id="fx-esvg" class="s-${S}"${V.zm?` style="width:${Math.round(V.zm*100)}%;max-height:none"`:""} viewBox="${-ml} ${-mt} ${L+ml+mr} ${Hh+mt+mb}" font-size="${fs}" role="img" aria-label="Mur vu de face">${DEFS}`;
  s+=`<rect class="wf" x="0" y="0" width="${L}" height="${Hh}"/>${S==="L"?`<rect x="0" y="0" width="${L}" height="${Hh}" class="wash" filter="url(#fxwash)"/>`:""}`;
  /* plinthe 8 cm, coupée au droit des portes */
  {let x0=0;const cuts=O.filter(o=>o.o.k!=="fenetre"&&o.al<5).map(o=>[o.x1,o.x2]).sort((a,b)=>a[0]-b[0]);cuts.concat([[L,L]]).forEach(([a,b])=>{if(a-x0>1)s+=`<rect class="pl" x="${x0}" y="${Hh-8}" width="${a-x0}" height="8"/>`;x0=Math.max(x0,b)})}
@@ -484,7 +487,7 @@ const ico=(k,c)=>`<svg class="${c||"ic"}" viewBox="0 0 24 24" aria-hidden="true"
 const rb=(a,k,t,o)=>`<button class="rb${o&&o.go?" go":""}${o&&o.del?" del":""}" data-a="${a}"${o&&o.dis?" disabled":""}><span class="rc">${ico(k)}${o&&o.n?`<em>${o.n}</em>`:""}</span><span class="rt">${t}</span></button>`;
 function udRow(){const P=K(),u=!!(P.canU&&P.canU()),r=!!(P.canR&&P.canR());return`<button class="ud" data-a="undo" aria-label="Annuler"${u?"":" disabled"}>${ico("und")}</button><button class="ud" data-a="redo" aria-label="Rétablir"${r?"":" disabled"}>${ico("red")}</button>`}
 function frame(svg,e){const net=V.tab!=="clim"&&fams().length&&window.PKRESEAUX;
- return`<div class="elev"><div class="ftop">${udRow()}<span class="sp"></span>${net&&!(e)?`<div class="vseg" role="group" aria-label="Vue"><button data-a="face" aria-pressed="${!V.net}">De face</button><button data-a="net" aria-pressed="${!!V.net}">Dans les murs</button></div>`:""}</div><div class="sv">${svg}</div>${e&&e.ph&&e.ph.length?`<button class="phm" data-a="phv" aria-label="Voir les photos"><img src="${e.ph[e.ph.length-1].u}" alt=""><em>${e.ph.length}</em></button>`:""}</div>${V.net?netLeg():""}`}
+ return`<div class="elev"><div class="ftop">${udRow()}<span class="sp"></span>${net&&!(e)?`<div class="vseg" role="group" aria-label="Vue"><button data-a="face" aria-pressed="${!V.net}">De face</button><button data-a="net" aria-pressed="${!!V.net}">Dans les murs</button></div>`:""}</div><div class="sv${V.zm&&V.tab==="mur"?" zm":""}">${svg}</div>${V.zlong&&V.tab==="mur"&&!e?`<button class="zt" data-a="zall">${V.zall?"Zoomer":"Tout le mur"}</button>`:""}${e&&e.ph&&e.ph.length?`<button class="phm" data-a="phv" aria-label="Voir les photos"><img src="${e.ph[e.ph.length-1].u}" alt=""><em>${e.ph.length}</em></button>`:""}</div>${V.net?netLeg():""}`}
 /* Les éléments marqués « Je ne sais pas » de la pièce */
 function dkList(){const out=[];walls().forEach((w,wi)=>(K().EQ.get(w.s.a)||[]).forEach((e,i)=>{if(vis(e.t)&&e.st==="dk")out.push({tab:"mur",wi,i})}));(room().eqp||[]).forEach((e,i)=>{if(vis(e.t)&&e.st==="dk")out.push({tab:"plaf",i})});return out}
 function curEl(){if(V.sel<0)return null;return V.tab==="mur"?(wall()?eqs(wall().s)[V.sel]:null):(room().eqp||[])[V.sel]}
@@ -540,7 +543,9 @@ function render(){const d=$("fx"),P=K(),rm=room();if(!rm)return close();const F=
  if(P.F().rooms.length>1&&V.tab!=="mur")hd+=`<div class="chips" role="group" aria-label="Pièce">${P.F().rooms.map((r,i)=>`<button data-ri="${i}" aria-pressed="${i===V.ri}">${esc(r.nom)}</button>`).join("")}</div>`;
  if(V.tab!=="clim"&&M.length){const n=autoRoom();if(n)setTimeout(()=>toast(`${n} éléments posés aux hauteurs habituelles. Touchez ceux qui sont à faire.`),50)}
  const pt=V.tab==="mur"?murParts():V.tab==="plaf"?plafParts():{fr:climHTML(),ct:"",clim:1};
+ setTimeout(zScroll,0);
  d.innerHTML=`<div class="in lay${pt.clim?" clim":""}${curEl()?" on-sel":""}"><div class="a-hd">${hd}</div><div class="a-fr">${pt.fr}</div><div class="a-ct">${pt.ct}</div></div>`+(V.merge&&V.tab==="mur"&&wall()?mergeHTML():V.pick?pickHTML():V.sheet?sheetHTML():"")}
+function zScroll(){const sv=document.querySelector("#fx .sv.zm");if(!sv)return;if(!V.ztold){V.ztold=1;setTimeout(()=>toast("Mur long : faites-le glisser avec le doigt. « Tout le mur » pour le voir en entier."),1600)}const g=V.sel>=0&&sv.querySelector(`.sym[data-i="${V.sel}"]`);if(g){const r=g.getBoundingClientRect(),R=sv.getBoundingClientRect(),c=r.left+r.width/2-R.left;if(c<40||c>R.width-40)sv.scrollLeft+=c-R.width/2;V.scx=sv.scrollLeft}else if(V.scx!=null)sv.scrollLeft=V.scx}
 /* Dictée d'une cote en cm (« trente », « quatre-vingt-quinze », « 1 mètre 20 ») */
 const NUM={zero:0,un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,treize:13,quatorze:14,quinze:15,seize:16,vingt:20,vingts:20,trente:30,quarante:40,cinquante:50,soixante:60,cent:100,cents:100};
 function cmOf(t){t=String(t||"").toLowerCase().replace(/,/g,".").replace(/-/g," ");const m=t.match(/(\d+(?:\.\d+)?)\s*(m|mètres?|metres?)\s*(\d+)?/);if(m)return Math.round(parseFloat(m[1])*100+(m[3]?+m[3]:0));const d=t.match(/\d+(?:\.\d+)?/);if(d)return Math.round(parseFloat(d[0]));
@@ -672,6 +677,19 @@ const CSS2=`
 #fx .rc-list{display:none}
 /* téléphone : le petit plan reste en haut (plus grand), la carte est pour tablette et PC */
 #fx .rcard{display:none}#fx .eh .fx-mini{width:64px;height:64px}
+#fx .sv.zm{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}#fx .sv.zm::-webkit-scrollbar{display:none}
+#fx .zt{position:absolute;right:8px;bottom:8px;appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:800 12.5px var(--f);border-radius:999px;height:34px;padding:0 12px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+#fx .zh{position:absolute;left:10px;bottom:12px;font:600 11.5px var(--f);color:var(--muted);pointer-events:none}
+/* Cyril 28/11 : téléphone debout, le mur le plus grand possible */
+@media (max-width:599px) and (orientation:portrait){
+ #fx .lay .a-fr{margin:0 -10px}
+ #fx .elev{padding:4px 2px 6px;border-radius:14px}
+ #fx .elev svg{max-height:none}
+ #fx .ftop{margin:0;padding:0 4px}#fx .ud{width:34px;height:34px}#fx .vseg button{height:28px;padding:0 10px;font-size:12.5px}
+ #fx .tabs2{margin-bottom:6px}#fx .tabs2 button{height:38px}
+ #fx .eh{margin-bottom:2px}
+ #fx .nav{margin-top:6px}
+}
 @media (min-width:900px){
  #fx .rcard{display:flex}#fx .eh .fx-mini{display:none}#fx .lay:has(.tabs2 [data-tab="plaf"][aria-selected="true"]) .eh .fx-mini{display:block}
  #fx .rc-plan{width:150px;height:150px}
@@ -829,7 +847,8 @@ function onClick(ev){if(V&&(V.pick||V.sheet)&&ev.target.classList&&ev.target.cla
  if(d.st){const i=+d.i,it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(!it)return;snap();if(d.st==="non"){if(V.tab==="mur")eqs(wall().s).splice(i,1);else room().eqp.splice(i,1);V.sel=-1}else it.st=it.st===d.st?undefined:d.st;save();return render()}
  if(d.put){const at=V.pick&&V.pick.at;V.pick=null;return put(d.put,at)}
  if(d.grid){V.pick=null;return grid(d.grid)}
- if(d.w!=null){V.wi=+d.w;V.sel=-1;return render()}
+ if(d.w!=null){V.wi=+d.w;V.sel=-1;V.scx=null;return render()}
+ if(d.a==="zall"){V.zall=!V.zall;V.scx=null;return render()}
  if(d.tab){V.tab=d.tab;V.sel=-1;V.pick=null;return render()}
  if(d.ri!=null){V.ri=+d.ri;V.wi=0;V.sel=-1;return render()}
  if(d.sel!=null){V.sheet=null;V.sel=+d.sel;render();return}
@@ -900,15 +919,15 @@ function loupe(ev,c){let d=$("fx-loupe");if(!ev){if(d)d.hidden=true;return}if(ev
 /* Doigt : sur un élément = le glisser (pas de 5 cm) ; sur le mur vide = toucher pour poser, glisser à gauche/droite = mur suivant. */
 let DR=null,BG=null;
 function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
-function onDown(ev){if(!V||ev.target.closest(".pick"))return;if(V.tab==="clim"&&cDown(ev))return;const g=ev.target.closest(".sym");if(!g){const svg=ev.target.closest("#fx-esvg,#fx-psvg");BG=svg?{svg,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId}:null;return}const svg=g.ownerSVGElement;const i=+g.dataset.i;V.sel=i;DR={i,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault();svg.querySelectorAll(".sym").forEach(s=>s.classList.toggle("on",+s.dataset.i===i))}
-function onMove(ev){if(CD)return cMove(ev);if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
+function onDown(ev){if(!V||ev.target.closest(".pick"))return;if(V.tab==="clim"&&cDown(ev))return;const g=ev.target.closest(".sym");if(!g){const svg=ev.target.closest("#fx-esvg,#fx-psvg");BG=svg?{svg,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId,sv:svg.closest(".sv.zm"),sl:(svg.closest(".sv")||{}).scrollLeft||0}:null;return}const svg=g.ownerSVGElement;const i=+g.dataset.i;V.sel=i;DR={i,svg,id:ev.pointerId,moved:false,x0:ev.clientX,y0:ev.clientY};try{svg.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault();svg.querySelectorAll(".sym").forEach(s=>s.classList.toggle("on",+s.dataset.i===i))}
+function onMove(ev){if(CD)return cMove(ev);if(BG&&BG.sv&&ev.pointerId===BG.id){const dx=ev.clientX-BG.x0;if(Math.abs(dx)>4)BG.pan=1;BG.sv.scrollLeft=BG.sl-dx;V.scx=BG.sv.scrollLeft;return}if(!DR||ev.pointerId!==DR.id)return;if(!DR.moved&&Math.hypot(ev.clientX-DR.x0,ev.clientY-DR.y0)<4)return;if(!DR.moved){DR.moved=true;snap()}const Pt=svgPt(DR.svg,ev),P=K();
  if(V.tab==="mur"){const w=wall(),e=eqs(w.s)[DR.i],L=Math.round(P.dist(w.s.a,w.s.b)*100);const r=RR(),E=eqs(w.s),a=hw(e,L),lo=Math.max(isO(e.t)?0:r.coin,a),hi=L-Math.max(r.coin,a);let x=Math.max(lo,Math.min(hi,R5(Pt.x)));
   /* collé à l'élément voisin, jamais l'un sur l'autre (Cyril 17/11) */for(let n=0;n<3;n++)E.forEach((o,j)=>{if(j===DR.i||isO(o.t)||isO(e.t)||Math.abs(o.h-e.h)>=Math.max(18,(HH[o.t]||8)+(HH[e.t]||8)))return;const d=a+hw(o,L);if(Math.abs(x-o.x)<d)x=x>=o.x?o.x+d:o.x-d});
   e.x=Math.round(Math.max(lo,Math.min(hi,x)));/* hauteur fixée par la règle : on glisse seulement à l'horizontale (Cyril) */const el=$("fx").querySelector(".elev .sv");el.innerHTML=svgMur();DR.svg=$("fx-esvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x,y:H()-e.h})}
  else{const rm=room(),e=rm.eqp[DR.i],b=bb(rm);e.x=Math.max(b[0],Math.min(b[2],b[0]+R5(Pt.x-b[0])))/100;e.y=Math.max(b[1],Math.min(b[3],b[1]+R5(Pt.y-b[1])))/100;const el=$("fx").querySelector(".elev .sv");el.innerHTML=svgPlaf();DR.svg=$("fx-psvg");try{DR.svg.setPointerCapture(DR.id)}catch(e){}loupe(ev,{x:e.x*100,y:e.y*100})}}
 function onUp(ev){if(CD)return cUp(ev);loupe(null);if(DR&&DR.moved&&V.tab==="mur"){const w=wall(),E=eqs(w.s),e=E[DR.i],L=Math.round(K().dist(w.s.a,w.s.b)*100);if(e&&mods(e)){const j=E.findIndex((o,j)=>j!==DR.i&&mods(o)&&Math.abs(o.h-e.h)<10&&Math.abs(o.x-e.x)<=hw(o,L)+hw(e,L)+1);if(j>=0&&mods(e).length+mods(E[j]).length<=4)V.merge={i:DR.i,j}}}
  if(DR){const m=DR.moved,i=DR.i;DR=null;if(!m){/* un toucher = à faire / déjà en place (Cyril 17/11) */const it=V.tab==="mur"?eqs(wall().s)[i]:(room().eqp||[])[i];if(it){snap();it.st=it.st==="faire"?undefined:"faire"}V.sel=i}save();render();return}
- if(!BG||ev.pointerId!==BG.id)return;const B=BG;BG=null;const dx=ev.clientX-B.x0,dy=ev.clientY-B.y0;
+ if(!BG||ev.pointerId!==BG.id)return;const B=BG;BG=null;const dx=ev.clientX-B.x0,dy=ev.clientY-B.y0;if(B.pan)return;if(B.sv&&Math.abs(dx)>10)return;
  if(V.tab==="mur"&&Math.abs(dx)>60&&Math.abs(dx)>2*Math.abs(dy))return go(dx<0?1:-1);
  if(Math.hypot(dx,dy)>10)return;
  if(V.sel>=0){V.sel=-1;return render()}
