@@ -120,7 +120,7 @@ function sym(e,i,fs,sel){if(isO(e.t)&&T[e.t])return symO(e,i,sel);const x=e.x,y=
   case"cond":g=`<rect class="bx cl" x="${x-8}" y="${y-8}" width="16" height="16" rx="3.5"/><path class="gl" d="M${x} ${y-4.5} q4 5 0 8.5 q-4 -3.5 0 -8.5"/>`;break;
   case"cmd":g=`<rect class="bx cl" x="${x-9}" y="${y-9}" width="18" height="18" rx="3.5"/><text class="tt" x="${x}" y="${y+3}" style="font-size:7px">°C</text>`;break;
  }
- const k=(T[e.t]||{}).w?1:Math.max(1,fs/11),r=Math.max(20*k,((T[e.t]||{}).w||0)/2);
+ const k=(T[e.t]||{}).w?1:Math.max(1,fs/11),r=Math.max(30*k,((T[e.t]||{}).w||0)/2);/* Cyril 28/11 : zone de toucher plus grande (doigt de chantier), le dessin ne change pas */
  return `<g class="sym st-${i<0?"ico":e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${sel?" on":""}" data-i="${i}"><title>${esc(e.n||(T[e.t]||{}).n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(r,(M?9*M.length:0)*k)}"/>${e.st==="faire"?(M&&M.length>1?`<rect class="halo" x="${x-(9*M.length+8)*k}" y="${y-17*k}" width="${2*(9*M.length+8)*k}" height="${34*k}" rx="${17*k}"/>`:`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(17*k,((T[e.t]||{}).w||0)/2+8)}"/>`):""}<g transform="translate(${x} ${y}) scale(${k}) translate(${-x} ${-y})">${g}</g>${e.st==="dk"?(()=>{const bx=x+(M?9*M.length:(HW[e.t]||9))*k,by=y-(HH[e.t]||9)*k,r=6.5*k;return`<g class="dkb"><circle cx="${bx}" cy="${by}" r="${r}"/><text x="${bx}" y="${by+r*.42}" font-size="${r*1.25}">?</text></g>`})():""}</g>`}
 /* Demi-largeur dessinée d'un élément (cm), pour qu'ils se collent sans se chevaucher */
 const HW={pc:9,pc2:18,pc3:27,pc4:36,p32:11,tv:9,rj:9,int:9,vv:9,app:9,iph:8,tab:30,vmcm:10,ef:7,ec:7,ev:8,mit:9,gs:20,grp:25,nour:14,cee:25,rad:40,ss:25,split:45,ge:40,liai:9,cond:8,cmd:9};
@@ -224,12 +224,23 @@ function mini(){const rm=room(),w=wall(),xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=
  if(sg&&V.tab==="mur"){const mx=(sg.a[0]+sg.b[0])/2,my=(sg.a[1]+sg.b[1])/2,a=Math.atan2(my-cy,mx-cx),r=M*.16;s+=`<circle class="me" cx="${cx}" cy="${cy}" r="${M/16}"/><line class="me" x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*r}" y2="${cy+Math.sin(a)*r}" stroke-width="${M/30}"/>`}
  return s+"</svg>"}
 
+/* Cyril 28/11 19h45 : on doit voir tout de suite QUEL mur on regarde. Petit plan de la pièce dans la colonne de droite :
+   murs numérotés, mur en cours en laiton (épais), portes et fenêtres marquées, toucher un mur = y aller. */
+function roomCard(){const rm=room(),W=walls();if(!rm||!W.length)return"";const P=K(),xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys),Wd=Math.max(...xs)-x0||1,Hh=Math.max(...ys)-y0||1,M=Math.max(Wd,Hh),pad=M*.2,cx=x0+Wd/2,cy=y0+Hh/2;
+ let s=`<svg class="rc-plan" viewBox="${x0-pad} ${y0-pad} ${Wd+2*pad} ${Hh+2*pad}" role="group" aria-label="Plan de la pièce : touchez un mur"><polygon points="${rm.pts.map(p=>p.join(",")).join(" ")}" class="rp"/>`;
+ W.forEach((o,i)=>{const a=o.s.a,b=o.s.b,on=i===V.wi;s+=`<line data-w="${i}" class="rw${on?" on":""}${o.s.kind==="clo"?" clo":""}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke-width="${M/(on?16:34)}"/>`;
+  let L=1;try{L=P.dist(a,b)*100||1}catch(e){}
+  try{opens(o.s).forEach(op=>{const t1=Math.max(0,op.x1/L),t2=Math.min(1,op.x2/L),q=t=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t],A=q(t1),B=q(t2);s+=`<line class="ro${/porte/i.test(oName(op))?" dr":""}" x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke-width="${M/(on?24:40)}"/>`})}catch(e){}
+  s+=`<line data-w="${i}" class="rhit" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke-width="${M/5}"/>`});
+ W.forEach((o,i)=>{const a=o.s.a,b=o.s.b,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,ang=Math.atan2(my-cy,mx-cx),d=M*.11,x=mx+Math.cos(ang)*d,y=my+Math.sin(ang)*d,on=i===V.wi;s+=`<g class="rn${on?" on":""}" data-w="${i}"><circle cx="${x}" cy="${y}" r="${M*.075}"/><text x="${x}" y="${y+M*.027}" font-size="${M*.08}">${i+1}</text></g>`});
+ s+="</svg>";const w=wall(),sg=w&&w.s;
+ return`<div class="rcard"><div class="rc-t"><b>Vous regardez le mur ${V.wi+1}</b><small>${sg?(sg.kind==="mur"?(sg.sh?"entre deux pièces":"donne dehors"):"cloison"):""} · en laiton sur le plan</small><span class="rc-h">Touchez un autre mur pour y aller.</span></div>${s}</div>`}
 /* Plafond de la pièce, vu de dessus, cotes depuis les murs. */
 function svgPlaf(){const rm=room(),pts=rm.pts.map(p=>[p[0]*100,p[1]*100]),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)],w=b[2]-b[0],h=b[3]-b[1],M=Math.max(w,h),mg=M*.2,fs=M/24;
  let s=`<svg id="fx-psvg" viewBox="${b[0]-mg} ${b[1]-mg} ${w+mg*1.5} ${h+mg*1.5}" font-size="${fs}" role="img" aria-label="Plafond vu de dessus">${DEFS}<polygon class="pfond" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;if(V.net)s+=`<clipPath id="fx-pclip"><polygon points="${pts.map(p=>p.join(",")).join(" ")}"/></clipPath><g clip-path="url(#fx-pclip)">${netPlaf(rm,M)}</g>`;
  pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length];s+=`<line class="pmur" x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke-width="${M/60}"/>`});
  const E=(rm.eqp||[]).map((e,i)=>({e,i})).filter(o=>vis(o.e.t)).sort((a,b)=>(b.e.t==="zb")-(a.e.t==="zb")),k=M/420,X=[],Y=[],Hh0=H();
- E.forEach(({e,i})=>{const x=e.x*100,y=e.y*100;if(isO(e.t)){const D=oD(e);X.push(Math.round(x-D.w/2),Math.round(x+D.w/2));Y.push(Math.round(y-D.l/2),Math.round(y+D.l/2));s+=`<g class="sym ouvg st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><rect class="hit" x="${x-D.w/2-8}" y="${y-D.l/2-8}" width="${D.w+16}" height="${D.l+16}"/>${e.st==="faire"?`<rect class="halo" x="${x-D.w/2-6}" y="${y-D.l/2-6}" width="${D.w+12}" height="${D.l+12}" rx="6"/>`:""}<rect class="ouv dsh${e.t==="zb"?" zb":""}" x="${x-D.w/2}" y="${y-D.l/2}" width="${D.w}" height="${D.l}"/><text class="ck" font-size="${fs*.8}" x="${x}" y="${y+fs*.3}">${e.t==="zb"?"à "+hzT(e,Hh0):"−"+Math.round(D.hh)}</text></g>`;return}X.push(Math.round(x));Y.push(Math.round(y));s+=`<g class="sym st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.4)}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.2)}"/>`:""}${symPlaf(e.t,x,y,Math.max(1,k))}</g>`});
+ E.forEach(({e,i})=>{const x=e.x*100,y=e.y*100;if(isO(e.t)){const D=oD(e);X.push(Math.round(x-D.w/2),Math.round(x+D.w/2));Y.push(Math.round(y-D.l/2),Math.round(y+D.l/2));s+=`<g class="sym ouvg st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><rect class="hit" x="${x-D.w/2-8}" y="${y-D.l/2-8}" width="${D.w+16}" height="${D.l+16}"/>${e.st==="faire"?`<rect class="halo" x="${x-D.w/2-6}" y="${y-D.l/2-6}" width="${D.w+12}" height="${D.l+12}" rx="6"/>`:""}<rect class="ouv dsh${e.t==="zb"?" zb":""}" x="${x-D.w/2}" y="${y-D.l/2}" width="${D.w}" height="${D.l}"/><text class="ck" font-size="${fs*.8}" x="${x}" y="${y+fs*.3}">${e.t==="zb"?"à "+hzT(e,Hh0):"−"+Math.round(D.hh)}</text></g>`;return}X.push(Math.round(x));Y.push(Math.round(y));s+=`<g class="sym st-${e.st==="faire"?"faire":e.st==="dk"?"dk":"exist"}${V.sel===i?" on":""}" data-i="${i}"><title>${esc(e.n||TP[e.t].n)}</title><circle class="hit" cx="${x}" cy="${y}" r="${Math.max(34*k,fs*1.8)}"/>${e.st==="faire"?`<circle class="halo" cx="${x}" cy="${y}" r="${Math.max(24*k,fs*1.2)}"/>`:""}${symPlaf(e.t,x,y,Math.max(1,k))}</g>`});
  s+=chain(X,b[0],b[2],b[1]-mg*.45,1,fs)+chain(Y,b[1],b[3],b[0]-mg*.45,0,fs);
  if(V.sel>=0&&rm.eqp&&rm.eqp[V.sel]){const e=rm.eqp[V.sel],D0=isO(e.t)?oD(e):null,x=e.x*100-(D0?D0.w/2:0),y=e.y*100-(D0?D0.l/2:0);s+=`<line class="cs" stroke-dasharray="6 5" x1="${b[0]}" y1="${y}" x2="${x}" y2="${y}"/><line class="cs" stroke-dasharray="6 5" x1="${x}" y1="${b[1]}" x2="${x}" y2="${y}"/>`+pill((b[0]+x)/2,y-fs*.9,Math.round(x-b[0])+" cm",fs)+pill(x+fs*2.6,(b[1]+y)/2,Math.round(y-b[1])+" cm",fs)}
  return s+"</svg>"}
@@ -237,7 +248,7 @@ function symPlaf(t,x,y,k){if(t==="zb")return`<rect class="ouv dsh zb" x="${x-30*
  if(t==="spot")return sq(13,"pf-spot",5)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${7*k}" fill="none"/><path class="pf-x" d="M${x-4.5*k} ${y-4.5*k}l${9*k} ${9*k}M${x+4.5*k} ${y-4.5*k}l${-9*k} ${9*k}"/>`;
  if(t==="pl")return sq(17,"pf-spot",6)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${10*k}" fill="none"/><circle class="pf-pl" cx="${x}" cy="${y}" r="${4.5*k}"/>`;
  if(t==="vmc")return sq(15,"pf-vmc",5)+`<circle class="pf-x" cx="${x}" cy="${y}" r="${9*k}" fill="none"/><circle class="pf-x" cx="${x}" cy="${y}" r="${4*k}" fill="none"/>`;
- if(t==="df")return sq(15,"pf-df",5)+`<text class="pf-dft" x="${x}" y="${y+4.5*k}" font-size="${12*k}">DF</text>`;
+ if(t==="df")return`<circle class="pf-df" cx="${x}" cy="${y}" r="${15*k}"/><circle class="pf-x" cx="${x}" cy="${y}" r="${9*k}" fill="none"/>${[0,1,2,3,4,5].map(j=>{const a=j*Math.PI/3,r1=10.5*k,r2=13*k;return`<line class="pf-x" x1="${x+Math.cos(a)*r1}" y1="${y+Math.sin(a)*r1}" x2="${x+Math.cos(a)*r2}" y2="${y+Math.sin(a)*r2}"/>`}).join("")}<circle class="pf-dfl" cx="${x}" cy="${y}" r="${2.6*k}"/><text class="pf-dft" x="${x}" y="${y+28*k}" font-size="${11*k}">Détecteur de fumée</text>`;
  if(t==="souf")return`<rect class="pf-cl" x="${x-30*k}" y="${y-10*k}" width="${60*k}" height="${20*k}" rx="${5*k}"/>${[-20,-12,-4,4,12,20].map(d=>`<line class="pf-x" x1="${x+d*k}" y1="${y-5*k}" x2="${x+d*k}" y2="${y+5*k}"/>`).join("")}`;
  if(t==="rep")return sq(25,"pf-cl",6)+[-14,-7,0,7,14].map(d=>`<line class="pf-x" x1="${x-18*k}" y1="${y+d*k}" x2="${x+18*k}" y2="${y+d*k}"/>`).join("");
  return sq(30,"pf-cl",7)+`<rect class="pf-x" x="${x-17*k}" y="${y-17*k}" width="${34*k}" height="${34*k}" rx="${4*k}" fill="none"/>`+[[0,-23],[0,23],[-23,0],[23,0]].map(([a,b])=>`<rect class="pf-x" x="${x+(a?a-2:-10)*k}" y="${y+(b?b-2:-10)*k}" width="${(a?4:20)*k}" height="${(b?4:20)*k}" rx="${1*k}" fill="none"/>`).join("")}
@@ -368,7 +379,7 @@ html.fx-open,html.fx-open body{overflow:hidden!important}
 #fx .sym{cursor:grab}#fx .sym .hit{fill:transparent}#fx .sym.on .bx,#fx .sym.on .pf-spot,#fx .sym.on .pf-cl,#fx .sym.on .pf-vmc,#fx .sym.on .pf-df{stroke:#B8924F;stroke-width:3}
 #fx .pfond{fill:var(--paper)}#fx .pmur{stroke:var(--fg);stroke-linecap:round}
 #fx .pf-spot{fill:var(--surface);stroke:var(--fg);stroke-width:2}#fx .pf-x{stroke:var(--fg);stroke-width:1.6}#fx .pf-pl{fill:var(--fg)}#fx .pf-vmc{fill:var(--surface);stroke:var(--fg);stroke-width:2}
-#fx .pf-df{fill:var(--surface);stroke:#E8590C;stroke-width:2}#fx .pf-dft{fill:#E8590C;text-anchor:middle;font-weight:800}#fx .pf-cl{fill:var(--surface);stroke:#2F7DE1;stroke-width:2}
+#fx .pf-df{fill:var(--surface);stroke:var(--ink,#1B2440);stroke-width:2}#fx .pf-dft{fill:var(--ink,#1B2440);text-anchor:middle;font-weight:700}#fx .pf-dfl{fill:#B8924F;stroke:none}#fx .pf-cl{fill:var(--surface);stroke:#2F7DE1;stroke-width:2}
 #fx .cons{display:flex;gap:10px;align-items:flex-start;margin:10px 2px 0;color:var(--muted);font-size:14px}#fx .cons i{flex:none;width:8px;height:8px;border-radius:50%;background:#B8924F;margin-top:7px}
 #fx .tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
 #fx .bt{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 14.5px var(--f);padding:10px 15px;border-radius:999px;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:6px}
@@ -490,7 +501,7 @@ function ctHTML(label){const e=curEl();if(e)return selHTML(e);
  const n=V.tab==="mur"?(K().EQ.get(wall().s.a)||[]).filter(x=>vis(x.t)).length+opens(wall().s).length:(room().eqp||[]).filter(x=>vis(x.t)).length;
  return`<div class="cons"><i></i><span>Touchez ce qui est à faire.</span></div><div class="rbs">${rb("add","add","Ajouter")}${rb("allfaire","all","Tout à faire")}${rb("slist","list",label,{n})}${rb("sreg","reg","Réglages")}</div>`}
 function murParts(){const w=wall();if(!w)return{fr:`<p class="muted">Cette pièce n'a pas encore de murs.</p>`,ct:""};const W=walls(),e=curEl();
- return{fr:frame(svgMur(),e),ct:`<div class="nav"><button class="rd" data-a="prev" aria-label="Mur précédent">${ico("bk")}</button><span>Mur ${V.wi+1} sur ${W.length}</span><button class="rd" data-a="next" aria-label="Mur suivant">${ico("nx")}</button></div>`+ctHTML("Sur ce mur")}}
+ return{fr:frame(svgMur(),e),ct:`<div class="nav"><button class="rd" data-a="prev" aria-label="Mur précédent">${ico("bk")}</button><span>Mur ${V.wi+1} sur ${W.length}</span><button class="rd" data-a="next" aria-label="Mur suivant">${ico("nx")}</button></div>`+(e?"":roomCard())+ctHTML("Sur ce mur")+(e?"":`<div class="rc-list"><b class="rc-lt">Sur ce mur, de gauche à droite</b>${listHTML()}</div>`)}}
 function plafParts(){const e=curEl();return{fr:frame(svgPlaf(),e),ct:ctHTML("Au plafond")}}
 /* Feuilles du bas : liste du mur, réglages (métiers, règles de pose, câbles, style du dessin) */
 function listHTML(){const mur=V.tab==="mur";let h="";
@@ -644,7 +655,25 @@ const CSS2=`
 #fx .s-T .halo{fill:none;stroke:var(--ink);stroke-width:1.2;stroke-dasharray:3 3;opacity:1}
 #fx .sym.st-dk{opacity:1}#fx .dkb circle{fill:#1B2440}#fx .dkb text{fill:#fff;font-weight:800;text-anchor:middle}
 :root[data-theme="dark"] #fx .dkb circle{fill:#F2EEE4}:root[data-theme="dark"] #fx .dkb text{fill:#1B2440}
+ /* plan de la pièce (Cyril 28/11) */
+#fx .rcard{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 12px;margin:10px 0 12px}
+#fx .rc-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}#fx .rc-t b{font-size:15.5px}#fx .rc-t small{font-size:12.5px;color:var(--muted)}#fx .rc-h{font-size:12.5px;color:var(--muted);margin-top:4px}
+#fx .rc-plan{width:112px;height:112px;flex:none;cursor:pointer}
+#fx .rc-plan .rp{fill:var(--paper,#FBFBFA);stroke:none}
+#fx .rc-plan .rw{stroke:var(--ink,#1B2440);stroke-linecap:round;opacity:.55}#fx .rc-plan .rw.clo{stroke-dasharray:.1 .08}
+#fx .rc-plan .rw.on{stroke:#B8924F;opacity:1}
+#fx .rc-plan .ro{stroke:#DCE6EE;stroke-linecap:butt}#fx .rc-plan .ro.dr{stroke:var(--surface,#fff)}
+#fx .rc-plan .rhit{stroke:transparent;cursor:pointer}
+#fx .rc-plan .rn circle{fill:var(--surface,#fff);stroke:var(--ink,#1B2440);stroke-width:.04}#fx .rc-plan .rn text{fill:var(--ink,#1B2440);text-anchor:middle;font-weight:800}
+#fx .rc-plan .rn.on circle{fill:#1B2440;stroke:#1B2440}#fx .rc-plan .rn.on text{fill:#fff}
+:root[data-theme="dark"] #fx .rc-plan .rn.on circle{fill:#F2EEE4;stroke:#F2EEE4}:root[data-theme="dark"] #fx .rc-plan .rn.on text{fill:#1B2440}
+#fx .rc-list{display:none}
+/* téléphone : le petit plan reste en haut (plus grand), la carte est pour tablette et PC */
+#fx .rcard{display:none}#fx .eh .fx-mini{width:64px;height:64px}
 @media (min-width:900px){
+ #fx .rcard{display:flex}#fx .eh .fx-mini{display:none}#fx .lay:has(.tabs2 [data-tab="plaf"][aria-selected="true"]) .eh .fx-mini{display:block}
+ #fx .rc-plan{width:150px;height:150px}
+ #fx .rc-list{display:block;margin-top:16px}#fx .rc-lt{display:block;font-size:14px;margin:0 0 6px}
  #fx .lay:not(.clim){grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);grid-template-areas:"hd hd" "fr ct";column-gap:20px;align-items:start}
  #fx .lay:not(.clim) .a-ct{padding-top:4px}#fx .lay:not(.clim) .nav{margin-top:0}
  #fx .elev svg{max-height:68vh}
