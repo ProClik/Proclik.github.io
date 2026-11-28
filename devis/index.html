@@ -1468,7 +1468,7 @@ function example(){S=fresh();S.travaux=["cloison","doublage","fenetres"];S.mode=
 function mursOK(){const g=S.plan&&S.plan.trace&&S.plan.trace.geo;return!!(g&&g.some(f=>f.rooms&&f.rooms.length))}
 /* 28/11 (Cyril #123 : « réouvert le formulaire, j'ai atterri sur le plan alors que j'en étais aux murs de face ») : on retient que « Vos murs » est en cours */
 function mursEnCours(){return!!(S.mursOn||S.murs&&!S.mursFin)&&mursOK()}
-function openMurs(){S.mursOn=1;save();const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=44");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
+function openMurs(){S.mursOn=1;save();const m=document.getElementById("mursfull"),fr_=document.getElementById("mframe");if(!fr_.getAttribute("src"))fr_.setAttribute("src","murs.html?embed=1&v=45");else mursLoad();m.hidden=false;document.body.style.overflow="hidden"}
 function mursLoad(){const fr_=document.getElementById("mframe");try{fr_.contentWindow.postMessage({type:"proclik-murs-load",plan:S.plan.trace,rep:Object.assign({},S.logement,{trav:S.travaux||[]})},"*")}catch(e){}}
 addEventListener("message",e=>{const d=e.data||{},f=document.getElementById("mframe");if(!f||e.source!==f.contentWindow)return;
  if(d.type==="proclik-murs-ready")mursLoad();  if(d.type==="proclik-murs-photo"&&d.img){/* photo prise à la fin d'une pièce (Cyril 18/11) : rangée avec les photos du chantier */if(files.photos.length<10)files.photos.push({name:(d.piece||"Pièce")+".jpg",img:d.img,file:null,tag:d.piece||null});return}
