@@ -744,7 +744,7 @@ function escSheet(){const E=(F().esc||[])[SH.i];if(!E)return"";const I=escInfo(S
 function roofSvg(k,u){const g=roofGeo();if(!g)return"";const c=ST.comb,FT=c.ft||[],P=(a,b)=>{const q=g.M(a,b,0);return q[0]+","+q[1]},R4=(a0,a1,b0,b1)=>[P(a0,b0),P(a1,b0),P(a1,b1),P(a0,b1)].join(" "),sd=g.sides,e=ftEnt();
  let s=`<rect x="${VB.x}" y="${VB.y}" width="${VB.w}" height="${VB.h}" fill="${k["--paper"]}" fill-opacity=".82" pointer-events="none"/>`;
  (g.one?[0]:[0,1]).forEach(i=>{const R=panRect(g,i);s+=`<polygon data-pan="${i}" points="${R4(R.u0,R.u1,R.v0,R.v1)}" fill="${C3.roof}" stroke="${C3.rive}" stroke-width="${u*.12}" style="cursor:pointer"/>`;
-  /* Cyril 28/11 : plus d'entraxe des chevrons côté client (ni question, ni pointillés) */if(!CL)for(let cc=g.u0;cc<=g.u1+1e-6;cc+=e)s+=`<line x1="${P(cc,R.v0).split(",")[0]}" y1="${P(cc,R.v0).split(",")[1]}" x2="${P(cc,R.v1).split(",")[0]}" y2="${P(cc,R.v1).split(",")[1]}" stroke="#A9B0C2" stroke-width="${u*.05}" stroke-dasharray="${u*.25} ${u*.2}" pointer-events="none"/>`;
+  /* Cyril 28/11 : plus de question sur l'entraxe côté client, mais les pointillés restent (50 cm par défaut) */for(let cc=g.u0;cc<=g.u1+1e-6;cc+=e)s+=`<line x1="${P(cc,R.v0).split(",")[0]}" y1="${P(cc,R.v0).split(",")[1]}" x2="${P(cc,R.v1).split(",")[0]}" y2="${P(cc,R.v1).split(",")[1]}" stroke="#A9B0C2" stroke-width="${u*.05}" stroke-dasharray="${u*.25} ${u*.2}" pointer-events="none"/>`;
   const lo=g.one?(g.hi?R.v0:R.v1):(i?R.v1:R.v0),hiE=g.one?(g.hi?R.v1:R.v0):g.vm,cu=(R.u0+R.u1)/2,mv=(lo*.25+hiE*.75),q=g.M(cu,mv,0);if(ftSelI()==null&&!(CL&&FT.some(x=>(g.one?0:(x.pan||0))===i)))s+=chip(q[0],q[1],g.one?"Le toit":"Pan côté "+sd[i],"#2C3242",u,true);const qb=g.M(cu,lo+(hiE-lo)*.08,0);if(!(CL&&FT.some(x=>(g.one?0:(x.pan||0))===i)))s+=chip(qb[0],qb[1],"bas du toit","#8A90A0",u*.8,true)});
  if(!g.one)s+=`<line x1="${P(g.u0-g.ov,g.vm).split(",")[0]}" y1="${P(g.u0-g.ov,g.vm).split(",")[1]}" x2="${P(g.u1+g.ov,g.vm).split(",")[0]}" y2="${P(g.u1+g.ov,g.vm).split(",")[1]}" stroke="#B8924F" stroke-width="${u*.22}" stroke-linecap="round" pointer-events="none"/>`;
  // Hauteur du sol au faîtage (Cyril 10/11 15h30) : sur des combles, depuis leur plancher ; sinon hauteur des murs + toit.
@@ -1192,7 +1192,7 @@ function ftDim(x){if(x.w>0&&x.h>0)return["Sur mesure",x.w,x.h];return FTS.find(f
 // Plan du toit vu d'en haut : pans (2 pentes : 0 = côté v0, 1 = côté v1 ; 1 pente : un seul pan, 0).
 function panOf(g,x){return g.one?0:(x.pan||0)}
 function panRect(g,i){const o=g.ov;if(g.one)return{u0:g.u0-o,u1:g.u1+o,v0:g.o0-o,v1:g.o1+o};return i?{u0:g.u0-o,u1:g.u1+o,v0:g.vm,v1:g.o1+o}:{u0:g.u0-o,u1:g.u1+o,v0:g.o0-o,v1:g.vm}}
-function ftEnt(){const e=+ST.comb.ent;return e>=.3&&e<=1.5?e:.6}
+function ftEnt(){const e=+ST.comb.ent;return e>=.3&&e<=1.5?e:CL?.5:.6}
 // Cotes d'une fenêtre de toit (Cyril 17/11) : à gauche / à droite = depuis l'intérieur des murs pignons ;
 // en bas / en haut = le long de la pente, depuis le bas de la pente (plancher ou haut du petit mur) et jusqu'au faîtage (ou haut du toit).
 function ftPanGeo(g,pi){const lowV0=g.one?!!g.hi:!pi,dir=lowV0?1:-1,side=g.one?(g.hi?0:1):pi,hm=side?g.hm2:g.hm1,low=(lowV0?g.v0:g.v1)+dir*(.2+(hm>0&&g.tn>0?hm/g.tn:0)),top=g.one?(g.hi?g.v1:g.v0)-dir*.2:g.vm;return{dir,low,top,ui0:g.u0+.2,ui1:g.u1-.2}}
