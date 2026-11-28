@@ -880,7 +880,7 @@ ops(true,1);ops(false,0);ops(false,1);
    const lab=r.nom||"",[cx,cy]=cenA(r),bb=r.pts.reduce((m,p)=>[Math.min(m[0],p[0]),Math.max(m[1],p[0])],[1e9,-1e9]),rw=bb[1]-bb[0],f1=Math.min(fs,(rw-20)/(lab.length*.62));
    const t=el("text",{x:cx,y:cy+f1*.35,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":800,"font-size":f1,fill:"var(--fg)","pointer-events":"none"},g);t.textContent=lab;
    if(st.sub){const u2=el("text",{x:cx,y:cy+f1*.35+fs*1.1,"text-anchor":"middle","font-family":"Manrope,system-ui,sans-serif","font-weight":700,"font-size":Math.min(fs*.8,(rw-20)/(st.sub.length*.6)),fill:"var(--muted)","pointer-events":"none"},g);u2.textContent=st.sub}})});return sc}
-function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`,cur={p:0,f:1,s:1,r:2}[PC.step];
+function steps(){const lab=PC.step==="p"?"Vos murs · les pièces":PC.step==="r"?"Vos murs · récap":PC.edit?"Vos murs · correction":(PC.step==="f"&&WALLS?"Vos murs"/* Cyril 28/11 : « deux fois 1 sur 4, et en haut il met pièce alors que c'est des murs » */:`Vos murs · pièce ${PC.qn+1} sur ${PC.queue.length}`),cur={p:0,f:1,s:1,r:2}[PC.step];
  const h=`<span class="sd">${[0,1,2].map(i=>`<i class="${i<cur?"ok":i===cur?"on":""}"></i>`).join("")}</span><b>${lab}</b>`;document.querySelectorAll(".steps").forEach(e=>e.innerHTML=h)}
 function showScr(id){["sq","sp","sr","ss"].forEach(s=>$(s).hidden=s!==id);document.documentElement.classList.toggle("fv",!id);document.querySelector(".app").hidden=!!id;steps()}
 function startPick(){PC.step="p";showScr("sp");planUI()}
