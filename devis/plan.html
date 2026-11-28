@@ -744,7 +744,7 @@ function escSheet(){const E=(F().esc||[])[SH.i];if(!E)return"";const I=escInfo(S
 function roofSvg(k,u){const g=roofGeo();if(!g)return"";const c=ST.comb,FT=c.ft||[],P=(a,b)=>{const q=g.M(a,b,0);return q[0]+","+q[1]},R4=(a0,a1,b0,b1)=>[P(a0,b0),P(a1,b0),P(a1,b1),P(a0,b1)].join(" "),sd=g.sides,e=ftEnt();
  let s=`<rect x="${VB.x}" y="${VB.y}" width="${VB.w}" height="${VB.h}" fill="${k["--paper"]}" fill-opacity=".82" pointer-events="none"/>`;
  (g.one?[0]:[0,1]).forEach(i=>{const R=panRect(g,i);s+=`<polygon data-pan="${i}" points="${R4(R.u0,R.u1,R.v0,R.v1)}" fill="${C3.roof}" stroke="${C3.rive}" stroke-width="${u*.12}" style="cursor:pointer"/>`;
-  /* Cyril 28/11 : plus de question sur l'entraxe côté client, mais les pointillés restent (50 cm par défaut) */for(let cc=g.u0;cc<=g.u1+1e-6;cc+=e)s+=`<line x1="${P(cc,R.v0).split(",")[0]}" y1="${P(cc,R.v0).split(",")[1]}" x2="${P(cc,R.v1).split(",")[0]}" y2="${P(cc,R.v1).split(",")[1]}" stroke="#A9B0C2" stroke-width="${u*.05}" stroke-dasharray="${u*.25} ${u*.2}" pointer-events="none"/>`;
+  /* Cyril 28/11 : plus de question sur l'entraxe côté client, mais les pointillés restent (50 cm par défaut) */{const iv=Math.min(.12,(R.v1-R.v0)*.05);chevU(g).forEach(cc=>{s+=`<line x1="${P(cc,R.v0+iv).split(",")[0]}" y1="${P(cc,R.v0+iv).split(",")[1]}" x2="${P(cc,R.v1-iv).split(",")[0]}" y2="${P(cc,R.v1-iv).split(",")[1]}" stroke="#A9B0C2" stroke-width="${u*.05}" stroke-dasharray="${u*.25} ${u*.2}" pointer-events="none"/>`})}
   const lo=g.one?(g.hi?R.v0:R.v1):(i?R.v1:R.v0),hiE=g.one?(g.hi?R.v1:R.v0):g.vm,cu=(R.u0+R.u1)/2,mv=(lo*.25+hiE*.75),q=g.M(cu,mv,0);if(ftSelI()==null&&!(CL&&FT.some(x=>(g.one?0:(x.pan||0))===i)))s+=chip(q[0],q[1],g.one?"Le toit":"Pan côté "+sd[i],"#2C3242",u,true);const qb=g.M(cu,lo+(hiE-lo)*.08,0);if(!(CL&&FT.some(x=>(g.one?0:(x.pan||0))===i)))s+=chip(qb[0],qb[1],"bas du toit","#8A90A0",u*.8,true)});
  if(!g.one)s+=`<line x1="${P(g.u0-g.ov,g.vm).split(",")[0]}" y1="${P(g.u0-g.ov,g.vm).split(",")[1]}" x2="${P(g.u1+g.ov,g.vm).split(",")[0]}" y2="${P(g.u1+g.ov,g.vm).split(",")[1]}" stroke="#B8924F" stroke-width="${u*.22}" stroke-linecap="round" pointer-events="none"/>`;
  // Hauteur du sol au faîtage (Cyril 10/11 15h30) : sur des combles, depuis leur plancher ; sinon hauteur des murs + toit.
@@ -1191,6 +1191,8 @@ const FTS=[["55 × 78",.55,.78],["78 × 98",.78,.98],["78 × 118",.78,1.18],["11
 function ftDim(x){if(x.w>0&&x.h>0)return["Sur mesure",x.w,x.h];return FTS.find(f=>f[0]===x.t)||FTS[1]}
 // Plan du toit vu d'en haut : pans (2 pentes : 0 = côté v0, 1 = côté v1 ; 1 pente : un seul pan, 0).
 function panOf(g,x){return g.one?0:(x.pan||0)}
+/* Cyril 28/11 : chevrons répartis sur toute la largeur du toit (débords compris), même marge des deux côtés */
+function chevU(g){const e=ftEnt(),a=g.u0-g.ov,W=g.u1+g.ov-a,n=Math.max(0,Math.floor(W/e+1e-6)),s0=a+(W-n*e)/2,L=[];for(let k=0;k<=n;k++)L.push(s0+k*e);return L}
 function panRect(g,i){const o=g.ov;if(g.one)return{u0:g.u0-o,u1:g.u1+o,v0:g.o0-o,v1:g.o1+o};return i?{u0:g.u0-o,u1:g.u1+o,v0:g.vm,v1:g.o1+o}:{u0:g.u0-o,u1:g.u1+o,v0:g.o0-o,v1:g.vm}}
 function ftEnt(){const e=+ST.comb.ent;return e>=.3&&e<=1.5?e:CL?.5:.6}
 // Cotes d'une fenêtre de toit (Cyril 17/11) : à gauche / à droite = depuis l'intérieur des murs pignons ;
@@ -1201,7 +1203,7 @@ function ftSetCote(g,i,k,m){const C=ftCotes(g,i),I=C.I,P=C.P,w2=I.d[1]/2,cs=Math
 // Fenêtre de toit i : centre (u le long du faîtage, v en travers), demi-hauteur vue d'en haut, hauteurs bas/haut au-dessus du plancher des combles, chevrons coupés.
 function ftInfo(g,i){const FT=ST.comb.ft||[],x=FT[i],pi=panOf(g,x),L=FT.filter(y=>panOf(g,y)===pi),k=L.indexOf(x),d=ftDim(x),hp=d[2]*Math.cos(g.p)/2,vA=g.one?g.o0:(pi?g.vm:g.o0),vB=g.one?g.o1:(pi?g.o1:g.vm);
  let u=x.u!=null?x.u:g.u0+(g.u1-g.u0)*(k+1)/(L.length+1),v=x.v!=null?x.v:(g.one?(g.o0+g.o1)/2:g.vm+(pi?1:-1)*(g.o1-g.o0)*.25);
- u=Math.max(g.u0+d[1]/2,Math.min(g.u1-d[1]/2,u));v=Math.max(vA+hp,Math.min(vB-hp,v));const za=g.z(v-hp),zb=g.z(v+hp),e=ftEnt();let cut=0;for(let c=g.u0;c<=g.u1+1e-6;c+=e)if(c>u-d[1]/2+.01&&c<u+d[1]/2-.01)cut++;
+ u=Math.max(g.u0+d[1]/2,Math.min(g.u1-d[1]/2,u));v=Math.max(vA+hp,Math.min(vB-hp,v));const za=g.z(v-hp),zb=g.z(v+hp),e=ftEnt();let cut=0;for(const c of chevU(g))if(c>u-d[1]/2+.01&&c<u+d[1]/2-.01)cut++;
  return{u,v,hp,d,pi,bas:Math.min(za,zb),haut:Math.max(za,zb),cut,e}}
 const COMBG=[["forme","Forme du toit",["2 pentes","1 pente"]],["mode","Toit défini par",["La pente","Les hauteurs"]],["pente","Pente du toit",["30°","35°","40°","45°"],c=>c.mode!=="Les hauteurs"],["sens","Sens du faîtage",["Auto","Parallèle à A","Parallèle à B"]],["debord","Débord de toit",["20 cm","40 cm","60 cm"]],["type","Combles",["Perdus","Aménageables"]],["isol","Isolation",["Aucune","Au sol soufflée","Au sol en rouleaux","En rampant"]],["ep","Épaisseur de laine",["200 mm","240 mm","300 mm","400 mm"],c=>c.isol!=="Aucune"],["pv","Pare-vapeur",["Non","Oui"],c=>c.isol!=="Aucune"],["plancher","Plancher OSB",["Non","Oui"],c=>c.type==="Aménageables"],["muret","Murets (jambettes)",["Sans","1,00 m","1,20 m","1,50 m"],c=>c.type==="Aménageables"&&c.mode!=="Les hauteurs"],["ba13","BA13 sous rampants",["Non","1 peau","2 peaux"],c=>c.type==="Aménageables"||c.isol==="En rampant"]];
 // Battant = oscillo-battant par défaut (option cochée « Oui »), sauf si le client répond « Non ».
@@ -1495,7 +1497,7 @@ $("sheet").addEventListener("click",e=>{const t=e.target.closest("button");if(!t
   if(d.ftpan!=null){const I=ftInfo(g,i);upd(+d.ftpan===I.pi?{}:{pan:+d.ftpan,v:r2(2*g.vm-I.v)})}
   if(d.ftdup||d.ftmir){const I=ftInfo(g,i),x0=FT[i],w=I.d[1],cp={...x0};let nu=I.u,nv=I.v,pan=I.pi;if(d.ftmir){pan=1-I.pi;nv=2*g.vm-I.v}else{const P=ftPanGeo(g,I.pi),gap=Math.max(.6,ftEnt());nu=I.u+w+gap;if(nu+w/2>P.ui1)nu=I.u-w-gap}
    c.ft=[...c.ft,{...cp,pan,u:r2(nu),v:r2(nv)}];const n=c.ft.length;openFt(n-1);rows();say(null,d.ftmir?`FT${n} posée à la même place que FT${i+1}, sur l'autre pan.`:`FT${n} : copie de FT${i+1}, posée à côté. Faites-la glisser ou tapez ses cotes.`);return}
-  if(d.ftsnap){const I=ftInfo(g,i),j=Math.floor((I.u-g.u0)/I.e);upd({u:r2(g.u0+(j+.5)*I.e)})}
+  if(d.ftsnap){const I=ftInfo(g,i),C=chevU(g),b0=C[0]||g.u0,j=Math.floor((I.u-b0)/I.e);upd({u:r2(b0+(j+.5)*I.e)})}
   renderSheet();draw();rows();return}
  if(d.wrf){ST.comb.forme=d.wrf;renderSheet();draw();rows();return}if(d.wrhi!=null){ST.comb.haut=+d.wrhi;renderSheet();draw();rows();return}
  // Supprimer une cloison entière (demande de Cyril, 03/11) : tous ses morceaux d'un coup, avec portes, travaux, notes et photos.

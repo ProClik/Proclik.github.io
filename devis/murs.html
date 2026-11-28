@@ -1179,6 +1179,19 @@ $("ss-svg").addEventListener("click",e=>{if(PC.step!=="s"||!PC.ss||PC.ss.p!=="lu
  else{if(!lumIn(q.r,P.x,P.y)){toast("Touchez à l'intérieur de la pièce",1600);return}if(roofFt(q).some(o=>Math.abs(P.x-o.cx)<o.rw/2&&Math.abs(P.y-o.cy)<o.rh/2)){toast("Ici, c'est une fenêtre de toit",1600);return}L.push({x:Math.round(P.x),y:Math.round(P.y),t:PC.lumK||"pt"});delete a._vide;vib(10)}
  ssUI(false)});
 function topThumb(q,p){const s=document.createElementNS("http://www.w3.org/2000/svg","svg");drawTop(s,q,p,soA(q.id,p),{uid:q.id.replace("-","_")+p,still:1,nolab:1});return s.outerHTML}
+/* Cyril 28/11 : compte rendu à enregistrer en fin de formulaire : le formulaire demande les vues (murs de face, sol, plafond, lumières, toit), couleurs figées en clair */
+function vuesInl(str,box){box.innerHTML=str;const sv=box.querySelector("svg");if(!sv)return"";sv.setAttribute("xmlns","http://www.w3.org/2000/svg");sv.removeAttribute("class");
+ const PR=["fill","stroke","stroke-width","stroke-opacity","fill-opacity","opacity","stroke-dasharray","stroke-linecap","stroke-linejoin","font-family","font-size","font-weight","display"];
+ [sv,...sv.querySelectorAll("*")].forEach(el=>{const cs=getComputedStyle(el);PR.forEach(p=>{const v=cs.getPropertyValue(p);if(v)el.style.setProperty(p,v)});el.removeAttribute("class")});return sv.outerHTML}
+function vuesExport(){const out=[],root=document.documentElement,th=root.getAttribute("data-theme");root.setAttribute("data-theme","light");
+ const box=document.createElement("div");box.style.cssText="position:fixed;left:-9999px;top:0;width:600px;height:400px;visibility:hidden;pointer-events:none";document.body.appendChild(box);
+ try{ALLR().filter(q=>PC.R[q.id]).forEach(q=>{const W=PC.R[q.id],SO=PC.SO[q.id]||{},L=[];
+  W.forEach((w,j)=>{if(w.snap)L.push({t:`Mur ${j+1} · ${fr1(w.L/100)} m`,svg:w.snap})});
+  ["fai","sol","pf","lum"].forEach(x=>{if(SO[x]&&SO[x]._done)L.push({t:sumTxt(x,SO[x])||({fai:"La faïence",sol:"Le sol",pf:"Le plafond",lum:"Les lumières"})[x],svg:topThumb(q,x)})});
+  if(GEO[q.lv].roof)L.push({t:roofTxt(q),svg:roofSVG(q,0)});
+  out.push({piece:q.r.nom,niveau:GEO.length>1?GEO[q.lv].nom:"",vues:L.map(v=>{try{return{t:v.t,svg:vuesInl(v.svg,box)}}catch(e){return null}}).filter(v=>v&&v.svg)})})}catch(e){}
+ box.remove();if(th==null)root.removeAttribute("data-theme");else root.setAttribute("data-theme",th);return out}
+addEventListener("message",e=>{const d=e.data||{};if(d.type==="proclik-murs-vues"){try{e.source.postMessage({type:"proclik-murs-vues",vues:vuesExport()},"*")}catch(x){}}});
 if(!EMB)window.__pc={roomEnd,PC,exportSols,startSS,startRoom,ALLR};
 
 // ---------- Pour finir : une photo et un mot (facultatifs) ----------
