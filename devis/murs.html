@@ -257,6 +257,9 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .qset:has(.sgr){border-top:0;margin-top:2px;padding-top:0}
 /* Cyril 28/11 : iPad/ordinateur, la fiche remplit tout le cadre (boutons plus grands, pas de place perdue en bas) */
 .pop.pwide{display:flex!important;flex-direction:column;padding:14px 16px 16px!important;gap:8px}.pop.pwide>*{flex:none}.pop.pwide .qopts.qic{flex:1 1 auto;min-height:0;gap:10px!important;margin:4px 0!important;grid-auto-rows:1fr}.pop.pwide .qopts.qic .qopt{min-height:0!important;height:100%;gap:8px!important;border-radius:16px}.pop.pwide .qopts.qic .qopt b{font-size:15px}.pop.pwide .qoi{width:40px;height:40px}.pop.pwide .qtl span{font-size:15px}.pop.pwide .sgr{margin-top:2px}.pop.pwide .seg .s{min-height:54px;font-size:14px}.pop.pwide .seg .s .mw{width:20px;height:24px}
+/* Cyril 28/11 : le choix fait = cercle plein bleu nuit, signe clair (proposition 4) ; iPad/ordinateur : cases moins hautes, place rendue à la hauteur */
+.qoi circle{transition:fill .25s,stroke-dasharray .25s}.qoi path{transition:stroke .25s}.qopt.on .qoi circle{fill:var(--fg);stroke:var(--fg);stroke-dasharray:none}.qopt.on .qoi path{stroke:var(--surface)}
+.pop.pwide{justify-content:space-between}.pop.pwide .qopts.qic{flex:1 1 auto;max-height:150px}.pop.pwide .seg .s{min-height:74px;font-size:15px;flex-direction:column;gap:6px}.pop.pwide .seg .s .mw{width:24px;height:28px}
 </style>
 </head>
 <body>
