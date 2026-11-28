@@ -180,7 +180,10 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 #sp-cards:empty{display:none}
 .nm{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
 .qo.sm{flex-direction:column;justify-content:center;text-align:center;gap:3px;min-height:56px;padding:6px 4px;font-size:12px}
-.blink{animation:blk 1.3s ease-in-out infinite}@keyframes blk{50%{opacity:.2}}
+.blink{animation:blk 1.3s ease-in-out infinite}
+.lumk{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px;font-size:13px;color:var(--muted)}.lumk>div{display:flex;gap:8px}.lumk .chip[aria-pressed="true"]{background:var(--fg);color:var(--surface)}
+.lumn{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px}.lumn .lnk{background:none;border:0;padding:6px 0;color:var(--fg);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer}
+#ss-svg .lum{cursor:pointer}.lumin{animation:lumi .35s ease-out}@keyframes lumi{from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.4)}}@keyframes blk{50%{opacity:.2}}
 [data-r]{transition:opacity .2s}
 .srm{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
 .srw{display:grid;gap:6px}#sr-room{font-size:15px}#sr-room small{color:var(--muted);font-weight:600;font-size:12.5px;margin-left:4px}
@@ -965,7 +968,7 @@ function roofSVG(q,big){const rf=GEO[q.lv].roof;if(!rf)return"<svg></svg>";const
  return g+`</svg>`}
 function roofTxt(q){const n=roofFt(q).length;return n?`Toit · ${n} fenêtre${n>1?"s":""} de toit`:"Le toit (plafond)"}
 function vwList(){const q=ALLR().find(x=>x.id===PC.sel),W=q&&PC.R[q.id];if(!W)return{q,L:[]};const SO=PC.SO[q.id]||{},L=W.map((w,j)=>({t:`Mur ${j+1}`,sub:`${w.L} cm · ${w.items.filter(i=>i.st==="faire"||i.rep==="oui").length||"rien"} à faire`,th:`Mur ${j+1} · ${w.L} cm`,h:()=>w.snap||"<svg></svg>",w:j}));
- ["fai","sol","pf"].filter(x=>SO[x]&&SO[x]._done).forEach(x=>{const t=sumTxt(x,SO[x])||({fai:"La faïence",sol:"Le sol",pf:"Le plafond"})[x];L.push({t:({fai:"La faïence",sol:"Le sol",pf:"Le plafond"})[x],sub:t,th:t,h:()=>topThumb(q,x),s:x})});
+ ["fai","sol","pf","lum"].filter(x=>SO[x]&&SO[x]._done).forEach(x=>{const N={fai:"La faïence",sol:"Le sol",pf:"Le plafond",lum:"Les lumières du plafond"},t=sumTxt(x,SO[x])||N[x];L.push({t:N[x],sub:t,th:t,h:()=>topThumb(q,x),s:x})});
  if(GEO[q.lv].roof)L.push({t:"Le toit, vu d'en dessous",sub:roofTxt(q),th:roofTxt(q),h:big=>roofSVG(q,big),toit:1});return{q,L}}
 let VW=null;
 function vwEl(){let v=$("vw");if(v)return v;v=document.createElement("div");v.id="vw";v.className="vw";v.hidden=true;
@@ -1033,7 +1036,26 @@ const SQ={sol:[
  {k:"pfBas",q:"Faut-il baisser le plafond ?",o:["Non","Oui, de quelques cm","Oui, nettement",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfSup",q:"Le plafond actuel est en…",o:["Béton","Bois (poutres)","Ancien plâtre",DKs],if:a=>a.pf==="À refaire"},
  {k:"pfIso",q:"Isolant au-dessus ?",o:["Oui","Non",DKs],if:a=>a.pf==="À refaire"}]};
-const SHORT={fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",plb:"Plancher",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
+/* Cyril 28/11 : « dans Vos murs, présenter aussi les plafonds (même les plafonds des rampants) pour y placer les lumières ».
+   Après les murs d'une pièce : son plafond vu d'en dessous (pente du toit teintée dans les combles) ; le client touche le plafond pour poser ses lumières. */
+SQ.lum=[
+ {k:"lum",q:"Les lumières au plafond de cette pièce…",o:["On les garde comme elles sont","On en change ou on en ajoute",DKs]},
+ {k:"lumT",q:"Quelles lumières voulez-vous ?",o:["Une lumière au centre","Des spots encastrés","Les deux",DKs],if:a=>a.lum==="On en change ou on en ajoute"},
+ {k:"lumP",q:"Touchez le plafond pour placer vos lumières",s:"Nous en avons mis là où on les met souvent. Touchez une lumière pour l'enlever, touchez ailleurs pour en ajouter.",place:1,if:a=>a.lum==="On en change ou on en ajoute"&&a.lumT&&a.lumT!==DKs}];
+const lumRf=q=>!!(GEO[q.lv]&&GEO[q.lv].roof);
+const lumNeed=q=>F.trav.includes("elec")||needPart("pf")||lumRf(q);
+function lumIn(r,x,y){const P=r.pts;let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const a=P[i],b=P[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+function lumOk(q,x,y,m){const r=q.r;if(!lumIn(r,x,y))return false;const d=[[m,0],[-m,0],[0,m],[0,-m]];if(!d.every(v=>lumIn(r,x+v[0],y+v[1])))return false;return!roofFt(q).some(o=>Math.abs(x-o.cx)<o.rw/2+15&&Math.abs(y-o.cy)<o.rh/2+15)}
+function lumAuto(q,t){const r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=P.map(v=>v[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0,h=Math.max(...ys)-y0,c=typeof cenA==="function"?cenA(r):cen(r),L=[];
+ const ctr=t!=="Des spots encastrés";if(ctr)L.push({x:Math.round(c[0]),y:Math.round(c[1]),t:"pt"});
+ if(t!=="Une lumière au centre"){const S=Math.abs(area(P))/1e4,n=Math.max(2,Math.min(12,Math.round(S/2.2))),co=Math.max(1,Math.round(Math.sqrt(n*w/Math.max(1,h)))),ro=Math.max(1,Math.ceil(n/co));
+  for(let i=0;i<co;i++)for(let j=0;j<ro;j++){const x=x0+w*(i+.5)/co,y=y0+h*(j+.5)/ro;if(ctr&&Math.hypot(x-c[0],y-c[1])<70)continue;{const rf=GEO[q.lv].roof;if(rf&&!rf.one&&Math.abs((rf.ax?y:x)-rf.vm*100)<30)continue}if(lumOk(q,x,y,25))L.push({x:Math.round(x),y:Math.round(y),t:"spot"})}}
+ if(!L.length)L.push({x:Math.round(c[0]),y:Math.round(c[1]),t:ctr?"pt":"spot"});return L}
+const lumN=(a,t)=>(a.lumP||[]).filter(l=>l.t===t).length;
+const lumLab=a=>{const n=lumN(a,"pt"),m=lumN(a,"spot");return[n?`${n} lumière${n>1?"s":""}`:"",m?`${m} spot${m>1?"s":""}`:""].filter(Boolean).join(" et ")||"—"};
+function lumConv(a,q){if(!a.lum)return null;const o={etat:a.lum===DKs?"Je ne sais pas":/garde/.test(a.lum)?"Déjà en place":"À changer ou ajouter",plafond_en_pente:lumRf(q)||undefined};if(o.etat!=="À changer ou ajouter")return o;
+ o.type=a.lumT||DKs;if(a.lumP&&a.lumP.length){o.points_lumineux=lumN(a,"pt");o.spots=lumN(a,"spot");o.positions_m=a.lumP.map(l=>({type:l.t==="pt"?"Point lumineux":"Spot",pos_m:[Math.round(l.x)/100,Math.round(l.y)/100]}))}return o}
+const SHORT={lum:"Lumières",lumT:"Type",lumP:"Placées",fai:"La faïence",faiM:"Murs",faiH:"Hauteur",faiF:"Carreaux",etat:"Le sol",depose:"Sol actuel",revet:"Nouveau sol",carFmt:"Carreaux",plb:"Plancher",pf:"Le plafond",pfBas:"Baisser",pfSup:"Plafond actuel",pfIso:"Isolant au-dessus"};
 PC.SO={};
 const needPart=p=>(A.trav||[]).includes(p==="sol"?"sol":"plafond");
 const soA=(id,p)=>{const o=PC.SO[id]||(PC.SO[id]={});return o[p]||(o[p]={})};
@@ -1055,9 +1077,10 @@ function faiConv(a,q){if(!a.fai)return null;if(a.fai===DKs)return{a_voir:true};i
  let S=0;m.forEach(j=>{const w=W[j];S+=w.L*Math.min(h,H);w.items.filter(i=>i.k==="porte").forEach(d=>{S-=d.w*Math.min(h,204)})});
  return{surface_m2:Math.max(0,Math.round(S/100)/100),format:a.faiF&&a.faiF!==DKs?a.faiF:null,murs:m.map(j=>j+1),hauteur_cm:Math.min(h,H),...(a.faiH===DKs||!a.faiH?{hauteur_a_verifier:true}:{}),fenetres_non_deduites:true}}
 function pfConv(a){if(!a.pf)return null;const o={pf:a.pf};if(a.pf==="À refaire"){o.pfBas=a.pfBas||DKs;o.pfSup=a.pfSup||DKs;o.pfIso=a.pfIso||DKs}return o}
-function exportSols(){return ALLR().filter(q=>PC.SO[q.id]).map(q=>{const o=PC.SO[q.id];return{fi:q.r.fi,ri:q.r.ri,zi:q.r.zi,piece:q.r.nom,sol:o.sol&&o.sol._done?solConv(o.sol):undefined,pf:o.pf&&o.pf._done?pfConv(o.pf):undefined,fai:o.fai&&o.fai._done?faiConv(o.fai,q):undefined}}).filter(x=>x.sol||x.pf||x.fai)}
+function exportSols(){return ALLR().filter(q=>PC.SO[q.id]).map(q=>{const o=PC.SO[q.id];return{fi:q.r.fi,ri:q.r.ri,zi:q.r.zi,piece:q.r.nom,sol:o.sol&&o.sol._done?solConv(o.sol):undefined,pf:o.pf&&o.pf._done?pfConv(o.pf):undefined,fai:o.fai&&o.fai._done?faiConv(o.fai,q):undefined,lumieres:o.lum&&o.lum._done?lumConv(o.lum,q):undefined}}).filter(x=>x.sol||x.pf||x.fai||x.lumieres)}
 function sumTxt(p,a){if(p==="fai"){if(!a.fai)return"";if(a.fai===DKs)return"Faïence : à voir";if(!/^Oui/.test(a.fai))return"Pas de faïence";return"Faïence"+(a.faiF&&a.faiF!==DKs?" "+a.faiF:"")}
  if(p==="sol"){if(!a.etat)return"";if(a.etat===DKs)return"Sol : à voir avec l'artisan";if(a.etat==="On le garde")return"Sol gardé";return(a.revet&&a.revet!==DKs?a.revet.replace(/ \(.*/,""):"Nouveau sol")+(a.revet==="Carrelage"&&a.carFmt&&a.carFmt!==DKs?" "+a.carFmt:"")}
+  if(p==="lum"){if(!a.lum)return"";if(a.lum===DKs)return"Lumières : à voir";if(/garde/.test(a.lum))return"Lumières gardées";return a.lumP&&a.lumP.length?lumLab(a):"Lumières à changer"}
  if(!a.pf)return"";return a.pf==="À refaire"?"Plafond à refaire":a.pf===DKs?"Plafond : à voir":"Plafond : rien à faire"}
 // ---------- Dessin : la pièce vue du dessus ----------
 function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=P.map(v=>v[1]),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0,h=Math.max(...ys)-y0,pad=Math.max(w,h)*.1+30,k=Math.max(w,h)/320;
@@ -1072,6 +1095,7 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
   else if(ch)fill="color-mix(in srgb,var(--laiton-soft) 60%,var(--wall))";
   lab=r.nom;sub=sumTxt("sol",a)||"Le sol"}
  else if(p==="fai"){if(/^Oui/.test(a.fai||""))fill="color-mix(in srgb,var(--laiton-soft) 35%,var(--wall))";lab=r.nom;sub=sumTxt("fai",a)||"La faïence"}
+ else if(p==="lum"){lab=r.nom;sub=lumRf(q)?"Plafond en pente (sous le toit)":"Le plafond, vu d'en dessous"}
  else{const on=a.pf==="À refaire";if(on){h2+=`<pattern id="${uid}p" patternUnits="userSpaceOnUse" x="${x0}" y="${y0}" width="120" height="250"><rect width="120" height="250" fill="var(--surface)"/><path d="M0 0H120M0 0V250" stroke="var(--line)" stroke-width="${Math.max(1,1.4*k)}" stroke-dasharray="${8*k} ${6*k}"/></pattern>`;fill=`url(#${uid}p)`}
   lab=r.nom;sub=sumTxt("pf",a)||"Le plafond"}
  h2+=`</defs>`;
@@ -1082,8 +1106,14 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
   if(!arc){z+=PL(A1,B1,"var(--pfloor)",Tt+1);return}const n=[-u[1],u[0]],rr=op.w*.9;z+=`<path d="M${A1[0]} ${A1[1]}L${A1[0]+n[0]*rr} ${A1[1]+n[1]*rr}A${rr} ${rr} 0 0 1 ${B1[0]} ${B1[1]}" fill="none" stroke="var(--muted)" stroke-width="${Math.max(1.5,.7*SC)}" stroke-dasharray="${2.5*SC} ${2*SC}"/>`})});return z};
  GEO[lv].segs.forEach(g=>{if(g.k!=="clo")h2+=PL(g.a,g.b,"var(--pwall)",WE*2,'stroke-linecap="round"')});h2+=OPS(true,0);
  GEO[lv].rooms.forEach(q2=>{if(q2!==r)h2+=`<path d="M${q2.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--pfloor)"/>`});
- h2+=`<path d="${d}" fill="${p==="pf"?"var(--surface)":"var(--pfloor)"}"/>`;
+ h2+=`<path d="${d}" fill="${p==="pf"||p==="lum"?"var(--surface)":"var(--pfloor)"}"/>`;
  if(fill)h2+=`<g clip-path="url(#${uid}c)" class="${o.still?"":"fillin"}"><rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="${fill}"/></g>`;
+ if(p==="lum"){const rf=GEO[lv].roof;
+  if(rf){const vm=rf.vm*100;h2+=`<g clip-path="url(#${uid}c)">`+(rf.one?`<rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="var(--laiton-soft)" opacity=".45"/>`:`<rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${h+10}" fill="var(--laiton-soft)" opacity=".28"/>`+(rf.ax?`<rect x="${x0-5}" y="${y0-5}" width="${w+10}" height="${Math.max(0,vm-y0+5)}" fill="var(--laiton-soft)" opacity=".4"/>`:`<rect x="${x0-5}" y="${y0-5}" width="${Math.max(0,vm-x0+5)}" height="${h+10}" fill="var(--laiton-soft)" opacity=".4"/>`));
+   roofFt(q).forEach(o2=>{h2+=`<rect x="${o2.cx-o2.rw/2}" y="${o2.cy-o2.rh/2}" width="${o2.rw}" height="${o2.rh}" rx="${3*k}" fill="var(--glass)" stroke="var(--fg)" stroke-width="${1.6*k}"/>`});h2+=`</g>`;
+   if(!rf.one)h2+=(rf.ax?`<path d="M${x0} ${vm}H${x0+w}"`:`<path d="M${vm} ${y0}V${y0+h}"`)+` stroke="var(--laiton)" stroke-width="${2.4*k}" stroke-dasharray="${9*k} ${6*k}" stroke-linecap="round" opacity=".8"/>`}
+  const sh=/change|ajoute/.test(a.lum||"")&&a.lumP?a.lumP:[];
+  sh.forEach((l,j)=>{const R=l.t==="pt"?11*k:6.5*k;h2+=`<g class="lum${o.still?"":" lumin"}" data-lum="${j}"><circle cx="${l.x}" cy="${l.y}" r="${R*2.6}" fill="var(--laiton)" opacity=".13"/><circle cx="${l.x}" cy="${l.y}" r="${R}" fill="${l.t==="pt"?"var(--laiton)":"var(--surface)"}" stroke="var(--laiton)" stroke-width="${2.4*k}"/>${l.t==="spot"?`<circle cx="${l.x}" cy="${l.y}" r="${R*.42}" fill="var(--laiton)"/>`:""}</g>`})}
  if(p==="pf"){const cx=cen(r)[0],cy=y0+h*.2;h2+=`<circle cx="${cx}" cy="${cy}" r="${9*k}" fill="var(--laiton)" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${20*k}" fill="none" stroke="var(--laiton)" stroke-width="${1.4*k}" opacity=".35"/>`}
  GEO[lv].segs.forEach(g=>{if(g.k==="clo")h2+=PL(g.a,g.b,"var(--pwall)",WC*2,'stroke-linecap="round"')});
  (GEO[lv].esc||[]).forEach(e=>{h2+=`<path d="M${e.pts.map(v=>v.join(" ")).join("L")}Z" fill="var(--laiton-soft)" stroke="var(--fg)" stroke-width="${Math.max(2,.8*SC)}" stroke-dasharray="${3*SC} ${2*SC}"/>`;const c=e.pts.reduce((m,v)=>[m[0]+v[0]/e.pts.length,m[1]+v[1]/e.pts.length],[0,0]);h2+=`<text x="${c[0]}" y="${c[1]+4*SC}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="700" font-size="${11*SC}" fill="var(--fg)">${e.t}</text>`});
@@ -1092,42 +1122,49 @@ function drawTop(s,q,p,a,o={}){const lv=q.lv,r=q.r,P=r.pts,xs=P.map(v=>v[0]),ys=
   W.forEach((w,j)=>{const e=E[w.side];if(!e)return;const sel=on.includes(j),mx=(e[0]+e[2])/2,my=(e[1]+e[3])/2,dx=cx0-mx,dy=cy0-my,dl=Math.hypot(dx,dy)||1,ox=mx+dx/dl*26*k,oy=my+dy/dl*26*k;
    if(sel)h2+=`<line x1="${e[0]}" y1="${e[1]}" x2="${e[2]}" y2="${e[3]}" stroke="var(--laiton)" stroke-width="${Math.max(8,10*k)}" stroke-linecap="round" opacity=".9"/>`;
    if(!o.nolab)h2+=`<circle cx="${ox}" cy="${oy}" r="${12*k}" fill="${sel?"var(--laiton)":"var(--surface)"}" stroke="var(--fg)" stroke-width="${1.2*k}"/><text x="${ox}" y="${oy+4.5*k}" text-anchor="middle" font-family="Manrope,system-ui,sans-serif" font-weight="800" font-size="${13*k}" fill="var(--fg)">${j+1}</text>`})}
- if(!o.nolab){const [cx,cy]=cen(r),fs=Math.min(20*SC,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
+ if(!o.nolab&&p!=="lum"){const [cx,cy]=cen(r),fs=Math.min(20*SC,(w-30)/Math.max(6,lab.length*.62)),fs2=Math.min(fs*.75,(w-30)/Math.max(6,sub.length*.58));
   h2+=`<g font-family="Manrope,system-ui,sans-serif" text-anchor="middle" pointer-events="none"><text x="${cx}" y="${cy-fs*.1}" font-weight="800" font-size="${fs}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs*.22}" stroke-linejoin="round">${lab}</text><text x="${cx}" y="${cy+fs2*1.25}" font-weight="700" font-size="${fs2}" fill="var(--fg)" paint-order="stroke" stroke="var(--surface)" stroke-width="${fs2*.26}" stroke-linejoin="round">${sub}</text></g>`}
  s.innerHTML=h2}
 const sub2=(a,b)=>[a[0]-b[0],a[1]-b[1]];
 // ---------- Parcours ----------
-function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)&&faiLie(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(p=>needPart(p)&&!soA(q.id,p)._plan)).concat(["fin"]);
- PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="fai"?"Maintenant, la faïence":parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
+function roomEnd(){const q=PC.queue[PC.qn],parts=(WET.includes(q.r.rt)&&faiLie(q.r.rt)?["fai"]:[]).concat(["sol","pf"].filter(p=>needPart(p)&&!soA(q.id,p)._plan)).concat(lumNeed(q)?["lum"]:[]).concat(["fin"]);
+ PC.parts=parts;party(`${q.r.nom} : murs terminés !`,parts[0]==="fai"?"Maintenant, la faïence":parts[0]==="sol"?"Maintenant, le sol":parts[0]==="pf"?"Maintenant, le plafond":parts[0]==="lum"?"Maintenant, les lumières du plafond":"Une photo pour finir ?");setTimeout(()=>startSS(0),1700)}
 function nextRoom(withParty){const q=PC.queue[PC.qn],nx=PC.queue[PC.qn+1],go=()=>{PC.qn++;if(nx)startRoom();else showRecap("<b>Bravo !</b> Tout votre logement est prêt")};
  if(withParty){party(`${q.r.nom} : c'est fait !`,nx?`On passe à : ${nx.r.nom}`:"Il ne reste que le récap");setTimeout(go,1900)}else go()}
 function startSS(pi,o={}){const q=o.q||PC.queue[PC.qn],p=o.part||PC.parts[pi],a=soA(q.id,p);
  if(!a.etat&&p==="sol"&&/^Partout/.test(A.sols||"")){a.etat="On le change";a._pre=1}
  if(!a.pf&&p==="pf"&&/^Partout/.test(A.plafs||"")){a.pf="À refaire";a._pre=1}
  PC.step="s";PC.ss={pi,p,q,i:o.sum?99:0,edit:!!o.edit};showScr("ss");ssUI(true)}
-function sameList(){const {p,q}=PC.ss;if(p==="fai")return[];return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
+function sameList(){const {p,q}=PC.ss;if(p==="fai"||p==="lum")return[];return ALLR().filter(x=>x.id!==q.id&&PC.SO[x.id]&&PC.SO[x.id][p]&&PC.SO[x.id][p]._done).reverse().slice(0,4)}
 function ssUI(anim){const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);if(p==="fin")return finUI(anim);if(PC.ss.i>V.length)PC.ss.i=V.length;const i=PC.ss.i,sum=i>=V.length;
- const PN={sol:"le sol",pf:"le plafond",fai:"la faïence"};$("ss-t").textContent=`${q.r.nom} · ${PN[p]}`;{const fc=p==="fai"&&faiConv(a,q);$("ss-s").innerHTML=p!=="fai"?`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`:fc&&fc.surface_m2>0?`<i>${fr1(fc.surface_m2)} m²</i> de faïence, d'après votre plan`:"Les murs carrelés de cette pièce"}
- drawTop($("ss-svg"),q,p,a);
+ const PN={sol:"le sol",pf:"le plafond",fai:"la faïence",lum:"les lumières du plafond"};$("ss-t").textContent=`${q.r.nom} · ${PN[p]}`;{const fc=p==="fai"&&faiConv(a,q);$("ss-s").innerHTML=p==="lum"?(lumRf(q)?"Le plafond <i>en pente</i>, vu d'en dessous":"Le plafond, <i>vu d'en dessous</i>"):p!=="fai"?`<i>${m2(q.r)} m²</i>, calculés d'après votre plan`:fc&&fc.surface_m2>0?`<i>${fr1(fc.surface_m2)} m²</i> de faïence, d'après votre plan`:"Les murs carrelés de cette pièce"}
+ drawTop($("ss-svg"),q,p,a,{still:p==="lum"&&!anim});
  const card=$("ss-card");let h="";
- if(!sum&&V[i].multi){const Q=V[i],W=faiWalls(q),m=a[Q.k]||[],all=m.length===W.length&&W.length>0;
+ if(!sum&&V[i].place){const Q=V[i];if(!a.lumP||!a.lumP.length&&!a._vide)a.lumP=lumAuto(q,a.lumT);drawTop($("ss-svg"),q,p,a,{still:!anim});const two=a.lumT==="Les deux",K=PC.lumK||(a.lumT==="Des spots encastrés"?"spot":"pt");PC.lumK=two?K:a.lumT==="Des spots encastrés"?"spot":"pt";
+  h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2><p>${Q.s}${lumRf(q)?" Ici le plafond est en pente, sous le toit (la partie teintée) : on peut y mettre des lumières aussi. Le trait en pointillés, c'est le haut du toit.":""}</p>`+
+   (two?`<div class="lumk"><span>En touchant le plafond, j'ajoute :</span><div><button type="button" class="chip" data-lk="pt" aria-pressed="${PC.lumK==="pt"}">Une lumière</button><button type="button" class="chip" data-lk="spot" aria-pressed="${PC.lumK==="spot"}">Un spot</button></div></div>`:"")+
+   `<div class="lumn"><b>${lumLab(a)}</b><button type="button" class="lnk" data-lr="1">Remettre comme proposé</button></div>`;
+  $("ss-go").textContent="Continuer ›";$("ss-go").disabled=!(a.lumP||[]).length}
+ else if(!sum&&V[i].multi){const Q=V[i],W=faiWalls(q),m=a[Q.k]||[],all=m.length===W.length&&W.length>0;
   h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid"><button type="button" class="qo" data-m="all" aria-pressed="${all}"><span>Tous les murs</span><em>${all?"✓":""}</em></button>${W.map((w,j)=>`<button type="button" class="qo" data-m="${j}" aria-pressed="${m.includes(j)}"><span>Mur ${j+1} · ${fr1(w.L/100)} m</span><em>${m.includes(j)?"✓":""}</em></button>`).join("")}</div>`;
   $("ss-go").textContent="Continuer ›";$("ss-go").disabled=!m.length}
  else if(!sum){const Q=V[i],sl=i===0?sameList():[];
   h=`<small>Question ${i+1} sur ${V.length}</small><h2>${Q.q}</h2>${Q.s?`<p>${Q.s}</p>`:""}<div class="qgrid">${Q.o.map(v=>`<button type="button" class="qo${v===DKs?" dk":""}" data-v="${v}" aria-pressed="${a[Q.k]===v}">${v===DKs||!window.icoOf?"":icoOf(v)}<span>${v}</span><em>${a[Q.k]===v?"✓":""}</em></button>`).join("")}</div>`+
    (sl.length?`<div class="same"><span>${p==="sol"?"Même sol que…":"Même plafond que…"}</span><div>${sl.map(x=>`<button type="button" class="chip" data-same="${x.id}">${x.r.nom}</button>`).join("")}</div></div>`:"");
   $("ss-go").textContent=a._pre&&i===0?"Oui, c'est ça ›":"Continuer ›";$("ss-go").disabled=a[Q.k]==null}
- else{h=`<small>C'est noté</small><h2>${{sol:"Le sol",pf:"Le plafond",fai:"La faïence"}[p]} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${Q.multi?faiLab(a,q):a[Q.k]||"—"}</b></button>`).join("")}</div>`;
-  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):PC.parts[PC.ss.pi+1]==="pf"?"C'est bon, le plafond ›":PC.parts[PC.ss.pi+1]==="sol"?"C'est bon, le sol ›":"C'est bon ›"}
+ else{h=`<small>C'est noté</small><h2>${{sol:"Le sol",pf:"Le plafond",fai:"La faïence",lum:"Les lumières du plafond"}[p]} de : ${q.r.nom}</h2><p>Touchez une ligne pour la changer.</p><div class="sls">${V.map((Q,j)=>`<button type="button" class="sl" data-i="${j}"><span>${SHORT[Q.k]}</span><b>${Q.multi?faiLab(a,q):Q.place?lumLab(a):a[Q.k]||"—"}</b></button>`).join("")}</div>`;
+  const last=PC.ss.edit||PC.ss.pi>=PC.parts.length-1,nx=PC.queue[PC.qn+1];$("ss-go").disabled=false;$("ss-go").textContent=PC.ss.edit?"C'est bon, retour au récap":last?(nx?`C'est bon, pièce suivante ›`:"C'est bon, voir le récap ›"):PC.parts[PC.ss.pi+1]==="pf"?"C'est bon, le plafond ›":PC.parts[PC.ss.pi+1]==="lum"?"C'est bon, les lumières ›":PC.parts[PC.ss.pi+1]==="sol"?"C'est bon, le sol ›":"C'est bon ›"}
  card.innerHTML=h;if(anim){card.classList.remove("in");void card.offsetWidth;card.classList.add("in")}steps()}
-$("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i],[data-m]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
+$("ss-card").addEventListener("click",e=>{const b=e.target.closest("[data-v],[data-same],[data-i],[data-m],[data-lk],[data-lr]");if(!b)return;const {p,q}=PC.ss,a=soA(q.id,p);vib(8);
+ if(b.dataset.lk){PC.lumK=b.dataset.lk;ssUI(false);return}
+ if(b.dataset.lr){a.lumP=lumAuto(q,a.lumT);delete a._vide;ssUI(false);return}
  if(b.dataset.m!=null){const Q=ssVis(p,a)[PC.ss.i],W=faiWalls(q);let m=(a[Q.k]||[]).slice();if(b.dataset.m==="all")m=m.length===W.length?[]:W.map((w,j)=>j);else{const j=+b.dataset.m;m=m.includes(j)?m.filter(x=>x!==j):m.concat(j).sort((x,y)=>x-y)}a[Q.k]=m;ssUI(false);return}
  if(b.dataset.same){const src=PC.SO[b.dataset.same][p];Object.keys(a).forEach(k=>delete a[k]);Object.assign(a,JSON.parse(JSON.stringify(src)));a._done=0;PC.ss.i=99;toast(`<b>Recopié</b> depuis ${b.textContent}`,2000);ssUI(true);return}
  if(b.dataset.i!=null){PC.ss.i=+b.dataset.i;ssUI(true);return}
- const V=ssVis(p,a),Q=V[PC.ss.i];a[Q.k]=b.dataset.v;delete a._pre;Object.keys(a).forEach(k=>{if(SQ[p].some(x=>x.k===k)&&!ssVis(p,a).some(x=>x.k===k))delete a[k]});
+ const V=ssVis(p,a),Q=V[PC.ss.i];if(Q.k==="lumT"&&a.lumT!==b.dataset.v){delete a.lumP;delete a._vide;PC.lumK=null}a[Q.k]=b.dataset.v;delete a._pre;Object.keys(a).forEach(k=>{if(SQ[p].some(x=>x.k===k)&&!ssVis(p,a).some(x=>x.k===k))delete a[k]});
  ssUI(false);clearTimeout(PC.ssT);PC.ssT=setTimeout(()=>{PC.ss.i++;ssUI(true)},320)});
 $("ss-go").onclick=()=>{const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);vib(8);clearTimeout(PC.ssT);
- if(PC.ss.i<V.length){const v0=a[V[PC.ss.i].k];if(v0==null||(V[PC.ss.i].multi&&!v0.length))return;delete a._pre;PC.ss.i++;ssUI(true);return}
+ if(PC.ss.i<V.length){const v0=a[V[PC.ss.i].k];if(v0==null||((V[PC.ss.i].multi||V[PC.ss.i].place)&&!v0.length))return;delete a._pre;PC.ss.i++;ssUI(true);return}
  a._done=1;post({type:"proclik-murs",murs:exportMurs(),sols:exportSols()});
  if(PC.ss.edit){showRecap("<b>C'est corrigé !</b>");return}
  if(PC.ss.pi<PC.parts.length-1){startSS(PC.ss.pi+1);return}
@@ -1135,8 +1172,14 @@ $("ss-go").onclick=()=>{const {p,q}=PC.ss,a=soA(q.id,p),V=ssVis(p,a);vib(8);clea
 $("ss-back").onclick=()=>{clearTimeout(PC.ssT);vib(6);if(PC.ss.i>0){PC.ss.i=Math.min(PC.ss.i,ssVis(PC.ss.p,soA(PC.ss.q.id,PC.ss.p)).length)-1;ssUI(true);return}
  if(PC.ss.edit){showRecap();return}if(PC.ss.pi>0){startSS(PC.ss.pi-1,{sum:1});return}PC.step="f";showScr(null);goWall(WALLS.length-1)};
 function ssParty(t,sub,cb){const c=$("ss-card");c.innerHTML=`<div class="ssdone">${'<svg viewBox="0 0 60 60" width="74" height="74" fill="none"><circle cx="30" cy="30" r="25" stroke="var(--laiton)" stroke-width="3"/><path d="M19 31l8 8 15-17" stroke="var(--laiton)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ck"/></svg>'}<b>${t}</b><span>${sub}</span></div>`;$("ss-go").disabled=true;vib([10,40,14]);setTimeout(cb,1700)}
+$("ss-svg").addEventListener("click",e=>{if(PC.step!=="s"||!PC.ss||PC.ss.p!=="lum")return;const {q}=PC.ss,a=soA(q.id,"lum"),V=ssVis("lum",a),Q=V[PC.ss.i];if(!Q||!Q.place)return;
+ const s=$("ss-svg"),pt=s.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=s.getScreenCTM();if(!m)return;const P=pt.matrixTransform(m.inverse()),L=a.lumP||(a.lumP=[]);
+ const vb=s.viewBox.baseVal,k=Math.max(vb.width,vb.height)/320,g=e.target.closest&&e.target.closest("[data-lum]");let j=g?+g.dataset.lum:L.findIndex(l=>Math.hypot(l.x-P.x,l.y-P.y)<Math.max(22*k,30));
+ if(j>=0){L.splice(j,1);if(!L.length)a._vide=1;vib(6)}
+ else{if(!lumIn(q.r,P.x,P.y)){toast("Touchez à l'intérieur de la pièce",1600);return}if(roofFt(q).some(o=>Math.abs(P.x-o.cx)<o.rw/2&&Math.abs(P.y-o.cy)<o.rh/2)){toast("Ici, c'est une fenêtre de toit",1600);return}L.push({x:Math.round(P.x),y:Math.round(P.y),t:PC.lumK||"pt"});delete a._vide;vib(10)}
+ ssUI(false)});
 function topThumb(q,p){const s=document.createElementNS("http://www.w3.org/2000/svg","svg");drawTop(s,q,p,soA(q.id,p),{uid:q.id.replace("-","_")+p,still:1,nolab:1});return s.outerHTML}
-if(!EMB)window.__pc={roomEnd,PC,exportSols,startSS};
+if(!EMB)window.__pc={roomEnd,PC,exportSols,startSS,startRoom,ALLR};
 
 // ---------- Pour finir : une photo et un mot (facultatifs) ----------
 function finUI(anim){const {q}=PC.ss,a=soA(q.id,"fin"),nx=PC.queue[PC.qn+1];a.ph=a.ph||[];
