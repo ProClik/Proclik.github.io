@@ -221,13 +221,14 @@ function svgMur(){const w=wall();if(!w)return"";const sg=w.s,P=K(),L=Math.round(
 function mini(){const rm=room(),w=wall(),xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys),W=Math.max(...xs)-x0||1,Hh=Math.max(...ys)-y0||1,M=Math.max(W,Hh),pad=M*.12;
  const cx=x0+W/2,cy=y0+Hh/2,sg=w&&w.s;let s=`<svg class="fx-mini" viewBox="${x0-pad} ${y0-pad} ${W+2*pad} ${Hh+2*pad}" role="group" aria-label="Choisir un mur"><polygon points="${rm.pts.map(p=>p.join(",")).join(" ")}" class="mp"/>`;
  walls().forEach((o,i)=>{s+=`<line data-w="${i}" class="mw${i===V.wi?" on":""}${o.s.kind==="clo"?" clo":""}" x1="${o.s.a[0]}" y1="${o.s.a[1]}" x2="${o.s.b[0]}" y2="${o.s.b[1]}" stroke-width="${M/(i===V.wi?13:26)}"/><line data-w="${i}" class="mhit" x1="${o.s.a[0]}" y1="${o.s.a[1]}" x2="${o.s.b[0]}" y2="${o.s.b[1]}" stroke-width="${M/7}"/>`});
- if(sg&&V.tab==="mur"){const mx=(sg.a[0]+sg.b[0])/2,my=(sg.a[1]+sg.b[1])/2,a=Math.atan2(my-cy,mx-cx),r=M*.16;s+=`<circle class="me" cx="${cx}" cy="${cy}" r="${M/16}"/><line class="me" x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*r}" y2="${cy+Math.sin(a)*r}" stroke-width="${M/30}"/>`}
+ if(sg&&V.tab==="mur"){const mx=(sg.a[0]+sg.b[0])/2,my=(sg.a[1]+sg.b[1])/2,ex=cx+(cx-mx)*.25,ey=cy+(cy-my)*.25;s=s.replace('class="mp"/>',`class="mp"/><polygon class="rcone" points="${ex},${ey} ${sg.a[0]},${sg.a[1]} ${sg.b[0]},${sg.b[1]}"/>`);s+=`<circle class="me" style="stroke:none" cx="${ex}" cy="${ey}" r="${M/18}"/>`}
  return s+"</svg>"}
 
 /* Cyril 28/11 19h45 : on doit voir tout de suite QUEL mur on regarde. Petit plan de la pièce dans la colonne de droite :
    murs numérotés, mur en cours en laiton (épais), portes et fenêtres marquées, toucher un mur = y aller. */
 function roomCard(){const rm=room(),W=walls();if(!rm||!W.length)return"";const P=K(),xs=rm.pts.map(p=>p[0]),ys=rm.pts.map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys),Wd=Math.max(...xs)-x0||1,Hh=Math.max(...ys)-y0||1,M=Math.max(Wd,Hh),pad=M*.2,cx=x0+Wd/2,cy=y0+Hh/2;
  let s=`<svg class="rc-plan" viewBox="${x0-pad} ${y0-pad} ${Wd+2*pad} ${Hh+2*pad}" role="group" aria-label="Plan de la pièce : touchez un mur"><polygon points="${rm.pts.map(p=>p.join(",")).join(" ")}" class="rp"/>`;
+ {const w0=W[V.wi];if(w0){const a=w0.s.a,b=w0.s.b,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,ex=cx+(cx-mx)*.25,ey=cy+(cy-my)*.25;s+=`<polygon class="rcone" points="${ex},${ey} ${a[0]},${a[1]} ${b[0]},${b[1]}"/><circle class="reye" cx="${ex}" cy="${ey}" r="${M/22}"/>`}}
  W.forEach((o,i)=>{const a=o.s.a,b=o.s.b,on=i===V.wi;s+=`<line data-w="${i}" class="rw${on?" on":""}${o.s.kind==="clo"?" clo":""}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke-width="${M/(on?16:34)}"/>`;
   let L=1;try{L=P.dist(a,b)*100||1}catch(e){}
   try{opens(o.s).forEach(op=>{const t1=Math.max(0,op.x1/L),t2=Math.min(1,op.x2/L),q=t=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t],A=q(t1),B=q(t2);s+=`<line class="ro${/porte/i.test(oName(op))?" dr":""}" x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke-width="${M/(on?24:40)}"/>`})}catch(e){}
@@ -663,6 +664,7 @@ const CSS2=`
 #fx .rc-plan .rw{stroke:var(--ink,#1B2440);stroke-linecap:round;opacity:.55}#fx .rc-plan .rw.clo{stroke-dasharray:.1 .08}
 #fx .rc-plan .rw.on{stroke:#B8924F;opacity:1}
 #fx .rc-plan .ro{stroke:#DCE6EE;stroke-linecap:butt}#fx .rc-plan .ro.dr{stroke:var(--surface,#fff)}
+#fx .rcone{fill:#B8924F;fill-opacity:.2;stroke:#B8924F;stroke-opacity:.45;stroke-width:.03;stroke-linejoin:round;pointer-events:none}#fx .rc-plan .reye{fill:#1B2440}:root[data-theme="dark"] #fx .rc-plan .reye{fill:#F2EEE4}
 #fx .rc-plan .rhit{stroke:transparent;cursor:pointer}
 #fx .rc-plan .rn circle{fill:var(--surface,#fff);stroke:var(--ink,#1B2440);stroke-width:.04}#fx .rc-plan .rn text{fill:var(--ink,#1B2440);text-anchor:middle;font-weight:800}
 #fx .rc-plan .rn.on circle{fill:#1B2440;stroke:#1B2440}#fx .rc-plan .rn.on text{fill:#fff}
