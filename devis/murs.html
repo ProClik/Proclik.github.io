@@ -262,6 +262,7 @@ h1{font-size:clamp(17px,2.4vw,21px);font-weight:800;margin:0;letter-spacing:-.01
 .pop.pwide{justify-content:space-between}.pop.pwide .qopts.qic{flex:1 1 auto;max-height:150px}.pop.pwide .seg .s{min-height:74px;font-size:15px;flex-direction:column;gap:6px}.pop.pwide .seg .s .mw{width:24px;height:28px}
 /* Cyril 28/11 : iPad/ordinateur, le petit plan prend juste sa place, le reste va au cadre du dessous */@media (min-aspect-ratio:5/4) and (min-height:600px){.side.hasw{grid-template-rows:auto minmax(0,1fr) auto!important}#where{grid-template-rows:auto auto auto!important;align-content:start}#wplan{height:auto}.side.hasw #dock{display:flex;flex-direction:column}.side.hasw #dock>.card{flex:1 1 auto}}
 .stage.tOn .hintline{visibility:hidden}.pop.pwide{justify-content:flex-start!important;gap:12px}.pop.pwide .qopts.qic{max-height:190px!important}.pop.pwide .sgr{margin-top:6px}
+/* Cyril 28/11 : « les boutons paraissent trop allongés » : cases presque carrées, la place libre est répartie autour */.pop.pwide{justify-content:flex-start!important;gap:14px}.pop.pwide>:first-child{margin-bottom:auto!important}.pop.pwide>:last-child{margin-bottom:auto!important}.pop.pwide .qopts.qic{flex:none!important;max-height:none!important;grid-auto-rows:auto!important}.pop.pwide .qopts.qic .qopt{height:auto!important;aspect-ratio:1/.9}.pop.pwide .seg .s{min-height:64px}
 </style>
 </head>
 <body>
