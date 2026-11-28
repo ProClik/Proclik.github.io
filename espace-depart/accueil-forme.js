@@ -222,7 +222,7 @@ function rendre(){var D=A.donnees(),J=jour(),C0=conf(),B=C0.on,h="",H={};
 
   /* 5. créer : 5 ronds */
   H.creer='<div class="sec"><h2>Créer</h2></div><div class="ronds r5">'+
-    [["predevis","plan","Pré-devis"],["facture","facture","Facture"],["depense","photo","Dépense"],["client","user","Client"],["rdv","cal","RDV"]].map(function(x){
+    [["predevis","plan","Demande"],["facture","facture","Facture"],["depense","photo","Dépense"],["client","user","Client"],["rdv","cal","RDV"]].map(function(x){
       return '<button type="button" data-f2cree="'+x[0]+'"><span>'+ic(x[1])+"</span>"+x[2]+"</button>"}).join("")+"</div>";
   /* blocs venus d'autres pages (cachés au départ, à ajouter dans « Personnaliser ») */
   if(B.semaine)H.semaine=blocSemaine(J);
@@ -265,6 +265,7 @@ function blocDepenses(){var L=(window.PCDEP&&PCDEP.liste())||[],n=A.AUJ(),m=n.ge
 function nav(v){var n=$("#nb-"+v)||$("#tt-"+v);if(n)n.click()}
 function apres(fn){setTimeout(fn,160)}
 function cree(k){
+  if(k==="predevis"&&window.PCND){PCND.ouvrir();return}
   if(k==="predevis"){var q=$$(".pcq button")[0];if(q)q.click();return}
   if(k==="facture"){nav("factures");apres(function(){if(X.nouveauDoc)X.nouveauDoc("facture")});return}
   if(k==="depense"){nav("depenses");apres(function(){var b=$("[data-depadd]");if(b)b.click()});return}
